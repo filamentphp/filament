@@ -30,6 +30,8 @@ abstract class Page extends BasePage
 
     public static string $formActionsAlignment = 'left';
 
+    public static bool $formActionsAreSticky = false;
+
     public static bool $hasInlineLabels = false;
 
     /**
@@ -201,6 +203,11 @@ abstract class Page extends BasePage
         return static::$shouldRegisterNavigation;
     }
 
+    public static function stickyFormActions(bool $condition = true): void
+    {
+        static::$formActionsAreSticky = $condition;
+    }
+
     public static function alignFormActionsLeft(): void
     {
         static::$formActionsAlignment = 'left';
@@ -219,6 +226,11 @@ abstract class Page extends BasePage
     public function getFormActionsAlignment(): string
     {
         return static::$formActionsAlignment;
+    }
+
+    public function areFormActionsSticky(): bool
+    {
+        return static::$formActionsAreSticky;
     }
 
     public function hasInlineLabels(): bool
