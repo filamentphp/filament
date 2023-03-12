@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Illuminate\Contracts\Support\Htmlable;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
@@ -498,7 +499,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->toArray();
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->hasRelationship()) {
             $label = (string) str($this->getRelationshipName())

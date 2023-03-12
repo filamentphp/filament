@@ -9,6 +9,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -920,7 +921,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this->evaluate($this->relationshipTitleAttribute);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->hasRelationship()) {
             $label = (string) str($this->getRelationshipName())
