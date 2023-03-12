@@ -12,6 +12,7 @@ abstract class StaticAction extends ViewComponent
     use Concerns\CanBeHidden;
     use Concerns\HasColor;
     use Concerns\HasIcon;
+    use Concerns\HasIndicator;
     use Concerns\HasLabel;
     use Concerns\HasName;
     use Concerns\HasSize;

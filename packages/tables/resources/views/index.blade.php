@@ -234,15 +234,20 @@
             @endif
 
             @if ($hasFiltersAboveContent)
-                <div class="px-2 pt-2" x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }">
-                    @if ($hasFiltersAboveContentCollapsible)
-                        <div class="flex w-full justify-end">
-                            <x-filament-tables::filters.trigger x-on:click="areFiltersOpen = ! areFiltersOpen" />
-                        </div>
-                    @endif
+                <div class="px-2" x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }">
+                    <div class="py-2">
+                        @if ($hasFiltersAboveContentCollapsible)
+                            <div
+                                x-on:click="areFiltersOpen = ! areFiltersOpen"
+                                class="flex w-full justify-end"
+                            >
+                                {{ $getFiltersTriggerAction()->indicator(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
+                            </div>
+                        @endif
 
-                    <div class="p-4 mb-2" x-show="areFiltersOpen">
-                        <x-filament-tables::filters :form="$getFiltersForm()"/>
+                        <div class="p-4" x-show="areFiltersOpen">
+                            <x-filament-tables::filters :form="$getFiltersForm()"/>
+                        </div>
                     </div>
 
                     <x-filament::hr
@@ -290,8 +295,9 @@
                             @if ($hasFiltersDropdown)
                                 <x-filament-tables::filters.dropdown
                                     :form="$getFiltersForm()"
-                                    :width="$getFiltersFormWidth()"
                                     :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                    :trigger-action="$getFiltersTriggerAction()"
+                                    :width="$getFiltersFormWidth()"
                                     class="shrink-0"
                                 />
                             @endif

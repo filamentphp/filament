@@ -5,6 +5,8 @@
     'dynamicComponent' => null,
     'group' => null,
     'icon' => null,
+    'indicator' => null,
+    'indicatorColor' => null,
     'label' => null,
     'size' => null,
     'tooltip' => null,
@@ -17,6 +19,8 @@
             ->color($color)
             ->dropdownPlacement($dropdownPlacement)
             ->icon($icon)
+            ->indicator($indicator)
+            ->indicatorColor($indicatorColor)
             ->label($label)
             ->size($size)
             ->tooltip($tooltip)
@@ -33,6 +37,8 @@
                 :color="$group->getColor()"
                 :tooltip="$group->getTooltip()"
                 :icon="$group->getIcon()"
+                :indicator="$group->getIndicator()"
+                :indicator-color="$group->getIndicatorColor()"
                 :size="$group->getSize()"
                 :label-sr-only="$group->isLabelHidden()"
                 :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($group->getExtraAttributes(), escape: false)"

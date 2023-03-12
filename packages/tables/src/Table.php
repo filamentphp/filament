@@ -140,6 +140,8 @@ class Table extends ViewComponent
 
     protected string | Closure | null $filtersLayout = null;
 
+    protected ?Closure $modifyFiltersTriggerActionUsing = null;
+
     /**
      * @var array<string, Group>
      */
@@ -587,6 +589,13 @@ class Table extends ViewComponent
     public function filtersLayout(string | Closure | null $filtersLayout): static
     {
         $this->filtersLayout = $filtersLayout;
+
+        return $this;
+    }
+
+    public function filtersTriggerAction(?Closure $callback): static
+    {
+        $this->modifyFiltersTriggerActionUsing = $callback;
 
         return $this;
     }
@@ -1174,6 +1183,28 @@ class Table extends ViewComponent
     public function getFiltersForm(): Form
     {
         return $this->getLivewire()->getTableFiltersForm();
+    }
+
+    public function getFiltersTriggerAction(): Action
+    {
+        $action = Action::make('openFilters')
+            ->label(__('filament-tables::table.buttons.filter.label'))
+            ->iconButton()
+            ->icon('heroicon-m-funnel')
+            ->color('gray')
+            ->table($this);
+
+        if ($this->modifyFiltersTriggerActionUsing) {
+            $action = $this->evaluate($this->modifyFiltersTriggerActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        if ($action->getView() === Action::BUTTON_VIEW) {
+            $action->defaultSize('sm');
+        }
+
+        return $action;
     }
 
     /**
