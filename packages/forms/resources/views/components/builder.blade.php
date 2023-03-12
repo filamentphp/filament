@@ -74,7 +74,7 @@
                         x-on:mouseenter="isAddButtonVisible = true"
                         x-on:click.away="isAddButtonVisible = false"
                         x-on:mouseleave="isAddButtonVisible = false"
-                        wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
+                        wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                         x-sortable-item="{{ $uuid }}"
                         x-on:expand-concealing-component.window="
                             error = $el.querySelector('[data-validation-error]')
