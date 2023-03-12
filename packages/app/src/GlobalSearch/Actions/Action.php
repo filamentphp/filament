@@ -43,13 +43,13 @@ class Action extends StaticAction
         $arguments = collect([$event])
             ->merge($this->getEventData())
             ->when(
-                $this->emitToComponent,
+                $this->getEmitToComponent(),
                 fn (Collection $collection, string $component) => $collection->prepend($component),
             )
             ->map(fn (mixed $value): string => Js::from($value)->toHtml())
             ->implode(', ');
 
-        return match ($this->emitDirection) {
+        return match ($this->getEmitDirection()) {
             'self' => "\$emitSelf($arguments)",
             'to' => "\$emitTo($arguments)",
             'up' => "\$emitUp($arguments)",
