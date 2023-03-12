@@ -7,7 +7,6 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Str;
 use Livewire\Component as LivewireComponent;
 
 class Wizard extends Component
