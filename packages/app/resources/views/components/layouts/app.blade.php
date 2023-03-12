@@ -1,7 +1,3 @@
-@props([
-    'maxContentWidth' => filament()->getMaxContentWidth(),
-])
-
 @php
     $navigation = filament()->getNavigation();
 @endphp
@@ -48,14 +44,14 @@
             <div
                 @class([
                     'filament-main-content flex-1 w-full px-4 mx-auto md:px-6 lg:px-8',
-                    match ($maxContentWidth ??= 'max-w-7xl') {
-                        null, '7xl', '' => 'max-w-7xl',
+                    match ($maxContentWidth ?? filament()->getMaxContentWidth() ?? '7xl') {
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',
                         '3xl' => 'max-w-3xl',
                         '4xl' => 'max-w-4xl',
                         '5xl' => 'max-w-5xl',
                         '6xl' => 'max-w-6xl',
+                        '7xl' => 'max-w-7xl',
                         'full' => 'max-w-full',
                         default => $maxContentWidth,
                     },
