@@ -27,7 +27,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      */
     protected string $view = 'filament-forms::components.repeater';
 
-    protected string | Closure | null $addButtonLabel = null;
+    protected string | Closure | null $addActionLabel = null;
 
     protected bool | Closure $isAddable = true;
 
@@ -104,7 +104,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         }
 
         $action = Action::make($this->getAddActionName())
-            ->label(fn (Repeater $component) => $component->getAddButtonLabel())
+            ->label(fn (Repeater $component) => $component->getAddActionLabel())
             ->action(function (Repeater $component): void {
                 $newUuid = (string) Str::uuid();
 
@@ -348,19 +348,19 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'reorder';
     }
 
-    public function addButtonLabel(string | Closure | null $label): static
+    public function addActionLabel(string | Closure | null $label): static
     {
-        $this->addButtonLabel = $label;
+        $this->addActionLabel = $label;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `addButtonLabel()` instead.
+     * @deprecated Use `addActionLabel()` instead.
      */
     public function createItemButtonLabel(string | Closure | null $label): static
     {
-        $this->addButtonLabel($label);
+        $this->addActionLabel($label);
 
         return $this;
     }
@@ -474,9 +474,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $containers;
     }
 
-    public function getAddButtonLabel(): string
+    public function getAddActionLabel(): string
     {
-        return $this->evaluate($this->addButtonLabel) ?? __('filament-forms::components.repeater.actions.add.label', [
+        return $this->evaluate($this->addActionLabel) ?? __('filament-forms::components.repeater.actions.add.label', [
             'label' => Str::lcfirst($this->getLabel()),
         ]);
     }

@@ -25,6 +25,10 @@ class Action extends MountableAction
 
     public function getLivewireMountAction(): ?string
     {
+        if (! $this->isMountedOnClick()) {
+            return null;
+        }
+
         if ($this->getUrl()) {
             return null;
         }

@@ -19,6 +19,10 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
 
     public function getLivewireMountAction(): ?string
     {
+        if (! $this->isMountedOnClick()) {
+            return null;
+        }
+
         if ($this->getUrl()) {
             return null;
         }

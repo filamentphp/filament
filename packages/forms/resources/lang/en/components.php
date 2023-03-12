@@ -17,7 +17,7 @@ return [
             ],
 
             'add_between' => [
-                'label' => 'Insert',
+                'label' => 'Insert between blocks',
             ],
 
             'delete' => [

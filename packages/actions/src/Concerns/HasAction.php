@@ -8,9 +8,18 @@ trait HasAction
 {
     protected Closure | string | null $action = null;
 
+    protected bool | Closure $isMountedOnClick = true;
+
     public function action(Closure | string | null $action): static
     {
         $this->action = $action;
+
+        return $this;
+    }
+
+    public function mountedOnClick(bool | Closure $condition = true): static
+    {
+        $this->isMountedOnClick = $condition;
 
         return $this;
     }
@@ -24,5 +33,10 @@ trait HasAction
         }
 
         return $action;
+    }
+
+    public function isMountedOnClick(): bool
+    {
+        return (bool) $this->evaluate($this->isMountedOnClick);
     }
 }
