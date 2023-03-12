@@ -3,9 +3,11 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Str;
 use Livewire\Component as LivewireComponent;
 
 class Wizard extends Component
@@ -19,6 +21,10 @@ class Wizard extends Component
     protected string | Closure | null $stepQueryStringKey = null;
 
     protected string | Htmlable | null $submitAction = null;
+
+    protected ?Closure $modifyNextActionUsing = null;
+
+    protected ?Closure $modifyPreviousActionUsing = null;
 
     public int | Closure $startStep = 1;
 
@@ -50,6 +56,11 @@ class Wizard extends Component
     {
         parent::setUp();
 
+        $this->registerActions([
+            fn (Wizard $component): ?Action => $component->getNextAction(),
+            fn (Wizard $component): ?Action => $component->getPreviousAction(),
+        ]);
+
         $this->registerListeners([
             'wizard::nextStep' => [
                 function (Wizard $component, string $statePath, string $currentStep): void {
@@ -74,6 +85,67 @@ class Wizard extends Component
                 },
             ],
         ]);
+    }
+
+    public function getNextAction(): ?Action
+    {
+        $action = Action::make($this->getNextActionName())
+            ->label(__('filament-forms::components.wizard.actions.next_step.label'))
+            ->icon((__('filament::layout.direction') === 'rtl') ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right')
+            ->iconPosition('after')
+            ->button()
+            ->outlined()
+            ->size('sm');
+
+        if ($this->modifyNextActionUsing) {
+            $action = $this->evaluate($this->modifyNextActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function nextAction(?Closure $callback): static
+    {
+        $this->modifyNextActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getNextActionName(): string
+    {
+        return 'next';
+    }
+
+    public function getPreviousAction(): ?Action
+    {
+        $action = Action::make($this->getPreviousActionName())
+            ->label(__('filament-forms::components.wizard.actions.previous_step.label'))
+            ->icon((__('filament::layout.direction') === 'rtl') ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left')
+            ->color('gray')
+            ->button()
+            ->size('sm');
+
+        if ($this->modifyPreviousActionUsing) {
+            $action = $this->evaluate($this->modifyPreviousActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function previousAction(?Closure $callback): static
+    {
+        $this->modifyPreviousActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getPreviousActionName(): string
+    {
+        return 'previous';
     }
 
     /**

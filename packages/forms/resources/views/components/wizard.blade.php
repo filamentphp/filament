@@ -1,7 +1,4 @@
 @php
-    $isRtl = __('filament::layout.direction') === 'rtl';
-    $previousArrowIcon = $isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left';
-    $nextArrowIcon = $isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right';
     $statePath = $getStatePath();
 @endphp
 
@@ -216,16 +213,13 @@
 
     <div class="flex items-center justify-between">
         <div>
-            <x-filament::button
-                :icon="$previousArrowIcon"
-                x-show="! isFirstStep()"
-                x-cloak="x-cloak"
+            <div
                 x-on:click="previousStep"
-                color="gray"
-                size="sm"
+                x-show="! isFirstStep()"
+                x-cloak
             >
-                {{ __('filament-forms::components.wizard.actions.previous_step.label') }}
-            </x-filament::button>
+                {{ $getAction('previous') }}
+            </div>
 
             <div x-show="isFirstStep()">
                 {{ $getCancelAction() }}
@@ -233,16 +227,13 @@
         </div>
 
         <div>
-            <x-filament::button
-                :icon="$nextArrowIcon"
-                icon-position="after"
-                x-show="! isLastStep()"
-                x-cloak="x-cloak"
+            <div
                 x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $statePath }}', getStepIndex(step))"
-                size="sm"
+                x-show="! isLastStep()"
+                x-cloak
             >
-                {{ __('filament-forms::components.wizard.actions.next_step.label') }}
-            </x-filament::button>
+                {{ $getAction('next') }}
+            </div>
 
             <div x-show="isLastStep()">
                 {{ $getSubmitAction() }}
