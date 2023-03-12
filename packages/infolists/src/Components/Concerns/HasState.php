@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 
 trait HasState
 {
-    use InteractsWithTableQuery;
+    use CanGetStateFromRelationships;
 
     protected mixed $defaultState = null;
 
