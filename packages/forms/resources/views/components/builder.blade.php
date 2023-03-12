@@ -66,7 +66,7 @@
                     <li
                         x-data="{
                             isAddButtonVisible: false,
-                            isCollapsed: @js($isCollapsed()),
+                            isCollapsed: @js($isCollapsed($item)),
                         }"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"

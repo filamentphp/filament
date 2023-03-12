@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\ComponentContainer;
 
 trait CanBeCollapsed
 {
@@ -21,9 +22,9 @@ trait CanBeCollapsed
         return $this;
     }
 
-    public function isCollapsed(): bool
+    public function isCollapsed(?ComponentContainer $item = null): bool
     {
-        return (bool) $this->evaluate($this->isCollapsed);
+        return (bool) $this->evaluate($this->isCollapsed, ['item' => $item]);
     }
 
     public function collapsible(bool | Closure | null $condition = true): static
