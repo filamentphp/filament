@@ -30,6 +30,7 @@ class ActionGroup extends ViewComponent
     use HasIcon {
         getIcon as getBaseIcon;
     }
+    use Concerns\HasIndicator;
     use HasLabel;
     use HasSize;
     use HasTooltip;

@@ -23,6 +23,8 @@
     :tooltip="$action->getTooltip()"
     :disabled="$isDisabled"
     :icon="$icon ?? $action->getIcon()"
+    :indicator="$action->getIndicator()"
+    :indicator-color="$action->getIndicatorColor()"
     :size="$action->getSize()"
     :label-sr-only="$action->isLabelHidden()"
     dusk="filament.actions.action.{{ $action->getName() }}"

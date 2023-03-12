@@ -5,6 +5,8 @@
     'icon' => null,
     'iconPosition' => 'before',
     'iconSize' => null,
+    'indicator' => null,
+    'indicatorColor' => 'primary',
     'keyBindings' => null,
     'labelSrOnly' => false,
     'outlined' => false,
@@ -17,7 +19,7 @@
 @php
     $buttonClasses = array_merge(
         [
-            'filament-button inline-grid grid-flow-col items-center justify-center rounded-lg border font-medium outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
+            'filament-button inline-grid grid-flow-col items-center justify-center rounded-lg border font-medium relative outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
             match ($size) {
                 'xs' => 'filament-button-size-xs gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.3)-1px)] text-xs',
                 'sm' => 'filament-button-size-sm gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.[3.5])-1px)] text-sm',
@@ -31,7 +33,7 @@
                 'filament-button-outlined',
                 match ($color) {
                     'danger' => 'filament-button-color-danger border-danger-600 text-danger-600 hover:bg-danger-500/10 focus:bg-danger-500/10 focus:ring-danger-500/50 dark:border-danger-400 dark:text-danger-400',
-                    'gray' => 'filament-button-color-gray border-gray-300 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-gray-500/50 dark:border-gray-600 dark:text-gray-200',
+                    'gray' => 'filament-button-color-gray border-gray-300 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-primary-500/50 dark:border-gray-600 dark:text-gray-200',
                     'primary' => 'filament-button-color-primary border-primary-600 text-primary-600 hover:bg-primary-500/10 focus:bg-primary-500/10 focus:ring-primary-500/50 dark:border-primary-400 dark:text-primary-400',
                     'secondary' => 'filament-button-color-secondary border-secondary-600 text-secondary-600 hover:bg-secondary-500/10 focus:bg-secondary-500/10 focus:ring-secondary-500/50 dark:border-secondary-400 dark:text-secondary-400',
                     'success' => 'filament-button-color-success border-success-600 text-success-600 hover:bg-success-500/10 focus:bg-success-500/10 focus:ring-success-500/50 dark:border-success-400 dark:text-success-400',
@@ -43,7 +45,7 @@
                 'shadow',
                 match ($color) {
                     'danger' => 'filament-button-color-danger border-transparent bg-danger-600 text-white hover:bg-danger-500 focus:bg-danger-500 focus:ring-danger-500/50',
-                    'gray' => 'filament-button-color-gray border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-gray-500/50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700',
+                    'gray' => 'filament-button-color-gray border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-primary-500 focus:border-transparent dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700',
                     'primary' => 'filament-button-color-primary border-transparent bg-primary-600 text-white hover:bg-primary-500 focus:bg-primary-500 focus:ring-primary-500/50',
                     'secondary' => 'filament-button-color-secondary border-transparent bg-secondary-600 text-white hover:bg-secondary-500 focus:bg-secondary-500 focus:ring-secondary-500/50',
                     'success' => 'filament-button-color-success border-transparent bg-success-600 text-white hover:bg-success-500 focus:bg-success-500 focus:ring-success-500/50',
@@ -87,6 +89,19 @@
             },
             default => null,
         } => ! $labelSrOnly,
+    ]);
+
+    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-button-indicator absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
+        match ($indicatorColor) {
+            'danger' => 'bg-danger-600',
+            'gray' => 'bg-gray-600',
+            'primary' => 'bg-primary-600',
+            'secondary' => 'bg-secondary-600',
+            'success' => 'bg-success-600',
+            'warning' => 'bg-warning-600',
+            default => $indicatorColor,
+        },
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -219,6 +234,12 @@
                 />
             @endif
         @endif
+
+        @if ($indicator)
+            <span class="{{ $indicatorClasses }}">
+                {{ $indicator }}
+            </span>
+        @endif
     </button>
 @elseif ($tag === 'a')
     <a
@@ -253,6 +274,12 @@
                 :size="$iconSize"
                 :class="$iconClasses"
             />
+        @endif
+
+        @if ($indicator)
+            <span class="{{ $indicatorClasses }}">
+                {{ $indicator }}
+            </span>
         @endif
     </a>
 @endif
