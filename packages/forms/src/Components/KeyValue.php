@@ -5,9 +5,6 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Illuminate\Support\Str;
-use function Filament\Forms\array_move_after;
-use function Filament\Forms\array_move_before;
 
 class KeyValue extends Field
 {
