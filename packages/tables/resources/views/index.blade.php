@@ -314,7 +314,7 @@
                 :colspan="$columnsCount"
                 class="border-t dark:border-gray-700"
             />
-        @elseif ($isSelectionEnabled)
+        @elseif ($isSelectionEnabled && $isLoaded)
             <x-filament-tables::selection-indicator
                 :all-records-count="$allRecordsCount"
                 :colspan="$columnsCount"
