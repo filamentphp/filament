@@ -352,7 +352,7 @@
                 class="flex justify-center"
             >
                 <x-slot name="trigger">
-                    <x-forms::button size="sm">
+                    <x-forms::button size="sm" outlined>
                         {{ $getCreateItemButtonLabel() }}
                     </x-forms::button>
                 </x-slot>
