@@ -62,6 +62,10 @@ In this example, users belong to many teams, so there is a `teams()` relationshi
 
 You'll also want users to be able to [register new teams](#registration).
 
+### Subdomain tenancy
+
+By default, tenant URLs add the 
+
 ## Registration
 
 A registration page will allow users to create a new tenant. This is useful if you're using a tenant model other than `App\Models\User`.
@@ -359,6 +363,49 @@ public function context(Context $context): Context
     return $context
         // ...
         ->tenant(Team::class, slugAttribute: 'slug');
+}
+```
+
+## Configuring subdomain tenancy
+
+If you want to use subdomains for your tenants rather than paths (e.g. tenant.domain.tld instead of domain.tld/tenant), you can do so by setting the isSubdomainTenancy parameter to true
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->tenant(Team::class, isSubdomainTenancy: true);
+}
+```
+
+For this to work, the domain of your tenant context needs to specify the 'tenant' parameter
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->domain('{tenant}.domain.tld')
+        ->tenant(Team::class, isSubdomainTenancy: true);
+}
+```
+
+and if used together with the slug attribute, specify that as well
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->domain('{tenant:slug}.domain.tld')
+        ->tenant(Team::class, slugAttribute: 'slug', isSubdomainTenancy: true);
 }
 ```
 

@@ -22,8 +22,6 @@ trait HasTenancy
 
     protected bool $isSubdomainTenancy = false;
 
-    protected ?string $tenantRouteParameter = null;
-
     /**
      * @var array<MenuItem>
      */
@@ -52,15 +50,12 @@ trait HasTenancy
         ?string $model,
         ?string $slugAttribute = null,
         ?string $ownershipRelationship = null,
-        bool | null $isSubdomainTenancy = null,
-        string $tenantRouteParameter = 'tenant'
+        bool $isSubdomainTenancy = false
     ): static {
         $this->tenantModel = $model;
         $this->tenantSlugAttribute = $slugAttribute;
         $this->tenantOwnershipRelationshipName = $ownershipRelationship;
-        $isSubdomainTenancy ??= false;
         $this->isSubdomainTenancy = $isSubdomainTenancy;
-        $this->tenantRouteParameter = $tenantRouteParameter;
 
         return $this;
     }
@@ -178,11 +173,6 @@ trait HasTenancy
         }
 
         return (string) str($this->getTenantModel())->camel();
-    }
-
-    public function getTenantRouteParameter(): ?string
-    {
-        return $this->tenantRouteParameter;
     }
 
     public function getIsSubdomainTenancy(): bool

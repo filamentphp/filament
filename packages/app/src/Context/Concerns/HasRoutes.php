@@ -166,7 +166,7 @@ trait HasRoutes
     {
         if ($tenant = Filament::getTenant()) {
             return [
-                $this->getTenantRouteParameter() => $tenant->{$this->getTenantSlugAttribute()},
+                'tenant' => $tenant->{$this->getTenantSlugAttribute()},
             ];
         }
 

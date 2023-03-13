@@ -79,7 +79,7 @@ Route::name('filament.')
                                     }
                                 });
 
-                            Route::prefix(($hasRoutableTenancy && ! $isSubdomainTenancy) ? ('{' . $context->getTenantRouteParameter() . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                            Route::prefix(($hasRoutableTenancy && ! $isSubdomainTenancy) ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                                 ->group(function () use ($context): void {
                                     Route::get('/', function () use ($context): RedirectResponse {
                                         return redirect($context->getUrl(Filament::getTenant()));
@@ -117,7 +117,7 @@ Route::name('filament.')
                         $tenantSlugAttribute = $context->getTenantSlugAttribute();
                         $isSubdomainTenancy = $context->getIsSubdomainTenancy();
 
-                        Route::prefix(($hasRoutableTenancy && ! $isSubdomainTenancy) ? ('{' . $context->getTenantRouteParameter() . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                        Route::prefix(($hasRoutableTenancy && ! $isSubdomainTenancy) ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                             ->group(function () use ($context): void {
                                 if ($routes = $context->getTenantRoutes()) {
                                     $routes($context);

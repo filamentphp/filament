@@ -38,11 +38,11 @@ class SetUpContext
             return;
         }
 
-        if (! $request->route()->hasParameter($context->getTenantRouteParameter())) {
+        if (! $request->route()->hasParameter('tenant')) {
             return;
         }
 
-        $tenant = $context->getTenant($request->route()->parameter($context->getTenantRouteParameter()));
+        $tenant = $context->getTenant($request->route()->parameter('tenant'));
         Filament::setTenant($tenant);
     }
 }
