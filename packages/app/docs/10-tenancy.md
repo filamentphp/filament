@@ -364,7 +364,7 @@ public function context(Context $context): Context
 
 ## Configuring subdomain tenancy
 
-If you want to use subdomains for your tenants rather than paths (e.g. tenant.domain.tld instead of domain.tld/tenant), you can do so by setting the isSubdomainTenancy parameter to true
+If you want to use subdomains for your tenants rather than paths (e.g. tenant.domain.tld instead of domain.tld/tenant), you can do so by setting the `isSubdomainTenancy` parameter to true
 
 ```php
 use Filament\Context;
@@ -377,7 +377,7 @@ public function context(Context $context): Context
 }
 ```
 
-For this to work, the domain of your tenant context needs to specify the 'tenant' parameter
+For this to work, the domain of your tenant context needs to specify the `tenant` parameter
 
 ```php
 use Filament\Context;
