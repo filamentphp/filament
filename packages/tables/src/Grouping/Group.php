@@ -176,7 +176,13 @@ class Group
             ]);
         }
 
-        return Arr::get($record, $column);
+        $title = Arr::get($record, $column);
+
+        if ($title instanceof LabelInterface) {
+            $title = $title->getLabel();
+        }
+
+        return $title;
     }
 
     public function groupQuery(Builder $query, Model $model): Builder
