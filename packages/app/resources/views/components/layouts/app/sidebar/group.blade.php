@@ -44,12 +44,11 @@
 
             @if ($collapsible)
                 <x-filament::icon
-                    name="heroicon-m-chevron-down"
+                    name="heroicon-m-chevron-up"
                     alias="app::sidebar.group.collapse"
                     size="h-5 w-5"
                     class="text-gray-600 transition dark:text-gray-300"
-                    x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'"
-                    x-cloak="x-cloak"
+                    x-bind:class="!$store.sidebar.groupIsCollapsed(label) || 'rotate-180'"
                 />
             @endif
         </button>
