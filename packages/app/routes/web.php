@@ -45,6 +45,7 @@ Route::name('filament.')
                             $hasRoutableTenancy = $context->hasRoutableTenancy();
                             $hasTenantRegistration = $context->hasTenantRegistration();
                             $tenantSlugAttribute = $context->getTenantSlugAttribute();
+                            $isSubdomainTenancy = $context->getIsSubdomainTenancy();
 
                             if ($hasRoutableTenancy) {
                                 Route::get('/', function () use ($context, $hasTenantRegistration): RedirectResponse {
@@ -78,7 +79,7 @@ Route::name('filament.')
                                     }
                                 });
 
-                            Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                            Route::prefix(($hasRoutableTenancy && !$isSubdomainTenancy) ? ('{' . $context->getTenantRouteParameter() . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                                 ->group(function () use ($context): void {
                                     Route::get('/', function () use ($context): RedirectResponse {
                                         return redirect($context->getUrl(Filament::getTenant()));
@@ -114,8 +115,9 @@ Route::name('filament.')
                     Route::group([], function () use ($context): void {
                         $hasRoutableTenancy = $context->hasRoutableTenancy();
                         $tenantSlugAttribute = $context->getTenantSlugAttribute();
+                        $isSubdomainTenancy = $context->getIsSubdomainTenancy();
 
-                        Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                        Route::prefix(($hasRoutableTenancy && !$isSubdomainTenancy) ? ('{' . $context->getTenantRouteParameter() . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                             ->group(function () use ($context): void {
                                 if ($routes = $context->getTenantRoutes()) {
                                     $routes($context);

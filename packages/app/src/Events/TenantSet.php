@@ -13,7 +13,7 @@ class TenantSet
 
     public function __construct(
         protected Model $tenant,
-        protected Model | Authenticatable | HasTenants $user,
+        protected Model | Authenticatable | HasTenants | null $user,
     ) {
     }
 
@@ -22,7 +22,7 @@ class TenantSet
         return $this->tenant;
     }
 
-    public function getUser(): Model | Authenticatable | HasTenants
+    public function getUser(): Model | Authenticatable | HasTenants | null
     {
         return $this->user;
     }

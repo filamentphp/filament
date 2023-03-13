@@ -119,7 +119,7 @@ trait HasAuth
             return null;
         }
 
-        return route($this->getEmailVerificationPromptRouteName());
+        return route($this->getEmailVerificationPromptRouteName(), $this->getTenantRouteParameters());
     }
 
     public function getEmailVerificationPromptRouteName(): string
@@ -138,7 +138,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.login");
+        return route("filament.{$this->getId()}.auth.login", $this->getTenantRouteParameters());
     }
 
     public function getRegistrationUrl(): ?string
@@ -147,7 +147,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.register");
+        return route("filament.{$this->getId()}.auth.register", $this->getTenantRouteParameters());
     }
 
     public function getRequestPasswordResetUrl(): ?string
@@ -156,7 +156,7 @@ trait HasAuth
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.password-reset.request");
+        return route("filament.{$this->getId()}.auth.password-reset.request", $this->getTenantRouteParameters());
     }
 
     public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user): string
@@ -167,7 +167,8 @@ trait HasAuth
             [
                 'id' => $user->getKey(),
                 'hash' => sha1($user->getEmailForVerification()),
-            ],
+                ...$this->getTenantRouteParameters(),
+            ]
         );
     }
 
@@ -176,12 +177,13 @@ trait HasAuth
         return URL::signedRoute("filament.{$this->getId()}.auth.password-reset.reset", [
             'email' => $user->getEmailForPasswordReset(),
             'token' => $token,
+            ...$this->getTenantRouteParameters(),
         ]);
     }
 
     public function getLogoutUrl(): string
     {
-        return route("filament.{$this->getId()}.auth.logout");
+        return route("filament.{$this->getId()}.auth.logout", $this->getTenantRouteParameters());
     }
 
     /**

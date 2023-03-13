@@ -23,7 +23,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'remember_token',
     ];
 
-    public function canAccessFilament(Context $context): bool
+    public function canAccessFilament(Context|null $context): bool
     {
         return true;
     }

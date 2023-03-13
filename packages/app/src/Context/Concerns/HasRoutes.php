@@ -158,4 +158,15 @@ trait HasRoutes
 
         return $firstItem->getUrl();
     }
+
+    public function getTenantRouteParameters(): array
+    {
+        if ($tenant = Filament::getTenant()) {
+            return [
+                $this->getTenantRouteParameter() => $tenant->{$this->getTenantSlugAttribute()},
+            ];
+        }
+
+        return [];
+    }
 }
