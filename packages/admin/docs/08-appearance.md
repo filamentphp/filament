@@ -325,44 +325,41 @@ The available hooks are as follows:
 
 When using Laravel octane, the filament serving and hooks will only fire on the first request.
 
-To work around this you can create an event listener to run the hooks in Octane:
+To work around this you can use a middleware to run the required setup hooks:
 
 ```php
 <?php
 
-namespace App\Listeners;
+namespace App\Http\Middleware;
 
+use Closure;
 use Filament\Facades\Filament;
+use Illuminate\Http\Request;
 
-class InjectFilamentListener
+class FilamentSetup
 {
-    public function handle($event): void
+    public function handle(Request $request, Closure $next)
     {
         Filament::serving(static function () {
             Filament::registerViteTheme('resources/css/app.css');
         });
+
+        return $next($request);
     }
 }
+
 ``` 
 
-In the `octane.php` config file add the event listener:
+In the `filament.php` config file add the middleware (as the first one):
 
 ```php
-    RequestReceived::class => [
-        \App\Listeners\InjectFilamentListener::class,
-        ...Octane::prepareApplicationForNextOperation(),
-        ...Octane::prepareApplicationForNextRequest(),
-        //
+'middleware' => [
+        'auth' => [
+            ...
+        ],
+        'base' => [
+            \App\Http\Middleware\FilamentSetup::class,
+            ...
+        ],
     ],
-```
-
-In order to keep the non-octane version working as well, we can use the bootstrapped event in `EventServiceProvider` to trigger
-the same event:
-
-```php
-    protected $listen = [
-        'bootstrapped: ' . \Illuminate\Foundation\Bootstrap\BootProviders::class => [
-            InjectFilamentListener::class
-        ]
-    ];
 ```
