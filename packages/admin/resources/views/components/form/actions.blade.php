@@ -20,7 +20,7 @@
         x-init="evaluatePageScrollPosition"
         x-on:scroll.window="evaluatePageScrollPosition"
         x-bind:class="{
-            'filament-form-actions-sticky-panel sticky bottom-0 -mx-4 transform -translate-y-4 bg-white p-4 shadow-lg transition ring-1 ring-black/5 md:rounded-xl': isSticky,
+            'filament-form-actions-sticky-panel sticky bottom-0 -mx-4 transform md:-translate-y-4 bg-white p-4 shadow-lg transition ring-1 ring-black/5 md:rounded-xl': isSticky,
             'dark:bg-gray-800': @js(config('filament.dark_mode')) && isSticky,
         }"
     @endif
