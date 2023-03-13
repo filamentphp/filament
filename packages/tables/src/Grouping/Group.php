@@ -217,7 +217,7 @@ class Group
     /**
      * @param  array<string> | null  $relationships
      */
-    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null, ?Relation $lastRelationship = null): string|Builder
+    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null, ?Relation $lastRelationship = null): string | Builder
     {
         $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
             explode('.', $relationshipName) :
