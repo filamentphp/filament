@@ -2,13 +2,11 @@
 
 namespace Filament\Http\Middleware;
 
-use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Request;
 
 class Authenticate extends Middleware
 {

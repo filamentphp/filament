@@ -52,7 +52,7 @@ trait HasTenancy
         ?string $model,
         ?string $slugAttribute = null,
         ?string $ownershipRelationship = null,
-        bool|null $isSubdomainTenancy = null,
+        bool | null $isSubdomainTenancy = null,
         string $tenantRouteParameter = 'tenant'
     ): static {
         $this->tenantModel = $model;
