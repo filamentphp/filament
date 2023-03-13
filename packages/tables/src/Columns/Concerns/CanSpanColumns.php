@@ -19,6 +19,18 @@ trait CanSpanColumns
     ];
 
     /**
+     * @var array<string, int | string | Closure | null>
+     */
+    protected array $columnStart = [
+        'default' => null,
+        'sm' => null,
+        'md' => null,
+        'lg' => null,
+        'xl' => null,
+        '2xl' => null,
+    ];
+
+    /**
      * @param  array<string, int | string | Closure | null> | int | string | Closure | null  $span
      */
     public function columnSpan(array | int | string | Closure | null $span): static
@@ -30,6 +42,29 @@ trait CanSpanColumns
         }
 
         $this->columnSpan = array_merge($this->columnSpan, $span);
+
+        return $this;
+    }
+
+    public function columnSpanFull(): static
+    {
+        $this->columnSpan('full');
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string, int | string | Closure | null> | int | string | Closure | null  $start
+     */
+    public function columnStart(array | int | string | Closure | null $start): static
+    {
+        if (! is_array($start)) {
+            $start = [
+                'default' => $start,
+            ];
+        }
+
+        $this->columnStart = array_merge($this->columnStart, $start);
 
         return $this;
     }
@@ -48,6 +83,23 @@ trait CanSpanColumns
         return array_map(
             fn (array | int | string | Closure | null $value): array | int | string | null => $this->evaluate($value),
             $span,
+        );
+    }
+
+    /**
+     * @return array<string, int | string | Closure | null> | int | string | null
+     */
+    public function getColumnStart(int | string | null $breakpoint = null): array | int | string | null
+    {
+        $start = $this->columnStart;
+
+        if ($breakpoint !== null) {
+            return $this->evaluate($start[$breakpoint] ?? null);
+        }
+
+        return array_map(
+            fn (array | int | string | Closure | null $value): array | int | string | null => $this->evaluate($value),
+            $start,
         );
     }
 }

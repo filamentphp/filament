@@ -31,6 +31,12 @@
             :lg="$formComponent->getColumnSpan('lg')"
             :xl="$formComponent->getColumnSpan('xl')"
             :twoXl="$formComponent->getColumnSpan('2xl')"
+            :defaultStart="$formComponent->getColumnStart('default')"
+            :smStart="$formComponent->getColumnStart('sm')"
+            :mdStart="$formComponent->getColumnStart('md')"
+            :lgStart="$formComponent->getColumnStart('lg')"
+            :xlStart="$formComponent->getColumnStart('xl')"
+            :twoXlStart="$formComponent->getColumnStart('2xl')"
             @class([
                 match ($maxWidth = $formComponent->getMaxWidth()) {
                     'xs' => 'max-w-xs',

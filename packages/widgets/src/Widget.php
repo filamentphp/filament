@@ -21,6 +21,11 @@ abstract class Widget extends Component
      */
     protected int | string | array $columnSpan = 1;
 
+    /**
+     * @var int | string | array<string, int | null>
+     */
+    protected int | string | array $columnStart = 1;
+
     public static function canView(): bool
     {
         return true;
@@ -37,6 +42,14 @@ abstract class Widget extends Component
     public function getColumnSpan(): int | string | array
     {
         return $this->columnSpan;
+    }
+
+    /**
+     * @return int | string | array<string, int | null>
+     */
+    public function getColumnStart(): int | string | array
+    {
+        return $this->columnStart;
     }
 
     /**

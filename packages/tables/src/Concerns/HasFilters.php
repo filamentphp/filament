@@ -148,6 +148,7 @@ trait HasFilters
                 ->schema($filter->getFormSchema())
                 ->statePath($filter->getName())
                 ->columnSpan($filter->getColumnSpan())
+                ->columnStart($filter->getColumnStart())
                 ->columns($filter->getColumns());
         }
 
