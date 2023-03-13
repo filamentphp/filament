@@ -142,7 +142,7 @@ class Group
             ->ucfirst();
     }
 
-    public function getDescription(Model $record, string $title): ?string
+    public function getDescription(Model $record, ?string $title): ?string
     {
         if (! $this->getDescriptionUsing) {
             return null;
