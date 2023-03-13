@@ -62,10 +62,6 @@ In this example, users belong to many teams, so there is a `teams()` relationshi
 
 You'll also want users to be able to [register new teams](#registration).
 
-### Subdomain tenancy
-
-By default, tenant URLs add the 
-
 ## Registration
 
 A registration page will allow users to create a new tenant. This is useful if you're using a tenant model other than `App\Models\User`.
@@ -408,6 +404,8 @@ public function context(Context $context): Context
         ->tenant(Team::class, slugAttribute: 'slug', isSubdomainTenancy: true);
 }
 ```
+
+Be aware that login sessions are saved per domain and tenant switching will not work without having to sign in again!
 
 ## Configuring the name attribute
 
