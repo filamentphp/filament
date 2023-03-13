@@ -13,6 +13,8 @@ trait HasRoutes
 
     protected ?Closure $authenticatedRoutes = null;
 
+    protected ?Closure $tenantRoutes = null;
+
     protected ?Closure $authenticatedTenantRoutes = null;
 
     protected string $homeUrl = '';
@@ -56,6 +58,13 @@ trait HasRoutes
         return $this;
     }
 
+    public function tenantRoutes(?Closure $routes): static
+    {
+        $this->tenantRoutes = $routes;
+
+        return $this;
+    }
+
     public function authenticatedTenantRoutes(?Closure $routes): static
     {
         $this->authenticatedTenantRoutes = $routes;
@@ -71,6 +80,11 @@ trait HasRoutes
     public function getAuthenticatedRoutes(): ?Closure
     {
         return $this->authenticatedRoutes;
+    }
+
+    public function getTenantRoutes(): ?Closure
+    {
+        return $this->tenantRoutes;
     }
 
     public function getAuthenticatedTenantRoutes(): ?Closure

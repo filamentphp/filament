@@ -111,6 +111,18 @@ Route::name('filament.')
                             }
                         });
 
+                    Route::group([], function () use ($context): void {
+                        $hasRoutableTenancy = $context->hasRoutableTenancy();
+                        $tenantSlugAttribute = $context->getTenantSlugAttribute();
+
+                        Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                            ->group(function () use ($context): void {
+                                if ($routes = $context->getTenantRoutes()) {
+                                    $routes($context);
+                                }
+                            });
+                    });
+
                     if ($routes = $context->getRoutes()) {
                         $routes($context);
                     }
