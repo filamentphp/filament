@@ -224,7 +224,7 @@ class Group
             [];
 
         if (! count($relationships)) {
-            return $lastRelationship ? $lastRelationship->getModel()->qualifyColumn($sortColumn) : $sortColumn;
+            return $lastRelationship ? $lastRelationship->getQuery()->getModel()->qualifyColumn($sortColumn) : $sortColumn;
         }
 
         $currentRelationshipName = array_shift($relationships);
