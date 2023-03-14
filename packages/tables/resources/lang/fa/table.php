@@ -95,7 +95,7 @@ return [
 
     'empty' => [
         'heading' => 'هیچ رکوردی یافت نشد',
-        
+
         'buttons' => [
 
             'reset_column_searches' => [
