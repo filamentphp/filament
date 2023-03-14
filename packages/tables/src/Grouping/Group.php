@@ -217,14 +217,14 @@ class Group
     /**
      * @param  array<string> | null  $relationships
      */
-    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | Builder
+    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null, ?Relation $lastRelationship = null): string | Builder
     {
         $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
             explode('.', $relationshipName) :
             [];
 
         if (! count($relationships)) {
-            return $sortColumn;
+            return $lastRelationship ? $lastRelationship->getQuery()->getModel()->qualifyColumn($sortColumn) : $sortColumn;
         }
 
         $currentRelationshipName = array_shift($relationships);
@@ -241,6 +241,7 @@ class Group
                     $relatedQuery,
                     $sortColumn,
                     $relationships,
+                    $relationship,
                 )],
             )
             ->applyScopes()
