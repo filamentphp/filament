@@ -151,7 +151,7 @@ trait HasState
         $relationshipAttribute = $this->getRelationshipAttribute();
 
         $state = collect($this->getRelationshipResults($record))
-            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->getAttributes()))
+            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
             ->pluck($relationshipAttribute)
             ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
             ->values();
