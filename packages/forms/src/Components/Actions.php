@@ -16,7 +16,7 @@ class Actions extends Component
     protected string | Closure | null $verticalAlignment = null;
 
     /**
-     * @param array<Action> $actions
+     * @param  array<Action>  $actions
      */
     final public function __construct(array $actions)
     {
@@ -24,7 +24,7 @@ class Actions extends Component
     }
 
     /**
-     * @param array<Action> $actions
+     * @param  array<Action>  $actions
      */
     public static function make(array $actions): static
     {
@@ -32,7 +32,7 @@ class Actions extends Component
     }
 
     /**
-     * @param array<Action> $actions
+     * @param  array<Action>  $actions
      */
     public function actions(array $actions): static
     {
