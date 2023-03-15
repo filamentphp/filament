@@ -361,7 +361,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return null;
         }
 
-        if (! $this->hasCreateOptionActionFormSchema()) {
+        if (! $this->hasEditOptionActionFormSchema()) {
             return null;
         }
 
