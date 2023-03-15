@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Selecionar/Deselecionar todos los elementos para las acciones masivas.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Selecionar/Deselecionar :key para las acciones masivas.',
+        ],
+
         'search_query' => [
             'label' => 'Búsqueda',
             'placeholder' => 'Buscar',
