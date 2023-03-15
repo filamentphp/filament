@@ -39,7 +39,7 @@
             href="{{ $url ?: $recordUrl }}"
             {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
             @class([
-                'block w-full flex',
+                'w-full flex',
                 $alignmentClass,
             ])
         >
