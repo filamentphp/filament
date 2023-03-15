@@ -74,7 +74,10 @@
             {{ $slot }}
         </button>
     @else
-        <div @class([$alignmentClass])>
+        <div @class([
+            'flex',
+            $alignmentClass]
+        )>
             {{ $slot }}
         </div>
     @endif
