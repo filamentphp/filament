@@ -76,7 +76,7 @@
     @else
         <div @class([
             'flex',
-            $alignmentClass
+            $alignmentClass,
         ])>
             {{ $slot }}
         </div>
