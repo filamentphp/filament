@@ -16,12 +16,12 @@
     $url = $column->getUrl();
 
     $alignmentClass = match ($alignment) {
-        'center' => 'text-center',
-        'end' => 'text-end',
-        'left' => 'text-left',
-        'right' => 'text-right',
-        'justify' => 'text-justify',
-        default => 'text-start',
+        'center' => 'text-center flex justify-center',
+        'end' => 'text-end flex justify-end',
+        'left' => 'text-left flex justify-start',
+        'right' => 'text-right flex justify-end',
+        'justify' => 'text-justify flex justify-between',
+        default => 'text-start flex justify-start',
     };
 
     $slot = $column->viewData(['recordKey' => $recordKey]);
