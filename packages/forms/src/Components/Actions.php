@@ -15,16 +15,25 @@ class Actions extends Component
 
     protected string | Closure | null $verticalAlignment = null;
 
+    /**
+     * @param array<Action> $actions
+     */
     final public function __construct(array $actions)
     {
         $this->actions($actions);
     }
 
+    /**
+     * @param array<Action> $actions
+     */
     public static function make(array $actions): static
     {
         return app(static::class, ['actions' => $actions]);
     }
 
+    /**
+     * @param array<Action> $actions
+     */
     public function actions(array $actions): static
     {
         $this->childComponents(array_map(
