@@ -16,12 +16,12 @@
     $url = $column->getUrl();
 
     $alignmentClass = match ($alignment) {
-        'center' => 'text-center flex justify-center',
-        'end' => 'text-end flex justify-end',
-        'left' => 'text-left flex justify-start',
-        'right' => 'text-right flex justify-end',
-        'justify' => 'text-justify flex justify-between',
-        default => 'text-start flex justify-start',
+        'center' => 'text-center justify-center',
+        'end' => 'text-end justify-end',
+        'left' => 'text-left justify-start',
+        'right' => 'text-right justify-end',
+        'justify' => 'text-justify justify-between',
+        default => 'text-start justify-start',
     };
 
     $slot = $column->viewData(['recordKey' => $recordKey]);
@@ -39,7 +39,7 @@
             href="{{ $url ?: $recordUrl }}"
             {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
             @class([
-                'block w-full',
+                'block w-full flex',
                 $alignmentClass,
             ])
         >
@@ -67,7 +67,7 @@
             wire:loading.class="cursor-wait opacity-70"
             type="button"
             @class([
-                'block w-full',
+                'block w-full flex',
                 $alignmentClass,
             ])
         >
