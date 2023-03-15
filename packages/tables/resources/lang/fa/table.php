@@ -95,6 +95,14 @@ return [
 
     'empty' => [
         'heading' => 'هیچ رکوردی یافت نشد',
+
+        'buttons' => [
+
+            'reset_column_searches' => [
+                'label' => 'جستجوی ستونی را پاک کن',
+            ],
+
+        ],
     ],
 
     'filters' => [
