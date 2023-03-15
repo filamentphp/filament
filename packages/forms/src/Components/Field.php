@@ -46,4 +46,9 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
             __($label) :
             $label;
     }
+
+    public function getKey(): string
+    {
+        return $this->getStatePath();
+    }
 }

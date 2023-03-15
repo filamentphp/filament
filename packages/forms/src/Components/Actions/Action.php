@@ -41,7 +41,12 @@ class Action extends MountableAction
             $argumentsParameter .= '';
         }
 
-        return "mountFormComponentAction('{$this->getComponent()->getStatePath()}', '{$this->getName()}'{$argumentsParameter})";
+        return "mountFormComponentAction('{$this->getComponent()->getKey()}', '{$this->getName()}'{$argumentsParameter})";
+    }
+
+    public function toFormComponent(): ActionContainer
+    {
+        return ActionContainer::make($this);
     }
 
     /**
@@ -49,8 +54,12 @@ class Action extends MountableAction
      */
     protected function getDefaultEvaluationParameters(): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'component' => $this->getComponent(),
-        ]);
+        $component = $this->getComponent();
+
+        return array_merge(
+            $component->getDefaultEvaluationParameters(),
+            parent::getDefaultEvaluationParameters(),
+            ['component' => $component],
+        );
     }
 }

@@ -36,9 +36,17 @@ trait HasComponents
 
     public function getComponent(string | Closure $callback, bool $withHidden = false): ?Component
     {
-        $callback = $callback instanceof Closure
-             ? $callback
-             : fn (Component $component): bool => $component instanceof Field && $component->getStatePath() === $callback;
+        $callback = $callback instanceof Closure ?
+            $callback :
+            static function (Component $component) use ($callback): bool {
+                $key = $component->getKey();
+
+                if ($key === null) {
+                    return false;
+                }
+
+                return $key === $callback;
+            };
 
         return collect($this->getFlatComponents($withHidden))->first($callback);
     }

@@ -10,7 +10,7 @@
     @php
         $actions = array_filter(
             $actions,
-            fn (\Filament\Actions\Action | \Filament\Actions\ActionGroup $action): bool => $action->isVisible(),
+            fn ($action): bool => $action->isVisible(),
         );
     @endphp
 
@@ -27,14 +27,9 @@
                 'grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,
             ]) }}
         >
-            {{ \Filament\Facades\Filament::renderHook('page.actions.start') }}
-            
             @foreach ($actions as $action)
                 {{ $action }}
             @endforeach
-            
-            {{ \Filament\Facades\Filament::renderHook('page.actions.end') }}
-            
         </div>
     @endif
 @endif
