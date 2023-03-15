@@ -68,6 +68,13 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         return $this;
     }
 
+    public function icon(string | Closure | null $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
     public function getDescription(): string | Htmlable | null
     {
         return $this->evaluate($this->description);
@@ -101,13 +108,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     public function isAside(): bool
     {
         return (bool) ($this->evaluate($this->isAside) ?? false);
-    }
-
-    public function icon(string | Closure | null $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
     }
 
     public function getIcon(): ?string

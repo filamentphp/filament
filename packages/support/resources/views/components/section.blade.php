@@ -5,6 +5,7 @@
     'compact' => false,
     'description' => null,
     'heading',
+    'icon' => null,
 ])
 
 <section
@@ -55,9 +56,20 @@
             'cursor-pointer' => $collapsible,
         ])>
             <h3 @class([
-                'font-medium leading-6 pointer-events-none',
+                'font-medium leading-6 pointer-events-none flex flex-row items-center',
                 'text-lg'=> ! $compact,
             ])>
+                @if ($icon)
+                    <x-dynamic-component
+                        :component="$icon"
+                        @class([
+                            'mr-1',
+                            'h-4 w-4' => $compact,
+                            'h-6 w-6' => ! $compact,
+                        ])
+                    />
+                @endif
+
                 {{ $heading }}
             </h3>
 
