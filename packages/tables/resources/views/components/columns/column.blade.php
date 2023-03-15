@@ -67,7 +67,7 @@
             wire:loading.class="cursor-wait opacity-70"
             type="button"
             @class([
-                'block w-full flex',
+                'w-full flex',
                 $alignmentClass,
             ])
         >
