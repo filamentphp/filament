@@ -6,7 +6,6 @@ use Filament\Forms\Concerns\HasColumns;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
-use Illuminate\Support\Str;
 
 class Component extends ViewComponent
 {
