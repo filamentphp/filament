@@ -291,7 +291,7 @@
                             </div>
                         @endif
 
-                        <div class="flex">
+                        <div class="flex items-center">
                             @if ($hasFiltersDropdown)
                                 <x-filament-tables::filters.dropdown
                                     :form="$getFiltersForm()"
