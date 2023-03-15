@@ -24,7 +24,7 @@ abstract class Widget extends Component
     /**
      * @var int | string | array<string, int | null>
      */
-    protected int | string | array $columnStart = null;
+    protected int | string | array $columnStart = [];
 
     public static function canView(): bool
     {
