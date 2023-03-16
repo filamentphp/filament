@@ -13,7 +13,7 @@
                 let documentHeight = document.body.scrollHeight
                 let currentScroll = window.scrollY + window.innerHeight
 
-                this.isSticky = (currentScroll + window.innerHeight) <= documentHeight
+                this.isSticky = currentScroll <= documentHeight
             },
 
         }"
