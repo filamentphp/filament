@@ -60,7 +60,7 @@ trait HasFormComponentActions
 
         $action->arguments(array_merge(
             $this->mountedFormComponentActionArguments ?? [],
-            $arguments ? json_decode($arguments, associative: true) : []
+            $arguments ? json_decode($arguments, associative: true) : [],
         ));
 
         $form = $this->getMountedFormComponentActionForm();
