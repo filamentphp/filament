@@ -100,6 +100,13 @@ trait InteractsWithTable
             $this->tableColumnSearchQueries ?? [],
         );
 
+        $sortSessionKey = $this->getTableSortSessionKey();
+
+        if (($this->tableSortColumn === null || $this->tableSortDirection === null) && $this->shouldPersistTableSortInSession() && session()->has($sortSessionKey)) {
+            $this->tableSortColumn = session()->get($sortSessionKey)['sortColumn'];
+            $this->tableSortDirection = session()->get($sortSessionKey)['sortDirection'];
+        }
+
         $this->hasMounted = true;
     }
 
