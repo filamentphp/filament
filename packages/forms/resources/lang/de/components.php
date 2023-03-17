@@ -9,11 +9,11 @@ return [
         'actions' => [
 
             'clone' => [
-                'label' => 'Klonen',
+                'label' => 'Kopieren',
             ],
 
             'add' => [
-                'label' => 'Zu :label hinzufügen',
+                'label' => 'Hinzufügen',
             ],
 
             'add_between' => [
@@ -128,7 +128,7 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Zu :label hinzufügen',
+                'label' => 'Hinzufügen',
             ],
 
             'delete' => [
@@ -136,7 +136,7 @@ return [
             ],
 
             'clone' => [
-                'label' => 'Klonen',
+                'label' => 'Kopieren',
             ],
 
             'reorder' => [
