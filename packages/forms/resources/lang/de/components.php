@@ -13,7 +13,7 @@ return [
             ],
 
             'create_item' => [
-                'label' => 'Zu :label hinzufügen',
+                'label' => 'Hinzufügen',
             ],
 
             'create_item_between' => [
@@ -128,7 +128,7 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Zu :label hinzufügen',
+                'label' => 'Hinzufügen',
             ],
 
             'delete_item' => [
