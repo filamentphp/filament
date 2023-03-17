@@ -115,7 +115,7 @@ trait HasFormComponentActions
         return $result;
     }
 
-    public function getMountedFormComponentAction(): Action | Closure | null
+    public function getMountedFormComponentAction(): ?Action
     {
         if (! $this->mountedFormComponentAction) {
             return null;
@@ -137,18 +137,6 @@ trait HasFormComponentActions
 
         if (! $action) {
             return null;
-        }
-
-        if ($action instanceof Closure) {
-            try {
-                return $this->getMountedFormComponentActionComponent()->evaluate(
-                    $action,
-                    $this->mountedFormComponentActionArguments,
-                );
-            } finally {
-                $this->mountedFormComponentActionComponent = null;
-                $this->mountedFormComponentAction = null;
-            }
         }
 
         if ($action->isDisabled()) {

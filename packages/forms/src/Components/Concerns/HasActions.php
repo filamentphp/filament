@@ -33,13 +33,13 @@ trait HasActions
         return $this;
     }
 
-    public function getAction(string $name): Action | Closure | null
+    public function getAction(string $name): ?Action
     {
         return $this->getActions()[$name] ?? null;
     }
 
     /**
-     * @return array<string, Action | Closure>
+     * @return array<string, Action>
      */
     public function getActions(): array
     {
