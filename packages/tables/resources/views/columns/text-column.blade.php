@@ -61,7 +61,7 @@
         <span
             @if ($isCopyable)
                 x-on:click="
-                    window.navigator.clipboard.writeText(@js($state))
+                    window.navigator.clipboard.writeText(@js($getState()))
                     $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
                 "
             @endif
