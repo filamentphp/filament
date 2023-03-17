@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Concerns;
 
-use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
