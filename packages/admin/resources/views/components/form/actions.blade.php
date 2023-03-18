@@ -10,10 +10,11 @@
             isSticky: false,
 
             evaluatePageScrollPosition: function() {
-                let documentHeight = document.body.scrollHeight
-                let currentScroll = window.scrollY + window.innerHeight
+                const documentHeight = document.body.scrollHeight
+                const currentScroll = window.scrollY + window.innerHeight
+                const offsetFooter = document.querySelector('.filament-main-footer').offsetHeight
 
-                this.isSticky = currentScroll <= documentHeight
+                this.isSticky = (currentScroll + offsetFooter) <= documentHeight
             },
 
         }"
