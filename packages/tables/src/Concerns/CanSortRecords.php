@@ -133,6 +133,9 @@ trait CanSortRecords
         return "tables.{$table}_sort";
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function shouldPersistTableSortInSession(): bool
     {
         return false;

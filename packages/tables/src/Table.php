@@ -194,6 +194,8 @@ class Table extends ViewComponent
 
     protected bool | Closure | null $persistsColumnSearchInSession = false;
 
+    protected bool | Closure | null $persistsSortInSession = false;
+
     protected string | Closure | null $pluralModelLabel = null;
 
     protected string | Closure | null $pollingInterval = null;
@@ -751,6 +753,13 @@ class Table extends ViewComponent
     public function persistColumnSearchInSession(bool | Closure $condition = true): static
     {
         $this->persistsColumnSearchInSession = $condition;
+
+        return $this;
+    }
+
+    public function persistSortInSession(bool | Closure $condition = true): static
+    {
+        $this->persistsSortInSession = $condition;
 
         return $this;
     }
@@ -1639,6 +1648,11 @@ class Table extends ViewComponent
     public function persistsColumnSearchInSession(): bool
     {
         return (bool) $this->evaluate($this->persistsColumnSearchInSession);
+    }
+
+    public function persistsSortInSession(): bool
+    {
+        return (bool) $this->evaluate($this->persistsSortInSession);
     }
 
     public function selectsCurrentPageOnly(): bool
