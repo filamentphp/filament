@@ -303,3 +303,6 @@ it('can not publish posts', function () {
         ->assertTableBulkActionHidden('publish');
 });
 ```
+
+> Note: There are a lot more test helpers that are not documented on this page. You may want to check `filament/tables/src/Testing/TestsActions.php` for more helpers, such as `assertTableActionVisible()`, `assertTableActionEnabled()`, etc.
+
