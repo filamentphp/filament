@@ -104,7 +104,7 @@ trait InteractsWithTable
 
         if (blank($this->tableSortColumn) && $this->shouldPersistTableSortInSession() && session()->has($sortSessionKey)) {
             $sort = session()->get($sortSessionKey);
-        
+
             $this->tableSortColumn = $sort['column'] ?? null;
             $this->tableSortDirection = $sort['direction'] ?? null;
         }
