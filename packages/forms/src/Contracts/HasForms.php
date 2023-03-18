@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Contracts;
 
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Livewire\TemporaryUploadedFile;
 
 interface HasForms
@@ -9,6 +10,8 @@ interface HasForms
     public function dispatchFormEvent(mixed ...$args): void;
 
     public function getActiveFormLocale(): ?string;
+
+    public function makeFormTranslatableContentDriver(): ?TranslatableContentDriver;
 
     public function getComponentFileAttachment(string $statePath): ?TemporaryUploadedFile;
 

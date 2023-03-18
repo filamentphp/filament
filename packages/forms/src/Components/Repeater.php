@@ -707,7 +707,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             $itemOrder = 1;
             $orderColumn = $component->getOrderColumn();
 
-            $activeLocale = $livewire->getActiveFormLocale();
+            $translatableContentDriver = $livewire->makeFormTranslatableContentDriver();
 
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState(shouldCallHooksBefore: false);
@@ -719,26 +719,25 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 }
 
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
-                    $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
-
                     $itemData = $component->mutateRelationshipDataBeforeSave($itemData, record: $record);
 
-                    $record->fill($itemData)->save();
+                    $translatableContentDriver ?
+                        $translatableContentDriver->updateRecord($record, $itemData) :
+                        $record->fill($itemData)->save();
 
                     continue;
                 }
 
                 $relatedModel = $component->getRelatedModel();
 
-                $record = new $relatedModel();
-
-                if ($activeLocale && method_exists($record, 'setLocale')) {
-                    $record->setLocale($activeLocale);
-                }
-
                 $itemData = $component->mutateRelationshipDataBeforeAdd($itemData);
 
-                $record->fill($itemData);
+                if ($translatableContentDriver) {
+                    $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
+                } else {
+                    $record = new $relatedModel();
+                    $record->fill($itemData);
+                }
 
                 $record = $relationship->save($record);
                 $item->model($record)->saveRelationships();
@@ -775,19 +774,15 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             return [];
         }
 
-        $activeLocale = $this->getLivewire()->getActiveFormLocale();
+        $translatableContentDriver = $this->getLivewire()->makeFormTranslatableContentDriver();
 
         return $records
-            ->map(function (Model $record) use ($activeLocale): array {
-                $state = $record->attributesToArray();
+            ->map(function (Model $record) use ($translatableContentDriver): array {
+                $data = $translatableContentDriver ?
+                    $translatableContentDriver->getRecordAttributesToArray($record) :
+                    $record->attributesToArray();
 
-                if ($activeLocale && method_exists($record, 'getTranslatableAttributes') && method_exists($record, 'getTranslation')) {
-                    foreach ($record->getTranslatableAttributes() as $attribute) {
-                        $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
-                    }
-                }
-
-                return $this->mutateRelationshipDataBeforeFill($state);
+                return $this->mutateRelationshipDataBeforeFill($data);
             })
             ->toArray();
     }

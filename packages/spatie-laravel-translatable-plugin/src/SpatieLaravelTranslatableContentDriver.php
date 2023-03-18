@@ -1,0 +1,99 @@
+<?php
+
+namespace Filament;
+
+use Filament\Support\Contracts\TranslatableContentDriver;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+
+class SpatieLaravelTranslatableContentDriver implements TranslatableContentDriver
+{
+    public function __construct(protected string $activeLocale)
+    {
+    }
+
+    public function isAttributeTranslatable(string $model, string $attribute): bool
+    {
+        $model = app($model);
+
+        if (! method_exists($model, 'isTranslatableAttribute')) {
+            return false;
+        }
+
+        return $model->isTranslatableAttribute($attribute);
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function makeRecord(string $model, array $data): Model
+    {
+        $record = new $model();
+
+        if (method_exists($record, 'setLocale')) {
+            $record->setLocale($this->activeLocale);
+        }
+
+        $record->fill($data);
+
+        return $record;
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public function updateRecord(Model $record, array $data): Model
+    {
+        if (method_exists($record, 'setLocale')) {
+            $record->setLocale($this->activeLocale);
+        }
+
+        $record->fill($data)->save();
+
+        return $record;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getRecordAttributesToArray(Model $record): array
+    {
+        $attributes = $record->attributesToArray();
+
+        if (! method_exists($record, 'getTranslatableAttributes')) {
+            return $attributes;
+        }
+
+        if (! method_exists($record, 'getTranslation')) {
+            return $attributes;
+        }
+
+        foreach ($record->getTranslatableAttributes() as $attribute) {
+            $attributes[$attribute] = $record->getTranslation($attribute, $this->activeLocale);
+        }
+
+        return $attributes;
+    }
+
+    public function applySearchConstraintToQuery(Builder $query, string $column, string $search, string $whereClause): Builder
+    {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        $column = match ($databaseConnection->getDriverName()) {
+            'pgsql' => "{$column}->>'{$this->activeLocale}'",
+            default => "json_extract({$column}, \"$.{$this->activeLocale}\")",
+        };
+
+        $searchOperator = match ($databaseConnection->getDriverName()) {
+            'pgsql' => 'ilike',
+            default => 'like',
+        };
+
+        return $query->{"{$whereClause}Raw"}(
+            "lower({$column}) {$searchOperator} ?",
+            "%{$search}%",
+        );
+    }
+}

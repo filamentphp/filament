@@ -9,7 +9,7 @@
     },
     "require": {
         "php": "^8.0",
-        "filament/filament": "self.version",
+        "filament/support": "self.version",
         "illuminate/support": "^9.0|^10.0",
         "spatie/laravel-translatable": "^5.0|^6.0"
     },

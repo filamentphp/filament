@@ -4,6 +4,7 @@ namespace Filament\Tables\Contracts;
 
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Grouping\Group;
@@ -86,4 +87,6 @@ interface HasTable extends HasForms
     public function isTableLoaded(): bool;
 
     public function hasTableColumnSearches(): bool;
+
+    public function makeTableTranslatableContentDriver(): ?TranslatableContentDriver;
 }

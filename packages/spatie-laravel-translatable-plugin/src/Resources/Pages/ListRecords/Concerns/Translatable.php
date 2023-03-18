@@ -3,6 +3,8 @@
 namespace Filament\Resources\Pages\ListRecords\Concerns;
 
 use Filament\Resources\Pages\Concerns\HasActiveLocaleSwitcher;
+use Filament\SpatieLaravelTranslatableContentDriver;
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +23,14 @@ trait Translatable
     public function getActiveTableLocale(): ?string
     {
         return $this->activeLocale;
+    }
+
+    /**
+     * @return class-string<TranslatableContentDriver> | null
+     */
+    public function getTableTranslatableContentDriver(): ?string
+    {
+        return SpatieLaravelTranslatableContentDriver::class;
     }
 
     protected function setActiveLocale(): void

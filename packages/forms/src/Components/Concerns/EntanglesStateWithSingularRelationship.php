@@ -40,14 +40,14 @@ trait EntanglesStateWithSingularRelationship
 
             $record = $component->getCachedExistingRecord();
 
-            $activeLocale = $livewire->getActiveFormLocale();
+            $translatableContentDriver = $livewire->makeFormTranslatableContentDriver();
 
             if ($record) {
                 $data = $component->mutateRelationshipDataBeforeSave($data);
 
-                $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
-
-                $record->fill($data)->save();
+                $translatableContentDriver ?
+                    $translatableContentDriver->updateRecord($record, $data) :
+                    $record->fill($data)->save();
 
                 return;
             }
@@ -56,19 +56,21 @@ trait EntanglesStateWithSingularRelationship
 
             $relatedModel = $component->getRelatedModel();
 
-            $record = new $relatedModel();
-
-            if ($activeLocale && method_exists($record, 'setLocale')) {
-                $record->setLocale($activeLocale);
+            if ($translatableContentDriver) {
+                $record = $translatableContentDriver->makeRecord($relatedModel, $data);
+            } else {
+                $record = new $relatedModel();
+                $record->fill($data);
             }
 
             $relationship = $component->getRelationship();
 
             if ($relationship instanceof BelongsTo) {
-                $relationship->associate($record->create($data));
+                $record->save();
+
+                $relationship->associate($record);
                 $relationship->getParent()->save();
             } else {
-                $record->fill($data);
                 $relationship->save($record);
             }
         });
@@ -100,19 +102,11 @@ trait EntanglesStateWithSingularRelationship
      */
     protected function getStateFromRelatedRecord(Model $record): array
     {
-        $state = $record->attributesToArray();
-
-        if (
-            ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&
-            method_exists($record, 'getTranslatableAttributes') &&
-            method_exists($record, 'getTranslation')
-        ) {
-            foreach ($record->getTranslatableAttributes() as $attribute) {
-                $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
-            }
+        if ($translatableContentDriver = $this->getLivewire()->makeFormTranslatableContentDriver()) {
+            return $translatableContentDriver->getRecordAttributesToArray($record);
         }
 
-        return $state;
+        return $record->attributesToArray();
     }
 
     /**

@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms;
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
@@ -217,6 +218,25 @@ trait InteractsWithTable
     public function getActiveTableLocale(): ?string
     {
         return null;
+    }
+
+    /**
+     * @return class-string<TranslatableContentDriver> | null
+     */
+    public function getTableTranslatableContentDriver(): ?string
+    {
+        return null;
+    }
+
+    public function makeTableTranslatableContentDriver(): ?TranslatableContentDriver
+    {
+        $driver = $this->getTableTranslatableContentDriver();
+
+        if (! $driver) {
+            return null;
+        }
+
+        return app($driver, ['locale' => $this->getActiveTableLocale() ?? app()->getLocale()]);
     }
 
     /**

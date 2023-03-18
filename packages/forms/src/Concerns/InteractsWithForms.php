@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Exceptions\PropertyNotFoundException;
@@ -213,6 +214,25 @@ trait InteractsWithForms
 
             throw $exception;
         }
+    }
+
+    /**
+     * @return class-string<TranslatableContentDriver> | null
+     */
+    public function getFormTranslatableContentDriver(): ?string
+    {
+        return null;
+    }
+
+    public function makeFormTranslatableContentDriver(): ?TranslatableContentDriver
+    {
+        $driver = $this->getFormTranslatableContentDriver();
+
+        if (! $driver) {
+            return null;
+        }
+
+        return app($driver, ['locale' => $this->getActiveFormLocale() ?? app()->getLocale()]);
     }
 
     public function getActiveFormLocale(): ?string
