@@ -54,8 +54,8 @@ trait CanSortRecords
             session()->put(
                 $this->getTableSortSessionKey(),
                 [
-                    'sortColumn' => $this->tableSortColumn,
-                    'sortDirection' => $this->tableSortDirection,
+                    'column' => $this->tableSortColumn,
+                    'direction' => $this->tableSortDirection,
                 ],
             );
         }
