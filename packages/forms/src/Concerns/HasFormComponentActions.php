@@ -16,6 +16,8 @@ trait HasFormComponentActions
 {
     public $mountedFormComponentAction = null;
 
+    public $mountedFormComponentActionArguments = [];
+
     public $mountedFormComponentActionData = [];
 
     public $mountedFormComponentActionComponent = null;
@@ -56,7 +58,10 @@ trait HasFormComponentActions
             return;
         }
 
-        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+        $action->arguments(array_merge(
+            $this->mountedFormComponentActionArguments ?? [],
+            $arguments ? json_decode($arguments, associative: true) : [],
+        ));
 
         $form = $this->getMountedFormComponentActionForm();
 
@@ -108,10 +113,11 @@ trait HasFormComponentActions
         return $this->getMountedFormComponentActionComponent()?->getAction($this->mountedFormComponentAction);
     }
 
-    public function mountFormComponentAction(string $component, string $name)
+    public function mountFormComponentAction(string $component, string $name, array $arguments = [])
     {
         $this->mountedFormComponentActionComponent = $component;
         $this->mountedFormComponentAction = $name;
+        $this->mountedFormComponentActionArguments = $arguments;
 
         $action = $this->getMountedFormComponentAction();
 
@@ -131,6 +137,8 @@ trait HasFormComponentActions
         if ($action->isDisabled()) {
             return;
         }
+
+        $action->arguments($this->mountedFormComponentActionArguments);
 
         $this->cacheForm(
             'mountedFormComponentActionForm',

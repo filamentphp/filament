@@ -57,9 +57,19 @@
             'cursor-pointer' => $isCollapsible,
         ])>
             <h3 @class([
-                'font-bold tracking-tight pointer-events-none',
-                'text-xl font-bold' => ! $isCompact,
+                'font-bold tracking-tight pointer-events-none flex flex-row items-center',
+                'text-xl' => ! $isCompact,
             ])>
+                @if ($icon = $getIcon())
+                    <x-dynamic-component
+                        :component="$icon"
+                        @class([
+                            'mr-1',
+                            'h-4 w-4' => $isCompact,
+                            'h-6 w-6' => ! $isCompact,
+                        ]) />
+                @endif
+
                 {{ $getHeading() }}
             </h3>
 
