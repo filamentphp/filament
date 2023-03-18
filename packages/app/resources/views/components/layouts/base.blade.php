@@ -6,7 +6,10 @@
 <html
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
-    class="filament antialiased min-h-screen js-focus-visible"
+    @class([
+        'filament antialiased min-h-screen js-focus-visible',
+        'dark' => filament()->hasDarkModeForced(),
+    ])
 >
 <head>
     {{ filament()->renderHook('head.start') }}
@@ -65,7 +68,7 @@
 
     {{ filament()->renderHook('styles.end') }}
 
-    @if (filament()->hasDarkMode())
+    @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
         <script>
             const theme = localStorage.getItem('theme')
 

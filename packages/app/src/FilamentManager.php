@@ -518,6 +518,11 @@ class FilamentManager
         return $this->getCurrentContext()->hasDarkMode();
     }
 
+    public function hasDarkModeForced(): bool
+    {
+        return $this->getCurrentContext()->hasDarkModeForced();
+    }
+
     public function getBrandName(): string
     {
         return $this->getCurrentContext()->getBrandName();

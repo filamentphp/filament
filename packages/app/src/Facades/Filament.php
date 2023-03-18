@@ -91,6 +91,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<class-string> getWidgets()
  * @method static bool hasCollapsibleNavigationGroups()
  * @method static bool hasDarkMode()
+ * @method static bool hasDarkModeForced()
  * @method static bool hasDatabaseNotifications()
  * @method static bool hasEmailVerification()
  * @method static bool hasLogin()
