@@ -123,7 +123,7 @@ protected function getDefaultTableSortDirection(): ?string
 }
 ```
 
-### Persist search in session
+### Persist sort in session
 
 To persist the sort in the user's session, override the `shouldPersistTableSortInSession()` method on the Livewire component:
 
