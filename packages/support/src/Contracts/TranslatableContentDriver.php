@@ -17,12 +17,12 @@ interface TranslatableContentDriver
     public function getRecordAttributesToArray(Model $record): array;
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function makeRecord(string $model, array $data): Model;
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateRecord(Model $record, array $data): Model;
 
