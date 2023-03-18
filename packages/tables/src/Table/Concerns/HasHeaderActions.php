@@ -7,8 +7,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\Position;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
@@ -117,6 +115,4 @@ trait HasHeaderActions
 
         return null;
     }
-
-
 }

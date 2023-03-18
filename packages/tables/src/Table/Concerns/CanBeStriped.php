@@ -19,6 +19,4 @@ trait CanBeStriped
     {
         return (bool) $this->evaluate($this->isStriped);
     }
-
-
 }

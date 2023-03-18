@@ -79,6 +79,4 @@ trait CanPaginateRecords
     {
         return (bool) $this->evaluate($this->isPaginatedWhileReordering);
     }
-
-
 }

@@ -98,6 +98,4 @@ trait CanGroupRecords
     {
         return $this->isGroupsOnly;
     }
-
-
 }
