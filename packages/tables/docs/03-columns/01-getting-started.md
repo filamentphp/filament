@@ -115,12 +115,18 @@ public function table(Table $table): Table
 
 ### Persist sort in session
 
-To persist the sort in the user's session, override the `shouldPersistTableSortInSession()` method on the Livewire component:
+To persist the sorting in the user's session, use the `persistSortInSession()` method:
 
 ```php
-protected function shouldPersistTableSortInSession(): bool
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return true;
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistSortInSession();
 }
 ```
 
