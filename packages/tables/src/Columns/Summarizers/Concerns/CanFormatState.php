@@ -3,12 +3,12 @@
 namespace Filament\Tables\Columns\Summarizers\Concerns;
 
 use Closure;
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Table;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 
 trait CanFormatState
 {
