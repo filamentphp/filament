@@ -85,7 +85,7 @@ TextColumn::make('stock')->numeric(
 
 ## Currency formatting
 
-The `money()` method allows you to easily format monetary values, in any currency. This functionality uses [`akaunting/laravel-money`](https://github.com/akaunting/laravel-money) internally:
+The `money()` method allows you to easily format monetary values, in any currency:
 
 ```php
 use Filament\Tables\Columns\TextColumn;

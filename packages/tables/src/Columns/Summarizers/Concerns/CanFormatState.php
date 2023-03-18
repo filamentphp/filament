@@ -2,11 +2,13 @@
 
 namespace Filament\Tables\Columns\Summarizers\Concerns;
 
-use Akaunting\Money;
 use Closure;
 use Filament\Tables\Columns\Summarizers\Summarizer;
+use Filament\Tables\Table;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -42,25 +44,19 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, bool $shouldConvert = true): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
     {
-        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $shouldConvert) {
+        $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy) {
             $isArrayState = is_array($state);
 
-            $state = array_map(function ($state) use ($currency, $shouldConvert, $summarizer) {
+            $state = array_map(function ($state) use ($currency, $divideBy, $summarizer) {
                 if (blank($state)) {
                     return null;
                 }
 
-                if (blank($currency)) {
-                    $currency = env('DEFAULT_CURRENCY', 'USD');
-                }
+                $currency = $summarizer->evaluate($currency) ?? Table::$defaultCurrency;
 
-                return (new Money\Money(
-                    $state,
-                    (new Money\Currency(strtoupper($summarizer->evaluate($currency)))),
-                    $shouldConvert,
-                ))->format();
+                return format_money($state, $currency, $divideBy);
             }, Arr::wrap($state));
 
             if (! $isArrayState) {
@@ -73,7 +69,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function numeric(int | Closure $decimalPlaces = 0, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
         $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator) {
             $isArrayState = is_array($state);
@@ -86,6 +82,12 @@ trait CanFormatState
                 if (! is_numeric($state)) {
                     return $state;
                 }
+
+                if ($decimalPlaces === null) {
+                    return format_number($state);
+                }
+
+                $decimalPlaces = 0;
 
                 return number_format(
                     $state,

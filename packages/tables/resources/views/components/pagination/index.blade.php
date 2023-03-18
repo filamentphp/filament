@@ -65,9 +65,9 @@
                         'filament-tables::table.pagination.overview',
                         $paginator->total(),
                         [
-                            'first' => $paginator->firstItem(),
-                            'last' => $paginator->lastItem(),
-                            'total' => $paginator->total(),
+                            'first' => \Filament\Support\format_number($paginator->firstItem()),
+                            'last' => \Filament\Support\format_number($paginator->lastItem()),
+                            'total' => \Filament\Support\format_number($paginator->total()),
                         ],
                     ) }}
                 </div>

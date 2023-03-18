@@ -44,6 +44,8 @@ class Table extends ViewComponent
 
     public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage'];
 
+    public static string $defaultCurrency = 'usd';
+
     public static string $defaultDateDisplayFormat = 'M j, Y';
 
     public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i:s';

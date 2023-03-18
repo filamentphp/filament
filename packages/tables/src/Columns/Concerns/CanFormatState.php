@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use Akaunting\Money;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Filament\Tables\Columns\TextColumn;
@@ -11,6 +10,8 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -82,28 +83,22 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, bool $shouldConvert = true): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
     {
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $shouldConvert): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy): ?string {
             if (blank($state)) {
                 return null;
             }
 
-            if (blank($currency)) {
-                $currency = env('DEFAULT_CURRENCY', 'USD');
-            }
+            $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
 
-            return (new Money\Money(
-                $state,
-                (new Money\Currency(strtoupper($column->evaluate($currency)))),
-                $shouldConvert,
-            ))->format();
+            return format_money($state, $currency, $divideBy);
         });
 
         return $this;
     }
 
-    public function numeric(int | Closure $decimalPlaces = 0, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
             if (blank($state)) {
@@ -113,6 +108,12 @@ trait CanFormatState
             if (! is_numeric($state)) {
                 return $state;
             }
+
+            if ($decimalPlaces === null) {
+                return format_number($state);
+            }
+
+            $decimalPlaces = 0;
 
             return number_format(
                 $state,

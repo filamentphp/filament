@@ -9,7 +9,6 @@
     },
     "require": {
         "php": "^8.0",
-        "akaunting/laravel-money": "^1.2|^2.0|^3.0|^4.0",
         "blade-ui-kit/blade-heroicons": "^2.0",
         "filament/actions": "self.version",
         "filament/forms": "self.version",
