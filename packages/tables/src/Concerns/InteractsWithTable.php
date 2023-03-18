@@ -112,6 +112,15 @@ trait InteractsWithTable
             $this->tableColumnSearches ?? [],
         );
 
+        $sortSessionKey = $this->getTableSortSessionKey();
+
+        if (blank($this->tableSortColumn) && $this->getTable()->persistsSortInSession() && session()->has($sortSessionKey)) {
+            $sort = session()->get($sortSessionKey);
+
+            $this->tableSortColumn = $sort['column'] ?? null;
+            $this->tableSortDirection = $sort['direction'] ?? null;
+        }
+
         if ($this->getTable()->isPaginated()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
@@ -159,6 +168,7 @@ trait InteractsWithTable
             ->persistFiltersInSession($this->shouldPersistTableFiltersInSession())
             ->persistSearchInSession($this->shouldPersistTableSearchInSession())
             ->persistColumnSearchInSession($this->shouldPersistTableColumnSearchInSession())
+            ->persistSortInSession($this->shouldPersistTableSortInSession())
             ->pluralModelLabel($this->getTablePluralModelLabel())
             ->poll($this->getTablePollingInterval())
             ->recordAction($this->getTableRecordActionUsing())

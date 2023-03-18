@@ -113,6 +113,17 @@ public function table(Table $table): Table
 }
 ```
 
+### Persist sort in session
+
+To persist the sort in the user's session, override the `shouldPersistTableSortInSession()` method on the Livewire component:
+
+```php
+protected function shouldPersistTableSortInSession(): bool
+{
+    return true;
+}
+```
+
 ## Searching
 
 Columns may be searchable, by using the text input in the top right of the table. To make a column searchable, you must use the `searchable()` method:

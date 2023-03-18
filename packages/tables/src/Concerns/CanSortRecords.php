@@ -40,6 +40,16 @@ trait CanSortRecords
 
     public function updatedTableSortColumn(): void
     {
+        if ($this->shouldPersistTableSortInSession()) {
+            session()->put(
+                $this->getTableSortSessionKey(),
+                [
+                    'column' => $this->tableSortColumn,
+                    'direction' => $this->tableSortDirection,
+                ],
+            );
+        }
+
         $this->resetPage();
     }
 
@@ -114,5 +124,17 @@ trait CanSortRecords
     protected function getDefaultTableSortDirection(): ?string
     {
         return null;
+    }
+
+    public function getTableSortSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_sort";
+    }
+
+    protected function shouldPersistTableSortInSession(): bool
+    {
+        return false;
     }
 }
