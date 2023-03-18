@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Concerns;
+namespace Filament\Tables\Table\Concerns;
 
 use Filament\Tables\Contracts\HasTable;
 
