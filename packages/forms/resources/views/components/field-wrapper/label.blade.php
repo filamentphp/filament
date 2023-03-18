@@ -15,6 +15,7 @@
         'text-danger-700' => $error,
         'dark:text-danger-400' => $error && config('forms.dark_mode'),
     ])>
+        {{-- Deliberately poor formatting to ensure that the asterisk sticks to the final word in the label. --}}
         {{ $slot }}@if ($required)<span class="whitespace-nowrap">
                 <sup @class([
                     'font-medium text-danger-700',
