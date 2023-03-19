@@ -17,12 +17,16 @@ Action::make('edit')
     ->button()
 ```
 
+![Button trigger](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/trigger-button/button.jpg?raw=true)
+
 "Link" triggers have no background color. They must have a label and optionally an [icon](#setting-an-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
 
 ```php
 Action::make('edit')
     ->link()
 ```
+
+![Link trigger](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/trigger-button/link.jpg?raw=true)
 
 "Icon button" triggers are circular buttons with an [icon](#setting-an-icon) and no label. You can switch to that style with the `iconButton()` method:
 
@@ -31,6 +35,8 @@ Action::make('edit')
     ->icon('heroicon-o-pencil-square')
     ->iconButton()
 ```
+
+![Icon button trigger](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/trigger-button/icon-button.jpg?raw=true)
 
 ## Setting a label
 
@@ -59,6 +65,8 @@ Action::make('delete')
     ->color('danger')
 ```
 
+![Danger colored trigger](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/trigger-button/danger.jpg?raw=true)
+
 ## Setting a size
 
 Buttons come in 3 sizes - `sm`, `md` or `lg`. You can change the size of the action's trigger using the `size()` method:
@@ -67,6 +75,8 @@ Buttons come in 3 sizes - `sm`, `md` or `lg`. You can change the size of the act
 Action::make('create')
     ->size('lg')
 ```
+
+![Large trigger](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/trigger-button/large.jpg?raw=true)
 
 ## Setting an icon
 
@@ -78,6 +88,8 @@ Action::make('edit')
     ->icon('heroicon-m-pencil-square')
 ```
 
+![Trigger with icon](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/trigger-button/icon.jpg?raw=true)
+
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
 ```php
@@ -86,6 +98,8 @@ Action::make('edit')
     ->icon('heroicon-m-pencil-square')
     ->iconPosition('after')
 ```
+
+![Trigger with icon after the label](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/trigger-button/icon-after.jpg?raw=true)
 
 ## Authorization
 
