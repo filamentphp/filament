@@ -25,7 +25,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function makeRecord(string $model, array $data): Model
     {
@@ -41,7 +41,7 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function updateRecord(Model $record, array $data): Model
     {
