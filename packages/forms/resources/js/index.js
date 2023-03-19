@@ -7,6 +7,9 @@ import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css'
 import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css'
 import '../css/components/file-upload.css'
 
+import 'easymde/dist/easymde.min.css'
+import '../css/components/markdown-editor.css'
+
 import 'trix/dist/trix.css'
 import '../css/components/rich-editor.css'
 

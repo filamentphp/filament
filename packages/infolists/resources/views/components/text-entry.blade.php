@@ -124,7 +124,9 @@
                                 >
                             @endif
 
-                            {{ $formattedState }}
+                            <div class="inline-block">
+                                {{ $formattedState }}
+                            </div>
 
                             @if ($isCopyable)
                                 </span>

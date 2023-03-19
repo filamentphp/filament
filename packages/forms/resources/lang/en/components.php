@@ -108,15 +108,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Attach files',
+            'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
             'code_block' => 'Code block',
-            'edit' => 'Edit',
+            'h' => 'Heading',
             'italic' => 'Italic',
             'link' => 'Link',
             'ordered_list' => 'Numbered list',
-            'preview' => 'Preview',
+            'redo' => 'Redo',
             'strike' => 'Strikethrough',
+            'table' => 'Table',
+            'undo' => 'Undo',
         ],
 
     ],

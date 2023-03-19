@@ -23,14 +23,17 @@ class MarkdownEditor extends Field implements Contracts\CanBeLengthConstrained, 
      */
     protected array | Closure $toolbarButtons = [
         'attachFiles',
+        'blockquote',
         'bold',
         'bulletList',
         'codeBlock',
-        'edit',
+        'h1',
         'italic',
         'link',
         'orderedList',
-        'preview',
+        'redo',
         'strike',
+        'table',
+        'undo',
     ];
 }
