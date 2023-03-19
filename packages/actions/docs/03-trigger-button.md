@@ -56,7 +56,6 @@ Buttons may have a color to indicate their significance. It may be either `prima
 
 ```php
 Action::make('delete')
-    ->action(fn () => $this->post->delete())
     ->color('danger')
 ```
 
@@ -65,8 +64,7 @@ Action::make('delete')
 Buttons come in 3 sizes - `sm`, `md` or `lg`. You can change the size of the action's trigger using the `size()` method:
 
 ```php
-Action::make('delete')
-    ->action(fn () => $this->post->delete())
+Action::make('create')
     ->size('lg')
 ```
 
