@@ -20,7 +20,7 @@ for (const [file, options] of Object.entries(schema)) {
             options.viewport ?? {
                 width: 1920,
                 height: 1080,
-                deviceScaleFactor: 1,
+                deviceScaleFactor: 3,
             },
         )
         await page.goto(`http://127.0.0.1:8000/${options.url}`, {
