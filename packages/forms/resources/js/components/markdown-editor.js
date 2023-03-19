@@ -106,10 +106,12 @@ export default function markdownEditorFormComponent({
                 placeholder,
                 previewImagesInEditor: true,
                 spellChecker: false,
-                status: [{
-                    className: 'upload-image',
-                    defaultValue: '',
-                }],
+                status: [
+                    {
+                        className: 'upload-image',
+                        defaultValue: '',
+                    },
+                ],
                 toolbar: this.getToolbar(),
                 uploadImage: true,
             })
@@ -121,26 +123,33 @@ export default function markdownEditorFormComponent({
 
                     if (lastChange.origin === '+input') {
                         const urlPlaceholder = '(https://)'
-                        const urlLineText = lastChange.text[lastChange.text.length - 1]
+                        const urlLineText =
+                            lastChange.text[lastChange.text.length - 1]
 
                         if (
                             urlLineText.endsWith(urlPlaceholder) &&
-                            (urlLineText !== ('[]' + urlPlaceholder))
+                            urlLineText !== '[]' + urlPlaceholder
                         ) {
                             const from = lastChange.from
                             const to = lastChange.to
-                            const isSelectionMultiline = lastChange.text.length > 1
+                            const isSelectionMultiline =
+                                lastChange.text.length > 1
                             const baseIndex = isSelectionMultiline ? 0 : from.ch
 
                             setTimeout(() => {
                                 instance.setSelection(
                                     {
                                         line: to.line,
-                                        ch: baseIndex + urlLineText.lastIndexOf('(') + 1
+                                        ch:
+                                            baseIndex +
+                                            urlLineText.lastIndexOf('(') +
+                                            1,
                                     },
                                     {
                                         line: to.line,
-                                        ch: baseIndex + urlLineText.lastIndexOf(')')
+                                        ch:
+                                            baseIndex +
+                                            urlLineText.lastIndexOf(')'),
                                     },
                                 )
                             }, 25)
@@ -151,9 +160,12 @@ export default function markdownEditorFormComponent({
                 }
             })
 
-            this.editor.codemirror.on('change', Alpine.debounce(() => {
-                this.state = this.editor.value()
-            }, 300))
+            this.editor.codemirror.on(
+                'change',
+                Alpine.debounce(() => {
+                    this.state = this.editor.value()
+                }, 300),
+            )
 
             this.$watch('state', () => {
                 if (this.editor.codemirror.hasFocus()) {
@@ -203,7 +215,12 @@ export default function markdownEditorFormComponent({
                 })
             }
 
-            if (['bold', 'italic', 'strike', 'link'].some((button) => toolbarButtons.includes(button)) && ['h1'].some((button) => toolbarButtons.includes(button))) {
+            if (
+                ['bold', 'italic', 'strike', 'link'].some((button) =>
+                    toolbarButtons.includes(button),
+                ) &&
+                ['h1'].some((button) => toolbarButtons.includes(button))
+            ) {
                 toolbar.push('|')
             }
 
@@ -215,7 +232,12 @@ export default function markdownEditorFormComponent({
                 })
             }
 
-            if (['h1'].some((button) => toolbarButtons.includes(button)) && ['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some((button) => toolbarButtons.includes(button))) {
+            if (
+                ['h1'].some((button) => toolbarButtons.includes(button)) &&
+                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some(
+                    (button) => toolbarButtons.includes(button),
+                )
+            ) {
                 toolbar.push('|')
             }
 
@@ -251,7 +273,14 @@ export default function markdownEditorFormComponent({
                 })
             }
 
-            if (['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some((button) => toolbarButtons.includes(button)) && ['table', 'attachFiles'].some((button) => toolbarButtons.includes(button))) {
+            if (
+                ['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some(
+                    (button) => toolbarButtons.includes(button),
+                ) &&
+                ['table', 'attachFiles'].some((button) =>
+                    toolbarButtons.includes(button),
+                )
+            ) {
                 toolbar.push('|')
             }
 
@@ -271,7 +300,14 @@ export default function markdownEditorFormComponent({
                 })
             }
 
-            if (['table', 'attachFiles'].some((button) => toolbarButtons.includes(button)) && ['undo', 'redo'].some((button) => toolbarButtons.includes(button))) {
+            if (
+                ['table', 'attachFiles'].some((button) =>
+                    toolbarButtons.includes(button),
+                ) &&
+                ['undo', 'redo'].some((button) =>
+                    toolbarButtons.includes(button),
+                )
+            ) {
                 toolbar.push('|')
             }
 
