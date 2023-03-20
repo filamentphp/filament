@@ -1,7 +1,7 @@
 ---
 title: Modals
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
+import PreviewScreenshot from "@components/PreviewScreenshot.astro"
 
 Actions may require additional confirmation or input from the user before they run. You may open a modal before an action is executed to do this.
 
@@ -15,7 +15,7 @@ Action::make('delete')
     ->requiresConfirmation()
 ```
 
-<AutoScreenshot name="actions/modal/confirmation" alt="Confirmation modal" version="3.x" />
+<PreviewScreenshot name="actions/modal/confirmation" alt="Confirmation modal" version="3.x" />
 
 > Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` callback.
 
@@ -32,7 +32,7 @@ Action::make('delete')
     ->modalButton('Yes, delete it')
 ```
 
-<AutoScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
+<PreviewScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
 
 ## Modal forms
 
@@ -57,7 +57,7 @@ Action::make('updateAuthor')
     })
 ```
 
-<AutoScreenshot name="actions/modal/form" alt="Modal with form" version="3.x" />
+<PreviewScreenshot name="actions/modal/form" alt="Modal with form" version="3.x" />
 
 ### Filling the form with existing data
 
@@ -117,7 +117,7 @@ Action::make('updateAuthor')
     ->slideOver()
 ```
 
-<AutoScreenshot name="actions/modal/slide-over" alt="Slide over with form" version="3.x" />
+<PreviewScreenshot name="actions/modal/slide-over" alt="Slide over with form" version="3.x" />
 
 Instead of opening in the center of the screen, the modal content will now slide in from the right and consume the entire height of the browser.
 

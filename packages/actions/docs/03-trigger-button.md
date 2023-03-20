@@ -1,7 +1,7 @@
 ---
 title: Trigger button
 ---
-import AutoScreenshot from "@components/AutoScreenshot.astro"
+import PreviewScreenshot from "@components/PreviewScreenshot.astro"
 
 All actions have a trigger button. When the user clicks on it, the action is executed - a modal will open, logic will run, or they will be redirected to a URL.
 
@@ -18,7 +18,7 @@ Action::make('edit')
     ->button()
 ```
 
-<AutoScreenshot name="actions/trigger-button/button" alt="Button trigger" version="3.x" />
+<PreviewScreenshot name="actions/trigger-button/button" alt="Button trigger" version="3.x" />
 
 "Link" triggers have no background color. They must have a label and optionally an [icon](#setting-an-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
 
@@ -27,7 +27,7 @@ Action::make('edit')
     ->link()
 ```
 
-<AutoScreenshot name="actions/trigger-button/link" alt="Link trigger" version="3.x" />
+<PreviewScreenshot name="actions/trigger-button/link" alt="Link trigger" version="3.x" />
 
 "Icon button" triggers are circular buttons with an [icon](#setting-an-icon) and no label. You can switch to that style with the `iconButton()` method:
 
@@ -37,7 +37,7 @@ Action::make('edit')
     ->iconButton()
 ```
 
-<AutoScreenshot name="actions/trigger-button/icon-button" alt="Icon button trigger" version="3.x" />
+<PreviewScreenshot name="actions/trigger-button/icon-button" alt="Icon button trigger" version="3.x" />
 
 ## Setting a label
 
@@ -66,7 +66,7 @@ Action::make('delete')
     ->color('danger')
 ```
 
-<AutoScreenshot name="actions/trigger-button/danger" alt="Danger colored trigger" version="3.x" />
+<PreviewScreenshot name="actions/trigger-button/danger" alt="Danger colored trigger" version="3.x" />
 
 ## Setting a size
 
@@ -77,7 +77,7 @@ Action::make('create')
     ->size('lg')
 ```
 
-<AutoScreenshot name="actions/trigger-button/large" alt="Large trigger" version="3.x" />
+<PreviewScreenshot name="actions/trigger-button/large" alt="Large trigger" version="3.x" />
 
 ## Setting an icon
 
@@ -89,7 +89,7 @@ Action::make('edit')
     ->icon('heroicon-m-pencil-square')
 ```
 
-<AutoScreenshot name="actions/trigger-button/icon" alt="Trigger with icon" version="3.x" />
+<PreviewScreenshot name="actions/trigger-button/icon" alt="Trigger with icon" version="3.x" />
 
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
@@ -100,7 +100,7 @@ Action::make('edit')
     ->iconPosition('after')
 ```
 
-<AutoScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="3.x" />
+<PreviewScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="3.x" />
 
 ## Authorization
 
