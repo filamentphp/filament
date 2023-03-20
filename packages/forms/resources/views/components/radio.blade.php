@@ -66,11 +66,11 @@
                         <div class="text-sm">
                             <label for="{{ $getId() }}-{{ $value }}" @class([
                                 'font-medium',
-                                'text-gray-700' => ! $errors->has($getStatePath()) && ! $shouldOptionBeDisabled,
-                                'dark:text-gray-200' => (! $errors->has($getStatePath()) && ! $shouldOptionBeDisabled) && config('forms.dark_mode'),
-                                'opacity-50' => ! $errors->has($getStatePath()) && $shouldOptionBeDisabled,
+                                'text-gray-700' => ! $errors->has($getStatePath()),
+                                'dark:text-gray-200' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
                                 'text-danger-600' => $errors->has($getStatePath()),
                                 'dark:text-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
+                                'opacity-50' => $shouldOptionBeDisabled,
                             ])>
                                 {{ $label }}
                             </label>
