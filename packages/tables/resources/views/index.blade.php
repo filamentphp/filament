@@ -322,7 +322,7 @@
                     <div @class([
                         'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
                         'dark:border-gray-700' => config('tables.dark_mode'),
-                        'hidden' => !$isSelectionEnabled && !count($sortableColumns),
+                        'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
                     ])>
                         @if ($isSelectionEnabled)
                             <x-tables::checkbox
