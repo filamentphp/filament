@@ -36,6 +36,7 @@
                     @php
                         $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
                     @endphp
+                    
                     <div @class([
                         'flex items-start',
                         'gap-3' => ! $isInline(),
