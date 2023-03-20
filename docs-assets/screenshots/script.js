@@ -31,10 +31,12 @@ themes.forEach((theme) => {
             })
 
             if (theme === 'dark') {
-                await page.emulateMediaFeatures([{
-                    name: 'prefers-color-scheme',
-                    value: 'dark'
-                }])
+                await page.emulateMediaFeatures([
+                    {
+                        name: 'prefers-color-scheme',
+                        value: 'dark',
+                    },
+                ])
 
                 await new Promise((resolve) => setTimeout(resolve, 500))
             }
