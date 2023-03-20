@@ -2,30 +2,65 @@ export default {
     'actions/trigger-button/button': {
         url: 'actions',
         selector: '#buttonAction',
+        viewport: {
+            width: 1920,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
     },
     'actions/trigger-button/link': {
         url: 'actions',
         selector: '#linkAction',
+        viewport: {
+            width: 1920,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
     },
     'actions/trigger-button/icon-button': {
         url: 'actions',
         selector: '#iconButtonAction',
+        viewport: {
+            width: 1920,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
     },
     'actions/trigger-button/danger': {
         url: 'actions',
         selector: '#dangerAction',
+        viewport: {
+            width: 1920,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
     },
     'actions/trigger-button/large': {
         url: 'actions',
         selector: '#largeAction',
+        viewport: {
+            width: 1920,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
     },
     'actions/trigger-button/icon': {
         url: 'actions',
         selector: '#iconAction',
+        viewport: {
+            width: 1920,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
     },
     'actions/trigger-button/icon-after': {
         url: 'actions',
         selector: '#iconAfterAction',
+        viewport: {
+            width: 1920,
+            height: 720,
+            deviceScaleFactor: 3,
+        },
     },
     'actions/modal/confirmation': {
         url: 'actions',
