@@ -312,9 +312,17 @@
         >
             @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                 @if (($content || $hasColumnsLayout) && (! $isReordering))
+                    @php
+                        $sortableColumns = array_filter(
+                            $columns,
+                            fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
+                        );
+                    @endphp
+                    
                     <div @class([
                         'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
                         'dark:border-gray-700' => config('tables.dark_mode'),
+                        'hidden' => !$isSelectionEnabled && !count($sortableColumns),
                     ])>
                         @if ($isSelectionEnabled)
                             <x-tables::checkbox
@@ -338,13 +346,6 @@
                                 ])"
                             />
                         @endif
-
-                        @php
-                            $sortableColumns = array_filter(
-                                $columns,
-                                fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
-                            );
-                        @endphp
 
                         @if (count($sortableColumns))
                             <div
