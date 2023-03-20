@@ -76,8 +76,8 @@ export default {
         url: 'actions',
         viewport: {
             width: 1920,
-            height: 640,
-            deviceScaleFactor: 1.5,
+            height: 1080,
+            deviceScaleFactor: 2,
         },
         before: async (page) => {
             await page.click('#slideOverAction button')
