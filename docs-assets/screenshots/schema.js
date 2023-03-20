@@ -38,7 +38,7 @@ export default {
             await page.click('#confirmationModalAction button')
             await page.waitForSelector('#modal h2')
 
-            await page.waitForTimeout(300)
+            await new Promise((resolve) => setTimeout(resolve, 300))
         },
         selector: 'body',
     },
