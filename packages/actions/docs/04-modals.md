@@ -32,6 +32,8 @@ Action::make('delete')
     ->modalButton('Yes, delete it')
 ```
 
+<AutoScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
+
 ## Modal forms
 
 You may also render a form in the modal to collect extra information from the user before the action runs.
@@ -55,6 +57,8 @@ Action::make('updateAuthor')
     })
 ```
 
+<AutoScreenshot name="actions/modal/form" alt="Modal with form" version="3.x" />
+
 ### Filling the form with existing data
 
 You may fill the form with existing data, using the `fillForm()` method:
@@ -68,16 +72,16 @@ Action::make('updateAuthor')
     ->fillForm([
         'authorId' => $this->record->author->id,
     ])
-    ->action(function (array $data): void {
-        $this->record->author()->associate($data['authorId']);
-        $this->record->save();
-    })
     ->form([
         Select::make('authorId')
             ->label('Author')
             ->options(User::query()->pluck('name', 'id'))
             ->required(),
     ])
+    ->action(function (array $data): void {
+        $this->record->author()->associate($data['authorId']);
+        $this->record->save();
+    })
 ```
 
 ## Custom modal content
@@ -112,6 +116,8 @@ Action::make('updateAuthor')
     })
     ->slideOver()
 ```
+
+<AutoScreenshot name="actions/modal/slide-over" alt="Slide over with form" version="3.x" />
 
 Instead of opening in the center of the screen, the modal content will now slide in from the right and consume the entire height of the browser.
 

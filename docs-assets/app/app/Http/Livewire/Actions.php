@@ -5,6 +5,7 @@ namespace App\Http\Livewire;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\Select;
 use Livewire\Component;
 
 class Actions extends Component implements HasActions
@@ -67,6 +68,43 @@ class Actions extends Component implements HasActions
             ->label('Delete')
             ->color('danger')
             ->requiresConfirmation()
+            ->action(fn () => null);
+    }
+
+    public function confirmationModalCustomTextAction(): Action
+    {
+        return Action::make('confirmationModalCustomTextAction')
+            ->label('Delete')
+            ->color('danger')
+            ->requiresConfirmation()
+            ->modalHeading('Delete post')
+            ->modalSubheading('Are you sure you\'d like to delete this post? This cannot be undone.')
+            ->modalButton('Yes, delete it')
+            ->action(fn () => null);
+    }
+
+    public function modalFormAction(): Action
+    {
+        return Action::make('modalFormAction')
+            ->label('Update author')
+            ->form([
+                Select::make('authorId')
+                    ->label('Author')
+                    ->required(),
+            ])
+            ->action(fn () => null);
+    }
+
+    public function slideOverAction(): Action
+    {
+        return Action::make('slideOverAction')
+            ->label('Update author')
+            ->form([
+                Select::make('authorId')
+                    ->label('Author')
+                    ->required(),
+            ])
+            ->slideOver()
             ->action(fn () => null);
     }
 

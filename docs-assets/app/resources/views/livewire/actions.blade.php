@@ -31,6 +31,18 @@
         <div id="confirmationModalAction" class="p-16 flex items-center justify-center max-w-xl">
             {{ $this->confirmationModalAction }}
         </div>
+
+        <div id="confirmationModalCustomTextAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->confirmationModalCustomTextAction }}
+        </div>
+
+        <div id="modalFormAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->modalFormAction }}
+        </div>
+
+        <div id="slideOverAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->slideOverAction }}
+        </div>
     @endif
 
     <div id="modal">

@@ -1,8 +1,11 @@
 import fs from 'fs'
 import puppeteer from 'puppeteer'
 import schema from './schema.js'
+import emitter from 'events'
 
 fs.rmSync('images', { recursive: true, force: true })
+
+emitter.setMaxListeners(1024)
 
 const themes = ['light', 'dark']
 

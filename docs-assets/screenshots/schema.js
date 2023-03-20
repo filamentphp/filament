@@ -42,6 +42,51 @@ export default {
         },
         selector: 'body',
     },
+    'actions/modal/confirmation-custom-text': {
+        url: 'actions',
+        viewport: {
+            width: 640,
+            height: 480,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#confirmationModalCustomTextAction button')
+            await page.waitForSelector('#modal h2')
+
+            await new Promise((resolve) => setTimeout(resolve, 300))
+        },
+        selector: 'body',
+    },
+    'actions/modal/form': {
+        url: 'actions',
+        viewport: {
+            width: 640,
+            height: 480,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#modalFormAction button')
+            await page.waitForSelector('#modal h2')
+
+            await new Promise((resolve) => setTimeout(resolve, 300))
+        },
+        selector: 'body',
+    },
+    'actions/modal/slide-over': {
+        url: 'actions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 1.5,
+        },
+        before: async (page) => {
+            await page.click('#slideOverAction button')
+            await page.waitForSelector('#modal h2')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+        selector: 'body',
+    },
     'app/dashboard': {
         url: 'admin',
         selector: 'body',
