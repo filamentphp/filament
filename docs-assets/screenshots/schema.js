@@ -27,6 +27,21 @@ export default {
         url: 'actions',
         selector: '#iconAfterAction',
     },
+    'actions/modal/confirmation': {
+        url: 'actions',
+        viewport: {
+            width: 640,
+            height: 480,
+            deviceScaleFactor: 3,
+        },
+        before: async (page, browser) => {
+            await page.click('#confirmationModalAction button')
+            await page.waitForSelector('#modal h2')
+
+            await page.waitForTimeout(300)
+        },
+        selector: 'body',
+    },
     'app/dashboard': {
         url: 'admin',
         selector: 'body',

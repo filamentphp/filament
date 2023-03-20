@@ -61,6 +61,15 @@ class Actions extends Component implements HasActions
             ->iconPosition('after');
     }
 
+    public function confirmationModalAction(): Action
+    {
+        return Action::make('confirmationModalAction')
+            ->label('Delete')
+            ->color('danger')
+            ->requiresConfirmation()
+            ->action(fn () => null);
+    }
+
     public function render()
     {
         return view('livewire.actions');

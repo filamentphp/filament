@@ -27,6 +27,10 @@ for (const [file, options] of Object.entries(schema)) {
             waitUntil: 'networkidle2',
         })
 
+        if (options.before) {
+            await options.before(page, browser)
+        }
+
         const element = await page.waitForSelector(options.selector)
         await element.screenshot({ path: `images/${file}.jpg` })
 

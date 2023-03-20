@@ -14,6 +14,8 @@ Action::make('delete')
     ->requiresConfirmation()
 ```
 
+![Confirmation modal](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/modal/confirmation.jpg?raw=true)
+
 > Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` callback.
 
 ## Setting a modal heading, subheading, and button label
