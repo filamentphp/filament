@@ -69,7 +69,13 @@ class BaseFileUpload extends Field
             }
 
             $files = collect(Arr::wrap($state))
-                ->filter(static fn (string $file) => blank($file) || $component->getDisk()->exists($file))
+            ->filter(static function (string $file) use ($component): bool {
+                try {
+                    return blank($file) || $component->getDisk()->exists($file);
+                }catch(\League\Flysystem\UnableToCheckFileExistence $exception){
+                    return false;
+                }
+            })
                 ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
                 ->all();
 
@@ -110,7 +116,11 @@ class BaseFileUpload extends Field
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            if (! $storage->exists($file)) {
+            try {
+                if (! $storage->exists($file)) {
+                    return null;
+                }
+            }catch(\League\Flysystem\UnableToCheckFileExistence $exception){
                 return null;
             }
 
