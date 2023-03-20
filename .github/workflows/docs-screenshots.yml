@@ -30,7 +30,7 @@ jobs:
         run: |
           cd docs-assets/app
           composer install --no-interaction
-          npm run build
+          npm ci && npm run build
           php artisan serve &
       - name: Run script
         run: |
