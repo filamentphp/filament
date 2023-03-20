@@ -31,7 +31,7 @@ export default {
         url: 'actions',
         viewport: {
             width: 640,
-            height: 480,
+            height: 240,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
@@ -46,7 +46,7 @@ export default {
         url: 'actions',
         viewport: {
             width: 640,
-            height: 480,
+            height: 240,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
@@ -61,7 +61,7 @@ export default {
         url: 'actions',
         viewport: {
             width: 640,
-            height: 480,
+            height: 300,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
@@ -76,7 +76,7 @@ export default {
         url: 'actions',
         viewport: {
             width: 1920,
-            height: 1080,
+            height: 720,
             deviceScaleFactor: 2,
         },
         before: async (page) => {
