@@ -4,7 +4,7 @@ export default {
         selector: '#buttonAction',
         viewport: {
             width: 1920,
-            height: 720,
+            height: 640,
             deviceScaleFactor: 3,
         },
     },
@@ -13,7 +13,7 @@ export default {
         selector: '#linkAction',
         viewport: {
             width: 1920,
-            height: 720,
+            height: 640,
             deviceScaleFactor: 3,
         },
     },
@@ -22,7 +22,7 @@ export default {
         selector: '#iconButtonAction',
         viewport: {
             width: 1920,
-            height: 720,
+            height: 640,
             deviceScaleFactor: 3,
         },
     },
@@ -31,7 +31,7 @@ export default {
         selector: '#dangerAction',
         viewport: {
             width: 1920,
-            height: 720,
+            height: 640,
             deviceScaleFactor: 3,
         },
     },
@@ -40,7 +40,7 @@ export default {
         selector: '#largeAction',
         viewport: {
             width: 1920,
-            height: 720,
+            height: 640,
             deviceScaleFactor: 3,
         },
     },
@@ -49,7 +49,7 @@ export default {
         selector: '#iconAction',
         viewport: {
             width: 1920,
-            height: 720,
+            height: 640,
             deviceScaleFactor: 3,
         },
     },
@@ -58,7 +58,7 @@ export default {
         selector: '#iconAfterAction',
         viewport: {
             width: 1920,
-            height: 720,
+            height: 640,
             deviceScaleFactor: 3,
         },
     },
