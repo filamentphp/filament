@@ -34,7 +34,7 @@ export default {
             height: 480,
             deviceScaleFactor: 3,
         },
-        before: async (page, browser) => {
+        before: async (page) => {
             await page.click('#confirmationModalAction button')
             await page.waitForSelector('#modal h2')
 
