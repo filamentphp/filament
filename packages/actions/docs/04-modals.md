@@ -1,6 +1,7 @@
 ---
 title: Modals
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Actions may require additional confirmation or input from the user before they run. You may open a modal before an action is executed to do this.
 
@@ -14,7 +15,7 @@ Action::make('delete')
     ->requiresConfirmation()
 ```
 
-![Confirmation modal](https://github.com/filamentphp/filament/blob/3.x/docs-assets/screenshots/images/actions/modal/confirmation.jpg?raw=true)
+<AutoScreenshot name="actions/modal/confirmation" alt="Confirmation modal" version="3.x" />
 
 > Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` callback.
 
