@@ -68,8 +68,7 @@
                                 'font-medium',
                                 'text-gray-700' => ! $errors->has($getStatePath()) && ! $shouldOptionBeDisabled,
                                 'dark:text-gray-200' => (! $errors->has($getStatePath()) && ! $shouldOptionBeDisabled) && config('forms.dark_mode'),
-                                'text-gray-400' => ! $errors->has($getStatePath()) && $shouldOptionBeDisabled,
-                                'dark:text-gray-500' => (! $errors->has($getStatePath()) && $shouldOptionBeDisabled) && config('forms.dark_mode'),
+                                'opacity-50' => ! $errors->has($getStatePath()) && $shouldOptionBeDisabled,
                                 'text-danger-600' => $errors->has($getStatePath()),
                                 'dark:text-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                             ])>
