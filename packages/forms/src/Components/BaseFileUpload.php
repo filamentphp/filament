@@ -72,7 +72,7 @@ class BaseFileUpload extends Field
             ->filter(static function (string $file) use ($component): bool {
                 try {
                     return blank($file) || $component->getDisk()->exists($file);
-                }catch(\League\Flysystem\UnableToCheckFileExistence $exception){
+                } catch(\League\Flysystem\UnableToCheckFileExistence $exception) {
                     return false;
                 }
             })
@@ -120,7 +120,7 @@ class BaseFileUpload extends Field
                 if (! $storage->exists($file)) {
                     return null;
                 }
-            }catch(\League\Flysystem\UnableToCheckFileExistence $exception){
+            } catch(\League\Flysystem\UnableToCheckFileExistence $exception) {
                 return null;
             }
 
@@ -143,12 +143,11 @@ class BaseFileUpload extends Field
         });
 
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
-
             try {
                 if (! $file->exists()) {
                     return null;
                 }
-            }catch(\League\Flysystem\UnableToCheckFileExistence $exception){
+            } catch(\League\Flysystem\UnableToCheckFileExistence $exception) {
                 return false;
             }
 
