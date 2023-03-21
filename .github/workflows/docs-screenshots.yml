@@ -22,6 +22,8 @@ jobs:
           coverage: none
       - name: Setup Node
         uses: actions/setup-node@v2
+        with:
+          node-version: 19.4.0
       - name: Install dependencies
         run: |
           cd docs-assets/screenshots
