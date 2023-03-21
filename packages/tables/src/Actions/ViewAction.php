@@ -24,7 +24,7 @@ class ViewAction extends Action
         $this->modalHeading(fn (): string => __('filament-actions::view.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalSubmitAction(false);
-        $this->modalCancelAction(fn (ModalAction $action) => $action->label(__('filament-actions::view.single.modal.actions.close.label')))
+        $this->modalCancelAction(fn (ModalAction $action) => $action->label(__('filament-actions::view.single.modal.actions.close.label')));
 
         $this->color('gray');
 
