@@ -49,7 +49,7 @@ Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
 ```
 
-Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) by using the `translateLabel()` method:
 
 ```php
 Action::make('edit')
@@ -66,7 +66,7 @@ Action::make('delete')
     ->color('danger')
 ```
 
-<PreviewScreenshot name="actions/trigger-button/danger" alt="Danger colored trigger" version="3.x" />
+<PreviewScreenshot name="actions/trigger-button/danger" alt="Red trigger" version="3.x" />
 
 ## Setting a size
 
@@ -118,7 +118,23 @@ Action::make('edit')
 
 This is useful for authorization of certain actions to only users who have permission.
 
-## Keybindings
+### Disabling a button
+
+If you want to disable a button instead of hiding it, you can use the `disabled()` method:
+
+```php
+Action::make('delete')
+    ->disabled()
+```
+
+You can conditionally disable a button by passing a boolean to it:
+
+```php
+Action::make('delete')
+    ->disabled(! auth()->user()->can('delete', $this->post))
+```
+
+## Registering keybindings
 
 You can attach keyboard shortcuts to trigger buttons. These use the same key codes as [Mousetrap](https://craig.is/killing/mice):
 
@@ -128,4 +144,89 @@ use Filament\Actions\Action;
 Action::make('save')
     ->action(fn () => $this->save())
     ->keyBindings(['command+s', 'ctrl+s'])
+```
+
+## Adding an indicator in the corner of the button
+
+You can add an indicator to the corner of the button, to display whatever you want. It's useful for displaying a count of something, or a status indicator:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('filter')
+    ->iconButton()
+    ->icon('heroicon-m-funnel')
+    ->indicator(5)
+```
+
+<PreviewScreenshot name="actions/trigger-button/indicator" alt="Trigger with indicator" version="3.x" />
+
+You can also pass a color to be used for the indicator, which can be either `primary`, `secondary`, `success`, `warning` or `danger`:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('filter')
+    ->iconButton()
+    ->icon('heroicon-m-funnel')
+    ->indicator(5)
+    ->indicatorColor('success')
+```
+
+<PreviewScreenshot name="actions/trigger-button/success-indicator" alt="Trigger with green indicator" version="3.x" />
+
+## Outlined button style
+
+When you're using the "button" trigger style, you might wish to make it less prominent. You could use a different [color](#setting-a-color), but sometimes you might want to make it outlined instead. You can do this with the `outlined()` method:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->button()
+    ->outlined()
+```
+
+<PreviewScreenshot name="actions/trigger-button/outlined" alt="Outlined trigger button" version="3.x" />
+
+## Inline icon button style
+
+When you're using the "icon button" trigger style, you might wish to make it fit inline with other content. You can do this with the `inline()` method, which removes the background color when it the button is hovered over:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->iconButton()
+    ->inline()
+```
+
+<PreviewScreenshot name="actions/trigger-button/inline-icon" alt="Inline icon button" version="3.x" />
+
+## Passing extra attributes
+
+You can pass extra HTML attributes to the button which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->extraAttributes([
+        'title' => 'Edit this post',
+    ])
+```
+
+If you pass CSS classes in a string, they will be merged with the default classes that already apply to the other HTML element of the button:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('edit')
+    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
+    ->extraAttributes([
+        'class' => 'mx-auto my-8',
+    ])
 ```

@@ -10,23 +10,16 @@ use Livewire\Component;
 
 abstract class MountableAction extends StaticAction
 {
-    use Concerns\CanBeDisabled;
-    use CanBeInline;
     use Concerns\CanBeMounted;
-    use Concerns\CanBeOutlined;
     use Concerns\CanNotify;
     use Concerns\CanOpenModal;
-    use Concerns\CanOpenUrl;
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
     use Concerns\HasAction;
     use Concerns\HasArguments;
     use Concerns\HasForm;
-    use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
-    use Concerns\HasKeyBindings;
     use Concerns\HasLifecycleHooks;
-    use Concerns\HasTooltip;
     use Concerns\HasWizard;
 
     protected function setUp(): void

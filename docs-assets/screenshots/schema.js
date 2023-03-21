@@ -25,6 +25,9 @@ export default {
             height: 640,
             deviceScaleFactor: 3,
         },
+        before: async (page) => {
+            await page.hover('#iconButtonAction button')
+        },
     },
     'actions/trigger-button/danger': {
         url: 'actions',
@@ -56,6 +59,42 @@ export default {
     'actions/trigger-button/icon-after': {
         url: 'actions',
         selector: '#iconAfterAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'actions/trigger-button/indicator': {
+        url: 'actions',
+        selector: '#indicatorAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'actions/trigger-button/success-indicator': {
+        url: 'actions',
+        selector: '#successIndicatorAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'actions/trigger-button/outlined': {
+        url: 'actions',
+        selector: '#outlinedAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'actions/trigger-button/inline-icon': {
+        url: 'actions',
+        selector: '#inlineIconAction',
         viewport: {
             width: 1920,
             height: 640,

@@ -62,6 +62,39 @@ class Actions extends Component implements HasActions
             ->iconPosition('after');
     }
 
+    public function indicatorAction(): Action
+    {
+        return Action::make('indicatorAction')
+            ->iconButton()
+            ->icon('heroicon-m-funnel')
+            ->indicator(5);
+    }
+
+    public function successIndicatorAction(): Action
+    {
+        return Action::make('successIndicatorAction')
+            ->iconButton()
+            ->icon('heroicon-m-funnel')
+            ->indicator(5)
+            ->indicatorColor('success');
+    }
+
+    public function outlinedAction(): Action
+    {
+        return Action::make('outlinedAction')
+            ->label('Edit')
+            ->button()
+            ->outlined();
+    }
+
+    public function inlineIconAction(): Action
+    {
+        return Action::make('inlineIconAction')
+            ->icon('heroicon-o-pencil-square')
+            ->iconButton()
+            ->inline();
+    }
+
     public function confirmationModalAction(): Action
     {
         return Action::make('confirmationModalAction')

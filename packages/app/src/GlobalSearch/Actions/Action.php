@@ -14,12 +14,7 @@ use Illuminate\Support\Js;
 
 class Action extends StaticAction
 {
-    use CanBeInline;
-    use CanBeOutlined;
     use CanEmitEvent;
-    use CanOpenUrl;
-    use HasKeyBindings;
-    use HasTooltip;
 
     protected function setUp(): void
     {

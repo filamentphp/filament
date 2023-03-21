@@ -28,6 +28,22 @@
             {{ $this->iconAfterAction }}
         </div>
 
+        <div id="indicatorAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->indicatorAction }}
+        </div>
+
+        <div id="successIndicatorAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->successIndicatorAction }}
+        </div>
+
+        <div id="outlinedAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->outlinedAction }}
+        </div>
+
+        <div id="inlineIconAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->inlineIconAction }}
+        </div>
+
         <div id="confirmationModalAction" class="p-16 flex items-center justify-center max-w-xl">
             {{ $this->confirmationModalAction }}
         </div>

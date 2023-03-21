@@ -10,8 +10,6 @@ use Filament\Actions\StaticAction;
 
 class Action extends StaticAction implements SubmitsForm
 {
-    use CanBeOutlined;
-    use CanOpenUrl;
     use CanSubmitForm;
     use Concerns\CanCancelAction;
     use Concerns\HasAction;

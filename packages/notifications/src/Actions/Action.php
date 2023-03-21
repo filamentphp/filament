@@ -18,13 +18,8 @@ use Illuminate\Support\Str;
 
 class Action extends StaticAction implements Arrayable, Groupable
 {
-    use CanBeInline;
-    use CanBeOutlined;
     use CanCloseNotification;
     use CanEmitEvent;
-    use CanOpenUrl;
-    use HasKeyBindings;
-    use HasTooltip;
 
     protected string $viewIdentifier = 'action';
 

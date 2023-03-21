@@ -10,12 +10,18 @@ abstract class StaticAction extends ViewComponent
 {
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
+    use Concerns\CanBeInline;
+    use Concerns\CanOpenUrl;
     use Concerns\HasColor;
+    use Concerns\HasGroupedIcon;
     use Concerns\HasIcon;
     use Concerns\HasIndicator;
+    use Concerns\HasKeyBindings;
     use Concerns\HasLabel;
     use Concerns\HasName;
+    use Concerns\CanBeOutlined;
     use Concerns\HasSize;
+    use Concerns\HasTooltip;
     use Conditionable;
     use HasExtraAttributes;
 
