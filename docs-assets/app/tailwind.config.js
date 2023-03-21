@@ -11,6 +11,9 @@ module.exports = {
                 success: colors.green,
                 warning: colors.yellow,
             },
+            fontFamily: {
+                sans: ['Be Vietnam Pro', 'sans-serif'],
+            },
         },
     },
     plugins: [
