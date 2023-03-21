@@ -2,13 +2,11 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Str;
-
 class Field extends Component implements Contracts\HasValidationRules
 {
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeValidated;
+    use Concerns\HasFallbackLabel;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
@@ -32,18 +30,5 @@ class Field extends Component implements Contracts\HasValidationRules
     public function getId(): string
     {
         return parent::getId() ?? $this->getStatePath();
-    }
-
-    public function getLabel(): string | Htmlable | null
-    {
-        $label = parent::getLabel() ?? (string) Str::of($this->getName())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
-
-        return (is_string($label) && $this->shouldTranslateLabel) ?
-            __($label) :
-            $label;
     }
 }
