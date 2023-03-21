@@ -95,6 +95,15 @@ return [
 
     'empty' => [
         'heading' => 'Geen records gevonden',
+
+        'buttons' => [
+
+            'reset_column_searches' => [
+                'label' => 'Kolom zoekopdracht wissen',
+            ],
+
+        ],
+
     ],
 
     'filters' => [
