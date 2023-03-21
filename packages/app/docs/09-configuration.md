@@ -23,7 +23,7 @@ When this documentation refers to the "configuration", this is the file you need
 To create a new context, you can use the `make:filament-context` command, passing in the unique name of the new context:
 
 ```bash
-php artisan make:context app
+php artisan make:filament-context app
 ```
 
 This command will create a new context called "app". A configuration file will be created at `app/Providers/Filament/AppContextProvider.php`. You can access this context at `/app`, but you can [customize the path](#changing-the-path) if you don't want that.
