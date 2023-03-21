@@ -73,6 +73,9 @@ export default {
             height: 640,
             deviceScaleFactor: 3,
         },
+        before: async (page) => {
+            await page.hover('#indicatorAction button')
+        },
     },
     'actions/trigger-button/success-indicator': {
         url: 'actions',
@@ -81,6 +84,9 @@ export default {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('#successIndicatorAction button')
         },
     },
     'actions/trigger-button/outlined': {
