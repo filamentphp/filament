@@ -20,9 +20,7 @@ themes.forEach((theme) => {
         }
 
         ;(async () => {
-            const browser = await puppeteer.launch({
-                executablePath: '/opt/homebrew/bin/chromium',
-            })
+            const browser = await puppeteer.launch()
             const page = await browser.newPage()
             await page.setViewport(
                 options.viewport ?? {
