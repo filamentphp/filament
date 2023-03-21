@@ -4,6 +4,7 @@ namespace Filament\Support;
 
 use Illuminate\Support\Str;
 use Illuminate\View\ComponentAttributeBag;
+use Illuminate\Translation\MessageSelector;
 
 if (! function_exists('Filament\Support\get_model_label')) {
     function get_model_label(string $model): string
@@ -28,5 +29,12 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
         );
 
         return $attributes;
+    }
+}
+
+if (! function_exists('Filament\Support\locale_has_pluralization')) {
+    function locale_has_pluralization(): bool
+    {
+        return (new MessageSelector())->getPluralIndex(app()->getLocale(), 10) > 0;
     }
 }
