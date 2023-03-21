@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;
+use Staudenmeir\EloquentHasManyDeep\HasManyDeep;
 
 trait HasState
 {
@@ -84,7 +85,8 @@ trait HasState
         if (! (
             $relationship instanceof HasMany ||
             $relationship instanceof BelongsToMany ||
-            $relationship instanceof MorphMany
+            $relationship instanceof MorphMany ||
+            $relationship instanceof HasManyDeep
         )) {
             return null;
         }
