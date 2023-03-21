@@ -143,8 +143,13 @@ class BaseFileUpload extends Field
         });
 
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
-            if (! $file->exists()) {
-                return null;
+
+            try {
+                if (! $file->exists()) {
+                    return null;
+                }
+            }catch(\League\Flysystem\UnableToCheckFileExistence $exception){
+                return false;
             }
 
             /** @phpstan-ignore-next-line */
