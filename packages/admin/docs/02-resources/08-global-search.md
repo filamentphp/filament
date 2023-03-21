@@ -89,3 +89,13 @@ public static function getGlobalSearchResultActions(Model $record): array
     ];
 }
 ```
+
+## Keybindings
+
+You can attach keyboard shortcuts to global search. These use the same key codes as [Mousetrap](https://craig.is/killing/mice). To set keybindings, update the configuration value inside of the package config:
+
+```php
+'global_search' => [
+    'key_bindings' => ['meta+k'], // array of keybindings
+]
+```
