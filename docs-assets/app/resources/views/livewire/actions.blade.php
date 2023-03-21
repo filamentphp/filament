@@ -56,6 +56,10 @@
             {{ $this->modalFormAction }}
         </div>
 
+        <div id="wizardAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->wizardAction }}
+        </div>
+
         <div id="slideOverAction" class="p-16 flex items-center justify-center max-w-xl">
             {{ $this->slideOverAction }}
         </div>

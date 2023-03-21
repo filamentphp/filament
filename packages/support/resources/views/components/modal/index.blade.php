@@ -2,7 +2,7 @@
     'actions' => null,
     'ariaLabelledby' => null,
     'closeButton' => true,
-    'closeByClickingAway' => true,
+    'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
     'closeEventName' => 'close-modal',
     'displayClasses' => 'inline-block',
     'footer' => null,

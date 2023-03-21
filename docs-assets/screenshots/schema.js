@@ -152,6 +152,21 @@ export default {
         },
         selector: 'body',
     },
+    'actions/modal/wizard': {
+        url: 'actions',
+        viewport: {
+            width: 1080,
+            height: 480,
+            deviceScaleFactor: 2,
+        },
+        before: async (page) => {
+            await page.click('#wizardAction button')
+            await page.waitForSelector('#modal h2')
+
+            await new Promise((resolve) => setTimeout(resolve, 300))
+        },
+        selector: 'body',
+    },
     'actions/modal/slide-over': {
         url: 'actions',
         viewport: {

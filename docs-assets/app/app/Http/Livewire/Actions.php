@@ -5,7 +5,11 @@ namespace App\Http\Livewire;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Wizard\Step;
 use Livewire\Component;
 
 class Actions extends Component implements HasActions
@@ -124,6 +128,31 @@ class Actions extends Component implements HasActions
                 Select::make('authorId')
                     ->label('Author')
                     ->required(),
+            ])
+            ->action(fn () => null);
+    }
+
+    public function wizardAction(): Action
+    {
+        return Action::make('wizardAction')
+            ->label('Create')
+            ->steps([
+                Step::make('Name')
+                    ->description('Give the category unique name')
+                    ->schema([
+                        TextInput::make('name')
+                            ->required(),
+                        TextInput::make('slug')
+                            ->disabled()
+                            ->required(),
+                    ])
+                    ->columns(2),
+                Step::make('Description')
+                    ->description('Add some extra details')
+                    ->schema([]),
+                Step::make('Visibility')
+                    ->description('Control who can view it')
+                    ->schema([]),
             ])
             ->action(fn () => null);
     }
