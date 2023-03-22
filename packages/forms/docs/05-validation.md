@@ -259,6 +259,14 @@ The field must be a MAC address. [See the Laravel documentation](https://laravel
 Field::make('mac_address')->macAddress()
 ```
 
+### Max Value
+
+The field under validation must be less than or equal to a maximum value. [See the Laravel documentation](https://laravel.com/docs/validation#rule-max)
+
+```php
+Field::make('name')->maxValue(50)
+```
+
 ### Multiple Of
 
 The field must be a multiple of value. [See the Laravel documentation](https://laravel.com/docs/validation#multiple-of)
