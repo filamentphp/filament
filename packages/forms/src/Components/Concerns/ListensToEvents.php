@@ -16,7 +16,7 @@ trait ListensToEvents
 
         return $this;
     }
-    
+
     public function registerListener(string $name, Closure $callback): static
     {
         $this->listeners[$name] = [$callback];
