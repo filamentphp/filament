@@ -22,7 +22,7 @@ class ForceDeleteAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::force-delete.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-actions::force-delete.single.modal.actions.delete.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::force-delete.single.modal.actions.delete.label'));
 
         $this->color('danger');
 

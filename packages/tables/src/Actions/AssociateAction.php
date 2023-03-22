@@ -47,7 +47,7 @@ class AssociateAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::associate.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalButton(__('filament-actions::associate.single.modal.actions.associate.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::associate.single.modal.actions.associate.label'));
 
         $this->modalWidth('lg');
 

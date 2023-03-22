@@ -251,7 +251,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             ->icon('heroicon-m-plus')
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
-            ->modalButton(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
+            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
             ->extraModalActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
                 $action->makeExtraModalAction('createAnother', ['another' => true])
                     ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
@@ -394,7 +394,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
-            ->modalButton(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
+            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
 
         if ($this->modifyManageOptionActionsUsing) {
             $action = $this->evaluate($this->modifyManageOptionActionsUsing, [

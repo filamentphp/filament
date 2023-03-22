@@ -22,7 +22,7 @@ class DeleteAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::delete.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-actions::delete.single.modal.actions.delete.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::delete.single.modal.actions.delete.label'));
 
         $this->successNotificationTitle(__('filament-actions::delete.single.messages.deleted'));
 

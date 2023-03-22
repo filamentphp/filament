@@ -31,7 +31,7 @@ trait CanReplicateRecords
 
         $this->modalHeading(fn (): string => __('filament-actions::replicate.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-actions::replicate.single.modal.actions.replicate.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::replicate.single.modal.actions.replicate.label'));
 
         $this->successNotificationTitle(__('filament-actions::replicate.single.messages.replicated'));
 

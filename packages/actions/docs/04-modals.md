@@ -19,21 +19,6 @@ Action::make('delete')
 
 > Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` callback.
 
-## Setting a modal heading, subheading, and button label
-
-You may customize the heading, subheading and button label of the modal:
-
-```php
-Action::make('delete')
-    ->action(fn () => $this->record->delete())
-    ->requiresConfirmation()
-    ->modalHeading('Delete post')
-    ->modalSubheading('Are you sure you\'d like to delete this post? This cannot be undone.')
-    ->modalButton('Yes, delete it')
-```
-
-<PreviewScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
-
 ## Modal forms
 
 You may also render a form in the modal to collect extra information from the user before the action runs.
@@ -150,6 +135,21 @@ Action::make('approvePost')
     })
 ```
 
+## Customizing the modal's heading, subheading, and submit action label
+
+You may customize the heading, subheading and label of the submit button in the modal:
+
+```php
+Action::make('delete')
+    ->action(fn () => $this->record->delete())
+    ->requiresConfirmation()
+    ->modalHeading('Delete post')
+    ->modalSubheading('Are you sure you\'d like to delete this post? This cannot be undone.')
+    ->modalSubmitActionLabel('Yes, delete it')
+```
+
+<PreviewScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
+
 ## Custom modal content
 
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
@@ -208,7 +208,9 @@ You may have a need to conditionally show a modal for confirmation reasons while
 
 ```php
 Action::make('create')
-    ->action('create')
+    ->action(function (array $data): void {
+        // ...
+    })
     ->modalHidden(fn (): bool => $this->role !== 'admin')
     ->modalContent(view('filament.pages.actions.create'))
 ```
@@ -221,7 +223,6 @@ You may execute code within a closure when the modal opens, by passing it to the
 use Filament\Forms\Form;
 
 Action::make('create')
-    ->action('create')
     ->mountUsing(function (Form $form) {
         $form->fill();
         

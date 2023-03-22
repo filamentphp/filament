@@ -30,7 +30,7 @@ trait CanOpenModal
 
     protected ModalAction | bool | Closure | null $modalSubmitAction = null;
 
-    protected string | Closure | null $modalButtonLabel = null;
+    protected string | Closure | null $modalSubmitActionLabel = null;
 
     protected View | Htmlable | Closure | null $modalContent = null;
 
@@ -101,9 +101,19 @@ trait CanOpenModal
         return $this;
     }
 
+    public function modalSubmitActionLabel(string | Closure | null $label = null): static
+    {
+        $this->modalSubmitActionLabel = $label;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `modalSubmitActionLabel()` instead.
+     */
     public function modalButton(string | Closure | null $label = null): static
     {
-        $this->modalButtonLabel = $label;
+        $this->modalSubmitActionLabel($label);
 
         return $this;
     }
@@ -195,7 +205,7 @@ trait CanOpenModal
     public function getModalSubmitAction(): ?ModalAction
     {
         $action = static::makeModalAction('submit')
-            ->label($this->getModalButtonLabel())
+            ->label($this->getModalSubmitActionLabel())
             ->submit($this->getLivewireCallActionName())
             ->color(match ($color = $this->getColor()) {
                 'gray' => 'primary',
@@ -239,9 +249,9 @@ trait CanOpenModal
         return $this->evaluate($this->extraModalActions);
     }
 
-    public function getModalButtonLabel(): string
+    public function getModalSubmitActionLabel(): string
     {
-        return $this->evaluate($this->modalButtonLabel) ?? __('filament-actions::modal.actions.submit.label');
+        return $this->evaluate($this->modalSubmitActionLabel) ?? __('filament-actions::modal.actions.submit.label');
     }
 
     public function getModalContent(): View | Htmlable | null

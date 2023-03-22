@@ -25,7 +25,7 @@ class DeleteBulkAction extends BulkAction
 
         $this->modalHeading(fn (): string => __('filament-actions::delete.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
-        $this->modalButton(__('filament-actions::delete.multiple.modal.actions.delete.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::delete.multiple.modal.actions.delete.label'));
 
         $this->successNotificationTitle(__('filament-actions::delete.multiple.messages.deleted'));
 

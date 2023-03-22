@@ -222,7 +222,7 @@ They also have the ability to delete the record if the `delete()` method of the 
 
 On resource pages, actions are usually in 2 places: in the top right of the page, and below the form.
 
-For example, you may add a new button action next to "Delete" on the Edit page that runs the `impersonate()` Livewire method:
+For example, you may add a new button action next to "Delete" on the Edit page:
 
 ```php
 use Filament\Actions;
@@ -235,14 +235,12 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\Action::make('impersonate')->action('impersonate'),
+            Actions\Action::make('impersonate')
+                ->action(function (): void {
+                    // ...
+                }),
             Actions\DeleteAction::make(),
         ];
-    }
-
-    public function impersonate(): void
-    {
-        // ...
     }
 }
 ```

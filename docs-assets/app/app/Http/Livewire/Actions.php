@@ -116,7 +116,7 @@ class Actions extends Component implements HasActions
             ->requiresConfirmation()
             ->modalHeading('Delete post')
             ->modalSubheading('Are you sure you\'d like to delete this post? This cannot be undone.')
-            ->modalButton('Yes, delete it')
+            ->modalSubmitActionLabel('Yes, delete it')
             ->action(fn () => null);
     }
 
