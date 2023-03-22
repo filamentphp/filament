@@ -17,13 +17,13 @@ Action::make('delete')
 
 <PreviewScreenshot name="actions/modal/confirmation" alt="Confirmation modal" version="3.x" />
 
-> Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` callback.
+> Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
 
 ## Modal forms
 
 You may also render a form in the modal to collect extra information from the user before the action runs.
 
-You may use components from the [Form Builder](../forms) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` callback:
+You may use components from the [Form Builder](../forms) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` closure:
 
 ```php
 use App\Models\User;
