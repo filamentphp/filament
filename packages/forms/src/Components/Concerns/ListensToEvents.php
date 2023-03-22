@@ -2,6 +2,8 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Closure;
+
 trait ListensToEvents
 {
     protected array $listeners = [];
@@ -11,6 +13,13 @@ trait ListensToEvents
         foreach ($this->getListeners($event) as $callback) {
             $callback($this, ...$parameters);
         }
+
+        return $this;
+    }
+    
+    public function registerListener(string $name, Closure $callback): static
+    {
+        $this->listeners[$name] = [$callback];
 
         return $this;
     }
