@@ -3,8 +3,8 @@
 namespace Filament\Support;
 
 use Illuminate\Support\Str;
-use Illuminate\View\ComponentAttributeBag;
 use Illuminate\Translation\MessageSelector;
+use Illuminate\View\ComponentAttributeBag;
 
 if (! function_exists('Filament\Support\get_model_label')) {
     function get_model_label(string $model): string
