@@ -482,6 +482,8 @@ Section::make('Heading')
 
 Placeholders can be used to render text-only "fields" within your forms. Each placeholder has `content()`, which cannot be changed by the user.
 
+> **Important:** All fields require a unique name. That also applies to Placeholders!
+
 ```php
 use Filament\Forms\Components\Placeholder;
 
@@ -522,6 +524,20 @@ Card::make()
         // ...
     ])
     ->columns(2)
+```
+
+## Inline labels
+
+You may use the `inlineLabel()` method to make the form labels and fields in separate columns, inline with each other. It works on all layout components, each field inside will have an inline label.
+
+```php
+use Filament\Forms\Components\Card;
+
+Card::make()
+    ->schema([
+        // ...
+    ])
+    ->inlineLabel()
 ```
 
 ## View

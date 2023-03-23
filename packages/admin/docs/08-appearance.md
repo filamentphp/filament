@@ -163,7 +163,6 @@ Now, you may register the theme file in a service provider's `boot()` method:
 
 ```php
 use Filament\Facades\Filament;
-use Illuminate\Foundation\Vite;
 
 Filament::serving(function () {
     // Using Vite
@@ -319,3 +318,5 @@ The available hooks are as follows:
 - `page.header-widgets.end` - after page header widgets
 - `page.footer-widgets.start` - before page footer widgets
 - `page.footer-widgets.end` - after page footer widgets
+- `page.actions.start` - before page actions
+- `page.actions.end` - after page actions

@@ -232,6 +232,7 @@ return [
         'forms' => [
             'actions' => [
                 'alignment' => 'left',
+                'are_sticky' => false,
             ],
             'have_inline_labels' => false,
         ],

@@ -4,11 +4,24 @@
         tab: null,
 
         init: function () {
+            this.$watch('tab', () => this.updateQueryString())
+
             this.tab = this.getTabs()[@js($getActiveTab()) - 1]
         },
 
         getTabs: function () {
             return JSON.parse(this.$refs.tabsData.value)
+        },
+
+        updateQueryString: function () {
+            if (! @js($isTabPersistedInQueryString())) {
+                return
+            }
+
+            const url = new URL(window.location.href)
+            url.searchParams.set(@js($getTabQueryStringKey()), this.tab)
+
+            history.pushState(null, document.title, url.toString())
         },
 
     }"
@@ -19,6 +32,7 @@
         'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
+    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ \Filament\Forms\Components\Tabs::class }}.container"
 >
     <input
         type="hidden"

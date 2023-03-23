@@ -12,6 +12,8 @@ use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
 use Filament\Notifications\Concerns\HasId;
 use Filament\Notifications\Concerns\HasTitle;
+use Filament\Notifications\Events\DatabaseNotificationsSent;
+use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
@@ -38,6 +40,8 @@ class Notification extends ViewComponent implements Arrayable
 
     protected string $viewIdentifier = 'notification';
 
+    protected array $safeViews = [];
+
     public function __construct(string $id)
     {
         $this->id($id);
@@ -51,6 +55,11 @@ class Notification extends ViewComponent implements Arrayable
         return $static;
     }
 
+    public function getViewData(): array
+    {
+        return $this->viewData;
+    }
+
     public function toArray(): array
     {
         return [
@@ -61,6 +70,8 @@ class Notification extends ViewComponent implements Arrayable
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
             'title' => $this->getTitle(),
+            'view' => $this->getView(),
+            'viewData' => $this->getViewData(),
         ];
     }
 
@@ -76,6 +87,14 @@ class Notification extends ViewComponent implements Arrayable
                 $data['actions'] ?? [],
             ),
         );
+
+        $view = $data['view'] ?? null;
+
+        if (filled($view) && ($static->getView() !== $view) && $static->isViewSafe($view)) {
+            $static->view($data['view']);
+        }
+
+        $static->viewData($data['viewData'] ?? []);
         $static->body($data['body'] ?? null);
         $static->duration($data['duration'] ?? null);
         $static->icon($data['icon'] ?? null);
@@ -83,6 +102,21 @@ class Notification extends ViewComponent implements Arrayable
         $static->title($data['title'] ?? null);
 
         return $static;
+    }
+
+    protected function isViewSafe(string $view): bool
+    {
+        return in_array($view, $this->safeViews, strict: true);
+    }
+
+    public function safeViews(string | array $safeViews): static
+    {
+        $this->safeViews = array_merge(
+            $this->safeViews,
+            Arr::wrap($safeViews),
+        );
+
+        return $this;
     }
 
     public function send(): static
@@ -108,7 +142,7 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function sendToDatabase(Model | Authenticatable | Collection | array $users): static
+    public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool $isEventDispatched = false): static
     {
         if (! is_iterable($users)) {
             $users = [$users];
@@ -116,6 +150,10 @@ class Notification extends ViewComponent implements Arrayable
 
         foreach ($users as $user) {
             $user->notify($this->toDatabase());
+
+            if ($isEventDispatched) {
+                DatabaseNotificationsSent::dispatch($user);
+            }
         }
 
         return $this;
@@ -197,24 +235,37 @@ class Notification extends ViewComponent implements Arrayable
 
     public static function assertNotified(Notification | string $notification = null): void
     {
-        $notifications = session()->get('filament.notifications');
+        $notificationsLivewireComponent = new Notifications();
+        $notificationsLivewireComponent->mount();
+        $notifications = $notificationsLivewireComponent->notifications;
 
-        Assert::assertIsArray($notifications);
+        $expectedNotification = null;
 
-        $expectedNotification = Arr::last($notifications);
+        Assert::assertIsArray($notifications->toArray());
 
-        Assert::assertIsArray($expectedNotification);
+        if (is_string($notification)) {
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification): bool => $mountedNotification->title === $notification);
+        }
+
+        if ($notification instanceof Notification) {
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+        }
 
         if (blank($notification)) {
             return;
         }
 
+        Assert::assertNotNull($expectedNotification, 'A notification was not sent');
+
         if ($notification instanceof Notification) {
-            Assert::assertSame($expectedNotification, $notification->toArray());
+            Assert::assertSame(
+                collect($expectedNotification)->except(['id'])->toArray(),
+                collect($notification->toArray())->except(['id'])->toArray()
+            );
 
             return;
         }
 
-        Assert::assertSame($expectedNotification['title'], $notification);
+        Assert::assertSame($expectedNotification->title, $notification);
     }
 }

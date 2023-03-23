@@ -22,6 +22,18 @@ return [
             'label' => 'ログアウト',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'サイドバーを折り畳む',
+            ],
+
+            'expand' => [
+                'label' => 'サイドバーを展開する',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'ユーザーメニュー',
         ],

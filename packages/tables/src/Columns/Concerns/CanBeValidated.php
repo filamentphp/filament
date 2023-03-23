@@ -42,7 +42,8 @@ trait CanBeValidated
         Validator::make(
             ['input' => $input],
             ['input' => $this->getRules()],
-            customAttributes: ['input' => $this->getValidationAttribute()],
+            [],
+            ['input' => $this->getValidationAttribute()],
         )->validate();
     }
 

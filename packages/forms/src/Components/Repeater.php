@@ -6,6 +6,7 @@ use Closure;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\Contracts\HasForms;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -28,6 +29,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     protected bool | Closure $isItemDeletionDisabled = false;
 
     protected bool | Closure $isItemMovementDisabled = false;
+
+    protected bool | Closure $isReorderableWithButtons = false;
 
     protected bool | Closure $isInset = false;
 
@@ -222,6 +225,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function reorderableWithButtons(bool | Closure $condition = true): static
+    {
+        $this->isReorderableWithButtons = $condition;
+
+        return $this;
+    }
+
     public function inset(bool | Closure $condition = true): static
     {
         $this->isInset = $condition;
@@ -240,10 +250,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         foreach ($this->getState() ?? [] as $itemKey => $itemData) {
             $containers[$itemKey] = $this
                 ->getChildComponentContainer()
-                ->getClone()
                 ->statePath($itemKey)
                 ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
-                ->inlineLabel(false);
+                ->inlineLabel(false)
+                ->getClone();
         }
 
         return $containers;
@@ -252,6 +262,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function getCreateItemButtonLabel(): string
     {
         return $this->evaluate($this->createItemButtonLabel);
+    }
+
+    public function isReorderableWithButtons(): bool
+    {
+        return $this->evaluate($this->isReorderableWithButtons) && (! $this->isItemMovementDisabled());
     }
 
     public function isItemMovementDisabled(): bool
@@ -406,14 +421,16 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->toArray();
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->hasRelationship()) {
-            return (string) Str::of($this->getRelationshipName())
+            $label = (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();

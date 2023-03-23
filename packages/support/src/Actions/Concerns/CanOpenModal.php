@@ -33,6 +33,17 @@ trait CanOpenModal
 
     protected string | Closure | null $modalWidth = null;
 
+    protected bool | Closure | null $isModalHidden = false;
+
+    protected bool | Closure | null $isModalClosedByClickingAway = null;
+
+    public function closeModalByClickingAway(bool | Closure | null $condition = true): static
+    {
+        $this->isModalClosedByClickingAway = $condition;
+
+        return $this;
+    }
+
     public function centerModal(bool | Closure | null $condition = true): static
     {
         $this->isModalCentered = $condition;
@@ -113,6 +124,13 @@ trait CanOpenModal
     public function modalWidth(string | Closure | null $width = null): static
     {
         $this->modalWidth = $width;
+
+        return $this;
+    }
+
+    public function modalHidden(bool | Closure | null $condition = false): static
+    {
+        $this->isModalHidden = $condition;
 
         return $this;
     }
@@ -224,9 +242,19 @@ trait CanOpenModal
         return $this->evaluate($this->isModalSlideOver);
     }
 
+    public function isModalHidden(): bool
+    {
+        return $this->evaluate($this->isModalHidden);
+    }
+
+    public function isModalClosedByClickingAway(): bool
+    {
+        return $this->evaluate($this->isModalClosedByClickingAway) ?? config('filament-support.modal.is_closed_by_clicking_away') ?? true;
+    }
+
     public function shouldOpenModal(): bool
     {
-        return $this->hasFormSchema() || $this->getModalSubheading() || $this->getModalContent() || $this->getModalFooter();
+        return (! $this->isModalHidden()) && ($this->hasFormSchema() || $this->getModalSubheading() || $this->getModalContent() || $this->getModalFooter());
     }
 
     protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction

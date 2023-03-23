@@ -1604,16 +1604,33 @@ trix-editor .attachment__metadata .attachment__size {
 .dark .trix-button-group {
   @apply border-gray-600;
 }
+.dark trix-toolbar .trix-dialog {
+  @apply border-t-2 border-gray-900 bg-gray-800;
+  box-shadow: 0 0.3em 1em theme("colors.gray.900");
+}
+.dark trix-toolbar .trix-input {
+  @apply border-gray-600 bg-gray-700;
+}
+.dark trix-toolbar .trix-button:not(:first-child) {
+  @apply border-l border-gray-600;
+}
 trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
   @apply bg-primary-600 text-white;
+}
+[dir=rtl] trix-editor.prose :where(ul):not(:where([class~="not-prose"] *)),
+[dir=rtl] trix-editor.prose :where(ol):not(:where([class~="not-prose"] *)) {
+  padding-right: 1.625em !important;
+  padding-left: 0em !important;
+}
+[dir=rtl] trix-editor.prose :where(ul > li):not(:where([class~="not-prose"] *)),
+[dir=rtl] trix-editor.prose :where(ol > li):not(:where([class~="not-prose"] *)) {
+  padding-right: 0.375em !important;
+  padding-left: 0em !important;
 }
 
 /* packages/forms/resources/css/components/select.css */
 .choices {
-  @apply relative;
-}
-.choices:focus {
-  @apply outline-none;
+  @apply relative outline-none;
 }
 .choices:last-child {
   @apply mb-0;
@@ -1663,7 +1680,7 @@ trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
 }
 .is-focused .choices__inner,
 .is-open .choices__inner {
-  @apply border-primary-500 ring-1 ring-inset ring-primary-500;
+  @apply border-primary-500 outline-none ring-1 ring-inset ring-primary-500;
 }
 .choices__list {
   @apply m-0 list-none pl-0;
@@ -1740,11 +1757,8 @@ trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
   @apply opacity-70;
 }
 .choices__button {
-  @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat;
+  @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat outline-none;
   text-indent: -9999px;
-}
-.choices__button:focus {
-  @apply outline-none;
 }
 .choices[data-type*=select-one] .choices__button {
   @apply absolute right-0 mr-9 h-4 w-4 p-0 opacity-60;
@@ -1800,7 +1814,7 @@ trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
   border-color: rgb(75 85 99) !important;
 }
 .choices__input {
-  @apply inline-block max-w-full border-none;
+  @apply inline-block max-w-full border-none outline-none;
   border-color: transparent !important;
   background-color: transparent !important;
   padding: 0 !important;

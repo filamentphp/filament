@@ -9,9 +9,10 @@
         :visible="filled($action)"
         :width="$action?->getModalWidth()"
         :slide-over="$action?->isModalSlideOver()"
+        :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
         display-classes="block"
-        x-init="this.livewire = $wire.__instance"
-        x-on:modal-closed.stop="if ('mountedFormComponentAction' in this.livewire?.serverMemo.data) this.livewire.set('mountedFormComponentAction', null)"
+        x-init="livewire = $wire.__instance"
+        x-on:modal-closed.stop="if ('mountedFormComponentAction' in livewire?.serverMemo.data) livewire.set('mountedFormComponentAction', null)"
     >
         @if ($action)
             @if ($action->isModalCentered())

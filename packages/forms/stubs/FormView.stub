@@ -1,0 +1,11 @@
+<div>
+    <form wire:submit.prevent="{{ submitAction }}">
+        {{ $this->form }}
+
+        <button type="submit">
+            Submit
+        </button>
+    </form>
+
+    {{ $this->modal }}
+</div>

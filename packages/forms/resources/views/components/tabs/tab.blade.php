@@ -19,7 +19,8 @@
 
         setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
     "
-    {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-tabs-component-tab focus:outline-none']) }}
+    {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-tabs-component-tab outline-none']) }}
+    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ \Filament\Forms\Components\Tab::class }}.tabs.{{ $getId() }}"
 >
     {{ $getChildComponentContainer() }}
 </div>

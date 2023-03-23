@@ -9,44 +9,42 @@
 
 @php
     $action = $column->getAction();
-    $alignment = $column->getAlignment();
     $name = $column->getName();
     $shouldOpenUrlInNewTab = $column->shouldOpenUrlInNewTab();
     $tooltip = $column->getTooltip();
     $url = $column->getUrl();
 
+    $columnClasses = \Illuminate\Support\Arr::toCssClasses([
+        'flex w-full',
+        match ($column->getAlignment()) {
+            'center' => 'justify-center text-center',
+            'end' => 'justify-end text-end',
+            'left' => 'justify-start text-left',
+            'right' => 'justify-end text-right',
+            'justify' => 'justify-between text-justify',
+            default => 'justify-start text-start',
+        },
+    ]);
+
     $slot = $column->viewData(['recordKey' => $recordKey]);
 @endphp
 
 <div
-    {{ $attributes->class([
-        'filament-tables-column-wrapper',
-        match ($alignment) {
-            'start' => 'text-start',
-            'center' => 'text-center',
-            'end' => 'text-end',
-            'left' => 'text-left',
-            'right' => 'text-right',
-            'justify' => 'text-justify',
-            default => null,
-        },
-    ]) }}
     @if ($tooltip)
         x-data="{}"
         x-tooltip.raw="{{ $tooltip }}"
     @endif
+    {{ $attributes->class(['filament-tables-column-wrapper']) }}
 >
-    @if ($isClickDisabled)
-        {{ $slot }}
-    @elseif ($url || ($recordUrl && $action === null))
+    @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
         <a
             href="{{ $url ?: $recordUrl }}"
             {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
-            class="block"
+            class="{{ $columnClasses }}"
         >
             {{ $slot }}
         </a>
-    @elseif ($action || $recordAction)
+    @elseif (($action || $recordAction) && (! $isClickDisabled))
         @php
             if ($action instanceof \Filament\Tables\Actions\Action) {
                 $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";
@@ -67,11 +65,13 @@
             wire:loading.attr="disabled"
             wire:loading.class="cursor-wait opacity-70"
             type="button"
-            class="block w-full text-start"
+            class="{{ $columnClasses }}"
         >
             {{ $slot }}
         </button>
     @else
-        {{ $slot }}
+        <div class="{{ $columnClasses }}">
+            {{ $slot }}
+        </div>
     @endif
 </div>

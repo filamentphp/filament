@@ -56,7 +56,7 @@ class Table extends ViewComponent
         }
 
         if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
-            return Position::AfterCells;
+            return Position::AfterColumns;
         }
 
         $actions = $this->getActions();
@@ -344,7 +344,7 @@ class Table extends ViewComponent
         /** @var TableComponent $livewire */
         $livewire = $this->getLivewire();
 
-        $callback = $livewire->isRecordSelectable();
+        $callback = $livewire->isTableRecordSelectable();
 
         if (! $callback) {
             return true;
@@ -407,6 +407,11 @@ class Table extends ViewComponent
         return $this->getLivewire()->isTableSearchable();
     }
 
+    public function getRecordCheckboxPosition(): string
+    {
+        return $this->getLivewire()->getTableRecordCheckboxPosition();
+    }
+
     public function isSearchableByColumn(): bool
     {
         return $this->getLivewire()->isTableSearchableByColumn();
@@ -436,5 +441,15 @@ class Table extends ViewComponent
         $livewire = $this->getLivewire();
 
         return invade($livewire)->isTableStriped();
+    }
+
+    public function isLoaded(): bool
+    {
+        return $this->getLivewire()->isTableLoaded();
+    }
+
+    public function hasColumnSearches(): bool
+    {
+        return $this->getLivewire()->hasTableColumnSearches();
     }
 }

@@ -8,6 +8,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,7 +18,7 @@ use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 
-class Select extends Field
+class Select extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBePreloaded;
@@ -30,6 +31,7 @@ class Select extends Field
         getSuffixAction as getBaseSuffixAction;
     }
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasLoadingMessage;
     use Concerns\HasOptions;
     use Concerns\HasPlaceholder;
@@ -40,6 +42,8 @@ class Select extends Field
     protected array | Closure | null $createOptionActionFormSchema = null;
 
     protected ?Closure $createOptionUsing = null;
+
+    protected string | Closure | null $createOptionModalHeading = null;
 
     protected ?Closure $modifyCreateOptionActionUsing = null;
 
@@ -215,7 +219,7 @@ class Select extends Field
             })
             ->icon('heroicon-o-plus')
             ->iconButton()
-            ->modalHeading(__('forms::components.select.actions.create_option.modal.heading'))
+            ->modalHeading($this->getCreateOptionModalHeading() ?? __('forms::components.select.actions.create_option.modal.heading'))
             ->modalButton(__('forms::components.select.actions.create_option.modal.actions.create.label'))
             ->hidden(fn (Component $component): bool => $component->isDisabled());
 
@@ -231,6 +235,18 @@ class Select extends Field
     public function getCreateOptionActionFormSchema(): ?array
     {
         return $this->evaluate($this->createOptionActionFormSchema);
+    }
+
+    public function createOptionModalHeading(string | Closure | null $heading): static
+    {
+        $this->createOptionModalHeading = $heading;
+
+        return $this;
+    }
+
+    public function getCreateOptionModalHeading(): ?string
+    {
+        return $this->evaluate($this->createOptionModalHeading);
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
@@ -431,8 +447,17 @@ class Select extends Field
                     ->toArray();
             }
 
+            $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
+
+            if (
+                str_contains($relationshipTitleColumnName, '->') &&
+                (! str_contains($relationshipTitleColumnName, ' as '))
+            ) {
+                $relationshipTitleColumnName .= " as {$relationshipTitleColumnName}";
+            }
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->pluck($relationshipTitleColumnName, $keyName)
                 ->toArray();
         });
 
@@ -470,8 +495,17 @@ class Select extends Field
                     ->toArray();
             }
 
+            $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
+
+            if (
+                str_contains($relationshipTitleColumnName, '->') &&
+                (! str_contains($relationshipTitleColumnName, ' as '))
+            ) {
+                $relationshipTitleColumnName .= " as {$relationshipTitleColumnName}";
+            }
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $keyName)
+                ->pluck($relationshipTitleColumnName, $keyName)
                 ->toArray();
         });
 
@@ -559,8 +593,17 @@ class Select extends Field
                     ->toArray();
             }
 
+            $relationshipTitleColumnName = $component->getRelationshipTitleColumnName();
+
+            if (
+                str_contains($relationshipTitleColumnName, '->') &&
+                (! str_contains($relationshipTitleColumnName, ' as '))
+            ) {
+                $relationshipTitleColumnName .= " as {$relationshipTitleColumnName}";
+            }
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleColumnName(), $relatedKeyName)
+                ->pluck($relationshipTitleColumnName, $relatedKeyName)
                 ->toArray();
         });
 
@@ -659,14 +702,16 @@ class Select extends Field
         return $this->evaluate($this->relationshipTitleColumnName);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->hasRelationship()) {
-            return (string) Str::of($this->getRelationshipName())
+            $label = (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();

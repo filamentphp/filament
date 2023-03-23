@@ -18,7 +18,7 @@
                     <button
                         type="submit"
                         @class([
-                            'text-gray-600 hover:text-primary-500 focus:outline-none focus:underline',
+                            'text-gray-600 hover:text-primary-500 outline-none focus:underline',
                             'dark:text-gray-300 dark:hover:text-primary-500' => config('filament.dark_mode'),
                         ])
                     >

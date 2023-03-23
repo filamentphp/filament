@@ -16,6 +16,7 @@
 
         $isCollapsible = $isCollapsible();
         $isCloneable = $isCloneable();
+        $isReorderableWithButtons = $isReorderableWithButtons();
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
@@ -65,11 +66,11 @@
                     @foreach ($containers as $uuid => $item)
                         <li
                             x-data="{
-                                isCollapsed: @js($isCollapsed()),
+                                isCollapsed: @js($isCollapsed($item)),
                             }"
                             x-on:repeater-collapse.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = true)"
                             x-on:repeater-expand.window="$event.detail === '{{ $getStatePath() }}' && (isCollapsed = false)"
-                            wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.item"
+                            wire:key="{{ $this->id }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                             wire:sortable.item="{{ $uuid }}"
                             x-on:expand-concealing-component.window="
                                 error = $el.querySelector('[data-validation-error]')
@@ -134,11 +135,78 @@
                                         'flex divide-x rtl:divide-x-reverse',
                                         'dark:divide-gray-700' => config('forms.dark_mode'),
                                     ])>
+                                        @if ($isReorderableWithButtons)
+                                            @unless ($loop->first)
+                                                <li>
+                                                    <button
+                                                        title="{{ __('forms::components.repeater.buttons.move_item_up.label') }}"
+                                                        type="button"
+                                                        wire:click.stop="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        wire:loading.attr="disabled"
+                                                        @class([
+                                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
+                                                            'dark:border-gray-700' => config('forms.dark_mode'),
+                                                        ])
+                                                    >
+                                                        <span class="sr-only">
+                                                            {{ __('forms::components.repeater.buttons.move_item_up.label') }}
+                                                        </span>
+
+                                                        <x-heroicon-s-chevron-up
+                                                            class="w-4 h-4"
+                                                            wire:loading.remove.delay
+                                                            wire:target="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        />
+
+                                                        <x-filament-support::loading-indicator
+                                                            class="w-4 h-4 text-primary-500"
+                                                            wire:loading.delay
+                                                            wire:target="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                            x-cloak
+                                                        />
+                                                    </button>
+                                                </li>
+                                            @endunless
+
+                                            @unless ($loop->last)
+                                                <li>
+                                                    <button
+                                                        title="{{ __('forms::components.repeater.buttons.move_item_down.label') }}"
+                                                        type="button"
+                                                        wire:click.stop="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        wire:loading.attr="disabled"
+                                                        @class([
+                                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
+                                                            'dark:border-gray-700' => config('forms.dark_mode'),
+                                                        ])
+                                                    >
+                                                        <span class="sr-only">
+                                                            {{ __('forms::components.repeater.buttons.move_item_down.label') }}
+                                                        </span>
+
+                                                        <x-heroicon-s-chevron-down
+                                                            class="w-4 h-4"
+                                                            wire:loading.remove.delay
+                                                            wire:target="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        />
+
+                                                        <x-filament-support::loading-indicator
+                                                            class="w-4 h-4 text-primary-500"
+                                                            wire:loading.delay
+                                                            wire:target="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                            x-cloak
+                                                        />
+                                                    </button>
+                                                </li>
+                                            @endunless
+                                        @endif
+
                                         @if ($isCloneable)
                                             <li>
                                                 <button
                                                     title="{{ __('forms::components.repeater.buttons.clone_item.label') }}"
-                                                    wire:click="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:click.stop="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:loading.attr="disabled"
                                                     type="button"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
@@ -149,7 +217,18 @@
                                                         {{ __('forms::components.repeater.buttons.clone_item.label') }}
                                                     </span>
 
-                                                    <x-heroicon-s-duplicate class="w-4 h-4"/>
+                                                    <x-heroicon-s-duplicate
+                                                        class="w-4 h-4"
+                                                        wire:loading.remove.delay
+                                                        wire:target="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    />
+
+                                                    <x-filament-support::loading-indicator
+                                                        class="w-4 h-4 text-primary-500"
+                                                        wire:loading.delay
+                                                        wire:target="dispatchFormEvent('repeater::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        x-cloak
+                                                    />
                                                 </button>
                                             </li>
                                         @endunless
@@ -159,6 +238,7 @@
                                                 <button
                                                     title="{{ __('forms::components.repeater.buttons.delete_item.label') }}"
                                                     wire:click.stop="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:loading.attr="disabled"
                                                     type="button"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500',
@@ -169,7 +249,17 @@
                                                         {{ __('forms::components.repeater.buttons.delete_item.label') }}
                                                     </span>
 
-                                                    <x-heroicon-s-trash class="w-4 h-4"/>
+                                                    <x-heroicon-s-trash class="w-4 h-4"
+                                                        wire:loading.remove.delay
+                                                        wire:target="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    />
+
+                                                    <x-filament-support::loading-indicator
+                                                        class="w-4 h-4 text-primary-500"
+                                                        wire:loading.delay
+                                                        wire:target="dispatchFormEvent('repeater::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                        x-cloak
+                                                    />
                                                 </button>
                                             </li>
                                         @endunless
@@ -218,7 +308,7 @@
                 <x-forms::button
                     :wire:click="'dispatchFormEvent(\'repeater::createItem\', \'' . $getStatePath() . '\')'"
                     size="sm"
-                    type="button"
+                    outlined
                 >
                     {{ $getCreateItemButtonLabel() }}
                 </x-forms::button>

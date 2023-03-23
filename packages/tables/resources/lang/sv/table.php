@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Markera/avmarkera alla rader för massåtgärder.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Markera/avmarkera rad :key för massåtgärder.',
+        ],
+
         'search_query' => [
             'label' => 'Sök',
             'placeholder' => 'Sök',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Meny för sidnumerering',
 
-        'overview' => 'Visar :first till :last av :total resultat',
+        'overview' => '{1} Visar 1 resultat|[2,*] Visar :first till :last av :total resultat',
 
         'fields' => [
 
@@ -141,7 +149,7 @@ return [
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Välj alla :count',
+                'label' => 'Markera alla :count',
             ],
 
             'deselect_all' => [

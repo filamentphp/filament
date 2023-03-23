@@ -5,12 +5,36 @@ return [
     'direction' => 'rtl',
 
     'buttons' => [
+        'dark_mode' => [
+            'label' => 'گۆڕینی ڕوانگە بۆ تاریک',
+        ],
+
+        'database_notifications' => [
+            'label' => 'کردنەوەی ئاگانامەکان',
+        ],
+
+        'light_mode' => [
+            'label' => 'گۆڕینی ڕوانگە بۆ سپی',
+        ],
+
         'logout' => [
-            'label' => 'بچۆ دەرەوە',
+            'label' => 'چوونەدەرەوە',
+        ],
+
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'بچووک کردنەوەی شریتی گەڕان',
+            ],
+
+            'expand' => [
+                'label' => 'فراوانکردنی شریتی گەڕان',
+            ],
+
         ],
 
         'user_menu' => [
-            'label' => 'Menuya bikarhêner',
+            'label' => 'مێنیوی بەکارهێنەر',
         ],
     ],
 

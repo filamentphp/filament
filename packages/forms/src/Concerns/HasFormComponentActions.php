@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Concerns;
 
+use Closure;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Component;
@@ -14,6 +15,8 @@ use Filament\Support\Exceptions\Halt;
 trait HasFormComponentActions
 {
     public $mountedFormComponentAction = null;
+
+    public $mountedFormComponentActionArguments = [];
 
     public $mountedFormComponentActionData = [];
 
@@ -28,7 +31,7 @@ trait HasFormComponentActions
     {
         $action = $this->getMountedFormComponentAction();
 
-        if (! $action) {
+        if (! ($action instanceof Action)) {
             return null;
         }
 
@@ -55,7 +58,10 @@ trait HasFormComponentActions
             return;
         }
 
-        $action->arguments($arguments ? json_decode($arguments, associative: true) : []);
+        $action->arguments(array_merge(
+            $this->mountedFormComponentActionArguments ?? [],
+            $arguments ? json_decode($arguments, associative: true) : [],
+        ));
 
         $form = $this->getMountedFormComponentActionForm();
 
@@ -82,6 +88,10 @@ trait HasFormComponentActions
         } catch (Cancel $exception) {
         }
 
+        if (filled($this->redirectTo)) {
+            return $result;
+        }
+
         $this->mountedFormComponentAction = null;
 
         $action->resetArguments();
@@ -94,7 +104,7 @@ trait HasFormComponentActions
         return $result;
     }
 
-    public function getMountedFormComponentAction(): ?Action
+    public function getMountedFormComponentAction(): Action | Closure | null
     {
         if (! $this->mountedFormComponentAction) {
             return null;
@@ -103,10 +113,11 @@ trait HasFormComponentActions
         return $this->getMountedFormComponentActionComponent()?->getAction($this->mountedFormComponentAction);
     }
 
-    public function mountFormComponentAction(string $component, string $name)
+    public function mountFormComponentAction(string $component, string $name, array $arguments = [])
     {
         $this->mountedFormComponentActionComponent = $component;
         $this->mountedFormComponentAction = $name;
+        $this->mountedFormComponentActionArguments = $arguments;
 
         $action = $this->getMountedFormComponentAction();
 
@@ -114,9 +125,20 @@ trait HasFormComponentActions
             return;
         }
 
+        if ($action instanceof Closure) {
+            try {
+                return $this->getMountedFormComponentActionComponent()->evaluate($action);
+            } finally {
+                $this->mountedFormComponentActionComponent = null;
+                $this->mountedFormComponentAction = null;
+            }
+        }
+
         if ($action->isDisabled()) {
             return;
         }
+
+        $action->arguments($this->mountedFormComponentActionArguments);
 
         $this->cacheForm(
             'mountedFormComponentActionForm',

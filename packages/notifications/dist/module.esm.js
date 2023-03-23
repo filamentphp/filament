@@ -338,7 +338,7 @@ var notification_default = (Alpine) => {
     configureAnimations: function() {
       let animation;
       Livewire.hook("message.received", (_, component) => {
-        if (component.fingerprint.name !== "notifications") {
+        if (component.fingerprint.name !== "filament.core.notifications") {
           return;
         }
         const getTop = () => this.$el.getBoundingClientRect().top;
@@ -355,7 +355,7 @@ var notification_default = (Alpine) => {
         this.$el.getAnimations().forEach((animation2) => animation2.finish());
       });
       Livewire.hook("message.processed", (_, component) => {
-        if (component.fingerprint.name !== "notifications") {
+        if (component.fingerprint.name !== "filament.core.notifications") {
           return;
         }
         if (!this.isShown) {
@@ -446,6 +446,14 @@ var Notification = class {
     this.iconColor("danger");
     return this;
   }
+  view(view) {
+    this.view = view;
+    return this;
+  }
+  viewData(viewData) {
+    this.viewData = viewData;
+    return this;
+  }
   send() {
     Livewire.emit("notificationSent", this);
     return this;
@@ -467,6 +475,30 @@ var Action = class {
   emit(event, data) {
     this.event(event);
     this.eventData(data);
+    return this;
+  }
+  emitSelf(event, data) {
+    this.emit(event, data);
+    this.emitDirection = "self";
+    return this;
+  }
+  emitTo(component, event, data) {
+    this.emit(event, data);
+    this.emitDirection = "to";
+    this.emitToComponent = component;
+    return this;
+  }
+  emitUp(event, data) {
+    this.emit(event, data);
+    this.emitDirection = "up";
+    return this;
+  }
+  emitDirection(emitDirection) {
+    this.emitDirection = emitDirection;
+    return this;
+  }
+  emitToComponent(component) {
+    this.emitToComponent = component;
     return this;
   }
   event(event) {

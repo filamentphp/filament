@@ -206,7 +206,7 @@ return [
 
         'no_search_results_message' => 'Nessuna opzione trovata per la ricerca.',
 
-        'placeholder' => 'Seleziona un\'opzione',
+        'placeholder' => "Seleziona un'opzione",
 
         'searching_message' => 'Ricerca...',
 

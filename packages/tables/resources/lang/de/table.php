@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Alle Einträge für Massenaktion auswählen/abwählen.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Eintrag :key für Massenaktion auswählen/abwählen.',
+        ],
+
         'search_query' => [
             'label' => 'Suche',
             'placeholder' => 'Suche',
@@ -27,7 +35,7 @@ return [
 
         'label' => 'Seitennavigation',
 
-        'overview' => ':first bis :last von :total Ergebnissen',
+        'overview' => '{1} Zeige 1 Ergebnis|[2,*] Zeige :first bis :last von :total Ergebnissen',
 
         'fields' => [
 

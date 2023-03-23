@@ -15,13 +15,13 @@
         'text-danger-700' => $error,
         'dark:text-danger-400' => $error && config('forms.dark_mode'),
     ])>
-        {{ $slot }}
-
-        @if ($required)
-            <sup @class([
-                'font-medium text-danger-700',
-                'dark:text-danger-400' => config('forms.dark_mode'),
-            ])>*</sup>
+        {{-- Deliberately poor formatting to ensure that the asterisk sticks to the final word in the label. --}}
+        {{ $slot }}@if ($required)<span class="whitespace-nowrap">
+                <sup @class([
+                    'font-medium text-danger-700',
+                    'dark:text-danger-400' => config('forms.dark_mode'),
+                ])>*</sup>
+            </span>
         @endif
     </span>
 

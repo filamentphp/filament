@@ -135,8 +135,6 @@ trait InteractsWithForms
 
     public function deleteUploadedFile(string $statePath, string $fileKey): void
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             $form->deleteUploadedFile($statePath, $fileKey);
         }
@@ -157,8 +155,6 @@ trait InteractsWithForms
 
     public function removeUploadedFile(string $statePath, string $fileKey): void
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             $form->removeUploadedFile($statePath, $fileKey);
         }
@@ -166,8 +162,6 @@ trait InteractsWithForms
 
     public function reorderUploadedFiles(string $statePath, array $fileKeys): void
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             $form->reorderUploadedFiles($statePath, $fileKeys);
         }
@@ -331,7 +325,7 @@ trait InteractsWithForms
 
     protected function getValidationAttributes(): array
     {
-        $attributes = [];
+        $attributes = parent::getValidationAttributes();
 
         foreach ($this->getCachedForms() as $form) {
             $attributes = array_merge($attributes, $form->getValidationAttributes());

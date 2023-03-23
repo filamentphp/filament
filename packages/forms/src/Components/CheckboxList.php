@@ -3,12 +3,17 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
-class CheckboxList extends Field
+class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
+    use Concerns\CanBeSearchable;
+    use Concerns\HasGridDirection;
+    use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
 
     protected string $view = 'forms::components.checkbox-list';
@@ -34,6 +39,8 @@ class CheckboxList extends Field
 
             $component->state([]);
         });
+
+        $this->searchDebounce(0);
     }
 
     public function relationship(string | Closure $relationshipName, string | Closure $titleColumnName, ?Closure $callback = null): static
@@ -44,12 +51,16 @@ class CheckboxList extends Field
         $this->options(static function (CheckboxList $component) use ($callback): array {
             $relationship = $component->getRelationship();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($component->getRelationshipTitleColumnName());
+            $relationshipQuery = $relationship->getRelated()->query();
 
             if ($callback) {
                 $relationshipQuery = $component->evaluate($callback, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
+            }
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($component->getRelationshipTitleColumnName());
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -68,6 +79,8 @@ class CheckboxList extends Field
 
         $this->loadStateFromRelationshipsUsing(static function (CheckboxList $component, ?array $state): void {
             $relationship = $component->getRelationship();
+
+            /** @var Collection $relatedModels */
             $relatedModels = $relationship->getResults();
 
             $component->state(
@@ -120,14 +133,16 @@ class CheckboxList extends Field
         return $this->evaluate($this->relationshipTitleColumnName);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->getRelationship()) {
-            return (string) Str::of($this->getRelationshipName())
+            $label = (string) Str::of($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();

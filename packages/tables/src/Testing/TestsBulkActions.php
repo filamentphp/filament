@@ -42,6 +42,10 @@ class TestsBulkActions
 
             $this->call('mountTableBulkAction', $name, $records);
 
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
+
             $action = $livewire->getCachedTableBulkAction($name);
 
             if (! $action->shouldOpenModal()) {
@@ -114,6 +118,10 @@ class TestsBulkActions
             }
 
             $this->call('callMountedTableBulkAction', json_encode($arguments));
+
+            if (filled($this->instance()->redirectTo)) {
+                return $this;
+            }
 
             if ($this->get('mountedTableBulkAction') !== $action->getName()) {
                 $this->assertDispatchedBrowserEvent('close-modal', [

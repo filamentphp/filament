@@ -53,6 +53,7 @@ export default (Alpine) => {
             removeUploadedFileUsing,
             reorderUploadedFilesUsing,
             shouldAppendFiles,
+            shouldOrientImageFromExif,
             shouldTransformImage,
             state,
             uploadButtonPosition,
@@ -79,6 +80,7 @@ export default (Alpine) => {
                         acceptedFileTypes,
                         allowPaste: false,
                         allowReorder: canReorder,
+                        allowImageExifOrientation: shouldOrientImageFromExif,
                         allowImagePreview: canPreview,
                         allowVideoPreview: canPreview,
                         allowAudioPreview: canPreview,
@@ -107,7 +109,9 @@ export default (Alpine) => {
                             uploadProgressIndicatorPosition,
                         server: {
                             load: async (source, load) => {
-                                let response = await fetch(source)
+                                let response = await fetch(source, {
+                                    cache: 'no-store',
+                                })
                                 let blob = await response.blob()
 
                                 load(blob)

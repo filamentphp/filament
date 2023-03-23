@@ -117,7 +117,7 @@ To register a custom widget, add the fully qualified class name to the `$widgets
 ```php
 use Filament\PluginServiceProvider;
 use Spatie\LaravelPackageTools\Package;
-use Vendor\Package\Widgers\CustomWidget;
+use Vendor\Package\Widgets\CustomWidget;
 
 class ExampleServiceProvider extends PluginServiceProvider
 {

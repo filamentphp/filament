@@ -22,6 +22,7 @@ trait InteractsWithTable
     use CanSelectRecords;
     use CanSortRecords;
     use CanToggleColumns;
+    use CanDeferLoading;
     use HasActions;
     use HasBulkActions;
     use HasColumns;
@@ -98,6 +99,15 @@ trait InteractsWithTable
         $this->tableColumnSearchQueries = $this->castTableColumnSearchQueries(
             $this->tableColumnSearchQueries ?? [],
         );
+
+        $sortSessionKey = $this->getTableSortSessionKey();
+
+        if (blank($this->tableSortColumn) && $this->shouldPersistTableSortInSession() && session()->has($sortSessionKey)) {
+            $sort = session()->get($sortSessionKey);
+
+            $this->tableSortColumn = $sort['column'] ?? null;
+            $this->tableSortDirection = $sort['direction'] ?? null;
+        }
 
         $this->hasMounted = true;
     }

@@ -3,9 +3,10 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Actions\BulkAction;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Tables\Actions\RecordCheckboxPosition;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 
@@ -20,17 +21,20 @@ trait CanSelectRecords
         $this->emitSelf('deselectAllTableRecords');
     }
 
+    public function shouldDeselectAllRecordsWhenTableFiltered(): bool
+    {
+        return true;
+    }
+
     public function getAllTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
 
-        if ($this->shouldSelectCurrentPageOnly()) {
-            return $this->getTableRecords()
-                ->map(fn ($key): string => (string) $key->id)
-                ->all();
-        }
+        $records = $this->shouldSelectCurrentPageOnly() ?
+            $this->getTableRecords() :
+            $query;
 
-        return $query
+        return $records
             ->pluck($query->getModel()->getQualifiedKeyName())
             ->map(fn ($key): string => (string) $key)
             ->all();
@@ -48,10 +52,10 @@ trait CanSelectRecords
 
         $query = $this->getFilteredTableQuery();
 
-        if (is_callable($this->isRecordSelectable())) {
+        if ($this->isTableRecordSelectable() !== null) {
             return $query
                 ->get()
-                ->filter(fn (Model $record): bool => $this->isRecordSelectable()($record))
+                ->filter(fn (Model $record): bool => $this->isTableRecordSelectable()($record))
                 ->count();
         }
 
@@ -84,6 +88,11 @@ trait CanSelectRecords
             $this->getCachedTableBulkActions(),
             fn (BulkAction $action): bool => ! $action->isHidden(),
         ));
+    }
+
+    public function getTableRecordCheckboxPosition(): string
+    {
+        return RecordCheckboxPosition::BeforeCells;
     }
 
     public function shouldSelectCurrentPageOnly(): bool

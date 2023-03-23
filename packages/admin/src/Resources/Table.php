@@ -23,11 +23,15 @@ class Table
 
     protected ?string $filtersLayout = null;
 
+    protected ?string $recordCheckboxPosition = null;
+
     protected array $headerActions = [];
 
     protected ?array $contentGrid = null;
 
     protected ?string $pollingInterval = null;
+
+    protected ?bool $isLoadingDeferred = false;
 
     protected ?string $reorderColumn = null;
 
@@ -99,6 +103,13 @@ class Table
         return $this;
     }
 
+    public function recordCheckboxPosition(?string $recordCheckboxPosition): static
+    {
+        $this->recordCheckboxPosition = $recordCheckboxPosition;
+
+        return $this;
+    }
+
     public function headerActions(array | ActionGroup $actions): static
     {
         $this->headerActions = Arr::wrap($actions);
@@ -151,6 +162,13 @@ class Table
     public function poll(?string $interval = '10s'): static
     {
         $this->pollingInterval = $interval;
+
+        return $this;
+    }
+
+    public function deferLoading(bool $condition = true): static
+    {
+        $this->isLoadingDeferred = $condition;
 
         return $this;
     }
@@ -237,6 +255,11 @@ class Table
         return $this->filtersLayout;
     }
 
+    public function getRecordCheckboxPosition(): ?string
+    {
+        return $this->recordCheckboxPosition;
+    }
+
     public function getHeaderActions(): array
     {
         return $this->headerActions;
@@ -250,5 +273,10 @@ class Table
     public function getPollingInterval(): ?string
     {
         return $this->pollingInterval;
+    }
+
+    public function isLoadingDeferred(): bool
+    {
+        return $this->isLoadingDeferred;
     }
 }

@@ -28,6 +28,8 @@ class Action extends BaseAction implements Arrayable
             'color' => $this->getColor(),
             'event' => $this->getEvent(),
             'eventData' => $this->getEventData(),
+            'emitDirection' => $this->getEmitDirection(),
+            'emitToComponent' => $this->getEmitToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
@@ -55,7 +57,14 @@ class Action extends BaseAction implements Arrayable
         $static->close($data['shouldCloseNotification'] ?? false);
         $static->color($data['color'] ?? null);
         $static->disabled($data['isDisabled'] ?? false);
-        $static->emit($data['event'] ?? null, $data['eventData'] ?? []);
+
+        match ($data['emitDirection'] ?? null) {
+            'self' => $static->emitSelf($data['event'] ?? null, $data['eventData'] ?? []),
+            'up' => $static->emitUp($data['event'] ?? null, $data['eventData'] ?? []),
+            'to' => $static->emitTo($data['emitToComponent'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
+            default => $static->emit($data['event'] ?? null, $data['eventData'] ?? [])
+        };
+
         $static->extraAttributes($data['extraAttributes'] ?? []);
         $static->icon($data['icon'] ?? null);
         $static->iconPosition($data['iconPosition'] ?? null);

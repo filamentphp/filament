@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'بیسڕەوە',
+        'label' => 'سڕینەوە',
 
         'modal' => [
 
-            'heading' => ':label بسڕەوە',
+            'heading' => 'سڕینەوەی :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'بیسڕەوە',
+                    'label' => 'سڕینەوە',
                 ],
 
             ],
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'سڕایەوە',
+            'deleted' => 'سڕدرایەوە',
         ],
 
     ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'سڕایەوە',
+            'deleted' => 'سڕدرایەوە',
         ],
 
     ],

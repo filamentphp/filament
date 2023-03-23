@@ -14,7 +14,7 @@
 
 @php
     $linkClasses = [
-        'filament-link inline-flex items-center justify-center gap-0.5 font-medium hover:underline focus:outline-none focus:underline',
+        'filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline',
         'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
         'text-sm' => $size === 'sm',
         'text-lg' => $size === 'lg',

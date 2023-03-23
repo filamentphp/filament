@@ -6,6 +6,7 @@
     'description' => null,
     'descriptionColor' => null,
     'descriptionIcon' => null,
+    'descriptionIconPosition' => 'after',
     'flat' => false,
     'label' => null,
     'tag' => 'div',
@@ -48,9 +49,13 @@
                     default => 'text-gray-600',
                 },
             ])>
+                @if ($descriptionIcon && $descriptionIconPosition === 'before')
+                    <x-dynamic-component :component="$descriptionIcon" class="w-4 h-4" />
+                @endif
+
                 <span>{{ $description }}</span>
 
-                @if ($descriptionIcon)
+                @if ($descriptionIcon && $descriptionIconPosition === 'after')
                     <x-dynamic-component :component="$descriptionIcon" class="w-4 h-4" />
                 @endif
             </div>
@@ -117,6 +122,10 @@
                     this.chart.update()
                 },
             }"
+            x-on:dark-mode-toggled.window="
+                chart.destroy()
+                initChart()
+            "
             class="absolute bottom-0 inset-x-0 rounded-b-2xl overflow-hidden"
         >
             <canvas

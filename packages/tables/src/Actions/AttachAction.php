@@ -67,7 +67,7 @@ class AttachAction extends Action
                 /** @var BelongsToMany $relationship */
                 $relationship = $this->getRelationship();
 
-                $record = $relationship->getRelated()->query()->find($data['recordId']);
+                $record = $relationship->getRelated()->query()->where($relationship->getQualifiedRelatedKeyName(), $data['recordId'])->first();
 
                 $relationship->attach(
                     $record,
@@ -192,9 +192,8 @@ class AttachAction extends Action
                     foreach ($searchColumns as $searchColumnName) {
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                        $query->{$whereClause}(
-                            $searchColumnName,
-                            $searchOperator,
+                        $query->{"{$whereClause}Raw"}(
+                            "lower({$searchColumnName}) {$searchOperator} ?",
                             "%{$search}%",
                         );
 

@@ -350,6 +350,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return $this->getResourceTable()->getBulkActions();
     }
 
+    public function isTableLoadingDeferred(): bool
+    {
+        return $this->getResourceTable()->isLoadingDeferred();
+    }
+
     protected function getTableColumns(): array
     {
         return $this->getResourceTable()->getColumns();
@@ -368,6 +373,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function getTableFiltersLayout(): ?string
     {
         return $this->getResourceTable()->getFiltersLayout();
+    }
+
+    public function getTableRecordCheckboxPosition(): string
+    {
+        return $this->getResourceTable()->getRecordCheckboxPosition() ?? Tables\Actions\RecordCheckboxPosition::BeforeCells;
     }
 
     protected function getTableHeaderActions(): array

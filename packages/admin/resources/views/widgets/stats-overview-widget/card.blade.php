@@ -11,6 +11,7 @@
     :description="$getDescription()"
     :description-color="$getDescriptionColor()"
     :description-icon="$getDescriptionIcon()"
+    :description-icon-position="$getDescriptionIconPosition()"
     :href="$url"
     :target="$shouldOpenUrlInNewTab() ? '_blank' : null"
     :label="$getLabel()"
