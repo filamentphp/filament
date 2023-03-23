@@ -4,5 +4,9 @@
     :icon-position="$getIconPosition()"
     class="filament-tables-link-action"
 >
-    {{ $getLabel() }}
+    <span @class([
+        'sr-only' => $isLabelHidden(),
+    ])>
+        {{ $getLabel() }}
+    </span>
 </x-tables::actions.action>
