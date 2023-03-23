@@ -55,7 +55,7 @@ Radio::make('feedback')
 
 ## Positioning the options inline with the label
 
-You may wish to display the options `inline()` with the label:
+You may wish to display the options `inline()` with the label instead of below it:
 
 ```php
 Radio::make('feedback')
@@ -65,3 +65,19 @@ Radio::make('feedback')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147709853-198d54fb-1bb1-4e82-87d0-3034b9152f0e.png)
+
+## Disabling specific options
+
+You can disable specific options using the `disableOptionWhen()` method. It accepts a closure, in which you can check if the option with a specific `$value` should be disabled:
+
+```php
+use Filament\Forms\Components\Radio;
+
+Radio::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published'
+    ])
+    ->disableOptionWhen(fn (string $value): bool => $value === 'published')
+```

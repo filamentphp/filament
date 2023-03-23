@@ -336,7 +336,7 @@ Select::make('status')
         'published' => 'Published',
     ])
     ->default('draft')
-    ->disableOptionWhen(fn ($value) => $value === 'published')
+    ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
 ## Adding affix text aside the field
