@@ -43,7 +43,7 @@
                                 type="radio"
                                 value="{{ $value }}"
                                 dusk="filament.forms.{{ $statePath }}"
-                            @disabled($shouldOptionBeDisabled)
+                                @disabled($shouldOptionBeDisabled)
                                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
                                 {{ $getExtraInputAttributeBag()->class([
                                     'focus:ring-primary-500 h-4 w-4 text-primary-600 outline-none disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
