@@ -618,18 +618,18 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $titleAttribute, ?Closure $callback = null): static
+    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
     {
-        $this->relationship = $relationshipName;
+        $this->relationship = $relationshipName ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
 
-        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($callback): array {
+        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyOptionsQueryUsing): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query();
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -680,7 +680,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ->toArray();
         });
 
-        $this->options(static function (Select $component) use ($callback): ?array {
+        $this->options(static function (Select $component) use ($modifyOptionsQueryUsing): ?array {
             if (($component->isSearchable()) && ! $component->isPreloaded()) {
                 return null;
             }
@@ -689,8 +689,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipQuery = $relationship->getRelated()->query();
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -780,13 +780,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $record->getAttributeValue($component->getRelationshipTitleAttribute());
         });
 
-        $this->getSelectedRecordUsing(static function (Select $component, $state) use ($callback): ?Model {
+        $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyOptionsQueryUsing): ?Model {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $state);
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -794,15 +794,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $relationshipQuery->first();
         });
 
-        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($callback): array {
+        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyOptionsQueryUsing): array {
             $relationship = $component->getRelationship();
             $relatedKeyName = $relationship->getRelatedKeyName();
 
             $relationshipQuery = $relationship->getRelated()->query()
                 ->whereIn($relatedKeyName, $values);
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }

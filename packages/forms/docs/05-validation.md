@@ -27,14 +27,14 @@ Field::make('name')->activeUrl()
 The field value must be a value after a given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-after)
 
 ```php
-Field::make('startDate')->after('tomorrow')
+Field::make('start_date')->after('tomorrow')
 ```
 
 Alternatively, you may pass the name of another field to compare against:
 
 ```php
-Field::make('startDate')
-Field::make('endDate')->after('startDate')
+Field::make('start_date')
+Field::make('end_date')->after('start_date')
 ```
 
 ### After or equal to (date)
@@ -42,14 +42,14 @@ Field::make('endDate')->after('startDate')
 The field value must be a date after or equal to the given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-after-or-equal)
 
 ```php
-Field::make('startDate')->afterOrEqual('tomorrow')
+Field::make('start_date')->afterOrEqual('tomorrow')
 ```
 
 Alternatively, you may pass the name of another field to compare against:
 
 ```php
-Field::make('startDate')
-Field::make('endDate')->afterOrEqual('startDate')
+Field::make('start_date')
+Field::make('end_date')->afterOrEqual('start_date')
 ```
 
 ### Alpha
@@ -81,14 +81,14 @@ Field::make('name')->alphaNum()
 The field value must be a date before a given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-before)
 
 ```php
-Field::make('startDate')->before('first day of next month')
+Field::make('start_date')->before('first day of next month')
 ```
 
 Alternatively, you may pass the name of another field to compare against:
 
 ```php
-Field::make('startDate')->before('endDate')
-Field::make('endDate')
+Field::make('start_date')->before('end_date')
+Field::make('end_date')
 ```
 
 ### Before or equal to (date)
@@ -96,14 +96,14 @@ Field::make('endDate')
 The field value must be a date before or equal to the given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-before-or-equal)
 
 ```php
-Field::make('startDate')->beforeOrEqual('end of this month')
+Field::make('start_date')->beforeOrEqual('end of this month')
 ```
 
 Alternatively, you may pass the name of another field to compare against:
 
 ```php
-Field::make('startDate')->beforeOrEqual('endDate')
-Field::make('endDate')
+Field::make('start_date')->beforeOrEqual('end_date')
+Field::make('end_date')
 ```
 
 ### Confirmed
@@ -120,7 +120,7 @@ Field::make('password_confirmation')
 The field value must be different to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-different)
 
 ```php
-Field::make('backupEmail')->different('email')
+Field::make('backup_email')->different('email')
 ```
 
 ### Doesnt Start With

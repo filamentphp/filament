@@ -143,7 +143,7 @@ Repeater::make('qualifications')
     ->cloneable()
 ```
 
-## Populating automatically from a relationship
+## Integrating with an Eloquent relationship
 
 You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:
 

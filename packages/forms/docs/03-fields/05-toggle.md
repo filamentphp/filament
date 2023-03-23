@@ -27,31 +27,9 @@ class User extends Model
 }
 ```
 
-## Positioning the label above
+## Adding icons to the toggle button
 
-Toggle fields have two layout modes, inline and stacked. By default, they are inline.
-
-When the toggle is inline, its label is adjacent to it:
-
-```php
-use Filament\Forms\Components\Toggle;
-
-Toggle::make('is_admin')->inline()
-```
-
-![](https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png)
-
-When the toggle is stacked, its label is above it:
-
-```php
-use Filament\Forms\Components\Toggle;
-
-Toggle::make('is_admin')->inline(false)
-```
-
-![](https://user-images.githubusercontent.com/41773797/147613161-43bfa094-0916-4e01-b86d-dbcf8ee63a17.png)
-
-Toggles may also use an "on icon" and an "off icon". These are displayed on its handle and could provide a greater indication to what your field represents. The parameter to each method must contain the name of a Blade icon component:
+Toggles may also use an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to represent the "on" and "off" state of the button. To add an icon to the "on" state, use the `onIcon()` method. To add an icon to the "off" state, use the `offIcon()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;
@@ -61,7 +39,9 @@ Toggle::make('is_admin')
     ->offIcon('heroicon-m-user')
 ```
 
-You may also customize the color representing each state. These may be either `primary`, `secondary`, `success`, `warning` or `danger`:
+## Customizing the color of the toggle button
+
+You may also customize the color representing the "on" or "off" state of the toggle. These may be either `primary`, `secondary`, `success`, `warning` or `danger`. To add a color to the "on" state, use the `onColor()` method. To add a color to the "off" state, use the `offColor()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;
@@ -72,3 +52,55 @@ Toggle::make('is_admin')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png)
+
+## Positioning the label above
+
+Toggle fields have two layout modes, inline and stacked. By default, they are inline.
+
+When the toggle is inline, its label is adjacent to it:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->inline()
+```
+
+![](https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png)
+
+When the toggle is stacked, its label is above it:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_admin')
+    ->inline(false)
+```
+
+![](https://user-images.githubusercontent.com/41773797/147613161-43bfa094-0916-4e01-b86d-dbcf8ee63a17.png)
+
+## Toggle validation
+
+As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to toggles.
+
+### Accepted validation
+
+You may ensure that the toggle is "on" using the `accepted()` method:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('terms_of_service')
+    ->accepted()
+```
+
+### Declined validation
+
+You may ensure that the toggle is "off" using the `declined()` method:
+
+```php
+use Filament\Forms\Components\Toggle;
+
+Toggle::make('is_under_18')
+    ->declined()
+```

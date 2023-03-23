@@ -242,7 +242,7 @@ The field is required, and the date of birth cannot be in the future, so we can 
 
 #### "Owner" select
 
-When creating a pet, it'll be important to store its owner. This is already set up as a `BelongsTo` relationship, and we can easily load options from the `owners` table by using the [`relationship()` method of the select](../forms/fields/select#populating-automatically-from-a-relationship):
+When creating a pet, it'll be important to store its owner. This is already set up as a `BelongsTo` relationship, and we can easily load options from the `owners` table by using the [`relationship()` method of the select](../forms/fields/select#integrating-with-an-eloquent-relationship):
 
 ```php
 use Filament\Forms;

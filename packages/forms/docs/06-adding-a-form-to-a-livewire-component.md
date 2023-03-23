@@ -136,8 +136,8 @@ It's important that you use the `$this->form->fill()` method instead of assignin
 
 Giving the `$form` access to a model is useful for a few reasons:
 
-- It allows fields within that form to load information from that model. For example, select fields can [load their options from the database](fields/select#populating-automatically-from-a-relationship) automatically.
-- The form can load and save the model's relationship data automatically. For example, you have an Edit Post form, with a [Repeater](fields/repeater#populating-automatically-from-a-relationship) which manages comments associated with that post. Filament will automatically load the comments for that post when you call `$this->form->fill([...])`, and save them back to the relationship when you call `$this->form->getState()`.
+- It allows fields within that form to load information from that model. For example, select fields can [load their options from the database](fields/select#integrating-with-an-eloquent-relationship) automatically.
+- The form can load and save the model's relationship data automatically. For example, you have an Edit Post form, with a [Repeater](fields/repeater#integrating-with-an-eloquent-relationship) which manages comments associated with that post. Filament will automatically load the comments for that post when you call `$this->form->fill([...])`, and save them back to the relationship when you call `$this->form->getState()`.
 - Validation rules like `exists()` and `unique()` can automatically retrieve the database table name from the model.
 
 It is advised to always pass the model to the form when there is one. As explained, it unlocks many new powers of the Filament form builder.

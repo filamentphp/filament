@@ -16,15 +16,15 @@ Filament provides many ways to manage relationships in the app. Which feature yo
 
 > These are compatible with `BelongsTo`, `MorphTo` and `BelongsToMany` relationships.
 
-Using a [select](../../forms/fields/select#populating-automatically-from-a-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../../forms/fields/select#creating-new-records), without leaving the page.
+Using a [select](../../forms/fields/select#integrating-with-an-eloquent-relationship), users will be able to choose from a list of existing records. You may also [add a button that allows you to create a new record inside a modal](../../forms/fields/select#creating-new-records), without leaving the page.
 
-When using a `BelongsToMany` relationship with a select, you'll be able to select multiple options, not just one. Records will be automatically added to your pivot table when you submit the form. If you wish, you can swap out the multi-select dropdown with a simple [checkbox list](../../forms/fields/checkbox-list#populating-automatically-from-a-relationship). Both components work in the same way.
+When using a `BelongsToMany` relationship with a select, you'll be able to select multiple options, not just one. Records will be automatically added to your pivot table when you submit the form. If you wish, you can swap out the multi-select dropdown with a simple [checkbox list](../../forms/fields/checkbox-list#integrating-with-an-eloquent-relationship). Both components work in the same way.
 
 ### Repeaters - CRUD multiple related records inside the owner's form
 
 > These are compatible with `HasMany` and `MorphMany` relationships.
 
-[Repeaters](../../forms/fields/repeater#populating-automatically-from-a-relationship) are standard form components, which can render a repeatable set of fields infinitely. They can be hooked up to a relationship, so records are automatically read, created, updated, and deleted from the related table. They live inside the main form schema, and can be used inside resource pages, as well as nesting within action modals.
+[Repeaters](../../forms/fields/repeater#integrating-with-an-eloquent-relationship) are standard form components, which can render a repeatable set of fields infinitely. They can be hooked up to a relationship, so records are automatically read, created, updated, and deleted from the related table. They live inside the main form schema, and can be used inside resource pages, as well as nesting within action modals.
 
 From a UX perspective, this solution is only suitable if your related model only has a few fields. Otherwise, the form can get very long.
 

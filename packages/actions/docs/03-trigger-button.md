@@ -81,7 +81,7 @@ Action::make('create')
 
 ## Setting an icon
 
-Buttons may have an icon to add more detail to the UI. You can set the icon using the `icon()` method:
+Buttons may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to add more detail to the UI. You can set the icon using the `icon()` method:
 
 ```php
 Action::make('edit')
@@ -205,7 +205,7 @@ Action::make('edit')
 
 <PreviewScreenshot name="actions/trigger-button/inline-icon" alt="Inline icon button" version="3.x" />
 
-## Passing extra attributes
+## Adding extra HTML attributes
 
 You can pass extra HTML attributes to the button which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
 

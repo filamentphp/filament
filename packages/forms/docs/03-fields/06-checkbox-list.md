@@ -71,7 +71,7 @@ You may allow users to toggle all checkboxes at once using the `bulkToggleable()
      ->bulkToggleable()
  ```
 
-## Populating automatically from a relationship
+## Integrating with an Eloquent relationship
 
 You may employ the `relationship()` method to configure a relationship to automatically retrieve and save options from:
 

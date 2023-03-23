@@ -12,7 +12,7 @@ TextInput::make('name')
 
 ![](https://user-images.githubusercontent.com/41773797/147612753-1d4514ea-dba9-4f5c-9efc-08f09608e90d.png)
 
-## Setting the input type
+## Setting the HTML input type
 
 You may set the type of string using a set of methods. Some, such as `email()`, also provide validation:
 
@@ -20,10 +20,10 @@ You may set the type of string using a set of methods. Some, such as `email()`, 
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('text')
-    ->email()
-    ->numeric()
-    ->password()
-    ->tel()
+    ->email() // or
+    ->numeric() // or
+    ->password() // or
+    ->tel() // or
     ->url()
 ```
 
@@ -32,71 +32,37 @@ You may instead use the `type()` method to pass another [HTML input type](https:
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('backgroundColor')->type('color')
+TextInput::make('backgroundColor')
+    ->type('color')
 ```
 
-## Validation
+## Setting the HTML input mode
 
-### Length validation
-
-You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
+You may set the [`inputmode` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#attributes) of the input using the `inputMode()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')
-    ->minLength(2)
-    ->maxLength(255)
+TextInput::make('text')
+    ->numeric()
+    ->inputMode('decimal')
 ```
 
-You may also specify the exact length of the input by setting the `length()`. This method adds both frontend and backend validation:
+## Setting the numeric step
 
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('code')->length(8)
-```
-
-### Size validation
-
-In addition, you may validate the minimum and maximum value of the input by setting the `minValue()` and `maxValue()` methods:
+You may set the [`step` attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#step) of the input using the `step()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('number')
     ->numeric()
-    ->minValue(1)
-    ->maxValue(100)
+    ->step(100)
 ```
 
-### Phone number validation
+## Autocompleting text
 
-When using a `tel()` field, the value will be validated using: `/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/`.
-
-If you wish to change that, then you can use the `telRegex()` method:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('phone')
-    ->tel()
-    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
-```
-
-Alternatively, to customize the `telRegex()` across all fields, use a service provider:
-
-```php
-use Filament\Forms\Components\TextInput;
-
-TextInput::configureUsing(function (TextInput $component): void {
-    $component->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/');
-});
-```
-
-## Autocomplete
-
-You may set the autocomplete configuration for the text field using the `autocomplete()` method:
+You may allow the text to be [autocompleted by the browser](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocomplete) using the `autocomplete()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -116,9 +82,9 @@ TextInput::make('password')
     ->disableAutocomplete()
 ```
 
-For more complex autocomplete options, text inputs also support [datalists](#datalists).
+For more complex autocomplete options, text inputs also support [datalists](#autocompleting-text-with-a-datalist).
 
-## Datalists
+### Autocompleting text with a datalist
 
 You may specify [datalist](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/datalist) options for a text input using the `datalist()` method:
 
@@ -137,9 +103,9 @@ TextInput::make('manufacturer')
 
 ![](https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png)
 
-Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking for strictly predefined options, check out [select fields](select).
+Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking to strictly limit users to a set of predefined options, check out the [select field](select).
 
-## Affixes
+## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
 
@@ -154,7 +120,9 @@ TextInput::make('domain')
 
 ![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
 
-You may place a icon before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+### Using icons as affixes
+
+You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -163,23 +131,6 @@ TextInput::make('domain')
     ->url()
     ->prefixIcon('heroicon-m-arrow-top-right-on-square')
     ->suffixIcon('heroicon-m-arrow-top-right-on-square')
-```
-
-You may render an action before and after the input using the `prefixAction()` and `suffixAction()` methods:
-
-```php
-use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\TextInput;
-
-TextInput::make('domain')
-    ->suffixAction(fn (?string $state): Action => 
-        Action::make('visit')
-            ->icon('heroicon-m-arrow-top-right-on-square')
-            ->url(
-                filled($state) ? "https://{$state}" : null,
-                shouldOpenInNewTab: true,
-            ),
-    )
 ```
 
 ## Input masking
@@ -269,4 +220,65 @@ You can also control whether the number is signed or not. While the default is t
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
+```
+
+## Text input validation
+
+As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to text inputs.
+
+### Length validation
+
+You may limit the length of the input by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->minLength(2)
+    ->maxLength(255)
+```
+
+You can also specify the exact length of the input by setting the `length()`. This method adds both frontend and backend validation:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('code')->length(8)
+```
+
+### Size validation
+
+You may validate the minimum and maximum value of a numeric input by setting the `minValue()` and `maxValue()` methods:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('number')
+    ->numeric()
+    ->minValue(1)
+    ->maxValue(100)
+```
+
+### Phone number validation
+
+When using a `tel()` field, the value will be validated using: `/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/`.
+
+If you wish to change that, then you can use the `telRegex()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('phone')
+    ->tel()
+    ->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/')
+```
+
+Alternatively, to customize the `telRegex()` across all fields, use a service provider:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::configureUsing(function (TextInput $component): void {
+    $component->telRegex('/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/');
+});
 ```

@@ -113,18 +113,18 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'deselectAll';
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $titleAttribute, ?Closure $callback = null): static
+    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
     {
+        $this->relationship = $relationshipName ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
-        $this->relationship = $relationshipName;
 
-        $this->options(static function (CheckboxList $component) use ($callback): array {
+        $this->options(static function (CheckboxList $component) use ($modifyOptionsQueryUsing): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query();
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }

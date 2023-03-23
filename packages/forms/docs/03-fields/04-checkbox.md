@@ -50,3 +50,29 @@ Checkbox::make('is_admin')->inline(false)
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613119-0bc731dd-fcdd-4c1a-9a26-cce2b0f589d2.png)
+
+## Checkbox validation
+
+As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to checkboxes.
+
+### Accepted validation
+
+You may ensure that the checkbox is checked using the `accepted()` method:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('terms_of_service')
+    ->accepted()
+```
+
+### Declined validation
+
+You may ensure that the checkbox is not checked using the `declined()` method:
+
+```php
+use Filament\Forms\Components\Checkbox;
+
+Checkbox::make('is_under_18')
+    ->declined()
+```

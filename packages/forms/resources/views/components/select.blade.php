@@ -38,6 +38,10 @@
                 :suffix="$hasSuffix"
                 class="w-full"
             >
+                @php
+                    $isHtmlAllowed = $isHtmlAllowed();
+                @endphp
+
                 @if ($canSelectPlaceholder())
                     <option value="">@if (! $isDisabled) {{ $getPlaceholder() }} @endif</option>
                 @endif
@@ -47,7 +51,11 @@
                         value="{{ $value }}"
                         @disabled($isOptionDisabled($value, $label))
                     >
-                        {{ $label }}
+                        @if ($isHtmlAllowed)
+                            {!! $label !!}
+                        @else
+                            {{ $label }}
+                        @endif
                     </option>
                 @endforeach
             </x-filament::input.select>

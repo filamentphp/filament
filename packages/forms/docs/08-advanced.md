@@ -21,7 +21,7 @@ DatePicker::make('date_of_birth')
         }
     })
 
-Select::make('userId')
+Select::make('user_id')
     ->options(function () {
         return User::all()->pluck('name', 'id');
     })
@@ -146,13 +146,13 @@ Sometimes, you may wish to conditionally hide any form component based on the va
 use Filament\Forms\Get;
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('newPassword')
+TextInput::make('new_password')
     ->password()
     ->reactive()
 
-TextInput::make('newPasswordConfirmation')
+TextInput::make('new_password_confirmation')
     ->password()
-    ->hidden(fn (Get $get) => $get('newPassword') !== null)
+    ->hidden(fn (Get $get) => $get('new_password') !== null)
 ```
 
 The field/s you're depending on should be `reactive()`, to ensure the Livewire component is reloaded when they are updated.
@@ -213,7 +213,7 @@ In this example, the `passwordConfirmation` field will not be present in the arr
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('passwordConfirmation')
+TextInput::make('password_confirmation')
     ->password()
     ->dehydrated(false)
 ```
