@@ -13,7 +13,7 @@
             'center' => match (config('notifications.layout.alignment.vertical')) {
                 'top' => '-translate-y-12',
                 'bottom' => 'translate-y-12',
-                'center' => '',
+                'center' => null,
             },
         },
     ])"
