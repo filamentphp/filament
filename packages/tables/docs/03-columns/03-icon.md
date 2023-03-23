@@ -16,7 +16,7 @@ IconColumn::make('is_featured')
     ])
 ```
 
-You may also pass a callback to activate an option, accepting the cell's `$state` & `$record`:
+You may also pass a callback to activate an option, accepting the cell's `$state` and `$record`:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
