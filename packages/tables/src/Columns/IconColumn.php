@@ -105,7 +105,7 @@ class IconColumn extends Column
         foreach ($this->getOptions() as $icon => $condition) {
             if (is_numeric($icon)) {
                 $stateIcon = $condition;
-            } elseif ($condition instanceof Closure && $condition($state)) {
+            } elseif ($condition instanceof Closure && $condition($state, $this->getRecord())) {
                 $stateIcon = $icon;
             } elseif ($condition === $state) {
                 $stateIcon = $icon;
