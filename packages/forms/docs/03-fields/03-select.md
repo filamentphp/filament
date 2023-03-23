@@ -97,7 +97,7 @@ Select::make('technologies')
 
 > If you're building a form inside your Livewire component, make sure you have set up the [form's model](../adding-a-form-to-a-livewire-component#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
 
-You may employ the `relationship()` method of the `Select` to configure a `BelongsTo` relationship to automatically retrieve options from. The first parameter is the name of an Eloquent relationship defined on your model, and the second parameter is the name of the "title" column that will be used to generate a label for each option:
+You may employ the `relationship()` method of the `Select` to configure a `BelongsTo` relationship to automatically retrieve options from. The `titleAttribute` is the name of a column that will be used to generate a label for each option:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -106,7 +106,7 @@ Select::make('author_id')
     ->relationship(relationshipName: 'author', titleAttribute: 'name')
 ```
 
-The `multiple()` method may be used in combination with `relationship()` to use a `BelongsToMany` relationship. Filament will load the options from the relationship, and save them back to the relationship's pivot table when the form is submitted:
+The `multiple()` method may be used in combination with `relationship()` to use a `BelongsToMany` relationship. Filament will load the options from the relationship, and save them back to the relationship's pivot table when the form is submitted. If a `relationshipName` is not provided, Filament will use the field name as the relationship name:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -153,7 +153,7 @@ Select::make('author_id')
     ->relationship(
         relationshipName: 'author',
         titleAttribute: 'name',
-        modifyOptionsQueryUsing: fn (Builder $query) => $query->withTrashed()
+        modifyOptionsQueryUsing: fn (Builder $query) => $query->withTrashed(),
     )
 ```
 
@@ -172,7 +172,7 @@ Select::make('author_id')
     ->relationship(relationshipName: 'author', titleAttribute: 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label.
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform an option's Eloquent model into a label:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -399,7 +399,20 @@ use Filament\Forms\Components\Select;
 Select::make('author_id')
     ->relationship(relationshipName: 'author', titleAttribute: 'name')
     ->searchable(['name', 'email'])
-    ->searchPrompt('Search authors by their name or email address.')
+    ->searchPrompt('Search authors by their name or email address')
+```
+
+## Setting a custom searching message
+
+When you're using a searchable select or multi-select, you may want to display a custom message while the search results are being loaded. You can do this using the `searchingMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->searchingMessage('Searching authors...')
 ```
 
 ## Tweaking the search debounce
