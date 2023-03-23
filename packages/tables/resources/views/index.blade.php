@@ -355,7 +355,17 @@
         >
             @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                 @if (! $isReordering)
-                    <div class="bg-gray-500/5 flex items-center gap-4 px-4 border-b dark:border-gray-700">
+                    @php
+                        $sortableColumns = array_filter(
+                            $columns,
+                            fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
+                        );
+                    @endphp
+
+                    <div @class([
+                        'bg-gray-500/5 flex items-center gap-4 px-4 border-b dark:border-gray-700',
+                        'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
+                    ])>
                         @if ($isSelectionEnabled)
                             <x-filament-tables::checkbox
                                 :label="__('filament-tables::table.fields.bulk_select_page.label')"
@@ -376,13 +386,6 @@
                                 @class(['hidden' => $isReordering])
                             />
                         @endif
-
-                        @php
-                            $sortableColumns = array_filter(
-                                $columns,
-                                fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
-                            );
-                        @endphp
 
                         @if (count($sortableColumns))
                             <div

@@ -12,6 +12,7 @@
             'center' => match (static::$verticalAlignment) {
                 'top' => '-translate-y-12',
                 'bottom' => 'translate-y-12',
+                'center' => null,
             },
         },
     ])"
