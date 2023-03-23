@@ -85,8 +85,7 @@ trait HasState
             $relationship instanceof HasMany ||
             $relationship instanceof BelongsToMany ||
             $relationship instanceof MorphMany ||
-            ($relationship instanceof \Staudenmeir\EloquentHasManyDeep\HasManyDeep &&
-            ! $relationship instanceof \Staudenmeir\EloquentHasManyDeep\HasOneDeep)
+            ($relationship instanceof \Staudenmeir\EloquentHasManyDeep\HasManyDeep && (! $relationship instanceof \Staudenmeir\EloquentHasManyDeep\HasOneDeep))
         )) {
             return null;
         }
