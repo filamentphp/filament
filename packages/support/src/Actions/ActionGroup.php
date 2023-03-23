@@ -32,7 +32,10 @@ class ActionGroup extends ViewComponent
 
     public static function make(array $actions): static
     {
-        return app(static::class, ['actions' => $actions]);
+        $static = app(static::class, ['actions' => $actions]);
+        $static->configure();
+
+        return $static;
     }
 
     public function getLabel(): ?string
