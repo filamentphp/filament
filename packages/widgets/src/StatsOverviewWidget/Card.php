@@ -100,7 +100,7 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
-    public function descriptionIcon(?string $icon, ?string $position = null): static
+    public function descriptionIcon(?string $icon, ?string $position = 'after'): static
     {
         $this->descriptionIcon = $icon;
         $this->descriptionIconPosition = $position;
