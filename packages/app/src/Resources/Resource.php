@@ -424,9 +424,9 @@ abstract class Resource
     {
         $context ??= Filament::getCurrentContext()->getId();
 
-        $slug = static::getSlug();
-
-        return "filament.{$context}.resources.{$slug}";
+        return (string) str(static::getSlug())
+            ->replace('/', '.')
+            ->prepend("filament.{$context}.resources.");
     }
 
     public static function getRecordRouteKeyName(): ?string
