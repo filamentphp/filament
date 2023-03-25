@@ -4,7 +4,6 @@ namespace Filament\Forms\Components;
 
 class Placeholder extends Component
 {
-    use Concerns\HasFallbackLabel;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;

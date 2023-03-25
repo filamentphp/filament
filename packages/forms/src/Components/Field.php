@@ -6,7 +6,6 @@ class Field extends Component implements Contracts\HasValidationRules
 {
     use Concerns\CanBeAutofocused;
     use Concerns\CanBeValidated;
-    use Concerns\HasFallbackLabel;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;

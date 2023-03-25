@@ -101,19 +101,6 @@ class MorphToSelect extends Component
         return $this;
     }
 
-    public function getLabel(): string | Htmlable | null
-    {
-        $label = parent::getLabel() ?? (string) Str::of($this->getName())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
-
-        return (is_string($label) && $this->shouldTranslateLabel) ?
-            __($label) :
-            $label;
-    }
-
     public function getRelationship(): MorphTo
     {
         return $this->getModelInstance()->{$this->getName()}();
