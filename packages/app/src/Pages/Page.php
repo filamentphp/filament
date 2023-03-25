@@ -74,9 +74,9 @@ abstract class Page extends BasePage
     {
         $context ??= Filament::getCurrentContext()->getId();
 
-        $slug = static::getSlug();
-
-        return "filament.{$context}.pages.{$slug}";
+        return (string) str(static::getSlug())
+            ->replace('/', '.')
+            ->prepend("filament.{$context}.pages.");
     }
 
     /**

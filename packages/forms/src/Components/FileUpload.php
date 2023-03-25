@@ -40,7 +40,7 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $shouldAppendFiles = false;
 
-    protected bool | Closure $shouldOrientImageFromExif = true;
+    protected bool | Closure $shouldOrientImagesFromExif = true;
 
     protected string | Closure $uploadButtonPosition = 'right';
 
@@ -138,9 +138,19 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function orientImagesFromExif(bool | Closure $condition = true): static
+    {
+        $this->shouldOrientImagesFromExif = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `orientImagesFromExif()` instead.
+     */
     public function orientImageFromExif(bool | Closure $condition = true): static
     {
-        $this->shouldOrientImageFromExif = $condition;
+        $this->shouldOrientImagesFromExif($condition);
 
         return $this;
     }
@@ -250,8 +260,8 @@ class FileUpload extends BaseFileUpload
         return (bool) $this->evaluate($this->shouldAppendFiles);
     }
 
-    public function shouldOrientImageFromExif(): bool
+    public function shouldOrientImagesFromExif(): bool
     {
-        return (bool) $this->evaluate($this->shouldOrientImageFromExif);
+        return (bool) $this->evaluate($this->shouldOrientImagesFromExif);
     }
 }

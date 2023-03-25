@@ -12,13 +12,13 @@ FileUpload::make('attachment')
 
 ![](https://user-images.githubusercontent.com/41773797/147613556-62c62153-4d21-4801-8a71-040d528d5757.png)
 
-> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
+> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/spatie-media-library) for more information.
 
 ## Configuring the storage disk and directory
 
-By default, files will be uploaded publicly to your default storage disk.
+By default, files will be uploaded publicly to your storage disk defined in the [configuration file](../installation#publishing-configuration). You can also set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this.
 
-To change the disk and directory that files are saved in, and their visibility, use the `disk()`, `directory()` and `visibility` methods:
+To change the disk and directory for a specific field, and the visibility of files, use the `disk()`, `directory()` and `visibility()` methods:
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -38,7 +38,8 @@ You may also upload multiple files. This stores URLs in JSON:
 ```php
 use Filament\Forms\Components\FileUpload;
 
-FileUpload::make('attachments')->multiple()
+FileUpload::make('attachments')
+    ->multiple()
 ```
 
 If you're saving the file URLs using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
@@ -56,25 +57,33 @@ class Message extends Model
 }
 ```
 
-## Customizing file names
+## Controlling file names
 
-By default, a random file name will be generated for newly-uploaded files. To instead preserve the original filenames of the uploaded files, use the `preserveFilenames()` method:
+By default, a random file name will be generated for newly-uploaded files. This is to ensure that there are never any conflicts with existing files.
+
+### Preserving original file names
+
+To preserve the original filenames of the uploaded files, use the `preserveFilenames()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
-FileUpload::make('attachment')->preserveFilenames()
+FileUpload::make('attachment')
+    ->preserveFilenames()
 ```
 
-You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the callback:
+### Generating custom file names
+
+You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the closure based on the `$file` that was uploaded:
 
 ```php
 use Livewire\TemporaryUploadedFile;
 
 FileUpload::make('attachment')
-    ->getUploadedFileNameForStorageUsing(function (TemporaryUploadedFile $file): string {
-        return (string) str($file->getClientOriginalName())->prepend('custom-prefix-');
-    })
+    ->getUploadedFileNameForStorageUsing(
+        fn (TemporaryUploadedFile $file): string => (string) str($file->getClientOriginalName())
+            ->prepend('custom-prefix-'),
+    )
 ```
 
 ### Storing original file names independently
@@ -89,51 +98,11 @@ FileUpload::make('attachments')
     ->storeFileNamesIn('attachment_file_names')
 ```
 
-`attachment_file_names` will now store the original file name/s of your uploaded files.
+`attachment_file_names` will now store the original file name/s of your uploaded files, so you can save them to the database when the form is submitted. If you're uploading `multiple()` files, make sure that you add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to this Eloquent model property too.
 
-## Validation
+## Cropping and resizing images
 
-> To customize Livewire's default file upload validation rules, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
-
-### File type validation
-
-You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types. You may also use the `image()` method as shorthand to allow all image MIME types.
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('document')->acceptedFileTypes(['application/pdf'])
-FileUpload::make('image')->image()
-```
-
-### File size validation
-
-You may also restrict the size of uploaded files, in kilobytes:
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('attachment')
-    ->minSize(512)
-    ->maxSize(1024)
-```
-
-### Number of files validation
-
-You may customize the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
-
-```php
-use Filament\Forms\Components\FileUpload;
-
-FileUpload::make('attachments')
-    ->multiple()
-    ->minFiles(2)
-    ->maxFiles(5)
-```
-
-## Manipulating images
-
-Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageResizeMode()`, `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for the other methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
+Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
 
 ```php
 use Filament\Forms\Components\FileUpload;
@@ -167,36 +136,145 @@ FileUpload::make('attachment')
 
 ## Reordering files
 
-You can also enable the re-ordering of uploaded files using the `enableReordering()` method:
+You can also allow users to re-order uploaded files using the `reorderable()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
     ->multiple()
-    ->enableReordering()
+    ->reorderable()
+```
+
+When using this method, FilePond may add newly-uploaded files to the beginning of the list, instead of the end. To fix this, use the `appendFiles()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->reorderable()
+    ->appendFiles()
 ```
 
 ## Opening files in a new tab
 
-You can add a button to open each file in a new tab with the `enableOpen()` method:
+You can add a button to open each file in a new tab with the `openable()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
     ->multiple()
-    ->enableOpen()
+    ->openable()
 ```
 
 ## Downloading files
 
-If you wish to add a download button to each file instead, you can use the `enableDownload()` method:
+If you wish to add a download button to each file instead, you can use the `downloadable()` method:
 
 ```php
 use Filament\Forms\Components\FileUpload;
 
 FileUpload::make('attachments')
     ->multiple()
-    ->enableDownload()
+    ->downloadable()
+```
+
+## Previewing files
+
+By default, some file types can be previewed in FilePond. If you wish to disable the preview for all files, you can use the `previewable(false)` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->previewable(false)
+```
+
+## Moving files instead of copying when the form is submitted
+
+By default, files are initially uploaded to Livewire's temporary storage directory, and then copied to the destination directory when the form is submitted. If you wish to move the files instead, providing that temporary uploads are stored on the same disk as permanent files, you can use the `moveFiles()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->moveFiles()
+```
+
+## Preventing files from being stored permanently
+
+If you wish to prevent files from being stored permanently when the form is submitted, you can use the `storeFiles(false)` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->storeFiles(false)
+```
+
+When the form is submitted a temporary file upload object will be returned instead of a permanently stored file path. This is perfect for temporary files like imported CSVs.
+
+## Orienting images from their EXIF data
+
+By default, FilePond will automatically orient images based on their EXIF data. If you wish to disable this behaviour, you can use the `orientImagesFromExif(false)` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->orientImagesFromExif(false)
+```
+
+## File upload validation
+
+As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to file uploads.
+
+Since Filament is powered by Livewire and uses its file upload system, you will want to refer to the default [Livewire file upload validation rules](https://laravel-livewire.com/docs/file-uploads#global-validation) as well.
+
+### File type validation
+
+You may restrict the types of files that may be uploaded using the `acceptedFileTypes()` method, and passing an array of MIME types.
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('document')
+    ->acceptedFileTypes(['application/pdf'])
+```
+
+You may also use the `image()` method as shorthand to allow all image MIME types.
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+```
+
+### File size validation
+
+You may also restrict the size of uploaded files, in kilobytes:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->minSize(512)
+    ->maxSize(1024)
+```
+
+### Number of files validation
+
+You may customize the number of files that may be uploaded, using the `minFiles()` and `maxFiles()` methods:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->multiple()
+    ->minFiles(2)
+    ->maxFiles(5)
 ```

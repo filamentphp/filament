@@ -219,21 +219,21 @@ export default function markdownEditorFormComponent({
                 ['bold', 'italic', 'strike', 'link'].some((button) =>
                     toolbarButtons.includes(button),
                 ) &&
-                ['h1'].some((button) => toolbarButtons.includes(button))
+                ['heading'].some((button) => toolbarButtons.includes(button))
             ) {
                 toolbar.push('|')
             }
 
-            if (toolbarButtons.includes('h1')) {
+            if (toolbarButtons.includes('heading')) {
                 toolbar.push({
                     name: 'heading',
                     action: EasyMDE.toggleHeadingSmaller,
-                    text: 'Heading',
+                    text: translations.toolbar_buttons?.heading,
                 })
             }
 
             if (
-                ['h1'].some((button) => toolbarButtons.includes(button)) &&
+                ['heading'].some((button) => toolbarButtons.includes(button)) &&
                 ['blockquote', 'codeBlock', 'bulletList', 'orderedList'].some(
                     (button) => toolbarButtons.includes(button),
                 )

@@ -112,7 +112,7 @@ return [
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
             'code_block' => 'Code block',
-            'h' => 'Heading',
+            'heading' => 'Heading',
             'italic' => 'Italic',
             'link' => 'Link',
             'ordered_list' => 'Numbered list',

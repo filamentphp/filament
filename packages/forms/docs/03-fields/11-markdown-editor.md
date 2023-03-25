@@ -12,9 +12,9 @@ MarkdownEditor::make('content')
 
 ![](https://user-images.githubusercontent.com/41773797/147613631-0f9254aa-0abb-4a2e-b9d7-bda1a01b8d57.png)
 
-## Toolbar buttons
+## Customizing the toolbar buttons
 
-You may enable / disable toolbar buttons using a range of convenient methods:
+You may set the toolbar buttons for the editor using the `toolbarButtons()` method:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -22,34 +22,34 @@ use Filament\Forms\Components\MarkdownEditor;
 MarkdownEditor::make('content')
     ->toolbarButtons([
         'attachFiles',
+        'blockquote',
         'bold',
         'bulletList',
         'codeBlock',
-        'edit',
+        'heading',
         'italic',
         'link',
         'orderedList',
-        'preview',
+        'redo',
         'strike',
+        'table',
+        'undo',
     ])
+```
+
+Alternatively, you may disable specific buttons using the `disableToolbarButtons()` method:
+
+```php
+use Filament\Forms\Components\MarkdownEditor;
+
 MarkdownEditor::make('content')
     ->disableToolbarButtons([
-        'attachFiles',
-        'codeBlock',
-    ])
-MarkdownEditor::make('content')
-    ->disableAllToolbarButtons()
-    ->enableToolbarButtons([
-        'bold',
-        'bulletList',
-        'edit',
-        'italic',
-        'preview',
+        'blockquote',
         'strike',
     ])
 ```
 
-## Image uploads
+## Uploading images to the editor
 
 You may customize how images are uploaded using configuration methods:
 

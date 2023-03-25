@@ -46,9 +46,9 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldPreserveFilenames = false;
 
-    protected bool | Closure $shouldMoveFile = false;
+    protected bool | Closure $shouldMoveFiles = false;
 
-    protected bool | Closure $shouldStoreFile = true;
+    protected bool | Closure $shouldStoreFiles = true;
 
     protected string | Closure | null $fileNamesStatePath = null;
 
@@ -154,7 +154,7 @@ class BaseFileUpload extends Field
             }
 
             /** @phpstan-ignore-next-line */
-            if ($component->shouldMoveFile() && $component->getDiskName() == $file->disk) {
+            if ($component->shouldMoveFiles() && ($component->getDiskName() == $file->disk)) {
                 $newPath = trim($component->getDirectory() . '/' . $component->getUploadedFileNameForStorage($file), '/');
 
                 $component->getDisk()->move($file->path(), $newPath);
@@ -297,9 +297,19 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function moveFiles(bool | Closure $condition = true): static
+    {
+        $this->shouldMoveFiles = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `moveFiles()` instead.
+     */
     public function moveFile(bool | Closure $condition = true): static
     {
-        $this->shouldMoveFile = $condition;
+        $this->moveFiles($condition);
 
         return $this;
     }
@@ -351,9 +361,19 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function storeFiles(bool | Closure $condition = true): static
+    {
+        $this->shouldStoreFiles = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `storeFiles()` instead.
+     */
     public function storeFile(bool | Closure $condition = true): static
     {
-        $this->shouldStoreFile = $condition;
+        $this->storeFiles($condition);
 
         return $this;
     }
@@ -462,14 +482,14 @@ class BaseFileUpload extends Field
         return (bool) $this->evaluate($this->shouldPreserveFilenames);
     }
 
-    public function shouldMoveFile(): bool
+    public function shouldMoveFiles(): bool
     {
-        return $this->evaluate($this->shouldMoveFile);
+        return $this->evaluate($this->shouldMoveFiles);
     }
 
-    public function shouldStoreFile(): bool
+    public function shouldStoreFiles(): bool
     {
-        return $this->evaluate($this->shouldStoreFile);
+        return $this->evaluate($this->shouldStoreFiles);
     }
 
     public function getFileNamesStatePath(): ?string
@@ -644,7 +664,7 @@ class BaseFileUpload extends Field
             return;
         }
 
-        if (! $this->shouldStoreFile()) {
+        if (! $this->shouldStoreFiles()) {
             return;
         }
 

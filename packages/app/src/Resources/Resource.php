@@ -438,7 +438,11 @@ abstract class Resource
     {
         $slug = static::getSlug();
 
-        Route::name("{$slug}.")
+        Route::name(
+            (string) str($slug)
+                ->replace('/', '.')
+                ->append('.'),
+        )
             ->prefix($slug)
             ->middleware(static::getRouteMiddleware($context))
             ->group(function () use ($context) {

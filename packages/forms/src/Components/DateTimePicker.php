@@ -57,8 +57,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
      */
     protected array | Closure $disabledDates = [];
 
-    public static int $defaultFirstDayOfWeek = 1;
-
     public static string $defaultDateDisplayFormat = 'M j, Y';
 
     public static string $defaultDateTimeDisplayFormat = 'M j, Y H:i';
@@ -367,7 +365,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
 
     public function getFirstDayOfWeek(): int
     {
-        return $this->firstDayOfWeek ?? static::$defaultFirstDayOfWeek;
+        return $this->firstDayOfWeek ?? 1;
     }
 
     public function getFormat(): string
