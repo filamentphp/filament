@@ -2,9 +2,6 @@
 
 namespace Filament\Forms\Components;
 
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Str;
-
 class Placeholder extends Component
 {
     use Concerns\HasHelperText;
@@ -51,14 +48,6 @@ class Placeholder extends Component
     public function getId(): string
     {
         return parent::getId() ?? $this->getStatePath();
-    }
-
-    public function getLabel(): string | Htmlable | null
-    {
-        return parent::getLabel() ?? (string) Str::of($this->getName())
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
     }
 
     public function getContent()
