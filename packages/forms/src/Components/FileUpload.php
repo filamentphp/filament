@@ -150,7 +150,7 @@ class FileUpload extends BaseFileUpload
      */
     public function orientImageFromExif(bool | Closure $condition = true): static
     {
-        $this->shouldOrientImagesFromExif($condition);
+        $this->orientImagesFromExif($condition);
 
         return $this;
     }
