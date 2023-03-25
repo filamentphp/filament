@@ -80,7 +80,7 @@
 
         @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
             <x-filament-forms::field-wrapper.error-message>
-                {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
+                {{ $errors->first($statePath) ?: ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
             </x-filament-forms::field-wrapper.error-message>
         @endif
 
