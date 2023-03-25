@@ -73,6 +73,8 @@ livewire(CreatePost::class)
     ->assertHasNoFormErrors();
 ```
 
+> Note that if you have multiple forms on a Livewire component, you can pass the name of a specific form as the second parameter like `assertHasFormErrors(['title' => 'required'], 'createPostForm')` or `assertHasNoFormErrors([], 'createPostForm')`.
+
 ## Form existence
 
 To check that a Livewire component has a form, use `assertFormExists()`:
