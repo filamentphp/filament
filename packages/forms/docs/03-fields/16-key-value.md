@@ -38,11 +38,11 @@ KeyValue::make('meta')
     ->addable(false)
 ```
 
-## Deleting items
+## Deleting rows
 
 An action button is displayed on each item to allow the user to delete it.
 
-### Preventing the user from deleting items
+### Preventing the user from deleting rows
 
 You may prevent the user from deleting rows using the `deletable(false)` method:
 
