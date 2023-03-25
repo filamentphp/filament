@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
@@ -116,7 +117,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 return $file;
             }
 
-            if (! $file->exists()) {
+            try {
+                if (! $file->exists()) {
+                    return null;
+                }
+            } catch (UnableToCheckFileExistence $exception) {
                 return null;
             }
 

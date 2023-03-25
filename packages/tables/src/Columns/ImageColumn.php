@@ -7,6 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\ComponentAttributeBag;
+use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 
 class ImageColumn extends Column
@@ -138,7 +139,11 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        if (! $storage->exists($state)) {
+        try {
+            if (! $storage->exists($state)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
             return null;
         }
 
