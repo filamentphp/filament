@@ -6,6 +6,7 @@ use Closure;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
+use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\TemporaryUploadedFile;
 use Throwable;
 
@@ -107,7 +108,11 @@ trait HasFileAttachments
         /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();
 
-        if (! $storage->exists($file)) {
+        try {
+            if (! $storage->exists($file)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
             return null;
         }
 

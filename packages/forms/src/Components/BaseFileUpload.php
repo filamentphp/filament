@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\TemporaryUploadedFile;
 use Throwable;
 
@@ -69,7 +70,13 @@ class BaseFileUpload extends Field
             }
 
             $files = collect(Arr::wrap($state))
-                ->filter(static fn (string $file) => blank($file) || $component->getDisk()->exists($file))
+                ->filter(static function (string $file) use ($component): bool {
+                    try {
+                        return blank($file) || $component->getDisk()->exists($file);
+                    } catch (UnableToCheckFileExistence $exception) {
+                        return false;
+                    }
+                })
                 ->mapWithKeys(static fn (string $file): array => [((string) Str::uuid()) => $file])
                 ->all();
 
@@ -110,7 +117,11 @@ class BaseFileUpload extends Field
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
 
-            if (! $storage->exists($file)) {
+            try {
+                if (! $storage->exists($file)) {
+                    return null;
+                }
+            } catch (UnableToCheckFileExistence $exception) {
                 return null;
             }
 
@@ -133,7 +144,11 @@ class BaseFileUpload extends Field
         });
 
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
-            if (! $file->exists()) {
+            try {
+                if (! $file->exists()) {
+                    return null;
+                }
+            } catch (UnableToCheckFileExistence $exception) {
                 return null;
             }
 
