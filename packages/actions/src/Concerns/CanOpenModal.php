@@ -212,7 +212,7 @@ trait CanOpenModal
                 default => $color,
             });
 
-        if ($this->modalSubmitAction) {
+        if ($this->modalSubmitAction !== null) {
             $action = $this->evaluate($this->modalSubmitAction, ['action' => $action]) ?? $action;
         }
 
@@ -230,7 +230,7 @@ trait CanOpenModal
             ->cancel()
             ->color('gray');
 
-        if ($this->modalCancelAction) {
+        if ($this->modalCancelAction !== null) {
             $action = $this->evaluate($this->modalCancelAction, ['action' => $action]) ?? $action;
         }
 
