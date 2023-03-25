@@ -72,7 +72,7 @@
                 init: function () {
                     chart = Chart.getChart(this.$refs.canvas);
 
-                    chart !== undefined
+                    (chart !== undefined)
                         ? this.updateChart()
                         : this.initChart()
                 },
