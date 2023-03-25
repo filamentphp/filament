@@ -69,7 +69,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $modifyExpandAllActionUsing = null;
 
-    protected ?Closure $mutateRelationshipDataBeforeAddUsing = null;
+    protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
 
     protected ?Closure $mutateRelationshipDataBeforeFillUsing = null;
 
@@ -657,10 +657,20 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return (bool) $this->evaluate($this->isInset);
     }
 
-    public function orderable(string | Closure | null $column = 'sort'): static
+    public function orderColumn(string | Closure | null $column = 'sort'): static
     {
         $this->orderColumn = $column;
-        $this->disableItemMovement(static fn (Repeater $component): bool => ! $component->evaluate($column));
+        $this->reorderable($column);
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `orderColumn()` instead.
+     */
+    public function orderable(string | Closure | null $column = 'sort'): static
+    {
+        $this->orderColumn($column);
 
         return $this;
     }
@@ -730,7 +740,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $relatedModel = $component->getRelatedModel();
 
-                $itemData = $component->mutateRelationshipDataBeforeAdd($itemData);
+                $itemData = $component->mutateRelationshipDataBeforeCreate($itemData);
 
                 if ($translatableContentDriver) {
                     $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
@@ -875,9 +885,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return filled($this->getRelationshipName());
     }
 
-    public function mutateRelationshipDataBeforeAddUsing(?Closure $callback): static
+    public function mutateRelationshipDataBeforeCreateUsing(?Closure $callback): static
     {
-        $this->mutateRelationshipDataBeforeAddUsing = $callback;
+        $this->mutateRelationshipDataBeforeCreateUsing = $callback;
 
         return $this;
     }
@@ -886,10 +896,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      * @param  array<array<string, mixed>>  $data
      * @return array<array<string, mixed>>
      */
-    public function mutateRelationshipDataBeforeAdd(array $data): array
+    public function mutateRelationshipDataBeforeCreate(array $data): array
     {
-        if ($this->mutateRelationshipDataBeforeAddUsing instanceof Closure) {
-            $data = $this->evaluate($this->mutateRelationshipDataBeforeAddUsing, [
+        if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeCreateUsing, [
                 'data' => $data,
             ]);
         }

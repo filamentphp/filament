@@ -56,9 +56,15 @@ Repeater::make('members')
     ->defaultItems(3)
 ```
 
-## Setting a create item button label
+Note that these default items are only created when the form is loaded without existing data. Inside [app framework resources](../../app/resources#forms) this only works on Create Pages, as Edit Pages will always fill the data from the model.
 
-You may set a label to customize the text that should be displayed in the button for adding a repeater item:
+## Adding items
+
+An action button is displayed below the repeater to allow the user to add a new item.
+
+## Setting the add action button's label
+
+You may set a label to customize the text that should be displayed in the button for adding a repeater item, using the `addActionLabel()` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -67,14 +73,14 @@ Repeater::make('members')
     ->schema([
         // ...
     ])
-    ->addButtonLabel('Add member')
+    ->addActionLabel('Add member')
 ```
 
 ![](https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png)
 
-## Disabling functionality
+### Preventing the user from adding items
 
-You may also prevent the user from adding items, deleting items, or moving items inside the repeater:
+You may prevent the user from adding items to the repeater using the `addable(false)` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -84,13 +90,15 @@ Repeater::make('members')
         // ...
     ])
     ->addable(false)
-    ->deletable(false)
-    ->reorderable(false)
 ```
 
-## Validation
+## Deleting items
 
-You may customize the number of items that may be created, using the `minItems()` and `maxItems()` methods:
+An action button is displayed on each item to allow the user to delete it.
+
+### Preventing the user from deleting items
+
+You may prevent the user from deleting items from the repeater using the `deletable(false)` method:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -99,11 +107,42 @@ Repeater::make('members')
     ->schema([
         // ...
     ])
-    ->minItems(1)
-    ->maxItems(10)
+    ->deletable(false)
 ```
 
-## Collapsible
+## Reordering items
+
+A button is displayed on each item to allow the user to drag and drop to reorder it in the list.
+
+### Preventing the user from reordering items
+
+You may prevent the user from reordering items from the repeater using the `reorderable(false)` method:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->reorderable(false)
+```
+
+### Reordering items with buttons instead of drag and drop
+
+You may use the `reorderableWithButtons()` method to enable reordering items with buttons instead of drag and drop:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->reorderableWithButtons()
+```
+
+## Collapsing items
 
 The repeater may be `collapsible()` to optionally hide content in long forms:
 
@@ -117,7 +156,7 @@ Repeater::make('qualifications')
     ->collapsible()
 ```
 
-You may collapse all items by default:
+You may also collapse all items by default:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -145,7 +184,9 @@ Repeater::make('qualifications')
 
 ## Integrating with an Eloquent relationship
 
-You may employ the `relationship()` method of the repeater to configure a relationship to automatically retrieve and save repeater items:
+> If you're building a form inside your Livewire component, make sure you have set up the [form's model](../adding-a-form-to-a-livewire-component#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
+
+You may employ the `relationship()` method of the `Repeater` to configure a `HasMany` relationship. Filament will load the item data from the relationship, and save it back to the relationship when the form is submitted. If a custom relationship name is not passed to `relationship()`, Filament will use the field name as the relationship name:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -157,11 +198,9 @@ Repeater::make('qualifications')
     ])
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [app framework](../../app), you can skip this step.
+### Reordering items in a relationship
 
-### Ordering items
-
-By default, ordering relationship repeater items is disabled. This is because your related model needs an `sort` column to store the order of related records. To enable ordering, you may use the `orderable()` method:
+By default, [reordering](#reordering-items) relationship repeater items is disabled. This is because your related model needs an `sort` column to store the order of related records. To enable reordering, you may use the `orderColumn()` method, passing in a name of the column on your related model to store the order in:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -171,12 +210,10 @@ Repeater::make('qualifications')
     ->schema([
         // ...
     ])
-    ->orderable()
+    ->orderColumn('sort')
 ```
 
-This assumes that your related model has a `sort` column.
-
-If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may pass this in to `orderable()`:
+If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may pass this in to `orderColumn()`:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -186,7 +223,64 @@ Repeater::make('qualifications')
     ->schema([
         // ...
     ])
-    ->orderable('order_column')
+    ->orderColumn('order_column')
+```
+
+### Mutating related item data before filling the field
+
+You may mutate the data for a related item before it is filled into the field using the `mutateRelationshipDataBeforeFillUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You must return the modified array of data:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->mutateRelationshipDataBeforeFillUsing(fn (array $data): array {
+        $data['user_id'] = auth()->id();
+
+        return $data;
+    })
+```
+
+### Mutating related item data before creating
+
+You may mutate the data for a new related item before it is created in the database using the `mutateRelationshipDataBeforeCreateUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You must return the modified array of data:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->mutateRelationshipDataBeforeCreateUsing(fn (array $data): array {
+        $data['user_id'] = auth()->id();
+
+        return $data;
+    })
+```
+
+### Mutating related item data before saving
+
+You may mutate the data for an existing related item before it is saved in the database using the `mutateRelationshipDataBeforeSaveUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You must return the modified array of data:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('qualifications')
+    ->relationship()
+    ->schema([
+        // ...
+    ])
+    ->mutateRelationshipDataBeforeSaveUsing(fn (array $data): array {
+        $data['user_id'] = auth()->id();
+
+        return $data;
+    })
 ```
 
 ## Grid layout
@@ -203,11 +297,11 @@ Repeater::make('members')
     ->grid(2)
 ```
 
-This method accepts the same options as the `columns()` method of the [grid](layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+This method accepts the same options as the `columns()` method of the [grid](../layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
-## Item labels
+## Adding a label to repeater items based on their content
 
-You may add a label for repeater items using the `itemLabel()` method:
+You may add a label for repeater items using the `itemLabel()` method. This method accepts a closure that recieves the current item's data in a `$state` variable. You must return a string to be used as the item label:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -225,7 +319,7 @@ Any fields that you use from `$state` should be `reactive()` or `lazy()` if you 
 
 ## Using `$get()` to access parent field values
 
-All form components are able to [use `$get()` and `$set()`](advanced) to access another field's value. However, you might experience unexpected behaviour when using this inside the repeater's schema.
+All form components are able to [use `$get()` and `$set()`](../advanced) to access another field's value. However, you might experience unexpected behaviour when using this inside the repeater's schema.
 
 This is because `$get()` and `$set()`, by default, are scoped to the current repeater item. This means that you are able to interact with another field inside that repeater item easily without knowing which repeater item the current form component belongs to.
 
@@ -249,4 +343,37 @@ You are trying to retrieve the value of `client_id` from inside the repeater ite
 
 `$get()` is relative to the current repeater item, so `$get('client_id')` is looking for `$get('repeater.item1.client_id')`.
 
-You can use `../` to go up a level in the data structure, so `$get('../client_id')` is $get('repeater.client_id') and `$get('../../client_id')` is `$get('client_id')`.
+You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
+
+## Enabling the "inset" design
+
+As part of Filament's design system, you can enable "inset" mode for a repeater with the `inset()`. This will give the repeater extra padding around the outside of the items, with a background color:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->inset()
+```
+
+## Repeater validation
+
+As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to repeaters.
+
+### Number of items validation
+
+You can validate the minimum and maximum number of items that you can have in a repeater by setting the `minItems()` and `maxItems()` methods:
+
+```php
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->minItems(2)
+    ->maxItems(5)
+```
