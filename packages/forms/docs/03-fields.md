@@ -1174,6 +1174,8 @@ FileUpload::make('attachment')
 
 By default, files will be uploaded publicly to your default storage disk.
 
+> Please note, to correctly display images and other files filepond requires files to be served from the same domain as the admin panel or cors headers to be present. Set the `APP_URL` env variable or modify the [filesystem](https://laravel.com/docs/10.x/filesystem) driver to set the correct url or ensure cors headers are present when serving files from an external (s3) filesystem.
+
 To change the disk and directory that files are saved in, and their visibility, use the `disk()`, `directory()` and `visibility` methods:
 
 ```php
