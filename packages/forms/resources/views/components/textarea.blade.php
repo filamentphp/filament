@@ -20,7 +20,6 @@
         {{
             $attributes
                 ->merge([
-                    'autocapitalize' => $getAutocapitalize(),
                     'autocomplete' => $getAutocomplete(),
                     'autofocus' => $isAutofocused(),
                     'cols' => $getCols(),

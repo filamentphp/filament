@@ -105,6 +105,17 @@ TextInput::make('manufacturer')
 
 Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking to strictly limit users to a set of predefined options, check out the [select field](select).
 
+## Autocapitalizing text
+
+You may allow the text to be [autocapitalized by the browser](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input#autocapitalize) using the `autocapitalize()` method:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->autocapitalize('words')
+```
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
@@ -243,7 +254,8 @@ You can also specify the exact length of the input by setting the `length()`. Th
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('code')->length(8)
+TextInput::make('code')
+    ->length(8)
 ```
 
 ### Size validation
