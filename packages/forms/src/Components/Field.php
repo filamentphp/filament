@@ -34,19 +34,6 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
         return parent::getId() ?? $this->getStatePath();
     }
 
-    public function getLabel(): string | Htmlable | null
-    {
-        $label = parent::getLabel() ?? (string) str($this->getName())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
-
-        return (is_string($label) && $this->shouldTranslateLabel) ?
-            __($label) :
-            $label;
-    }
-
     public function getKey(): string
     {
         return $this->getStatePath();

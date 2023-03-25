@@ -50,14 +50,6 @@ class Placeholder extends Component implements Contracts\HasHintActions
         return parent::getId() ?? $this->getStatePath();
     }
 
-    public function getLabel(): string | Htmlable | null
-    {
-        return parent::getLabel() ?? (string) str($this->getName())
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
-    }
-
     public function getContent(): mixed
     {
         return $this->evaluate(
