@@ -4,9 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\MorphToSelect\Type;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Str;
 
 class MorphToSelect extends Component
 {

@@ -5,7 +5,6 @@ namespace Filament\Forms\Components\Builder;
 use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns;
-use Illuminate\Support\Str;
 
 class Block extends Component
 {
