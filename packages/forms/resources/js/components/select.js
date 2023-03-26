@@ -148,6 +148,10 @@ export default function selectFormComponent({
             }
 
             this.$watch('state', async () => {
+                if (! this.select) {
+                    return
+                }
+
                 this.refreshPlaceholder()
 
                 if (this.isStateBeingUpdated) {
@@ -156,6 +160,11 @@ export default function selectFormComponent({
 
                 await this.refreshSelectedOption()
             })
+        },
+
+        destroy: function () {
+            this.select.destroy()
+            this.select = null
         },
 
         refreshChoices: async function (config = {}) {

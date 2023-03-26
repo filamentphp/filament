@@ -160,6 +160,10 @@ export default function fileUploadFormComponent({
             })
 
             this.$watch('state', async () => {
+                if (! this.pond) {
+                    return
+                }
+
                 if (!this.shouldUpdateState) {
                     return
                 }
@@ -249,6 +253,11 @@ export default function fileUploadFormComponent({
             this.pond.on('processfilerevert', async () => {
                 this.dispatchFormEvent('file-upload-finished')
             })
+        },
+
+        destroy: function () {
+            FilePond.destroy(this.$refs.input)
+            this.pond = null
         },
 
         dispatchFormEvent: function (name) {

@@ -91,7 +91,7 @@
         >
             <div
                 x-data="{ isShown: false }"
-                x-init="$nextTick(()=> {
+                x-init="$nextTick(() => {
                     isShown = isOpen
                     $watch('isOpen', () => isShown = isOpen)
                 })"

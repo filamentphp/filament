@@ -94,7 +94,7 @@ export default function markdownEditorFormComponent({
 
         state,
 
-        init: function () {
+        init: async function () {
             this.editor = new EasyMDE({
                 autoDownloadFontAwesome: false,
                 autoRefresh: true,
@@ -168,6 +168,10 @@ export default function markdownEditorFormComponent({
             )
 
             this.$watch('state', () => {
+                if (! this.editor) {
+                    return
+                }
+
                 if (this.editor.codemirror.hasFocus()) {
                     return
                 }
@@ -178,6 +182,11 @@ export default function markdownEditorFormComponent({
                 // until after it is focused. All solutions online have been
                 // attempted and none have worked so far.
             })
+        },
+
+        destroy: function () {
+            this.editor.cleanup()
+            this.editor = null
         },
 
         getToolbar: function () {

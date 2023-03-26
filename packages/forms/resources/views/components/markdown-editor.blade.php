@@ -10,7 +10,7 @@
     @unless ($isDisabled())
         <div
             x-ignore
-            ax-load
+            ax-load="visible"
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
             x-data="markdownEditorFormComponent({
                 placeholder: @js($getPlaceholder()),
@@ -37,7 +37,7 @@
                     ->class(['filament-forms-markdown-editor-component font-mono'])
             }}
         >
-            <textarea x-ref="editor"></textarea>
+            <textarea x-ref="editor" class="hidden"></textarea>
         </div>
     @else
         <div class="prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm dark:prose-invert dark:border-gray-600 dark:bg-gray-700">
