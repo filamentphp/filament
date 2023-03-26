@@ -143,7 +143,6 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
@@ -167,7 +166,6 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"

@@ -26,7 +26,6 @@
                     <div class="flex items-center gap-3">
                         @if ($hasFilterLoadingIndicator)
                             <x-filament::loading-indicator
-                                x-cloak="x-cloak"
                                 class="h-8 w-8 text-gray-500"
                                 wire:loading
                                 wire:target="filter"
