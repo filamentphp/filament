@@ -30,8 +30,14 @@
 
     <x-filament-support::dropdown.list>
         @foreach ($actions as $action)
+            @if ($action->hasDividerBefore())
+                <x-filament-support::dropdown.list.divider />
+            @endif
             @if (! $action->isHidden())
                 {{ $action }}
+            @endif
+            @if ($action->hasDividerAfter())
+                <x-filament-support::dropdown.list.divider />
             @endif
         @endforeach
     </x-filament-support::dropdown.list>

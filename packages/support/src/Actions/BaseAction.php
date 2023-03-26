@@ -12,6 +12,7 @@ abstract class BaseAction extends ViewComponent
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\HasColor;
+    use Concerns\HasDivider;
     use Concerns\HasIcon;
     use Concerns\HasLabel;
     use Concerns\HasName;
