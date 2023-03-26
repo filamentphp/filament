@@ -4,6 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use ReflectionParameter;
 
 trait CanReplicateRecords
 {
@@ -99,13 +100,11 @@ trait CanReplicateRecords
         return $this->replica;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'replica' => fn (): ?Model => $this->getReplica(),
-        ]);
+        return match ($parameter->getName()) {
+            'replica' => $this->getReplica(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 }

@@ -5,6 +5,7 @@ namespace Filament\Resources\RelationManagers;
 use Closure;
 use Filament\Support\Components\Component;
 use Illuminate\Database\Eloquent\Model;
+use ReflectionParameter;
 
 class RelationGroup extends Component
 {
@@ -107,11 +108,12 @@ class RelationGroup extends Component
         return $this->pageClass;
     }
 
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return [
-            'ownerRecord' => fn (): ?Model => $this->getOwnerRecord(),
-            'pageClass' => fn (): ?string => $this->getPageClass(),
-        ];
+        return match ($parameter->getName()) {
+            'ownerRecord' => $this->getOwnerRecord(),
+            'pageClass' => $this->getPageClass(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 }

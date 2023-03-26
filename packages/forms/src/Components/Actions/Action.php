@@ -4,7 +4,9 @@ namespace Filament\Forms\Components\Actions;
 
 use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\MountableAction;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Js;
+use ReflectionParameter;
 
 class Action extends MountableAction
 {
@@ -49,17 +51,17 @@ class Action extends MountableAction
         return ActionContainer::make($this);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        $component = $this->getComponent();
-
-        return array_merge(
-            $component->getDefaultEvaluationParameters(),
-            parent::getDefaultEvaluationParameters(),
-            ['component' => $component],
-        );
+        return match ($parameter->getName()) {
+            'component' => $this->getComponent(),
+            'context', 'operation' => $this->getComponent()->getContainer()->getOperation(),
+            'get' => $this->getComponent()->getGetCallback(),
+            'model' => $this->getComponent()->getModel(),
+            'record' => $this->getComponent()->getRecord(),
+            'set' => $this->getComponent()->getSetCallback(),
+            'state' => $this->getComponent()->getState(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 }

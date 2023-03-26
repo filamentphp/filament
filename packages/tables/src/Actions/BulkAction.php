@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\MountableAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
+use ReflectionParameter;
 
 class BulkAction extends MountableAction
 {
@@ -59,15 +60,13 @@ class BulkAction extends MountableAction
         return "mountBulkAction('{$this->getName()}')";
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'records' => fn (): ?Collection => $this->getRecords(),
-            'table' => fn (): Table => $this->getTable(),
-        ]);
+        return match ($parameter->getName()) {
+            'records' => $this->getRecords(),
+            'table' => $this->getTable(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 
     /**

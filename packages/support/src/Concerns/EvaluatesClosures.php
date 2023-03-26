@@ -4,6 +4,10 @@ namespace Filament\Support\Concerns;
 
 use Closure;
 use Filament\Support\Evaluator;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use ReflectionFunction;
+use ReflectionNamedType;
+use ReflectionParameter;
 
 trait EvaluatesClosures
 {
@@ -22,21 +26,80 @@ trait EvaluatesClosures
             return $value;
         }
 
-        return app(Evaluator::class)(
-            $value,
-            array_merge(
-                isset($this->evaluationIdentifier) ? [$this->evaluationIdentifier => $this] : [],
-                $this->getDefaultEvaluationParameters(),
-                $parameters,
-            ),
-        );
+        $dependencies = [];
+
+        foreach ((new ReflectionFunction($value))->getParameters() as $parameter) {
+            $parameterName = $parameter->getName();
+
+            if (array_key_exists($parameterName, $parameters)) {
+                $dependencies[] = value($parameters[$parameterName]);
+
+                continue;
+            }
+
+            $dependencies[] = $this->resolveClosureDependencyForEvaluation($parameter);
+        }
+
+        return $value(...$dependencies);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return [];
+        $parameterName = $parameter->getName();
+
+        if (
+            isset($this->evaluationIdentifier) &&
+            ($parameterName === $this->evaluationIdentifier)
+        ) {
+            return $this;
+        }
+
+        $typedParameterClassName = $this->getTypedReflectionParameterClassName($parameter);
+
+        if (filled($typedParameterClassName)) {
+            return app()->make($typedParameterClassName);
+        }
+
+        if ($parameter->isDefaultValueAvailable()) {
+            return $parameter->getDefaultValue();
+        }
+
+        if ($parameter->isOptional()) {
+            return null;
+        }
+
+        $staticClass = static::class;
+        throw new BindingResolutionException("An attempt was made to evaluate a closure for [{$staticClass}], but [${$parameterName}] was unresolvable.");
+    }
+
+    protected function getTypedReflectionParameterClassName(ReflectionParameter $parameter): ?string
+    {
+        $type = $parameter->getType();
+
+        if (! $type instanceof ReflectionNamedType) {
+            return null;
+        }
+
+        if ($type->isBuiltin()) {
+            return null;
+        }
+
+        $name = $type->getName();
+
+        $class = $parameter->getDeclaringClass();
+
+        if (blank($class)) {
+            return $name;
+        }
+
+        if ($name === 'self') {
+            return $class->getName();
+        }
+
+        if ($name === 'parent' && ($parent = $class->getParentClass())) {
+            return $parent->getName();
+        }
+
+        return $name;
     }
 }

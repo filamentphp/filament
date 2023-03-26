@@ -516,7 +516,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function getOptionLabel(): ?string
     {
         return $this->evaluate($this->getOptionLabelUsing, [
-            'value' => $this->getState(),
+            'value' => fn (): mixed => $this->getState(),
         ]);
     }
 
@@ -526,7 +526,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function getOptionLabels(): array
     {
         $labels = $this->evaluate($this->getOptionLabelsUsing, [
-            'values' => $this->getState(),
+            'values' => fn (): array => $this->getState(),
         ]);
 
         if ($labels instanceof Arrayable) {

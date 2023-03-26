@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
+use ReflectionParameter;
 
 class Summarizer extends ViewComponent
 {
@@ -149,14 +150,12 @@ class Summarizer extends ViewComponent
         return $this->id;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => fn (): HasTable => $this->getLivewire(),
-            'table' => fn (): Table => $this->getTable(),
-        ]);
+        return match ($parameter->getName()) {
+            'livewire' => $this->getLivewire(),
+            'table' => $this->getTable(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 }

@@ -11,6 +11,7 @@ use Filament\Forms\Set;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Model;
+use ReflectionParameter;
 
 class Component extends ViewComponent
 {
@@ -37,23 +38,18 @@ class Component extends ViewComponent
 
     protected string $evaluationIdentifier = 'component';
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        $getOperationUsing = fn (): string => $this->getContainer()->getOperation();
-
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'context' => $getOperationUsing,
-            'get' => fn (): Get => $this->getGetCallback(),
-            'livewire' => fn (): HasForms => $this->getLivewire(),
-            'model' => fn (): ?string => $this->getModel(),
-            'operation' => $getOperationUsing,
-            'record' => fn (): ?Model => $this->getRecord(),
-            'set' => fn (): Set => $this->getSetCallback(),
-            'state' => fn (): mixed => $this->getState(),
-        ]);
+        return match ($parameter->getName()) {
+            'context', 'operation' => $this->getContainer()->getOperation(),
+            'get' => $this->getGetCallback(),
+            'livewire' => $this->getLivewire(),
+            'model' => $this->getModel(),
+            'record' => $this->getRecord(),
+            'set' => $this->getSetCallback(),
+            'state' => $this->getState(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 
     public function getKey(): ?string

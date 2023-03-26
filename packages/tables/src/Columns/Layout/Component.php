@@ -17,6 +17,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
+use ReflectionParameter;
 use stdClass;
 
 class Component extends ViewComponent
@@ -119,16 +120,14 @@ class Component extends ViewComponent
         return $this->isCollapsible;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => fn (): HasTable => $this->getLivewire(),
-            'record' => fn (): ?Model => $this->getRecord(),
-            'rowLoop' => fn (): ?stdClass => $this->getRowLoop(),
-            'table' => fn (): Table => $this->getTable(),
-        ]);
+        return match ($parameter->getName()) {
+            'livewire' => $this->getLivewire(),
+            'record' => $this->getRecord(),
+            'rowLoop' => $this->getRowLoop(),
+            'table' => $this->getTable(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 }

@@ -4,6 +4,7 @@ namespace Filament\Infolists;
 
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Database\Eloquent\Model;
+use ReflectionParameter;
 
 class ComponentContainer extends ViewComponent
 {
@@ -27,13 +28,11 @@ class ComponentContainer extends ViewComponent
         return app(static::class);
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => fn (): ?Model => $this->getRecord(),
-        ]);
+        return match ($parameter->getName()) {
+            'record' => $this->getRecord(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 }

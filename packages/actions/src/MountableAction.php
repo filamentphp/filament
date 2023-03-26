@@ -6,6 +6,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Livewire\Component;
+use ReflectionParameter;
 
 abstract class MountableAction extends StaticAction
 {
@@ -84,15 +85,13 @@ abstract class MountableAction extends StaticAction
         return null;
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'arguments' => fn (): array => $this->getArguments(),
-            'data' => fn (): array => $this->getFormData(),
-            'livewire' => fn (): Component => $this->getLivewire(),
-        ]);
+        return match ($parameter->getName()) {
+            'arguments' => $this->getArguments(),
+            'data' => $this->getFormData(),
+            'livewire' => $this->getLivewire(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 }

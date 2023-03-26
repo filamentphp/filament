@@ -6,6 +6,7 @@ use Filament\Infolists\Concerns\HasColumns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Model;
+use ReflectionParameter;
 
 class Component extends ViewComponent
 {
@@ -27,14 +28,13 @@ class Component extends ViewComponent
 
     protected string $evaluationIdentifier = 'component';
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => fn (): ?Model => $this->getRecord(),
-            'state' => fn (): mixed => $this->getState(),
-        ]);
+        return match ($parameter->getName()) {
+
+            'record' => $this->getRecord(),
+            'state' => $this->getState(),
+            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        };
     }
 }
