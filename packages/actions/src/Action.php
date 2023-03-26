@@ -43,10 +43,7 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->resolveEvaluationParameter(
-                'record',
-                fn (): ?Model => $this->getRecord(),
-            ),
+            'record' => fn (): ?Model => $this->getRecord(),
         ]);
     }
 }

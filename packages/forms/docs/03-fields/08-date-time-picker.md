@@ -2,6 +2,8 @@
 title: Date-time picker
 ---
 
+## Overview
+
 The date-time picker provides an interactive interface for selecting a date and/or a time.
 
 ```php

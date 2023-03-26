@@ -4,6 +4,8 @@ namespace Filament\Tables\Filters;
 
 use Exception;
 use Filament\Support\Components\Component;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Support\Traits\Conditionable;
 
 class BaseFilter extends Component
@@ -55,8 +57,8 @@ class BaseFilter extends Component
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-            'table' => $this->getTable(),
+            'livewire' => fn (): HasTable => $this->getLivewire(),
+            'table' => fn (): Table => $this->getTable(),
         ]);
     }
 }

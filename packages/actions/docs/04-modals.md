@@ -3,6 +3,8 @@ title: Modals
 ---
 import PreviewScreenshot from "@components/PreviewScreenshot.astro"
 
+## Overview
+
 Actions may require additional confirmation or input from the user before they run. You may open a modal before an action is executed to do this.
 
 ## Confirmation modals

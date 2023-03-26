@@ -2,6 +2,8 @@
 title: Checkbox
 ---
 
+## Overview
+
 The checkbox component, similar to a [toggle](toggle), allows you to interact a boolean value.
 
 ```php

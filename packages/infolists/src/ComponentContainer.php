@@ -3,6 +3,7 @@
 namespace Filament\Infolists;
 
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Database\Eloquent\Model;
 
 class ComponentContainer extends ViewComponent
 {
@@ -32,7 +33,7 @@ class ComponentContainer extends ViewComponent
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->getRecord(),
+            'record' => fn (): ?Model => $this->getRecord(),
         ]);
     }
 }

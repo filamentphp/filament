@@ -2,6 +2,8 @@
 title: Wizard
 ---
 
+## Overview
+
 Similar to [tabs](tabs), you may want to use a multistep form wizard to reduce the number of components that are visible at once. These are especially useful if your form has a definite chronological order, in which you want each step to be validated as the user progresses.
 
 ```php
@@ -23,8 +25,6 @@ Wizard::make([
 ])
 ```
 
-> We have different setup instructions you're looking to add a wizard to an app framework [resource Create page](../../app/resources/creating-records#wizards) or a table [action](../tables/actions#wizards). Following that documentation will ensure that the ability to submit the form is only available on the last step.
-
 Each step has a mandatory label. You may optionally also add a description for extra detail:
 
 ```php
@@ -37,19 +37,7 @@ Wizard\Step::make('Order')
     ]),
 ```
 
-## Setting up step icons
-
-Steps may also have an icon, which can be the name of any Blade icon component:
-
-```php
-use Filament\Forms\Components\Wizard;
-
-Wizard\Step::make('Order')
-    ->icon('heroicon-m-shopping-bag')
-    ->schema([
-        // ...
-    ]),
-```
+> We have different setup instructions you're looking to add a wizard to the creation process inside an [app framework resource](../../app/resources/creating-records#using-a-wizard) or an [action modal](../../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
 
 ## Rendering a submit button on the last step
 
@@ -66,6 +54,34 @@ Wizard::make([
 Wizard::make([
     // ...
 ])->submitAction(new HtmlString('<button type="submit">Submit</button>'))
+```
+
+## Setting up step icons
+
+Steps may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), set using the `icon()` method:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard\Step::make('Order')
+    ->icon('heroicon-m-shopping-bag')
+    ->schema([
+        // ...
+    ]),
+```
+
+## Adding descriptions to steps
+
+You may add a short description after the title of each step using the `description()` method:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard\Step::make('Order')
+    ->description('Review your basket')
+    ->schema([
+        // ...
+    ]),
 ```
 
 ## Setting the default active step
@@ -90,4 +106,62 @@ use Filament\Forms\Components\Wizard;
 Wizard::make([
     // ...
 ])->skippable()
+```
+
+## Persisting the current step in the URL's query string
+
+By default, the current step is not persisted in the URL's query string. You can change this behavior using the `persistStepInQueryString()` method:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->persistStepInQueryString()
+```
+
+By default, the current step is persisted in the URL's query string using the `step` key. You can change this key by passing it to the `persistStepInQueryString()` method:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->persistStepInQueryString('wizard-step')
+```
+
+## Step lifecycle hooks
+
+You may use the `afterValidation()` and `beforeValidation()` methods to run code before and after validation occurs on the step:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard\Step::make('Order')
+    ->afterValidation(function () {
+        // ...
+    })
+    ->beforeValidation(function () {
+        // ...
+    })
+    ->schema([
+        // ...
+    ]),
+```
+
+## Using grid columns within a step
+
+You may use the `columns()` method to customize the [grid](grid) within the step:
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    Wizard\Step::make('Order')
+        ->columns(2)
+        ->schema([
+            // ...
+        ]),
+    // ...
+])
 ```

@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\MountableAction;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 
 class BulkAction extends MountableAction
@@ -64,11 +65,8 @@ class BulkAction extends MountableAction
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'records' => $this->resolveEvaluationParameter(
-                'records',
-                fn (): ?Collection => $this->getRecords(),
-            ),
-            'table' => $this->getTable(),
+            'records' => fn (): ?Collection => $this->getRecords(),
+            'table' => fn (): Table => $this->getTable(),
         ]);
     }
 

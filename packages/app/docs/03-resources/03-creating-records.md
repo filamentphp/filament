@@ -188,7 +188,7 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 
 Users may access the Create page if the `create()` method of the model policy returns `true`.
 
-## Wizards
+## Using a wizard
 
 You may easily transform the creation process into a multistep wizard.
 
@@ -253,7 +253,7 @@ protected function getSteps(): array
 }
 ```
 
-Alternatively, if you're creating records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/create#wizards).
+Alternatively, if you're creating records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/create#using-a-wizard).
 
 Now, create a new record to see your wizard in action! Edit will still use the form defined within the resource class.
 

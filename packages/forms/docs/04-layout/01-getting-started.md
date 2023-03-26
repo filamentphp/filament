@@ -2,16 +2,18 @@
 title: Getting started
 ---
 
-Layout component classes can be found in the `Filament\Form\Components` namespace.
+## Overview
 
-They reside within the schema of your form, alongside any [fields](fields).
+Filament forms are not limited to just displaying fields. You can also use "layout components" to organize them into an infinitely nestable structure.
+
+Layout component classes can be found in the `Filament\Form\Components` namespace. They reside within the schema of your form, alongside any [fields](fields).
 
 Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
 
 ```php
 use Filament\Forms\Components\Grid;
 
-Grid::make()
+Grid::make(2)
     ->schema([
         // ...
     ])
@@ -38,22 +40,26 @@ You may define an ID for the component using the `id()` method:
 ```php
 use Filament\Forms\Components\Card;
 
-Card::make()->id('main-card')
+Card::make()
+    ->id('main-card')
 ```
 
-## Custom attributes
+## Adding extra HTML attributes
 
-The HTML of components can be customized even further, by passing an array of `extraAttributes()`:
+You can pass extra HTML attributes to the component, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
 
 ```php
-use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Group;
 
-Card::make()->extraAttributes(['class' => 'bg-gray-50'])
+Card::make()
+    ->extraAttributes(['class' => 'custom-card-style'])
 ```
+
+Classes will be merged with the default classes, and any other attributes will override the default attributes.
 
 ## Global settings
 
-If you wish to change the default behaviour of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all card components have [2 columns](grid#columns) by default, you can do it like so:
+If you wish to change the default behaviour of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all card components have [2 columns](grid) by default, you can do it like so:
 
 ```php
 use Filament\Forms\Components\Card;
@@ -68,12 +74,15 @@ Of course, you are still able to overwrite this on each field individually:
 ```php
 use Filament\Forms\Components\Card;
 
-Card::make()->columns(1)
+Card::make()
+    ->columns(1)
 ```
 
 ## Saving data to relationships
 
-You may load and save the contents of a layout component to a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, using the `relationship()` method:
+> If you're building a form inside your Livewire component, make sure you have set up the [form's model](../adding-a-form-to-a-livewire-component#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
+
+As well as being able to give structure to fields, layout components are also able to "teleport" their nested fields into a relationship. Filament will handle loading data from a `HasOne`, `BelongsTo` or `MorphOne` Eloquent relationship, and then it will save the data back to the same relationship. To set this behaviour up, you can use the `relationship()` method on any layout component:
 
 ```php
 use Filament\Forms\Components\Fieldset;
@@ -92,4 +101,21 @@ Fieldset::make('Metadata')
 
 In this example, the `title`, `description` and `image` are automatically loaded from the `metadata` relationship, and saved again when the form is submitted. If the `metadata` record does not exist, it is automatically created.
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [app framework](../../app), you can skip this step.
+This functionality is not just limited to fieldsets - you can use it with any layout component. For example, you could use a `Group` component which has no styling associated with it:
+
+```php
+use Filament\Forms\Components\Group;
+use Filament\Forms\Components\TextInput;
+
+Group::make()
+    ->relationship('customer')
+    ->schema([
+        TextInput::make('name')
+            ->label('Customer')
+            ->required(),
+        TextInput::make('email')
+            ->label('Email address')
+            ->email()
+            ->required(),
+    ])
+```

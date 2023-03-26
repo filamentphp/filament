@@ -2,6 +2,8 @@
 title: Getting started
 ---
 
+## Overview
+
 Filament's form package allows you to easily build dynamic forms in your app. You can use it to [add a form to any Livewire component](adding-a-form-to-a-livewire-component). Additionally, it's used within other Filament packages to render forms within [app resources](../app/resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essentially to learning how to use these Filament packages.
 
 This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](adding-a-form-to-a-livewire-component) and then come back. If you're adding a form to an [app resource](../app/resources), or another Filament package, you're ready to go!
@@ -58,7 +60,7 @@ use Filament\Forms\Components\TextInput;
 ]
 ```
 
-You can learn more about columns and spans in the [layout section](layout/grid#columns). You can even make them responsive!
+You can learn more about columns and spans in the [layout documentation](layout/grid). You can even make them responsive!
 
 ### Adding layout components to a form schema
 

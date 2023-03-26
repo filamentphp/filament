@@ -2,6 +2,8 @@
 title: Toggle
 ---
 
+## Overview
+
 The toggle component, similar to a [checkbox](checkbox), allows you to interact a boolean value.
 
 ```php

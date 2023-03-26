@@ -182,7 +182,7 @@ If you'd like the action modal to close too, you can completely `cancel()` the a
 $action->cancel();
 ```
 
-## Wizards
+## Using a wizard
 
 You may easily transform the creation process into a multistep wizard. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
 

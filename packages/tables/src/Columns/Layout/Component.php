@@ -13,7 +13,11 @@ use Filament\Tables\Columns\Concerns\CanGrow;
 use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
+use stdClass;
 
 class Component extends ViewComponent
 {
@@ -121,10 +125,10 @@ class Component extends ViewComponent
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
-            'rowLoop' => $this->getRowLoop(),
-            'table' => $this->getTable(),
+            'livewire' => fn (): HasTable => $this->getLivewire(),
+            'record' => fn (): ?Model => $this->getRecord(),
+            'rowLoop' => fn (): ?stdClass => $this->getRowLoop(),
+            'table' => fn (): Table => $this->getTable(),
         ]);
     }
 }

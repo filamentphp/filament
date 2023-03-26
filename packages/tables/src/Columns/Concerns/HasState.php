@@ -45,7 +45,7 @@ trait HasState
 
     public function getDefaultState(): mixed
     {
-        return $this->evaluate($this->defaultState, exceptParameters: ['state']);
+        return $this->evaluate($this->defaultState);
     }
 
     public function getState(): mixed
@@ -55,7 +55,7 @@ trait HasState
         }
 
         $state = $this->getStateUsing ?
-            $this->evaluate($this->getStateUsing, exceptParameters: ['state']) :
+            $this->evaluate($this->getStateUsing) :
             $this->getStateFromRecord();
 
         if (is_string($state) && ($separator = $this->getSeparator())) {

@@ -16,6 +16,8 @@ trait HasState
      */
     protected ?array $state = null;
 
+    protected string $cachedFullStatePath;
+
     /**
      * @param  array<string, mixed> | null  $state
      */
@@ -42,6 +44,10 @@ trait HasState
 
     public function getStatePath(bool $isAbsolute = true): string
     {
+        if (isset($this->cachedFullStatePath)) {
+            return $this->cachedFullStatePath;
+        }
+
         $pathComponents = [];
 
         if ($isAbsolute && $parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
@@ -52,7 +58,7 @@ trait HasState
             $pathComponents[] = $statePath;
         }
 
-        return implode('.', $pathComponents);
+        return $this->cachedFullStatePath = implode('.', $pathComponents);
     }
 
     /**
@@ -82,5 +88,10 @@ trait HasState
         }
 
         return $this->getParentComponent()?->getRecord();
+    }
+
+    protected function flushCachedStatePath(): void
+    {
+        unset($this->cachedFullStatePath);
     }
 }

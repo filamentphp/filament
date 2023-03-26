@@ -57,10 +57,7 @@ trait InteractsWithRecord
 
     public function getRecord(): ?Model
     {
-        return $this->evaluate(
-            $this->record,
-            exceptParameters: ['record'],
-        );
+        return $this->evaluate($this->record);
     }
 
     public function getRecordTitle(?Model $record = null): ?string

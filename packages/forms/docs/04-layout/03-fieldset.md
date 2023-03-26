@@ -2,6 +2,8 @@
 title: Fieldset
 ---
 
+## Overview
+
 You may want to group fields into a Fieldset. Each fieldset has a label, a border, and a two-column grid by default:
 
 ```php
@@ -13,7 +15,7 @@ Fieldset::make('Label')
     ])
 ```
 
-## Grid columns
+## Using grid columns within a fieldset
 
 You may use the `columns()` method to customize the [grid](grid) within the fieldset:
 

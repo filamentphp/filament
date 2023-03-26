@@ -54,7 +54,6 @@ class Placeholder extends Component implements Contracts\HasHintActions
     {
         return $this->evaluate(
             $this->content,
-            exceptParameters: ['state'],
         );
     }
 }

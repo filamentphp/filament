@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components;
 use Filament\Infolists\Concerns\HasColumns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Illuminate\Database\Eloquent\Model;
 
 class Component extends ViewComponent
 {
@@ -32,11 +33,8 @@ class Component extends ViewComponent
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->getRecord(),
-            'state' => $this->resolveEvaluationParameter(
-                'state',
-                fn (): mixed => $this->getState(),
-            ),
+            'record' => fn (): ?Model => $this->getRecord(),
+            'state' => fn (): mixed => $this->getState(),
         ]);
     }
 }

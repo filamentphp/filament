@@ -2,6 +2,8 @@
 title: Markdown editor
 ---
 
+## Overview
+
 The markdown editor allows you to edit and preview markdown content, as well as upload images using drag and drop.
 
 ```php

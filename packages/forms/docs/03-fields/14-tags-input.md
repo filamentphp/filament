@@ -2,6 +2,8 @@
 title: Tags input
 ---
 
+## Overview
+
 The tags input component allows you to interact with a list of tags.
 
 By default, tags are stored in JSON:

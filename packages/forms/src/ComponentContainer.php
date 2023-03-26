@@ -4,6 +4,7 @@ namespace Filament\Forms;
 
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Database\Eloquent\Model;
 
 class ComponentContainer extends ViewComponent
 {
@@ -48,9 +49,9 @@ class ComponentContainer extends ViewComponent
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-            'model' => $this->getModel(),
-            'record' => $this->getRecord(),
+            'livewire' => fn (): HasForms => $this->getLivewire(),
+            'model' => fn (): ?string => $this->getModel(),
+            'record' => fn (): ?Model => $this->getRecord(),
         ]);
     }
 }

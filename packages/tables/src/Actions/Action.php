@@ -6,6 +6,7 @@ use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
 class Action extends MountableAction implements Groupable, HasRecord
@@ -43,11 +44,8 @@ class Action extends MountableAction implements Groupable, HasRecord
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->resolveEvaluationParameter(
-                'record',
-                fn (): ?Model => $this->getRecord(),
-            ),
-            'table' => $this->getTable(),
+            'record' => fn (): ?Model => $this->getRecord(),
+            'table' => fn (): Table => $this->getTable(),
         ]);
     }
 

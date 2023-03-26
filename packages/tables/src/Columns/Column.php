@@ -5,7 +5,11 @@ namespace Filament\Tables\Columns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
+use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
+use stdClass;
 
 class Column extends ViewComponent
 {
@@ -58,17 +62,12 @@ class Column extends ViewComponent
      */
     protected function getDefaultEvaluationParameters(): array
     {
-        $record = $this->getRecord();
-
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-            'record' => $record,
-            'rowLoop' => $this->getRowLoop(),
-            'state' => $this->resolveEvaluationParameter(
-                'state',
-                fn () => $this->getState(),
-            ),
-            'table' => $this->getTable(),
+            'livewire' => fn (): HasTable => $this->getLivewire(),
+            'record' => fn (): ?Model => $this->getRecord(),
+            'rowLoop' => fn (): ?stdClass => $this->getRowLoop(),
+            'state' => fn (): mixed => $this->getState(),
+            'table' => fn (): Table => $this->getTable(),
         ]);
     }
 }

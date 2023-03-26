@@ -90,9 +90,9 @@ abstract class MountableAction extends StaticAction
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'arguments' => $this->getArguments(),
-            'data' => $this->getFormData(),
-            'livewire' => $this->getLivewire(),
+            'arguments' => fn (): array => $this->getArguments(),
+            'data' => fn (): array => $this->getFormData(),
+            'livewire' => fn (): Component => $this->getLivewire(),
         ]);
     }
 }

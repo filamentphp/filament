@@ -110,8 +110,8 @@ class RelationGroup extends Component
     protected function getDefaultEvaluationParameters(): array
     {
         return [
-            'ownerRecord' => $this->getOwnerRecord(),
-            'pageClass' => $this->getPageClass(),
+            'ownerRecord' => fn (): ?Model => $this->getOwnerRecord(),
+            'pageClass' => fn (): ?string => $this->getPageClass(),
         ];
     }
 }

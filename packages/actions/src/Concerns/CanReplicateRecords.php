@@ -105,7 +105,7 @@ trait CanReplicateRecords
     protected function getDefaultEvaluationParameters(): array
     {
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'replica' => $this->getReplica(),
+            'replica' => fn (): ?Model => $this->getReplica(),
         ]);
     }
 }

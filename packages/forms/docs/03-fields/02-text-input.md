@@ -2,6 +2,8 @@
 title: Text input
 ---
 
+## Overview
+
 The text input allows you to interact with a string:
 
 ```php

@@ -2,6 +2,8 @@
 title: Repeater
 ---
 
+## Overview
+
 The repeater component allows you to output a JSON array of repeated form components.
 
 ```php

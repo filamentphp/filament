@@ -2,6 +2,8 @@
 title: Color picker
 ---
 
+## Overview
+
 The color picker component allows you to pick a color in a range of formats.
 
 By default, the component uses HEX format:

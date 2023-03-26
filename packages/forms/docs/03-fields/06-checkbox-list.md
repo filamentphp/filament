@@ -2,6 +2,8 @@
 title: Checkbox list
 ---
 
+## Overview
+
 The checkbox list component allows you to select multiple values from a list of predefined options:
 
 ```php

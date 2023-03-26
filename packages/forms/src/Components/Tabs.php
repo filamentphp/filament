@@ -49,6 +49,13 @@ class Tabs extends Component
         return $this;
     }
 
+    public function persistTabInQueryString(string | Closure | null $key = 'tab'): static
+    {
+        $this->tabQueryStringKey = $key;
+
+        return $this;
+    }
+
     public function getActiveTab(): int
     {
         if ($this->isTabPersistedInQueryString()) {
@@ -74,12 +81,5 @@ class Tabs extends Component
     public function isTabPersistedInQueryString(): bool
     {
         return filled($this->getTabQueryStringKey());
-    }
-
-    public function persistTabInQueryString(string | Closure | null $key = 'tab'): static
-    {
-        $this->tabQueryStringKey = $key;
-
-        return $this;
     }
 }

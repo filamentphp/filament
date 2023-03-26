@@ -2,10 +2,15 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Forms\Concerns\HasColumns;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Illuminate\Database\Eloquent\Model;
 
 class Component extends ViewComponent
 {
@@ -37,20 +42,17 @@ class Component extends ViewComponent
      */
     protected function getDefaultEvaluationParameters(): array
     {
-        $operation = $this->getContainer()->getOperation();
+        $getOperationUsing = fn (): string => $this->getContainer()->getOperation();
 
         return array_merge(parent::getDefaultEvaluationParameters(), [
-            'context' => $operation,
-            'get' => $this->getGetCallback(),
-            'livewire' => $this->getLivewire(),
-            'model' => $this->getModel(),
-            'operation' => $operation,
-            'record' => $this->getRecord(),
-            'set' => $this->getSetCallback(),
-            'state' => $this->resolveEvaluationParameter(
-                'state',
-                fn (): mixed => $this->getState(),
-            ),
+            'context' => $getOperationUsing,
+            'get' => fn (): Get => $this->getGetCallback(),
+            'livewire' => fn (): HasForms => $this->getLivewire(),
+            'model' => fn (): ?string => $this->getModel(),
+            'operation' => $getOperationUsing,
+            'record' => fn (): ?Model => $this->getRecord(),
+            'set' => fn (): Set => $this->getSetCallback(),
+            'state' => fn (): mixed => $this->getState(),
         ]);
     }
 

@@ -2,6 +2,8 @@
 title: Rich editor
 ---
 
+## Overview
+
 The rich editor allows you to edit and preview HTML content, as well as upload images.
 
 ```php

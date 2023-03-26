@@ -21,6 +21,8 @@ trait HasState
 
     protected bool | Closure $isDistinctList = false;
 
+    protected string $cachedFullStatePath;
+
     public function getStateUsing(?Closure $callback): static
     {
         $this->getStateUsing = $callback;
@@ -49,13 +51,13 @@ trait HasState
 
     public function getDefaultState(): mixed
     {
-        return $this->evaluate($this->defaultState, exceptParameters: ['state']);
+        return $this->evaluate($this->defaultState);
     }
 
     public function getState(): mixed
     {
         if ($this->getStateUsing) {
-            $state = $this->evaluate($this->getStateUsing, exceptParameters: ['state']);
+            $state = $this->evaluate($this->getStateUsing);
         } else {
             $containerState = $this->getContainer()->getState();
 
@@ -117,6 +119,10 @@ trait HasState
 
     public function getStatePath(bool $isAbsolute = true): string
     {
+        if (isset($this->cachedFullStatePath)) {
+            return $this->cachedFullStatePath;
+        }
+
         $pathComponents = [];
 
         if ($isAbsolute && ($containerStatePath = $this->getContainer()->getStatePath())) {
@@ -127,7 +133,7 @@ trait HasState
             $pathComponents[] = $this->statePath;
         }
 
-        return implode('.', $pathComponents);
+        return $this->cachedFullStatePath = implode('.', $pathComponents);
     }
 
     public function getStateFromRecord(Model $record): mixed
@@ -161,5 +167,10 @@ trait HasState
         }
 
         return $state->all();
+    }
+
+    protected function flushCachedStatePath(): void
+    {
+        unset($this->cachedFullStatePath);
     }
 }

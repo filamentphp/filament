@@ -2,7 +2,7 @@
 title: Validation
 ---
 
-## Getting started
+## Overview
 
 Validation rules may be added to any [field](fields).
 
