@@ -66,6 +66,8 @@ class Resource
 
     protected static int $globalSearchResultsLimit = 50;
 
+    protected static bool $shouldAlwaysCheckGate = false;
+
     protected static bool $shouldIgnorePolicies = false;
 
     public static function form(Form $form): Form
@@ -116,6 +118,10 @@ class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
+        if (static::shouldAlwaysCheckGate()) {
+            return Gate::forUser(Filament::auth()->user())->check($action, $record ?? static::getModel());
+        }
+
         if (static::shouldIgnorePolicies()) {
             return true;
         }
@@ -134,9 +140,19 @@ class Resource
         return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
+    public static function alwaysCheckGate(bool $condition = true): void
+    {
+        static::$shouldAlwaysCheckGate = $condition;
+    }
+
     public static function ignorePolicies(bool $condition = true): void
     {
         static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldAlwaysCheckGate(): bool
+    {
+        return static::$shouldAlwaysCheckGate;
     }
 
     public static function shouldIgnorePolicies(): bool
