@@ -184,9 +184,7 @@ class MakeResourceCommand extends Command
                 'resourcePageClass' => $listResourcePageClass,
             ]);
 
-            $this->copyStubToApp('ResourcePage', $createResourcePagePath, [
-                'baseResourcePage' => 'Filament\\Resources\\Pages\\CreateRecord',
-                'baseResourcePageClass' => 'CreateRecord',
+            $this->copyStubToApp('ResourceCreatePage', $createResourcePagePath, [
                 'namespace' => "{$namespace}\\{$resourceClass}\\Pages",
                 'resource' => "{$namespace}\\{$resourceClass}",
                 'resourceClass' => $resourceClass,
