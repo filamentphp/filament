@@ -87,6 +87,10 @@ trait InteractsWithTableQuery
 
         foreach ($this->getSearchColumns() as $searchColumnName) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
+            $searchColumnName = match ($databaseConnection->getDriverName()) {
+                'mongodb' => (string)$searchColumnName,
+                default => $searchColumnName,
+            };
 
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumnName),
