@@ -137,7 +137,7 @@ it('can retrieve data', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
             'author_id' => $post->author->getKey(),
@@ -160,7 +160,7 @@ it('can save', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->fillForm([
             'author_id' => $newData->author->getKey(),
@@ -213,7 +213,7 @@ it('can delete', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->callPageAction(DeleteAction::class);
 
@@ -231,7 +231,7 @@ it('can not delete', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->assertPageActionHidden(DeleteAction::class);
 });
@@ -262,7 +262,7 @@ it('can retrieve data', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ViewPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
             'author_id' => $post->author->getKey(),
