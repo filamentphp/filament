@@ -57,7 +57,7 @@ it('sends a notification', function () {
             Notification::make()
                 ->danger()
                 ->title('Unable to create post')
-                ->body('Something went wrong.')
+                ->body('Something went wrong.'),
         );
 });
 ```
