@@ -27967,7 +27967,8 @@ var markdown_editor_default = (Alpine) => {
       },
       checkForAutoInsertion: function() {
         const lines = this.$refs.textarea.value.split("\n");
-        const currentLine = this.$refs.textarea.value.substring(0, this.$refs.textarea.value.selectionStart).split("\n").length;
+        const linesBeforeSelection = this.$refs.textarea.value.substring(0, this.$refs.textarea.selectionStart);
+        const currentLine = linesBeforeSelection.split("\n").length;
         const previousLine = lines[currentLine - 2];
         if (!previousLine.match(/^(\*\s|-\s)|^(\d)+\./)) {
           return;
@@ -27975,22 +27976,40 @@ var markdown_editor_default = (Alpine) => {
         if (previousLine.match(/^(\*\s)/)) {
           if (previousLine.trim().length > 1) {
             lines[currentLine - 1] = "* ";
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length + 2;
+            });
           } else {
             delete lines[currentLine - 2];
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length - 2;
+            });
           }
         } else if (previousLine.match(/^(-\s)/)) {
           if (previousLine.trim().length > 1) {
             lines[currentLine - 1] = "- ";
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length + 2;
+            });
           } else {
             delete lines[currentLine - 2];
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length - 2;
+            });
           }
         } else {
           const matches2 = previousLine.match(/^(\d)+/);
           const number = matches2[0];
           if (previousLine.trim().length > number.length + 2) {
             lines[currentLine - 1] = `${parseInt(number) + 1}. `;
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length + number.length + 2;
+            });
           } else {
             delete lines[currentLine - 2];
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length - number.length - 2;
+            });
           }
         }
         this.state = lines.join("\n");
