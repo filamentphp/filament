@@ -55,7 +55,7 @@ it('sends a notification', function () {
     livewire(CreatePost::class)
         ->assertNotified(
             Notification::make()
-                ->danger(),
+                ->danger()
                 ->title('Unable to create post')
                 ->body('Something went wrong.'),
         );
