@@ -66,6 +66,8 @@ class Resource
 
     protected static int $globalSearchResultsLimit = 50;
 
+    protected static bool $shouldAuthorizeWithGate = false;
+
     protected static bool $shouldIgnorePolicies = false;
 
     public static function form(Form $form): Form
@@ -116,13 +118,18 @@ class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
+        $user = Filament::auth()->user();
+        $model = static::getModel();
+
+        if (static::shouldAuthorizeWithGate()) {
+            return Gate::forUser($user)->check($action, $record ?? $model);
+        }
+
         if (static::shouldIgnorePolicies()) {
             return true;
         }
 
-        $policy = Gate::getPolicyFor($model = static::getModel());
-        $user = Filament::auth()->user();
-
+        $policy = Gate::getPolicyFor($model);
         if ($policy === null) {
             return true;
         }
@@ -134,9 +141,19 @@ class Resource
         return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
+    public static function authorizeWithGate(bool $condition = true): void
+    {
+        static::$shouldAuthorizeWithGate = $condition;
+    }
+
     public static function ignorePolicies(bool $condition = true): void
     {
         static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldAuthorizeWithGate(): bool
+    {
+        return static::$shouldAuthorizeWithGate;
     }
 
     public static function shouldIgnorePolicies(): bool
