@@ -6,6 +6,8 @@ use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Http\Livewire\Concerns\CanNotify;
+use Filament\Resources\Resource;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
@@ -70,6 +72,8 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
      * @deprecated Override the `table()` method to configure the table.
      */
     protected static ?string $pluralModelLabel = null;
+
+    protected static bool $shouldAuthorizeWithGate = false;
 
     protected static bool $shouldIgnorePolicies = false;
 
@@ -216,12 +220,18 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected function can(string $action, ?Model $record = null): bool
     {
+        $user = Filament::auth()->user();
+        $model = $this->getTable()->getModel();
+
+        if (static::shouldAuthorizeWithGate()) {
+            return Gate::forUser($user)->check($action, $record ?? $model);
+        }
+
         if (static::shouldIgnorePolicies()) {
             return true;
         }
 
-        $policy = Gate::getPolicyFor($model = $this->getTable()->getModel());
-        $user = Filament::auth()->user();
+        $policy = Gate::getPolicyFor($model);
 
         if ($policy === null) {
             return true;
@@ -234,9 +244,19 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
+    public static function authorizeWithGate(bool $condition = true): void
+    {
+        static::$shouldAuthorizeWithGate = $condition;
+    }
+
     public static function ignorePolicies(bool $condition = true): void
     {
         static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldAuthorizeWithGate(): bool
+    {
+        return static::$shouldAuthorizeWithGate;
     }
 
     public static function shouldIgnorePolicies(): bool
