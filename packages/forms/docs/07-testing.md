@@ -103,6 +103,19 @@ it('has a title field', function () {
 });
 ```
 
+You may pass a function as an additional argument in order to assert that a field passes a given "truth test". This is useful for asserting that a field has a specific configuration:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('has a title field', function () {
+    livewire(CreatePost::class)
+        ->assertFormFieldExists('title', function (TextInput $field): bool {
+            return $input->isDisabled();
+        });
+});
+```
+
 > Note that if you have multiple forms on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
 
 ### Hidden fields
