@@ -1,6 +1,6 @@
 <?php
 
-use Closure'
+use Closure;
 
 namespace Livewire\Testing {
 

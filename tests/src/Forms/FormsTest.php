@@ -23,7 +23,7 @@ it('has fields', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormFieldExists('title')
         ->assertFormFieldExists('nested.input')
-        ->assertFormFieldExists('disabled', function (TextInput $field) {
+        ->assertFormFieldExists('disabled', function (TextInput $field): bool {
             return $field->isDisabled();
         });
 });
@@ -32,7 +32,7 @@ it('has fields on multiple forms', function () {
     livewire(TestComponentWithMultipleForms::class)
         ->assertFormFieldExists('title', 'fooForm')
         ->assertFormFieldExists('title', 'barForm')
-        ->assertFormFieldExists('disabled', 'barForm', function (TextInput $field) {
+        ->assertFormFieldExists('disabled', 'barForm', function (TextInput $field): bool {
             return $field->isDisabled();
         });
 });
