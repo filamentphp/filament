@@ -191,7 +191,7 @@ it('can validate input', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->fillForm([
             'title' => null,
