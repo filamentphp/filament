@@ -6,7 +6,6 @@ use Closure;
 use Filament\Facades\Filament;
 use Filament\Http\Livewire\Concerns\CanNotify;
 use Filament\Resources\Form;
-use Filament\Resources\Resource;
 use Filament\Resources\Table;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables;
