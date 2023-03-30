@@ -66,7 +66,7 @@ class Resource
 
     protected static int $globalSearchResultsLimit = 50;
 
-    protected static bool $shouldAlwaysCheckGate = false;
+    protected static bool $shouldAuthorizeWithGate = false;
 
     protected static bool $shouldIgnorePolicies = false;
 
@@ -118,17 +118,18 @@ class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
-        if (static::shouldAlwaysCheckGate()) {
-            return Gate::forUser(Filament::auth()->user())->check($action, $record ?? static::getModel());
+        $user = Filament::auth()->user();
+        $model = static::getModel();
+
+        if (static::shouldAuthorizeWithGate()) {
+            return Gate::forUser($user)->check($action, $record ?? $model);
         }
 
         if (static::shouldIgnorePolicies()) {
             return true;
         }
 
-        $policy = Gate::getPolicyFor($model = static::getModel());
-        $user = Filament::auth()->user();
-
+        $policy = Gate::getPolicyFor($model);
         if ($policy === null) {
             return true;
         }
@@ -140,9 +141,9 @@ class Resource
         return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
-    public static function alwaysCheckGate(bool $condition = true): void
+    public static function authorizeWithGate(bool $condition = true): void
     {
-        static::$shouldAlwaysCheckGate = $condition;
+        static::$shouldAuthorizeWithGate = $condition;
     }
 
     public static function ignorePolicies(bool $condition = true): void
@@ -150,9 +151,9 @@ class Resource
         static::$shouldIgnorePolicies = $condition;
     }
 
-    public static function shouldAlwaysCheckGate(): bool
+    public static function shouldAuthorizeWithGate(): bool
     {
-        return static::$shouldAlwaysCheckGate;
+        return static::$shouldAuthorizeWithGate;
     }
 
     public static function shouldIgnorePolicies(): bool
