@@ -6,7 +6,6 @@ use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
-use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionParameter;
 

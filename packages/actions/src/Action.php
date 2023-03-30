@@ -2,7 +2,6 @@
 
 namespace Filament\Actions;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 use ReflectionParameter;
 

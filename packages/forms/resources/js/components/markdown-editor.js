@@ -168,7 +168,7 @@ export default function markdownEditorFormComponent({
             )
 
             this.$watch('state', () => {
-                if (! this.editor) {
+                if (!this.editor) {
                     return
                 }
 

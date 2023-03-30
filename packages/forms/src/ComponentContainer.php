@@ -4,7 +4,6 @@ namespace Filament\Forms;
 
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Components\ViewComponent;
-use Illuminate\Database\Eloquent\Model;
 use ReflectionParameter;
 
 class ComponentContainer extends ViewComponent

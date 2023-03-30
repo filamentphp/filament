@@ -13,12 +13,8 @@ use Filament\Tables\Columns\Concerns\CanGrow;
 use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 use ReflectionParameter;
-use stdClass;
 
 class Component extends ViewComponent
 {

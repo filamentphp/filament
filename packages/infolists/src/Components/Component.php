@@ -5,7 +5,6 @@ namespace Filament\Infolists\Components;
 use Filament\Infolists\Concerns\HasColumns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
-use Illuminate\Database\Eloquent\Model;
 use ReflectionParameter;
 
 class Component extends ViewComponent
@@ -31,7 +30,6 @@ class Component extends ViewComponent
     protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
     {
         return match ($parameter->getName()) {
-
             'record' => $this->getRecord(),
             'state' => $this->getState(),
             default => parent::resolveClosureDependencyForEvaluation($parameter),

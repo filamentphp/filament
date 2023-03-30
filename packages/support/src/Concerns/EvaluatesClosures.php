@@ -3,7 +3,6 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
-use Filament\Support\Evaluator;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use ReflectionFunction;
 use ReflectionNamedType;
@@ -69,6 +68,7 @@ trait EvaluatesClosures
         }
 
         $staticClass = static::class;
+
         throw new BindingResolutionException("An attempt was made to evaluate a closure for [{$staticClass}], but [${$parameterName}] was unresolvable.");
     }
 

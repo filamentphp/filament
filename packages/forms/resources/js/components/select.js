@@ -148,7 +148,7 @@ export default function selectFormComponent({
             }
 
             this.$watch('state', async () => {
-                if (! this.select) {
+                if (!this.select) {
                     return
                 }
 

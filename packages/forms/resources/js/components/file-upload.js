@@ -160,7 +160,7 @@ export default function fileUploadFormComponent({
             })
 
             this.$watch('state', async () => {
-                if (! this.pond) {
+                if (!this.pond) {
                     return
                 }
 

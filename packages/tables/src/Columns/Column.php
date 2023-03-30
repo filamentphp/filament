@@ -5,12 +5,8 @@ namespace Filament\Tables\Columns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
-use Filament\Tables\Contracts\HasTable;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 use ReflectionParameter;
-use stdClass;
 
 class Column extends ViewComponent
 {

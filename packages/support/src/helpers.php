@@ -2,7 +2,6 @@
 
 namespace Filament\Support;
 
-use Closure;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;

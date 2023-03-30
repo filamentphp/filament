@@ -3,7 +3,6 @@
 namespace Filament\Infolists;
 
 use Filament\Support\Components\ViewComponent;
-use Illuminate\Database\Eloquent\Model;
 use ReflectionParameter;
 
 class ComponentContainer extends ViewComponent

@@ -4,7 +4,6 @@ namespace Filament\Forms\Components\Actions;
 
 use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\MountableAction;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Js;
 use ReflectionParameter;
 
