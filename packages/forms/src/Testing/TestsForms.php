@@ -137,7 +137,12 @@ class TestsForms
 
     public function assertFormFieldExists(): Closure
     {
-        return function (string $fieldName, string $formName = 'form'): static {
+        return function (string $fieldName, string | Closure $formName = 'form', ?Closure $callback = null): static {
+            if ($formName instanceof Closure) {
+                $callback = $formName;
+                $formName = 'form';
+            }
+
             /** @phpstan-ignore-next-line  */
             $this->assertFormExists($formName);
 
@@ -154,6 +159,13 @@ class TestsForms
                 $field,
                 "Failed asserting that a field with the name [{$fieldName}] exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
             );
+
+            if ($callback) {
+                Assert::assertTrue(
+                    $callback($field),
+                    "Failed asserting that a field with the name [{$fieldName}] and provided configuration exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
+                );
+            }
 
             return $this;
         };
@@ -173,10 +185,15 @@ class TestsForms
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertTrue(
-                $field->isDisabled(),
-                "Failed asserting that a field with the name [{$fieldName}] is disabled on the form named [{$formName}] on the [{$livewireClass}] component."
-            );
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormFieldExists($fieldName, $formName, function (Field $field) use ($fieldName, $formName, $livewireClass): bool {
+                Assert::assertTrue(
+                    $field->isDisabled(),
+                    "Failed asserting that a field with the name [{$fieldName}] is disabled on the form named [{$formName}] on the [{$livewireClass}] component."
+                );
+
+                return true;
+            });
 
             return $this;
         };
@@ -196,10 +213,15 @@ class TestsForms
 
             $livewireClass = $this->instance()::class;
 
-            Assert::assertFalse(
-                $field->isDisabled(),
-                "Failed asserting that a field with the name [{$fieldName}] is enabled on the form named [{$formName}] on the [{$livewireClass}] component."
-            );
+            /** @phpstan-ignore-next-line  */
+            $this->assertFormFieldExists($fieldName, $formName, function (Field $field) use ($fieldName, $formName, $livewireClass): bool {
+                Assert::assertFalse(
+                    $field->isDisabled(),
+                    "Failed asserting that a field with the name [{$fieldName}] is enabled on the form named [{$formName}] on the [{$livewireClass}] component."
+                );
+
+                return true;
+            });
 
             return $this;
         };
