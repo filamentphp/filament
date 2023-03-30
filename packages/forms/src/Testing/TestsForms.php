@@ -142,7 +142,7 @@ class TestsForms
                 $callback = $formName;
                 $formName = 'form';
             }
-        
+
             /** @phpstan-ignore-next-line  */
             $this->assertFormExists($formName);
 
@@ -204,10 +204,10 @@ class TestsForms
                     $field->isDisabled(),
                     "Failed asserting that a field with the name [{$fieldName}] is enabled on the form named [{$formName}] on the [{$livewireClass}] component."
                 );
-                
+
                 return true;
             });
-            
+
             return $this;
         };
     }
