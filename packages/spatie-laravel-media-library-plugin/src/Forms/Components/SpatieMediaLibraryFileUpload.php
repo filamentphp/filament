@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\TemporaryUploadedFile;
@@ -92,6 +93,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
             $component->saveUploadedFiles();
+            $component->deleteAbandonedFiles();
         });
 
         $this->saveUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): ?string {
@@ -123,16 +125,6 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 ->toMediaCollection($component->getCollection(), $component->getDiskName());
 
             return $media->getAttributeValue('uuid');
-        });
-
-        $this->deleteUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): void {
-            if (! $file) {
-                return;
-            }
-
-            $mediaClass = config('media-library.media_model', Media::class);
-
-            $mediaClass::findByUuid($file)?->delete();
         });
 
         $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state): array {
@@ -195,6 +187,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->hasResponsiveImages = $condition;
 
         return $this;
+    }
+
+    public function deleteAbandonedFiles(): void
+    {
+        /** @var Model&HasMedia $record */
+        $record = $this->getRecord();
+
+        $record
+            ->getMedia($this->getCollection())
+            ->whereNotIn('uuid', array_keys($this->getState() ?? []))
+            ->each(fn (Media $media) => $media->delete());
     }
 
     public function getCollection(): string
