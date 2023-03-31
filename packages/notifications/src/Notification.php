@@ -248,7 +248,7 @@ class Notification extends ViewComponent implements Arrayable
         }
 
         if ($notification instanceof Notification) {
-            $expectedNotification = $notifications->first(fn (Notification $mountedNotification, string $key): bool => $mountedNotification->id === $key);
+            $expectedNotification = $notifications->first(fn (Notification $mountedNotification): bool => $mountedNotification->id === $notification->id);
         }
 
         if (blank($notification)) {
