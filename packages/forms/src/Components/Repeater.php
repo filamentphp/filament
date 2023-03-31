@@ -464,6 +464,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $relationship = $this->getRelationship();
         $relationshipQuery = $relationship->getQuery();
 
+        if ($relationship instanceof BelongsToMany) {
+            $relationshipQuery->select([
+                $relationship->getTable() . '.*',
+                $relationshipQuery->getModel()->getTable() . '.*',
+            ]);
+        }
+
         if ($this->modifyRelationshipQueryUsing) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
                 'query' => $relationshipQuery,
