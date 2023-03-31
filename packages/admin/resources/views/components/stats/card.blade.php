@@ -66,19 +66,17 @@
         <div
             x-title="filament-stats-card-chart"
             x-data="{
+                chart: null,
+
                 labels: {{ json_encode(array_keys($chart)) }},
                 values: {{ json_encode(array_values($chart)) }},
 
                 init: function () {
-                    chart = Chart.getChart(this.$refs.canvas);
-
-                    (chart !== undefined)
-                        ? this.updateChart()
-                        : this.initChart()
+                    this.chart ? this.updateChart() : this.initChart()
                 },
 
                 initChart: function () {
-                    return chart = new Chart(this.$refs.canvas, {
+                    return this.chart = new Chart(this.$refs.canvas, {
                         type: 'line',
                         data: {
                             labels: this.labels,
@@ -119,9 +117,9 @@
                 },
 
                 updateChart: function () {
-                    chart.data.labels = this.labels
-                    chart.data.datasets[0].data = this.values
-                    chart.update()
+                    this.chart.data.labels = this.labels
+                    this.chart.data.datasets[0].data = this.values
+                    this.chart.update()
                 },
             }"
             x-on:dark-mode-toggled.window="
