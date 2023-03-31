@@ -95,7 +95,7 @@ return [
     'empty' => [
 
         'heading' => 'Aucun élément trouvé',
-        
+
         'buttons' => [
 
             'reset_column_searches' => [
