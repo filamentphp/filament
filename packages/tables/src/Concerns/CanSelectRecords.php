@@ -16,6 +16,8 @@ trait CanSelectRecords
 
     protected bool $shouldSelectCurrentPageOnly = false;
 
+    protected Collection $cachedSelectedTableRecords;
+
     public function deselectAllTableRecords(): void
     {
         $this->emitSelf('deselectAllTableRecords');
@@ -64,11 +66,15 @@ trait CanSelectRecords
 
     public function getSelectedTableRecords(): Collection
     {
+        if (isset($this->cachedSelectedTableRecords)) {
+            return $this->cachedSelectedTableRecords;
+        }
+
         if (! ($this instanceof HasRelationshipTable && $this->getRelationship() instanceof BelongsToMany && $this->allowsDuplicates())) {
             $query = $this->getTableQuery()->whereIn(app($this->getTableModel())->getQualifiedKeyName(), $this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 
-            return $query->get();
+            return $this->cachedSelectedTableRecords = $query->get();
         }
 
         /** @var BelongsToMany $relationship */
@@ -77,7 +83,7 @@ trait CanSelectRecords
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->hydratePivotRelationForTableRecords($this->selectPivotDataInQuery(
+        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords($this->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
         )->get());
     }
