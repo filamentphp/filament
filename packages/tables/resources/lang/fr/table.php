@@ -93,6 +93,7 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Aucun élément trouvé',
         
         'buttons' => [
@@ -102,6 +103,7 @@ return [
             ],
 
         ],
+
     ],
 
     'filters' => [
