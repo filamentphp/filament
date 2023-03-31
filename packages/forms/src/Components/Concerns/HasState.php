@@ -4,7 +4,6 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Component;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Contracts\Support\Arrayable;
