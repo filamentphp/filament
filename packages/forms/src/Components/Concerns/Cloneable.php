@@ -21,7 +21,7 @@ trait Cloneable
     public function getClone(): static
     {
         $clone = clone $this;
-        $clone->flushCachedStatePath();
+        $clone->flushCachedAbsoluteStatePath();
         $clone->cloneChildComponents();
 
         return $clone;
