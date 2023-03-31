@@ -31,6 +31,8 @@ trait HasBulkActions
      */
     public ?array $mountedTableBulkActionData = [];
 
+    protected Collection $cachedSelectedTableRecords;
+
     protected function configureTableBulkAction(BulkAction $action): void
     {
     }
@@ -216,13 +218,17 @@ trait HasBulkActions
 
     public function getSelectedTableRecords(): Collection
     {
+        if (isset($this->cachedSelectedTableRecords)) {
+            return $this->cachedSelectedTableRecords;
+        }
+
         $table = $this->getTable();
 
         if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
             $query = $table->getQuery()->whereIn(app($table->getModel())->getQualifiedKeyName(), $this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 
-            return $query->get();
+            return $this->cachedSelectedTableRecords = $query->get();
         }
 
         /** @var BelongsToMany $relationship */
@@ -231,7 +237,7 @@ trait HasBulkActions
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->hydratePivotRelationForTableRecords($table->selectPivotDataInQuery(
+        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords($table->selectPivotDataInQuery(
             $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
         )->get());
     }
