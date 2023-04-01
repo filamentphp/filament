@@ -35,6 +35,36 @@ trait EntanglesStateWithSingularRelationship
             $component->fillFromRelationship();
         });
 
+        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
+            $relationship = $component->getRelationship();
+
+            if ($relationship instanceof BelongsTo) {
+                return;
+            }
+
+            $record = $component->getCachedExistingRecord();
+
+            if ($record) {
+                return;
+            }
+
+            $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
+            $data = $component->mutateRelationshipDataBeforeCreate($data);
+
+            $relatedModel = $component->getRelatedModel();
+
+            $translatableContentDriver = $livewire->makeFormTranslatableContentDriver();
+
+            if ($translatableContentDriver) {
+                $record = $translatableContentDriver->makeRecord($relatedModel, $data);
+            } else {
+                $record = new $relatedModel();
+                $record->fill($data);
+            }
+
+            $relationship->save($record);
+        });
+
         $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
             $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
@@ -52,6 +82,12 @@ trait EntanglesStateWithSingularRelationship
                 return;
             }
 
+            $relationship = $component->getRelationship();
+
+            if (! ($relationship instanceof BelongsTo)) {
+                return;
+            }
+
             $data = $component->mutateRelationshipDataBeforeCreate($data);
 
             $relatedModel = $component->getRelatedModel();
@@ -63,16 +99,10 @@ trait EntanglesStateWithSingularRelationship
                 $record->fill($data);
             }
 
-            $relationship = $component->getRelationship();
+            $record->save();
 
-            if ($relationship instanceof BelongsTo) {
-                $record->save();
-
-                $relationship->associate($record);
-                $relationship->getParent()->save();
-            } else {
-                $relationship->save($record);
-            }
+            $relationship->associate($record);
+            $relationship->getParent()->save();
         });
 
         $this->dehydrated(false);
