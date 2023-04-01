@@ -172,7 +172,7 @@ it('can save', function () {
         ->assertHasNoFormErrors();
 
     expect($post->refresh())
-        ->author->toBeSameModel($newData->author)
+        ->author_id->toBe($newData->author->getKey())
         ->content->toBe($newData->content)
         ->tags->toBe($newData->tags)
         ->title->toBe($newData->title);
