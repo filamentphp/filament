@@ -13,6 +13,8 @@ trait BelongsToModel
 
     protected ?Closure $saveRelationshipsUsing = null;
 
+    protected ?Closure $saveRelationshipsBeforeChildrenUsing = null;
+
     protected bool | Closure $shouldSaveRelationshipsWhenHidden = false;
 
     public function model(Model | string | Closure | null $model = null): static
@@ -27,6 +29,29 @@ trait BelongsToModel
         $callback = $this->saveRelationshipsUsing;
 
         if (! $callback) {
+            return;
+        }
+
+        if (! ($this->getRecord()?->exists)) {
+            return;
+        }
+
+        if ((! $this->shouldSaveRelationshipsWhenHidden()) && $this->isHidden()) {
+            return;
+        }
+
+        $this->evaluate($callback);
+    }
+
+    public function saveRelationshipsBeforeChildren(): void
+    {
+        $callback = $this->saveRelationshipsBeforeChildrenUsing;
+
+        if (! $callback) {
+            return;
+        }
+
+        if (! ($this->getRecord()?->exists)) {
             return;
         }
 
@@ -65,6 +90,13 @@ trait BelongsToModel
     public function saveRelationshipsUsing(?Closure $callback): static
     {
         $this->saveRelationshipsUsing = $callback;
+
+        return $this;
+    }
+
+    public function saveRelationshipsBeforeChildrenUsing(?Closure $callback): static
+    {
+        $this->saveRelationshipsBeforeChildrenUsing = $callback;
 
         return $this;
     }
