@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
+use Route;
 
 class Resource
 {
@@ -433,7 +434,7 @@ class Resource
     {
         $routeBaseName = static::getRouteBaseName();
 
-        return route("{$routeBaseName}.{$name}", $params, $isAbsolute);
+        return route("{$routeBaseName}.{$name}", Route::current()->parameters() + $params, $isAbsolute);
     }
 
     public static function hasPage($page): bool
