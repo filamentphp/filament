@@ -79,6 +79,7 @@
                 'filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50',
                 'cursor-pointer' => $closeByClickingAway,
             ])
+            style="will-change: transform;"
         ></div>
 
         <div
