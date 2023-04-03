@@ -51,7 +51,7 @@
             >
                 <div class="w-5 h-5 flex items-center justify-center">
                     <x-heroicon-s-x
-                        :x-tooltip.raw="__('tables::table.filters.buttons.remove_all.tooltip')"
+                        x-tooltip.raw="{{ __('tables::table.filters.buttons.remove_all.tooltip') }}"
                         wire:loading.remove.delay
                         wire:target="removeTableFilters,removeTableFilter"
                         class="w-5 h-5"
