@@ -7,6 +7,7 @@ use Filament\Support\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -158,6 +159,39 @@ class TestsActions
             Assert::assertNull(
                 $action,
                 message: "Failed asserting that a table action with name [{$name}] does not exist on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $livewireClass = $livewire::class;
+
+            $names = array_map(fn ($name) => $this->parseActionName($name), $names);
+            $namesIndex = 0;
+
+            foreach($livewire->getCachedTableActions() as $actionName => $action) {
+                if ($names[$namesIndex] !== $actionName) {
+                    continue;
+                }
+
+                Assert::assertInstanceOf(
+                    Action::class,
+                    $action,
+                    message: "Failed asserting that a table action with name [{$actionName}] exists on the [{$livewireClass}] component.",
+                );
+
+                $namesIndex++;
+            }
+
+            Assert::assertEquals(
+                count($names),
+                $namesIndex,
+                message: "Failed asserting that a table actions with names [".implode(', ', $names)."] exist in order on the [{$livewireClass}] component.",
             );
 
             return $this;
