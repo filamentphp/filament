@@ -21,6 +21,10 @@ namespace Livewire\Testing {
 
         public function assertTableActionDoesNotExist(string $name): static {}
 
+        public function assertTableActionsExistInOrder(array $names): static {}
+
+        public function assertTableHeaderActionsExistInOrder(array $names): static {}
+
         public function assertTableActionVisible(string $name, $record = null): static {}
 
         public function assertTableActionHidden(string $name, $record = null): static {}
