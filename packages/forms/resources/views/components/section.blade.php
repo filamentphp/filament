@@ -56,6 +56,28 @@
             'filament-forms-section-header flex-1 space-y-1',
             'cursor-pointer' => $isCollapsible,
         ])>
+
+            @if($getHeading() instanceof Illuminate\View\View)
+                {{ $getHeading() }}
+            @else
+                <h3 @class([
+                    'font-bold tracking-tight pointer-events-none flex flex-row items-center',
+                    'text-xl' => ! $isCompact,
+                ])>
+                    @if ($icon = $getIcon())
+                        <x-dynamic-component
+                            :component="$icon"
+                            @class([
+                                'mr-1',
+                                'h-4 w-4' => $isCompact,
+                                'h-6 w-6' => ! $isCompact,
+                            ]) />
+                    @endif
+
+                    {{ $getHeading() }}
+                </h3>
+            @endif
+
             <h3 @class([
                 'font-bold tracking-tight pointer-events-none flex flex-row items-center',
                 'text-xl' => ! $isCompact,
