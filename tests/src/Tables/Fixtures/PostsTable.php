@@ -108,6 +108,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\Action::make('has-color')
                 ->color('primary'),
             Tables\Actions\Action::make('exists'),
+            Tables\Actions\Action::make('exists-in-order'),
             Tables\Actions\Action::make('url')
                 ->url('https://filamentphp.com'),
             Tables\Actions\Action::make('url_in_new_tab')
