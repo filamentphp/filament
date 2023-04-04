@@ -7,7 +7,6 @@ use Filament\Support\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -169,32 +168,11 @@ class TestsActions
     {
         return function (array $names): static {
             $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
-            $names = array_map(fn ($name) => $this->parseActionName($name), $names);
-            $namesIndex = 0;
-
-            foreach($livewire->getCachedTableActions() as $actionName => $action) {
-                if ($namesIndex === count($names)) {
-                    break;
-                }
-                if ($names[$namesIndex] !== $actionName) {
-                    continue;
-                }
-
-                Assert::assertInstanceOf(
-                    Action::class,
-                    $action,
-                    message: "Failed asserting that a table action with name [{$actionName}] exists on the [{$livewireClass}] component.",
-                );
-
-                $namesIndex++;
-            }
-
-            Assert::assertEquals(
-                count($names),
-                $namesIndex,
-                message: "Failed asserting that a table actions with names [".implode(', ', $names)."] exist in order on the [{$livewireClass}] component.",
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedTableActions(),
+                'table',
+                Action::class,
             );
 
             return $this;
@@ -205,32 +183,11 @@ class TestsActions
     {
         return function (array $names): static {
             $livewire = $this->instance();
-            $livewireClass = $livewire::class;
-
-            $names = array_map(fn ($name) => $this->parseActionName($name), $names);
-            $namesIndex = 0;
-
-            foreach($livewire->getCachedTableHeaderActions() as $actionName => $action) {
-                if ($namesIndex === count($names)) {
-                    break;
-                }
-                if ($names[$namesIndex] !== $actionName) {
-                    continue;
-                }
-
-                Assert::assertInstanceOf(
-                    Action::class,
-                    $action,
-                    message: "Failed asserting that a table action with name [{$actionName}] exists on the [{$livewireClass}] component.",
-                );
-
-                $namesIndex++;
-            }
-
-            Assert::assertEquals(
-                count($names),
-                $namesIndex,
-                message: "Failed asserting that a table header actions with names [".implode(', ', $names)."] exist in order on the [{$livewireClass}] component.",
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedTableHeaderActions(),
+                'table',
+                Action::class,
             );
 
             return $this;
