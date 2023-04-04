@@ -186,7 +186,7 @@ class TestsActions
             $this->assertActionListInOrder(
                 $names,
                 $livewire->getCachedTableHeaderActions(),
-                'table',
+                'table header',
                 Action::class,
             );
 
