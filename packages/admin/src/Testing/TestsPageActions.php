@@ -155,6 +155,21 @@ class TestsPageActions
         };
     }
 
+    public function assertPageActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedActions(),
+                'page',
+                Action::class,
+            );
+
+            return $this;
+        };
+    }
+
     public function assertPageActionVisible(): Closure
     {
         return function (string $name): static {
