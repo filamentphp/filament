@@ -13,7 +13,11 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedAction) open()"
             x-on:modal-closed.stop="
+                if ($wire.mountedFormComponentAction) return
+
                 const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
 
                 if (mountedActionShouldOpenModal && 'mountedAction' in livewire?.serverMemo.data) {
@@ -93,7 +97,11 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableAction) open()"
             x-on:modal-closed.stop="
+                if ($wire.mountedFormComponentAction) return
+
                 const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
 
                 if (mountedTableActionShouldOpenModal && 'mountedTableAction' in livewire?.serverMemo.data) {
@@ -171,7 +179,11 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
+                if ($wire.mountedFormComponentAction) return
+
                 const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
 
                 if (mountedTableBulkActionShouldOpenModal && 'mountedTableBulkAction' in livewire?.serverMemo.data) {
@@ -250,7 +262,16 @@
             :slide-over="$action?->isModalSlideOver()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
-            x-init="livewire = $wire.__instance"
+            x-init="
+                livewire = $wire.__instance
+
+                $watch('isOpen', () => {
+                    window.dispatchEvent(new CustomEvent(
+                        isOpen ? 'opened-form-component-action-modal' : 'closed-form-component-action-modal',
+                        { detail: { id: '{{ $this->id }}-form-component-action' } }
+                    ))
+                })
+            "
             x-on:modal-closed.stop="
                 const mountedFormComponentActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedFormComponentActionShouldOpenModal()) }}
 
