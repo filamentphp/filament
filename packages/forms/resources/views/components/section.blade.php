@@ -3,6 +3,8 @@
     $isCollapsed = $isCollapsed();
     $isCollapsible = $isCollapsible() && (! $isAside);
     $isCompact = $isCompact();
+    $isAsideCompact = $isAside && $isAsideCompact();
+    $isAsideOnRight = $isAside && $isAsideOnRight();
 @endphp
 
 <div
@@ -33,7 +35,10 @@
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-section-component',
         'rounded-xl border border-gray-300 bg-white' => ! $isAside,
-        'grid grid-cols-1 md:grid-cols-2' => $isAside,
+        'grid grid-cols-1' => $isAside,
+        'md:grid-cols-2' => $isAside && ! $isAsideCompact,
+        'md:grid-cols-3' => $isAsideCompact,
+        'order-last' => $isAsideOnRight,
         'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode')  && ! $isAside,
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
@@ -43,7 +48,9 @@
             'filament-forms-section-header-wrapper flex rtl:space-x-reverse overflow-hidden rounded-t-xl',
             'min-h-[40px]' => $isCompact,
             'min-h-[56px]' => ! $isCompact,
-            'pr-6 pb-4' => $isAside,
+            'pb-4' => $isAside,
+            'pr-6' => $aside && ! $isAsideOnRight,
+            'pl-6' => $isAsideOnRight,
             'px-4 py-2 items-center bg-gray-100' => ! $isAside,
             'dark:bg-gray-900' => config('forms.dark_mode') && (! $isAside),
         ])
@@ -113,7 +120,11 @@
             x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($isCollapsed) x-cloak @endif
         @endif
-        class="filament-forms-section-content-wrapper"
+        @class([
+            'filament-forms-section-content-wrapper',
+            'col-span-2' => $isAsideCompact,
+            'order-first' => $isAsideOnRight,
+        ])
     >
         <div @class([
             'filament-forms-section-content',
