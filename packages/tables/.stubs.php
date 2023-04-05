@@ -53,6 +53,8 @@ namespace Livewire\Testing {
 
         public function assertTableBulkActionDoesNotExist(string $name): static {}
 
+        public function assertTableBulkActionsExistInOrder(array $names): static {}
+
         public function assertTableBulkActionVisible(string $name): static {}
 
         public function assertTableBulkActionHidden(string $name): static {}
