@@ -114,5 +114,6 @@ it('can state whether a table action exists', function () {
 it('can state whether several table actions exist in order', function () {
     livewire(PostsTable::class)
         ->assertTableActionsExistInOrder(['edit', 'delete'])
-        ->assertTableHeaderActionsExistInOrder(['exists', 'exists-in-order']);
+        ->assertTableHeaderActionsExistInOrder(['exists', 'exists-in-order'])
+        ->assertTableEmptyStateActionsExistInOrder(['empty-exists', 'empty-exists-in-order']);
 });

@@ -167,6 +167,14 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
         ];
     }
 
+    protected function getTableEmptyStateActions(): array
+    {
+        return [
+            Tables\Actions\Action::make('empty-exists'),
+            Tables\Actions\Action::make('empty-exists-in-order'),
+        ];
+    }
+
     protected function getTableQuery(): Builder
     {
         return Post::query();

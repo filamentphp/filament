@@ -194,6 +194,21 @@ class TestsActions
         };
     }
 
+    public function assertTableEmptyStateActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedTableEmptyStateActions(),
+                'table empty state',
+                Action::class,
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableActionVisible(): Closure
     {
         return function (string $name, $record = null): static {
