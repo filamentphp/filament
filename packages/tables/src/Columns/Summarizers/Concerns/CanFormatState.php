@@ -87,8 +87,6 @@ trait CanFormatState
                     return format_number($state);
                 }
 
-                $decimalPlaces = 0;
-
                 return number_format(
                     $state,
                     $summarizer->evaluate($decimalPlaces),
