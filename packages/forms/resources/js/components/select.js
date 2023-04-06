@@ -26,6 +26,7 @@ export default (Alpine) => {
             searchDebounce,
             searchingMessage,
             searchPrompt,
+            searchPlaceholder,
             state,
         }) => {
             return {
@@ -58,6 +59,7 @@ export default (Alpine) => {
                         renderChoiceLimit: optionsLimit,
                         searchFields: ['label'],
                         searchResultLimit: optionsLimit,
+                        searchPlaceholderValue: searchPlaceholder,
                         shouldSort: false,
                     })
 

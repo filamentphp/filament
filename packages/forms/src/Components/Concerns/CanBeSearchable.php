@@ -17,6 +17,8 @@ trait CanBeSearchable
 
     protected string | Htmlable | Closure | null $searchPrompt = null;
 
+    protected string | Closure | null $searchplaceholder = null;
+
     public function searchable(bool | Closure $condition = true): static
     {
         $this->isSearchable = $condition;
@@ -52,6 +54,13 @@ trait CanBeSearchable
         return $this;
     }
 
+    public function searchPlaceholder(string | Closure | null $message): static
+    {
+        $this->searchPlaceholder = $message;
+
+        return $this;
+    }
+
     public function getNoSearchResultsMessage(): string | Htmlable
     {
         return $this->evaluate($this->noSearchResultsMessage) ?? __('forms::components.select.no_search_results_message');
@@ -60,6 +69,11 @@ trait CanBeSearchable
     public function getSearchPrompt(): string | Htmlable
     {
         return $this->evaluate($this->searchPrompt) ?? __('forms::components.select.search_prompt');
+    }
+
+    public function getSearchPlaceholder(): string | Htmlable
+    {
+        return $this->evaluate($this->searchPlaceholder) ?? __('forms::components.select.search_placeholder');
     }
 
     public function getSearchDebounce(): int
