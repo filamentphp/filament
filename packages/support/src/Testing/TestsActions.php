@@ -35,7 +35,8 @@ class TestsActions
         return function (array $names, array $actions, string $actionType, string $actionClass): self {
             $livewireClass = $this->instance()::class;
 
-            $names = array_map(fn ($name) => $this->parseActionName($name), $names);
+            /** @var array<string> $names */
+            $names = array_map(fn ($name) => $this->parseActionName($name), $names); //@phpstan-ignore-line
             $namesIndex = 0;
 
             foreach($actions as $actionName => $action) {
