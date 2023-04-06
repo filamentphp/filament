@@ -5,10 +5,8 @@ namespace Filament\Commands;
 use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 
 class CompileThemeCommand extends Command
 {
