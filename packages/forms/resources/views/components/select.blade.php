@@ -98,8 +98,8 @@
                         position: @js($getPosition()),
                         searchDebounce: @js($getSearchDebounce()),
                         searchingMessage: @js($getSearchingMessage()),
-                        searchPrompt: @js($getSearchPrompt()),
                         searchPlaceholder: @js($getSearchPlaceholder()),
+                        searchPrompt: @js($getSearchPrompt()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
                     x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
