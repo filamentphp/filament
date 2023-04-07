@@ -98,9 +98,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @param  array<Block>  $blocks
+     * @param  array<Block> | Closure  $blocks
      */
-    public function blocks(array $blocks): static
+    public function blocks(array | Closure $blocks): static
     {
         $this->childComponents($blocks);
 
