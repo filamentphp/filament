@@ -248,10 +248,9 @@ return [
 
         'searching_message' => 'Searching...',
 
-        'search_prompt' => 'Start typing to search...',
-
         'search_placeholder' => 'Search',
 
+        'search_prompt' => 'Start typing to search...',
     ],
 
     'tags_input' => [
