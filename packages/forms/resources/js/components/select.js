@@ -25,8 +25,8 @@ export default (Alpine) => {
             position,
             searchDebounce,
             searchingMessage,
-            searchPrompt,
             searchPlaceholder,
+            searchPrompt,
             state,
         }) => {
             return {
