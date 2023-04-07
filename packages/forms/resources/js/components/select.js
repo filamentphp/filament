@@ -58,8 +58,8 @@ export default (Alpine) => {
                         removeItemButton: true,
                         renderChoiceLimit: optionsLimit,
                         searchFields: ['label'],
-                        searchResultLimit: optionsLimit,
                         searchPlaceholderValue: searchPlaceholder,
+                        searchResultLimit: optionsLimit,
                         shouldSort: false,
                     })
 
