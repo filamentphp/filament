@@ -15,9 +15,9 @@ trait CanBeSearchable
 
     protected string | Closure | null $searchingMessage = null;
 
-    protected string | Htmlable | Closure | null $searchPrompt = null;
-
     protected string | Closure | null $searchPlaceholder = null;
+
+    protected string | Htmlable | Closure | null $searchPrompt = null;
 
     public function searchable(bool | Closure $condition = true): static
     {
