@@ -251,6 +251,7 @@ return [
         'search_placeholder' => 'Search',
 
         'search_prompt' => 'Start typing to search...',
+
     ],
 
     'tags_input' => [
