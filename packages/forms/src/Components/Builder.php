@@ -3,12 +3,12 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use function Filament\Forms\array_move_after;
-use function Filament\Forms\array_move_before;
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Components\Builder\Block;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Builder\Block;
+use function Filament\Forms\array_move_after;
+use function Filament\Forms\array_move_before;
 
 class Builder extends Field implements Contracts\CanConcealComponents
 {
@@ -191,7 +191,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
         });
     }
 
-    public function blocks(array $blocks): static
+    public function blocks(array | Closure $blocks): static
     {
         $this->childComponents($blocks);
 
@@ -316,7 +316,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     public function isReorderableWithButtons(): bool
     {
-        return $this->evaluate($this->isReorderableWithButtons) && (! $this->isItemMovementDisabled());
+        return $this->evaluate($this->isReorderableWithButtons) && (!$this->isItemMovementDisabled());
     }
 
     public function isItemMovementDisabled(): bool
