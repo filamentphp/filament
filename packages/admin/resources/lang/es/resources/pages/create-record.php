@@ -1,9 +1,9 @@
 <?php
 
 return [
-    
+
     'title' => 'Crear :label',
-    
+
     'breadcrumb' => 'Crear',
 
     'form' => [
