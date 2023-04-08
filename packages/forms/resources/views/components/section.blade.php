@@ -32,7 +32,9 @@
     id="{{ $getId() }}"
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-forms-section-component',
-        'rounded-xl border border-gray-300 bg-white' => ! $isAside,
+        'border border-gray-300 bg-white' => ! $isAside,
+        'rounded-lg' => ! $isAside && $isCompact,
+        'rounded-xl' => ! $isAside && ! $isCompact,
         'grid grid-cols-1 md:grid-cols-2' => $isAside,
         'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode')  && ! $isAside,
     ]) }}
@@ -40,15 +42,15 @@
 >
     <div
         @class([
-            'filament-forms-section-header-wrapper flex rtl:space-x-reverse overflow-hidden rounded-t-xl',
-            'min-h-[40px]' => $isCompact,
-            'min-h-[56px]' => ! $isCompact,
+            'filament-forms-section-header-wrapper flex rtl:space-x-reverse overflow-hidden',
+            'min-h-[40px] rounded-t-lg' => $isCompact,
+            'min-h-[56px] rounded-t-xl' => ! $isCompact,
             'pr-6 pb-4' => $isAside,
             'px-4 py-2 items-center bg-gray-100' => ! $isAside,
             'dark:bg-gray-900' => config('forms.dark_mode') && (! $isAside),
         ])
         @if ($isCollapsible)
-            x-bind:class="{ 'rounded-b-xl': isCollapsed }"
+            x-bind:class="{ '{{ $isCompact ? 'rounded-b-lg' : 'rounded-b-xl' }}': isCollapsed }"
             x-on:click="isCollapsed = ! isCollapsed"
         @endif
     >
@@ -117,8 +119,10 @@
     >
         <div @class([
             'filament-forms-section-content',
-            'rounded-xl border border-gray-300 bg-white' => $isAside,
+            'border border-gray-300 bg-white' => $isAside,
             'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode') && $isAside,
+            'rounded-xl' => $isAside && ! $isCompact,
+            'rounded-lg' => $isAside && $isCompact,
             'p-6' => ! $isCompact,
             'p-4' => $isCompact,
         ])>
