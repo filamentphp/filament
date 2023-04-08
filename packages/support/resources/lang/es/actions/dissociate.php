@@ -21,18 +21,18 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Disociada',
+            'dissociated' => 'Disociado',
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Disociar seleccionadas',
+        'label' => 'Disociar seleccionados',
 
         'modal' => [
 
-            'heading' => 'Disociar :label seleccionadas',
+            'heading' => 'Disociar :label seleccionados',
 
             'actions' => [
 
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Disociadas',
+            'dissociated' => 'Disociados',
         ],
 
     ],
