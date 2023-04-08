@@ -21,7 +21,7 @@ return [
         ],
 
         'bulk_select_record' => [
-            'label' => 'Seleccionar/Deseleccionar el elemento :key para las acciones masivas.',
+            'label' => 'Seleccionar/deseleccionar el elemento :key para las acciones masivas.',
         ],
 
         'search_query' => [
