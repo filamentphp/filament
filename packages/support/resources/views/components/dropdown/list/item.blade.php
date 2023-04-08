@@ -40,10 +40,12 @@
         'text-warning-500' => $color === 'warning',
     ]);
 
-    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click'));
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+
+    $hasLoadingIndicator = filled($wireTarget);
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click')), ENT_QUOTES);
+        $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
     }
 @endphp
 
