@@ -32,12 +32,12 @@ return [
 
         'modal' => [
 
-            'heading' => 'Disociar :label seleccionada',
+            'heading' => 'Disociar :label seleccionadas',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Disociar seleccionadas',
+                    'label' => 'Disociar',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'dissociated' => 'Disociada',
+            'dissociated' => 'Disociadas',
         ],
 
     ],
