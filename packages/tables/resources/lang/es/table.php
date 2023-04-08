@@ -17,7 +17,7 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Seleccionar/Deseleccionar todos los elementos para las acciones masivas.',
+            'label' => 'Seleccionar/deseleccionar todos los elementos para las acciones masivas.',
         ],
 
         'bulk_select_record' => [
