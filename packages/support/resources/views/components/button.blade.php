@@ -109,11 +109,14 @@
         'sr-only' => $labelSrOnly,
     ]);
 
-    $hasFileUploadLoadingIndicator = ($type === 'submit') && filled($form);
-    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || $hasFileUploadLoadingIndicator;
+
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+
+    $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
+    $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
+        $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
 

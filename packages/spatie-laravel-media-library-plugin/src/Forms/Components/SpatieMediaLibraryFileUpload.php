@@ -109,8 +109,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         });
 
         $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
-            $component->saveUploadedFiles();
             $component->deleteAbandonedFiles();
+            $component->saveUploadedFiles();
         });
 
         $this->saveUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): ?string {
