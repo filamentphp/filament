@@ -163,6 +163,7 @@
                                                     title="{{ __('forms::components.builder.buttons.move_item_up.label') }}"
                                                     type="button"
                                                     wire:click.stop="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:target="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     wire:loading.attr="disabled"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
@@ -195,6 +196,7 @@
                                                     title="{{ __('forms::components.builder.buttons.move_item_down.label') }}"
                                                     type="button"
                                                     wire:click.stop="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                    wire:target="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     wire:loading.attr="disabled"
                                                     @class([
                                                         'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
@@ -227,6 +229,7 @@
                                             <button
                                                 title="{{ __('forms::components.builder.buttons.clone_item.label') }}"
                                                 wire:click.stop="dispatchFormEvent('builder::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                wire:target="dispatchFormEvent('builder::cloneItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                 wire:loading.attr="disabled"
                                                 type="button"
                                                 @class([
@@ -259,6 +262,7 @@
                                             <button
                                                 title="{{ __('forms::components.builder.buttons.delete_item.label') }}"
                                                 wire:click.stop="dispatchFormEvent('builder::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
+                                                wire:target="dispatchFormEvent('builder::deleteItem', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                 wire:loading.attr="disabled"
                                                 type="button"
                                                 @class([
