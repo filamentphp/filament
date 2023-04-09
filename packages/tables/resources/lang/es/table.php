@@ -36,7 +36,6 @@ return [
         'label' => 'Navegación de paginación',
 
         'overview' => '{1} Se muestra un resultado|[2,*] Se muestran de :first a :last de :total resultados',
-        
 
         'fields' => [
 
