@@ -49,9 +49,9 @@ use Filament\Forms\Form;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class CreatePost extends Component implements HasForms // [tl! focus]
+class CreatePost extends Component implements HasForms
 {
-    use InteractsWithForms; // [tl! focus:start]
+    use InteractsWithForms;
     
     public ?array $data = [];
     
@@ -75,7 +75,7 @@ class CreatePost extends Component implements HasForms // [tl! focus]
     public function create(): void
     {
         dd($this->form->getState());
-    } // [tl! focus:start]
+    }
     
     public function render(): View
     {
@@ -113,7 +113,7 @@ use App\Models\Post;
 
 public function create(): void
 {
-    Post::create($this->form->getState()); // [tl! focus]
+    Post::create($this->form->getState());
 }
 ```
 

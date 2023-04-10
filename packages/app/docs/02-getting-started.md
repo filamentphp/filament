@@ -149,7 +149,7 @@ public static function form(Form $form): Form
 {
     return $form
         ->schema([
-            Forms\Components\TextInput::make('name'), // [tl! ++]
+            Forms\Components\TextInput::make('name'),
         ]);
 }
 ```
@@ -162,8 +162,8 @@ This field is required in the database, and has a maximum length of 255 characte
 use Filament\Forms;
 
 Forms\Components\TextInput::make('name')
-    ->required() // [tl! ++]
-    ->maxLength(255) // [tl! ++]
+    ->required()
+    ->maxLength(255)
 ```
 
 Attempt to submit the form to create a new patient without a name, and observe that a message is displayed informing you that the name field is required.
@@ -183,12 +183,12 @@ public static function form(Form $form): Form
             Forms\Components\TextInput::make('name')
                 ->required()
                 ->maxLength(255),
-            Forms\Components\Select::make('type') // [tl! add:start]
+            Forms\Components\Select::make('type')
                 ->options([
                     'cat' => 'Cat',
                     'dog' => 'Dog',
                     'rabbit' => 'Rabbit',
-                ]), // [tl! add:end]
+                ]),
         ]);
 }
 ```
@@ -206,7 +206,7 @@ Forms\Components\Select::make('type')
         'dog' => 'Dog',
         'rabbit' => 'Rabbit',
     ])
-    ->required() // [tl! ++]
+    ->required()
 ```
 
 #### "Date of birth" picker
@@ -231,9 +231,9 @@ public static function form(Form $form): Form
                     'rabbit' => 'Rabbit',
                 ])
                 ->required(),
-            Forms\Components\DatePicker::make('date_of_birth') // [tl! add:start]
+            Forms\Components\DatePicker::make('date_of_birth')
                 ->required()
-                ->maxDate(now()), // [tl! add:end]
+                ->maxDate(now()),
         ]);
 }
 ```
@@ -265,9 +265,9 @@ public static function form(Form $form): Form
             Forms\Components\DatePicker::make('date_of_birth')
                 ->required()
                 ->maxDate(now()),
-            Forms\Components\Select::make('owner_id') // [tl! add:start]
+            Forms\Components\Select::make('owner_id')
                 ->relationship('owner', 'name')
-                ->required(), // [tl! add:end]
+                ->required(),
         ]);
 }
 ```
@@ -281,8 +281,8 @@ use Filament\Forms;
 
 Forms\Components\Select::make('owner_id')
     ->relationship('owner', 'name')
-    ->searchable() // [tl! ++]
-    ->preload() // [tl! ++]
+    ->searchable()
+    ->preload()
     ->required()
 ```
 
@@ -297,7 +297,7 @@ Forms\Components\Select::make('owner_id')
     ->relationship('owner', 'name')
     ->searchable()
     ->preload()
-    ->createOptionForm([ // [tl! add:start]
+    ->createOptionForm([
         Forms\Components\TextInput::make('name')
             ->required()
             ->maxLength(255),
@@ -310,7 +310,7 @@ Forms\Components\Select::make('owner_id')
             ->label('Phone number')
             ->tel()
             ->required(),
-    ]) // [tl! add:end]
+    ])
     ->required()
 ```
 
@@ -340,10 +340,10 @@ public static function table(Table $table): Table
 {
     return $table
         ->columns([
-            Tables\Columns\TextColumn::make('name'), // [tl! add:start]
+            Tables\Columns\TextColumn::make('name'),
             Tables\Columns\TextColumn::make('type'),
             Tables\Columns\TextColumn::make('date_of_birth'),
-            Tables\Columns\TextColumn::make('owner.name'), // [tl! add:end]
+            Tables\Columns\TextColumn::make('owner.name'),
         ]);
 }
 ```
@@ -363,11 +363,11 @@ public static function table(Table $table): Table
     return $table
         ->columns([
             Tables\Columns\TextColumn::make('name')
-                ->searchable(), // [tl! ++]
+                ->searchable(),
             Tables\Columns\TextColumn::make('type'),
             Tables\Columns\TextColumn::make('date_of_birth'),
             Tables\Columns\TextColumn::make('owner.name')
-                ->searchable(), // [tl! ++]
+                ->searchable(),
         ]);
 }
 ```
@@ -390,7 +390,7 @@ public static function table(Table $table): Table
                 ->searchable(),
             Tables\Columns\TextColumn::make('type'),
             Tables\Columns\TextColumn::make('date_of_birth')
-                ->sortable(), // [tl! ++]
+                ->sortable(),
             Tables\Columns\TextColumn::make('owner.name')
                 ->searchable(),
         ]);
@@ -416,12 +416,12 @@ public static function table(Table $table): Table
             // ...
         ])
         ->filters([
-            Tables\Filters\SelectFilter::make('type') // [tl! add:start]
+            Tables\Filters\SelectFilter::make('type')
                 ->options([
                     'cat' => 'Cat',
                     'dog' => 'Dog',
                     'rabbit' => 'Rabbit',
-                ]), // [tl! add:end]
+                ]),
         ]);
 }
 ```
@@ -456,7 +456,7 @@ use App\Filament\PatientResource\RelationManagers;
 public static function getRelations(): array
 {
     return [
-        RelationManagers\TreatmentsRelationManager::class, // [tl! ++]
+        RelationManagers\TreatmentsRelationManager::class,
     ];
 }
 ```
@@ -500,7 +500,7 @@ use Filament\Forms;
 Forms\Components\TextInput::make('description')
     ->required()
     ->maxLength(255)
-    ->columnSpan('full') // [tl! ++]
+    ->columnSpan('full')
 ```
 
 Let's add a `notes` field, which can be used to add more information about the treatment. We can use a [textarea](../forms/fields/textarea) for this:
@@ -517,9 +517,9 @@ public function form(Form $form): Form
                 ->required()
                 ->maxLength(255)
                 ->columnSpan('full'),
-            Forms\Components\Textarea::make('notes') // [tl! add:start]
+            Forms\Components\Textarea::make('notes')
                 ->maxLength(65535)
-                ->columnSpan('full'), // [tl! add:end]
+                ->columnSpan('full'),
         ]);
 }
 ```
@@ -543,10 +543,10 @@ public function form(Form $form): Form
             Forms\Components\Textarea::make('notes')
                 ->maxLength(65535)
                 ->columnSpan('full'),
-            Forms\Components\TextInput::make('price') // [tl! add:start]
+            Forms\Components\TextInput::make('price')
                 ->numeric()
                 ->prefix('$')
-                ->maxValue(42949672.95), // [tl! add:end]
+                ->maxValue(42949672.95),
         ]);
 }
 ```
@@ -565,13 +565,13 @@ Inside the new `app/Casts/MoneyCast.php` file, update the `get()` and `set()` me
 public function get($model, string $key, $value, array $attributes): float
 {
     // Transform the integer stored in the database into a float.
-    return round(floatval($value) / 100, precision: 2); // [tl! ++]
+    return round(floatval($value) / 100, precision: 2);
 }
 
 public function set($model, string $key, $value, array $attributes): float
 {
     // Transform the float into an integer for storage.
-    return round(floatval($value) * 100); // [tl! ++]
+    return round(floatval($value) * 100);
 }
 ```
 
@@ -583,9 +583,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Treatment extends Model
 {
-    protected $casts = [ // [tl! add:start]
+    protected $casts = [
         'price' => MoneyCast::class,
-    ]; // [tl! add:end]
+    ];
 
     // ...
 }
@@ -606,9 +606,9 @@ public function table(Table $table): Table
     return $table
         ->columns([
             Tables\Columns\TextColumn::make('description'),
-            Tables\Columns\TextColumn::make('price') // [tl! add:start]
+            Tables\Columns\TextColumn::make('price')
                 ->money('usd')
-                ->sortable(), // [tl! add:end]
+                ->sortable(),
         ]);
 }
 ```
@@ -627,8 +627,8 @@ public function table(Table $table): Table
             Tables\Columns\TextColumn::make('price')
                 ->money('usd')
                 ->sortable(),
-            Tables\Columns\TextColumn::make('created_at') // [tl! add:start]
-                ->dateTime(), // [tl! add:end]
+            Tables\Columns\TextColumn::make('created_at')
+                ->dateTime(),
         ]);
 }
 ```

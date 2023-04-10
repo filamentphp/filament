@@ -28,11 +28,11 @@ use Filament\Forms\Form;
 public function form(Form $form): Form
 {
     return $form
-        ->schema([ // [tl! focus:start]
+        ->schema([
             TextInput::make('title'),
             TextInput::make('slug'),
             RichEditor::make('content'),
-        ]); // [tl! focus:end]
+        ]);
 }
 ```
 
@@ -76,11 +76,11 @@ use Filament\Forms\Components\TextInput;
     TextInput::make('slug'),
     RichEditor::make('content')
         ->columnSpan(2),
-    Section::make('Publishing') // [tl! focus:start]
+    Section::make('Publishing')
         ->description('Settings for publishing this post.')
         ->schema([
             // ...
-        ]), // [tl! focus:end]
+        ]),
 ]
 ```
 
@@ -93,7 +93,7 @@ use Filament\Forms\Components\Select;
 
 Section::make('Publishing')
     ->description('Settings for publishing this post.')
-    ->schema([ // [tl! focus:start]
+    ->schema([
         Select::make('status')
             ->options([
                 'draft' => 'Draft',
@@ -101,7 +101,7 @@ Section::make('Publishing')
                 'published' => 'Published',
             ]),
         DateTimePicker::make('published_at'),
-    ]) // [tl! focus:end]
+    ])
 ```
 
 This section now contains a [`Select` field](fields/select) and a [`DateTimePicker` field](fields/date-time-picker). You can learn more about those fields and their functionalities on the respective docs pages.

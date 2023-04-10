@@ -47,9 +47,9 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class ListProducts extends Component implements HasTable // [tl! focus]
+class ListProducts extends Component implements HasTable
 {
-    use InteractsWithTable; // [tl! focus]
+    use InteractsWithTable;
     
     public function table(Table $table): Table
     {
@@ -67,7 +67,7 @@ class ListProducts extends Component implements HasTable // [tl! focus]
             ->bulkActions([
                 // ...
             ]);
-    } // [tl! focus:start]
+    }
     
     public function render(): View
     {

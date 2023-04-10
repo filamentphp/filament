@@ -2,6 +2,8 @@
 title: Database notifications
 ---
 
+## Overview
+
 > To start, make sure the package is [installed](installation) - `@livewire('notifications')` should be in your Blade layout somewhere.
 
 Before we start, make sure that the [Laravel notifications table](https://laravel.com/docs/notifications#database-prerequisites) is added to your database:
@@ -43,7 +45,7 @@ Notifications::databaseNotificationsTrigger('filament-notifications.database-not
 
 Now, simply move the `@livewire('notifications')` component to the position in your HTML that you wish to render the database notifications trigger button. It should appear, and open the database notifications modal when clicked!
 
-## Sending notifications
+## Sending database notifications
 
 There are several ways to send database notifications, depending on which one suits you best.
 
@@ -87,11 +89,11 @@ public function toDatabase(User $notifiable): array
 }
 ```
 
-## Receiving notifications
+## Receiving database notifications
 
 Without any setup, new database notifications will only be received when the page is first loaded.
 
-### Polling
+### Polling for new database notifications
 
 Polling is the practice of periodically making a request to the server to check for new notifications. This is a good approach as the setup is simple, but some may say that it is not a scalable solution as it increases server load.
 
@@ -113,7 +115,7 @@ Notifications::databaseNotifications();
 Notifications::databaseNotificationsPollingInterval(null);
 ```
 
-### Echo
+### Using Echo to receive new database notifications with websockets
 
 Alternatively, the package has a native integration with [Laravel Echo](https://laravel.com/docs/broadcasting#client-side-installation). Make sure Echo is installed, as well as a [server-side websockets integration](https://laravel.com/docs/broadcasting#server-side-installation) like Pusher.
 
@@ -132,7 +134,7 @@ Notification::make()
 event(new DatabaseNotificationsSent($recipient));
 ```
 
-## Opening the notifications modal
+## Opening the database notifications modal
 
 Instead of rendering the trigger button as described above, you can always open the database notifications modal from anywhere by dispatching an `open-modal` browser event:
 

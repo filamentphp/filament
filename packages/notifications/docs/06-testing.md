@@ -2,9 +2,11 @@
 title: Testing
 ---
 
+## Overview
+
 All examples in this guide will be written using [Pest](https://pestphp.com). However, you can easily adapt this to PHPUnit.
 
-## Session notifications
+## Testing session notifications
 
 To check if a notification was sent using the session, use the `assertNotified()` helper:
 

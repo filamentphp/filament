@@ -106,16 +106,16 @@ You may also want to update your `vite.config.js` file to refresh the page after
 
 ```js
 import { defineConfig } from 'vite'
-import laravel, { refreshPaths } from 'laravel-vite-plugin' // [tl! focus]
+import laravel, { refreshPaths } from 'laravel-vite-plugin'
 
 export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: [ // [tl! focus:start]
+            refresh: [
                 ...refreshPaths,
                 'app/Http/Livewire/**',
-            ], // [tl! focus:end]
+            ],
         }),
     ],
 })
@@ -132,7 +132,7 @@ const mix = require('laravel-mix')
 
 mix.js('resources/js/app.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css', [
-        require('tailwindcss'), // [tl! focus]
+        require('tailwindcss'),
     ])
 ```
 

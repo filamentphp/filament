@@ -22,12 +22,12 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->columns([ // [tl! focus:start]
+        ->columns([
             TextColumn::make('title'),
             TextColumn::make('slug'),
             IconColumn::make('is_featured')
                 ->boolean(),
-        ]); // [tl! focus:end]
+        ]);
 }
 ```
 
@@ -82,7 +82,7 @@ public function table(Table $table): Table
         ->schema([
             // ...
         ])
-        ->filters([ // [tl! focus:start]
+        ->filters([
             Filter::make('is_featured'),
             SelectFilter::make('status')
                 ->options([
@@ -90,7 +90,7 @@ public function table(Table $table): Table
                     'reviewing' => 'Reviewing',
                     'published' => 'Published',
                 ]),
-        ]); // [tl! focus:end]
+        ]);
 }
 ```
 
@@ -116,7 +116,7 @@ public function table(Table $table): Table
         ->schema([
             // ...
         ])
-        ->actions([ // [tl! focus:start]
+        ->actions([
             Action::make('feature')
                 ->action(function (Post $record) {
                     $record->is_featured = true;
@@ -132,7 +132,7 @@ public function table(Table $table): Table
         ])
         ->bulkActions([
             DeleteBulkAction::make(),
-        ]); // [tl! focus:end]
+        ]);
 }
 ```
 

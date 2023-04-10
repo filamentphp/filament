@@ -151,7 +151,7 @@ Or if you're using Laravel Mix instead of Vite, in your `webpack.mix.js` file, r
 const mix = require('laravel-mix')
 
 mix.postCss('resources/css/filament.css', 'public/css', [
-    require('tailwindcss'), // [tl! focus]
+    require('tailwindcss'),
 ])
 ```
 
