@@ -22,6 +22,7 @@ class Component extends ViewComponent
     use Concerns\HasFieldWrapper;
     use Concerns\HasInlineLabel;
     use Concerns\HasId;
+    use Concerns\HasKey;
     use Concerns\HasLabel;
     use Concerns\HasMaxWidth;
     use Concerns\HasMeta;
@@ -45,10 +46,5 @@ class Component extends ViewComponent
             'state' => $this->getState(),
             default => parent::resolveClosureDependencyForEvaluation($parameter),
         };
-    }
-
-    public function getKey(): ?string
-    {
-        return null;
     }
 }

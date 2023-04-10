@@ -455,7 +455,7 @@ Relation managers are Livewire components. When they are first loaded, the owner
 $this->ownerRecord
 ```
 
-However, in you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#using-closure-customization) to access the `$livewire` instance:
+However, in you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
 
 ```php
 use Filament\Forms;

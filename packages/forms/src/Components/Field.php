@@ -34,6 +34,6 @@ class Field extends Component implements Contracts\HasHintActions, Contracts\Has
 
     public function getKey(): string
     {
-        return $this->getStatePath();
+        return parent::getKey() ?? $this->getStatePath();
     }
 }
