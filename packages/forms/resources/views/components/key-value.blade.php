@@ -48,7 +48,7 @@
                         @if (($canDeleteRows() || $isReorderable()) && $isEnabled())
                             <th
                                 scope="col"
-                                x-show="rows.length > 1"
+                                x-show="rows.length > 0"
                                 class="{{ ($canDeleteRows() && $isReorderable()) ? 'w-16' : 'w-12' }}"
                             >
                                 <span class="sr-only"></span>
