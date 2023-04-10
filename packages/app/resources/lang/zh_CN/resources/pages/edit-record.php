@@ -20,6 +20,10 @@ return [
 
         ],
 
+        'tab' => [
+            'label' => '编辑',
+        ],
+
     ],
 
     'messages' => [

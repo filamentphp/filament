@@ -249,6 +249,7 @@ return [
         'searching_message' => 'Buscando...',
 
         'search_prompt' => 'Comece a digitar para pesquisar...',
+
     ],
 
     'tags_input' => [

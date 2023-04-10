@@ -6,4 +6,12 @@ return [
 
     'breadcrumb' => '详情',
 
+    'form' => [
+
+        'tab' => [
+            'label' => '视图',
+        ],
+
+    ],
+
 ];

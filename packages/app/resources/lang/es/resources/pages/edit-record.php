@@ -15,7 +15,7 @@ return [
             ],
 
             'save' => [
-                'label' => 'Guardar',
+                'label' => 'Guardar cambios',
             ],
 
         ],

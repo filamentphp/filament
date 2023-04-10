@@ -55,6 +55,7 @@ export default function selectFormComponent({
                 removeItemButton: true,
                 renderChoiceLimit: optionsLimit,
                 searchFields: ['label'],
+                searchPlaceholderValue: searchPrompt,
                 searchResultLimit: optionsLimit,
                 shouldSort: false,
             })
