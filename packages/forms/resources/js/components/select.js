@@ -25,7 +25,6 @@ export default (Alpine) => {
             position,
             searchDebounce,
             searchingMessage,
-            searchPlaceholder,
             searchPrompt,
             state,
         }) => {
@@ -51,14 +50,14 @@ export default (Alpine) => {
                             window.pluralize(maxItemsMessage, maxItemCount, {
                                 count: maxItemCount,
                             }),
-                        noChoicesText: searchPrompt,
+                        noChoicesText: null,
                         noResultsText: noSearchResultsMessage,
                         placeholderValue: placeholder,
                         position: position ?? 'auto',
                         removeItemButton: true,
                         renderChoiceLimit: optionsLimit,
                         searchFields: ['label'],
-                        searchPlaceholderValue: searchPlaceholder,
+                        searchPlaceholderValue: searchPrompt,
                         searchResultLimit: optionsLimit,
                         shouldSort: false,
                     })

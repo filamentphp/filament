@@ -98,7 +98,6 @@
                         position: @js($getPosition()),
                         searchDebounce: @js($getSearchDebounce()),
                         searchingMessage: @js($getSearchingMessage()),
-                        searchPlaceholder: @js($getSearchPlaceholder()),
                         searchPrompt: @js($getSearchPrompt()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"

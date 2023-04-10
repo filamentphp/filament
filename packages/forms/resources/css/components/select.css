@@ -151,6 +151,10 @@
     @apply cursor-default;
 }
 
+.choices__item.has-no-choices {
+    display: none;
+}
+
 .choices__item--selectable {
     @apply cursor-pointer;
 }

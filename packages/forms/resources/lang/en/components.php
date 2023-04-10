@@ -248,8 +248,6 @@ return [
 
         'searching_message' => 'Searching...',
 
-        'search_placeholder' => 'Search',
-
         'search_prompt' => 'Start typing to search...',
 
     ],
