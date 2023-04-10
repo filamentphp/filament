@@ -2,6 +2,8 @@
 title: Text column
 ---
 
+## Overview
+
 Text columns display simple text from your database:
 
 ```php

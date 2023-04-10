@@ -2,6 +2,8 @@
 title: Dashboard
 ---
 
+## Overview
+
 Filament allows you to build dynamic dashboards, comprised of "widget" cards, very easily.
 
 The following document will explain how to use these widgets to assemble a dashboard using the app framework.

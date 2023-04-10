@@ -2,6 +2,8 @@
 title: Multi-tenancy
 ---
 
+## Overview
+
 Multi-tenancy is a concept where a single instance of an application serves multiple customers. Each customer has their own data and access rules that prevent them from viewing or modifying each other's data. This is a common pattern in SaaS applications.
 
 There are two main approaches to "ownership" in a multi-tenant application:

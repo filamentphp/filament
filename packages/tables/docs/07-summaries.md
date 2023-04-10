@@ -2,7 +2,7 @@
 title: Summaries
 ---
 
-## Getting started
+## Overview
 
 You may render a "summary" section below your table content. This is great for displaying the results of calculations such as averages, sums, counts, and ranges of the data in your table.
 

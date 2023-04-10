@@ -2,6 +2,8 @@
 title: Configuration
 ---
 
+## Overview
+
 By default, the configuration file is located at `app/Providers/Filament/AdminContextProvider.php`. Keep reading to learn more about [contexts](#introducing-contexts) and how each has [its own configuration file](#creating-a-new-context).
 
 ## Introducing contexts

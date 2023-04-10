@@ -2,6 +2,8 @@
 title: Global search
 ---
 
+## Overview
+
 Global search allows you to search across all of your resource records, from anywhere in the app.
 
 ## Title

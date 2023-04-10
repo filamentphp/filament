@@ -2,6 +2,8 @@
 title: Icon column
 ---
 
+## Overview
+
 Icon columns render a Blade icon component representing their contents:
 
 ```php

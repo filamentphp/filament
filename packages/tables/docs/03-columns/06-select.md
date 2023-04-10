@@ -2,6 +2,8 @@
 title: Select column
 ---
 
+## Overview
+
 The select column allows you to render a select field inside the table, which can be used to update that database record without needing to open a new page or a modal.
 
 You must pass options to the column:

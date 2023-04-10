@@ -2,7 +2,7 @@
 title: Filters
 ---
 
-## Getting started
+## Overview
 
 Filters allow you to scope the Eloquent query as a way to reduce the number of records in a table. You can put them in the `$table->filters()` method:
 

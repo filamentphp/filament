@@ -2,6 +2,8 @@
 title: Getting started
 ---
 
+## Overview
+
 You may be wondering how to get started building an app with Filament. There are many features, spread across several packages, that compose even the simplest of apps. This guide will teach you a few core concepts of the framework, and give you a glimpse of what is possible.
 
 Before using Filament, you need to be familiar with Laravel. Many core Laravel concepts are used within Filament, especially [database migrations](https://laravel.com/docs/migrations) and [Eloquent ORM](https://laravel.com/docs/eloquent). If you've never used Laravel before, or need a refresher, we highly recommend that you follow the [Laravel Bootcamp](https://bootcamp.laravel.com/blade/installation) to build a small app. The guide will give you a great foundation of knowledge that you would otherwise be missing, and you will find Filament much easier and faster to understand and use.

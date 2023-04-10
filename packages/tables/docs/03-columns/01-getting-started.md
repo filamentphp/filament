@@ -2,6 +2,8 @@
 title: Getting started
 ---
 
+## Overview
+
 Column classes can be found in the `Filament\Tables\Columns` namespace. You can put them inside the `$table->columns()` method:
 
 ```php

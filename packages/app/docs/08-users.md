@@ -2,6 +2,8 @@
 title: Users
 ---
 
+## Overview
+
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
 
 ## Authorizing access to the app
