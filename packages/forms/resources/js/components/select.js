@@ -50,7 +50,7 @@ export default (Alpine) => {
                             window.pluralize(maxItemsMessage, maxItemCount, {
                                 count: maxItemCount,
                             }),
-                        noChoicesText: null,
+                        noChoicesText: searchPrompt,
                         noResultsText: noSearchResultsMessage,
                         placeholderValue: placeholder,
                         position: position ?? 'auto',
