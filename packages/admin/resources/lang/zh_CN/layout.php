@@ -33,6 +33,7 @@ return [
             ],
 
         ],
+
         'user_menu' => [
             'label' => '用户菜单',
         ],
