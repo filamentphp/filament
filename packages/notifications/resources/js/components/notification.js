@@ -62,7 +62,7 @@ export default (Alpine) => {
 
             Livewire.hook('message.received', (_, component) => {
                 if (
-                    component.fingerprint.name !== 'filament.core.notifications'
+                    !component.serverMemo.data.isFilamentNotificationsComponent
                 ) {
                     return
                 }
@@ -90,7 +90,7 @@ export default (Alpine) => {
 
             Livewire.hook('message.processed', (_, component) => {
                 if (
-                    component.fingerprint.name !== 'filament.core.notifications'
+                    !component.serverMemo.data.isFilamentNotificationsComponent
                 ) {
                     return
                 }
