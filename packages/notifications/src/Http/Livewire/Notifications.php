@@ -16,6 +16,9 @@ use Livewire\Component;
 
 class Notifications extends Component
 {
+    // Used to check if Livewire messages should trigger notification animations.
+    public bool $isFilamentNotificationsComponent = true;
+
     public Collection $notifications;
 
     protected $listeners = [
