@@ -24,7 +24,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     protected string | Closure | null $icon = null;
 
-    protected bool | Closure | null $formBefore = null;
+    protected bool | Closure | null $isFormBefore = null;
 
     final public function __construct(string | Htmlable | Closure $heading)
     {
