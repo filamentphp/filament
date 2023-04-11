@@ -37,7 +37,7 @@ class StatsOverview extends BaseWidget
 
 Now, check out your widget in the dashboard.
 
-## Setting a card descriptions and icon
+## Adding a description and icon to a card
 
 You may add a `description()` to provide additional information, along with a `descriptionIcon()`:
 
