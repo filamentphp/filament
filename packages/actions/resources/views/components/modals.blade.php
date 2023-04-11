@@ -16,7 +16,7 @@
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedAction) open()"
             x-on:modal-closed.stop="
-                if ($wire.mountedFormComponentAction) return
+                if ('mountedFormComponentAction' in livewire?.serverMemo.data) return
 
                 const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
 
@@ -100,7 +100,7 @@
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableAction) open()"
             x-on:modal-closed.stop="
-                if ($wire.mountedFormComponentAction) return
+                if ('mountedFormComponentAction' in livewire?.serverMemo.data) return
 
                 const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
 
@@ -182,7 +182,7 @@
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
-                if ($wire.mountedFormComponentAction) return
+                if ('mountedFormComponentAction' in livewire?.serverMemo.data) return
 
                 const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
 
