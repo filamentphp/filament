@@ -24,7 +24,7 @@
 
     <span>
         <button x-on:click="deselectAllRecords" class="text-sm font-medium text-primary-600">
-            {{ trans_choice('tables::table.selection_indicator.buttons.deselect_all.label', $allRecordsCount, ['count' => $allRecordsCount]) }}.
+            {{ __('tables::table.selection_indicator.buttons.deselect_all.label') }}.
         </button>
     </span>
 </div>
