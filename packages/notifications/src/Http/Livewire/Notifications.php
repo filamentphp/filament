@@ -16,6 +16,8 @@ use Livewire\Component;
 
 class Notifications extends Component
 {
+    public bool $isFilamentNotificationsComponent = true;
+
     public Collection $notifications;
 
     /**
