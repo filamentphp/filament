@@ -47,9 +47,9 @@
                         @if (($deleteAction || $reorderAction) && (! $isDisabled))
                             <th
                                 scope="col"
-                                x-show="rows.length > 1"
-                                class="{{ ($deleteAction && $reorderAction) ? 'w-16' : 'w-12' }}"
-                            >
+                                x-show="rows.length"
+                                    class="{{ ($deleteAction && $reorderAction) ? 'w-16' : 'w-12' }}"
+                                >
                                 <span class="sr-only"></span>
                             </th>
                         @endif
@@ -98,7 +98,7 @@
                             </td>
 
                             @if (($deleteAction || $reorderAction) && (! $isDisabled))
-                                <td x-show="rows.length > 1" class="whitespace-nowrap">
+                                <td class="whitespace-nowrap">
                                     <div class="flex items-center justify-center px-2">
                                         @if ($reorderAction)
                                             <div x-sortable-handle>
