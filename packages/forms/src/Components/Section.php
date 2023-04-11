@@ -114,9 +114,9 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         return $this->evaluate($this->icon);
     }
 
-    public function formBefore(bool | Closure | null $formBefore = true): static
+    public function formBefore(bool | Closure | null $condition = true): static
     {
-        $this->formBefore = $formBefore;
+        $this->isFormBefore = $condition;
 
         return $this;
     }
