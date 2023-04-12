@@ -26,7 +26,7 @@
 
     <span id="{{ $this->id }}.table.selection.indicator.record-count.{{ $allRecordsCount }}" x-show="{{ $allRecordsCount }} !== selectedRecords.length">
         <button x-on:click="selectAllRecords" class="text-sm font-medium text-primary-600">
-            {{ __('filament-tables::table.selection_indicator.buttons.select_all.label', ['count' => $allRecordsCount]) }}.
+            {{ trans_choice('filament-tables::table.selection_indicator.buttons.select_all.label', $allRecordsCount) }}.
         </button>
     </span>
 

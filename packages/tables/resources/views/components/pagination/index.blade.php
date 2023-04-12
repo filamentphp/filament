@@ -117,7 +117,7 @@
                                         <x-filament-tables::pagination.item
                                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                                             :label="$page"
-                                            :aria-label="__('filament-tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
+                                            :aria-label="trans_choice('filament-tables::table.pagination.buttons.go_to_page.label', $page, ['page' => $page])"
                                             :active="$page === $paginator->currentPage()"
                                             :wire:key="$this->id . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
                                         />
