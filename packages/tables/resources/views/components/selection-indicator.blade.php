@@ -18,7 +18,7 @@
 
     <span id="{{ $this->id }}.table.selection.indicator.record-count.{{ $allRecordsCount }}" x-show="{{ $allRecordsCount }} !== selectedRecords.length">
         <button x-on:click="selectAllRecords" class="text-sm font-medium text-primary-600">
-            {{ trans_choice('tables::table.selection_indicator.buttons.select_all.label', $allRecordsCount, ['count' => $allRecordsCount]) }}.
+            {{ trans_choice('tables::table.selection_indicator.buttons.select_all.label', $allRecordsCount) }}.
         </button>
     </span>
 
