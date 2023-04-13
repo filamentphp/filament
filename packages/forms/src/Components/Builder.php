@@ -30,6 +30,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     protected bool | Closure $isItemDeletionDisabled = false;
 
+    protected string | Closure | null $itemLabel = null;
+
     protected bool | Closure $hasBlockLabels = true;
 
     protected bool | Closure $hasBlockNumbers = true;
@@ -240,6 +242,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function itemLabel(string | Closure | null $label): static
+    {
+        $this->itemLabel = $label;
+
+        return $this;
+    }
+
     public function reorderableWithButtons(bool | Closure $condition = true): static
     {
         $this->isReorderableWithButtons = $condition;
@@ -309,9 +318,22 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this->evaluate($this->createItemButtonLabel);
     }
 
+    public function getItemLabel(string $uuid): ?string
+    {
+        return $this->evaluate($this->itemLabel, [
+            'state' => $this->getChildComponentContainer($uuid)->getRawState(),
+            'uuid' => $uuid,
+        ]);
+    }
+
     public function hasBlock($name): bool
     {
         return (bool) $this->getBlock($name);
+    }
+
+    public function hasItemLabels(): bool
+    {
+        return $this->itemLabel !== null;
     }
 
     public function isReorderableWithButtons(): bool

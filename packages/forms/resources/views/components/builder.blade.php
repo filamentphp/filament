@@ -20,6 +20,7 @@
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
+        $hasItemLabels = $hasItemLabels();
     @endphp
 
     <div>
@@ -97,7 +98,7 @@
                             'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
                         ])
                     >
-                        @if ((! $isItemMovementDisabled) || $hasBlockLabels || (! $isItemDeletionDisabled) || $isCollapsible || $isCloneable)
+                        @if ((! $isItemMovementDisabled) || $hasBlockLabels || (! $isItemDeletionDisabled) || $isCollapsible || $isCloneable || $hasItemLabels)
                             <header
                                 @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
                                 @class([
@@ -149,6 +150,13 @@
                                         @endif
                                     </p>
                                 @endif
+
+                                <p @class([
+                                    'flex-none px-4 text-xs font-medium text-gray-600 truncate',
+                                    'dark:text-gray-400' => config('forms.dark_mode'),
+                                ])>
+                                    {{ $getItemLabel($uuid) }}
+                                </p>
 
                                 <div class="flex-1"></div>
 
