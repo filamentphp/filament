@@ -57,6 +57,7 @@ class Column extends ViewComponent
             'livewire' => $this->getLivewire(),
             'record' => $this->getRecord(),
             'rowLoop' => $this->getRowLoop(),
+            'component' => $this,
         ]);
     }
 }
