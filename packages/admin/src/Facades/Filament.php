@@ -48,7 +48,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerWidgets(array $widgets)
  * @method static Htmlable renderHook(string $name)
  * @method static void serving(Closure $callback)
- * @method static void servingFilament( bool $servingFilament = true )
+ * @method static void servingFilament(bool $servingFilament = true)
  *
  * @see FilamentManager
  */
