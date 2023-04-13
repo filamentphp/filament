@@ -62,12 +62,12 @@
                 })
 
                 $watch('mode', () => {
-                    if (mode === 'auto') {
+                    if (this.mode === 'auto') {
                         localStorage.setItem('mode', 'auto')
                         if (this.isSystemDark()) {
-                            theme = 'dark'
+                            this.theme = 'dark'
                         } else {
-                            theme = 'light'
+                            this.theme = 'light'
                         }
                     } else {
                         localStorage.setItem('mode', 'manual')
