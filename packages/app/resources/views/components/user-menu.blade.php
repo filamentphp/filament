@@ -90,20 +90,30 @@
             isSystemDark: function () {
                 return window.matchMedia('(prefers-color-scheme: dark)').matches
             },
+
+            toggleTheme: function () {
+                if (this.theme === 'dark') {
+                    this.theme = 'light'
+                } else {
+                    this.theme = 'dark'
+                }
+
+                if (this.mode === 'auto') {
+                    this.mode = 'manual'
+                } else {
+                    this.mode = 'auto'
+                }
+            }
         }"
     >
         <div>
             @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
-                <x-filament::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
+                <x-filament::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); toggleTheme();">
                     {{ __('filament::layout.buttons.light_mode.label') }}
                 </x-filament::dropdown.list.item>
 
-                <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
+                <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); toggleTheme();">
                     {{ __('filament::layout.buttons.dark_mode.label') }}
-                </x-filament::dropdown.list.item>
-
-                <x-filament::dropdown.list.item icon="heroicon-m-cog" x-show="mode === 'manual'" x-on:click="close(); mode = 'auto';">
-                    {{ __('filament::layout.buttons.system_mode.label') }}
                 </x-filament::dropdown.list.item>
             @endif
         </div>
