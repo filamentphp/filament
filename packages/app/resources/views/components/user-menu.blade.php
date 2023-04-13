@@ -40,7 +40,12 @@
 
             init: function () {
                 this.theme = localStorage.getItem('theme') || (this.isSystemDark() ? 'dark' : 'light')
-                this.mode = localStorage.getItem('theme') ? 'manual' : 'auto'
+
+                if ( localStorage.getItem('mode') === 'manual' ) {
+                    this.mode = 'manual'
+                } else {
+                    this.mode = 'auto'
+                }
 
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
                     if (this.mode === 'manual') return
@@ -56,9 +61,20 @@
                     }
                 })
 
-                $watch('theme', () => {
-                    if (this.mode === 'auto') return
+                $watch('mode', () => {
+                    if (mode === 'auto') {
+                        localStorage.setItem('mode', 'auto')
+                        if (this.isSystemDark()) {
+                            theme = 'dark'
+                        } else {
+                            theme = 'light'
+                        }
+                    } else {
+                        localStorage.setItem('mode', 'manual')
+                    }
+                })
 
+                $watch('theme', () => {
                     localStorage.setItem('theme', this.theme)
 
                     if (this.theme === 'dark' && (! document.documentElement.classList.contains('dark'))) {
@@ -84,6 +100,10 @@
 
                 <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
                     {{ __('filament::layout.buttons.dark_mode.label') }}
+                </x-filament::dropdown.list.item>
+
+                <x-filament::dropdown.list.item icon="heroicon-m-cog" x-show="mode === 'manual'" x-on:click="close(); mode = 'auto';">
+                    {{ __('filament::layout.buttons.system_mode.label') }}
                 </x-filament::dropdown.list.item>
             @endif
         </div>
