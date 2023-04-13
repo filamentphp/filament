@@ -1239,7 +1239,7 @@ FileUpload::make('attachment')
     ->maxSize(1024)
 ```
 
-> To customize Livewire's default file upload validation rules, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
+> To customize Livewire's default file upload validation rules, including the 12MB file size maximum, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
 
 Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageResizeMode()`, `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for the other methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
 
