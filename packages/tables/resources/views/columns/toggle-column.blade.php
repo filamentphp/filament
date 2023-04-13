@@ -9,10 +9,14 @@
         isLoading: false,
     }"
     x-init="
-        $watch('state', () => $refs.button.dispatchEvent(new Event('change')))
+        $watch('state', () => $refs.button?.dispatchEvent(new Event('change')))
 
         Livewire.hook('message.processed', (component) => {
             if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            if (! $refs.newState) {
                 return
             }
 
