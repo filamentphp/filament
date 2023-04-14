@@ -31,11 +31,16 @@ trait CanReorderRecords
             return;
         }
 
-        foreach ($order as $index => $recordKey) {
-            $this->getTableRecord($recordKey)->update([
-                $orderColumn => $index + 1,
+        $model = new ($this->getTableModel());
+        $model
+            ->newModelQuery()
+            ->whereIn($model->getKeyName(), array_values($order))
+            ->update([
+                $orderColumn => DB::raw('case ' . collect($order)
+                    ->map(fn ($recordKey, int $index): string => 'when ' . $model->getKeyName() . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($index + 1))
+                    ->implode(' ') . ' end'
+                )
             ]);
-        }
     }
 
     public function toggleTableReordering(): void
