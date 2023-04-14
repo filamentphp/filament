@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use DB;
 
 trait CanReorderRecords
 {
