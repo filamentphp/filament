@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 
 trait CanReorderRecords
 {
@@ -15,7 +16,7 @@ trait CanReorderRecords
             return;
         }
 
-        $orderColumn = $this->getTableReorderColumn();
+        $orderColumn = Str::afterLast($this->getTableReorderColumn(), '.');
 
         if (
             $this instanceof HasRelationshipTable &&
