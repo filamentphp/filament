@@ -294,7 +294,7 @@
                                 </header>
                             @endif
 
-                            <div class="p-6" x-show="! isCollapsed">
+                            <div class="filament-forms-repeater-item p-6" x-show="! isCollapsed">
                                 {{ $item }}
                             </div>
 
