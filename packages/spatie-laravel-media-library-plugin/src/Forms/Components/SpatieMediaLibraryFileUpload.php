@@ -68,10 +68,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 return null;
             }
 
-            $mediaClass = config('media-library.media_model', Media::class);
-
             /** @var ?Media $media */
-            $media = $mediaClass::findByUuid($file);
+            $media = $component->getRecord()->getRelation('media')?->firstWhere('uuid', $file);
 
             if ($component->getVisibility() === 'private') {
                 try {
