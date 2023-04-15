@@ -38,8 +38,12 @@
 
             theme: null,
 
+            systemTheme: null,
+
             init: function () {
                 this.theme = localStorage.getItem('theme') || (this.isSystemDark() ? 'dark' : 'light')
+
+                this.systemTheme = this.isSystemDark() ? 'dark' : 'light'
 
                 if ( localStorage.getItem('mode') === 'manual' ) {
                     this.mode = 'manual'
@@ -48,16 +52,24 @@
                 }
 
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-                    if (this.mode === 'manual') return
+                    if (this.mode === 'manual') {
+                        if (event.matches) {
+                            this.systemTheme = 'dark'
+                        } else {
+                            this.systemTheme = 'light'
+                        }
+                    } else {
+                        if (event.matches && (! document.documentElement.classList.contains('dark'))) {
+                            this.theme = 'dark'
+                            this.systemTheme = 'dark'
 
-                    if (event.matches && (! document.documentElement.classList.contains('dark'))) {
-                        this.theme = 'dark'
+                            document.documentElement.classList.add('dark')
+                        } else if ((! event.matches) && document.documentElement.classList.contains('dark')) {
+                            this.theme = 'light'
+                            this.systemTheme = 'light'
 
-                        document.documentElement.classList.add('dark')
-                    } else if ((! event.matches) && document.documentElement.classList.contains('dark')) {
-                        this.theme = 'light'
-
-                        document.documentElement.classList.remove('dark')
+                            document.documentElement.classList.remove('dark')
+                        }
                     }
                 })
 
@@ -66,8 +78,10 @@
                         localStorage.setItem('mode', 'auto')
                         if (this.isSystemDark()) {
                             this.theme = 'dark'
+                            this.systemTheme = 'dark'
                         } else {
                             this.theme = 'light'
+                            this.systemTheme = 'light'
                         }
                     } else {
                         localStorage.setItem('mode', 'manual')
@@ -91,16 +105,36 @@
                 return window.matchMedia('(prefers-color-scheme: dark)').matches
             },
 
-            toggleTheme: function () {
-                if (this.theme === 'dark') {
-                    this.theme = 'light'
-                } else {
-                    this.theme = 'dark'
-                }
+            matchesSystemTheme: function () {
+                return (this.theme === this.systemTheme)
+            },
 
-                if (this.mode === 'auto') {
+            toggleTheme: function () {
+                if (this.isSystemDark() && this.theme === 'dark') {
+                    this.theme = 'light'
                     this.mode = 'manual'
+                    this.systemTheme = 'dark'
+                } else if (this.isSystemDark() && this.theme === 'light') {
+                    this.theme = 'dark'
+                    this.mode = 'auto'
+                    this.systemTheme = 'dark'
+                } else if (!this.isSystemDark() && this.theme === 'dark') {
+                    this.theme = 'light'
+                    this.mode = 'auto'
+                    this.systemTheme = 'light'
+                } else if (!this.isSystemDark() && this.theme === 'light') {
+                    this.theme = 'dark'
+                    this.mode = 'manual'
+                    this.systemTheme = 'light'
                 } else {
+                    if (this.isSystemDark()) {
+                        this.theme = 'dark'
+                        this.systemTheme = 'dark'
+                    } else {
+                        this.theme = 'light'
+                        this.systemTheme = 'light'
+                    }
+
                     this.mode = 'auto'
                 }
             }
@@ -110,12 +144,12 @@
             @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
                 <x-filament::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); toggleTheme();">
                     {{ __('filament::layout.buttons.light_mode.label') }}
-                    <p x-show="mode === 'manual'" class="font-light text-xs text-gray-300">Follow System Theme</p>
+                    <p x-show="!matchesSystemTheme()" class="font-light text-xs text-gray-300">Follow System Theme</p>
                 </x-filament::dropdown.list.item>
 
                 <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); toggleTheme();">
                     {{ __('filament::layout.buttons.dark_mode.label') }}
-                    <p x-show="mode === 'manual'" class="font-light text-xs text-gray-600">Follow System Theme</p>
+                    <p x-show="!matchesSystemTheme()" class="font-light text-xs text-gray-600">Follow System Theme</p>
                 </x-filament::dropdown.list.item>
             @endif
         </div>
