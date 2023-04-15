@@ -30,7 +30,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getUserMenuItems()
  * @method static string getUserName(Model | Authenticatable $user)
  * @method static array getWidgets()
- * @method static bool isServingFilament()
+ * @method static bool isServing()
  * @method static void globalSearchProvider(string $provider)
  * @method static void navigation(\Closure $builder)
  * @method static void notify(string $status, string $message, bool $isAfterRedirect = false)
@@ -48,7 +48,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerWidgets(array $widgets)
  * @method static Htmlable renderHook(string $name)
  * @method static void serving(Closure $callback)
- * @method static void servingFilament(bool $servingFilament = true)
+ * @method static void setServingStatus(bool $condition = true)
  *
  * @see FilamentManager
  */
