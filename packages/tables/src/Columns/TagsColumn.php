@@ -6,6 +6,8 @@ use Closure;
 
 class TagsColumn extends Column
 {
+    use Concerns\CanFilter;
+
     protected string $view = 'tables::columns.tags-column';
 
     protected string | Closure | null $separator = null;

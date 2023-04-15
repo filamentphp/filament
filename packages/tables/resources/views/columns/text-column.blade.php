@@ -9,6 +9,10 @@
     $iconClasses = 'w-4 h-4';
 
     $isCopyable = $isCopyable();
+
+    $hasFilter = $hasFilter();
+    $filterName = $getFilterName();
+    $filterFunctionName = $getFilterFunctionName();
 @endphp
 
 <div
@@ -71,8 +75,17 @@
                     $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
                 "
             @endif
+            @if ($hasFilter)
+                @if (! blank($filterName))
+                    wire:click="$set('tableFilters.{{ $filterName }}', '{{ $state }}')"
+            @endif
+            @if (! blank($filterFunctionName))
+                wire:click="{{ $filterFunctionName }}('{{ $state }}')"
+               @endif
+            @endif
             @class([
                 'cursor-pointer' => $isCopyable,
+                'transition hover:text-primary-500 cursor-pointer' => $hasFilter,
             ])
         >
             {{ $state }}
