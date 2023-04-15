@@ -243,7 +243,10 @@ export default (Alpine) => {
                     })
 
                     this.pond.on('addfilestart', async (file) => {
-                        if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
+                        if (
+                            file.status !==
+                            FilePond.FileStatus.PROCESSING_QUEUED
+                        ) {
                             return
                         }
 
@@ -252,12 +255,16 @@ export default (Alpine) => {
 
                     const handleFileProcessing = async () => {
                         if (
-                            this.pond.getFiles()
-                                .filter(file => (
-                                    (file.status === FilePond.FileStatus.PROCESSING) ||
-                                    (file.status === FilePond.FileStatus.PROCESSING_QUEUED)
-                                ))
-                                .length
+                            this.pond
+                                .getFiles()
+                                .filter(
+                                    (file) =>
+                                        file.status ===
+                                            FilePond.FileStatus.PROCESSING ||
+                                        file.status ===
+                                            FilePond.FileStatus
+                                                .PROCESSING_QUEUED,
+                                ).length
                         ) {
                             return
                         }
