@@ -144,12 +144,12 @@
             @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
                 <x-filament::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); toggleTheme();">
                     {{ __('filament::layout.buttons.light_mode.label') }}
-                    <p x-show="!matchesSystemTheme" class="font-light text-xs text-gray-300">Follow System Theme</p>
+                    <p x-show="!matchesSystemTheme" class="font-light text-xs text-gray-300">{{ __('filament::layout.buttons.system_mode.label') }}</p>
                 </x-filament::dropdown.list.item>
 
                 <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); toggleTheme();">
                     {{ __('filament::layout.buttons.dark_mode.label') }}
-                    <p x-show="!matchesSystemTheme" class="font-light text-xs text-gray-600">Follow System Theme</p>
+                    <p x-show="!matchesSystemTheme" class="font-light text-xs text-gray-600">{{ __('filament::layout.buttons.system_mode.label') }}</p>
                 </x-filament::dropdown.list.item>
             @endif
         </div>
