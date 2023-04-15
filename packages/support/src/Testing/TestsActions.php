@@ -43,6 +43,7 @@ class TestsActions
                 if ($namesIndex === count($names)) {
                     break;
                 }
+
                 if ($names[$namesIndex] !== $actionName) {
                     continue;
                 }
