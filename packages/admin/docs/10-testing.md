@@ -381,7 +381,7 @@ it('can validate invoice recipient email', function () {
 });
 ```
 
-### Pre-filled Data
+### Pre-filled data
 
 To check if a page action is pre-filled with data, you can use the `assertPageActionDataSet()` method:
 
