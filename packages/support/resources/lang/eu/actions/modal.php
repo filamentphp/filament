@@ -2,7 +2,7 @@
 
 return [
 
-    'confirmation' => '¿Está segura/o de hacer esto?',
+    'confirmation' => 'Ziur zaude hau egin nahi duzula?',
 
     'actions' => [
 
