@@ -93,7 +93,7 @@
                             setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
                         "
                         @class([
-                            'bg-white border border-gray-300 shadow-sm rounded-xl relative',
+                            'filament-forms-builder-component-item bg-white border border-gray-300 shadow-sm rounded-xl relative',
                             'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
                         ])
                     >
