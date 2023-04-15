@@ -8,49 +8,30 @@
         state: @js((bool) $state),
         isLoading: false,
     }"
-    x-init="
-        $watch('state', () => $refs.button?.dispatchEvent(new Event('change')))
-
-        Livewire.hook('message.processed', (component) => {
-            if (component.component.id !== @js($this->id)) {
-                return
-            }
-
-            if (! $refs.newState) {
-                return
-            }
-
-            let newState = $refs.newState.value === '1' ? true : false
-
-            if (state === newState) {
-                return
-            }
-
-            state = newState
-        })
-    "
     {{ $attributes->merge($getExtraAttributes())->class([
         'filament-tables-toggle-column',
     ]) }}
+    wire:ignore
 >
-    <input
-        type="hidden"
-        value="{{ $state ? 1 : 0 }}"
-        x-ref="newState"
-    />
-
     <button
         role="switch"
         aria-checked="false"
         x-bind:aria-checked="state.toString()"
-        x-on:click="! isLoading && (state = ! state)"
-        x-ref="button"
-        x-on:change="
+        x-on:click="
+            if (isLoading) return
+
             isLoading = true
-            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), ! state)
             error = response?.error ?? undefined
+
+            if (error) {
+                return isLoading = false
+            }
+
+            state = ! state
             isLoading = false
         "
+        x-ref="button"
         x-tooltip="error"
         x-bind:class="{
             'opacity-70 pointer-events-none': isLoading,
@@ -70,7 +51,6 @@
             } }} @if (config('forms.dark_mode')) dark:bg-white/10 @endif': ! state,
         }"
         {!! $isDisabled() ? 'disabled' : null !!}
-        wire:ignore.self
         type="button"
         class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 outline-none focus:ring-1 focus:ring-offset-1 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none"
     >
