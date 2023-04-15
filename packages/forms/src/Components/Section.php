@@ -123,7 +123,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     public function isFormBefore(): bool
     {
-        return (bool) $this->evaluate($this-> isFormBefore);
+        return (bool) $this->evaluate($this->isFormBefore);
     }
 
 }
