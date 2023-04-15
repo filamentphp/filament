@@ -191,7 +191,7 @@ it('can reset table filters`', function () {
 });
 ```
 
-## Table Actions
+## Actions
 
 ### Calling actions
 
