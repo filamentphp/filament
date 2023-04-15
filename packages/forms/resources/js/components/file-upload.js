@@ -253,10 +253,11 @@ export default (Alpine) => {
                     const handleFileProcessing = async () => {
                         if (
                             this.pond.getFiles()
-                                .filter(file =>
-                                    file.status === FilePond.FileStatus.PROCESSING ||
-                                    file.status === FilePond.FileStatus.PROCESSING_QUEUED
-                                ).length
+                                .filter(file => (
+                                    (file.status === FilePond.FileStatus.PROCESSING) ||
+                                    (file.status === FilePond.FileStatus.PROCESSING_QUEUED)
+                                ))
+                                .length
                         ) {
                             return
                         }
