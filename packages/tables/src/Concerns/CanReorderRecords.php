@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Str;
 
 trait CanReorderRecords
 {
@@ -17,7 +18,7 @@ trait CanReorderRecords
             return;
         }
 
-        $orderColumn = $this->getTable()->getReorderColumn();
+        $orderColumn = (string) str($this->getTable()->getReorderColumn())->afterLast('.');
 
         if (
             (($relationship = $this->getTable()->getRelationship()) instanceof BelongsToMany) &&
