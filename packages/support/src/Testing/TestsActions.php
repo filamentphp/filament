@@ -36,7 +36,7 @@ class TestsActions
             $livewireClass = $this->instance()::class;
 
             /** @var array<string> $names */
-            $names = array_map(fn ($name) => $this->parseActionName($name), $names); //@phpstan-ignore-line
+            $names = array_map(fn ($name) => $this->parseActionName($name), $names); // @phpstan-ignore-line
             $namesIndex = 0;
 
             foreach ($actions as $actionName => $action) {
@@ -51,7 +51,7 @@ class TestsActions
                 Assert::assertInstanceOf(
                     $actionClass,
                     $action,
-                    message: "Failed asserting that a $actionType action with name [{$actionName}] exists on the [{$livewireClass}] component.",
+                    message: "Failed asserting that a {$actionType} action with name [{$actionName}] exists on the [{$livewireClass}] component.",
                 );
 
                 $namesIndex++;
@@ -60,7 +60,7 @@ class TestsActions
             Assert::assertEquals(
                 count($names),
                 $namesIndex,
-                message: "Failed asserting that a $actionType actions with names [" . implode(', ', $names) . "] exist in order on the [{$livewireClass}] component.",
+                message: "Failed asserting that a {$actionType} actions with names [" . implode(', ', $names) . "] exist in order on the [{$livewireClass}] component.",
             );
 
             return $this;
