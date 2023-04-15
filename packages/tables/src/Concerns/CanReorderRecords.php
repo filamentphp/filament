@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 trait CanReorderRecords
 {
@@ -31,15 +32,17 @@ trait CanReorderRecords
             return;
         }
 
-        $model = new ($this->getTableModel());
+        $model = app($this->getTableModel());
+        $modelKeyName = $model->getKeyName();
+        
         $model
             ->newModelQuery()
-            ->whereIn($model->getKeyName(), array_values($order))
+            ->whereIn($modelKeyName, array_values($order))
             ->update([
                 $orderColumn => DB::raw('case ' . collect($order)
-                    ->map(fn ($recordKey, int $index): string => 'when ' . $model->getKeyName() . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($index + 1))
+                    ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $modelKeyName . ' = ' . DB::getPdo()->quote($recordIndex) . ' then ' . ($index + 1))
                     ->implode(' ') . ' end'
-                )
+                ),
             ]);
     }
 
