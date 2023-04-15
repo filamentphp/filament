@@ -60,7 +60,7 @@ class TestsActions
             Assert::assertEquals(
                 count($names),
                 $namesIndex,
-                message: "Failed asserting that a $actionType actions with names [".implode(', ', $names)."] exist in order on the [{$livewireClass}] component.",
+                message: "Failed asserting that a $actionType actions with names [" . implode(', ', $names) . "] exist in order on the [{$livewireClass}] component.",
             );
 
             return $this;
