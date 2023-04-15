@@ -157,6 +157,51 @@ class TestsActions
         };
     }
 
+    public function assertTableActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedTableActions(),
+                'table',
+                Action::class,
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableHeaderActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedTableHeaderActions(),
+                'table header',
+                Action::class,
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableEmptyStateActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedTableEmptyStateActions(),
+                'table empty state',
+                Action::class,
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableActionVisible(): Closure
     {
         return function (string $name, $record = null): static {

@@ -118,6 +118,11 @@ it('can state whether a page action exists', function () {
         ->assertActionDoesNotExist('does_not_exist');
 });
 
+it('can state whether several page actions exist in order', function () {
+    livewire(PageActions::class)
+        ->assertPageActionsExistInOrder(['exists', 'exists_in_order']);
+});
+
 it('can show a notification', function () {
     livewire(Actions::class)
         ->callAction('shows_notification')
