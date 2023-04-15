@@ -117,7 +117,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function placeholder(string | Closure $placeholder): static
+    public function placeholder(string | Closure | null $placeholder): static
     {
         $this->placeholder = $placeholder;
 
@@ -175,7 +175,7 @@ trait CanFormatState
             $state = $state . $this->evaluate($this->suffix);
         }
 
-        if (empty($state) && ! is_numeric($state)) {
+        if (blank($state)) {
             $state = $this->evaluate($this->placeholder);
         }
 

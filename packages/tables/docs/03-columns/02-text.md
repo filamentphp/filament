@@ -166,7 +166,7 @@ TextColumn::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
 
-## Adding a placeholder
+## Adding a placeholder if the cell is empty
 
 Sometimes you may want to display a placeholder if the cell's value is empty:
 
@@ -176,8 +176,6 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('updated_at')
     ->placeholder('Never')
 ```
-
-> An integer or float equal to `0` will not be considered empty.
 
 ## Customizing the color
 
