@@ -37,6 +37,8 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
+    protected bool $isServing = false;
+
     public function auth(): Guard
     {
         return $this->getCurrentContext()->auth();
@@ -581,5 +583,15 @@ class FilamentManager
     public function hasCollapsibleNavigationGroups(): bool
     {
         return $this->getCurrentContext()->hasCollapsibleNavigationGroups();
+    }
+
+    public function setServingStatus(bool $condition = true): void
+    {
+        $this->isServing = $condition;
+    }
+
+    public function isServing(): bool
+    {
+        return $this->isServing;
     }
 }

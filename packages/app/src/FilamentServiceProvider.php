@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -69,6 +70,10 @@ class FilamentServiceProvider extends PackageServiceProvider
             DispatchServingFilamentEvent::class,
             SetUpContext::class,
         ]);
+
+        Filament::serving(function () {
+            Filament::setServingStatus();
+        });
 
         if ($this->app->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {

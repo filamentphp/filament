@@ -100,12 +100,14 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasTopNavigation()
  * @method static bool hasRegistration()
  * @method static bool hasRoutableTenancy()
+ * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
  * @method static void registerContext(Context $context)
  * @method static Htmlable renderHook(string $name)
  * @method static void serving(Closure $callback)
  * @method static void setCurrentContext(Context | null $context = null)
+ * @method static void setServingStatus(bool $condition = true)
  * @method static void setTenant(Model | null $tenant = null)
  *
  * @see FilamentManager
