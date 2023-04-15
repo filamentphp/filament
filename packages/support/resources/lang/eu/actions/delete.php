@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Ezabatu :label hautatutakoak',
+            'heading' => 'Ezabatu hautatutako :label',
 
             'actions' => [
 
