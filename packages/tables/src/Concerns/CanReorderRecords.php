@@ -35,12 +35,13 @@ trait CanReorderRecords
 
         $model = app($this->getTableModel());
         $modelKeyName = $model->getKeyName();
-        
+
         $model
             ->newModelQuery()
             ->whereIn($modelKeyName, array_values($order))
             ->update([
-                $orderColumn => DB::raw('case ' . collect($order)
+                $orderColumn => DB::raw(
+                    'case ' . collect($order)
                     ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $modelKeyName . ' = ' . DB::getPdo()->quote($recordIndex) . ' then ' . ($index + 1))
                     ->implode(' ') . ' end'
                 ),
