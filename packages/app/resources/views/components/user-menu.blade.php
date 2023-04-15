@@ -55,13 +55,6 @@
 
                 this.matchesSystemTheme = this.isSystemTheme()
 
-                console.log(this.mode)
-                console.log('theme: ' + this.theme)
-                console.log('system is dark: ' + this.isSystemDark())
-                console.log('system matches: ' + this.isSystemTheme())
-                    console.log('system check: ' + this.matchesSystemTheme)
-                console.log('===')
-
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
                     if (this.mode === 'auto') {
                         if (event.matches && (! document.documentElement.classList.contains('dark'))) {
@@ -76,13 +69,6 @@
                     }
 
                     this.matchesSystemTheme = this.isSystemTheme()
-
-                    console.log(this.mode)
-                    console.log('theme: ' + this.theme)
-                    console.log('system is dark: ' + this.isSystemDark())
-                    console.log('system matches: ' + this.isSystemTheme())
-                    console.log('system check: ' + this.matchesSystemTheme)
-                    console.log('===')
                 })
 
                 $watch('mode', () => {
@@ -98,13 +84,6 @@
                     }
 
                     this.matchesSystemTheme = this.isSystemTheme()
-
-                    console.log(this.mode)
-                    console.log('theme: ' + this.theme)
-                    console.log('system is dark: ' + this.isSystemDark())
-                    console.log('system matches: ' + this.isSystemTheme())
-                    console.log('system check: ' + this.matchesSystemTheme)
-                    console.log('===')
                 })
 
                 $watch('theme', () => {
@@ -119,13 +98,6 @@
                     this.matchesSystemTheme = this.isSystemTheme()
 
                     $dispatch('dark-mode-toggled', this.theme)
-
-                    console.log(this.mode)
-                    console.log('theme: ' + this.theme)
-                    console.log('system is dark: ' + this.isSystemDark())
-                    console.log('system matches: ' + this.isSystemTheme())
-                    console.log('system check: ' + this.matchesSystemTheme)
-                    console.log('===')
                 })
             },
 
