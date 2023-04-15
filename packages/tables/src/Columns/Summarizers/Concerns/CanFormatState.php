@@ -14,6 +14,8 @@ trait CanFormatState
 {
     protected ?Closure $formatStateUsing = null;
 
+    protected string | Closure | null $placeholder = null;
+
     public function formatStateUsing(?Closure $callback): static
     {
         $this->formatStateUsing = $callback;
@@ -105,10 +107,23 @@ trait CanFormatState
         return $this;
     }
 
+    public function placeholder(string | Closure | null $placeholder): static
+    {
+        $this->placeholder = $placeholder;
+
+        return $this;
+    }
+
     public function formatState(mixed $state): mixed
     {
-        return $this->evaluate($this->formatStateUsing ?? $state, [
+        $state = $this->evaluate($this->formatStateUsing ?? $state, [
             'state' => $state,
         ]);
+
+        if (blank($state)) {
+            $state = $this->evaluate($this->placeholder);
+        }
+
+        return $state;
     }
 }
