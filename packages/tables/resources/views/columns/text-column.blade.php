@@ -78,10 +78,10 @@
             @if ($hasFilter)
                 @if (! blank($filterName))
                     wire:click="$set('tableFilters.{{ $filterName }}', '{{ $state }}')"
-            @endif
-            @if (! blank($filterFunctionName))
-                wire:click="{{ $filterFunctionName }}('{{ $state }}')"
-               @endif
+                @endif
+                @if (! blank($filterFunctionName))
+                    wire:click="{{ $filterFunctionName }}('{{ $state }}')"
+                @endif
             @endif
             @class([
                 'cursor-pointer' => $isCopyable,

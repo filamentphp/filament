@@ -29,9 +29,9 @@
             @if ($hasFilter)
                 @if (! blank($filterName))
                     wire:click="$set('tableFilters.tags.values', [ '{{ $tag }}' ])"
-            @endif
-            @if (! blank($filterFunctionName))
-                wire:click="{{ $filterFunctionName }}('{{ $state }}')"
+                @endif
+                @if (! blank($filterFunctionName))
+                    wire:click="{{ $filterFunctionName }}('{{ $state }}')"
                 @endif
             @endif
         >
