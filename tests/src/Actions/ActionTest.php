@@ -108,19 +108,14 @@ it('can have a URL', function () {
 
 it('can open a URL in a new tab', function () {
     livewire(Actions::class)
-        ->assertActionShouldOpenUrlInNewTab('url_in_new_tab')
-        ->assertActionShouldNotOpenUrlInNewTab('url_not_in_new_tab');
+        ->assertActionShouldOpenUrlInNewTab('url-in-new-tab')
+        ->assertActionShouldNotOpenUrlInNewTab('url-not-in-new-tab');
 });
 
 it('can state whether a page action exists', function () {
     livewire(Actions::class)
         ->assertActionExists('exists')
         ->assertActionDoesNotExist('does-not-exist');
-});
-
-it('can state whether several page actions exist in order', function () {
-    livewire(Actions::class)
-        ->assertPageActionsExistInOrder(['exists', 'exists-in-order']);
 });
 
 it('can show a notification', function () {

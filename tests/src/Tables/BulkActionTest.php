@@ -111,7 +111,7 @@ it('can state whether a bulk action exists', function () {
         ->assertTableBulkActionDoesNotExist('does_not_exist');
 });
 
-it('can state whether several bulk actions exist in order', function () {
+it('can state whether bulk actions exist in order', function () {
     livewire(PostsTable::class)
-        ->assertTableBulkActionsExistInOrder(['exists', 'exists_in_order']);
+        ->assertTableBulkActionsExistInOrder(['exists', 'exists-in-order']);
 });

@@ -163,7 +163,7 @@ class TestsActions
             $livewire = $this->instance();
             $this->assertActionListInOrder(
                 $names,
-                $livewire->getCachedTableActions(),
+                $livewire->getTable()->getActions(),
                 'table',
                 Action::class,
             );
@@ -178,7 +178,7 @@ class TestsActions
             $livewire = $this->instance();
             $this->assertActionListInOrder(
                 $names,
-                $livewire->getCachedTableHeaderActions(),
+                $livewire->getTable()->getHeaderActions(),
                 'table header',
                 Action::class,
             );
@@ -193,7 +193,7 @@ class TestsActions
             $livewire = $this->instance();
             $this->assertActionListInOrder(
                 $names,
-                $livewire->getCachedTableEmptyStateActions(),
+                $livewire->getTable()->getEmptyStateActions(),
                 'table empty state',
                 Action::class,
             );

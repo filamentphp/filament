@@ -171,7 +171,7 @@ class TestsBulkActions
             $livewire = $this->instance();
             $this->assertActionListInOrder(
                 $names,
-                $livewire->getCachedTableBulkActions(),
+                $livewire->getTable()->getBulkActions(),
                 'table bulk',
                 BulkAction::class,
             );

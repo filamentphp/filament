@@ -33,7 +33,7 @@ trait CanReorderRecords
             return;
         }
 
-        $model = app($this->getTableModel());
+        $model = app($this->getTable()->getModel());
         $modelKeyName = $model->getKeyName();
 
         $model
