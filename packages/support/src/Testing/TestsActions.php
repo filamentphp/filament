@@ -39,7 +39,7 @@ class TestsActions
             $names = array_map(fn ($name) => $this->parseActionName($name), $names); //@phpstan-ignore-line
             $namesIndex = 0;
 
-            foreach($actions as $actionName => $action) {
+            foreach ($actions as $actionName => $action) {
                 if ($namesIndex === count($names)) {
                     break;
                 }
