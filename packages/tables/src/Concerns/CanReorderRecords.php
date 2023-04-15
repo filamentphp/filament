@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Facades\DB;
 
 trait CanReorderRecords
 {
@@ -32,11 +33,19 @@ trait CanReorderRecords
             return;
         }
 
-        foreach ($order as $index => $recordKey) {
-            $this->getTableRecord($recordKey)->update([
-                $orderColumn => $index + 1,
+        $model = app($this->getTableModel());
+        $modelKeyName = $model->getKeyName();
+
+        $model
+            ->newModelQuery()
+            ->whereIn($modelKeyName, array_values($order))
+            ->update([
+                $orderColumn => DB::raw(
+                    'case ' . collect($order)
+                    ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $modelKeyName . ' = ' . DB::getPdo()->quote($recordIndex) . ' then ' . ($index + 1))
+                    ->implode(' ') . ' end'
+                ),
             ]);
-        }
     }
 
     public function toggleTableReordering(): void
