@@ -51,7 +51,7 @@ class Card extends Component implements Htmlable
     /**
      * @param  scalar | Htmlable | Closure  $value
      */
-    final public function __construct(string $label, $value)
+    final public function __construct(string | Htmlable $label, $value)
     {
         $this->label($label);
         $this->value($value);
@@ -60,7 +60,7 @@ class Card extends Component implements Htmlable
     /**
      * @param  scalar | Htmlable | Closure  $value
      */
-    public static function make(string $label, $value): static
+    public static function make(string | Htmlable $label, $value): static
     {
         return app(static::class, ['label' => $label, 'value' => $value]);
     }
