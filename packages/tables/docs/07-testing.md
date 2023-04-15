@@ -270,7 +270,7 @@ it('can validate edited post data', function () {
 
 For bulk actions, this method is called `assertHasTableBulkActionErrors()`.
 
-### Pre-filled Data
+### Pre-filled data
 
 To check if an action or bulk action is pre-filled with data, you can use the `assertTableActionDataSet()` or `assertTableBulkActionDataSet()` method:
 
@@ -296,7 +296,7 @@ it('can load existing post data for editing', function () {
 });
 ```
 
-### Action State
+### Action state
 
 To ensure that an action or bulk action exists or doesn't in a table, you can use the `assertTableActionExists()`/`assertTableActionDoesNotExist()` or  `assertTableBulkActionExists()`/`assertTableBulkActionDoesNotExist()` method:
 
