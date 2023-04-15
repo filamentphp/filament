@@ -16,7 +16,7 @@
                 return
             }
 
-            if (!$refs.newState) {
+            if (! $refs.newState) {
                 return
             }
 
