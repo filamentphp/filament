@@ -35,7 +35,7 @@ return [
 
         'label' => 'Paginazioaren nabigazioa',
 
-        'overview' => '{1} Emaitza bat erakusten da|[2,*] :total emaitzatik :first-etik :last-era erakusten dira',
+        'overview' => '{1} Emaitza bat erakusten da|[2,*] :total emaitzatik :firstetik :lastera erakusten dira',
 
         'fields' => [
 
