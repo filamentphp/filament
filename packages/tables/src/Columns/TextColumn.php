@@ -15,7 +15,6 @@ class TextColumn extends Column
     use Concerns\HasIcon;
     use Concerns\HasSize;
     use Concerns\HasWeight;
-    use Concerns\CanFilter;
 
     protected string $view = 'tables::columns.text-column';
 
