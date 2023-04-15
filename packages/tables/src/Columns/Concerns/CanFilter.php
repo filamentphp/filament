@@ -10,16 +10,16 @@ trait CanFilter
 
     protected string | Closure | null $filterFunctionName = null;
 
-    public function filterName(string | Closure $filterName): static
+    public function filterName(string | Closure | null $name): static
     {
-        $this->filterName = $filterName;
+        $this->filterName = $name;
 
         return $this;
     }
 
-    public function getFilterName(): string
+    public function getFilterName(): ?string
     {
-        return $this->evaluate($this->filterName) ?? '';
+        return $this->evaluate($this->filterName);
     }
 
     public function hasFilter(): bool
@@ -27,15 +27,15 @@ trait CanFilter
         return filled($this->getFilterName()) || filled($this->getFilterFunctionName());
     }
 
-    public function filterFunctionName(string | Closure $filterFunctionName): static
+    public function filterFunctionName(string | Closure | null $name): static
     {
-        $this->filterFunctionName = $filterFunctionName;
+        $this->filterFunctionName = $name;
 
         return $this;
     }
 
-    public function getFilterFunctionName(): string
+    public function getFilterFunctionName(): ?string
     {
-        return $this->evaluate($this->filterFunctionName) ?? '';
+        return $this->evaluate($this->filterFunctionName);
     }
 }
