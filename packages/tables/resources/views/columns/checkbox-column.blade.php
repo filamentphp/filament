@@ -14,6 +14,10 @@
                 return
             }
 
+            if (! $refs.newState) {
+                return
+            }
+
             let newState = $refs.newState.value === '1' ? true : false
 
             if (state === newState) {
