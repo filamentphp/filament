@@ -3,7 +3,6 @@
 namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Str;
 
 trait CanReorderRecords
 {
