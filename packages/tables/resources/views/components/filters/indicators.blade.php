@@ -27,7 +27,7 @@
                             wire:loading.class="cursor-wait"
                             wire:target="removeTableFilter"
                             type="button"
-                            class="ml-1 -mr-2 rtl:mr-1 rtl:-ml-2 p-1 -my-1 hover:bg-gray-500/10 rounded-full"
+                            class="ms-1 -me-2 p-1 -my-1 hover:bg-gray-500/10 rounded-full"
                         >
                             <x-heroicon-s-x class="w-3 h-3" />
 
@@ -45,7 +45,7 @@
                 wire:click="removeTableFilters"
                 type="button"
                 @class([
-                    '-mb-1.5 -mt-0.5 -mr-2 p-1.5 text-gray-600 hover:bg-gray-500/10 rounded-full hover:text-gray-700',
+                    '-mb-1.5 -mt-0.5 -me-2 p-1.5 text-gray-600 hover:bg-gray-500/10 rounded-full hover:text-gray-700',
                     'dark:text-gray-400 dark:hover:text-gray-300 dark:hover:bg-gray-500/20' => config('tables.dark_mode'),
                 ])
             >

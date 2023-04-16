@@ -11,7 +11,7 @@
 >
     <x-filament-support::loading-indicator
         x-show="isLoading"
-        class="inline-block w-4 h-4 mr-3 rtl:mr-0 rtl:ml-3 text-primary-500"
+        class="inline-block w-4 h-4 me-3 text-primary-500"
     />
 
     <span @class(['dark:text-white' => config('tables.dark_mode')]) x-text="window.pluralize(@js(__('tables::table.selection_indicator.selected_count')), selectedRecords.length, { count: selectedRecords.length })"></span>

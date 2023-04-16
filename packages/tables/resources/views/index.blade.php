@@ -318,7 +318,7 @@
                             fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
                         );
                     @endphp
-                    
+
                     <div @class([
                         'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
                         'dark:border-gray-700' => config('tables.dark_mode'),
@@ -371,7 +371,7 @@
                                 class="flex flex-wrap items-center gap-1 py-1 text-xs sm:text-sm"
                             >
                                 <label>
-                                    <span class="mr-1 font-medium">
+                                    <span class="me-1 font-medium">
                                         {{ __('tables::table.sorting.fields.column.label') }}
                                     </span>
 
@@ -379,7 +379,7 @@
                                         x-model="column"
                                         style="background-position: right 0.2rem center"
                                         @class([
-                                            'text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500',
+                                            'text-xs ps-2 pe-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500',
                                             'dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500' => config('tables.dark_mode'),
                                         ])
                                     >
@@ -400,7 +400,7 @@
                                         x-model="direction"
                                         style="background-position: right 0.2rem center"
                                         @class([
-                                            'text-xs pl-2 pr-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500',
+                                            'text-xs ps-2 pe-6 py-1 font-medium border-0 bg-gray-500/5 rounded-lg border-gray-300 sm:text-sm focus:ring-0 focus:border-primary-500 focus:ring-primary-500',
                                             'dark:text-white dark:bg-gray-700 dark:border-gray-600 dark:focus:border-primary-500' => config('tables.dark_mode'),
                                         ])
                                     >
@@ -473,12 +473,12 @@
                                     ))
                                 >
                                     <div @class([
-                                        'items-center gap-4 md:flex md:mr-0 rtl:md:ml-0' => (! $contentGrid),
-                                        'mr-6 rtl:mr-0 rtl:ml-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
+                                        'items-center gap-4 md:flex md:me-0' => (! $contentGrid),
+                                        'me-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
                                     ])>
                                         <x-tables::reorder.handle :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'absolute top-3 right-3 rtl:right-auto rtl:left-3',
-                                            'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                            'absolute top-3 end-3',
+                                            'md:relative md:top-0 md:end-0' => ! $contentGrid,
                                             'hidden' => ! $isReordering,
                                         ])" />
 
@@ -488,8 +488,8 @@
                                                 :value="$recordKey"
                                                 :label="__('tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                 :class="\Illuminate\Support\Arr::toCssClasses([
-                                                    'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
-                                                    'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                    'filament-tables-record-checkbox absolute top-3 end-3',
+                                                    'md:relative md:top-0 md:end-0' => ! $contentGrid,
                                                     'hidden' => $isReordering,
                                                 ])"
                                             />
@@ -497,10 +497,10 @@
 
                                         @if ($hasCollapsibleColumnsLayout)
                                             <div @class([
-                                                'absolute right-1 rtl:right-auto rtl:left-1',
+                                                'absolute end-1',
                                                 'top-10' => $isSelectionEnabled,
                                                 'top-1' => ! $isSelectionEnabled,
-                                                'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                'md:relative md:top-0 md:end-0' => ! $contentGrid,
                                                 'hidden' => $isReordering,
                                             ])>
                                                 <x-tables::icon-button
@@ -568,8 +568,8 @@
                                                 :record="$record"
                                                 wrap="-md"
                                                 :class="\Illuminate\Support\Arr::toCssClasses([
-                                                    'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
-                                                    'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
+                                                    'absolute bottom-1 end-1' => $actionsPosition === ActionsPosition::BottomCorner,
+                                                    'md:relative md:bottom-0 md:end-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
                                                     'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
                                                     'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
                                                     'hidden' => $isReordering,
@@ -585,8 +585,8 @@
                                             x-cloak
                                             @class([
                                                 'pb-2 -mx-2',
-                                                'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
-                                                'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
+                                                'md:ps-20' => (! $contentGrid) && $isSelectionEnabled,
+                                                'md:ps-12' => (! $contentGrid) && (! $isSelectionEnabled),
                                                 'hidden' => $isReordering,
                                             ])
                                         >

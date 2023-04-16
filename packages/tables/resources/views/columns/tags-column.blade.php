@@ -25,7 +25,7 @@
     @endforeach
 
     @if ($hasActiveLimit())
-        <span class="ml-1 text-xs">
+        <span class="ms-1 text-xs">
             {{ trans_choice('tables::table.columns.tags.more', count($getTags()) - $getLimit()) }}
         </span>
     @endif

@@ -8,7 +8,7 @@
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @endif
     @class([
-        'filament-sidebar fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-all bg-white lg:border-r rtl:lg:border-r-0 rtl:lg:border-l w-[var(--sidebar-width)] lg:z-0',
+        'filament-sidebar fixed inset-y-0 start-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-all bg-white lg:border-e w-[var(--sidebar-width)] lg:z-0',
         'lg:translate-x-0' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
         'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
     ])
@@ -48,7 +48,7 @@
                 data-turbo="false"
                 @class([
                     'block w-full',
-                    'lg:ml-3' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
+                    'lg:ms-3' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
                 ])
             >
                 <x-filament::brand />
@@ -107,7 +107,7 @@
                 @if (! $loop->last)
                     <li>
                         <div @class([
-                            'border-t -mr-6 rtl:-mr-auto rtl:-ml-6',
+                            'border-t -me-6',
                             'dark:border-gray-700' => config('filament.dark_mode'),
                         ])></div>
                     </li>

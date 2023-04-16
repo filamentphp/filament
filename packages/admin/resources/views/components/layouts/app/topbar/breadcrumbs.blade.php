@@ -23,7 +23,7 @@
 
             @if (! $loop->last)
                 <li @class([
-                    'h-6 border-r border-gray-300 -skew-x-12',
+                    'h-6 border-e border-gray-300 -skew-x-12',
                     'dark:border-gray-500' => config('filament.dark_mode'),
                 ])></li>
             @endif

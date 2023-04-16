@@ -11,7 +11,7 @@
 
         init: function () {
             this.$watch('step', () => this.updateQueryString())
-        
+
             this.step = this.getSteps()[{{ $getStartStep() }} - 1]
         },
 
@@ -73,13 +73,13 @@
             if (! @js($isStepPersistedInQueryString())) {
                 return
             }
-            
+
             const url = new URL(window.location.href)
             url.searchParams.set(@js($getStepQueryStringKey()), this.step)
 
             history.pushState(null, document.title, url.toString())
         },
-        
+
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
@@ -124,7 +124,7 @@
                             'bg-primary-600': getStepIndex(step) === {{ $loop->index }},
                             'bg-transparent group-hover:bg-gray-200 @if (config('forms.dark_mode')) dark:group-hover:bg-gray-600 @endif': getStepIndex(step) > {{ $loop->index }},
                         }"
-                        class="absolute top-0 left-0 w-1 h-full md:w-full md:h-1 md:bottom-0 md:top-auto"
+                        class="absolute top-0 start-0 w-1 h-full md:w-full md:h-1 md:bottom-0 md:top-auto"
                         aria-hidden="true"
                     ></div>
 
@@ -188,7 +188,7 @@
                 </button>
 
                 @if (! $loop->first)
-                    <div class="absolute inset-0 top-0 left-0 hidden w-3 md:block" aria-hidden="true">
+                    <div class="absolute inset-0 top-0 start-0 hidden w-3 md:block" aria-hidden="true">
                         <svg @class([
                             'h-full w-full text-gray-300 rtl:rotate-180',
                             'dark:text-gray-700' => config('forms.dark_mode'),

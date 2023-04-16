@@ -35,8 +35,8 @@
         'w-4 h-4' => $size === 'sm',
         'w-5 h-5' => $size === 'md',
         'w-6 h-6' => $size === 'lg',
-        'mr-1 rtl:ml-1' => $iconPosition === 'before',
-        'ml-1 rtl:mr-1' => $iconPosition === 'after'
+        'me-1' => $iconPosition === 'before',
+        'ms-1' => $iconPosition === 'after'
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();

@@ -70,7 +70,7 @@
 
             <span
                 x-cloak
-                class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2"
+                class="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none"
             >
                 <span
                     x-bind:style="{ 'background-color': state }"

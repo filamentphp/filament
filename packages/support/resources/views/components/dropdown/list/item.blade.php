@@ -21,7 +21,7 @@
     ]);
 
     $detailClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-detail ml-auto text-xs text-gray-500',
+        'filament-dropdown-list-item-detail ms-auto text-xs text-gray-500',
         'group-hover:text-primary-100 group-focus:text-primary-100' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
         'group-hover:text-danger-100 group-focus:text-danger-100' => $color === 'danger' && $hasHoverAndFocusState,
         'group-hover:text-success-100 group-focus:text-success-100' => $color === 'success' && $hasHoverAndFocusState,
@@ -31,7 +31,7 @@
     $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-start';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-icon mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0',
+        'filament-dropdown-list-item-icon me-2 h-5 w-5',
         'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
         'text-primary-500' => $color === 'primary',
         'text-danger-500' => $color === 'danger',

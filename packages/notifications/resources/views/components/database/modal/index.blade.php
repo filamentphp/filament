@@ -30,7 +30,7 @@
                     'dark:border-gray-800' => $notification->unread() && config('notifications.dark_mode'),
                 ])>
                     <div @class([
-                        'py-2 pl-4 pr-2',
+                        'py-2 ps-4 pe-2',
                         'bg-primary-50 -mb-px' => $notification->unread(),
                         'dark:bg-gray-700' => $notification->unread() && config('notifications.dark_mode'),
                     ])>

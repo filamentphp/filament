@@ -59,7 +59,7 @@
                 @endif
             @else
                 <div @class([
-                    'pl-2 text-sm font-medium',
+                    'ps-2 text-sm font-medium',
                     'dark:text-white' => config('tables.dark_mode'),
                 ])>
                     {{ trans_choice(

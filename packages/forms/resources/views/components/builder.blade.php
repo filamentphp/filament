@@ -115,7 +115,7 @@
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         @class([
-                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-500',
+                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-e transition hover:text-gray-500',
                                             'dark:border-gray-700' => config('forms.dark_mode'),
                                         ])
                                     >

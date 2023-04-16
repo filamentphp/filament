@@ -43,7 +43,7 @@
             'filament-forms-section-header-wrapper flex rtl:space-x-reverse overflow-hidden rounded-t-xl',
             'min-h-[40px]' => $isCompact,
             'min-h-[56px]' => ! $isCompact,
-            'pr-6 pb-4' => $isAside,
+            'pe-6 pb-4' => $isAside,
             'px-4 py-2 items-center bg-gray-100' => ! $isAside,
             'dark:bg-gray-900' => config('forms.dark_mode') && (! $isAside),
         ])
@@ -64,7 +64,7 @@
                     <x-dynamic-component
                         :component="$icon"
                         @class([
-                            'mr-1',
+                            'me-1',
                             'h-4 w-4' => $isCompact,
                             'h-6 w-6' => ! $isCompact,
                         ]) />

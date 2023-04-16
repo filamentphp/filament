@@ -45,7 +45,7 @@
             tabindex="-1"
             @if ($isDisabled()) disabled @endif
             {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default rounded-lg shadow-sm outline-none',
+                'bg-white relative w-full border py-2 ps-3 pe-10 text-start cursor-default rounded-lg shadow-sm outline-none',
                 'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
                 'dark:bg-gray-700' => config('forms.dark_mode'),
                 'border-gray-300' => ! $errors->has($getStatePath()),
@@ -69,7 +69,7 @@
                 ])
             />
 
-            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
+            <span class="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none">
                 <svg @class([
                     'w-5 h-5 text-gray-400',
                     'dark:text-gray-400' => config('forms.dark_mode'),
@@ -174,7 +174,7 @@
                             inputmode="numeric"
                             x-model.debounce="hour"
                             @class([
-                                'w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 outline-none focus:ring-0',
+                                'w-16 p-0 pe-1 text-xl bg-gray-50 text-center text-gray-700 border-0 outline-none focus:ring-0',
                                 'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.hour"
@@ -195,7 +195,7 @@
                             inputmode="numeric"
                             x-model.debounce="minute"
                             @class([
-                                'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0',
+                                'w-16 p-0 pe-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0',
                                 'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.minute"
@@ -219,7 +219,7 @@
                                 x-model.debounce="second"
                                 dusk="filament.forms.{{ $getStatePath() }}.second"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0',
+                                    'w-16 p-0 pe-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0',
                                     'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             />

@@ -5,7 +5,7 @@
         'dark:border-gray-600 dark:text-gray-200' => config('forms.dark_mode'),
     ]) }}
 >
-    <legend class="text-sm leading-tight font-medium px-2 -ml-2">
+    <legend class="text-sm leading-tight font-medium px-2 -ms-2">
         {{ $getLabel() }}
     </legend>
 

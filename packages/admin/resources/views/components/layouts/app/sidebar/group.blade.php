@@ -10,7 +10,7 @@
     x-data="{ label: {{ \Illuminate\Support\Js::from((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }} }"
     class="filament-sidebar-group"
     @if (filled($parentGroup))
-        x-bind:class="{{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }} ? 'ml-11 pr-3 pt-3' : 'hidden'"
+        x-bind:class="{{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }} ? 'ms-11 pe-3 pt-3' : 'hidden'"
     @endif
 >
     @if ($label)
@@ -28,7 +28,7 @@
                 'dark:text-gray-300' => config('filament.dark_mode'),
             ])>
                 @if ($icon)
-                    <x-dynamic-component :component="$icon" class="ml-1 w-3 h-3 flex-shrink-0" />
+                    <x-dynamic-component :component="$icon" class="ms-1 w-3 h-3 flex-shrink-0" />
                 @endif
 
                 <p class="flex-1 font-bold uppercase text-xs tracking-wider">
