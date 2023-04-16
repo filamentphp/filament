@@ -1,6 +1,8 @@
 name: generate-docs-screenshots
 
-on: push
+on:
+  push:
+    tags: '*'
 
 jobs:
   take-screenshots:
