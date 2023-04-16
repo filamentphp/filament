@@ -2,13 +2,13 @@
     x-data="{}"
     @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
         x-cloak
-        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[var(--collapsed-sidebar-width)] rtl:lg:-translate-x-0 rtl:translate-x-full'"
+        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[--sidebar-width]' : '-translate-x-full lg:translate-x-0 lg:max-w-[--collapsed-sidebar-width] rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @else
         x-cloak="-lg"
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @endif
     @class([
-        'filament-sidebar fixed inset-y-0 start-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-all bg-white lg:border-e w-[var(--sidebar-width)] lg:z-0',
+        'filament-sidebar fixed inset-y-0 start-0 z-20 flex flex-col h-screen overflow-hidden shadow-2xl transition-all bg-white lg:border-e w-[--sidebar-width] lg:z-0',
         'lg:translate-x-0' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
         'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
     ])

@@ -19,15 +19,15 @@
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
                 x-data="{}"
                 x-bind:class="{
-                    'lg:ps-[var(--collapsed-sidebar-width)]': ! $store.sidebar.isOpen,
-                    'filament-main-sidebar-open lg:ps-[var(--sidebar-width)]': $store.sidebar.isOpen,
+                    'lg:ps-[--collapsed-sidebar-width]': ! $store.sidebar.isOpen,
+                    'filament-main-sidebar-open lg:ps-[--sidebar-width]': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @endif
             @class([
                 'filament-main flex-col gap-y-6 w-screen flex-1',
                 'hidden h-full transition-all' => config('filament.layout.sidebar.is_collapsible_on_desktop'),
-                'flex lg:ps-[var(--sidebar-width)]' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
+                'flex lg:ps-[--sidebar-width]' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
             ])
         >
             <x-filament::topbar :breadcrumbs="$breadcrumbs" />
