@@ -16,14 +16,14 @@
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedAction) open()"
             x-on:modal-closed.stop="
+                const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
+
                 if (
                     ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
                     livewire.serverMemo.data.mountedFormComponentAction
                 ) {
                     return
                 }
-
-                const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
 
                 if (mountedActionShouldOpenModal && 'mountedAction' in livewire?.serverMemo.data) {
                     livewire.set('mountedAction', null)
@@ -105,14 +105,14 @@
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableAction) open()"
             x-on:modal-closed.stop="
+                const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
+
                 if (
                     ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
                     livewire.serverMemo.data.mountedFormComponentAction
                 ) {
                     return
                 }
-
-                const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
 
                 if (mountedTableActionShouldOpenModal && 'mountedTableAction' in livewire?.serverMemo.data) {
                     livewire.set('mountedTableAction', null)
@@ -192,14 +192,14 @@
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
+                const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
+
                 if (
                     ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
                     livewire.serverMemo.data.mountedFormComponentAction
                 ) {
                     return
                 }
-
-                const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
 
                 if (mountedTableBulkActionShouldOpenModal && 'mountedTableBulkAction' in livewire?.serverMemo.data) {
                     livewire.set('mountedTableBulkAction', null)
