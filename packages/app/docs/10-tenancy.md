@@ -71,7 +71,7 @@ A registration page will allow users to create a new tenant. This is useful if y
 
 When visiting your app after logging in, users will be redirected to this page if they don't already have a tenant.
 
-To set up a registration page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\RegisterTenant`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Pages/Tenancy/RegisterTenant.php`:
+To set up a registration page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\RegisterTenant`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Pages/Tenancy/RegisterTeam.php`:
 
 ```php
 namespace App\Filament\Pages\Tenancy;
