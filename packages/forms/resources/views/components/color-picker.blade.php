@@ -51,15 +51,15 @@
                                 'text-gray-900 block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
                                 'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
                                 'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
-                                'rounded-l-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),
-                                'rounded-r-lg' => ! ($getSuffixLabel() || $getSuffixIcon()),
+                                'rounded-s-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),
+                                'rounded-e-lg' => ! ($getSuffixLabel() || $getSuffixIcon()),
                             ])
                     }}
                 />
 
                 <span
                     x-cloak
-                    class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2"
+                    class="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none"
                 >
                     <span
                         x-bind:style="{ 'background-color': state }"

@@ -20,18 +20,18 @@
     "
     {{ $attributes->class([
         'grid' => $isGrid && $direction === 'row',
-        'grid-cols-[var(--cols-default)]' => $default && ($direction === 'row'),
-        'columns-[var(--cols-default)]' => $default && ($direction === 'column'),
-        'sm:grid-cols-[var(--cols-sm)]' => $sm && ($direction === 'row'),
-        'sm:columns-[var(--cols-sm)]' => $sm && ($direction === 'column'),
-        'md:grid-cols-[var(--cols-md)]' => $md && ($direction === 'row'),
-        'md:columns-[var(--cols-md)]' => $md && ($direction === 'column'),
-        'lg:grid-cols-[var(--cols-lg)]' => $lg && ($direction === 'row'),
-        'lg:columns-[var(--cols-lg)]' => $lg && ($direction === 'column'),
-        'xl:grid-cols-[var(--cols-xl)]' => $xl && ($direction === 'row'),
-        'xl:columns-[var(--cols-xl)]' => $xl && ($direction === 'column'),
-        '2xl:grid-cols-[var(--cols-2xl)]' => $twoXl && ($direction === 'row'),
-        '2xl:columns-[var(--cols-2xl)]' => $twoXl && ($direction === 'column'),
+        'grid-cols-[--cols-default]' => $default && ($direction === 'row'),
+        'columns-[--cols-default]' => $default && ($direction === 'column'),
+        'sm:grid-cols-[--cols-sm]' => $sm && ($direction === 'row'),
+        'sm:columns-[--cols-sm]' => $sm && ($direction === 'column'),
+        'md:grid-cols-[--cols-md]' => $md && ($direction === 'row'),
+        'md:columns-[--cols-md]' => $md && ($direction === 'column'),
+        'lg:grid-cols-[--cols-lg]' => $lg && ($direction === 'row'),
+        'lg:columns-[--cols-lg]' => $lg && ($direction === 'column'),
+        'xl:grid-cols-[--cols-xl]' => $xl && ($direction === 'row'),
+        'xl:columns-[--cols-xl]' => $xl && ($direction === 'column'),
+        '2xl:grid-cols-[--cols-2xl]' => $twoXl && ($direction === 'row'),
+        '2xl:columns-[--cols-2xl]' => $twoXl && ($direction === 'column'),
     ]) }}
 >
     {{ $slot }}

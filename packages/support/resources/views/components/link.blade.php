@@ -19,7 +19,7 @@
 
     $linkClasses = [
         'filament-link inline-flex items-center justify-center gap-0.5 font-medium relative outline-none hover:underline focus:underline disabled:opacity-70 disabled:pointer-events-none',
-        'pr-4 rtl:pr-0 rtl:pl-4' => $indicator,
+        'pe-4' => $indicator,
         'opacity-70 pointer-events-none' => $disabled,
         match ($color) {
             'danger' => 'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400',
@@ -46,12 +46,12 @@
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-link-icon',
-        'mr-1 rtl:ml-1' => $iconPosition === 'before',
-        'ml-1 rtl:mr-1' => $iconPosition === 'after'
+        'me-1' => $iconPosition === 'before',
+        'ms-1' => $iconPosition === 'after'
     ]);
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-link-indicator absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
+        'filament-link-indicator absolute -top-1 -end-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
         match ($indicatorColor) {
             'danger' => 'bg-danger-600',
             'gray' => 'bg-gray-600',

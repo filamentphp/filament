@@ -6,7 +6,7 @@
 
 <span
     @class([
-        'inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal',
+        'inline-flex items-center justify-center ms-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal',
         match ($active) {
             true => 'text-white bg-gray-900/10',
             false => match ($badgeColor) {

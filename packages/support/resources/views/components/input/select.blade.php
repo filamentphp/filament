@@ -11,8 +11,8 @@
         'h-9 py-1' => $size === 'sm',
         'border-gray-300 dark:border-gray-600' => ! $error,
         'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $error,
-        'rounded-l-lg' => ! $prefix,
-        'rounded-r-lg' => ! $suffix,
+        'rounded-s-lg' => ! $prefix,
+        'rounded-e-lg' => ! $suffix,
     ]) }}
 >
     {{ $slot }}

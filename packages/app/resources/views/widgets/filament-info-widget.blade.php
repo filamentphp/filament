@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <svg class="h-16 w-16 absolute right-0 rtl:right-auto rtl:left-0 bottom-0" xmlns="http://www.w3.org/2000/svg"
+        <svg class="h-16 w-16 absolute end-0 bottom-0" xmlns="http://www.w3.org/2000/svg"
              width="300.000000pt" height="418.000000pt" viewBox="0 0 300.000000 418.000000"
              preserveAspectRatio="xMidYMid meet">
             <g class="dark:fill-current" transform="translate(0 418) scale(.1 -.1)" fill="#111827" xmlns="http://www.w3.org/2000/svg">

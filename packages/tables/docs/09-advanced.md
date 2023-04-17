@@ -133,8 +133,8 @@ public function table(Table $table): Table
     return $table
         ->recordClasses(fn (Model $record) => match ($record->status) {
             'draft' => 'opacity-30',
-            'reviewing' => 'border-l-2 border-orange-600 dark:border-orange-300',
-            'published' => 'border-l-2 border-green-600 dark:border-green-300',
+            'reviewing' => 'border-s-2 border-orange-600 dark:border-orange-300',
+            'published' => 'border-s-2 border-green-600 dark:border-green-300',
             default => null,
         });
 }
@@ -154,7 +154,7 @@ Alternatively, you may add the classes to your [safelist](https://tailwindcss.co
 module.exports = {
     safelist: [
         'border-green-600',
-        'border-l-2',
+        'border-s-2',
         'border-orange-600',
         'dark:border-orange-300',
         'opacity-30',

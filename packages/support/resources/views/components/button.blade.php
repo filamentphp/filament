@@ -72,19 +72,19 @@
         'filament-button-icon',
         match ($iconPosition) {
             'before' => match ($size) {
-                'xs' => '-ml-0.5 rtl:ml-0 rtl:-mr-0.5',
-                'sm' => '-ml-0.5 rtl:ml-0 rtl:-mr-0.5',
-                'md' => '-ml-1 rtl:ml-0 rtl:-mr-1',
-                'lg' => '-ml-1 rtl:ml-0 rtl:-mr-1',
-                'xl' => '-ml-1 rtl:ml-0 rtl:-mr-1',
+                'xs' => '-ms-0.5',
+                'sm' => '-ms-0.5',
+                'md' => '-ms-1',
+                'lg' => '-ms-1',
+                'xl' => '-ms-1',
                 default => null,
             },
             'after' => match ($size) {
-                'xs' => '-mr-0.5 rtl:-ml-0.5 rtl:mr-0',
-                'sm' => '-mr-0.5 rtl:-ml-0.5 rtl:mr-0',
-                'md' => '-mr-1 rtl:-ml-1 rtl:mr-0',
-                'lg' => '-mr-1 rtl:-ml-1 rtl:mr-0',
-                'xl' => '-mr-1 rtl:-ml-1 rtl:mr-0',
+                'xs' => '-me-0.5',
+                'sm' => '-me-0.5',
+                'md' => '-me-1',
+                'lg' => '-me-1',
+                'xl' => '-me-1',
                 default => null,
             },
             default => null,
@@ -92,7 +92,7 @@
     ]);
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-indicator absolute -top-1 -right-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
+        'filament-button-indicator absolute -top-1 -end-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
         match ($indicatorColor) {
             'danger' => 'bg-danger-600',
             'gray' => 'bg-gray-600',
