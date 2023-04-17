@@ -18,8 +18,8 @@ public function context(Context $context): Context
         ->secondaryColor(Color::Sky)
         ->grayColor(Color::Gray)
         ->dangerColor(Color::Rose)
-        ->successColor(Color::Emerald)
-        ->warningColor(Color::Orange);
+        ->warningColor(Color::Orange)
+        ->successColor(Color::Emerald);
 }
 ```
 
