@@ -23,7 +23,7 @@ public function context(Context $context): Context
 }
 ```
 
-The `Filament\Support\Color` contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
+The `Filament\Support\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
 
 Alternatively, you may pass your own palette in as an array of RGB values:
 
