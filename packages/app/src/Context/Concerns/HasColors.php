@@ -177,8 +177,8 @@ trait HasColors
             'primary' => $this->getPrimaryColor(),
             'secondary' => $this->getSecondaryColor(),
             'gray' => $this->getGrayColor(),
-            'warning' => $this->getWarningColor(),
             'danger' => $this->getDangerColor(),
+            'warning' => $this->getWarningColor(),
             'success' => $this->getSuccessColor(),
         ];
     }
