@@ -67,7 +67,8 @@ In the same way as labels, field IDs are also automatically determined based on 
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->id('name-field')
+TextInput::make('name')
+    ->id('name-field')
 ```
 
 ## Setting a default value
