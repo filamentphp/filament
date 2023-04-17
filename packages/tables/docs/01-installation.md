@@ -75,7 +75,7 @@ module.exports = {
 }
 ```
 
-Of course, you may specify your own custom `primary`, `secondary`, `success`, `warning` and `danger` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 900 variants specified - a single hex code or RGB value won't work here.
+Of course, you may specify your own custom `primary`, `secondary`, `success`, `warning` and `danger` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 950 variants specified - a single hex code or RGB value won't work here.
 
 ### Configuring styles
 

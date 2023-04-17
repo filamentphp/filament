@@ -39,12 +39,13 @@ $context->primaryColor([
     700 => '67, 56, 202',
     800 => '55, 48, 163',
     900 => '49, 46, 129',
+    950 => '30, 27, 75',
 ])
 ```
 
 ### Generating a color palette
 
-If you want us to attempt to generate a palette for you based on a singular hex or RGB value, you can use pass those in:
+If you want us to attempt to generate a palette for you based on a singular hex or RGB value, you can pass that in:
 
 ```php
 use Filament\Support\Color;
