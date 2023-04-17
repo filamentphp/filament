@@ -6,7 +6,7 @@
     x-data="{}"
     @if (filament()->isSidebarCollapsibleOnDesktop())
         x-cloak
-        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[var(--collapsed-sidebar-width)] rtl:lg:-translate-x-0 rtl:translate-x-full'"
+        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[--sidebar-width]' : '-translate-x-full lg:translate-x-0 lg:max-w-[--collapsed-sidebar-width] rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @else
         @if (filament()->hasTopNavigation() || filament()->isSidebarFullyCollapsibleOnDesktop())
             x-cloak
@@ -16,7 +16,7 @@
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full rtl:translate-x-full'"
     @endif
     @class([
-        'filament-sidebar fixed inset-y-0 left-0 z-20 flex h-screen w-[var(--sidebar-width)] flex-col overflow-hidden bg-white transition-all rtl:left-auto rtl:right-0 dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent lg:z-0',
+        'filament-sidebar fixed inset-y-0 start-0 z-20 flex h-screen w-[--sidebar-width] flex-col overflow-hidden bg-white transition-all dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent lg:z-0',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
     ])
 >
@@ -58,7 +58,7 @@
                 data-turbo="false"
                 @class([
                     'block w-full',
-                    'lg:ml-3' => filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()),
+                    'lg:ms-3' => filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
                 <x-filament::logo />
@@ -92,7 +92,7 @@
             <div class="px-6 space-y-6 mb-6">
                 <x-filament::tenant-menu />
 
-                <div class="border-t -mr-6 rtl:-mr-auto rtl:-ml-6 dark:border-gray-700"></div>
+                <div class="border-t -me-6 dark:border-gray-700"></div>
             </div>
         @endif
 

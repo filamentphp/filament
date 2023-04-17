@@ -125,7 +125,7 @@
                             'bg-primary-600': getStepIndex(step) === {{ $loop->index }},
                             'bg-transparent group-hover:bg-gray-200 dark:group-hover:bg-gray-600': getStepIndex(step) > {{ $loop->index }},
                         }"
-                        class="absolute top-0 left-0 w-1 h-full md:w-full md:h-1 md:bottom-0 md:top-auto"
+                        class="absolute top-0 start-0 w-1 h-full md:w-full md:h-1 md:bottom-0 md:top-auto"
                         aria-hidden="true"
                     ></div>
 
@@ -190,7 +190,7 @@
                 </button>
 
                 @if (! $loop->first)
-                    <div class="hidden absolute top-0 left-0 w-3 inset-0 md:block" aria-hidden="true">
+                    <div class="hidden absolute top-0 start-0 w-3 inset-0 md:block" aria-hidden="true">
                         <svg
                             class="h-full w-full text-gray-300 rtl:rotate-180 dark:text-gray-700"
                             viewBox="0 0 12 82"

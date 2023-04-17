@@ -60,7 +60,7 @@
                     </x-filament::button>
                 @endif
             @else
-                <div class="pl-2 text-sm font-medium dark:text-white">
+                <div class="ps-2 text-sm font-medium dark:text-white">
                     {{ trans_choice(
                         'filament-tables::table.pagination.overview',
                         $paginator->total(),

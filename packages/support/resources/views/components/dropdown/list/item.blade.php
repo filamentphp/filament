@@ -36,7 +36,7 @@
 
     $labelClasses = 'filament-dropdown-list-item-label w-full truncate text-start';
 
-    $detailClasses = 'filament-dropdown-list-item-detail ml-auto text-xs';
+    $detailClasses = 'filament-dropdown-list-item-detail ms-auto text-xs';
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 

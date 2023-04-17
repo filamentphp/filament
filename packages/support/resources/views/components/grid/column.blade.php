@@ -41,18 +41,18 @@
     "
     {{ $attributes->class([
         'hidden' => $hidden,
-        'col-[var(--col-span-default)]' => $default && (! $hidden),
-        'sm:col-[var(--col-span-sm)]' => $sm && (! $hidden),
-        'md:col-[var(--col-span-md)]' => $md && (! $hidden),
-        'lg:col-[var(--col-span-lg)]' => $lg && (! $hidden),
-        'xl:col-[var(--col-span-xl)]' => $xl && (! $hidden),
-        '2xl:col-[var(--col-span-2xl)]' => $twoXl && (! $hidden),
-        'col-start-[var(--col-start-default)]' => $defaultStart && (! $hidden),
-        'sm:col-start-[var(--col-start-sm)]' => $smStart && (! $hidden),
-        'md:col-start-[var(--col-start-md)]' => $mdStart && (! $hidden),
-        'lg:col-start-[var(--col-start-lg)]' => $lgStart && (! $hidden),
-        'xl:col-start-[var(--col-start-xl)]' => $xlStart && (! $hidden),
-        '2xl:col-start-[var(--col-start-2xl)]' => $twoXlStart && (! $hidden),
+        'col-[--col-span-default]' => $default && (! $hidden),
+        'sm:col-[--col-span-sm]' => $sm && (! $hidden),
+        'md:col-[--col-span-md]' => $md && (! $hidden),
+        'lg:col-[--col-span-lg]' => $lg && (! $hidden),
+        'xl:col-[--col-span-xl]' => $xl && (! $hidden),
+        '2xl:col-[--col-span-2xl]' => $twoXl && (! $hidden),
+        'col-start-[--col-start-default]' => $defaultStart && (! $hidden),
+        'sm:col-start-[--col-start-sm]' => $smStart && (! $hidden),
+        'md:col-start-[--col-start-md]' => $mdStart && (! $hidden),
+        'lg:col-start-[--col-start-lg]' => $lgStart && (! $hidden),
+        'xl:col-start-[--col-start-xl]' => $xlStart && (! $hidden),
+        '2xl:col-start-[--col-start-2xl]' => $twoXlStart && (! $hidden),
     ]) }}
 >
     {{ $slot }}

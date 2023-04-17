@@ -53,7 +53,7 @@
         </div>
 
         @if (filament()->auth()->check())
-            <div class="absolute top-0 right-0 flex items-center justify-end p-2 w-full">
+            <div class="absolute top-0 end-0 flex items-center justify-end p-2 w-full">
                 @livewire('filament.core.notifications')
 
                 <x-filament::user-menu />
