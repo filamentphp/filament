@@ -16,7 +16,7 @@ For example, you could build an app where users can log in at `/app` and access 
 
 ### The default admin context
 
-When you run `filament:install`, a new file is created in `app/Providers/Filament` - `AdminContextProvider.php`. This is the file contains the configuration for the `/admin` context.
+When you run `filament:install`, a new file is created in `app/Providers/Filament` - `AdminContextProvider.php`. This file contains the configuration for the `/admin` context.
 
 When this documentation refers to the "configuration", this is the file you need to edit. It allows you to completely customize the app.
 
