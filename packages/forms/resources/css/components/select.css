@@ -95,20 +95,12 @@
     @apply inline-block w-full pe-12;
 }
 
-[dir='rtl'] .choices__list--single {
-    @apply ps-12 pe-0;
-}
-
 .choices__list--single .choices__item {
     @apply w-full;
 }
 
 .choices__list--multiple {
     @apply flex flex-wrap gap-1 pe-6;
-}
-
-[dir='rtl'] .choices__list--multiple {
-    @apply ps-6 pe-0;
 }
 
 .choices__list--multiple:not(:empty) {
@@ -149,12 +141,7 @@
 
 .choices__list--dropdown .choices__item,
 .choices__list[aria-expanded] .choices__item {
-    @apply relative px-3 py-2;
-}
-
-[dir='rtl'] .choices__list--dropdown .choices__item,
-[dir='rtl'] .choices__list[aria-expanded] .choices__item {
-    @apply text-right;
+    @apply relative px-3 py-2 text-start;
 }
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
@@ -198,10 +185,6 @@
 .dark .choices[data-type*='select-one'] .choices__button {
     @apply opacity-30;
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==');
-}
-
-[dir='rtl'] .choices[data-type*='select-one'] .choices__button {
-    @apply start-0 end-auto ms-9 me-0;
 }
 
 .choices[data-type*='select-one'] .choices__button:hover,
