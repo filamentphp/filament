@@ -78,7 +78,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             }
 
             /** @var ?Media $media */
-            $media = $component->getRecord()->getRelation('media')?->firstWhere('uuid', $file);
+            $media = $component->getRecord()->getRelationValue('media')->firstWhere('uuid', $file);
 
             $url = null;
 
@@ -147,7 +147,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $mediaClass = config('media-library.media_model', Media::class);
 
-            $mappedIds = $mediaClass::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
+            $mappedIds = $component->getRecord()
+                ->getRelationValue('media')
+                ->whereIn('uuid', $uuids)
+                ->pluck('id', 'uuid')
+                ->all();
 
             $mediaClass::setNewOrder(array_merge(array_flip($uuids), $mappedIds));
 
