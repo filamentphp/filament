@@ -31,7 +31,7 @@ class EditRecord extends Page implements HasFormActions
     public ?string $previousUrl = null;
 
     protected $queryString = [
-        'activeRelationManager',
+        'activeRelationManager' => ['except' => 0],
     ];
 
     public function getBreadcrumb(): string

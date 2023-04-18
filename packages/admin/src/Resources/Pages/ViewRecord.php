@@ -26,7 +26,7 @@ class ViewRecord extends Page
     public $data;
 
     protected $queryString = [
-        'activeRelationManager',
+        'activeRelationManager' => ['except' => 0],
     ];
 
     public function getBreadcrumb(): string
