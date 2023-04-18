@@ -94,6 +94,7 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Keine Datensätze gefunden',
 
         'buttons' => [
