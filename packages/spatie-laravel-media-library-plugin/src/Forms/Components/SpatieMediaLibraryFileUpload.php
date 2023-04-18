@@ -130,10 +130,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $mediaClass = config('media-library.media_model', Media::class);
 
             $mappedIds = $component->getRecord()
-                ->getRelation('media')
+                ->getRelationValue('media')
                 ->whereIn('uuid', $uuids)
                 ->pluck('id', 'uuid')
-                ->toArray();
+                ->all();
 
             $mediaClass::setNewOrder(array_merge(array_flip($uuids), $mappedIds));
 
