@@ -20,6 +20,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected string | Closure | null $conversionsDisk = null;
 
+    protected string | Closure | null $fileName = null;
+
     protected bool | Closure $hasResponsiveImages = false;
 
     protected string | Closure | null $mediaName = null;
@@ -109,10 +111,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var FileAdder $mediaAdder */
             $mediaAdder = $record->addMediaFromString($file->get());
 
-            $filename = $component->getUploadedFileNameForStorage($file);
-
             $media = $mediaAdder
-                ->usingFileName($filename)
+                ->usingFileName($component->getFileName($file) ?? $component->getUploadedFileNameForStorage($file))
                 ->usingName($component->getMediaName($file) ?? pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME))
                 ->storingConversionsOnDisk($component->getConversionsDisk() ?? '')
                 ->withCustomProperties($component->getCustomProperties())
@@ -243,6 +243,20 @@ class SpatieMediaLibraryFileUpload extends FileUpload
     {
         return $this->evaluate($this->mediaName, [
             'file' => $file,
+        ]);
+    }
+
+    public function fileName(string | Closure | null $name): static
+    {
+        $this->fileName = $name;
+
+        return $this;
+    }
+
+    public function getFileName(TemporaryUploadedFile $file): ?string
+    {
+        return $this->evaluate($this->fileName, [
+            'file' => $file
         ]);
     }
 }
