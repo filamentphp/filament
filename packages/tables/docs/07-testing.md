@@ -59,7 +59,7 @@ use function Pest\Livewire\livewire;
 
 it('can not render post comments', function () {
     Post::factory()->count(10)->create()
-   
+
     livewire(PostResource\Pages\ListPosts::class)
         ->assertCanNotRenderTableColumn('comments');
 });
@@ -165,7 +165,7 @@ use function Pest\Livewire\livewire;
 
 it('can filter posts by `author_id`', function () {
     $posts = Post::factory()->count(10)->create();
-    
+
     $authorId = $posts->first()->author_id;
 
     livewire(PostResource\Pages\ListPosts::class)
@@ -332,7 +332,7 @@ use function Pest\Livewire\livewire;
 
 it('can not publish posts', function () {
     $post = Post::factory()->create();
-    
+
     livewire(PostResource\Pages\ListPosts::class)
         ->assertTableActionHidden('publish', $post)
         ->assertTableBulkActionHidden('publish');
