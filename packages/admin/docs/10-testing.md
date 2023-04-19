@@ -489,3 +489,38 @@ it('can not send invoices', function () {
         ->assertPageActionsExistInOrder(['send', 'export']);
 });
 ```
+
+### Button Style
+
+To ensure an action's button is showing the correct icon, you can use `assertPageActionHasIcon` or `assertPageActionDoesNotHaveIcon`.
+
+```php
+use function Pest\Livewire\livewire;
+
+it('when active send button has correct icon', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionEnabled('send')
+        ->assertPageActionHasIcon('send', 'envelope-open')
+        ->assertPageActionDoesNotHaveIcon('send', 'envelope');
+});
+```
+
+To ensure an action's button is displaying the right color, you can use `assertPageActionHasColor` or `assertPageActionDoesNotHaveColor`.
+
+```php
+use function Pest\Livewire\livewire;
+
+it('actions display proper colors', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHasColor('delete', 'danger')
+        ->assertPageActionDoesNotHaveColor('print', 'danger');
+});
+```
