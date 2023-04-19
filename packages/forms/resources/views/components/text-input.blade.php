@@ -51,8 +51,8 @@
                     wire:ignore
                     {!! $isLazy() ? "x-on:blur=\"\$wire.\$refresh\"" : null !!}
                     {!! $isDebounced() ? "x-on:input.debounce.{$getDebounce()}=\"\$wire.\$refresh\"" : null !!}
-                    {{ $getExtraAlpineAttributeBag() }}
                 @endunless
+                {{ $getExtraAlpineAttributeBag() }}
                 dusk="filament.forms.{{ $getStatePath() }}"
                 {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
                 {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}
