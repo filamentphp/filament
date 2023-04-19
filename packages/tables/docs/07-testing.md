@@ -167,6 +167,22 @@ it('shows the correct columns', function () {
 });
 ```
 
+### Extra Attributes
+
+To ensure that a column has the correct extra attributes you can use the `assertTableColumnHasExtraAttributes()` and `assertTableColumnDoesNotHaveExtraAttributes()` methods:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('it displays author in red', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnHasExtraAttributes('author', ['class' => 'text-danger-500'], $post)
+        ->assertTableColumnDoesNotHaveExtraAttributes('author', ['class' => 'text-primary-500'], $post);
+});
+```
+
 ## Filters
 
 To filter the table records, you can use the `filterTable()` method, along with `assertCanSeeTableRecords()` and `assertCanNotSeeTableRecords()`:
