@@ -212,12 +212,28 @@ To ensure that a column has the correct extra attributes you can use the `assert
 ```php
 use function Pest\Livewire\livewire;
 
-it('it displays author in red', function () {
+it('displays author in red', function () {
     $post = Post::factory()->create();
 
     livewire(PostsTable::class)
         ->assertTableColumnHasExtraAttributes('author', ['class' => 'text-danger-500'], $post)
         ->assertTableColumnDoesNotHaveExtraAttributes('author', ['class' => 'text-primary-500'], $post);
+});
+```
+
+### Select Columns
+
+If you have a select column, you can ensure it has the correct options with `assertSelectColumnHasOptions()` and `assertSelectColumnDoesNotHaveOptions()`
+
+```php
+use function Pest\Livewire\livewire;
+
+it('has the correct statuses', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertSelectColumnHasOptions('status', ['unpublished' => 'Unpublished', 'published' => 'Published'], $post)
+        ->assertSelectColumnDoesNotHaveOptions('status', ['archived' => 'Archived'], $post);
 });
 ```
 
