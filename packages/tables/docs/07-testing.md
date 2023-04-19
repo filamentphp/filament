@@ -110,7 +110,7 @@ it('can search posts by title', function () {
 
 ### State
 
-To assert that a certain column has a state for a record:
+To assert that a certain column has a state or does not have a state for a record:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -121,19 +121,34 @@ it('can get post author names', function () {
     $post = $posts->first();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableColumnStateSet('author.name', $post->author->name, record: $post);
+        ->assertTableColumnStateSet('author.name', $post->author->name, record: $post)
+        ->assertTableColumnStateNotSet('author.name', 'Anonymous', record: $post);
+});
+```
+
+### Existence
+
+To ensure that a column exists, you can use the `assertTableColumnExists()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('has an author column', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnExists(`author`);
 });
 ```
 
 ### Authorization
 
-To ensure that a particular user cannot see a column, you can use the `assertTableColumnHidden()` method:
+To ensure that a particular user cannot see a column, you can use the `assertTableColumnVisible()` and `assertTableColumnHidden()` methods:
 
 ```php
 use function Pest\Livewire\livewire;
 
-it('can hide the author column', function () {
+it('shows the correct columns', function () {
     livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnVisible(`created_at`)
         ->assertTableColumnHidden(`author`);
 });
 ```
@@ -303,7 +318,7 @@ it('can validate edited post data', function () {
 });
 ```
 
-For bulk actions, this method is called `assertHasTableBulkActionErrors()`.
+For bulk actions these methods are called `assertHasTableBulkActionErrors()` and `assertHasNoTableBulkActionErrors()`.
 
 ### Pre-filled data
 
@@ -441,5 +456,22 @@ it('delete actions have correct colors', function () {
         ->assertTableActionDoesNotHaveColor('delete', 'danger');
         ->assertTableBulkActionHasColor('delete', 'warning')
         ->assertTableBulkActionDoesNotHaveColor('delete', 'danger');
+});
+```
+
+### URL
+
+To ensure an action or bulk action has the correct URL traits, you can use `assertTableActionHasUrl()`, `assertTableActionDoesNotHaveUrl()`, `assertTableActionShouldOpenUrlInNewTab()`, and `assertTableActionShouldNotOpenUrlInNewTab()`.
+
+```php
+use function Pest\Livewire\livewire;
+it('links to the correct filament sites', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableActionHasUrl('filament', 'https://filamentphp.com/')
+        ->assertTableActionDoesNotHaveUrl('filament', 'https://github.com/filamentphp/filament')
+        ->assertTableActionShouldOpenUrlInNewTab('filament')
+        ->assertTableActionShouldNotOpenUrlInNewTab('github');
 });
 ```
