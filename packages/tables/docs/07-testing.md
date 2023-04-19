@@ -111,6 +111,23 @@ it('can search posts by title', function () {
 });
 ```
 
+To search individual columns, you can pass an array of searches to  `searchTableColumns()`
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can search posts by title column', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    $title = $posts->first()->title;
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->searchTableColumns(['title' => $title])
+        ->assertCanSeeTableRecords($posts->where('title', $title))
+        ->assertCanNotSeeTableRecords($posts->where('title', '!=', $title));
+});
+```
+
 ### State
 
 To assert that a certain column has a state or does not have a state for a record you can use `assertTableColumnStateSet()` and `assertTableColumnStateNotSet()`:
