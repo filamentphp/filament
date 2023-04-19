@@ -110,7 +110,7 @@ it('can search posts by title', function () {
 
 ### State
 
-To assert that a certain column has a state or does not have a state for a record:
+To assert that a certain column has a state or does not have a state for a record you can use `assertTableColumnStateSet()` and `assertTableColumnStateNotSet()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -123,6 +123,20 @@ it('can get post author names', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->assertTableColumnStateSet('author.name', $post->author->name, record: $post)
         ->assertTableColumnStateNotSet('author.name', 'Anonymous', record: $post);
+});
+```
+
+To assert that a certain column has a formatted state or does not have a formatted state for a record you can use `assertTableColumnFormattedStateSet()` and `assertTableColumnFormattedStateNotSet()`::
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can get post author names', function () {
+    $post = Post::factory(['name' => 'John Smith'])->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableColumnFormattedStateSet('author.name', 'Smith, John', record: $post)
+        ->assertTableColumnFormattedStateNotSet('author.name', $post->author->name, record: $post);
 });
 ```
 
