@@ -236,6 +236,47 @@ it('can reset table filters`', function () {
 });
 ```
 
+### Removing Filters
+
+To remove a single filter you can use `removeTableFilter`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('filters list by published', function () {
+    $posts = Post::factory()->count(10)->create();
+
+    $unpublishedPosts = $posts->where('is_published', false)->get();
+
+    livewire(PostsTable::class)
+        ->filterTable('is_published')
+        ->assertCanNotSeeTableRecords($unpublishedPosts)
+        ->removeTableFilter('is_published')
+        ->assertCanSeeTableRecords($posts);
+});
+```
+
+To remove all filters you can use `removeTableFilters`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can remove all table filters', function () {
+    $posts = Post::factory()->count(10)->forAuthor()->create();
+
+    $unpublishedPosts = $posts
+        ->where('is_published', false)
+        ->where('author_id', $posts->first()->author->getKey());
+
+    livewire(PostsTable::class)
+        ->filterTable('is_published')
+        ->filterTable('author', $author)
+        ->assertCanNotSeeTableRecords($unpublishedPosts)
+        ->removeTableFilters()
+        ->assertCanSeeTableRecords($posts);
+});
+```
+
 ## Actions
 
 ### Calling actions
