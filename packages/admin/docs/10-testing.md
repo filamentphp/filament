@@ -381,7 +381,6 @@ it('can send invoices', function () {
 To check if an action has been halted, you can use `assertPageActionHalted`:
 
 ```php
-use Filament\Pages\Actions\DeleteAction;
 use function Pest\Livewire\livewire;
 
 it('stops sending if invoice has no email address', function () {
