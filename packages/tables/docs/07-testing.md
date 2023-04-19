@@ -393,3 +393,53 @@ it('can not publish, but can delete posts', function () {
         ->assertTableBulkActionVisible('delete');
 });
 ```
+
+### Button Style
+
+To ensure an action or bulk action has the correct label, you can use `assertTableActionHasLabel()`/`assertTableBulkActionHasLabel()` and `assertTableActionDoesNotHaveLabel()`/`assertTableBulkActionDoesNotHaveLabel()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('delete actions have correct labels', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableActionHasLabel('delete', 'Archive Post')
+        ->assertTableActionDoesNotHaveLabel('delete', 'Delete');
+        ->assertTableBulkActionHasLabel('delete', 'Archive Post')
+        ->assertTableBulkActionDoesNotHaveLabel('delete', 'Delete');
+});
+```
+
+To ensure an action or bulk action's button is showing the correct icon, you can use `assertTableActionHasIcon()`/`assertTableBulkActionHasIcon()` or `assertTableActionDoesNotHaveIcon()`/`assertTableBulkActionDoesNotHaveIcon()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('delete actions have correct icons', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableActionHasIcon('delete', 'heroicon-o-archive-box')
+        ->assertTableActionDoesNotHaveIcon('delete', 'heroicon-o-trash');
+        ->assertTableBulkActionHasIcon('delete', 'heroicon-o-archive-box')
+        ->assertTableBulkActionDoesNotHaveIcon('delete', 'heroicon-o-trash');
+});
+```
+
+To ensure an action or bulk action's button is displaying the right color, you can use `assertTableActionHasColor()`/`assertTableBulkActionHasColor()` or `assertTableActionDoesNotHaveColor()`/`assertTableBulkActionDoesNotHaveColor()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('delete actions have correct colors', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableActionHasColor('delete', 'warning')
+        ->assertTableActionDoesNotHaveColor('delete', 'danger');
+        ->assertTableBulkActionHasColor('delete', 'warning')
+        ->assertTableBulkActionDoesNotHaveColor('delete', 'danger');
+});
+```
