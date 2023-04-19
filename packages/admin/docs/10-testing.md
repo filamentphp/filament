@@ -359,6 +359,23 @@ it('can send invoices', function () {
 });
 ```
 
+If you ever need to only set a page action's data without immediately calling it, you can use `setPageActionData`.
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can send invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->setPageActionData('send', data: [
+            'email' => $email = fake()->email(),
+        ])
+});
+```
+
 ### Errors
 
 `assertHasNoPageActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
@@ -410,21 +427,6 @@ it('can send invoices to the primary contact by default', function () {
 
 ### Action State
 
-To check if a page action is hidden to a user, you can use the `assertPageActionHidden()` method:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can not send invoices', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertPageActionHidden('send');
-});
-```
-
 To ensure that an action exists or doesn't in a table, you can use the `assertPageActionExists()` or  `assertPageActionDoesNotExist()` method:
 
 ```php
@@ -438,6 +440,38 @@ it('can send but not unsend invoices', function () {
     ])
         ->assertPageActionExists('send')
         ->assertPageActionDoesNotExist('unsend');
+});
+```
+
+To ensure a page action is hidden or visible for a user, you can use the `assertPageActionHidden()` or `assertPageActionVisible()` methods:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can only print invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHidden('send')
+        ->assertPageActionVisible('print');
+});
+```
+
+To ensure a page action is enabled or disabled for a user, you can use the `assertPageActionEnabled()` or `assertPageActionDisabled()` methods:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can only print a sent invoice', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionDisabled('send')
+        ->assertPageActionEnabled('print');
 });
 ```
 
