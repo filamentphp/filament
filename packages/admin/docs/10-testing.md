@@ -376,6 +376,25 @@ it('can send invoices', function () {
 });
 ```
 
+### Execution
+
+To check if an action has been halted, you can use `assertPageActionHalted`:
+
+```php
+use Filament\Pages\Actions\DeleteAction;
+use function Pest\Livewire\livewire;
+
+it('stops sending if invoice has no email address', function () {
+    $invoice = Invoice::factory(['email' => null])->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->callPageAction('send')
+        ->assertPageActionHalted('send');
+});
+```
+
 ### Errors
 
 `assertHasNoPageActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
@@ -538,5 +557,25 @@ it('actions display proper colors', function () {
     ])
         ->assertPageActionHasColor('delete', 'danger')
         ->assertPageActionDoesNotHaveColor('print', 'danger');
+});
+```
+
+### URL
+
+To ensure an action has the correct URL traits, you can use `assertPageActionHasUrl`, `assertPageActionDoesNotHaveUrl`, `assertPageActionShouldOpenUrlInNewTab`, and `assertPageActionShouldNotOpenUrlInNewTab`.
+
+```php
+use function Pest\Livewire\livewire;
+
+it('links to the correct filament sites', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHasUrl('filament', 'https://filamentphp.com/')
+        ->assertPageActionDoesNotHaveUrl('filament', 'https://github.com/filamentphp/filament')
+        ->assertPageActionShouldOpenUrlInNewTab('filament')
+        ->assertPageActionShouldNotOpenUrlInNewTab('github');
 });
 ```
