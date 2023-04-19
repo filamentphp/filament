@@ -18,16 +18,19 @@ it('can render page', function () {
 });
 ```
 
-To check that you can see certain records in the table, pass them to `assertCanSeeTableRecords()`:
+To to test which records are shown, you can use `assertCanSeeTableRecords()`, `assertCanNotSeeTableRecords()` and `assertCountTableRecords()`
 
 ```php
 use function Pest\Livewire\livewire;
 
-it('can list posts', function () {
-    $posts = Post::factory()->count(10)->create();
+it('cannot display trashed posts by default', function () {
+    $posts = Post::factory()->count(4)->create();
+    $trashedPosts = Post::factory()->trashed()->count(6)->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertCanSeeTableRecords($posts);
+        ->assertCanSeeTableRecords($posts)
+        ->assertCanNotSeeTableRecords($trashedPosts)
+        ->assertCountTableRecords(4);
 });
 ```
 
