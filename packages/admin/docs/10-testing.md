@@ -492,12 +492,28 @@ it('can not send invoices', function () {
 
 ### Button Style
 
-To ensure an action's button is showing the correct icon, you can use `assertPageActionHasIcon` or `assertPageActionDoesNotHaveIcon`.
+To ensure an action has the correct label, you can use `assertPageActionHasLabel` and `assertPageActionDoesNotHaveLabel`:
 
 ```php
 use function Pest\Livewire\livewire;
 
-it('when active send button has correct icon', function () {
+it('send action has correct label', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHasLabel('send', 'Email Invoice')
+        ->assertPageActionDoesNotHaveLabel('send', 'Send');
+});
+```
+
+To ensure an action's button is showing the correct icon, you can use `assertPageActionHasIcon` or `assertPageActionDoesNotHaveIcon`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('when enabled the send button has correct icon', function () {
     $invoice = Invoice::factory()->create();
 
     livewire(EditInvoice::class, [
@@ -509,7 +525,7 @@ it('when active send button has correct icon', function () {
 });
 ```
 
-To ensure an action's button is displaying the right color, you can use `assertPageActionHasColor` or `assertPageActionDoesNotHaveColor`.
+To ensure an action's button is displaying the right color, you can use `assertPageActionHasColor` or `assertPageActionDoesNotHaveColor`:
 
 ```php
 use function Pest\Livewire\livewire;
