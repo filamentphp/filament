@@ -212,7 +212,22 @@ it('can delete posts', function () {
 
 This example assumes that you have a `DeleteAction` on your table. If you have a custom `Action::make('reorder')`, you may use `callTableAction('reorder')`.
 
-For bulk actions, you may do the same, passing in records to execute the bulk action against to `callTableBulkAction()`:
+For column actions, you may do the same, using `callTableColumnAction`,
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can copy posts', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->callTableColumnAction('copy', $post);
+
+    $this->assertDatabaseCount((new Post)->getTable(), 2);
+});
+```
+
+For bulk actions, you may do the same, passing in multiple records to execute the bulk action against with `callTableBulkAction()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -325,16 +340,35 @@ it('has all actions in expected order', function () {
 });
 ```
 
-To ensure that an action or bulk action is hidden for a user, you can use the `assertTableActionHidden()` or `assertTableBulkActionHidden()` method:
+To ensure that an action or bulk action is enabled or disabled for a user, you can use the `assertTableActionEnabled()` `assertTableActionDisabled()` or `assertTableBulkActionEnabled()`/`assertTableBulkActionDisabled()` methods:
 
 ```php
 use function Pest\Livewire\livewire;
 
-it('can not publish posts', function () {
+it('can not publish, but can delete posts', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableActionDisabled('publish', $post)
+        ->assertTableActionEnabled('delete', $post)
+        ->assertTableBulkActionDisabled('publish')
+        ->assertTableBulkActionEnabled('delete');
+});
+```
+
+
+To ensure that an action or bulk action is visible or hidden for a user, you can use the `assertTableActionVisible()` `assertTableActionHidden()` or `assertTableBulkActionVisible()`/`assertTableBulkActionHidden()` methods:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can not publish, but can delete posts', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
         ->assertTableActionHidden('publish', $post)
-        ->assertTableBulkActionHidden('publish');
+        ->assertTableActionVisible('delete', $post)
+        ->assertTableBulkActionHidden('publish')
+        ->assertTableBulkActionVisible('delete');
 });
 ```
