@@ -263,6 +263,26 @@ it('can edit posts', function () {
 });
 ```
 
+### Execution
+
+To check if an action or bulk action has been halted, you can use `assertTableActionHalted()`/`assertTableBulkActionHalted()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('will halt delete if post is flagged', function () {
+    $posts= Post::factory()->count(2)->flagged()->create();
+
+    livewire(PostResource\Pages\ListPosts::class)
+        ->callTableAction('delete', $posts->first())
+        ->callTableBulkAction('delete', $posts)
+        ->assertTableActionHalted('delete')
+        ->assertTableBulkActionHalted('delete');
+
+    $this->assertModelExists($post);
+});
+```
+
 ### Errors
 
 `assertHasNoTableActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
@@ -335,6 +355,7 @@ use function Pest\Livewire\livewire;
 it('has all actions in expected order', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->assertTableActionsExistInOrder(['edit', 'delete'])
+        ->assertTableBulkActionsExistInOrder(['restore', 'forceDelete'])
         ->assertTableHeaderActionsExistInOrder(['create', 'attach'])
         ->assertTableEmptyStateActionsExistInOrder(['create', 'toggle-trashed-filter'])
 });
