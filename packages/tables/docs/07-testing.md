@@ -187,6 +187,24 @@ it('shows the correct columns', function () {
 });
 ```
 
+### Descriptions
+
+To ensure a column has the correct description above or below you can use the `assertTableColumnHasDescription()` and `assertTableColumnDoesNotHaveDescription()` methods
+
+```php
+use function Pest\Livewire\livewire;
+
+it('has the correct descriptions above and below author', function () {
+    $post = Post::factory()->create();
+
+    livewire(PostsTable::class)
+        ->assertTableColumnHasDescription('author', 'Author! ↓↓↓', $post, 'above')
+        ->assertTableColumnHasDescription('author', 'Author! ↑↑↑', $post)
+        ->assertTableColumnDoesNotHaveDescription('author', 'Author! ↑↑↑', $post, 'above')
+        ->assertTableColumnDoesNotHaveDescription('author', 'Author! ↓↓↓', $post);
+});
+```
+
 ### Extra Attributes
 
 To ensure that a column has the correct extra attributes you can use the `assertTableColumnHasExtraAttributes()` and `assertTableColumnDoesNotHaveExtraAttributes()` methods:
