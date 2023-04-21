@@ -212,7 +212,7 @@ class AttachAction extends Action
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $this->getInverseRelationshipName(),
                         function (Builder $query): Builder {
-                            return $query->where($query->qualifyColumn($query->getRelationship()->getParent()->getKeyName()), $this->getRelationship()->getParent()->getKey());
+                            return $query->where($query->qualifyColumn($this->getRelationship()->getParent()->getKeyName()), $this->getRelationship()->getParent()->getKey());
                         },
                     ),
                 )
