@@ -24,7 +24,7 @@ public function table(Table $table): Table
 }
 ```
 
-Actions may be created using the static `make()` method, passing its name. The name of the action should be unique.
+Actions may be created using the static `make()` method, passing its unique name. The name of the action should be unique.
 
 You can then pass a callback to `action()` which executes the task, or a callback to `url()` which generates a link URL:
 
@@ -76,7 +76,7 @@ public function table(Table $table): Table
 }
 ```
 
-Bulk actions may be created using the static `make()` method, passing its name. The name of the action should be unique. You should then pass a callback to `action()` which executes the task:
+Bulk actions may be created using the static `make()` method, passing its unique name. The name of the action should be unique. You should then pass a callback to `action()` which executes the task:
 
 ```php
 use Filament\Tables\Actions\BulkAction;
