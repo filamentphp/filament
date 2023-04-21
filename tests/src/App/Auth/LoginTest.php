@@ -106,7 +106,6 @@ it('can validate `email` is valid email', function () {
 
 it('can validate `password` is required', function () {
     livewire(Login::class)
-        ->set('password', '')
         ->fillForm(['password' => ''])
         ->call('authenticate')
         ->assertHasErrors(['password' => ['required']]);
