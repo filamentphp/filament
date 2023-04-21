@@ -37,7 +37,6 @@
                 wire:ignore
                 @if ($isDebounced()) x-on:input.debounce.{{ $getDebounce() }}="$wire.$refresh" @endif
                 @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
-                {{ $getExtraAlpineAttributeBag() }}
             @else
                 x-data="{}"
             @endif
@@ -47,6 +46,7 @@
             }"
             {{
                 $getExtraInputAttributeBag()
+                    ->merge($getExtraAlpineAttributes(), escape: false)
                     ->merge([
                         'autocapitalize' => $getAutocapitalize(),
                         'autocomplete' => $getAutocomplete(),
