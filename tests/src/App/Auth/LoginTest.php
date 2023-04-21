@@ -56,7 +56,7 @@ it('cannot authenticate with incorrect credentials', function () {
             'password' => 'incorrect-password',
         ])
         ->call('authenticate')
-        ->assertHasErrors(['email']);
+        ->assertFormHasErrors(['email']);
 
     $this->assertGuest();
 });
@@ -94,19 +94,19 @@ it('can validate `email` is required', function () {
     livewire(Login::class)
         ->fillForm(['email' => ''])
         ->call('authenticate')
-        ->assertHasErrors(['email' => ['required']]);
+        ->assertFormHasErrors(['email' => ['required']]);
 });
 
 it('can validate `email` is valid email', function () {
     livewire(Login::class)
         ->fillForm(['email' => 'invalid-email'])
         ->call('authenticate')
-        ->assertHasErrors(['email' => ['email']]);
+        ->assertFormHasErrors(['email' => ['email']]);
 });
 
 it('can validate `password` is required', function () {
     livewire(Login::class)
         ->fillForm(['password' => ''])
         ->call('authenticate')
-        ->assertHasErrors(['password' => ['required']]);
+        ->assertFormHasErrors(['password' => ['required']]);
 });
