@@ -4,6 +4,7 @@ namespace Filament\Pages\Auth;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -29,13 +30,10 @@ class Register extends CardPage
      */
     protected static string $view = 'filament::pages.auth.register';
 
-    public ?string $email = '';
-
-    public ?string $name = '';
-
-    public ?string $password = '';
-
-    public ?string $passwordConfirmation = '';
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $data = [];
 
     protected string $userModel;
 
@@ -108,7 +106,15 @@ class Register extends CardPage
                     ->password()
                     ->required()
                     ->dehydrated(false),
-            ]);
+            ])
+            ->statePath('data');
+    }
+
+    public function registerAction(): Action
+    {
+        return Action::make('registerAction')
+            ->label(__('filament::pages/auth/register.buttons.register.label'))
+            ->submit('register');
     }
 
     protected function getUserModel(): string
