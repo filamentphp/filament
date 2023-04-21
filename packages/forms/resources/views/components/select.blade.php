@@ -106,7 +106,7 @@
                 {{
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
-                        ->merge($getExtraAlpineAttributes())
+                        ->merge($getExtraAlpineAttributes(), escape: false)
                         ->class($inputClasses)
                 }}
             >
