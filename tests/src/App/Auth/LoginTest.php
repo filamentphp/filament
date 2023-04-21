@@ -23,7 +23,7 @@ it('can authenticate', function () {
             'email' => $userToAuthenticate->email,
             'password' => 'password',
         ])
-        ->callAction('authenticateAction')
+        ->call('authenticate')
         ->assertRedirect(Filament::getUrl());
 
     $this->assertAuthenticatedAs($userToAuthenticate);
@@ -39,7 +39,7 @@ it('can authenticate and redirect user to their intended URL', function () {
             'email' => $userToAuthenticate->email,
             'password' => 'password',
         ])
-        ->callAction('authenticateAction')
+        ->call('authenticate')
         ->assertRedirect($intendedUrl);
 });
 
@@ -55,7 +55,7 @@ it('cannot authenticate with incorrect credentials', function () {
             'email' => $userToAuthenticate->email,
             'password' => 'incorrect-password',
         ])
-        ->callAction('authenticateAction')
+        ->call('authenticate')
         ->assertHasErrors(['email']);
 
     $this->assertGuest();
@@ -72,7 +72,7 @@ it('can throttle authentication attempts', function () {
                 'email' => $userToAuthenticate->email,
                 'password' => 'password',
             ])
-            ->callAction('authenticateAction');
+            ->call('authenticate');
 
         $this->assertAuthenticated();
 
@@ -84,7 +84,7 @@ it('can throttle authentication attempts', function () {
             'email' => $userToAuthenticate->email,
             'password' => 'password',
         ])
-        ->callAction('authenticateAction')
+        ->call('authenticate')
         ->assertNotified();
 
     $this->assertGuest();
@@ -93,14 +93,14 @@ it('can throttle authentication attempts', function () {
 it('can validate `email` is required', function () {
     livewire(Login::class)
         ->fillForm(['email' => ''])
-        ->callAction('authenticateAction')
+        ->call('authenticate')
         ->assertHasErrors(['email' => ['required']]);
 });
 
 it('can validate `email` is valid email', function () {
     livewire(Login::class)
         ->fillForm(['email' => 'invalid-email'])
-        ->callAction('authenticateAction')
+        ->call('authenticate')
         ->assertHasErrors(['email' => ['email']]);
 });
 
@@ -108,6 +108,6 @@ it('can validate `password` is required', function () {
     livewire(Login::class)
         ->set('password', '')
         ->fillForm(['password' => ''])
-        ->callAction('authenticateAction')
+        ->call('authenticate')
         ->assertHasErrors(['password' => ['required']]);
 });

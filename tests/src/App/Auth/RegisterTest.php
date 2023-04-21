@@ -31,7 +31,7 @@ it('can register', function () {
             'password' => 'password',
             'passwordConfirmation' => 'password',
         ])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertRedirect(Filament::getUrl());
 
     Event::assertDispatched(Registered::class);
@@ -58,7 +58,7 @@ it('can register and redirect user to their intended URL', function () {
             'password' => 'password',
             'passwordConfirmation' => 'password',
         ])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertRedirect($intendedUrl);
 });
 
@@ -76,7 +76,7 @@ it('can throttle registration attempts', function () {
             'password' => 'password',
             'passwordConfirmation' => 'password',
         ])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertRedirect(Filament::getUrl());
 
     Event::assertDispatchedTimes(Registered::class, times: 1);
@@ -92,7 +92,7 @@ it('can throttle registration attempts', function () {
             'password' => 'password',
             'passwordConfirmation' => 'password',
         ])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertNotified()
         ->assertNoRedirect();
 
@@ -104,35 +104,35 @@ it('can throttle registration attempts', function () {
 it('can validate `name` is required', function () {
     livewire(Register::class)
         ->fillForm(['name' => ''])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['name' => ['required']]);
 });
 
 it('can validate `name` is max 255 characters', function () {
     livewire(Register::class)
         ->fillForm(['name' => Str::random(256)])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['name' => ['max']]);
 });
 
 it('can validate `email` is required', function () {
     livewire(Register::class)
         ->fillForm(['email' => ''])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['email' => ['required']]);
 });
 
 it('can validate `email` is valid email', function () {
     livewire(Register::class)
         ->fillForm(['email' => 'invalid-email'])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['email' => ['email']]);
 });
 
 it('can validate `email` is max 255 characters', function () {
     livewire(Register::class)
         ->fillForm(['email' => Str::random(256)])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['email' => ['max']]);
 });
 
@@ -141,14 +141,14 @@ it('can validate `email` is unique', function () {
 
     livewire(Register::class)
         ->fillForm(['email' => $existingEmail])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['email' => ['unique']]);
 });
 
 it('can validate `password` is required', function () {
     livewire(Register::class)
         ->fillForm(['password' => ''])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['password' => ['required']]);
 });
 
@@ -158,13 +158,13 @@ it('can validate `password` is confirmed', function () {
             'password' => Str::random(),
             'passwordConfirmation' => Str::random(),
         ])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['password' => ['same']]);
 });
 
 it('can validate `passwordConfirmation` is required', function () {
     livewire(Register::class)
         ->fillForm(['passwordConfirmation' => ''])
-        ->callAction('registerAction')
+        ->call('register')
         ->assertHasErrors(['passwordConfirmation' => ['required']]);
 });
