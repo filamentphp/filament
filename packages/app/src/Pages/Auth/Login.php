@@ -4,6 +4,7 @@ namespace Filament\Pages\Auth;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\TextInput;
@@ -28,11 +29,10 @@ class Login extends CardPage
      */
     protected static string $view = 'filament::pages.auth.login';
 
-    public ?string $email = '';
-
-    public ?string $password = '';
-
-    public bool $remember = false;
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $data = [];
 
     public function mount(): void
     {
@@ -66,7 +66,7 @@ class Login extends CardPage
             'password' => $data['password'],
         ], $data['remember'])) {
             throw ValidationException::withMessages([
-                'email' => __('filament::pages/auth/login.messages.failed'),
+                'data.email' => __('filament::pages/auth/login.messages.failed'),
             ]);
         }
 
@@ -92,7 +92,15 @@ class Login extends CardPage
                     ->required(),
                 Checkbox::make('remember')
                     ->label(__('filament::pages/auth/login.fields.remember.label')),
-            ]);
+            ])
+            ->statePath('data');
+    }
+
+    public function authenticateAction(): Action
+    {
+        return Action::make('authenticateAction')
+            ->label(__('filament::pages/auth/login.buttons.authenticate.label'))
+            ->submit('authenticate');
     }
 
     public static function getName(): string
