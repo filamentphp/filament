@@ -103,6 +103,14 @@ class Login extends CardPage
             ->submit('authenticate');
     }
 
+    public function registerAction(): Action
+    {
+        return Action::make('registerAction')
+            ->link()
+            ->label(__('filament::pages/auth/login.buttons.register.label'))
+            ->url(filament()->getRegistrationUrl());
+    }
+
     public static function getName(): string
     {
         return 'filament.core.auth.login';

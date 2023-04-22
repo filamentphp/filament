@@ -117,6 +117,14 @@ class Register extends CardPage
             ->submit('register');
     }
 
+    public function loginAction(): Action
+    {
+        return Action::make('loginAction')
+            ->link()
+            ->label(__('filament::pages/auth/register.buttons.login.label'))
+            ->url(filament()->getLoginUrl());
+    }
+
     protected function getUserModel(): string
     {
         if (isset($this->userModel)) {
