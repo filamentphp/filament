@@ -4,7 +4,6 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
-use Filament\Actions\StaticAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;

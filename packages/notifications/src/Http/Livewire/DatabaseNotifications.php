@@ -3,7 +3,6 @@
 namespace Filament\Notifications\Http\Livewire;
 
 use Carbon\CarbonInterface;
-use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
@@ -12,7 +11,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
-use Illuminate\Notifications\NotificationCollection;
 use Livewire\Component;
 
 class DatabaseNotifications extends Component

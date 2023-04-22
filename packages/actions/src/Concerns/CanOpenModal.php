@@ -7,7 +7,6 @@ use Filament\Actions\StaticAction;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Arr;
 
 trait CanOpenModal
 {
