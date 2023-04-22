@@ -148,12 +148,15 @@ class Summarizer extends ViewComponent
         return $this->id;
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'livewire' => $this->getLivewire(),
-            'table' => $this->getTable(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
 }

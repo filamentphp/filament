@@ -28,8 +28,15 @@ trait HasRecordClasses
      */
     public function getRecordClasses(Model $record): array
     {
-        return Arr::wrap($this->evaluate($this->recordClasses, [
-            'record' => $record,
-        ]) ?? []);
+        return Arr::wrap($this->evaluate(
+            $this->recordClasses,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        ) ?? []);
     }
 }

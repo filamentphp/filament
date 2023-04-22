@@ -100,11 +100,14 @@ trait CanReplicateRecords
         return $this->replica;
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'replica' => $this->getReplica(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'replica' => [$this->getReplica()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
 }

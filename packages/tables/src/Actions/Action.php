@@ -6,6 +6,7 @@ use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use ReflectionParameter;
 
@@ -38,12 +39,28 @@ class Action extends MountableAction implements Groupable, HasRecord
         return "mountTableAction('{$this->getName()}')";
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'record' => $this->getRecord(),
-            'table' => $this->getTable(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'record' => [$this->getRecord()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
 

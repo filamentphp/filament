@@ -16,10 +16,11 @@ trait EvaluatesClosures
      * @template T
      *
      * @param  T | callable(): T  $value
-     * @param  array<string, mixed>  $parameters
+     * @param  array<string, mixed>  $namedInjections
+     * @param  array<string, mixed>  $typedInjections
      * @return T
      */
-    public function evaluate(mixed $value, array $parameters = []): mixed
+    public function evaluate(mixed $value, array $namedInjections = [], array $typedInjections = []): mixed
     {
         if (! $value instanceof Closure) {
             return $value;
@@ -28,21 +29,17 @@ trait EvaluatesClosures
         $dependencies = [];
 
         foreach ((new ReflectionFunction($value))->getParameters() as $parameter) {
-            $parameterName = $parameter->getName();
-
-            if (array_key_exists($parameterName, $parameters)) {
-                $dependencies[] = value($parameters[$parameterName]);
-
-                continue;
-            }
-
-            $dependencies[] = $this->resolveClosureDependencyForEvaluation($parameter);
+            $dependencies[] = $this->resolveClosureDependencyForEvaluation($parameter, $namedInjections, $typedInjections);
         }
 
         return $value(...$dependencies);
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @param array<string, mixed> $namedInjections
+     * @param array<string, mixed> $typedInjections
+     */
+    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter, array $namedInjections, array $typedInjections): mixed
     {
         $parameterName = $parameter->getName();
 
@@ -53,7 +50,31 @@ trait EvaluatesClosures
             return $this;
         }
 
+        if (array_key_exists($parameterName, $namedInjections)) {
+            return value($namedInjections[$parameterName]);
+        }
+
         $typedParameterClassName = $this->getTypedReflectionParameterClassName($parameter);
+
+        if (array_key_exists($typedParameterClassName, $typedInjections)) {
+            return value($typedInjections[$parameterName]);
+        }
+
+        // Dependencies are wrapped in an array to differentiate between null and no value.
+        $defaultWrappedDependencyByName = $this->resolveDefaultClosureDependencyForEvaluationByName($parameterName);
+
+        if (count($defaultWrappedDependencyByName)) {
+            // Unwrap the dependency if it was resolved.
+            return $defaultWrappedDependencyByName[0];
+        }
+
+        // Dependencies are wrapped in an array to differentiate between null and no value.
+        $defaultWrappedDependencyByType = $this->resolveDefaultClosureDependencyForEvaluationByType($typedParameterClassName);
+
+        if (count($defaultWrappedDependencyByType)) {
+            // Unwrap the dependency if it was resolved.
+            return $defaultWrappedDependencyByType[0];
+        }
 
         if (filled($typedParameterClassName)) {
             return app()->make($typedParameterClassName);
@@ -70,6 +91,22 @@ trait EvaluatesClosures
         $staticClass = static::class;
 
         throw new BindingResolutionException("An attempt was made to evaluate a closure for [{$staticClass}], but [${$parameterName}] was unresolvable.");
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        return [];
     }
 
     protected function getTypedReflectionParameterClassName(ReflectionParameter $parameter): ?string

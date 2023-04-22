@@ -85,13 +85,16 @@ abstract class MountableAction extends StaticAction
         return null;
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'arguments' => $this->getArguments(),
-            'data' => $this->getFormData(),
-            'livewire' => $this->getLivewire(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'arguments' => [$this->getArguments()],
+            'data' => [$this->getFormData()],
+            'livewire' => [$this->getLivewire()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
 }

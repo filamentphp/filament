@@ -6,6 +6,7 @@ use Filament\Forms\Concerns\HasColumns;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Illuminate\Database\Eloquent\Model;
 use ReflectionParameter;
 
 class Component extends ViewComponent
@@ -34,17 +35,33 @@ class Component extends ViewComponent
 
     protected string $evaluationIdentifier = 'component';
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'context', 'operation' => $this->getContainer()->getOperation(),
-            'get' => $this->getGetCallback(),
-            'livewire' => $this->getLivewire(),
-            'model' => $this->getModel(),
-            'record' => $this->getRecord(),
-            'set' => $this->getSetCallback(),
-            'state' => $this->getState(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'context', 'operation' => [$this->getContainer()->getOperation()],
+            'get' => [$this->getGetCallback()],
+            'livewire' => [$this->getLivewire()],
+            'model' => [$this->getModel()],
+            'record' => [$this->getRecord()],
+            'set' => [$this->getSetCallback()],
+            'state' => [$this->getState()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
 }

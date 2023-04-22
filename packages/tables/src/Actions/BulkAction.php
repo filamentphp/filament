@@ -4,6 +4,9 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\MountableAction;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 use ReflectionParameter;
 
 class BulkAction extends MountableAction
@@ -58,12 +61,27 @@ class BulkAction extends MountableAction
         return "mountBulkAction('{$this->getName()}')";
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'records' => $this->getRecords(),
-            'table' => $this->getTable(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'records' => [$this->getRecords()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        return match ($parameterType) {
+            Collection::class => [$this->getRecords()],
+            EloquentCollection::class => [$this->getRecords()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
 

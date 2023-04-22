@@ -950,10 +950,17 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function mutateRelationshipDataBeforeSave(array $data, Model $record): array
     {
         if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {
-            $data = $this->evaluate($this->mutateRelationshipDataBeforeSaveUsing, [
-                'data' => $data,
-                'record' => $record,
-            ]);
+            $data = $this->evaluate(
+                $this->mutateRelationshipDataBeforeSaveUsing,
+                namedInjections: [
+                    'data' => $data,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
         }
 
         return $data;

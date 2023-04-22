@@ -18,8 +18,15 @@ trait HasRecordUrl
 
     public function getRecordUrl(Model $record): ?string
     {
-        return $this->evaluate($this->recordUrl, [
-            'record' => $record,
-        ]);
+        return $this->evaluate(
+            $this->recordUrl,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
     }
 }
