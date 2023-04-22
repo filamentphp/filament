@@ -15,7 +15,6 @@ use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
-use ReflectionParameter;
 
 class Component extends ViewComponent
 {

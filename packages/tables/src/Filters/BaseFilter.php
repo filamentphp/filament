@@ -4,9 +4,7 @@ namespace Filament\Tables\Filters;
 
 use Exception;
 use Filament\Support\Components\Component;
-use Filament\Tables\Table;
 use Illuminate\Support\Traits\Conditionable;
-use ReflectionParameter;
 
 class BaseFilter extends Component
 {

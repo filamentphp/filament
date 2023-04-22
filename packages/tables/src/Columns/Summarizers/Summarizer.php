@@ -8,7 +8,6 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
-use ReflectionParameter;
 
 class Summarizer extends ViewComponent
 {

@@ -36,8 +36,8 @@ trait EvaluatesClosures
     }
 
     /**
-     * @param array<string, mixed> $namedInjections
-     * @param array<string, mixed> $typedInjections
+     * @param  array<string, mixed>  $namedInjections
+     * @param  array<string, mixed>  $typedInjections
      */
     protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter, array $namedInjections, array $typedInjections): mixed
     {

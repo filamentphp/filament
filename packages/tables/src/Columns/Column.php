@@ -7,7 +7,6 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
-use ReflectionParameter;
 
 class Column extends ViewComponent
 {
