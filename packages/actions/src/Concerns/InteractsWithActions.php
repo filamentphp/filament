@@ -34,7 +34,7 @@ trait InteractsWithActions
     public ?array $mountedActionArguments = [];
 
     /**
-     * @var array<string, array<<string, mixed>> | null
+     * @var array<string, array<string, mixed> | null
      */
     public ?array $mountedActionData = [];
 
@@ -124,7 +124,8 @@ trait InteractsWithActions
     public function mountAction(string $name, array $arguments = []): mixed
     {
         $this->mountedActions[] = $name;
-        $this->mountedActionArguments[] = $arguments;
+        $this->mountedActionArguments[$name] = $arguments;
+        $this->mountedActionData[$name] = [];
 
         $action = $this->getMountedAction();
 
@@ -246,7 +247,7 @@ trait InteractsWithActions
 
         return $action->getForm(
             $this->makeForm()
-                ->statePath("mountedActionData.{$action->getName()}")
+                ->statePath('mountedActionData.' . array_key_last($this->mountedActionData))
                 ->model($action->getModel() ?? $this->getMountedActionFormModel())
                 ->operation(implode('.', $this->mountedActions)),
         );
@@ -311,32 +312,36 @@ trait InteractsWithActions
         return $action;
     }
 
+    protected function closeParentActions(Action $action): void
+    {
+        if ($action->shouldCloseAllParentActions()) {
+            $this->mountedActions = [];
+            $this->mountedActionArguments = [];
+            $this->mountedActionData = [];
+
+            return;
+        }
+
+        $parentActionToCloseTo = $action->getParentActionToCloseTo();
+
+        while (true) {
+            $recentlyClosedParentAction = array_pop($this->mountedActions);
+            array_pop($this->mountedActionArguments);
+            array_pop($this->mountedActionData);
+
+            if (
+                blank($parentActionToCloseTo) ||
+                ($recentlyClosedParentAction === $parentActionToCloseTo)
+            ) {
+                break;
+            }
+        }
+    }
+
     public function unmountAction(bool $shouldCloseParentActions = true): void
     {
-        if (
-            $shouldCloseParentActions &&
-            ($action = $this->getMountedAction())
-        ) {
-            if ($action->shouldCloseAllParentActions()) {
-                $this->mountedActions = [];
-                $this->mountedActionArguments = [];
-                $this->mountedActionData = [];
-            } else {
-                $parentActionToCloseTo = $action->getParentActionToCloseTo();
-
-                while (true) {
-                    $recentlyClosedParentAction = array_pop($this->mountedActions);
-                    array_pop($this->mountedActionArguments);
-                    array_pop($this->mountedActionData);
-
-                    if (
-                        blank($parentActionToCloseTo) ||
-                        ($recentlyClosedParentAction === $parentActionToCloseTo)
-                    ) {
-                        break;
-                    }
-                }
-            }
+        if ($shouldCloseParentActions && ($action = $this->getMountedAction())) {
+            $this->closeParentActions($action);
         } else {
             array_pop($this->mountedActions);
             array_pop($this->mountedActionArguments);
@@ -355,6 +360,8 @@ trait InteractsWithActions
             'mountedActionForm',
             fn () => $this->getMountedActionForm(),
         );
+
+        $this->resetErrorBag();
 
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-action",
