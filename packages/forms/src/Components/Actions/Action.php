@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Components\Actions;
 
+use Closure;
 use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\MountableAction;
 use Illuminate\Database\Eloquent\Model;
@@ -19,19 +20,27 @@ class Action extends MountableAction
         $this->iconButton();
     }
 
-    public function getLivewireCallActionName(): string
+    public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedFormComponentAction';
     }
 
-    public function getLivewireMountAction(): ?string
+    public function getLivewireClickHandler(): ?string
     {
+        if (is_string($this->action)) {
+            return parent::getLivewireClickHandler();
+        }
+
         if (! $this->isMountedOnClick()) {
-            return null;
+            return parent::getLivewireClickHandler();
+        }
+
+        if ($this->canSubmitForm()) {
+            return parent::getLivewireClickHandler();
         }
 
         if ($this->getUrl()) {
-            return null;
+            return parent::getLivewireClickHandler();
         }
 
         $argumentsParameter = '';

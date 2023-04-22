@@ -101,20 +101,20 @@ class Action extends StaticAction implements Arrayable, Groupable
         return Str::startsWith($view, 'filament-actions::');
     }
 
-    public function getLivewireMountAction(): ?string
+    public function getLivewireClickHandler(): ?string
     {
         if ($this->shouldCloseNotification()) {
-            return null;
+            return parent::getLivewireClickHandler();
         }
 
         if ($this->getUrl()) {
-            return null;
+            return parent::getLivewireClickHandler();
         }
 
         $event = $this->getEvent();
 
         if (! $event) {
-            return null;
+            return parent::getLivewireClickHandler();
         }
 
         $arguments = collect([$event])
@@ -134,10 +134,10 @@ class Action extends StaticAction implements Arrayable, Groupable
         };
     }
 
-    public function getAlpineMountAction(): ?string
+    public function getAlpineClickHandler(): ?string
     {
         if (! $this->shouldCloseNotification()) {
-            return null;
+            return parent::getAlpineClickHandler();
         }
 
         return 'close()';

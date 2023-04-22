@@ -24,15 +24,13 @@ trait HasAction
         return $this;
     }
 
-    public function getAction(): ?Closure
+    public function getActionFunction(): ?Closure
     {
-        $action = $this->action;
-
-        if (is_string($action)) {
-            $action = Closure::fromCallable(class_exists($action) ? $action : [$this->getLivewire(), $action]);
+        if (! $this->action instanceof Closure) {
+            return null;
         }
 
-        return $action;
+        return $this->action;
     }
 
     public function isMountedOnClick(): bool

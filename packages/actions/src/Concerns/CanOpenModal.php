@@ -3,8 +3,6 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Actions\Modal\Actions\Action;
-use Filament\Actions\Modal\Actions\Action as ModalAction;
 use Filament\Actions\StaticAction;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
@@ -164,7 +162,10 @@ trait CanOpenModal
         return $this;
     }
 
-    abstract public function getLivewireCallActionName(): string;
+    public function getLivewireCallMountedActionName(): ?string
+    {
+        return null;
+    }
 
     public function modalHidden(bool | Closure | null $condition = false): static
     {
@@ -174,7 +175,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<Action>
+     * @return array<StaticAction>
      */
     public function getModalActions(): array
     {
@@ -190,7 +191,7 @@ trait CanOpenModal
             $actions = [];
 
             foreach ($this->evaluate($this->modalActions) as $action) {
-                $actions[$action->getName()] = $action;
+                $actions[$action->getName()] = $action->livewire($this->getLivewire());
             }
 
             return $this->modalActions = $actions;
@@ -235,7 +236,7 @@ trait CanOpenModal
     {
         $action = static::makeModalAction('submit')
             ->label($this->getModalSubmitActionLabel())
-            ->submit($this->getLivewireCallActionName())
+            ->submit($this->getLivewireCallMountedActionName())
             ->color(match ($color = $this->getColor()) {
                 'gray' => 'primary',
                 default => $color,
@@ -256,7 +257,7 @@ trait CanOpenModal
     {
         $action = static::makeModalAction('cancel')
             ->label(__('filament-actions::modal.actions.cancel.label'))
-            ->cancel()
+            ->cancelParent()
             ->color('gray');
 
         if ($this->modalCancelAction !== null) {
@@ -278,7 +279,7 @@ trait CanOpenModal
         $actions = [];
 
         foreach ($this->evaluate($this->extraModalActions) as $action) {
-            $actions[$action->getName()] = $action;
+            $actions[$action->getName()] = $action->livewire($this->getLivewire());
         }
 
         return $this->extraModalActions = $actions;
@@ -340,12 +341,14 @@ trait CanOpenModal
     public function makeExtraModalAction(string $name, ?array $arguments = null): StaticAction
     {
         return static::makeModalAction($name)
-            ->action($this->getLivewireCallActionName(), $arguments)
+            ->callParent($this->getLivewireCallMountedActionName())
+            ->arguments($arguments)
             ->color('gray');
     }
 
-    public static function makeModalAction(string $name): StaticAction
+    public function makeModalAction(string $name): StaticAction
     {
-        return ModalAction::make($name);
+        return StaticAction::make($name)
+            ->button();
     }
 }

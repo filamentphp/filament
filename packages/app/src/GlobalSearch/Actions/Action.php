@@ -20,16 +20,16 @@ class Action extends StaticAction
         $this->defaultSize('sm');
     }
 
-    public function getLivewireMountAction(): ?string
+    public function getLivewireClickHandler(): ?string
     {
         if ($this->getUrl()) {
-            return null;
+            return parent::getLivewireClickHandler();
         }
 
         $event = $this->getEvent();
 
         if (! $event) {
-            return null;
+            return parent::getLivewireClickHandler();
         }
 
         $arguments = collect([$event])
@@ -47,10 +47,5 @@ class Action extends StaticAction
             'up' => "\$emitUp($arguments)",
             default => "\$emit($arguments)"
         };
-    }
-
-    public function getAlpineMountAction(): ?string
-    {
-        return null;
     }
 }

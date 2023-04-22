@@ -34,7 +34,7 @@ trait InteractsWithActions
     public ?array $mountedActionArguments = [];
 
     /**
-     * @var array<string, array<string, mixed> | null
+     * @var array<string, array<string, mixed>> | null
      */
     public ?array $mountedActionData = [];
 
@@ -258,6 +258,9 @@ trait InteractsWithActions
         return null;
     }
 
+    /**
+     * @param string | array<string> $name
+     */
     public function getAction(string | array $name): ?Action
     {
         if (is_array($name)) {
@@ -297,6 +300,9 @@ trait InteractsWithActions
         );
     }
 
+    /**
+     * @param array<string> $modalActionNames
+     */
     public function getModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName): ?Action
     {
         foreach ($modalActionNames as $modalActionName) {

@@ -7,19 +7,20 @@ use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Livewire\Component;
 
-abstract class MountableAction extends StaticAction
+class MountableAction extends StaticAction
 {
+    use Concerns\BelongsToLivewire;
     use Concerns\CanBeMounted;
     use Concerns\CanNotify;
     use Concerns\CanOpenModal;
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
-    use Concerns\HasAction;
-    use Concerns\HasArguments;
     use Concerns\HasForm;
     use Concerns\HasInfolist;
     use Concerns\HasLifecycleHooks;
     use Concerns\HasWizard;
+
+    public static string $modalActionsAlignment = 'left';
 
     protected function setUp(): void
     {
@@ -36,7 +37,7 @@ abstract class MountableAction extends StaticAction
      */
     public function call(array $parameters = []): mixed
     {
-        return $this->evaluate($this->getAction(), $parameters);
+        return $this->evaluate($this->getActionFunction(), $parameters);
     }
 
     public function cancel(): void
@@ -70,21 +71,6 @@ abstract class MountableAction extends StaticAction
     }
 
     /**
-     * @return Component
-     */
-    abstract public function getLivewire();
-
-    public function getLivewireMountAction(): ?string
-    {
-        return null;
-    }
-
-    public function getAlpineMountAction(): ?string
-    {
-        return null;
-    }
-
-    /**
      * @return array<mixed>
      */
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
@@ -95,5 +81,25 @@ abstract class MountableAction extends StaticAction
             'livewire' => [$this->getLivewire()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
+    }
+
+    public static function alignModalActionsLeft(): void
+    {
+        static::$modalActionsAlignment = 'left';
+    }
+
+    public static function alignModalActionsCenter(): void
+    {
+        static::$modalActionsAlignment = 'center';
+    }
+
+    public static function alignModalActionsRight(): void
+    {
+        static::$modalActionsAlignment = 'right';
+    }
+
+    public static function getModalActionsAlignment(): string
+    {
+        return static::$modalActionsAlignment;
     }
 }

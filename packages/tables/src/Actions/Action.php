@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Closure;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
@@ -13,19 +14,27 @@ class Action extends MountableAction implements Groupable, HasRecord
     use Concerns\BelongsToTable;
     use InteractsWithRecord;
 
-    public function getLivewireCallActionName(): string
+    public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedTableAction';
     }
 
-    public function getLivewireMountAction(): ?string
+    public function getLivewireClickHandler(): ?string
     {
+        if (is_string($this->action)) {
+            return parent::getLivewireClickHandler();
+        }
+
         if (! $this->isMountedOnClick()) {
-            return null;
+            return parent::getLivewireClickHandler();
+        }
+
+        if ($this->canSubmitForm()) {
+            return parent::getLivewireClickHandler();
         }
 
         if ($this->getUrl()) {
-            return null;
+            return parent::getLivewireClickHandler();
         }
 
         if ($record = $this->getRecord()) {

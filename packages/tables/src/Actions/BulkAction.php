@@ -30,7 +30,7 @@ class BulkAction extends MountableAction
     public function call(array $parameters = []): mixed
     {
         try {
-            return $this->evaluate($this->getAction(), $parameters);
+            return $this->evaluate($this->getActionFunction(), $parameters);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();
@@ -49,12 +49,12 @@ class BulkAction extends MountableAction
         return $action;
     }
 
-    public function getLivewireCallActionName(): string
+    public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedTableBulkAction';
     }
 
-    public function getAlpineMountAction(): ?string
+    public function getAlpineClickHandler(): ?string
     {
         return "mountBulkAction('{$this->getName()}')";
     }

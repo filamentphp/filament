@@ -4,14 +4,20 @@ namespace Filament\Actions;
 
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Illuminate\Support\Js;
 use Illuminate\Support\Traits\Conditionable;
 
-abstract class StaticAction extends ViewComponent
+class StaticAction extends ViewComponent
 {
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeInline;
+    use Concerns\CanCallParentAction;
+    use Concerns\CanCancelParentAction;
     use Concerns\CanOpenUrl;
+    use Concerns\CanSubmitForm;
+    use Concerns\HasAction;
+    use Concerns\HasArguments;
     use Concerns\HasColor;
     use Concerns\HasGroupedIcon;
     use Concerns\HasIcon;
@@ -83,6 +89,32 @@ abstract class StaticAction extends ViewComponent
     public static function getDefaultName(): ?string
     {
         return null;
+    }
+
+    public function getLivewireClickHandler(): ?string
+    {
+        if (is_string($this->action)) {
+            return $this->action;
+        }
+
+        if ($handler = $this->getParentActionCallLivewireClickHandler()) {
+            $handler .= '(';
+            $handler .= Js::from($this->getArguments());
+            $handler .= ')';
+
+            return $handler;
+        }
+
+        return null;
+    }
+
+    public function getAlpineClickHandler(): ?string
+    {
+        if (! $this->canCancelParentAction()) {
+            return null;
+        }
+
+        return 'close()';
     }
 
     /**
