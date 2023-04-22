@@ -1,3 +1,4 @@
+@php use Filament\Notifications\Http\Livewire\Notifications; @endphp
 <x-filament-notifications::notification
     :notification="$notification"
     @class([
@@ -6,7 +7,7 @@
     ])
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
         'opacity-0',
-        match (static::$horizontalAlignment) {
+        ($this instanceof Notifications) ? match (static::$horizontalAlignment) {
             'left' => '-translate-x-12',
             'right' => 'translate-x-12',
             'center' => match (static::$verticalAlignment) {
@@ -14,7 +15,7 @@
                 'bottom' => 'translate-y-12',
                 'center' => null,
             },
-        },
+        } : null,
     ])"
     x-transition:leave-end="scale-95 opacity-0"
 >

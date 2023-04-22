@@ -2,6 +2,7 @@
 
 namespace Filament\Context\Concerns;
 
+use Filament\Http\Livewire\DatabaseNotifications;
 use Filament\Http\Livewire\GlobalSearch;
 use Filament\Http\Livewire\Notifications;
 use Filament\Pages\Page;
@@ -262,6 +263,7 @@ trait HasComponents
 
     public function registerLivewireComponents(): void
     {
+        $this->queueLivewireComponentForRegistration(DatabaseNotifications::class);
         $this->queueLivewireComponentForRegistration(GlobalSearch::class);
         $this->queueLivewireComponentForRegistration(Notifications::class);
 

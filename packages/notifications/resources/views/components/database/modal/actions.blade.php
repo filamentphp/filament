@@ -8,11 +8,11 @@
         <div class="mt-2 text-sm">
             @if ($unreadNotificationsCount)
                 <x-filament::link
-                    wire:click="markAllDatabaseNotificationsAsRead"
+                    wire:click="markAllNotificationsAsRead"
                     color="gray"
                     tag="button"
                     tabindex="-1"
-                    wire:target="markAllDatabaseNotificationsAsRead"
+                    wire:target="markAllNotificationsAsRead"
                     wire:loading.attr="disabled"
                     class="disabled:opacity-70 disabled:pointer-events-none"
                 >
@@ -25,12 +25,12 @@
             @endif
 
             <x-filament::link
-                wire:click="clearDatabaseNotifications"
+                wire:click="clearNotifications"
                 x-on:click="close()"
                 color="gray"
                 tag="button"
                 tabindex="-1"
-                wire:target="clearDatabaseNotifications"
+                wire:target="clearNotifications"
                 wire:loading.attr="disabled"
                 class="disabled:opacity-70 disabled:pointer-events-none"
             >

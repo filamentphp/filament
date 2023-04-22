@@ -87,7 +87,9 @@
         <div class="flex items-center shrink-0">
             @livewire('filament.core.global-search')
 
-            @livewire('filament.core.notifications')
+            @if (filament()->hasDatabaseNotifications())
+                @livewire('filament.core.database-notifications')
+            @endif
 
             <x-filament::user-menu />
 

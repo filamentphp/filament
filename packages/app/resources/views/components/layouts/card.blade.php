@@ -54,14 +54,10 @@
 
         @if (filament()->auth()->check())
             <div class="absolute top-0 end-0 flex items-center justify-end p-2 w-full">
-                @livewire('filament.core.notifications')
+                @livewire('filament.core.database-notifications')
 
                 <x-filament::user-menu />
             </div>
         @endif
     </div>
-
-    @if (! filament()->auth()->check())
-        @livewire('filament.core.notifications')
-    @endif
 </x-filament::layouts.base>
