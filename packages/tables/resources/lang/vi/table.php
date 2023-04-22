@@ -17,7 +17,7 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Chọn/bỏ chọn tất cả các mục cho hành động hàng loạt.',
+            'label' => 'Chọn/bỏ chọn tất cả các mục cho tác vụ hàng loạt.',
         ],
 
         'bulk_select_record' => [
