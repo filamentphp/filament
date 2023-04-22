@@ -2,7 +2,6 @@
 
 namespace Filament\Forms\Components\Actions;
 
-use Closure;
 use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\MountableAction;
 use Illuminate\Database\Eloquent\Model;

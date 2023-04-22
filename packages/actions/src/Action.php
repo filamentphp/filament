@@ -2,8 +2,6 @@
 
 namespace Filament\Actions;
 
-use Closure;
-use Filament\Actions\Contracts\HasActions;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 use Livewire\Component;

@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Actions;
 
-use Closure;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;

@@ -2,8 +2,6 @@
 
 namespace Filament\Actions\Concerns;
 
-use Closure;
-
 trait CanCallParentAction
 {
     protected ?string $parentActionCallLivewireClickHandler = null;

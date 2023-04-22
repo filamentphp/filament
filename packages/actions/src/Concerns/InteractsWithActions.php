@@ -258,7 +258,7 @@ trait InteractsWithActions
     }
 
     /**
-     * @param string | array<string> $name
+     * @param  string | array<string>  $name
      */
     public function getAction(string | array $name): ?Action
     {
@@ -300,7 +300,7 @@ trait InteractsWithActions
     }
 
     /**
-     * @param array<string> $modalActionNames
+     * @param  array<string>  $modalActionNames
      */
     public function getModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName): ?Action
     {
