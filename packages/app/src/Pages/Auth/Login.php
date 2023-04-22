@@ -66,7 +66,7 @@ class Login extends CardPage
             'password' => $data['password'],
         ], $data['remember'])) {
             throw ValidationException::withMessages([
-                'email' => __('filament::pages/auth/login.messages.failed'),
+                'data.email' => __('filament::pages/auth/login.messages.failed'),
             ]);
         }
 
