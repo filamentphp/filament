@@ -105,35 +105,35 @@ it('can validate `name` is required', function () {
     livewire(Register::class)
         ->fillForm(['name' => ''])
         ->call('register')
-        ->assertFormHasErrors(['name' => ['required']]);
+        ->assertHasFormErrors(['name' => ['required']]);
 });
 
 it('can validate `name` is max 255 characters', function () {
     livewire(Register::class)
         ->fillForm(['name' => Str::random(256)])
         ->call('register')
-        ->assertFormHasErrors(['name' => ['max']]);
+        ->assertHasFormErrors(['name' => ['max']]);
 });
 
 it('can validate `email` is required', function () {
     livewire(Register::class)
         ->fillForm(['email' => ''])
         ->call('register')
-        ->assertFormHasErrors(['email' => ['required']]);
+        ->assertHasFormErrors(['email' => ['required']]);
 });
 
 it('can validate `email` is valid email', function () {
     livewire(Register::class)
         ->fillForm(['email' => 'invalid-email'])
         ->call('register')
-        ->assertFormHasErrors(['email' => ['email']]);
+        ->assertHasFormErrors(['email' => ['email']]);
 });
 
 it('can validate `email` is max 255 characters', function () {
     livewire(Register::class)
         ->fillForm(['email' => Str::random(256)])
         ->call('register')
-        ->assertFormHasErrors(['email' => ['max']]);
+        ->assertHasFormErrors(['email' => ['max']]);
 });
 
 it('can validate `email` is unique', function () {
@@ -142,14 +142,14 @@ it('can validate `email` is unique', function () {
     livewire(Register::class)
         ->fillForm(['email' => $existingEmail])
         ->call('register')
-        ->assertFormHasErrors(['email' => ['unique']]);
+        ->assertHasFormErrors(['email' => ['unique']]);
 });
 
 it('can validate `password` is required', function () {
     livewire(Register::class)
         ->fillForm(['password' => ''])
         ->call('register')
-        ->assertFormHasErrors(['password' => ['required']]);
+        ->assertHasFormErrors(['password' => ['required']]);
 });
 
 it('can validate `password` is confirmed', function () {
@@ -159,12 +159,12 @@ it('can validate `password` is confirmed', function () {
             'passwordConfirmation' => Str::random(),
         ])
         ->call('register')
-        ->assertFormHasErrors(['password' => ['same']]);
+        ->assertHasFormErrors(['password' => ['same']]);
 });
 
 it('can validate `passwordConfirmation` is required', function () {
     livewire(Register::class)
         ->fillForm(['passwordConfirmation' => ''])
         ->call('register')
-        ->assertFormHasErrors(['passwordConfirmation' => ['required']]);
+        ->assertHasFormErrors(['passwordConfirmation' => ['required']]);
 });
