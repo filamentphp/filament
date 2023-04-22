@@ -1,10 +1,11 @@
 <div>
-    <form wire:submit.prevent="register" class="space-y-8">
+    <form
+        wire:submit.prevent="register"
+        class="grid gap-y-8"
+    >
         {{ $this->form }}
 
-        <x-filament::button type="submit" form="register" class="w-full">
-            {{ static::getLabel() }}
-        </x-filament::button>
+        {{ $this->registerAction }}
     </form>
 
     @if (count($tenants = filament()->getUserTenants(filament()->auth()->user())))
