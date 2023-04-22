@@ -14,7 +14,7 @@
             display-classes="block"
             x-init="livewire = $wire.__instance"
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedAction) open()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedActions.length) open()"
             x-on:modal-closed.stop="
                 const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
 
@@ -25,8 +25,8 @@
                     return
                 }
 
-                if (mountedActionShouldOpenModal && 'mountedAction' in livewire?.serverMemo.data) {
-                    livewire.set('mountedAction', null)
+                if (mountedActionShouldOpenModal && 'mountedActions' in livewire?.serverMemo.data) {
+                    livewire.call('unmountAction', false)
                 }
             "
         >
@@ -69,10 +69,10 @@
 
                 {{ $action->getModalFooter() }}
 
-                @if (count($action->getModalActions()))
+                @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-filament::modal.actions>
@@ -162,10 +162,10 @@
 
                 {{ $action->getModalFooter() }}
 
-                @if (count($action->getModalActions()))
+                @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-filament::modal.actions>
@@ -245,10 +245,10 @@
 
                 {{ $action->getModalFooter() }}
 
-                @if (count($action->getModalActions()))
+                @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-filament::modal.actions>
@@ -334,10 +334,10 @@
 
                 {{ $action->getModalFooter() }}
 
-                @if (count($action->getModalActions()))
+                @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-filament::modal.actions>

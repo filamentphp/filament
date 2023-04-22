@@ -10,6 +10,7 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     use Concerns\BelongsToLivewire;
     use Concerns\CanSubmitForm;
     use Concerns\HasMountableArguments;
+    use Concerns\HasParentActions;
     use Concerns\InteractsWithRecord;
 
     public function getLivewireCallActionName(): string

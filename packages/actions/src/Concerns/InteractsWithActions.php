@@ -4,11 +4,13 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 use Filament\Actions\Action;
+use Filament\Actions\StaticAction;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 use Livewire\Exceptions\PropertyNotFoundException;
 
@@ -21,15 +23,18 @@ trait InteractsWithActions
         __get as __getForm;
     }
 
-    public ?string $mountedAction = null;
+    /**
+     * @var array<string> | null
+     */
+    public ?array $mountedActions = [];
 
     /**
-     * @var array<string, mixed> | null
+     * @var array<string, array<string, mixed>> | null
      */
     public ?array $mountedActionArguments = [];
 
     /**
-     * @var array<string, mixed> | null
+     * @var array<string, array<<string, mixed>> | null
      */
     public ?array $mountedActionData = [];
 
@@ -72,7 +77,7 @@ trait InteractsWithActions
         }
 
         $action->arguments(array_merge(
-            $this->mountedActionArguments ?? [],
+            Arr::last($this->mountedActionArguments),
             $arguments,
         ));
 
@@ -101,18 +106,14 @@ trait InteractsWithActions
         } catch (Cancel $exception) {
         }
 
+        $action->resetArguments();
+        $action->resetFormData();
+
         if (filled($this->redirectTo)) {
             return $result;
         }
 
-        $this->mountedAction = null;
-
-        $action->resetArguments();
-        $action->resetFormData();
-
-        $this->dispatchBrowserEvent('close-modal', [
-            'id' => "{$this->id}-action",
-        ]);
+        $this->unmountAction();
 
         return $result;
     }
@@ -122,8 +123,8 @@ trait InteractsWithActions
      */
     public function mountAction(string $name, array $arguments = []): mixed
     {
-        $this->mountedAction = $name;
-        $this->mountedActionArguments = $arguments;
+        $this->mountedActions[] = $name;
+        $this->mountedActionArguments[] = $arguments;
 
         $action = $this->getMountedAction();
 
@@ -135,7 +136,7 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments($this->mountedActionArguments);
+        $action->arguments(Arr::last($this->mountedActionArguments));
 
         $this->cacheForm(
             'mountedActionForm',
@@ -159,7 +160,7 @@ trait InteractsWithActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->mountedAction = null;
+            $this->unmountAction(shouldCloseParentActions: false);
 
             return null;
         }
@@ -214,11 +215,11 @@ trait InteractsWithActions
 
     public function getMountedAction(): ?Action
     {
-        if (! $this->mountedAction) {
+        if (! count($this->mountedActions ?? [])) {
             return null;
         }
 
-        return $this->getAction($this->mountedAction);
+        return $this->getAction($this->mountedActions);
     }
 
     /**
@@ -245,9 +246,9 @@ trait InteractsWithActions
 
         return $action->getForm(
             $this->makeForm()
-                ->statePath('mountedActionData')
+                ->statePath("mountedActionData.{$action->getName()}")
                 ->model($action->getModel() ?? $this->getMountedActionFormModel())
-                ->operation($this->mountedAction),
+                ->operation(implode('.', $this->mountedActions)),
         );
     }
 
@@ -256,12 +257,23 @@ trait InteractsWithActions
         return null;
     }
 
-    public function getAction(string $name): ?Action
+    public function getAction(string | array $name): ?Action
     {
+        if (is_array($name)) {
+            $firstName = array_shift($name);
+            $modalActionNames = $name;
+
+            $name = $firstName;
+        }
+
         $action = $this->cachedActions[$name] ?? null;
 
         if ($action) {
-            return $action;
+            return $this->getModalActionFromAction(
+                $action,
+                modalActionNames: $modalActionNames ?? [],
+                parentActionName: $name,
+            );
         }
 
         if (! method_exists($this, $name)) {
@@ -277,6 +289,75 @@ trait InteractsWithActions
             throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [{$name}] method on the Livewire component returned an instance of [" . get_class($action) . '].');
         }
 
-        return $this->cacheAction($action, name: $name);
+        return $this->getModalActionFromAction(
+            $this->cacheAction($action, name: $name),
+            modalActionNames: $modalActionNames ?? [],
+            parentActionName: $name,
+        );
+    }
+
+    public function getModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName): ?Action
+    {
+        foreach ($modalActionNames as $modalActionName) {
+            $action = $action->getModalAction($modalActionName);
+
+            if (! $action) {
+                throw new InvalidArgumentException("The [{$modalActionName}] action has not been registered on the [{$parentActionName}] action.");
+            }
+
+            $parentActionName = $modalActionName;
+        }
+
+        return $action;
+    }
+
+    public function unmountAction(bool $shouldCloseParentActions = true): void
+    {
+        if (
+            $shouldCloseParentActions &&
+            ($action = $this->getMountedAction())
+        ) {
+            if ($action->shouldCloseAllParentActions()) {
+                $this->mountedActions = [];
+                $this->mountedActionArguments = [];
+                $this->mountedActionData = [];
+            } else {
+                $parentActionToCloseTo = $action->getParentActionToCloseTo();
+
+                while (true) {
+                    $recentlyClosedParentAction = array_pop($this->mountedActions);
+                    array_pop($this->mountedActionArguments);
+                    array_pop($this->mountedActionData);
+
+                    if (
+                        blank($parentActionToCloseTo) ||
+                        ($recentlyClosedParentAction === $parentActionToCloseTo)
+                    ) {
+                        break;
+                    }
+                }
+            }
+        } else {
+            array_pop($this->mountedActions);
+            array_pop($this->mountedActionArguments);
+            array_pop($this->mountedActionData);
+        }
+
+        if (! count($this->mountedActions)) {
+            $this->dispatchBrowserEvent('close-modal', [
+                'id' => "{$this->id}-action",
+            ]);
+
+            return;
+        }
+
+        $this->cacheForm(
+            'mountedActionForm',
+            fn () => $this->getMountedActionForm(),
+        );
+
+        $this->dispatchBrowserEvent('open-modal', [
+            'id' => "{$this->id}-action",
+        ]);
     }
 }
