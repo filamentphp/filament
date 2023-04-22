@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications;
 
+use Filament\Notifications\Http\Livewire\DatabaseNotifications;
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
 use Filament\Support\Assets\AssetManager;
@@ -35,6 +36,8 @@ class NotificationsServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        Livewire::component('database-notifications', DatabaseNotifications::class);
+
         Livewire::component('notifications', Notifications::class);
 
         Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {

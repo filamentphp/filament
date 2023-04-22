@@ -20,10 +20,6 @@
         @endforeach
     </div>
 
-    @if ($this->hasDatabaseNotifications())
-        <x-filament-notifications::database />
-    @endif
-
     @if ($broadcastChannel = $this->getBroadcastChannel())
         <x-filament-notifications::echo :channel="$broadcastChannel" />
     @endif

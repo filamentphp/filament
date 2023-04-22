@@ -86,6 +86,8 @@
 
     {{ $slot }}
 
+    @livewire('filament.core.notifications')
+
     {{ filament()->renderHook('scripts.start') }}
 
     @livewireScripts
