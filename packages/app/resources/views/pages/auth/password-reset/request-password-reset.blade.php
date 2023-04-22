@@ -12,11 +12,12 @@
         </x-slot>
     @endif
 
-    <form wire:submit.prevent="request" class="space-y-8">
+    <form
+        wire:submit.prevent="request"
+        class="grid gap-y-8"
+    >
         {{ $this->form }}
 
-        <x-filament::button type="submit" form="request" class="w-full">
-            {{ __('filament::pages/auth/password-reset/request-password-reset.buttons.request.label') }}
-        </x-filament::button>
+        {{ $this->requestAction }}
     </form>
 </div>
