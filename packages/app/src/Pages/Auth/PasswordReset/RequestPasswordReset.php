@@ -116,8 +116,8 @@ class RequestPasswordReset extends CardPage
             ->link()
             ->label(__('filament::pages/auth/password-reset/request-password-reset.buttons.login.label'))
             ->icon(match (__('filament::layout.direction')) {
-                'ltr' => 'heroicon-m-arrow-left',
                 'rtl' => 'heroicon-m-arrow-right',
+                default => 'heroicon-m-arrow-left',
             })
             ->url(filament()->getLoginUrl());
     }
