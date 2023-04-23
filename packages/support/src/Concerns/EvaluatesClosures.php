@@ -43,13 +43,6 @@ trait EvaluatesClosures
     {
         $parameterName = $parameter->getName();
 
-        if (
-            isset($this->evaluationIdentifier) &&
-            ($parameterName === $this->evaluationIdentifier)
-        ) {
-            return $this;
-        }
-
         if (array_key_exists($parameterName, $namedInjections)) {
             return value($namedInjections[$parameterName]);
         }
@@ -74,6 +67,13 @@ trait EvaluatesClosures
         if (count($defaultWrappedDependencyByType)) {
             // Unwrap the dependency if it was resolved.
             return $defaultWrappedDependencyByType[0];
+        }
+
+        if (
+            isset($this->evaluationIdentifier) &&
+            ($parameterName === $this->evaluationIdentifier)
+        ) {
+            return $this;
         }
 
         if (filled($typedParameterClassName)) {
