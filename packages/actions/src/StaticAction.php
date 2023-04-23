@@ -134,7 +134,7 @@ class StaticAction extends ViewComponent
 
     public function getAlpineClickHandler(): ?string
     {
-        if (! $this->canClose()) {
+        if (! $this->shouldClose()) {
             return null;
         }
 

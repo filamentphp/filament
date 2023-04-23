@@ -6,17 +6,17 @@ use Closure;
 
 trait CanClose
 {
-    protected bool | Closure $canClose = false;
+    protected bool | Closure $shouldClose = false;
 
     public function close(bool | Closure $condition = true): static
     {
-        $this->canClose = $condition;
+        $this->shouldClose = $condition;
 
         return $this;
     }
 
-    public function canClose(): bool
+    public function shouldClose(): bool
     {
-        return (bool) $this->evaluate($this->canClose);
+        return (bool) $this->evaluate($this->shouldClose);
     }
 }

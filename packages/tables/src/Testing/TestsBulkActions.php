@@ -3,6 +3,7 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
+use Filament\Actions\MountableAction;
 use Filament\Actions\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;

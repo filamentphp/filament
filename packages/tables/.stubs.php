@@ -161,5 +161,5 @@ namespace Livewire\Testing {
 
         public function loadTable(): static {}
     }
-    
+
 }

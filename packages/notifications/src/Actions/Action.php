@@ -39,7 +39,7 @@ class Action extends StaticAction implements Arrayable, Groupable
             'isOutlined' => $this->isOutlined(),
             'isDisabled' => $this->isDisabled(),
             'label' => $this->getLabel(),
-            'canClose' => $this->canClose(),
+            'shouldClose' => $this->shouldClose(),
             'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
             'size' => $this->getSize(),
             'url' => $this->getUrl(),

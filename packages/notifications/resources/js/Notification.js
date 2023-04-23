@@ -231,7 +231,7 @@ class Action {
     }
 
     close(condition = true) {
-        this.canClose = condition
+        this.shouldClose = condition
 
         return this
     }
