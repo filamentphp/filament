@@ -250,10 +250,12 @@ trait HasFormComponentActions
         if (! ($shouldCloseParentActions && $action)) {
             array_pop($this->mountedFormComponentActions);
             array_pop($this->mountedFormComponentActionsArguments);
+            array_pop($this->mountedFormComponentActionsComponents);
             array_pop($this->mountedFormComponentActionsData);
         } elseif ($action->shouldCloseAllParentActions()) {
             $this->mountedFormComponentActions = [];
             $this->mountedFormComponentActionsArguments = [];
+            $this->mountedFormComponentActionsComponents = [];
             $this->mountedFormComponentActionsData = [];
         } else {
             $parentActionToCloseTo = $action->getParentActionToCloseTo();
@@ -261,6 +263,7 @@ trait HasFormComponentActions
             while (true) {
                 $recentlyClosedParentAction = array_pop($this->mountedFormComponentActions);
                 array_pop($this->mountedFormComponentActionsArguments);
+                array_pop($this->mountedFormComponentActionsComponents);
                 array_pop($this->mountedFormComponentActionsData);
 
                 if (
