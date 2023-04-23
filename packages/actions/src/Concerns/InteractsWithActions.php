@@ -30,12 +30,12 @@ trait InteractsWithActions
     /**
      * @var array<string, array<string, mixed>> | null
      */
-    public ?array $mountedActionArguments = [];
+    public ?array $mountedActionsArguments = [];
 
     /**
      * @var array<string, array<string, mixed>> | null
      */
-    public ?array $mountedActionData = [];
+    public ?array $mountedActionsData = [];
 
     /**
      * @var array<string, Action>
@@ -76,7 +76,7 @@ trait InteractsWithActions
         }
 
         $action->arguments(array_merge(
-            Arr::last($this->mountedActionArguments),
+            Arr::last($this->mountedActionsArguments),
             $arguments,
         ));
 
@@ -123,8 +123,8 @@ trait InteractsWithActions
     public function mountAction(string $name, array $arguments = []): mixed
     {
         $this->mountedActions[] = $name;
-        $this->mountedActionArguments[$name] = $arguments;
-        $this->mountedActionData[$name] = [];
+        $this->mountedActionsArguments[$name] = $arguments;
+        $this->mountedActionsData[$name] = [];
 
         $action = $this->getMountedAction();
 
@@ -136,7 +136,7 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments(Arr::last($this->mountedActionArguments));
+        $action->arguments(Arr::last($this->mountedActionsArguments));
 
         $this->cacheForm(
             'mountedActionForm',
@@ -246,7 +246,7 @@ trait InteractsWithActions
 
         return $action->getForm(
             $this->makeForm()
-                ->statePath('mountedActionData.' . array_key_last($this->mountedActionData))
+                ->statePath('mountedActionsData.' . array_key_last($this->mountedActionsData))
                 ->model($action->getModel() ?? $this->getMountedActionFormModel())
                 ->operation(implode('.', $this->mountedActions)),
         );
@@ -262,6 +262,10 @@ trait InteractsWithActions
      */
     public function getAction(string | array $name): ?Action
     {
+        if (is_string($name) && str($name)->contains('.')) {
+            $name = explode('.', $name);
+        }
+
         if (is_array($name)) {
             $firstName = array_shift($name);
             $modalActionNames = $name;
@@ -272,7 +276,7 @@ trait InteractsWithActions
         $action = $this->cachedActions[$name] ?? null;
 
         if ($action) {
-            return $this->getModalActionFromAction(
+            return $this->getMountableModalActionFromAction(
                 $action,
                 modalActionNames: $modalActionNames ?? [],
                 parentActionName: $name,
@@ -292,7 +296,7 @@ trait InteractsWithActions
             throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [{$name}] method on the Livewire component returned an instance of [" . get_class($action) . '].');
         }
 
-        return $this->getModalActionFromAction(
+        return $this->getMountableModalActionFromAction(
             $this->cacheAction($action, name: $name),
             modalActionNames: $modalActionNames ?? [],
             parentActionName: $name,
@@ -302,10 +306,10 @@ trait InteractsWithActions
     /**
      * @param  array<string>  $modalActionNames
      */
-    public function getModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName): ?Action
+    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName): ?Action
     {
         foreach ($modalActionNames as $modalActionName) {
-            $action = $action->getModalAction($modalActionName);
+            $action = $action->getMountableModalAction($modalActionName);
 
             if (! $action) {
                 throw new InvalidArgumentException("The [{$modalActionName}] action has not been registered on the [{$parentActionName}] action.");
@@ -319,21 +323,23 @@ trait InteractsWithActions
 
     public function unmountAction(bool $shouldCloseParentActions = true): void
     {
-        if ($shouldCloseParentActions && ($action = $this->getMountedAction())) {
-            if ($action->shouldCloseAllParentActions()) {
-                $this->mountedActions = [];
-                $this->mountedActionArguments = [];
-                $this->mountedActionData = [];
+        $action = $this->getMountedAction();
 
-                return;
-            }
-
+        if (! ($shouldCloseParentActions && $action)) {
+            array_pop($this->mountedActions);
+            array_pop($this->mountedActionsArguments);
+            array_pop($this->mountedActionsData);
+        } elseif ($action->shouldCloseAllParentActions()) {
+            $this->mountedActions = [];
+            $this->mountedActionsArguments = [];
+            $this->mountedActionsData = [];
+        } else {
             $parentActionToCloseTo = $action->getParentActionToCloseTo();
 
             while (true) {
                 $recentlyClosedParentAction = array_pop($this->mountedActions);
-                array_pop($this->mountedActionArguments);
-                array_pop($this->mountedActionData);
+                array_pop($this->mountedActionsArguments);
+                array_pop($this->mountedActionsData);
 
                 if (
                     blank($parentActionToCloseTo) ||
@@ -342,16 +348,14 @@ trait InteractsWithActions
                     break;
                 }
             }
-        } else {
-            array_pop($this->mountedActions);
-            array_pop($this->mountedActionArguments);
-            array_pop($this->mountedActionData);
         }
 
         if (! count($this->mountedActions)) {
             $this->dispatchBrowserEvent('close-modal', [
                 'id' => "{$this->id}-action",
             ]);
+
+            $action?->record(null);
 
             return;
         }

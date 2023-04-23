@@ -3,10 +3,13 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Contracts\HasRecord;
+use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Model;
 
 trait CanOpenModal
 {
@@ -190,7 +193,7 @@ trait CanOpenModal
             $actions = [];
 
             foreach ($this->evaluate($this->modalActions) as $action) {
-                $actions[$action->getName()] = $action->livewire($this->getLivewire());
+                $actions[$action->getName()] = $this->prepareModalAction($action);
             }
 
             return $this->modalActions = $actions;
@@ -215,9 +218,29 @@ trait CanOpenModal
         return $this->modalActions = $actions;
     }
 
-    public function getModalAction(string $name): ?StaticAction
+    public function getMountableModalAction(string $name): ?MountableAction
     {
-        return $this->getModalActions()[$name] ?? null;
+        $action = $this->getModalActions()[$name] ?? null;
+
+        if (! $action) {
+            return null;
+        }
+
+        if (! $action instanceof MountableAction) {
+            return null;
+        }
+
+        return $action;
+    }
+
+    public function prepareModalAction(StaticAction $action): StaticAction
+    {
+        if (! $action instanceof MountableAction) {
+            return $action;
+        }
+
+        return $action
+            ->livewire($this->getLivewire());
     }
 
     /**
@@ -278,7 +301,7 @@ trait CanOpenModal
         $actions = [];
 
         foreach ($this->evaluate($this->extraModalActions) as $action) {
-            $actions[$action->getName()] = $action->livewire($this->getLivewire());
+            $actions[$action->getName()] = $this->prepareModalAction($action);
         }
 
         return $this->extraModalActions = $actions;

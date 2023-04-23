@@ -52,7 +52,7 @@ class TestsActions
     public function setActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::prependKeysWith($data, 'mountedActionData.') as $key => $value) {
+            foreach (Arr::prependKeysWith($data, 'mountedActionsData.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -64,7 +64,7 @@ class TestsActions
     {
         return function (array $data): static {
             foreach ($data as $key => $value) {
-                $this->assertSet("mountedActionData.{$key}", $value);
+                $this->assertSet("mountedActionsData.{$key}", $value);
             }
 
             return $this;
@@ -514,10 +514,10 @@ class TestsActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => "mountedActionData.{$value}"];
+                            return [$key => "mountedActionsData.{$value}"];
                         }
 
-                        return ["mountedActionData.{$key}" => $value];
+                        return ["mountedActionsData.{$key}" => $value];
                     })
                     ->all(),
             );
@@ -533,10 +533,10 @@ class TestsActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => "mountedActionData.{$value}"];
+                            return [$key => "mountedActionsData.{$value}"];
                         }
 
-                        return ["mountedActionData.{$key}" => $value];
+                        return ["mountedActionsData.{$key}" => $value];
                     })
                     ->all(),
             );

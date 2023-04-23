@@ -18,6 +18,10 @@
             x-on:modal-closed.stop="
                 const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
 
+                if (! mountedActionShouldOpenModal) {
+                    return
+                }
+
                 if (
                     ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
                     livewire.serverMemo.data.mountedFormComponentAction
@@ -25,7 +29,7 @@
                     return
                 }
 
-                if (mountedActionShouldOpenModal && 'mountedActions' in livewire?.serverMemo.data) {
+                if ('mountedActions' in livewire?.serverMemo.data) {
                     livewire.call('unmountAction', false)
                 }
             "
@@ -103,9 +107,13 @@
             display-classes="block"
             x-init="livewire = $wire.__instance"
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableAction) open()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableActions.length) open()"
             x-on:modal-closed.stop="
                 const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
+
+                if (! mountedTableActionShouldOpenModal) {
+                    return
+                }
 
                 if (
                     ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
@@ -114,12 +122,8 @@
                     return
                 }
 
-                if (mountedTableActionShouldOpenModal && 'mountedTableAction' in livewire?.serverMemo.data) {
-                    livewire.set('mountedTableAction', null)
-                }
-
-                if (mountedTableActionShouldOpenModal && 'mountedTableActionRecord' in livewire?.serverMemo.data) {
-                    livewire.set('mountedTableActionRecord', null)
+                if ('mountedTableActions' in livewire?.serverMemo.data) {
+                    livewire.call('unmountTableAction', false)
                 }
             "
         >
@@ -194,6 +198,10 @@
             x-on:modal-closed.stop="
                 const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
 
+                if (! mountedTableBulkActionShouldOpenModal) {
+                    return
+                }
+
                 if (
                     ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
                     livewire.serverMemo.data.mountedFormComponentAction
@@ -201,7 +209,7 @@
                     return
                 }
 
-                if (mountedTableBulkActionShouldOpenModal && 'mountedTableBulkAction' in livewire?.serverMemo.data) {
+                if ('mountedTableBulkAction' in livewire?.serverMemo.data) {
                     livewire.set('mountedTableBulkAction', null)
                 }
             "

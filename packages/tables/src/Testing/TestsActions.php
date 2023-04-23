@@ -56,7 +56,7 @@ class TestsActions
     public function setTableActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::prependKeysWith($data, 'mountedTableActionData.') as $key => $value) {
+            foreach (Arr::prependKeysWith($data, 'mountedTableActionsData.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -68,7 +68,7 @@ class TestsActions
     {
         return function (array $data): static {
             foreach ($data as $key => $value) {
-                $this->assertSet("mountedTableActionData.{$key}", $value);
+                $this->assertSet("mountedTableActionsData.{$key}", $value);
             }
 
             return $this;
@@ -623,10 +623,10 @@ class TestsActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => "mountedTableActionData.{$value}"];
+                            return [$key => "mountedTableActionsData.{$value}"];
                         }
 
-                        return ["mountedTableActionData.{$key}" => $value];
+                        return ["mountedTableActionsData.{$key}" => $value];
                     })
                     ->all(),
             );
@@ -642,10 +642,10 @@ class TestsActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => "mountedTableActionData.{$value}"];
+                            return [$key => "mountedTableActionsData.{$value}"];
                         }
 
-                        return ["mountedTableActionData.{$key}" => $value];
+                        return ["mountedTableActionsData.{$key}" => $value];
                     })
                     ->all(),
             );

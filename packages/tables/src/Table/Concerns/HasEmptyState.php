@@ -83,9 +83,29 @@ trait HasEmptyState
         return $this->emptyStateActions;
     }
 
-    public function getEmptyStateAction(string $name): ?Action
+    /**
+     * @param  string | array<string>  $name
+     */
+    public function getEmptyStateAction(string | array $name): ?Action
     {
-        return $this->getEmptyStateActions()[$name] ?? null;
+        if (is_string($name) && str($name)->contains('.')) {
+            $name = explode('.', $name);
+        }
+
+        if (is_array($name)) {
+            $firstName = array_shift($name);
+            $modalActionNames = $name;
+
+            $name = $firstName;
+        }
+
+        $action = $this->getEmptyStateActions()[$name] ?? null;
+
+        return $this->getMountableModalActionFromAction(
+            $action,
+            modalActionNames: $modalActionNames ?? [],
+            parentActionName: $name,
+        );
     }
 
     public function getEmptyStateDescription(): string | Htmlable | null

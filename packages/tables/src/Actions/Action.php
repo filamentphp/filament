@@ -6,6 +6,7 @@ use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
+use Filament\Actions\StaticAction;
 use Illuminate\Database\Eloquent\Model;
 
 class Action extends MountableAction implements Groupable, HasRecord
@@ -90,5 +91,18 @@ class Action extends MountableAction implements Groupable, HasRecord
     public function getModel(): string
     {
         return $this->getCustomModel() ?? $this->getTable()->getModel();
+    }
+
+    public function prepareModalAction(StaticAction $action): StaticAction
+    {
+        $action = parent::prepareModalAction($action);
+
+        if (! $action instanceof Action) {
+            return $action;
+        }
+
+        return $action
+            ->table($this->getTable())
+            ->record($this->getRecord());
     }
 }
