@@ -100,6 +100,7 @@ trait HasFormComponentActions
         $this->mountedFormComponentActions[] = $name;
         $this->mountedFormComponentActionsArguments[] = $arguments;
         $this->mountedFormComponentActionsComponents[] = $component;
+        $this->mountedFormComponentActionsData[] = [];
 
         $action = $this->getMountedFormComponentAction();
 
