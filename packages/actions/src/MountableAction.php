@@ -17,6 +17,7 @@ class MountableAction extends StaticAction
     use Concerns\HasForm;
     use Concerns\HasInfolist;
     use Concerns\HasLifecycleHooks;
+    use Concerns\HasParentActions;
     use Concerns\HasWizard;
 
     public static string $modalActionsAlignment = 'left';

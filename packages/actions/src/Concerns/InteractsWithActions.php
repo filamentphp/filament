@@ -317,36 +317,31 @@ trait InteractsWithActions
         return $action;
     }
 
-    protected function closeParentActions(Action $action): void
-    {
-        if ($action->shouldCloseAllParentActions()) {
-            $this->mountedActions = [];
-            $this->mountedActionArguments = [];
-            $this->mountedActionData = [];
-
-            return;
-        }
-
-        $parentActionToCloseTo = $action->getParentActionToCloseTo();
-
-        while (true) {
-            $recentlyClosedParentAction = array_pop($this->mountedActions);
-            array_pop($this->mountedActionArguments);
-            array_pop($this->mountedActionData);
-
-            if (
-                blank($parentActionToCloseTo) ||
-                ($recentlyClosedParentAction === $parentActionToCloseTo)
-            ) {
-                break;
-            }
-        }
-    }
-
     public function unmountAction(bool $shouldCloseParentActions = true): void
     {
         if ($shouldCloseParentActions && ($action = $this->getMountedAction())) {
-            $this->closeParentActions($action);
+            if ($action->shouldCloseAllParentActions()) {
+                $this->mountedActions = [];
+                $this->mountedActionArguments = [];
+                $this->mountedActionData = [];
+
+                return;
+            }
+
+            $parentActionToCloseTo = $action->getParentActionToCloseTo();
+
+            while (true) {
+                $recentlyClosedParentAction = array_pop($this->mountedActions);
+                array_pop($this->mountedActionArguments);
+                array_pop($this->mountedActionData);
+
+                if (
+                    blank($parentActionToCloseTo) ||
+                    ($recentlyClosedParentAction === $parentActionToCloseTo)
+                ) {
+                    break;
+                }
+            }
         } else {
             array_pop($this->mountedActions);
             array_pop($this->mountedActionArguments);
