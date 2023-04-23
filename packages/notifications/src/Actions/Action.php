@@ -2,13 +2,9 @@
 
 namespace Filament\Notifications\Actions;
 
-use Filament\Actions\Concerns\CanEmitEvent;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
-use Filament\Notifications\Actions\Concerns\CanClose;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
 class Action extends StaticAction implements Arrayable, Groupable

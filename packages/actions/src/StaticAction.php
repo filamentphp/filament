@@ -2,7 +2,6 @@
 
 namespace Filament\Actions;
 
-use Filament\Actions\Concerns\CanEmitEvent;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Support\Collection;
