@@ -231,7 +231,7 @@ class Action {
     }
 
     close(condition = true) {
-        this.shouldCloseNotification = condition
+        this.canClose = condition
 
         return this
     }

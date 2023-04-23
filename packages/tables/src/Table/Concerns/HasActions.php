@@ -173,6 +173,10 @@ trait HasActions
             $parentActionName = $modalActionName;
         }
 
+        if (! $action instanceof Action) {
+            return null;
+        }
+
         return $action;
     }
 

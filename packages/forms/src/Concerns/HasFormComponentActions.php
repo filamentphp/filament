@@ -194,7 +194,7 @@ trait HasFormComponentActions
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
 
-        $action ??= $this->getMountedFormComponentAction($actionNestingIndex);
+        $action = $this->getMountedFormComponentAction($actionNestingIndex);
 
         if (! ($action instanceof Action)) {
             return null;

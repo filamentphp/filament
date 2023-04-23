@@ -2,8 +2,10 @@
 
 namespace Filament\Actions;
 
+use Filament\Actions\Concerns\CanEmitEvent;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Traits\Conditionable;
 
@@ -13,7 +15,8 @@ class StaticAction extends ViewComponent
     use Concerns\CanBeHidden;
     use Concerns\CanBeInline;
     use Concerns\CanCallParentAction;
-    use Concerns\CanCancelParentAction;
+    use Concerns\CanClose;
+    use Concerns\CanEmitEvent;
     use Concerns\CanOpenUrl;
     use Concerns\CanSubmitForm;
     use Concerns\HasAction;
@@ -93,8 +96,30 @@ class StaticAction extends ViewComponent
 
     public function getLivewireClickHandler(): ?string
     {
+        if (! $this->isLivewireClickHandlerEnabled()) {
+            return null;
+        }
+
         if (is_string($this->action)) {
             return $this->action;
+        }
+
+        if ($event = $this->getEvent()) {
+            $arguments = collect([$event])
+                ->merge($this->getEventData())
+                ->when(
+                    $this->getEmitToComponent(),
+                    fn (Collection $collection, string $component) => $collection->prepend($component),
+                )
+                ->map(fn (mixed $value): string => Js::from($value)->toHtml())
+                ->implode(', ');
+
+            return match ($this->getEmitDirection()) {
+                'self' => "\$emitSelf($arguments)",
+                'to' => "\$emitTo($arguments)",
+                'up' => "\$emitUp($arguments)",
+                default => "\$emit($arguments)"
+            };
         }
 
         if ($handler = $this->getParentActionCallLivewireClickHandler()) {
@@ -110,7 +135,7 @@ class StaticAction extends ViewComponent
 
     public function getAlpineClickHandler(): ?string
     {
-        if (! $this->canCancelParentAction()) {
+        if (! $this->canClose()) {
             return null;
         }
 

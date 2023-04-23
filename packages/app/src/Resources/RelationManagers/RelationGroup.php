@@ -126,6 +126,10 @@ class RelationGroup extends Component
     {
         $ownerRecord = $this->getOwnerRecord();
 
+        if (! $ownerRecord) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
         return match ($parameterType) {
             Model::class, $ownerRecord::class => [$ownerRecord],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),

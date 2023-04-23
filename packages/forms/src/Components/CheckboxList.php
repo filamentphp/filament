@@ -59,7 +59,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     {
         $action = Action::make($this->getSelectAllActionName())
             ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->link()
             ->size('sm');
 
@@ -88,7 +88,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     {
         $action = Action::make($this->getDeselectAllActionName())
             ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->link()
             ->size('sm');
 

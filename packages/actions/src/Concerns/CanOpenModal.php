@@ -277,7 +277,7 @@ trait CanOpenModal
     {
         $action = static::makeModalAction('cancel')
             ->label(__('filament-actions::modal.actions.cancel.label'))
-            ->cancelParent()
+            ->close()
             ->color('gray');
 
         if ($this->modalCancelAction !== null) {

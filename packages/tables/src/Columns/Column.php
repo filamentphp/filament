@@ -76,6 +76,10 @@ class Column extends ViewComponent
     {
         $record = $this->getRecord();
 
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
         return match ($parameterType) {
             Model::class, $record::class => [$record],
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),

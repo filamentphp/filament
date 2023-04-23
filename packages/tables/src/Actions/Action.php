@@ -21,20 +21,12 @@ class Action extends MountableAction implements Groupable, HasRecord
 
     public function getLivewireClickHandler(): ?string
     {
+        if (! $this->isLivewireClickHandlerEnabled()) {
+            return null;
+        }
+
         if (is_string($this->action)) {
-            return parent::getLivewireClickHandler();
-        }
-
-        if (! $this->isMountedOnClick()) {
-            return parent::getLivewireClickHandler();
-        }
-
-        if ($this->canSubmitForm()) {
-            return parent::getLivewireClickHandler();
-        }
-
-        if ($this->getUrl()) {
-            return parent::getLivewireClickHandler();
+            return $this->action;
         }
 
         if ($record = $this->getRecord()) {
@@ -64,6 +56,10 @@ class Action extends MountableAction implements Groupable, HasRecord
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
         $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
 
         return match ($parameterType) {
             Model::class, $record::class => [$record],

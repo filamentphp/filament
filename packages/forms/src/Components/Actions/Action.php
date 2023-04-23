@@ -26,20 +26,12 @@ class Action extends MountableAction
 
     public function getLivewireClickHandler(): ?string
     {
+        if (! $this->isLivewireClickHandlerEnabled()) {
+            return null;
+        }
+
         if (is_string($this->action)) {
-            return parent::getLivewireClickHandler();
-        }
-
-        if (! $this->isMountedOnClick()) {
-            return parent::getLivewireClickHandler();
-        }
-
-        if ($this->canSubmitForm()) {
-            return parent::getLivewireClickHandler();
-        }
-
-        if ($this->getUrl()) {
-            return parent::getLivewireClickHandler();
+            return $this->action;
         }
 
         $argumentsParameter = '';
@@ -81,6 +73,10 @@ class Action extends MountableAction
     protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
         $record = $this->getComponent()->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
 
         return match ($parameterType) {
             Model::class, $record::class => [$record],

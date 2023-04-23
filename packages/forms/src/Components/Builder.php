@@ -130,7 +130,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
             })
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->button()
             ->outlined()
             ->size('sm');
@@ -187,7 +187,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
             })
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->size('sm');
 
@@ -424,7 +424,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->label(__('filament-forms::components.builder.actions.collapse.label'))
             ->icon('heroicon-m-minus')
             ->color('gray')
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');
@@ -456,7 +456,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->label(__('filament-forms::components.builder.actions.expand.label'))
             ->icon('heroicon-m-plus')
             ->color('gray')
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');
@@ -486,7 +486,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getCollapseAllActionName())
             ->label(__('filament-forms::components.builder.actions.collapse_all.label'))
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->link()
             ->size('sm');
 
@@ -515,7 +515,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getExpandAllActionName())
             ->label(__('filament-forms::components.builder.actions.expand_all.label'))
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->link()
             ->size('sm');
 

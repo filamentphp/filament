@@ -101,6 +101,10 @@ trait HasEmptyState
 
         $action = $this->getEmptyStateActions()[$name] ?? null;
 
+        if (! $action) {
+            return null;
+        }
+
         return $this->getMountableModalActionFromAction(
             $action,
             modalActionNames: $modalActionNames ?? [],
