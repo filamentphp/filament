@@ -21,6 +21,7 @@ class TestsActions
     public function mountAction(): Closure
     {
         return function (string | array $name, array $arguments = []): static {
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -125,7 +126,7 @@ class TestsActions
     public function assertActionExists(): Closure
     {
         return function (string | array $name): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -147,7 +148,7 @@ class TestsActions
     public function assertActionDoesNotExist(): Closure
     {
         return function (string | array $name): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -172,7 +173,7 @@ class TestsActions
     public function assertActionVisible(): Closure
     {
         return function (string | array $name): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -196,7 +197,7 @@ class TestsActions
     public function assertActionHidden(): Closure
     {
         return function (string | array $name): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -220,7 +221,7 @@ class TestsActions
     public function assertActionEnabled(): Closure
     {
         return function (string | array $name): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -244,7 +245,7 @@ class TestsActions
     public function assertActionDisabled(): Closure
     {
         return function (string | array $name): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -268,7 +269,7 @@ class TestsActions
     public function assertActionHasIcon(): Closure
     {
         return function (string | array $name, string $icon, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -292,7 +293,7 @@ class TestsActions
     public function assertActionDoesNotHaveIcon(): Closure
     {
         return function (string | array $name, string $icon, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -316,7 +317,7 @@ class TestsActions
     public function assertActionHasLabel(): Closure
     {
         return function (string | array $name, string $label, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -340,7 +341,7 @@ class TestsActions
     public function assertActionDoesNotHaveLabel(): Closure
     {
         return function (string | array $name, string $label, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -364,7 +365,7 @@ class TestsActions
     public function assertActionHasColor(): Closure
     {
         return function (string | array $name, string $color, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -388,7 +389,7 @@ class TestsActions
     public function assertActionDoesNotHaveColor(): Closure
     {
         return function (string | array $name, string $color, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -412,7 +413,7 @@ class TestsActions
     public function assertActionHasUrl(): Closure
     {
         return function (string | array $name, string $url, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -436,7 +437,7 @@ class TestsActions
     public function assertActionDoesNotHaveUrl(): Closure
     {
         return function (string | array $name, string $url, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -460,7 +461,7 @@ class TestsActions
     public function assertActionShouldOpenUrlInNewTab(): Closure
     {
         return function (string | array $name, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -484,7 +485,7 @@ class TestsActions
     public function assertActionShouldNotOpenUrlInNewTab(): Closure
     {
         return function (string | array $name, $record = null): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
@@ -508,7 +509,7 @@ class TestsActions
     public function assertActionHalted(): Closure
     {
         return function (string | array $name): static {
-            /** @var array $name */
+            /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
