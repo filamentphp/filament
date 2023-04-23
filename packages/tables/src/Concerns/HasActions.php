@@ -80,6 +80,9 @@ trait HasActions
         } catch (Cancel $exception) {
         }
 
+        $action->resetArguments();
+        $action->resetFormData();
+
         if (filled($this->redirectTo)) {
             return $result;
         }
@@ -97,7 +100,7 @@ trait HasActions
     public function mountTableAction(string $name, ?string $record = null): mixed
     {
         $this->mountedTableActions[] = $name;
-        $this->mountedTableActionsData[$name] = [];
+        $this->mountedTableActionsData[] = [];
 
         if (count($this->mountedTableActions) === 1) {
             $this->mountedTableActionRecord($record);

@@ -123,8 +123,8 @@ trait InteractsWithActions
     public function mountAction(string $name, array $arguments = []): mixed
     {
         $this->mountedActions[] = $name;
-        $this->mountedActionsArguments[$name] = $arguments;
-        $this->mountedActionsData[$name] = [];
+        $this->mountedActionsArguments[] = $arguments;
+        $this->mountedActionsData[] = [];
 
         $action = $this->getMountedAction();
 
@@ -136,7 +136,7 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments(Arr::last($this->mountedActionsArguments));
+        $action->arguments($arguments);
 
         $this->cacheForm(
             'mountedActionForm',
