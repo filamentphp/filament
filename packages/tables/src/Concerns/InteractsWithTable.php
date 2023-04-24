@@ -82,6 +82,13 @@ trait InteractsWithTable
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
+        if (! empty($this->tableFilters) && $this->shouldPersistTableFiltersInSession()) {
+            session()->put(
+                $this->getTableFiltersSessionKey(),
+                $this->tableFilters,
+            );
+        }
+        
         $searchSessionKey = $this->getTableSearchSessionKey();
 
         if (blank($this->tableSearchQuery) && $this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
