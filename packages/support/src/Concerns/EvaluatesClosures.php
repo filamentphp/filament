@@ -49,7 +49,7 @@ trait EvaluatesClosures
 
         $typedParameterClassName = $this->getTypedReflectionParameterClassName($parameter);
 
-        if (array_key_exists($typedParameterClassName, $typedInjections)) {
+        if (filled($typedParameterClassName) && array_key_exists($typedParameterClassName, $typedInjections)) {
             return value($typedInjections[$parameterName]);
         }
 
@@ -61,12 +61,14 @@ trait EvaluatesClosures
             return $defaultWrappedDependencyByName[0];
         }
 
-        // Dependencies are wrapped in an array to differentiate between null and no value.
-        $defaultWrappedDependencyByType = $this->resolveDefaultClosureDependencyForEvaluationByType($typedParameterClassName);
+        if (filled($typedParameterClassName)) {
+            // Dependencies are wrapped in an array to differentiate between null and no value.
+            $defaultWrappedDependencyByType = $this->resolveDefaultClosureDependencyForEvaluationByType($typedParameterClassName);
 
-        if (count($defaultWrappedDependencyByType)) {
-            // Unwrap the dependency if it was resolved.
-            return $defaultWrappedDependencyByType[0];
+            if (count($defaultWrappedDependencyByType)) {
+                // Unwrap the dependency if it was resolved.
+                return $defaultWrappedDependencyByType[0];
+            }
         }
 
         if (
