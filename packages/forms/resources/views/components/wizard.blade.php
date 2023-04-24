@@ -11,7 +11,7 @@
 
         init: function () {
             this.$watch('step', () => this.updateQueryString())
-        
+
             this.step = this.getSteps()[{{ $getStartStep() }} - 1]
         },
 
@@ -73,13 +73,13 @@
             if (! @js($isStepPersistedInQueryString())) {
                 return
             }
-            
+
             const url = new URL(window.location.href)
             url.searchParams.set(@js($getStepQueryStringKey()), this.step)
 
             history.pushState(null, document.title, url.toString())
         },
-        
+
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
@@ -103,12 +103,12 @@
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="list"
         @class([
-            'border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0',
+            'filament-forms-wizard-component-header border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0',
             'dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700' => config('forms.dark_mode'),
         ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
-            <li class="relative overflow-hidden group md:flex-1">
+            <li class="filament-forms-wizard-component-header-step relative overflow-hidden group md:flex-1">
                 <button
                     type="button"
                     x-on:click="if (isStepAccessible(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
@@ -137,7 +137,7 @@
                                     'border-primary-500': getStepIndex(step) === {{ $loop->index }},
                                     'border-gray-300 @if (config('forms.dark_mode')) dark:border-gray-500 @endif': getStepIndex(step) < {{ $loop->index }},
                                 }"
-                                class="flex items-center justify-center w-10 h-10 rounded-full"
+                                class="filament-forms-wizard-component-header-step-icon flex items-center justify-center w-10 h-10 rounded-full"
                             >
                                 <x-heroicon-o-check
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
@@ -171,13 +171,13 @@
                         </div>
 
                         <div class="flex flex-col items-start justify-center">
-                            <div class="text-sm font-semibold tracking-wide uppercase">
+                            <div class="filament-forms-wizard-component-header-step-label text-sm font-semibold tracking-wide uppercase">
                                 {{ $step->getLabel() }}
                             </div>
 
                             @if (filled($description = $step->getDescription()))
                                 <div @class([
-                                    'text-sm leading-4 font-medium text-gray-500',
+                                    'filament-forms-wizard-component-header-step-description text-sm leading-4 font-medium text-gray-500',
                                     'dark:text-gray-400' => config('forms.dark_mode'),
                                 ])>
                                     {{ $description }}
