@@ -171,13 +171,13 @@
                         </div>
 
                         <div class="flex flex-col items-start justify-center">
-                            <div class="filament-forms-wizard-component-header-label text-sm font-semibold tracking-wide uppercase">
+                            <div class="filament-forms-wizard-component-header-step-label text-sm font-semibold tracking-wide uppercase">
                                 {{ $step->getLabel() }}
                             </div>
 
                             @if (filled($description = $step->getDescription()))
                                 <div @class([
-                                    'filament-forms-wizard-component-header-description text-sm leading-4 font-medium text-gray-500',
+                                    'filament-forms-wizard-component-header-step-description text-sm leading-4 font-medium text-gray-500',
                                     'dark:text-gray-400' => config('forms.dark_mode'),
                                 ])>
                                     {{ $description }}
