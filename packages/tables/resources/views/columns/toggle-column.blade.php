@@ -2,7 +2,7 @@
     $state = $getState();
 @endphp
 
-<div wire:key="{{ 'toggle-column-' . $recordKey . '-' . json_encode($state) }}">
+<div wire:key="{{ 'toggle-column-' . $recordKey . '-' . $getName() . '-' . json_encode($state) }}">
 <div
     x-data="{
         error: undefined,
