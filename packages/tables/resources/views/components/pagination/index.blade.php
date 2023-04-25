@@ -43,7 +43,7 @@
         </div>
     </div>
 
-    <div class="hidden flex-1 items-center lg:grid grid-cols-3">
+    <div class=" flex-1 items-center lg:grid grid-cols-3">
         <div class="flex items-center">
             @if ($isSimple)
                 @if (! $paginator->onFirstPage())
