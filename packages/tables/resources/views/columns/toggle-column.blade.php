@@ -2,6 +2,7 @@
     $state = $getState();
 @endphp
 
+<div wire:key="{{ 'toggle-column-' . $recordKey . '-' . json_encode($state) }}">
 <div
     x-data="{
         error: undefined,
@@ -31,7 +32,6 @@
             state = ! state
             isLoading = false
         "
-        x-ref="button"
         x-tooltip="error"
         x-bind:class="{
             'opacity-70 pointer-events-none': isLoading,
@@ -113,4 +113,5 @@
             </span>
         </span>
     </button>
+</div>
 </div>
