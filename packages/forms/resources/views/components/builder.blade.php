@@ -138,7 +138,7 @@
                                             $block->labelState($item->getRawState());
                                         @endphp
 
-                                        {{ $item->getParentComponent()->getLabel() }}
+                                        {!! $item->getParentComponent()->getLabel() !!}
 
                                         @php
                                             $block->labelState(null);
