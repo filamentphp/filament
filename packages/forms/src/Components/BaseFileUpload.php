@@ -44,6 +44,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldMoveFile = false;
 
+    protected bool | Closure $shouldStoreFiles = true;
+
     protected string | Closure | null $fileNamesStatePath = null;
 
     protected string | Closure $visibility = 'public';
@@ -103,7 +105,7 @@ class BaseFileUpload extends Field
             $component->saveUploadedFiles();
         });
 
-        $this->dehydrateStateUsing(static function (BaseFileUpload $component, ?array $state): string | array | null {
+        $this->dehydrateStateUsing(static function (BaseFileUpload $component, ?array $state): string | array | null | TemporaryUploadedFile {
             $files = array_values($state ?? []);
 
             if ($component->isMultiple()) {
@@ -242,6 +244,13 @@ class BaseFileUpload extends Field
     public function storeFileNamesIn(string | Closure | null $statePath): static
     {
         $this->fileNamesStatePath = $statePath;
+
+        return $this;
+    }
+
+    public function storeFiles(bool | Closure $condition = true): static
+    {
+        $this->shouldStoreFiles = $condition;
 
         return $this;
     }
@@ -422,6 +431,11 @@ class BaseFileUpload extends Field
         return $this->generateRelativeStatePath($this->fileNamesStatePath);
     }
 
+    public function shouldStoreFiles(): bool
+    {
+        return $this->evaluate($this->shouldStoreFiles);
+    }
+
     public function getValidationRules(): array
     {
         $rules = [
@@ -572,6 +586,10 @@ class BaseFileUpload extends Field
         if (blank($this->getState())) {
             $this->state([]);
 
+            return;
+        }
+
+        if (! $this->shouldStoreFiles()) {
             return;
         }
 

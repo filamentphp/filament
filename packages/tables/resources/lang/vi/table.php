@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Chọn/bỏ chọn tất cả các mục cho tác vụ hàng loạt.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Chọn/bỏ chọn mục :key cho các tác vụ hàng loạt.',
+        ],
+
         'search_query' => [
             'label' => 'Tìm kiếm',
             'placeholder' => 'Tìm kiếm',
@@ -86,7 +94,17 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Không có dữ liệu nào',
+
+        'buttons' => [
+
+            'reset_column_searches' => [
+                'label' => 'Xóa tìm kiếm cột',
+            ],
+
+        ],
+
     ],
 
     'filters' => [

@@ -317,6 +317,8 @@ it('can list posts', function () {
 
 ## Page actions
 
+### Calling actions
+
 You can call a [page action](pages/actions) by passing its name or class to `callPageAction()`:
 
 ```php
@@ -357,6 +359,8 @@ it('can send invoices', function () {
 });
 ```
 
+### Errors
+
 `assertHasNoPageActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
 
 To check if a validation error has occurred with the data, use `assertHasPageActionErrors()`, similar to `assertHasErrors()` in Livewire:
@@ -377,6 +381,8 @@ it('can validate invoice recipient email', function () {
 });
 ```
 
+### Pre-filled data
+
 To check if a page action is pre-filled with data, you can use the `assertPageActionDataSet()` method:
 
 ```php
@@ -395,12 +401,14 @@ it('can send invoices to the primary contact by default', function () {
         ])
         ->callMountedPageAction()
         ->assertHasNoPageActionErrors();
-        
+
     expect($invoice->refresh())
         ->isSent()->toBeTrue()
         ->recipient_email->toBe($recipientEmail);
 });
 ```
+
+### Action State
 
 To check if a page action is hidden to a user, you can use the `assertPageActionHidden()` method:
 
@@ -414,5 +422,36 @@ it('can not send invoices', function () {
         'invoice' => $invoice,
     ])
         ->assertPageActionHidden('send');
+});
+```
+
+To ensure that an action exists or doesn't in a table, you can use the `assertPageActionExists()` or  `assertPageActionDoesNotExist()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can send but not unsend invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionExists('send')
+        ->assertPageActionDoesNotExist('unsend');
+});
+```
+
+To ensure sets of actions exist in the correct order, you can use `assertPageActionsExistInOrder`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can not send invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionsExistInOrder(['send', 'export']);
 });
 ```

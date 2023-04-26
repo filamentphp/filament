@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Zaznacz/odznacz wszystkie pozycje dla operacji zbiorczych.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Zaznacz/odznacz pozycję :key dla operacji zbiorczych.',
+        ],
+
         'search_query' => [
             'label' => 'Szukaj',
             'placeholder' => 'Szukaj',
@@ -86,7 +94,17 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Nie znaleziono wyników',
+
+        'heading' => 'Nie znaleziono rekordów',
+
+        'buttons' => [
+
+            'reset_column_searches' => [
+                'label' => 'Wyczyść wyszukiwanie w kolumnach',
+            ],
+
+        ],
+
     ],
 
     'filters' => [

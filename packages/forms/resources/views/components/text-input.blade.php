@@ -51,7 +51,6 @@
                     wire:ignore
                     {!! $isLazy() ? "x-on:blur=\"\$wire.\$refresh\"" : null !!}
                     {!! $isDebounced() ? "x-on:input.debounce.{$getDebounce()}=\"\$wire.\$refresh\"" : null !!}
-                    {{ $getExtraAlpineAttributeBag() }}
                 @endunless
                 dusk="filament.forms.{{ $getStatePath() }}"
                 {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
@@ -70,6 +69,7 @@
                     {!! filled($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
                     {!! $isRequired() ? 'required' : null !!}
                 @endif
+                {{ $getExtraAlpineAttributeBag() }}
                 {{ $getExtraInputAttributeBag()->class([
                     'block w-full transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
                     'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),

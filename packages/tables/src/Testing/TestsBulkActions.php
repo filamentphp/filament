@@ -172,6 +172,21 @@ class TestsBulkActions
         };
     }
 
+    public function assertTableBulkActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedTableBulkActions(),
+                'table bulk',
+                BulkAction::class,
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableBulkActionVisible(): Closure
     {
         return function (string $name): static {
