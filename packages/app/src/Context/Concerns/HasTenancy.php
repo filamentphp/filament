@@ -165,6 +165,8 @@ trait HasTenancy
             return $this->tenantOwnershipRelationshipName;
         }
 
-        return (string) str($this->getTenantModel())->camel();
+        return (string) str($this->getTenantModel())
+            ->classBasename()
+            ->camel();
     }
 }
