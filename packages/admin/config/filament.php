@@ -240,7 +240,6 @@ return [
             'should_show_logo' => true,
         ],
         'max_content_width' => null,
-        'dropdown_panel_max_height' => null,
         'notifications' => [
             'vertical_alignment' => 'top',
             'alignment' => 'right',

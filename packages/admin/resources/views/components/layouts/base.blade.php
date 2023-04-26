@@ -34,7 +34,6 @@
             :root {
                 --sidebar-width: {{ config('filament.layout.sidebar.width') ?? '20rem' }};
                 --collapsed-sidebar-width: {{ config('filament.layout.sidebar.collapsed_width') ?? '5.4rem' }};
-                --dropdown-panel-max-height: {{ config('filament.layout.dropdown_panel_max_height') ?? '30rem' }};
             }
         </style>
 
