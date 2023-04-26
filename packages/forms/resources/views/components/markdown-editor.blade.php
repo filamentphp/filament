@@ -220,7 +220,7 @@
                         @if (! $isConcealed())
                             {!! $isRequired() ? 'required' : null !!}
                         @endif
-                        class="tracking-normal overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 caret-black whitespace-pre-wrap rtl:whitespace-normal"
+                        class="tracking-normal overflow-y-hidden font-mono block absolute bg-transparent top-0 text-sm left-0 z-1 w-full h-full min-h-full resize-none transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 caret-black whitespace-pre-wrap"
                         x-bind:class="{
                             'dark:caret-white dark:focus:border-primary-500': @js(config('forms.dark_mode')),
                             'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
@@ -236,7 +236,7 @@
                     x-html="overlay"
                     style="min-height: 150px;"
                     @class([
-                        'w-full h-full rounded-lg px-3 py-2 border border-transparent font-mono tracking-normal bg-white text-sm text-gray-900 break-words whitespace-pre-wrap rtl:whitespace-normal',
+                        'w-full h-full rounded-lg px-3 py-2 border border-transparent font-mono tracking-normal bg-white text-sm text-gray-900 break-words whitespace-pre-wrap',
                         'dark:bg-gray-700 dark:border-gray-600 dark:text-white' => config('forms.dark_mode'),
                     ])
                 ></div>
