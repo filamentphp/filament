@@ -20,7 +20,6 @@
         $isItemCreationDisabled = $isItemCreationDisabled();
         $isItemDeletionDisabled = $isItemDeletionDisabled();
         $isItemMovementDisabled = $isItemMovementDisabled();
-        $hasItemLabels = $hasItemLabels();
     @endphp
 
     <div>
@@ -65,6 +64,11 @@
                 @endphp
 
                 @foreach ($containers as $uuid => $item)
+                    @php
+                        $block = $item->getParentComponent();
+                        $blockHasItemLabel = $block->hasItemLabel();
+                    @endphp
+
                     <li
                         x-data="{
                             isCreateButtonVisible: false,
@@ -98,7 +102,7 @@
                             'dark:bg-gray-800 dark:border-gray-600' => config('forms.dark_mode'),
                         ])
                     >
-                        @if ((! $isItemMovementDisabled) || $hasBlockLabels || (! $isItemDeletionDisabled) || $isCollapsible || $isCloneable || $hasItemLabels)
+                        @if ((! $isItemMovementDisabled) || $hasBlockLabels || (! $isItemDeletionDisabled) || $isCollapsible || $isCloneable || $blockHasItemLabel)
                             <header
                                 @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
                                 @class([
@@ -134,8 +138,6 @@
                                         'dark:text-gray-400' => config('forms.dark_mode'),
                                     ])>
                                         @php
-                                            $block = $item->getParentComponent();
-
                                             $block->labelState($item->getRawState());
                                         @endphp
 
@@ -151,12 +153,14 @@
                                     </p>
                                 @endif
 
-                                <p @class([
-                                    'flex-none px-4 text-xs font-medium text-gray-600 truncate',
-                                    'dark:text-gray-400' => config('forms.dark_mode'),
-                                ])>
-                                    {{ $getItemLabel($uuid) }}
-                                </p>
+                                @if($blockHasItemLabel)
+                                    <p @class([
+                                        'flex-none px-4 text-xs font-medium text-gray-600 truncate builder-block-item-label',
+                                        'dark:text-gray-400' => config('forms.dark_mode'),
+                                    ])>
+                                        {!! $block->getItemLabel($uuid) !!}
+                                    </p>
+                                @endif
 
                                 <div class="flex-1"></div>
 

@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Builder;
 use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns;
+use Illuminate\Support\HtmlString;
 
 class Block extends Component
 {
@@ -13,6 +14,8 @@ class Block extends Component
     }
 
     protected string $view = 'forms::components.builder.block';
+
+    protected string | Closure | null $itemLabel = null;
 
     protected string | Closure | null $icon = null;
 
@@ -45,6 +48,13 @@ class Block extends Component
         return $this;
     }
 
+    public function itemLabel(string | Closure | null $label): static
+    {
+        $this->itemLabel = $label;
+
+        return $this;
+    }
+
     public function getIcon(): ?string
     {
         return $this->evaluate($this->icon);
@@ -56,5 +66,18 @@ class Block extends Component
             $this->label,
             $this->labelState ? ['state' => $this->labelState] : [],
         ) ?? $this->getDefaultLabel();
+    }
+
+    public function getItemLabel(string $uuid): null|string|HtmlString
+    {
+        return $this->evaluate($this->itemLabel, [
+            'state' => $this->getState()[$uuid] ?? null,
+            'uuid' => $uuid,
+        ]);
+    }
+
+    public function hasItemLabel(): bool
+    {
+        return $this->itemLabel !== null;
     }
 }
