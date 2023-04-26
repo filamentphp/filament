@@ -129,7 +129,7 @@ trait HasActions
         ]);
     }
 
-    protected function getCachedActions(): array
+    public function getCachedActions(): array
     {
         if ($this->cachedActions === null) {
             $this->cacheActions();

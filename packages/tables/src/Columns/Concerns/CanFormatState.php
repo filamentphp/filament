@@ -21,6 +21,8 @@ trait CanFormatState
 
     protected string | Closure | null $suffix = null;
 
+    protected string | Closure | null $placeholder = null;
+
     protected string | Closure | null $timezone = null;
 
     public function date(?string $format = null, ?string $timezone = null): static
@@ -115,6 +117,13 @@ trait CanFormatState
         return $this;
     }
 
+    public function placeholder(string | Closure | null $placeholder): static
+    {
+        $this->placeholder = $placeholder;
+
+        return $this;
+    }
+
     public function html(): static
     {
         return $this->formatStateUsing(static fn ($state): HtmlString => $state instanceof HtmlString ? $state : Str::of($state)->sanitizeHtml()->toHtmlString());
@@ -164,6 +173,10 @@ trait CanFormatState
 
         if ($this->suffix) {
             $state = $state . $this->evaluate($this->suffix);
+        }
+
+        if (blank($state)) {
+            $state = $this->evaluate($this->placeholder);
         }
 
         return $state;
