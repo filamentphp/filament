@@ -1,10 +1,12 @@
 @props([
     'form',
+    'maxHeight' => null,
     'width' => null,
 ])
 
 <x-tables::dropdown
     {{ $attributes->class(['filament-tables-column-toggling']) }}
+    :max-height="$maxHeight"
     placement="bottom-end"
     shift
     :width="$width"

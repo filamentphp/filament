@@ -244,6 +244,7 @@
                         @if ($hasFiltersPopover)
                             <x-tables::filters.popover
                                 :form="$getFiltersForm()"
+                                :max-height="$getFiltersFormMaxHeight()"
                                 :width="$getFiltersFormWidth()"
                                 :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
                                 class="shrink-0"
@@ -253,6 +254,7 @@
                         @if ($isColumnToggleFormVisible)
                             <x-tables::toggleable
                                 :form="$getColumnToggleForm()"
+                                :max-height="$getColumnToggleFormMaxHeight()"
                                 :width="$getColumnToggleFormWidth()"
                                 class="shrink-0"
                             />
@@ -318,7 +320,7 @@
                             fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
                         );
                     @endphp
-                    
+
                     <div @class([
                         'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
                         'dark:border-gray-700' => config('tables.dark_mode'),
