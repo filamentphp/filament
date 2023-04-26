@@ -68,7 +68,7 @@ class Block extends Component
         ) ?? $this->getDefaultLabel();
     }
 
-    public function getItemLabel(string $uuid): null|string|HtmlString
+    public function getItemLabel(string $uuid): null | string | HtmlString
     {
         return $this->evaluate($this->itemLabel, [
             'state' => $this->getState()[$uuid] ?? null,
