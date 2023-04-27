@@ -1,12 +1,12 @@
 @php
-    $inputClasses = [
-        'filament-select-input-with-prefix' => ($hasPrefix = $getPrefixLabel() || $getPrefixIcon()),
-        'filament-select-input-with-suffix' => ($hasSuffix = $getSuffixLabel() || $getSuffixIcon()),
-    ];
-
     $isDisabled = $isDisabled();
 
     $statePath = $getStatePath();
+
+    $prefixLabel = $getPrefixLabel();
+    $prefixIcon = $getPrefixIcon();
+    $suffixLabel = $getSuffixLabel();
+    $suffixIcon = $getSuffixIcon();
 @endphp
 
 <x-dynamic-component
@@ -15,12 +15,12 @@
 >
     <x-filament::input.affixes
         :state-path="$statePath"
-        :prefix="$getPrefixLabel()"
+        :prefix="$prefixLabel"
         :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$getPrefixIcon()"
-        :suffix="$getSuffixLabel()"
+        :prefix-icon="$prefixIcon"
+        :suffix="$suffixLabel"
         :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$getSuffixIcon()"
+        :suffix-icon="$suffixIcon"
         class="filament-forms-select-component"
         :attributes="$getExtraAttributeBag()"
     >
@@ -36,7 +36,7 @@
                 ], escape: false)"
                 :prefix="$hasPrefix"
                 :suffix="$hasSuffix"
-                class="w-full"
+                class="filament-forms-input w-full"
             >
                 @php
                     $isHtmlAllowed = $isHtmlAllowed();
@@ -107,7 +107,11 @@
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class($inputClasses)
+                        ->class([
+                            'filament-forms-input',
+                            'filament-select-input-with-prefix' => ($hasPrefix = $prefixLabel || $prefixIcon),
+                            'filament-select-input-with-suffix' => ($hasSuffix = $suffixLabel || $suffixIcon),
+                        ])
                 }}
             >
                 <select
