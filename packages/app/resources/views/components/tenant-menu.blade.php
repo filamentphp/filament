@@ -21,7 +21,10 @@
 
 {{ filament()->renderHook('tenant-menu.before') }}
 
-<x-filament::dropdown placement="bottom-start">
+<x-filament::dropdown
+    placement="bottom-start"
+    teleport
+>
     <x-slot name="trigger">
         <div
             class="flex items-center space-x-3 -m-3 p-2 rounded-lg transition rtl:space-x-reverse hover:bg-gray-500/5 dark:hover:bg-gray-900/50"

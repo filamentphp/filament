@@ -39,7 +39,7 @@
             wire:key="{{ $attributes->get('wire:key') }}.panel"
         @endif
         @class([
-            'filament-dropdown-panel absolute z-10 w-full divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-900/10 transition dark:divide-gray-700 dark:bg-gray-800 dark:ring-gray-50/10',
+            'filament-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-900/10 transition dark:divide-gray-700 dark:bg-gray-800 dark:ring-gray-50/10',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'sm' => 'max-w-sm',
