@@ -106,7 +106,7 @@
                     {{ $attributes
                         ->merge($getExtraAttributes())
                         ->merge($getExtraAlpineAttributes())
-                        ->merge(['class' => 'filament-forms-select-component filament-forms-input'])
+                        ->class(['filament-forms-select-component filament-forms-input'])
                     }}
                     x-bind:class="{
                         'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
