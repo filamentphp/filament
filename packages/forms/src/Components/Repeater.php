@@ -488,7 +488,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         );
     }
 
-    public function getItemLabel(string $uuid): ?string
+    public function getItemLabel(string $uuid): null | string | Htmlable
     {
         return $this->evaluate($this->itemLabel, [
             'state' => $this->getChildComponentContainer($uuid)->getRawState(),
