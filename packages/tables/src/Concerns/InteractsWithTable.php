@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Concerns;
 
+use App\Models\Shop\Product;
 use Exception;
 use Filament\Forms;
 use Filament\Tables\Contracts\HasRelationshipTable;
@@ -60,19 +61,17 @@ trait InteractsWithTable
             return;
         }
 
-        if (blank($this->toggledTableColumns) || ($this->toggledTableColumns === [])) {
+        $toggleColumnsSessionKey = $this->getTableColumnToggleFormStateSessionKey();
+
+        if ((blank($this->toggledTableColumns) || ($this->toggledTableColumns === [])) && session()->has($toggleColumnsSessionKey)) {
             $this->getTableColumnToggleForm()->fill(session()->get(
-                $this->getTableColumnToggleFormStateSessionKey(),
+                $toggleColumnsSessionKey,
                 $this->getDefaultTableColumnToggleState()
             ));
-        }
-
-        $filtersSessionKey = $this->getTableFiltersSessionKey();
-
-        if ((blank($this->tableFilters) || ($this->tableFilters === [])) && $this->shouldPersistTableFiltersInSession() && session()->has($filtersSessionKey)) {
-            $this->tableFilters = array_merge(
-                $this->tableFilters ?? [],
-                session()->get($filtersSessionKey) ?? [],
+        } else {
+            session()->put(
+                $toggleColumnsSessionKey,
+                $this->toggledTableColumns,
             );
         }
 
@@ -80,26 +79,45 @@ trait InteractsWithTable
             $this->tableFilters = null;
         }
 
+        $shouldPersistTableFiltersInSession = $this->shouldPersistTableFiltersInSession();
+        $filtersSessionKey = $this->getTableFiltersSessionKey();
+
+        if (($this->tableFilters === null) && $shouldPersistTableFiltersInSession && session()->has($filtersSessionKey)) {
+            $this->tableFilters = array_merge(
+                $this->tableFilters ?? [],
+                session()->get($filtersSessionKey) ?? [],
+            );
+        }
+
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
-        if (! empty($this->tableFilters) && $this->shouldPersistTableFiltersInSession()) {
+        if ($shouldPersistTableFiltersInSession) {
             session()->put(
-                $this->getTableFiltersSessionKey(),
+                $filtersSessionKey,
                 $this->tableFilters,
             );
         }
-        
+
+        $shouldPersistTableSearchInSession = $this->shouldPersistTableSearchInSession();
         $searchSessionKey = $this->getTableSearchSessionKey();
 
-        if (blank($this->tableSearchQuery) && $this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
+        if (blank($this->tableSearchQuery) && $shouldPersistTableSearchInSession && session()->has($searchSessionKey)) {
             $this->tableSearchQuery = session()->get($searchSessionKey);
         }
 
         $this->tableSearchQuery = strval($this->tableSearchQuery);
 
+        if ($shouldPersistTableSearchInSession) {
+            session()->put(
+                $searchSessionKey,
+                $this->tableSearchQuery,
+            );
+        }
+
+        $shouldPersistTableColumnSearchInSession = $this->shouldPersistTableColumnSearchInSession();
         $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
 
-        if ((blank($this->tableColumnSearchQueries) || ($this->tableColumnSearchQueries === [])) && $this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+        if ((blank($this->tableColumnSearchQueries) || ($this->tableColumnSearchQueries === [])) && $shouldPersistTableColumnSearchInSession && session()->has($columnSearchSessionKey)) {
             $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey);
         }
 
@@ -107,13 +125,31 @@ trait InteractsWithTable
             $this->tableColumnSearchQueries ?? [],
         );
 
+        if ($shouldPersistTableColumnSearchInSession) {
+            session()->put(
+                $columnSearchSessionKey,
+                $this->tableColumnSearchQueries,
+            );
+        }
+
+        $shouldPersistTableSortInSession = $this->shouldPersistTableSortInSession();
         $sortSessionKey = $this->getTableSortSessionKey();
 
-        if (blank($this->tableSortColumn) && $this->shouldPersistTableSortInSession() && session()->has($sortSessionKey)) {
+        if (blank($this->tableSortColumn) && $shouldPersistTableSortInSession && session()->has($sortSessionKey)) {
             $sort = session()->get($sortSessionKey);
 
             $this->tableSortColumn = $sort['column'] ?? null;
             $this->tableSortDirection = $sort['direction'] ?? null;
+        }
+
+        if ($shouldPersistTableSortInSession) {
+            session()->put(
+                $sortSessionKey,
+                [
+                    'column' => $this->tableSortColumn,
+                    'direction' => $this->tableSortDirection,
+                ],
+            );
         }
 
         $this->hasMounted = true;
