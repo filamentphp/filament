@@ -8,7 +8,7 @@
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @endif
     @class([
-        'filament-sidebar fixed inset-y-0 left-0 rtl:left-auto rtl:right-0 z-20 flex flex-col h-screen overflow-hidden lg:shadow-2xl transition-all bg-white lg:border-r rtl:lg:border-r-0 rtl:lg:border-l w-[var(--sidebar-width)] lg:z-0',
+        'filament-sidebar fixed inset-y-0 left-0 z-20 flex h-screen w-[var(--sidebar-width)] flex-col overflow-hidden bg-white transition-all rtl:left-auto rtl:right-0 lg:z-0 lg:border-r lg:shadow-2xl rtl:lg:border-l rtl:lg:border-r-0',
         'lg:translate-x-0' => ! config('filament.layout.sidebar.is_collapsible_on_desktop'),
         'dark:bg-gray-800 dark:border-gray-700' => config('filament.dark_mode'),
     ])
