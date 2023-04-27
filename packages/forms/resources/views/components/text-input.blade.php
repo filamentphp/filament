@@ -71,7 +71,7 @@
                 @endif
                 {{ $getExtraAlpineAttributeBag() }}
                 {{ $getExtraInputAttributeBag()->class([
-                    'block w-full transition duration-75 rounded-lg shadow-sm outline-none focus:ring-1 focus:ring-inset disabled:opacity-70',
+                    'filament-forms-input block w-full transition duration-75 rounded-lg shadow-sm outline-none focus:ring-1 focus:ring-inset disabled:opacity-70',
                     'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
                 ]) }}
                 x-bind:class="{
