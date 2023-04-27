@@ -1,7 +1,7 @@
 <div class="filament-resource-relation-manager">
-    {{ \Filament\Facades\Filament::renderHook('relation-manager.start') }}
-    
+    {{ \Filament\Facades\Filament::renderHook('resource.relation-manager.start') }}
+
     {{ $this->table }}
 
-    {{ \Filament\Facades\Filament::renderHook('relation-manager.end') }}
+    {{ \Filament\Facades\Filament::renderHook('resource.relation-manager.end') }}
 </div>

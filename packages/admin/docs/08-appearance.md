@@ -318,7 +318,7 @@ The available hooks are as follows:
 - `page.header-widgets.end` - after page header widgets
 - `page.footer-widgets.start` - before page footer widgets
 - `page.footer-widgets.end` - after page footer widgets
-- `resource.relation-manager.start` - before the relation manager table
-- `resource.relation-manager.end` - after the relation manager table
 - `page.actions.start` - before page actions
 - `page.actions.end` - after page actions
+- `resource.relation-manager.start` - before the relation manager table
+- `resource.relation-manager.end` - after the relation manager table
