@@ -8,7 +8,6 @@ use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
-use ReflectionParameter;
 
 class Summarizer extends ViewComponent
 {
@@ -148,12 +147,15 @@ class Summarizer extends ViewComponent
         return $this->id;
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'livewire' => $this->getLivewire(),
-            'table' => $this->getTable(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
     }
 }

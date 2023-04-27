@@ -19,9 +19,16 @@ trait HasRecordAction
 
     public function getRecordAction(Model $record): ?string
     {
-        $action = $this->evaluate($this->recordAction, [
-            'record' => $record,
-        ]);
+        $action = $this->evaluate(
+            $this->recordAction,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
 
         if (! class_exists($action)) {
             return $action;

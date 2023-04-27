@@ -188,6 +188,10 @@ class EditRecord extends Page
 
     protected function configureAction(Action $action): void
     {
+        $action
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle());
+
         match (true) {
             $action instanceof DeleteAction => $this->configureDeleteAction($action),
             $action instanceof ForceDeleteAction => $this->configureForceDeleteAction($action),
@@ -204,8 +208,6 @@ class EditRecord extends Page
 
         $action
             ->authorize($resource::canView($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle())
             ->infolist(fn (Infolist $infolist): Infolist => static::getResource()::infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => static::getResource()::form($form));
 
@@ -220,25 +222,19 @@ class EditRecord extends Page
 
         $action
             ->authorize($resource::canForceDelete($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle())
             ->successRedirectUrl($resource::getUrl('index'));
     }
 
     protected function configureReplicateAction(ReplicateAction $action): void
     {
         $action
-            ->authorize(static::getResource()::canReplicate($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+            ->authorize(static::getResource()::canReplicate($this->getRecord()));
     }
 
     protected function configureRestoreAction(RestoreAction $action): void
     {
         $action
-            ->authorize(static::getResource()::canRestore($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+            ->authorize(static::getResource()::canRestore($this->getRecord()));
     }
 
     protected function configureDeleteAction(DeleteAction $action): void
@@ -247,8 +243,6 @@ class EditRecord extends Page
 
         $action
             ->authorize($resource::canDelete($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle())
             ->successRedirectUrl($resource::getUrl('index'));
     }
 

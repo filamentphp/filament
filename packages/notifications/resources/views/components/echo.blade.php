@@ -10,9 +10,6 @@
                 .notification((notification) => {
                     setTimeout(() => $wire.handleBroadcastNotification(notification), 500)
                 })
-                .listen('.database-notifications.sent', () => {
-                    setTimeout(() => $wire.call('$refresh'), 500)
-                })
         })
 
         if (window.Echo) {

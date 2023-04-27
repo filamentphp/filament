@@ -1,6 +1,6 @@
 @php
-    $notifications = $this->getDatabaseNotifications();
-    $unreadNotificationsCount = $this->getUnreadDatabaseNotificationsCount();
+    $notifications = $this->getNotifications();
+    $unreadNotificationsCount = $this->getUnreadNotificationsCount();
 @endphp
 
 <div
@@ -9,9 +9,9 @@
     @endif
     class="flex items-center"
 >
-    @if ($databaseNotificationsTrigger = $this->getDatabaseNotificationsTrigger())
+    @if ($trigger = $this->getTrigger())
         <x-filament-notifications::database.trigger>
-            {{ $databaseNotificationsTrigger->with(['unreadNotificationsCount' => $unreadNotificationsCount]) }}
+            {{ $trigger->with(['unreadNotificationsCount' => $unreadNotificationsCount]) }}
         </x-filament-notifications::database.trigger>
     @endif
 
@@ -19,4 +19,8 @@
         :notifications="$notifications"
         :unread-notifications-count="$unreadNotificationsCount"
     />
+
+    @if ($broadcastChannel = $this->getBroadcastChannel())
+        <x-filament-notifications::database.echo :channel="$broadcastChannel" />
+    @endif
 </div>

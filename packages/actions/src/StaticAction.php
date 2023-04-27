@@ -4,14 +4,22 @@ namespace Filament\Actions;
 
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Js;
 use Illuminate\Support\Traits\Conditionable;
 
-abstract class StaticAction extends ViewComponent
+class StaticAction extends ViewComponent
 {
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeInline;
+    use Concerns\CanCallParentAction;
+    use Concerns\CanClose;
+    use Concerns\CanEmitEvent;
     use Concerns\CanOpenUrl;
+    use Concerns\CanSubmitForm;
+    use Concerns\HasAction;
+    use Concerns\HasArguments;
     use Concerns\HasColor;
     use Concerns\HasGroupedIcon;
     use Concerns\HasIcon;
@@ -83,6 +91,54 @@ abstract class StaticAction extends ViewComponent
     public static function getDefaultName(): ?string
     {
         return null;
+    }
+
+    public function getLivewireClickHandler(): ?string
+    {
+        if (! $this->isLivewireClickHandlerEnabled()) {
+            return null;
+        }
+
+        if (is_string($this->action)) {
+            return $this->action;
+        }
+
+        if ($event = $this->getEvent()) {
+            $arguments = collect([$event])
+                ->merge($this->getEventData())
+                ->when(
+                    $this->getEmitToComponent(),
+                    fn (Collection $collection, string $component) => $collection->prepend($component),
+                )
+                ->map(fn (mixed $value): string => Js::from($value)->toHtml())
+                ->implode(', ');
+
+            return match ($this->getEmitDirection()) {
+                'self' => "\$emitSelf($arguments)",
+                'to' => "\$emitTo($arguments)",
+                'up' => "\$emitUp($arguments)",
+                default => "\$emit($arguments)"
+            };
+        }
+
+        if ($handler = $this->getParentActionCallLivewireClickHandler()) {
+            $handler .= '(';
+            $handler .= Js::from($this->getArguments());
+            $handler .= ')';
+
+            return $handler;
+        }
+
+        return null;
+    }
+
+    public function getAlpineClickHandler(): ?string
+    {
+        if (! $this->shouldClose()) {
+            return null;
+        }
+
+        return 'close()';
     }
 
     /**

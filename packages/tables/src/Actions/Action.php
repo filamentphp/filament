@@ -6,27 +6,27 @@ use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
+use Filament\Actions\StaticAction;
 use Illuminate\Database\Eloquent\Model;
-use ReflectionParameter;
 
 class Action extends MountableAction implements Groupable, HasRecord
 {
     use Concerns\BelongsToTable;
     use InteractsWithRecord;
 
-    public function getLivewireCallActionName(): string
+    public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedTableAction';
     }
 
-    public function getLivewireMountAction(): ?string
+    public function getLivewireClickHandler(): ?string
     {
-        if (! $this->isMountedOnClick()) {
+        if (! $this->isLivewireClickHandlerEnabled()) {
             return null;
         }
 
-        if ($this->getUrl()) {
-            return null;
+        if (is_string($this->action)) {
+            return $this->action;
         }
 
         if ($record = $this->getRecord()) {
@@ -38,12 +38,32 @@ class Action extends MountableAction implements Groupable, HasRecord
         return "mountTableAction('{$this->getName()}')";
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'record' => $this->getRecord(),
-            'table' => $this->getTable(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'record' => [$this->getRecord()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
 
@@ -67,5 +87,18 @@ class Action extends MountableAction implements Groupable, HasRecord
     public function getModel(): string
     {
         return $this->getCustomModel() ?? $this->getTable()->getModel();
+    }
+
+    public function prepareModalAction(StaticAction $action): StaticAction
+    {
+        $action = parent::prepareModalAction($action);
+
+        if (! $action instanceof Action) {
+            return $action;
+        }
+
+        return $action
+            ->table($this->getTable())
+            ->record($this->getRecord());
     }
 }

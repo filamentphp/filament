@@ -304,10 +304,12 @@ trait InteractsWithForms
 
         $this->hasCachedForms = true;
 
-        $this->cacheForm(
-            'mountedFormComponentActionForm',
-            $this->getMountedFormComponentActionForm(),
-        );
+        foreach ($this->mountedFormComponentActions as $actionNestingIndex => $actionName) {
+            $this->cacheForm(
+                "mountedFormComponentActionForm{$actionNestingIndex}",
+                $this->getMountedFormComponentActionForm($actionNestingIndex),
+            );
+        }
 
         return $this->cachedForms;
     }

@@ -3,7 +3,7 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Filament\Actions\Modal\Actions\Action as ModalAction;
+use Filament\Actions\StaticAction;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewAction extends Action
@@ -24,7 +24,7 @@ class ViewAction extends Action
         $this->modalHeading(fn (): string => __('filament-actions::view.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
         $this->modalSubmitAction(false);
-        $this->modalCancelAction(fn (ModalAction $action) => $action->label(__('filament-actions::view.single.modal.actions.close.label')));
+        $this->modalCancelAction(fn (StaticAction $action) => $action->label(__('filament-actions::view.single.modal.actions.close.label')));
 
         $this->color('gray');
 

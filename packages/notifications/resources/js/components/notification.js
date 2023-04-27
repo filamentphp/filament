@@ -107,7 +107,7 @@ export default (Alpine) => {
             this.isShown = false
 
             setTimeout(
-                () => Livewire.emit('notificationClosed', notification.id),
+                () => Livewire.emitUp('notificationClosed', notification.id),
                 this.getTransitionDuration(),
             )
         },

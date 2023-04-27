@@ -925,7 +925,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     public function getOptionLabelFromRecord(Model $record): string
     {
-        return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
+        return $this->evaluate(
+            $this->getOptionLabelFromRecordUsing,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
     }
 
     public function getRelationshipTitleAttribute(): string

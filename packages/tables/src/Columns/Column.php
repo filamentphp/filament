@@ -5,8 +5,8 @@ namespace Filament\Tables\Columns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
-use ReflectionParameter;
 
 class Column extends ViewComponent
 {
@@ -54,15 +54,35 @@ class Column extends ViewComponent
         return $static;
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
-            'rowLoop' => $this->getRowLoop(),
-            'state' => $this->getState(),
-            'table' => $this->getTable(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'record' => [$this->getRecord()],
+            'rowLoop' => [$this->getRowLoop()],
+            'state' => [$this->getState()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
 }

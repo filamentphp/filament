@@ -8,50 +8,32 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Support\Arr;
 
 /**
  * @property ComponentContainer $mountedFormComponentActionForm
  */
 trait HasFormComponentActions
 {
-    public ?string $mountedFormComponentAction = null;
+    /**
+     * @var array<string> | null
+     */
+    public ?array $mountedFormComponentActions = [];
 
     /**
-     * @var array<string, mixed> | null
+     * @var array<string, array<string, mixed>> | null
      */
-    public ?array $mountedFormComponentActionArguments = [];
+    public ?array $mountedFormComponentActionsArguments = [];
 
     /**
-     * @var array<string, mixed> | null
+     * @var array<string, array<string, mixed>> | null
      */
-    public ?array $mountedFormComponentActionData = [];
+    public ?array $mountedFormComponentActionsData = [];
 
-    public ?string $mountedFormComponentActionComponent = null;
-
-    protected function hasMountedFormComponentAction(): bool
-    {
-        return $this->mountedFormComponentActionComponent !== null;
-    }
-
-    protected function getMountedFormComponentActionForm(): ?Form
-    {
-        $action = $this->getMountedFormComponentAction();
-
-        if (! ($action instanceof Action)) {
-            return null;
-        }
-
-        if ((! $this->isCachingForms) && $this->hasCachedForm('mountedFormComponentActionForm')) {
-            return $this->getCachedForm('mountedFormComponentActionForm');
-        }
-
-        return $action->getForm(
-            $this->makeForm()
-                ->model($this->getMountedFormComponentActionComponent()->getActionFormModel())
-                ->statePath('mountedFormComponentActionData')
-                ->operation($this->mountedFormComponentAction),
-        );
-    }
+    /**
+     * @var array<string> | null
+     */
+    public ?array $mountedFormComponentActionsComponents = [];
 
     /**
      * @param  array<string, mixed>  $arguments
@@ -69,7 +51,7 @@ trait HasFormComponentActions
         }
 
         $action->arguments(array_merge(
-            $this->mountedFormComponentActionArguments ?? [],
+            Arr::last($this->mountedFormComponentActionsArguments ?? []),
             $arguments,
         ));
 
@@ -98,29 +80,16 @@ trait HasFormComponentActions
         } catch (Cancel $exception) {
         }
 
+        $action->resetArguments();
+        $action->resetFormData();
+
         if (filled($this->redirectTo)) {
             return $result;
         }
 
-        $this->mountedFormComponentAction = null;
-
-        $action->resetArguments();
-        $action->resetFormData();
-
-        $this->dispatchBrowserEvent('close-modal', [
-            'id' => "{$this->id}-form-component-action",
-        ]);
+        $this->unmountFormComponentAction();
 
         return $result;
-    }
-
-    public function getMountedFormComponentAction(): ?Action
-    {
-        if (! $this->mountedFormComponentAction) {
-            return null;
-        }
-
-        return $this->getMountedFormComponentActionComponent()?->getAction($this->mountedFormComponentAction);
     }
 
     /**
@@ -128,9 +97,10 @@ trait HasFormComponentActions
      */
     public function mountFormComponentAction(string $component, string $name, array $arguments = []): mixed
     {
-        $this->mountedFormComponentAction = $name;
-        $this->mountedFormComponentActionArguments = $arguments;
-        $this->mountedFormComponentActionComponent = $component;
+        $this->mountedFormComponentActions[] = $name;
+        $this->mountedFormComponentActionsArguments[] = $arguments;
+        $this->mountedFormComponentActionsComponents[] = $component;
+        $this->mountedFormComponentActionsData[] = [];
 
         $action = $this->getMountedFormComponentAction();
 
@@ -142,10 +112,10 @@ trait HasFormComponentActions
             return null;
         }
 
-        $action->arguments($this->mountedFormComponentActionArguments);
+        $action->arguments($arguments);
 
         $this->cacheForm(
-            'mountedFormComponentActionForm',
+            'mountedFormComponentActionForm' . array_key_last($this->mountedFormComponentActions),
             fn () => $this->getMountedFormComponentActionForm(),
         );
 
@@ -166,8 +136,7 @@ trait HasFormComponentActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->mountedFormComponentActionComponent = null;
-            $this->mountedFormComponentAction = null;
+            $this->unmountFormComponentAction(shouldCloseParentActions: false);
 
             return null;
         }
@@ -180,6 +149,10 @@ trait HasFormComponentActions
 
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-form-component-action",
+        ]);
+
+        $this->dispatchBrowserEvent('opened-form-component-action-modal', [
+            'id' => $this->id,
         ]);
 
         return null;
@@ -205,14 +178,61 @@ trait HasFormComponentActions
         return (bool) count($this->getMountedFormComponentActionForm()?->getComponents() ?? []);
     }
 
-    public function getMountedFormComponentActionComponent(): ?Component
+    public function getMountedFormComponentAction(?int $actionNestingIndex = null): ?Action
     {
-        if (! $this->hasMountedFormComponentAction()) {
+        $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
+        $actionName = $this->mountedFormComponentActions[$actionNestingIndex] ?? null;
+
+        if (blank($actionName)) {
+            return null;
+        }
+
+        return $this->getMountedFormComponentActionComponent($actionNestingIndex)?->getAction($actionName);
+    }
+
+    protected function getMountedFormComponentActionForm(?int $actionNestingIndex = null): ?Form
+    {
+        $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
+
+        $action = $this->getMountedFormComponentAction($actionNestingIndex);
+
+        if (! ($action instanceof Action)) {
+            return null;
+        }
+
+        if ((! $this->isCachingForms) && $this->hasCachedForm("mountedFormComponentActionForm{$actionNestingIndex}")) {
+            return $this->getCachedForm("mountedFormComponentActionForm{$actionNestingIndex}");
+        }
+
+        return $action->getForm(
+            $this->makeForm()
+                ->model($this->getMountedFormComponentActionComponent($actionNestingIndex)->getActionFormModel())
+                ->statePath('mountedFormComponentActionData.' . $actionNestingIndex)
+                ->operation(implode('.', array_slice($this->mountedFormComponentActions, 0, $actionNestingIndex + 1))),
+        );
+    }
+
+    public function getMountedFormComponentActionComponent(?int $actionNestingIndex = null): ?Component
+    {
+        $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
+        $componentStatePath = $this->mountedFormComponentActionsComponents[$actionNestingIndex] ?? null;
+
+        if (blank($componentStatePath)) {
             return null;
         }
 
         foreach ($this->getCachedForms() as $form) {
-            $component = $form->getComponent($this->mountedFormComponentActionComponent);
+            $formStatePath = $form->getStatePath();
+
+            if (blank($formStatePath)) {
+                continue;
+            }
+
+            if (! str($componentStatePath)->startsWith($formStatePath)) {
+                continue;
+            }
+
+            $component = $form->getComponent($componentStatePath);
 
             if (! $component) {
                 continue;
@@ -222,5 +242,60 @@ trait HasFormComponentActions
         }
 
         return null;
+    }
+
+    public function unmountFormComponentAction(bool $shouldCloseParentActions = true): void
+    {
+        $action = $this->getMountedFormComponentAction();
+
+        if (! ($shouldCloseParentActions && $action)) {
+            array_pop($this->mountedFormComponentActions);
+            array_pop($this->mountedFormComponentActionsArguments);
+            array_pop($this->mountedFormComponentActionsComponents);
+            array_pop($this->mountedFormComponentActionsData);
+        } elseif ($action->shouldCloseAllParentActions()) {
+            $this->mountedFormComponentActions = [];
+            $this->mountedFormComponentActionsArguments = [];
+            $this->mountedFormComponentActionsComponents = [];
+            $this->mountedFormComponentActionsData = [];
+        } else {
+            $parentActionToCloseTo = $action->getParentActionToCloseTo();
+
+            while (true) {
+                $recentlyClosedParentAction = array_pop($this->mountedFormComponentActions);
+                array_pop($this->mountedFormComponentActionsArguments);
+                array_pop($this->mountedFormComponentActionsComponents);
+                array_pop($this->mountedFormComponentActionsData);
+
+                if (
+                    blank($parentActionToCloseTo) ||
+                    ($recentlyClosedParentAction === $parentActionToCloseTo)
+                ) {
+                    break;
+                }
+            }
+        }
+
+        if (! count($this->mountedFormComponentActions)) {
+            $this->dispatchBrowserEvent('close-modal', [
+                'id' => "{$this->id}-form-component-action",
+            ]);
+
+            $this->dispatchBrowserEvent('closed-form-component-action-modal', [
+                'id' => $this->id,
+            ]);
+
+            return;
+        }
+
+        $this->resetErrorBag();
+
+        $this->dispatchBrowserEvent('open-modal', [
+            'id' => "{$this->id}-form-component-action",
+        ]);
+
+        $this->dispatchBrowserEvent('opened-form-component-action-modal', [
+            'id' => $this->id,
+        ]);
     }
 }
