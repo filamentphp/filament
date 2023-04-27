@@ -60,18 +60,11 @@ trait InteractsWithTable
             return;
         }
 
-        $toggleColumnsSessionKey = $this->getTableColumnToggleFormStateSessionKey();
-
-        if ((blank($this->toggledTableColumns) || ($this->toggledTableColumns === [])) && session()->has($toggleColumnsSessionKey)) {
+        if (blank($this->toggledTableColumns) || ($this->toggledTableColumns === [])) {
             $this->getTableColumnToggleForm()->fill(session()->get(
-                $toggleColumnsSessionKey,
+                $this->getTableColumnToggleFormStateSessionKey(),
                 $this->getDefaultTableColumnToggleState()
             ));
-        } else {
-            session()->put(
-                $toggleColumnsSessionKey,
-                $this->toggledTableColumns,
-            );
         }
 
         if (! count($this->tableFilters ?? [])) {
