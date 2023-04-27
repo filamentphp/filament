@@ -25,7 +25,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes())
-                ->class(['filament-forms-date-time-picker-component filament-forms-input relative'])
+                ->class(['filament-forms-date-time-picker-component relative'])
         }}
     >
         <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
