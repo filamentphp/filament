@@ -103,10 +103,11 @@
                     })"
                     x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                     wire:ignore
-                    {{ $attributes
-                        ->merge($getExtraAttributes())
-                        ->merge($getExtraAlpineAttributes())
-                        ->class(['filament-forms-select-component filament-forms-input'])
+                    {{
+                        $attributes
+                            ->merge($getExtraAttributes())
+                            ->merge($getExtraAlpineAttributes())
+                            ->class(['filament-forms-select-component filament-forms-input'])
                     }}
                     x-bind:class="{
                         'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
