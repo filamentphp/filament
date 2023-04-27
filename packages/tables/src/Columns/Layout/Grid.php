@@ -8,12 +8,12 @@ class Grid extends Component
 
     protected ?array $columns = null;
 
-    final public function __construct(array | int | null $columns)
+    final public function __construct(array | int | string | null $columns)
     {
         $this->columns($columns);
     }
 
-    public static function make(array | int | null $columns = 2): static
+    public static function make(array | int | string | null $columns = 2): static
     {
         $static = app(static::class, ['columns' => $columns]);
         $static->configure();
@@ -21,7 +21,7 @@ class Grid extends Component
         return $static;
     }
 
-    public function columns(array | int | null $columns = 2): static
+    public function columns(array | int | string | null $columns = 2): static
     {
         if (! is_array($columns)) {
             $columns = [
