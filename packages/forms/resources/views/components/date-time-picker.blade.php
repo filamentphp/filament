@@ -22,9 +22,11 @@
         })"
         x-on:keydown.esc="isOpen() && $event.stopPropagation()"
         {{ $getExtraAlpineAttributeBag() }}
-        {{ $attributes->merge($getExtraAttributes())->class([
-            'filament-forms-date-time-picker-component filament-forms-input relative'
-        ]) }}
+        {{
+            $attributes
+                ->merge($getExtraAttributes())
+                ->class(['filament-forms-date-time-picker-component filament-forms-input relative'])
+        }}
     >
         <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
         <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
