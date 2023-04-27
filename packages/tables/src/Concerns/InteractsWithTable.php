@@ -2,7 +2,6 @@
 
 namespace Filament\Tables\Concerns;
 
-use App\Models\Shop\Product;
 use Exception;
 use Filament\Forms;
 use Filament\Tables\Contracts\HasRelationshipTable;
