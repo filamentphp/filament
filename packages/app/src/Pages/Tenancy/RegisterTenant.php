@@ -2,6 +2,7 @@
 
 namespace Filament\Pages\Tenancy;
 
+use Filament\Actions\Action;
 use Filament\Context;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
@@ -115,6 +116,13 @@ abstract class RegisterTenant extends CardPage
                     ->statePath('data'),
             ),
         ];
+    }
+
+    public function registerAction(): Action
+    {
+        return Action::make('registerAction')
+            ->label(static::getLabel())
+            ->submit('register');
     }
 
     public function getModel(): string

@@ -3,9 +3,7 @@
         <x-slot name="subheading">
             {{ __('filament::pages/auth/register.buttons.login.before') }}
 
-            <x-filament::link :href="filament()->getLoginUrl()">
-                {{ __('filament::pages/auth/register.buttons.login.label') }}
-            </x-filament::link>
+            {{ $this->loginAction }}
         </x-slot>
     @endif
 

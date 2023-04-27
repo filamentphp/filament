@@ -5,6 +5,7 @@ namespace Filament\Pages\Auth\PasswordReset;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -100,6 +101,25 @@ class RequestPasswordReset extends CardPage
                     ->autocomplete()
                     ->autofocus(),
             ]);
+    }
+
+    public function requestAction(): Action
+    {
+        return Action::make('requestAction')
+            ->label(__('filament::pages/auth/password-reset/request-password-reset.buttons.request.label'))
+            ->submit('request');
+    }
+
+    public function loginAction(): Action
+    {
+        return Action::make('loginAction')
+            ->link()
+            ->label(__('filament::pages/auth/password-reset/request-password-reset.buttons.login.label'))
+            ->icon(match (__('filament::layout.direction')) {
+                'rtl' => 'heroicon-m-arrow-right',
+                default => 'heroicon-m-arrow-left',
+            })
+            ->url(filament()->getLoginUrl());
     }
 
     public static function getName(): string
