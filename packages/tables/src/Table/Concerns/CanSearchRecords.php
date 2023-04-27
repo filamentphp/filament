@@ -8,7 +8,7 @@ trait CanSearchRecords
 {
     protected bool | Closure | null $persistsSearchInSession = false;
 
-    protected bool | Closure | null $persistsColumnSearchInSession = false;
+    protected bool | Closure | null $persistsColumnSearchesInSession = false;
 
     public function persistSearchInSession(bool | Closure $condition = true): static
     {
@@ -17,9 +17,9 @@ trait CanSearchRecords
         return $this;
     }
 
-    public function persistColumnSearchInSession(bool | Closure $condition = true): static
+    public function persistColumnSearchesInSession(bool | Closure $condition = true): static
     {
-        $this->persistsColumnSearchInSession = $condition;
+        $this->persistsColumnSearchesInSession = $condition;
 
         return $this;
     }
@@ -55,9 +55,9 @@ trait CanSearchRecords
         return (bool) $this->evaluate($this->persistsSearchInSession);
     }
 
-    public function persistsColumnSearchInSession(): bool
+    public function persistsColumnSearchesInSession(): bool
     {
-        return (bool) $this->evaluate($this->persistsColumnSearchInSession);
+        return (bool) $this->evaluate($this->persistsColumnSearchesInSession);
     }
 
     public function hasColumnSearches(): bool

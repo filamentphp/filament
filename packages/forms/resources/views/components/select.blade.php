@@ -5,8 +5,11 @@
 
     $prefixLabel = $getPrefixLabel();
     $prefixIcon = $getPrefixIcon();
+    $hasPrefix = $prefixLabel || $prefixIcon;
+
     $suffixLabel = $getSuffixLabel();
     $suffixIcon = $getSuffixIcon();
+    $hasSuffix = $suffixLabel || $suffixIcon;
 @endphp
 
 <x-dynamic-component
@@ -109,8 +112,8 @@
                         ->merge($getExtraAlpineAttributes(), escape: false)
                         ->class([
                             'filament-forms-input',
-                            'filament-select-input-with-prefix' => ($hasPrefix = $prefixLabel || $prefixIcon),
-                            'filament-select-input-with-suffix' => ($hasSuffix = $suffixLabel || $suffixIcon),
+                            'filament-select-input-with-prefix' => $hasPrefix,
+                            'filament-select-input-with-suffix' => $hasSuffix,
                         ])
                 }}
             >

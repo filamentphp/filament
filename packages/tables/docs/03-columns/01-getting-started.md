@@ -207,7 +207,7 @@ public function table(Table $table): Table
             // ...
         ])
         ->persistSearchInSession()
-        ->persistColumnSearchInSession();
+        ->persistColumnSearchesInSession();
 }
 ```
 

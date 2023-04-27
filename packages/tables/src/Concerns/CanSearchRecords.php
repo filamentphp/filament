@@ -43,9 +43,9 @@ trait CanSearchRecords
             unset($this->tableColumnSearches[$key]);
         }
 
-        if ($this->getTable()->persistsColumnSearchInSession()) {
+        if ($this->getTable()->persistsColumnSearchesInSession()) {
             session()->put(
-                $this->getTableColumnSearchSessionKey(),
+                $this->getTableColumnSearchesSessionKey(),
                 $this->tableColumnSearches,
             );
         }
@@ -59,13 +59,13 @@ trait CanSearchRecords
 
     protected function applySearchToTableQuery(Builder $query): Builder
     {
-        $this->applyColumnSearchToTableQuery($query);
+        $this->applyColumnSearchesToTableQuery($query);
         $this->applyGlobalSearchToTableQuery($query);
 
         return $query;
     }
 
-    protected function applyColumnSearchToTableQuery(Builder $query): Builder
+    protected function applyColumnSearchesToTableQuery(Builder $query): Builder
     {
         foreach ($this->getTableColumnSearches() as $column => $search) {
             if ($search === '') {
@@ -212,7 +212,7 @@ trait CanSearchRecords
         return "tables.{$table}_search";
     }
 
-    public function getTableColumnSearchSessionKey(): string
+    public function getTableColumnSearchesSessionKey(): string
     {
         $table = class_basename($this::class);
 
