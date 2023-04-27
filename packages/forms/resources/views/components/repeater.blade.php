@@ -126,7 +126,7 @@
                                         'flex-none px-4 text-xs font-medium text-gray-600 truncate',
                                         'dark:text-gray-400' => config('forms.dark_mode'),
                                     ])>
-                                        {!! $getItemLabel($uuid) !!}
+                                        {{ $getItemLabel($uuid) }}
                                     </p>
 
                                     <div class="flex-1"></div>
