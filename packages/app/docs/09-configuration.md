@@ -110,18 +110,20 @@ The available hooks are as follows:
 - `styles.end` - after styles are defined
 - `global-search.start` - before [global search](resources/global-search) input
 - `global-search.end` - after [global search](resources/global-search) input
-- `tenant-menu.start` - before tenant menu
-- `tenant-menu.end` - after tenant menu
-- `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)
-- `user-menu.end` - after [user menu](navigation#customizing-the-user-menu)
-- `user-menu.account.before` - before the account item in the [user menu](navigation#customizing-the-user-menu)
-- `user-menu.account.after` - after the account item in the [user menu](navigation#customizing-the-user-menu)
 - `page.header-widgets.start` - before page header widgets
 - `page.header-widgets.end` - after page header widgets
 - `page.footer-widgets.start` - before page footer widgets
 - `page.footer-widgets.end` - after page footer widgets
 - `page.actions.start` - before page actions
 - `page.actions.end` - after page actions
+- `resource.relation-manager.start` - before the relation manager table
+- `resource.relation-manager.end` - after the relation manager table
+- `tenant-menu.start` - before tenant menu
+- `tenant-menu.end` - after tenant menu
+- `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)
+- `user-menu.end` - after [user menu](navigation#customizing-the-user-menu)
+- `user-menu.account.before` - before the account item in the [user menu](navigation#customizing-the-user-menu)
+- `user-menu.account.after` - after the account item in the [user menu](navigation#customizing-the-user-menu)
 
 ## Setting a domain
 
