@@ -162,7 +162,7 @@ public function context(Context $context): Context
 {
     return $context
         // ...
-        ->tenantBillingProvider(SparkBillingProvider::class);
+        ->tenantBillingProvider(new SparkBillingProvider());
 }
 ```
 
