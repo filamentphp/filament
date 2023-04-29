@@ -108,27 +108,27 @@ it('can have a URL', function () {
 
 it('can open a URL in a new tab', function () {
     livewire(Actions::class)
-        ->assertActionShouldOpenUrlInNewTab('url_in_new_tab')
-        ->assertActionShouldNotOpenUrlInNewTab('url_not_in_new_tab');
+        ->assertActionShouldOpenUrlInNewTab('url-in-new-tab')
+        ->assertActionShouldNotOpenUrlInNewTab('url-not-in-new-tab');
 });
 
 it('can state whether a page action exists', function () {
     livewire(Actions::class)
         ->assertActionExists('exists')
-        ->assertActionDoesNotExist('does_not_exist');
+        ->assertActionDoesNotExist('does-not-exist');
 });
 
 it('can show a notification', function () {
     livewire(Actions::class)
-        ->callAction('shows_notification')
+        ->callAction('shows-notification')
         ->assertNotified();
 
     livewire(Actions::class)
-        ->callAction('shows_notification')
+        ->callAction('shows-notification')
         ->assertNotified('A notification');
 
     livewire(Actions::class)
-        ->callAction('shows_notification')
+        ->callAction('shows-notification')
         ->assertNotified(
             Notification::make()
                 ->title('A notification')
@@ -141,7 +141,7 @@ it('will raise an exception if a notification was not sent checking notification
     $this->expectExceptionMessage('A notification was not sent');
 
     livewire(Actions::class)
-        ->callAction('does_not_show_notification')
+        ->callAction('does-not-show-notification')
         ->assertNotified(
             Notification::make()
                 ->title('A notification')
@@ -154,21 +154,21 @@ it('will raise an exception if a notification was not sent checking notification
     $this->expectExceptionMessage('A notification was not sent');
 
     livewire(Actions::class)
-        ->callAction('does_not_show_notification')
+        ->callAction('does-not-show-notification')
         ->assertNotified('A notification');
 });
 
 it('can assert that a notification without an ID was sent', function () {
     livewire(Actions::class)
-        ->callAction('shows_notification')
+        ->callAction('shows-notification')
         ->assertNotified();
 
     livewire(Actions::class)
-        ->callAction('shows_notification')
+        ->callAction('shows-notification')
         ->assertNotified('A notification');
 
     livewire(Actions::class)
-        ->callAction('shows_notification')
+        ->callAction('shows-notification')
         ->assertNotified(
             Notification::make()
                 ->title('A notification')
@@ -178,15 +178,15 @@ it('can assert that a notification without an ID was sent', function () {
 
 it('can assert that a notification with an ID was sent', function () {
     livewire(Actions::class)
-        ->callAction('shows_notification_with_id')
+        ->callAction('shows-notification-with-id')
         ->assertNotified();
 
     livewire(Actions::class)
-        ->callAction('shows_notification_with_id')
+        ->callAction('shows-notification-with-id')
         ->assertNotified('A notification');
 
     livewire(Actions::class)
-        ->callAction('shows_notification_with_id')
+        ->callAction('shows-notification-with-id')
         ->assertNotified(
             Notification::make('notification_with_id')
                 ->title('A notification')
@@ -199,7 +199,7 @@ it('will raise an exception if a notification was sent checking with a different
     $this->expectExceptionMessage('Failed asserting that two arrays are identical.');
 
     livewire(Actions::class)
-        ->callAction('shows_notification_with_id')
+        ->callAction('shows-notification-with-id')
         ->assertNotified(
             Notification::make()
                 ->title('A different title')
@@ -209,7 +209,7 @@ it('will raise an exception if a notification was sent checking with a different
 
 it('will raise an exception if a notification is not sent but a previous notification was sent', function () {
     livewire(Actions::class)
-        ->callAction('shows_notification_with_id')
+        ->callAction('shows-notification-with-id')
         ->assertNotified(
             Notification::make()
                 ->title('A notification')
@@ -220,7 +220,7 @@ it('will raise an exception if a notification is not sent but a previous notific
     $this->expectExceptionMessage('A notification was not sent');
 
     livewire(Actions::class)
-        ->callAction('does_not_show_notification')
+        ->callAction('does-not-show-notification')
         ->assertNotified(
             Notification::make()
                 ->title('A notification')
@@ -230,17 +230,17 @@ it('will raise an exception if a notification is not sent but a previous notific
 
 test('can assert that notifications are sent in any order', function () {
     livewire(Actions::class)
-        ->callAction('two_notifications')
+        ->callAction('two-notifications')
         ->assertNotified('Second notification');
 
     livewire(Actions::class)
-        ->callAction('two_notifications')
+        ->callAction('two-notifications')
         ->assertNotified('First notification');
 
     $this->expectException('PHPUnit\Framework\ExpectationFailedException');
     $this->expectExceptionMessage('A notification was not sent');
 
     livewire(Actions::class)
-        ->callAction('two_notifications')
+        ->callAction('two-notifications')
         ->assertNotified('Third notification');
 });

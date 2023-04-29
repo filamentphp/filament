@@ -2,20 +2,13 @@
 
 namespace Filament\Notifications\Actions;
 
-use Filament\Actions\Concerns\CanEmitEvent;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
-use Filament\Notifications\Actions\Concerns\CanCloseNotification;
 use Illuminate\Contracts\Support\Arrayable;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Js;
 use Illuminate\Support\Str;
 
 class Action extends StaticAction implements Arrayable, Groupable
 {
-    use CanCloseNotification;
-    use CanEmitEvent;
-
     protected string $viewIdentifier = 'action';
 
     protected function setUp(): void
@@ -46,7 +39,7 @@ class Action extends StaticAction implements Arrayable, Groupable
             'isOutlined' => $this->isOutlined(),
             'isDisabled' => $this->isDisabled(),
             'label' => $this->getLabel(),
-            'shouldCloseNotification' => $this->shouldCloseNotification(),
+            'shouldClose' => $this->shouldClose(),
             'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
             'size' => $this->getSize(),
             'url' => $this->getUrl(),
@@ -71,7 +64,7 @@ class Action extends StaticAction implements Arrayable, Groupable
             $static->size($size);
         }
 
-        $static->close($data['shouldCloseNotification'] ?? false);
+        $static->close($data['shouldClose'] ?? false);
         $static->color($data['color'] ?? null);
         $static->disabled($data['isDisabled'] ?? false);
 
@@ -99,47 +92,5 @@ class Action extends StaticAction implements Arrayable, Groupable
     protected static function isViewSafe(string $view): bool
     {
         return Str::startsWith($view, 'filament-actions::');
-    }
-
-    public function getLivewireMountAction(): ?string
-    {
-        if ($this->shouldCloseNotification()) {
-            return null;
-        }
-
-        if ($this->getUrl()) {
-            return null;
-        }
-
-        $event = $this->getEvent();
-
-        if (! $event) {
-            return null;
-        }
-
-        $arguments = collect([$event])
-            ->merge($this->getEventData())
-            ->when(
-                $this->getEmitToComponent(),
-                fn (Collection $collection, string $component) => $collection->prepend($component),
-            )
-            ->map(fn (mixed $value): string => Js::from($value)->toHtml())
-            ->implode(', ');
-
-        return match ($this->getEmitDirection()) {
-            'self' => "\$emitSelf($arguments)",
-            'to' => "\$emitTo($arguments)",
-            'up' => "\$emitUp($arguments)",
-            default => "\$emit($arguments)"
-        };
-    }
-
-    public function getAlpineMountAction(): ?string
-    {
-        if (! $this->shouldCloseNotification()) {
-            return null;
-        }
-
-        return 'close()';
     }
 }

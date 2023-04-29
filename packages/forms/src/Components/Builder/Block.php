@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Builder;
 use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Block extends Component
 {
@@ -59,7 +60,7 @@ class Block extends Component
         return $this->evaluate($this->icon);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable
     {
         return $this->evaluate(
             $this->label,

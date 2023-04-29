@@ -101,12 +101,19 @@ it('can have a URL', function () {
 
 it('can open a URL in a new tab', function () {
     livewire(PostsTable::class)
-        ->assertTableActionShouldOpenUrlInNewTab('url_in_new_tab')
-        ->assertTableActionShouldNotOpenUrlInNewTab('url_not_in_new_tab');
+        ->assertTableActionShouldOpenUrlInNewTab('url-in-new-tab')
+        ->assertTableActionShouldNotOpenUrlInNewTab('url-not-in-new-tab');
 });
 
 it('can state whether a table action exists', function () {
     livewire(PostsTable::class)
         ->assertTableActionExists('exists')
-        ->assertTableActionDoesNotExist('does_not_exist');
+        ->assertTableActionDoesNotExist('does-not-exist');
+});
+
+it('can state whether table actions exist in order', function () {
+    livewire(PostsTable::class)
+        ->assertTableActionsExistInOrder(['edit', 'delete'])
+        ->assertTableHeaderActionsExistInOrder(['exists', 'exists-in-order'])
+        ->assertTableEmptyStateActionsExistInOrder(['empty-exists', 'empty-exists-in-order']);
 });

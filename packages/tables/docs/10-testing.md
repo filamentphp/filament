@@ -195,6 +195,8 @@ it('can reset table filters`', function () {
 
 ## Actions
 
+### Calling actions
+
 You can call an action by passing its name or class to `callTableAction()`:
 
 ```php
@@ -248,6 +250,8 @@ it('can edit posts', function () {
 });
 ```
 
+### Errors
+
 `assertHasNoTableActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
 
 To check if a validation error has occurred with the data, use `assertHasTableActionErrors()`, similar to `assertHasErrors()` in Livewire:
@@ -267,6 +271,8 @@ it('can validate edited post data', function () {
 ```
 
 For bulk actions, this method is called `assertHasTableBulkActionErrors()`.
+
+### Pre-filled data
 
 To check if an action or bulk action is pre-filled with data, you can use the `assertTableActionDataSet()` or `assertTableBulkActionDataSet()` method:
 
@@ -289,6 +295,35 @@ it('can load existing post data for editing', function () {
 
     expect($post->refresh())
         ->title->toBe($title);
+});
+```
+
+### Action state
+
+To ensure that an action or bulk action exists or doesn't in a table, you can use the `assertTableActionExists()`/`assertTableActionDoesNotExist()` or  `assertTableBulkActionExists()`/`assertTableBulkActionDoesNotExist()` method:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can publish but not unpublish posts', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableActionExists('publish')
+        ->assertTableActionDoesNotExist('unpublish')
+        ->assertTableBulkActionExists('publish')
+        ->assertTableBulkActionDoesNotExist('unpublish');
+});
+```
+
+To ensure different sets of actions exist in the correct order, you can use the various "InOrder" assertions
+
+```php
+use function Pest\Livewire\livewire;
+
+it('has all actions in expected order', function () {
+    livewire(PostResource\Pages\ListPosts::class)
+        ->assertTableActionsExistInOrder(['edit', 'delete'])
+        ->assertTableHeaderActionsExistInOrder(['create', 'attach'])
+        ->assertTableEmptyStateActionsExistInOrder(['create', 'toggle-trashed-filter'])
 });
 ```
 

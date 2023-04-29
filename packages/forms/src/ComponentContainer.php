@@ -4,7 +4,7 @@ namespace Filament\Forms;
 
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Components\ViewComponent;
-use ReflectionParameter;
+use Illuminate\Database\Eloquent\Model;
 
 class ComponentContainer extends ViewComponent
 {
@@ -43,13 +43,33 @@ class ComponentContainer extends ViewComponent
         return app(static::class, ['livewire' => $livewire]);
     }
 
-    protected function resolveClosureDependencyForEvaluation(ReflectionParameter $parameter): mixed
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return match ($parameter->getName()) {
-            'livewire' => $this->getLivewire(),
-            'model' => $this->getModel(),
-            'record' => $this->getRecord(),
-            default => parent::resolveClosureDependencyForEvaluation($parameter),
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'model' => [$this->getModel()],
+            'record' => [$this->getRecord()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
 }

@@ -60,7 +60,7 @@
     $iconClasses = 'filament-icon-button-icon';
 
     $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-icon-button-indicator absolute -top-0.5 -right-0.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
+        'filament-icon-button-indicator absolute -top-0.5 -end-0.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
         match ($indicatorColor) {
             'danger' => 'bg-danger-600',
             'gray' => 'bg-gray-600',

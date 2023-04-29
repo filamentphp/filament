@@ -13,20 +13,24 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedAction) open()"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedActions.length) open()"
             x-on:modal-closed.stop="
+                const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
+
+                if (! mountedActionShouldOpenModal) {
+                    return
+                }
+
                 if (
-                    ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
-                    livewire.serverMemo.data.mountedFormComponentAction
+                    ('mountedFormComponentActions' in livewire?.serverMemo.data) &&
+                    livewire.serverMemo.data.mountedFormComponentActions.length
                 ) {
                     return
                 }
 
-                const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
-
-                if (mountedActionShouldOpenModal && 'mountedAction' in livewire?.serverMemo.data) {
-                    livewire.set('mountedAction', null)
+                if ('mountedActions' in livewire?.serverMemo.data) {
+                    livewire.call('unmountAction', false)
                 }
             "
         >
@@ -69,10 +73,10 @@
 
                 {{ $action->getModalFooter() }}
 
-                @if (count($action->getModalActions()))
+                @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-filament::modal.actions>
@@ -102,24 +106,24 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableAction) open()"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedTableActions.length) open()"
             x-on:modal-closed.stop="
+                const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
+
+                if (! mountedTableActionShouldOpenModal) {
+                    return
+                }
+
                 if (
-                    ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
-                    livewire.serverMemo.data.mountedFormComponentAction
+                    ('mountedFormComponentActions' in livewire?.serverMemo.data) &&
+                    livewire.serverMemo.data.mountedFormComponentActions.length
                 ) {
                     return
                 }
 
-                const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
-
-                if (mountedTableActionShouldOpenModal && 'mountedTableAction' in livewire?.serverMemo.data) {
-                    livewire.set('mountedTableAction', null)
-                }
-
-                if (mountedTableActionShouldOpenModal && 'mountedTableActionRecord' in livewire?.serverMemo.data) {
-                    livewire.set('mountedTableActionRecord', null)
+                if ('mountedTableActions' in livewire?.serverMemo.data) {
+                    livewire.call('unmountTableAction', false)
                 }
             "
         >
@@ -162,10 +166,10 @@
 
                 {{ $action->getModalFooter() }}
 
-                @if (count($action->getModalActions()))
+                @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-filament::modal.actions>
@@ -189,19 +193,23 @@
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}-form-component-action') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}-form-component-action') && $wire.mountedTableBulkAction) open()"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
+                const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
+
+                if (! mountedTableBulkActionShouldOpenModal) {
+                    return
+                }
+
                 if (
-                    ('mountedFormComponentAction' in livewire?.serverMemo.data) &&
-                    livewire.serverMemo.data.mountedFormComponentAction
+                    ('mountedFormComponentActions' in livewire?.serverMemo.data) &&
+                    livewire.serverMemo.data.mountedFormComponentActions.length
                 ) {
                     return
                 }
 
-                const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
-
-                if (mountedTableBulkActionShouldOpenModal && 'mountedTableBulkAction' in livewire?.serverMemo.data) {
+                if ('mountedTableBulkAction' in livewire?.serverMemo.data) {
                     livewire.set('mountedTableBulkAction', null)
                 }
             "
@@ -245,10 +253,10 @@
 
                 {{ $action->getModalFooter() }}
 
-                @if (count($action->getModalActions()))
+                @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-filament::modal.actions>
@@ -277,21 +285,12 @@
             :slide-over="$action?->isModalSlideOver()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
-            x-init="
-                livewire = $wire.__instance
-
-                $watch('isOpen', () => {
-                    window.dispatchEvent(new CustomEvent(
-                        isOpen ? 'opened-form-component-action-modal' : 'closed-form-component-action-modal',
-                        { detail: { id: '{{ $this->id }}-form-component-action' } }
-                    ))
-                })
-            "
+            x-init="livewire = $wire.__instance"
             x-on:modal-closed.stop="
                 const mountedFormComponentActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedFormComponentActionShouldOpenModal()) }}
 
-                if (mountedFormComponentActionShouldOpenModal && 'mountedFormComponentAction' in livewire?.serverMemo.data) {
-                    livewire.set('mountedFormComponentAction', null)
+                if (mountedFormComponentActionShouldOpenModal && 'mountedFormComponentActions' in livewire?.serverMemo.data) {
+                    livewire.call('unmountFormComponentAction', false)
                 }
             "
         >
@@ -334,10 +333,10 @@
 
                 {{ $action->getModalFooter() }}
 
-                @if (count($action->getModalActions()))
+                @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
                         <x-filament::modal.actions :full-width="$action->isModalCentered()">
-                            @foreach ($action->getModalActions() as $modalAction)
+                            @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
                         </x-filament::modal.actions>

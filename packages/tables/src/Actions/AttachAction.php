@@ -236,9 +236,10 @@ class AttachAction extends Action
                     ! $table->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $table->getInverseRelationship(),
-                        function (Builder $query) use ($table): Builder {
-                            return $query->where($table->getRelationship()->getParent()->getQualifiedKeyName(), $table->getRelationship()->getParent()->getKey());
-                        },
+                        fn (Builder $query): Builder => $query->where(
+                            $query->qualifyColumn($table->getRelationship()->getParent()->getKeyName()),
+                            $table->getRelationship()->getParent()->getKey(),
+                        ),
                     ),
                 )
                 ->get()

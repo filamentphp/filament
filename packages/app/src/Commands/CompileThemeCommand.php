@@ -56,6 +56,7 @@ class CompileThemeCommand extends Command
             ) : Arr::first($contextIds);
         }
 
+        exec('npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer tippy.js --save-dev');
         exec("npx tailwindcss --input ./resources/css/filament/{$contextId}/theme.css --output ./public/css/filament/{$contextId}/theme.css --config ./resources/css/filament/{$contextId}/tailwind.config.js --minify" . ($this->option('watch') ? ' --watch' : ''));
 
         $this->components->info("Compiled resources/css/filament/{$contextId}/theme.css!");

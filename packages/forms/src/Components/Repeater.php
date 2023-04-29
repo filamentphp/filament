@@ -335,7 +335,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
             })
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');
@@ -367,7 +367,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->label(__('filament-forms::components.repeater.actions.collapse.label'))
             ->icon('heroicon-m-minus')
             ->color('gray')
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');
@@ -399,7 +399,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->label(__('filament-forms::components.repeater.actions.expand.label'))
             ->icon('heroicon-m-plus')
             ->color('gray')
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');
@@ -429,7 +429,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getCollapseAllActionName())
             ->label(__('filament-forms::components.repeater.actions.collapse_all.label'))
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->link()
             ->size('sm');
 
@@ -458,7 +458,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getExpandAllActionName())
             ->label(__('filament-forms::components.repeater.actions.expand_all.label'))
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->link()
             ->size('sm');
 
@@ -864,7 +864,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         );
     }
 
-    public function getItemLabel(string $uuid): ?string
+    public function getItemLabel(string $uuid): string | Htmlable | null
     {
         return $this->evaluate($this->itemLabel, [
             'state' => $this->getChildComponentContainer($uuid)->getRawState(),
@@ -950,10 +950,17 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function mutateRelationshipDataBeforeSave(array $data, Model $record): array
     {
         if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {
-            $data = $this->evaluate($this->mutateRelationshipDataBeforeSaveUsing, [
-                'data' => $data,
-                'record' => $record,
-            ]);
+            $data = $this->evaluate(
+                $this->mutateRelationshipDataBeforeSaveUsing,
+                namedInjections: [
+                    'data' => $data,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
         }
 
         return $data;

@@ -234,11 +234,21 @@ class AssociateAction extends Action
             return $relationshipQuery
                 ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use ($relationship): Builder {
                     if ($relationship instanceof MorphMany) {
-                        return $query->where($relationship->getMorphType(), $relationship->getMorphClass())
-                            ->where($relationship->getQualifiedForeignKeyName(), $relationship->getParent()->getKey());
+                        return $query
+                            ->where(
+                                $relationship->getMorphType(),
+                                $relationship->getMorphClass(),
+                            )
+                            ->where(
+                                $relationship->getQualifiedForeignKeyName(),
+                                $relationship->getParent()->getKey()
+                            );
                     }
 
-                    return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
+                    return $query->where(
+                        $query->qualifyColumn($relationship->getParent()->getKeyName()),
+                        $relationship->getParent()->getKey(),
+                    );
                 })
                 ->get()
                 ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])

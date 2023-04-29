@@ -31,7 +31,7 @@
                         alignment="start"
                         wrap
                         @class([
-                            'md:-ml-2' => ! ($heading || $description),
+                            'md:-ms-2' => ! ($heading || $description),
                             'mt-2' => $heading || $description,
                         ])
                     />
@@ -44,7 +44,7 @@
                 :actions="$actions"
                 alignment="end"
                 wrap
-                class="ml-auto shrink-0 md:-mr-2"
+                class="ms-auto shrink-0 md:-me-2"
             />
         @endif
     </div>

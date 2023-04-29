@@ -78,6 +78,7 @@ Install the packages in your app's `composer.json`:
     "require": {
         "filament/filament": "*",
     },
+    "minimum-stability": "dev",
     "repositories": [
         {
             "type": "path",

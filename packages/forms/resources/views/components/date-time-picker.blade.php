@@ -50,8 +50,8 @@
                         ], escape: false)
                         ->class([
                             'block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
-                            'rounded-l-lg' => ! ($prefixLabel || $prefixIcon),
-                            'rounded-r-lg' => ! ($suffixLabel || $suffixIcon),
+                            'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
+                            'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
                         ])
                 }}
             />
@@ -97,13 +97,13 @@
                     tabindex="-1"
                     @disabled($isDisabled)
                     {{ $getExtraTriggerAttributeBag()->class([
-                        'bg-white relative w-full border py-2 pl-3 pr-10 rtl:pl-10 rtl:pr-3 text-start cursor-default shadow-sm outline-none sm:text-sm dark:bg-gray-700',
+                        'bg-white relative w-full border py-2 ps-3 pe-10 text-start cursor-default shadow-sm outline-none sm:text-sm dark:bg-gray-700',
                         'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled,
                         'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
                         'border-danger-600 dark:border-danger-400' => $errors->has($statePath),
                         'opacity-70 dark:text-gray-300' => $isDisabled,
-                        'rounded-l-lg' => ! ($prefixLabel || $prefixIcon),
-                        'rounded-r-lg' => ! ($suffixLabel || $suffixIcon),
+                        'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
+                        'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
                     ]) }}
                 >
                     <input
@@ -118,7 +118,7 @@
                         ])
                     />
 
-                    <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
+                    <span class="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none">
                         <x-filament::icon
                             name="heroicon-m-calendar"
                             alias="filament-forms::components.date-time-picker.suffix"
@@ -207,7 +207,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="hour"
-                                    class="w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
+                                    class="w-16 p-0 pe-1 text-xl bg-gray-50 text-center text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
                                     dusk="filament.forms.{{ $statePath }}.hour"
                                 />
 
@@ -220,7 +220,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="minute"
-                                    class="w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
+                                    class="w-16 p-0 pe-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
                                     dusk="filament.forms.{{ $statePath }}.minute"
                                 />
 
@@ -235,7 +235,7 @@
                                         inputmode="numeric"
                                         x-model.debounce="second"
                                         dusk="filament.forms.{{ $statePath }}.second"
-                                        class="w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
+                                        class="w-16 p-0 pe-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
                                     />
                                 @endif
                             </div>

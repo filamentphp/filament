@@ -111,6 +111,10 @@ class ViewRecord extends Page
 
     protected function configureAction(Action $action): void
     {
+        $action
+            ->record($this->getRecord())
+            ->recordTitle($this->getRecordTitle());
+
         match (true) {
             $action instanceof DeleteAction => $this->configureDeleteAction($action),
             $action instanceof EditAction => $this->configureEditAction($action),
@@ -127,8 +131,6 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canEdit($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle())
             ->form(fn (Form $form): Form => static::getResource()::form($form));
 
         if ($resource::hasPage('edit')) {
@@ -142,25 +144,19 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canForceDelete($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle())
             ->successRedirectUrl($resource::getUrl('index'));
     }
 
     protected function configureReplicateAction(ReplicateAction $action): void
     {
         $action
-            ->authorize(static::getResource()::canReplicate($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+            ->authorize(static::getResource()::canReplicate($this->getRecord()));
     }
 
     protected function configureRestoreAction(RestoreAction $action): void
     {
         $action
-            ->authorize(static::getResource()::canRestore($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle());
+            ->authorize(static::getResource()::canRestore($this->getRecord()));
     }
 
     protected function configureDeleteAction(DeleteAction $action): void
@@ -169,8 +165,6 @@ class ViewRecord extends Page
 
         $action
             ->authorize($resource::canDelete($this->getRecord()))
-            ->record($this->getRecord())
-            ->recordTitle($this->getRecordTitle())
             ->successRedirectUrl($resource::getUrl('index'));
     }
 

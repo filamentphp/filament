@@ -54,26 +54,26 @@ class Actions extends Page
             Action::make('exists'),
             Action::make('url')
                 ->url('https://filamentphp.com'),
-            Action::make('url_in_new_tab')
+            Action::make('url-in-new-tab')
                 ->url('https://filamentphp.com', true),
-            Action::make('url_not_in_new_tab')
+            Action::make('url-not-in-new-tab')
                 ->url('https://filamentphp.com', false),
-            Action::make('shows_notification')
+            Action::make('shows-notification')
                 ->action(function () {
                     Notification::make()
                         ->title('A notification')
                         ->success()
                         ->send();
                 }),
-            Action::make('does_not_show_notification'),
-            Action::make('shows_notification_with_id')
+            Action::make('does-not-show-notification'),
+            Action::make('shows-notification-with-id')
                 ->action(function () {
                     Notification::make('notification_with_id')
                         ->title('A notification')
                         ->success()
                         ->send();
                 }),
-            Action::make('two_notifications')
+            Action::make('two-notifications')
                 ->action(function () {
                     Notification::make('first_notification')
                         ->title('First notification')

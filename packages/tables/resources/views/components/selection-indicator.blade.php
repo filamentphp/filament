@@ -16,7 +16,7 @@
 >
     <x-filament::loading-indicator
         x-show="isLoading"
-        class="inline-block w-4 h-4 mr-3 rtl:mr-0 rtl:ml-3 text-primary-500"
+        class="inline-block w-4 h-4 me-3 text-primary-500"
     />
 
     <span

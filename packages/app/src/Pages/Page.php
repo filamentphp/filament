@@ -158,9 +158,9 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return int | array<string, int | null>
+     * @return int | string | array<string, int | string | null>
      */
-    public function getHeaderWidgetsColumns(): int | array
+    public function getHeaderWidgetsColumns(): int | string | array
     {
         return 2;
     }
@@ -191,9 +191,9 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return int | array<string, int | null>
+     * @return int | string | array<string, int | string | null>
      */
-    public function getFooterWidgetsColumns(): int | array
+    public function getFooterWidgetsColumns(): int | string | array
     {
         return 2;
     }

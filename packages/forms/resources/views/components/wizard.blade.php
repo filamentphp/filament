@@ -106,10 +106,10 @@
     <ol
         @if ($label = $getLabel()) aria-label="{{ $label }}" @endif
         role="list"
-        class="border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700"
+        class="filament-forms-wizard-component-header border border-gray-300 shadow-sm bg-white rounded-xl overflow-hidden divide-y divide-gray-300 md:flex md:divide-y-0 dark:bg-gray-800 dark:border-gray-700 dark:divide-gray-700"
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
-            <li class="relative overflow-hidden group md:flex-1">
+            <li class="filament-forms-wizard-component-header-step relative overflow-hidden group md:flex-1">
                 <button
                     type="button"
                     x-on:click="if (isStepAccessible(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
@@ -125,7 +125,7 @@
                             'bg-primary-600': getStepIndex(step) === {{ $loop->index }},
                             'bg-transparent group-hover:bg-gray-200 dark:group-hover:bg-gray-600': getStepIndex(step) > {{ $loop->index }},
                         }"
-                        class="absolute top-0 left-0 w-1 h-full md:w-full md:h-1 md:bottom-0 md:top-auto"
+                        class="absolute top-0 start-0 w-1 h-full md:w-full md:h-1 md:bottom-0 md:top-auto"
                         aria-hidden="true"
                     ></div>
 
@@ -138,7 +138,7 @@
                                     'border-primary-500': getStepIndex(step) === {{ $loop->index }},
                                     'border-gray-300 dark:border-gray-500': getStepIndex(step) < {{ $loop->index }},
                                 }"
-                                class="flex items-center justify-center w-10 h-10 rounded-full"
+                                class="filament-forms-wizard-component-header-step-icon flex items-center justify-center w-10 h-10 rounded-full"
                             >
                                 <x-filament::icon
                                     name="heroicon-m-check"
@@ -176,12 +176,12 @@
                         </div>
 
                         <div class="flex flex-col items-start justify-center">
-                            <div class="text-sm font-medium">
+                            <div class="filament-forms-wizard-component-header-step-label text-sm font-medium">
                                 {{ $step->getLabel() }}
                             </div>
 
                             @if (filled($description = $step->getDescription()))
-                                <div class="text-sm leading-4 font-medium text-gray-500 dark:text-gray-400">
+                                <div class="filament-forms-wizard-component-header-step-description text-sm leading-4 font-medium text-gray-500 dark:text-gray-400">
                                     {{ $description }}
                                 </div>
                             @endif
@@ -190,7 +190,7 @@
                 </button>
 
                 @if (! $loop->first)
-                    <div class="hidden absolute top-0 left-0 w-3 inset-0 md:block" aria-hidden="true">
+                    <div class="hidden absolute top-0 start-0 w-3 inset-0 md:block" aria-hidden="true">
                         <svg
                             class="h-full w-full text-gray-300 rtl:rotate-180 dark:text-gray-700"
                             viewBox="0 0 12 82"

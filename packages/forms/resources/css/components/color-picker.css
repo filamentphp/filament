@@ -1,4 +1,4 @@
-.filament-forms-color-picker-preview {
+.filament-forms-color-picker-component-preview {
     background-image: repeating-linear-gradient(
             45deg,
             #aaa 25%,
@@ -19,7 +19,7 @@
     background-size: 8px 8px;
 }
 
-.filament-forms-color-picker-preview::after {
+.filament-forms-color-picker-component-preview::after {
     @apply absolute inset-0;
     content: '';
     background: var(--color);

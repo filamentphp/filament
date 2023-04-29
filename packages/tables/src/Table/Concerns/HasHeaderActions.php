@@ -89,14 +89,32 @@ trait HasHeaderActions
         return $this->headerActions;
     }
 
-    public function getHeaderAction(string $name): ?Action
+    /**
+     * @param  string | array<string>  $name
+     */
+    public function getHeaderAction(string | array $name): ?Action
     {
+        if (is_string($name) && str($name)->contains('.')) {
+            $name = explode('.', $name);
+        }
+
+        if (is_array($name)) {
+            $firstName = array_shift($name);
+            $modalActionNames = $name;
+
+            $name = $firstName;
+        }
+
         $actions = $this->getHeaderActions();
 
         $action = $actions[$name] ?? null;
 
         if ($action) {
-            return $action;
+            return $this->getMountableModalActionFromAction(
+                $action,
+                modalActionNames: $modalActionNames ?? [],
+                parentActionName: $name,
+            );
         }
 
         foreach ($actions as $action) {
@@ -110,7 +128,11 @@ trait HasHeaderActions
                 continue;
             }
 
-            return $groupedAction;
+            return $this->getMountableModalActionFromAction(
+                $groupedAction,
+                modalActionNames: $modalActionNames ?? [],
+                parentActionName: $name,
+            );
         }
 
         return null;

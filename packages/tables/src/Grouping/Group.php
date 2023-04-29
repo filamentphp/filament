@@ -3,6 +3,7 @@
 namespace Filament\Tables\Grouping;
 
 use Closure;
+use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 
-class Group
+class Group extends Component
 {
     protected ?string $column;
 
@@ -148,10 +149,17 @@ class Group
             return null;
         }
 
-        return app()->call($this->getDescriptionUsing, [
-            'record' => $record,
-            'title' => $title,
-        ]);
+        return $this->evaluate(
+            $this->getDescriptionUsing,
+            namedInjections: [
+                'record' => $record,
+                'title' => $title,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
     }
 
     public function getKey(Model $record): ?string
@@ -170,10 +178,17 @@ class Group
         $column = $this->getColumn();
 
         if ($this->getTitleFromRecordUsing) {
-            return app()->call($this->getTitleFromRecordUsing, [
-                'column' => $column,
-                'record' => $record,
-            ]);
+            return $this->evaluate(
+                $this->getTitleFromRecordUsing,
+                namedInjections: [
+                    'column' => $column,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
         }
 
         $title = Arr::get($record, $column);
@@ -188,7 +203,7 @@ class Group
     public function groupQuery(Builder $query, Model $model): Builder
     {
         if ($this->groupQueryUsing) {
-            return app()->call($this->groupQueryUsing, [
+            return $this->evaluate($this->groupQueryUsing, [
                 'column' => $this->getColumn(),
                 'query' => $query,
             ]) ?? $query;
@@ -204,7 +219,7 @@ class Group
     public function orderQuery(EloquentBuilder $query, string $direction): EloquentBuilder
     {
         if ($this->orderQueryUsing) {
-            return app()->call($this->orderQueryUsing, [
+            return $this->evaluate($this->orderQueryUsing, [
                 'column' => $this->getColumn(),
                 'direction' => $direction,
                 'query' => $query,
@@ -253,11 +268,18 @@ class Group
         $column = $this->getColumn();
 
         if ($this->scopeQueryUsing) {
-            return app()->call($this->scopeQueryUsing, [
-                'column' => $column,
-                'query' => $query,
-                'record' => $record,
-            ]) ?? $query;
+            return $this->evaluate(
+                $this->scopeQueryUsing,
+                namedInjections: [
+                    'column' => $column,
+                    'query' => $query,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            ) ?? $query;
         }
 
         $value = Arr::get($record, $column);

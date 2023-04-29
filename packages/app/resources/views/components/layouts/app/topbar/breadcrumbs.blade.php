@@ -18,7 +18,7 @@
             </li>
 
             @if (! $loop->last)
-                <li class="h-4 border-r border-gray-300 -skew-x-12 dark:border-gray-500"></li>
+                <li class="h-4 border-e border-gray-300 -skew-x-12 dark:border-gray-500"></li>
             @endif
         @endforeach
     </ul>

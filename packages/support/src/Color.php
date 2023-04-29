@@ -18,6 +18,7 @@ class Color
         700 => '51, 65, 85',
         800 => '30, 41, 59',
         900 => '15, 23, 42',
+        950 => '2, 6, 23',
     ];
 
     public const Gray = [
@@ -31,6 +32,7 @@ class Color
         700 => '55, 65, 81',
         800 => '31, 41, 55',
         900 => '17, 24, 39',
+        950 => '3, 7, 18',
     ];
 
     public const Zinc = [
@@ -44,6 +46,7 @@ class Color
         700 => '63, 63, 70',
         800 => '39, 39, 42',
         900 => '24, 24, 27',
+        950 => '9, 9, 11',
     ];
 
     public const Neutral = [
@@ -57,6 +60,7 @@ class Color
         700 => '64, 64, 64',
         800 => '38, 38, 38',
         900 => '23, 23, 23',
+        950 => '10, 10, 10',
     ];
 
     public const Stone = [
@@ -70,6 +74,7 @@ class Color
         700 => '68, 64, 60',
         800 => '41, 37, 36',
         900 => '28, 25, 23',
+        950 => '12, 10, 9',
     ];
 
     public const Red = [
@@ -83,6 +88,7 @@ class Color
         700 => '185, 28, 28',
         800 => '153, 27, 27',
         900 => '127, 29, 29',
+        950 => '69, 10, 10',
     ];
 
     public const Orange = [
@@ -96,6 +102,7 @@ class Color
         700 => '194, 65, 12',
         800 => '154, 52, 18',
         900 => '124, 45, 18',
+        950 => '67, 20, 7',
     ];
 
     public const Amber = [
@@ -109,6 +116,7 @@ class Color
         700 => '180, 83, 9',
         800 => '146, 64, 14',
         900 => '120, 53, 15',
+        950 => '69, 26, 3',
     ];
 
     public const Yellow = [
@@ -122,6 +130,7 @@ class Color
         700 => '161, 98, 7',
         800 => '133, 77, 14',
         900 => '113, 63, 18',
+        950 => '66, 32, 6',
     ];
 
     public const Lime = [
@@ -135,6 +144,7 @@ class Color
         700 => '77, 124, 15',
         800 => '63, 98, 18',
         900 => '54, 83, 20',
+        950 => '26, 46, 5',
     ];
 
     public const Green = [
@@ -148,6 +158,7 @@ class Color
         700 => '21, 128, 61',
         800 => '22, 101, 52',
         900 => '20, 83, 45',
+        950 => '5, 46, 22',
     ];
 
     public const Emerald = [
@@ -161,6 +172,7 @@ class Color
         700 => '4, 120, 87',
         800 => '6, 95, 70',
         900 => '6, 78, 59',
+        950 => '2, 44, 34',
     ];
 
     public const Teal = [
@@ -174,6 +186,7 @@ class Color
         700 => '15, 118, 110',
         800 => '17, 94, 89',
         900 => '19, 78, 74',
+        950 => '4, 47, 46',
     ];
 
     public const Cyan = [
@@ -187,6 +200,7 @@ class Color
         700 => '14, 116, 144',
         800 => '21, 94, 117',
         900 => '22, 78, 99',
+        950 => '8, 51, 68',
     ];
 
     public const Sky = [
@@ -200,6 +214,7 @@ class Color
         700 => '3, 105, 161',
         800 => '7, 89, 133',
         900 => '12, 74, 110',
+        950 => '8, 47, 73',
     ];
 
     public const Blue = [
@@ -213,6 +228,7 @@ class Color
         700 => '29, 78, 216',
         800 => '30, 64, 175',
         900 => '30, 58, 138',
+        950 => '23, 37, 84',
     ];
 
     public const Indigo = [
@@ -226,6 +242,7 @@ class Color
         700 => '67, 56, 202',
         800 => '55, 48, 163',
         900 => '49, 46, 129',
+        950 => '30, 27, 75',
     ];
 
     public const Violet = [
@@ -239,6 +256,7 @@ class Color
         700 => '109, 40, 217',
         800 => '91, 33, 182',
         900 => '76, 29, 149',
+        950 => '46, 16, 101',
     ];
 
     public const Purple = [
@@ -252,6 +270,7 @@ class Color
         700 => '126, 34, 206',
         800 => '107, 33, 168',
         900 => '88, 28, 135',
+        950 => '59, 7, 100',
     ];
 
     public const Fuchsia = [
@@ -265,6 +284,7 @@ class Color
         700 => '162, 28, 175',
         800 => '134, 25, 143',
         900 => '112, 26, 117',
+        950 => '74, 4, 78',
     ];
 
     public const Pink = [
@@ -278,6 +298,7 @@ class Color
         700 => '190, 24, 93',
         800 => '157, 23, 77',
         900 => '131, 24, 67',
+        950 => '80, 7, 36',
     ];
 
     public const Rose = [
@@ -291,10 +312,11 @@ class Color
         700 => '190, 18, 60',
         800 => '159, 18, 57',
         900 => '136, 19, 55',
+        950 => '76, 5, 25',
     ];
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public static function hex(string $color): array
     {
@@ -302,7 +324,7 @@ class Color
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public static function rgb(string $color): array
     {
@@ -310,7 +332,7 @@ class Color
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     protected static function generateShades(Rgb $color): array
     {
@@ -326,6 +348,7 @@ class Color
             700 => 0.75,
             800 => 0.6,
             900 => 0.49,
+            950 => 0.3,
         ];
 
         foreach ([50, 100, 200, 300, 400] as $shade) {
@@ -340,7 +363,7 @@ class Color
 
         $colors[500] = "{$color->red()}, {$color->green()}, {$color->blue()}";
 
-        foreach ([600, 700, 800, 900] as $shade) {
+        foreach ([600, 700, 800, 900, 950] as $shade) {
             $intensity = $intensityMap[$shade];
 
             $red = round(intval($color->red()) * $intensity);

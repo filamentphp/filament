@@ -8,7 +8,7 @@ Field classes can be found in the `Filament\Form\Components` namespace.
 
 Fields reside within the schema of your form, alongside any [layout components](layout).
 
-Fields may be created using the static `make()` method, passing its name. The name of the field should correspond to a property on your Livewire component. You may use [Livewire's "dot notation"](https://laravel-livewire.com/docs/properties#binding-nested-data) to bind fields to arrays.
+Fields may be created using the static `make()` method, passing its unique name. The name of the field should correspond to a property on your Livewire component. You may use [Livewire's "dot notation"](https://laravel-livewire.com/docs/properties#binding-nested-data) to bind fields to arrays.
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -51,7 +51,7 @@ TextInput::make('name')
     ->label(__('fields.name'))
 ```
 
-Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -67,7 +67,8 @@ In the same way as labels, field IDs are also automatically determined based on 
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('name')->id('name-field')
+TextInput::make('name')
+    ->id('name-field')
 ```
 
 ## Setting a default value

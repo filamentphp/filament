@@ -6,6 +6,7 @@ use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\Position;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
@@ -87,8 +88,22 @@ trait HasActions
         return $this->actions;
     }
 
-    public function getAction(string $name): ?Action
+    /**
+     * @param  string | array<string>  $name
+     */
+    public function getAction(string | array $name): ?Action
     {
+        if (is_string($name) && str($name)->contains('.')) {
+            $name = explode('.', $name);
+        }
+
+        if (is_array($name)) {
+            $firstName = array_shift($name);
+            $modalActionNames = $name;
+
+            $name = $firstName;
+        }
+
         $mountedRecord = $this->getLivewire()->getMountedTableActionRecord();
 
         $actions = $this->getActions();
@@ -96,7 +111,12 @@ trait HasActions
         $action = $actions[$name] ?? null;
 
         if ($action) {
-            return $action->record($mountedRecord);
+            return $this->getMountableModalActionFromAction(
+                $action->record($mountedRecord),
+                modalActionNames: $modalActionNames ?? [],
+                parentActionName: $name,
+                mountedRecord: $mountedRecord,
+            );
         }
 
         foreach ($actions as $action) {
@@ -110,18 +130,54 @@ trait HasActions
                 continue;
             }
 
-            return $groupedAction->record($mountedRecord);
+            return $this->getMountableModalActionFromAction(
+                $groupedAction->record($mountedRecord),
+                modalActionNames: $modalActionNames ?? [],
+                parentActionName: $name,
+                mountedRecord: $mountedRecord,
+            );
         }
 
         $actions = $this->columnActions;
 
         $action = $actions[$name] ?? null;
 
-        if ($action) {
-            return $action->record($mountedRecord);
+        if (! $action) {
+            return null;
         }
 
-        return null;
+        return $this->getMountableModalActionFromAction(
+            $action->record($mountedRecord),
+            modalActionNames: $modalActionNames ?? [],
+            parentActionName: $name,
+            mountedRecord: $mountedRecord,
+        );
+    }
+
+    /**
+     * @param  array<string>  $modalActionNames
+     */
+    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName, ?Model $mountedRecord = null): ?Action
+    {
+        foreach ($modalActionNames as $modalActionName) {
+            $action = $action->getMountableModalAction($modalActionName);
+
+            if (! $action) {
+                throw new InvalidArgumentException("The [{$modalActionName}] action has not been registered on the [{$parentActionName}] table action.");
+            }
+
+            if ($action instanceof Action) {
+                $action->record($mountedRecord);
+            }
+
+            $parentActionName = $modalActionName;
+        }
+
+        if (! $action instanceof Action) {
+            return null;
+        }
+
+        return $action;
     }
 
     public function getActionsPosition(): string

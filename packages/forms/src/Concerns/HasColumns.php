@@ -12,9 +12,9 @@ trait HasColumns
     protected ?array $columns = null;
 
     /**
-     * @param  array<string, int | null> | int | null  $columns
+     * @param  array<string, int | string | null> | int | string | null  $columns
      */
-    public function columns(array | int | null $columns = 2): static
+    public function columns(array | int | string | null $columns = 2): static
     {
         if (! is_array($columns)) {
             $columns = [
@@ -28,9 +28,9 @@ trait HasColumns
     }
 
     /**
-     * @return array<string, int | null> | int | null
+     * @return array<string, int | string | null> | int | string | null
      */
-    public function getColumns(?string $breakpoint = null): array | int | null
+    public function getColumns(?string $breakpoint = null): array | int | string | null
     {
         $columns = $this->getColumnsConfig();
 

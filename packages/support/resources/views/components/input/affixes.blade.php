@@ -24,7 +24,7 @@
 
 <div {{ $attributes->class(['filament-input-affix-container flex rtl:space-x-reverse group']) }}>
     @if (count($prefixActions))
-        <div class="self-stretch flex gap-1 items-center pr-2">
+        <div class="self-stretch flex gap-1 items-center pe-2">
             @foreach ($prefixActions as $prefixAction)
                 {{ $prefixAction }}
             @endforeach
@@ -35,7 +35,7 @@
         <span
             @class(array_merge(
                 [$baseAffixClasses],
-                ['rounded-l-lg -mr-px'],
+                ['rounded-s-lg -me-px'],
             ))
             @if (filled($statePath))
                 x-bind:class="{
@@ -56,9 +56,9 @@
     @if ($prefix)
         <span
             @class([
-                    'filament-input-affix-label -mr-px',
+                    'filament-input-affix-label -me-px',
                     $baseAffixClasses,
-                    'rounded-l-lg' => ! $prefixIcon
+                    'rounded-s-lg' => ! $prefixIcon
             ])
             @if (filled($statePath))
                 x-bind:class="{
@@ -78,9 +78,9 @@
     @if ($suffix)
         <span
             @class([
-                    'filament-input-affix-label -ml-px',
+                    'filament-input-affix-label -ms-px',
                     $baseAffixClasses,
-                    'rounded-r-lg' => ! $suffixIcon
+                    'rounded-e-lg' => ! $suffixIcon
             ])
             @if (filled($statePath))
                 x-bind:class="{
@@ -97,7 +97,7 @@
         <span
             @class(array_merge(
                 [$baseAffixClasses],
-                ['rounded-r-lg -ml-px'],
+                ['rounded-e-lg -ms-px'],
             ))
             @if (filled($statePath))
                 x-bind:class="{
@@ -116,7 +116,7 @@
     @endif
 
     @if (count($suffixActions))
-        <div class="self-stretch flex gap-1 items-center pl-2">
+        <div class="self-stretch flex gap-1 items-center ps-2">
             @foreach ($suffixActions as $suffixAction)
                 {{ $suffixAction }}
             @endforeach

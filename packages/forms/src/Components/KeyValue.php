@@ -73,7 +73,7 @@ class KeyValue extends Field
 
         $action = Action::make($this->getAddActionName())
             ->label(fn (KeyValue $component) => $component->getAddActionLabel())
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->link()
             ->size('sm');
 
@@ -108,7 +108,7 @@ class KeyValue extends Field
             ->label(__('filament-forms::components.key_value.actions.delete.label'))
             ->icon('heroicon-m-trash')
             ->color('danger')
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');
@@ -144,7 +144,7 @@ class KeyValue extends Field
             ->label(__('filament-forms::components.key_value.actions.reorder.label'))
             ->icon('heroicon-m-arrows-up-down')
             ->color('gray')
-            ->mountedOnClick(false)
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');

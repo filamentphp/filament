@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
-use BackedEnum;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -64,14 +63,6 @@ trait HasState
             $state = $containerState instanceof Model ?
                 $this->getStateFromRecord($containerState) :
                 data_get($containerState, $this->getStatePath());
-        }
-
-        if (
-            interface_exists(BackedEnum::class) &&
-            ($state instanceof BackedEnum) &&
-            property_exists($state, 'value')
-        ) {
-            $state = $state->value;
         }
 
         if (is_string($state) && ($separator = $this->getSeparator())) {

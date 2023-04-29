@@ -13,7 +13,7 @@
     :component="$component"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"
     :tag="$url ? 'a' : 'button'"
-    :wire:click="$action->getLivewireMountAction()"
+    :wire:click="$action->getLivewireClickHandler()"
     :href="$isDisabled ? null : $url"
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
     :disabled="$isDisabled"

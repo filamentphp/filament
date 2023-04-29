@@ -14,12 +14,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 trait HasActions
 {
-    public ?string $mountedTableAction = null;
+    /**
+     * @var array<string> | null
+     */
+    public ?array $mountedTableActions = [];
 
     /**
-     * @var array<string, mixed>
+     * @var array<string, array<string, mixed>> | null
      */
-    public $mountedTableActionData = [];
+    public ?array $mountedTableActionsData = [];
 
     public int | string | null $mountedTableActionRecord = null;
 
@@ -77,21 +80,14 @@ trait HasActions
         } catch (Cancel $exception) {
         }
 
+        $action->resetArguments();
+        $action->resetFormData();
+
         if (filled($this->redirectTo)) {
             return $result;
         }
 
-        $this->mountedTableAction = null;
-
-        $action->record(null);
-        $this->mountedTableActionRecord(null);
-
-        $action->resetArguments();
-        $action->resetFormData();
-
-        $this->dispatchBrowserEvent('close-modal', [
-            'id' => "{$this->id}-table-action",
-        ]);
+        $this->unmountTableAction();
 
         return $result;
     }
@@ -103,8 +99,12 @@ trait HasActions
 
     public function mountTableAction(string $name, ?string $record = null): mixed
     {
-        $this->mountedTableAction = $name;
-        $this->mountedTableActionRecord($record);
+        $this->mountedTableActions[] = $name;
+        $this->mountedTableActionsData[] = [];
+
+        if (count($this->mountedTableActions) === 1) {
+            $this->mountedTableActionRecord($record);
+        }
 
         $action = $this->getMountedTableAction();
 
@@ -142,8 +142,7 @@ trait HasActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->mountedTableAction = null;
-            $this->mountedTableActionRecord(null);
+            $this->unmountTableAction(shouldCloseParentActions: false);
 
             return null;
         }
@@ -183,11 +182,11 @@ trait HasActions
 
     public function getMountedTableAction(): ?Action
     {
-        if (! $this->mountedTableAction) {
+        if (! count($this->mountedTableActions ?? [])) {
             return null;
         }
 
-        return $this->getTable()->getAction($this->mountedTableAction) ?? $this->getTable()->getEmptyStateAction($this->mountedTableAction) ?? $this->getTable()->getHeaderAction($this->mountedTableAction);
+        return $this->getTable()->getAction($this->mountedTableActions) ?? $this->getTable()->getEmptyStateAction($this->mountedTableActions) ?? $this->getTable()->getHeaderAction($this->mountedTableActions);
     }
 
     public function getMountedTableActionForm(): ?Form
@@ -205,8 +204,8 @@ trait HasActions
         return $action->getForm(
             $this->makeForm()
                 ->model($this->getMountedTableActionRecord() ?? $this->getTable()->getModel())
-                ->statePath('mountedTableActionData')
-                ->operation($this->mountedTableAction),
+                ->statePath('mountedTableActionsData.' . array_key_last($this->mountedTableActionsData))
+                ->operation(implode('.', $this->mountedTableActions)),
         );
     }
 
@@ -226,6 +225,55 @@ trait HasActions
         $this->cachedMountedTableActionRecordKey = $recordKey;
 
         return $this->cachedMountedTableActionRecord = $this->getTableRecord($recordKey);
+    }
+
+    public function unmountTableAction(bool $shouldCloseParentActions = true): void
+    {
+        $action = $this->getMountedTableAction();
+
+        if (! ($shouldCloseParentActions && $action)) {
+            array_pop($this->mountedTableActions);
+            array_pop($this->mountedTableActionsData);
+        } elseif ($action->shouldCloseAllParentActions()) {
+            $this->mountedTableActions = [];
+            $this->mountedTableActionsData = [];
+        } else {
+            $parentActionToCloseTo = $action->getParentActionToCloseTo();
+
+            while (true) {
+                $recentlyClosedParentAction = array_pop($this->mountedTableActions);
+                array_pop($this->mountedTableActionsData);
+
+                if (
+                    blank($parentActionToCloseTo) ||
+                    ($recentlyClosedParentAction === $parentActionToCloseTo)
+                ) {
+                    break;
+                }
+            }
+        }
+
+        if (! count($this->mountedTableActions)) {
+            $this->dispatchBrowserEvent('close-modal', [
+                'id' => "{$this->id}-table-action",
+            ]);
+
+            $action?->record(null);
+            $this->mountedTableActionRecord(null);
+
+            return;
+        }
+
+        $this->cacheForm(
+            'mountedTableActionForm',
+            fn () => $this->getMountedTableActionForm(),
+        );
+
+        $this->resetErrorBag();
+
+        $this->dispatchBrowserEvent('open-modal', [
+            'id' => "{$this->id}-table-action",
+        ]);
     }
 
     /**
