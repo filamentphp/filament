@@ -1,5 +1,9 @@
+@props([
+    'extraAttributes' => [],
+])
+
 <td
-    {{ $attributes->class([
+    {{ $attributes->merge($extraAttributes)->class([
         'filament-tables-cell',
         'dark:text-white' => config('tables.dark_mode'),
     ]) }}

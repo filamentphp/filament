@@ -827,6 +827,7 @@
                                     @endphp
 
                                     <x-tables::cell
+                                        :extra-attributes="$column->getExtraCellAttributes()"
                                         class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                         wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                         wire:loading.remove.delay
