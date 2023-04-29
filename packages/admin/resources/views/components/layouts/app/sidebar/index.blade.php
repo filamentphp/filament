@@ -2,7 +2,7 @@
     x-data="{}"
     @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
         x-cloak
-        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[var(--collapsed-sidebar-width)] rtl:lg:-translate-x-0 rtl:translate-x-full'"
+        x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0 max-w-[16rem] lg:max-w-[var(--sidebar-width)]' : '-translate-x-full lg:translate-x-0 lg:max-w-[var(--collapsed-sidebar-width)] rtl:lg:-translate-x-0 rtl:translate-x-full'"
     @else
         x-cloak="-lg"
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0 rtl:translate-x-full'"
@@ -43,16 +43,20 @@
                 </button>
             @endif
 
-            <a
-                href="{{ config('filament.home_url') }}"
-                data-turbo="false"
+            <div
                 @class([
-                    'block w-full',
+                    'block w-full relative',
                     'lg:ml-3' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
                 ])
             >
-                <x-filament::brand />
-            </a>
+                <a
+                    href="{{ config('filament.home_url') }}"
+                    data-turbo="false"
+                    class="inline-block"
+                >
+                    <x-filament::brand />
+                </a>
+            </div>
         </div>
 
         @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
