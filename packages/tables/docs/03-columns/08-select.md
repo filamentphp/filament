@@ -33,6 +33,19 @@ SelectColumn::make('status')
     ->rules(['required'])
 ```
 
+## Relationships
+
+You can populate data based on a database and directly link it to the relation id in a table:
+
+```php
+use Filament\Tables\Columns\SelectColumn;
+
+SelectColumn::make('authorId')
+   ->label('Author')
+   ->options(User::all()->pluck('name', 'id'))
+    ->rules(['required'])
+```
+
 ## Disabling placeholder selection
 
 You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
