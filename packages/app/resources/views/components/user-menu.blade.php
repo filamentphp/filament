@@ -34,56 +34,19 @@
 
     <x-filament::dropdown.list
         x-data="{
-            mode: null,
-
             theme: null,
 
-            systemTheme: null,
-
-            matchesSystemTheme: null,
-
             init: function () {
-                this.theme = localStorage.getItem('theme') || (this.isSystemDark() ? 'dark' : 'light')
-
-                this.systemTheme = this.isSystemDark() ? 'dark' : 'light'
-
-                if ( localStorage.getItem('mode') === 'manual' ) {
-                    this.mode = 'manual'
-                } else {
-                    this.mode = 'auto'
-                }
-
-                this.matchesSystemTheme = this.isSystemTheme()
+                this.theme = localStorage.getItem('theme') || 'system'
 
                 window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-                    if (this.mode === 'auto') {
-                        if (event.matches && (! document.documentElement.classList.contains('dark'))) {
-                            this.theme = 'dark'
+                    if (this.theme != 'system') return
 
-                            document.documentElement.classList.add('dark')
-                        } else if ((! event.matches) && document.documentElement.classList.contains('dark')) {
-                            this.theme = 'light'
-
-                            document.documentElement.classList.remove('dark')
-                        }
+                    if (event.matches && (! document.documentElement.classList.contains('dark'))) {
+                        document.documentElement.classList.add('dark')
+                    } else if ((! event.matches) && document.documentElement.classList.contains('dark')) {
+                        document.documentElement.classList.remove('dark')
                     }
-
-                    this.matchesSystemTheme = this.isSystemTheme()
-                })
-
-                $watch('mode', () => {
-                    if (this.mode === 'auto') {
-                        localStorage.setItem('mode', 'auto')
-                        if (this.isSystemDark()) {
-                            this.theme = 'dark'
-                        } else {
-                            this.theme = 'light'
-                        }
-                    } else {
-                        localStorage.setItem('mode', 'manual')
-                    }
-
-                    this.matchesSystemTheme = this.isSystemTheme()
                 })
 
                 $watch('theme', () => {
@@ -93,9 +56,13 @@
                         document.documentElement.classList.add('dark')
                     } else if (this.theme === 'light' && document.documentElement.classList.contains('dark')) {
                         document.documentElement.classList.remove('dark')
+                    } else if (this.theme === 'system') {
+                        if (this.isSystemDark() && (! document.documentElement.classList.contains('dark'))) {
+                            document.documentElement.classList.add('dark')
+                        } else if (! this.isSystemDark() && (document.documentElement.classList.contains('dark'))) {
+                            document.documentElement.classList.remove('dark')
+                        }
                     }
-
-                    this.matchesSystemTheme = this.isSystemTheme()
 
                     $dispatch('dark-mode-toggled', this.theme)
                 })
@@ -104,52 +71,20 @@
             isSystemDark: function () {
                 return window.matchMedia('(prefers-color-scheme: dark)').matches
             },
-
-            isSystemTheme: function () {
-                if ( this.theme === 'dark' && this.isSystemDark() ) {
-                    return true
-                } else if ( this.theme === 'light' && !this.isSystemDark() ){
-                    return true
-                } else {
-                    return false
-                }
-            },
-
-            toggleTheme: function () {
-                if (this.isSystemDark() && this.theme === 'dark') {
-                    this.theme = 'light'
-                    this.mode = 'manual'
-                } else if (this.isSystemDark() && this.theme === 'light') {
-                    this.theme = 'dark'
-                    this.mode = 'auto'
-                } else if (!this.isSystemDark() && this.theme === 'dark') {
-                    this.theme = 'light'
-                    this.mode = 'auto'
-                } else if (!this.isSystemDark() && this.theme === 'light') {
-                    this.theme = 'dark'
-                    this.mode = 'manual'
-                } else {
-                    if (this.isSystemDark()) {
-                        this.theme = 'dark'
-                    } else {
-                        this.theme = 'light'
-                    }
-
-                    this.mode = 'auto'
-                }
-            }
         }"
     >
         <div>
             @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
-                <x-filament::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); toggleTheme();">
+                <x-filament::dropdown.list.item icon="heroicon-m-moon" color="gray" x-on:click="close(); theme = 'light'">
                     {{ __('filament::layout.buttons.light_mode.label') }}
-                    <p x-show="!matchesSystemTheme" class="font-light text-xs text-gray-300">{{ __('filament::layout.buttons.system_mode.label') }}</p>
                 </x-filament::dropdown.list.item>
 
-                <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); toggleTheme();">
+                <x-filament::dropdown.list.item icon="heroicon-m-sun" color="gray" x-on:click="close(); theme = 'dark'">
                     {{ __('filament::layout.buttons.dark_mode.label') }}
-                    <p x-show="!matchesSystemTheme" class="font-light text-xs text-gray-600">{{ __('filament::layout.buttons.system_mode.label') }}</p>
+                </x-filament::dropdown.list.item>
+
+                <x-filament::dropdown.list.item icon="heroicon-m-cog" color="gray" x-on:click="close(); theme = 'system'">
+                    {{ __('filament::layout.buttons.system_mode.label') }}
                 </x-filament::dropdown.list.item>
             @endif
         </div>

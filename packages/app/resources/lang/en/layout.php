@@ -39,9 +39,9 @@ return [
         ],
 
         'system_mode' => [
-            'label' => 'Use system mode',
+            'label' => 'Toggle system mode',
         ],
-        
+
         'user_menu' => [
             'label' => 'User menu',
         ],
