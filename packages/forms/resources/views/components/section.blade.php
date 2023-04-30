@@ -37,7 +37,7 @@
         'grid grid-cols-1' => $isAside,
         'md:grid-cols-2' => $isAside && ! $isCompact,
         'md:grid-cols-3' => $isAside && $isCompact,
-        'order-last' => $isFormBefore,
+        'md:order-last' => $isFormBefore,
         'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode')  && ! $isAside,
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
@@ -122,7 +122,7 @@
         @class([
             'filament-forms-section-content-wrapper',
             'col-span-2' => $isAside && $isCompact,
-            'order-first' => $isFormBefore,
+            'md:order-first' => $isFormBefore,
         ])
     >
         <div @class([
