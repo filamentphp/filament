@@ -1,4 +1,10 @@
-@php use Filament\Notifications\Http\Livewire\Notifications; @endphp
+@php
+    use Filament\Notifications\Http\Livewire\Notifications;
+
+    $color = $getColor();
+    $iconColor = $getIconColor();
+    $isInline = $isInline();
+@endphp
 <x-filament-notifications::notification
     :notification="$notification"
     @class([
