@@ -296,6 +296,7 @@
                                 <x-filament-tables::filters.dropdown
                                     :form="$getFiltersForm()"
                                     :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                    :max-height="$getFiltersFormMaxHeight()"
                                     :trigger-action="$getFiltersTriggerAction()"
                                     :width="$getFiltersFormWidth()"
                                     class="shrink-0"
@@ -305,6 +306,7 @@
                             @if ($isColumnToggleFormVisible)
                                 <x-filament-tables::toggleable
                                     :form="$getColumnToggleForm()"
+                                    :max-height="$getColumnToggleFormMaxHeight()"
                                     :width="$getColumnToggleFormWidth()"
                                     class="shrink-0"
                                 />

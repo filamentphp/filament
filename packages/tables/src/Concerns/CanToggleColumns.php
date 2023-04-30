@@ -102,4 +102,12 @@ trait CanToggleColumns
     {
         return null;
     }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableColumnToggleFormMaxHeight(): ?string
+    {
+        return null;
+    }
 }
