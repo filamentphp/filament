@@ -71,11 +71,11 @@ namespace Livewire\Testing {
 
         public function assertTableActionHasLabel(string $name, string $label): static {}
 
+        public function assertTableActionDoesNotHaveLabel(string $name, string $label): static {}
+
         public function assertTableActionHasColor(string $name, string $color): static {}
 
         public function assertTableActionDoesNotHaveColor(string $name, string $color): static {}
-
-        public function assertTableActionDoesNotHaveLabel(string $name, string $label): static {}
 
         public function assertTableBulkActionHasIcon(string $name, string $icon): static {}
 
