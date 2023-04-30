@@ -23,10 +23,10 @@
                 :two-xl="$getColumns('2xl')"
                 :is-grid="! $isInline()"
                 direction="column"
-                :attributes="$attributes->merge($getExtraAttributes())->class([
+                :attributes="\Filament\Support\prepare_inherited_attributes($attributes->merge($getExtraAttributes())->class([
                     'filament-forms-radio-component flex flex-wrap gap-3',
                     'flex-col' => ! $isInline(),
-                ])"
+                ]))"
             >
                 @php
                     $isDisabled = $isDisabled();
@@ -36,7 +36,7 @@
                     @php
                         $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
                     @endphp
-                    
+
                     <div @class([
                         'flex items-start',
                         'gap-3' => ! $isInline(),
