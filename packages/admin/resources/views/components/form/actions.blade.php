@@ -10,10 +10,7 @@
             isSticky: false,
 
             evaluatePageScrollPosition: function() {
-                let documentHeight = document.body.scrollHeight
-                let currentScroll = window.scrollY + window.innerHeight
-
-                this.isSticky = currentScroll <= documentHeight
+                this.isSticky = (window.scrollY + (window.innerHeight * 2)) <= document.body.scrollHeight
             },
 
         }"
