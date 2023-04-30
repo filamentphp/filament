@@ -797,7 +797,7 @@
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
                                 class="filament-table-header-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
-                                :attributes="$column->getExtraHeaderAttributeBag()"
+                                :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())"
                                 :wrap="$column->isHeaderWrapped()"
                             >
                                 {{ $column->getLabel() }}

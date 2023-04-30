@@ -23,7 +23,7 @@
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
-        :attributes="$getExtraAttributeBag()"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <input
             @if ($hasMask)

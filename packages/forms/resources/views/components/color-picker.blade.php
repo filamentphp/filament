@@ -11,7 +11,7 @@
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$getSuffixIcon()"
         class="filament-forms-text-input-component"
-        :attributes="$getExtraAttributeBag()"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @php
             $isDisabled = $isDisabled();
