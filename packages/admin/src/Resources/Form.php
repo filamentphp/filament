@@ -9,7 +9,7 @@ use Filament\Forms\Components\Wizard;
 
 class Form
 {
-    protected array | int | null $columns = null;
+    protected array | int | string | null $columns = null;
 
     protected bool $isDisabled = false;
 
@@ -28,7 +28,7 @@ class Form
         return app(static::class);
     }
 
-    public function columns(array | int | null $columns): static
+    public function columns(array | int | string | null $columns): static
     {
         $this->columns = $columns;
 
@@ -63,7 +63,7 @@ class Form
         return $this;
     }
 
-    public function getColumns(): array | int | null
+    public function getColumns(): array | int | string | null
     {
         return $this->columns;
     }

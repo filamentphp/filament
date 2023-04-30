@@ -33,6 +33,8 @@ namespace Livewire\Testing {
 
         public function assertPageActionHasLabel(string $name, string $label): static {}
 
+        public function assertPageActionDoesNotHaveLabel(string $name, string $label): static {}
+
         public function assertPageActionHasColor(string $name, string $color): static {}
 
         public function assertPageActionDoesNotHaveColor(string $name, string $color): static {}
@@ -44,8 +46,6 @@ namespace Livewire\Testing {
         public function assertPageActionShouldOpenUrlInNewTab(string $name): static {}
 
         public function assertPageActionShouldNotOpenUrlInNewTab(string $name): static {}
-
-        public function assertPageActionDoesNotHaveLabel(string $name, string $label): static {}
 
         public function assertPageActionHalted(string $name): static {}
 

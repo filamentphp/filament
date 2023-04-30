@@ -116,10 +116,10 @@
             :two-xl="$getColumns('2xl')"
             :direction="$gridDirection ?? 'column'"
             :x-show="$isSearchable() ? 'visibleCheckboxListOptions.length' : null"
-            :attributes="$attributes->class([
+            :attributes="\Filament\Support\prepare_inherited_attributes($attributes->class([
                 'filament-forms-checkbox-list-component gap-1',
                 'space-y-2' => $gridDirection !== 'row',
-            ])"
+            ]))"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}">

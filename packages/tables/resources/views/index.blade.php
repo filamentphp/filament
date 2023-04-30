@@ -318,7 +318,7 @@
                             fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
                         );
                     @endphp
-                    
+
                     <div @class([
                         'bg-gray-500/5 flex items-center gap-4 px-4 border-b',
                         'dark:border-gray-700' => config('tables.dark_mode'),
@@ -827,10 +827,11 @@
                                     @endphp
 
                                     <x-tables::cell
-                                        class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                         wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                         wire:loading.remove.delay
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                        class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
+                                        :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())"
                                     >
                                         <x-tables::columns.column
                                             :column="$column"
