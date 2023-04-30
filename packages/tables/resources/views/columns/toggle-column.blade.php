@@ -2,7 +2,7 @@
     $state = $getState();
 @endphp
 
-<div wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $getName() }}.toggle-column.{{ json_encode($state) }}">
+<div wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $getName() }}.toggle-column.{{ $state ? 'true' : 'false' }}">
     <div
         x-data="{
             error: undefined,
@@ -19,17 +19,20 @@
             aria-checked="false"
             x-bind:aria-checked="state.toString()"
             x-on:click="
-                if (isLoading) return
-
-                isLoading = true
-                response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), ! state)
-                error = response?.error ?? undefined
-
-                if (error) {
-                    return isLoading = false
+                if (isLoading) {
+                    return
                 }
 
                 state = ! state
+
+                isLoading = true
+                response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+                error = response?.error ?? undefined
+
+                if (error) {
+                    state = ! state
+                }
+
                 isLoading = false
             "
             x-tooltip="error"
