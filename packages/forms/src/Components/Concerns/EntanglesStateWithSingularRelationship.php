@@ -63,6 +63,8 @@ trait EntanglesStateWithSingularRelationship
 
             $record->fill($data);
             $relationship->save($record);
+
+            $component->cachedExistingRecord($record);
         });
 
         $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
@@ -100,6 +102,8 @@ trait EntanglesStateWithSingularRelationship
 
             $relationship->associate($record->create($data));
             $relationship->getParent()->save();
+
+            $component->cachedExistingRecord($record);
         });
 
         $this->dehydrated(false);
@@ -173,6 +177,13 @@ trait EntanglesStateWithSingularRelationship
     public function getRelatedModel(): ?string
     {
         return $this->getRelationship()?->getModel()::class;
+    }
+
+    public function cachedExistingRecord(?Model $record): static
+    {
+        $this->cachedExistingRecord = $record;
+
+        return $this;
     }
 
     public function getCachedExistingRecord(): ?Model
