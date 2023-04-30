@@ -37,6 +37,7 @@
                 :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag()->merge([
                     $applyStateBindingModifiers('wire:model') => $statePath,
                 ], escape: false))"
+                :error="$errors->has($statePath)"
                 :prefix="$hasPrefix"
                 :suffix="$hasSuffix"
                 class="filament-forms-input w-full"
