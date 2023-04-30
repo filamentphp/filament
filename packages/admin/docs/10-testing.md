@@ -567,7 +567,7 @@ To ensure an action has the correct URL, you can use `assertPageActionHasUrl()`,
 ```php
 use function Pest\Livewire\livewire;
 
-it('links to the correct filament sites', function () {
+it('links to the correct Filament sites', function () {
     $invoice = Invoice::factory()->create();
 
     livewire(EditInvoice::class, [
