@@ -23,6 +23,7 @@ class Column extends ViewComponent
     use Concerns\CanOpenUrl;
     use Concerns\CanSpanColumns;
     use Concerns\HasAlignment;
+    use Concerns\HasExtraCellAttributes;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
     use Concerns\HasRowLoopObject;

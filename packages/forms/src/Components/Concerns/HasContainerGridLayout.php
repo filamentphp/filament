@@ -6,7 +6,7 @@ trait HasContainerGridLayout
 {
     protected ?array $gridColumns = null;
 
-    public function grid(array | int | null $columns = 2): static
+    public function grid(array | int | string | null $columns = 2): static
     {
         if (! is_array($columns)) {
             $columns = [
@@ -19,7 +19,7 @@ trait HasContainerGridLayout
         return $this;
     }
 
-    public function getGridColumns($breakpoint = null): array | int | null
+    public function getGridColumns($breakpoint = null): array | int | string | null
     {
         $columns = $this->gridColumns ?? [
             'default' => 1,

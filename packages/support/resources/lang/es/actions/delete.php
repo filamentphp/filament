@@ -28,16 +28,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Borrar seleccionado',
+        'label' => 'Borrar seleccionados',
 
         'modal' => [
 
-            'heading' => 'Borrar seleccionado :label',
+            'heading' => 'Borrar :label seleccionados',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Borrar seleccionado',
+                    'label' => 'Borrar',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'deleted' => 'Borrado',
+            'deleted' => 'Borrados',
         ],
 
     ],

@@ -1174,6 +1174,8 @@ FileUpload::make('attachment')
 
 By default, files will be uploaded publicly to your default storage disk.
 
+> Please note, to correctly preview images and other files, FilePond requires files to be served from the same domain as the app, or the appropriate CORS headers need to be present. Ensure that the `APP_URL` environment variable is correct, or modify the [filesystem](https://laravel.com/docs/10.x/filesystem) driver to set the correct URL. If you're hosting files on a separate domain like S3, ensure that CORS headers are set up.
+
 To change the disk and directory that files are saved in, and their visibility, use the `disk()`, `directory()` and `visibility` methods:
 
 ```php
@@ -1237,7 +1239,7 @@ FileUpload::make('attachment')
     ->maxSize(1024)
 ```
 
-> To customize Livewire's default file upload validation rules, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
+> To customize Livewire's default file upload validation rules, including the 12MB file size maximum, please refer to its [documentation](https://laravel-livewire.com/docs/file-uploads#global-validation).
 
 Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageResizeMode()`, `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for the other methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
 

@@ -23911,24 +23911,21 @@ var file_upload_default = (Alpine) => {
           }
           this.insertOpenLink(fileItem);
         });
-        this.pond.on("processfilestart", async () => {
+        this.pond.on("addfilestart", async (file2) => {
+          if (file2.status !== FileStatus.PROCESSING_QUEUED) {
+            return;
+          }
           this.dispatchFormEvent("file-upload-started");
         });
-        this.pond.on("processfileprogress", async () => {
-          this.dispatchFormEvent("file-upload-started");
-        });
-        this.pond.on("processfile", async () => {
+        const handleFileProcessing = async () => {
+          if (this.pond.getFiles().filter((file2) => file2.status === FileStatus.PROCESSING || file2.status === FileStatus.PROCESSING_QUEUED).length) {
+            return;
+          }
           this.dispatchFormEvent("file-upload-finished");
-        });
-        this.pond.on("processfiles", async () => {
-          this.dispatchFormEvent("file-upload-finished");
-        });
-        this.pond.on("processfileabort", async () => {
-          this.dispatchFormEvent("file-upload-finished");
-        });
-        this.pond.on("processfilerevert", async () => {
-          this.dispatchFormEvent("file-upload-finished");
-        });
+        };
+        this.pond.on("processfile", handleFileProcessing);
+        this.pond.on("processfileabort", handleFileProcessing);
+        this.pond.on("processfilerevert", handleFileProcessing);
       },
       dispatchFormEvent: function(name2) {
         this.$el.closest("form")?.dispatchEvent(new CustomEvent(name2, {
@@ -27967,7 +27964,8 @@ var markdown_editor_default = (Alpine) => {
       },
       checkForAutoInsertion: function() {
         const lines = this.$refs.textarea.value.split("\n");
-        const currentLine = this.$refs.textarea.value.substring(0, this.$refs.textarea.value.selectionStart).split("\n").length;
+        const linesBeforeSelection = this.$refs.textarea.value.substring(0, this.$refs.textarea.selectionStart);
+        const currentLine = linesBeforeSelection.split("\n").length;
         const previousLine = lines[currentLine - 2];
         if (!previousLine.match(/^(\*\s|-\s)|^(\d)+\./)) {
           return;
@@ -27975,22 +27973,40 @@ var markdown_editor_default = (Alpine) => {
         if (previousLine.match(/^(\*\s)/)) {
           if (previousLine.trim().length > 1) {
             lines[currentLine - 1] = "* ";
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length + 2;
+            });
           } else {
             delete lines[currentLine - 2];
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length - 2;
+            });
           }
         } else if (previousLine.match(/^(-\s)/)) {
           if (previousLine.trim().length > 1) {
             lines[currentLine - 1] = "- ";
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length + 2;
+            });
           } else {
             delete lines[currentLine - 2];
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length - 2;
+            });
           }
         } else {
           const matches2 = previousLine.match(/^(\d)+/);
           const number = matches2[0];
           if (previousLine.trim().length > number.length + 2) {
             lines[currentLine - 1] = `${parseInt(number) + 1}. `;
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length + number.length + 2;
+            });
           } else {
             delete lines[currentLine - 2];
+            this.$nextTick(() => {
+              this.$refs.textarea.selectionStart = this.$refs.textarea.selectionEnd = linesBeforeSelection.length - number.length - 2;
+            });
           }
         }
         this.state = lines.join("\n");
@@ -28094,6 +28110,7 @@ var select_default = (Alpine) => {
           removeItemButton: true,
           renderChoiceLimit: optionsLimit,
           searchFields: ["label"],
+          searchPlaceholderValue: searchPrompt,
           searchResultLimit: optionsLimit,
           shouldSort: false
         });

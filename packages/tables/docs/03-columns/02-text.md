@@ -166,6 +166,17 @@ TextColumn::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
 
+## Adding a placeholder if the cell is empty
+
+Sometimes you may want to display a placeholder if the cell's value is empty:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('updated_at')
+    ->placeholder('Never')
+```
+
 ## Customizing the color
 
 You may set a color for the text, either `primary`, `secondary`, `success`, `warning` or `danger`:

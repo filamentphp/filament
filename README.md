@@ -72,19 +72,20 @@ If you want to contribute to Filament packages, you may want to test it in a rea
 
 Install the packages in your app's `composer.json`:
 
-```json
+```jsonc
 {
-    ...
+    // ...
     "require": {
         "filament/filament": "*",
     },
+    "minimum-stability": "dev",
     "repositories": [
         {
             "type": "path",
             "url": "filament/packages/*"
         }
     ],
-    ...
+    // ...
 }
 ```
 

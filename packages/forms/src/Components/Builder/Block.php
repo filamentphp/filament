@@ -5,11 +5,13 @@ namespace Filament\Forms\Components\Builder;
 use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\Concerns;
-use Illuminate\Support\Str;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Block extends Component
 {
-    use Concerns\HasName;
+    use Concerns\HasName {
+        getLabel as getDefaultLabel;
+    }
 
     protected string $view = 'forms::components.builder.block';
 
@@ -49,15 +51,11 @@ class Block extends Component
         return $this->evaluate($this->icon);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable
     {
-        $label = $this->evaluate($this->label, array_merge(
+        return $this->evaluate(
+            $this->label,
             $this->labelState ? ['state' => $this->labelState] : [],
-        ));
-
-        return $label ?? (string) Str::of($this->getName())
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
+        ) ?? $this->getDefaultLabel();
     }
 }

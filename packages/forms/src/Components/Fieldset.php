@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Fieldset extends Component implements CanEntangleWithSingularRelationships
 {
@@ -10,12 +12,12 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
 
     protected string $view = 'forms::components.fieldset';
 
-    final public function __construct(string $label)
+    final public function __construct(string | Htmlable | Closure | null $label = null)
     {
         $this->label($label);
     }
 
-    public static function make(string $label): static
+    public static function make(string | Htmlable | Closure | null $label = null): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();

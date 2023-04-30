@@ -3,6 +3,7 @@
 namespace Filament\Support;
 
 use Illuminate\Support\Str;
+use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
 
 if (! function_exists('Filament\Support\get_model_label')) {
@@ -11,6 +12,13 @@ if (! function_exists('Filament\Support\get_model_label')) {
         return (string) Str::of(class_basename($model))
             ->kebab()
             ->replace('-', ' ');
+    }
+}
+
+if (! function_exists('Filament\Support\locale_has_pluralization')) {
+    function locale_has_pluralization(): bool
+    {
+        return (new MessageSelector())->getPluralIndex(app()->getLocale(), 10) > 0;
     }
 }
 

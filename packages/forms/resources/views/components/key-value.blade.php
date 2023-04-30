@@ -48,7 +48,7 @@
                         @if (($canDeleteRows() || $isReorderable()) && $isEnabled())
                             <th
                                 scope="col"
-                                x-show="rows.length > 1"
+                                x-show="rows.length"
                                 class="{{ ($canDeleteRows() && $isReorderable()) ? 'w-16' : 'w-12' }}"
                             >
                                 <span class="sr-only"></span>
@@ -105,7 +105,7 @@
                             </td>
 
                             @if (($canDeleteRows() || $isReorderable()) && $isEnabled())
-                                <td x-show="rows.length > 1" class="whitespace-nowrap">
+                                <td class="whitespace-nowrap">
                                     <div class="flex items-center justify-center gap-2">
                                         @if ($isReorderable())
                                             <button

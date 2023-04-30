@@ -16,7 +16,7 @@ IconColumn::make('is_featured')
     ])
 ```
 
-You may also pass a callback to activate an option, accepting the cell's `$state`:
+You may also pass a callback to activate an option, accepting the cell's `$state` and `$record`:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
@@ -24,7 +24,7 @@ use Filament\Tables\Columns\IconColumn;
 IconColumn::make('is_featured')
     ->options([
         'heroicon-o-x-circle',
-        'heroicon-o-pencil' => fn ($state): bool => $state === 'draft',
+        'heroicon-o-pencil' => fn ($state, $record): bool => $record->status === 2,
         'heroicon-o-clock' => fn ($state): bool => $state === 'reviewing',
         'heroicon-o-check-circle' => fn ($state): bool => $state === 'published',
     ])
