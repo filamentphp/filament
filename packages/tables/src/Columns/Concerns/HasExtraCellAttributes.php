@@ -7,8 +7,14 @@ use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraCellAttributes
 {
+    /**
+     * @var array<array<mixed> | Closure>
+     */
     protected array $extraCellAttributes = [];
 
+    /**
+     * @param  array<mixed> | Closure  $attributes
+     */
     public function extraCellAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
@@ -20,6 +26,9 @@ trait HasExtraCellAttributes
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getExtraCellAttributes(): array
     {
         $temporaryAttributeBag = new ComponentAttributeBag();
