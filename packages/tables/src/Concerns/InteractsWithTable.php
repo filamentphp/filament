@@ -73,11 +73,6 @@ trait InteractsWithTable
                 $this->getTableColumnToggleFormStateSessionKey(),
                 $this->getDefaultTableColumnToggleState()
             ));
-        } else {
-            session()->put(
-                $this->getTableColumnToggleFormStateSessionKey(),
-                $this->toggledTableColumns,
-            );
         }
 
         $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();
