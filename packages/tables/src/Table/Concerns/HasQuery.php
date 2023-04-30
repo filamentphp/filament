@@ -19,9 +19,21 @@ trait HasQuery
 
     protected ?Closure $getRelationshipUsing = null;
 
+    /**
+     * @var array<Closure>
+     */
+    protected array $queryScopes = [];
+
     public function query(Builder | Closure | null $query): static
     {
         $this->query = $query;
+
+        return $this;
+    }
+
+    public function scopeQuery(Closure $callback): static
+    {
+        $this->queryScopes[] = $callback;
 
         return $this;
     }
@@ -40,14 +52,23 @@ trait HasQuery
         return $this;
     }
 
+    protected function applyQueryScopes(Builder $query): Builder
+    {
+        foreach ($this->queryScopes as $scope) {
+            $this->evaluate($scope, ['query' => $query]);
+        }
+
+        return $query;
+    }
+
     public function getQuery(): Builder | Relation
     {
         if ($query = $this->evaluate($this->query)) {
-            return $query->clone();
+            return $this->applyQueryScopes($query->clone());
         }
 
         if ($query = $this->getRelationshipQuery()) {
-            return $query->clone();
+            return $this->applyQueryScopes($query->clone());
         }
 
         $livewireClass = $this->getLivewire()::class;
