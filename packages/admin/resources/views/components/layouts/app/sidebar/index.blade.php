@@ -44,6 +44,7 @@
             @endif
 
             <div
+                data-turbo="false"
                 @class([
                     'block w-full relative',
                     'lg:ml-3' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
@@ -51,7 +52,6 @@
             >
                 <a
                     href="{{ config('filament.home_url') }}"
-                    data-turbo="false"
                     class="inline-block"
                 >
                     <x-filament::brand />
