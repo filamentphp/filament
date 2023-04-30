@@ -10,7 +10,7 @@
     @class([
         'w-full transition duration-300',
         'max-w-sm rounded-xl bg-white shadow-lg ring-1 ring-gray-900/10 dark:ring-gray-50/10' => ! $isInline,
-        'dark:bg-gray-800' => ! $color,
+        'dark:bg-gray-800' => ! $color && ! $isInline,
         'dark:bg-gray-700' => $color,
     ])
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
