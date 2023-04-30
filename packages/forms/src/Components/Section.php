@@ -125,5 +125,4 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     {
         return (bool) $this->evaluate($this->isFormBefore);
     }
-
 }
