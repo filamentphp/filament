@@ -201,6 +201,14 @@ trait HasFilters
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
+    protected function getTableFiltersFormMaxHeight(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableFiltersLayout(): ?string
     {
         return null;

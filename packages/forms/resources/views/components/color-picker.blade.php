@@ -21,7 +21,7 @@
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
-        :attributes="$getExtraAttributeBag()"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
             <div

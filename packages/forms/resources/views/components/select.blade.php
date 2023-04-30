@@ -25,7 +25,7 @@
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
         class="filament-forms-select-component"
-        :attributes="$getExtraAttributeBag()"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @unless ($isSearchable() || $isMultiple())
             <x-filament::input.select
@@ -34,9 +34,9 @@
                 :id="$getId()"
                 dusk="filament.forms.{{ $statePath }}"
                 :required="$isRequired() && (! ! $isConcealed())"
-                :attributes="$getExtraInputAttributeBag()->merge([
+                :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag()->merge([
                     $applyStateBindingModifiers('wire:model') => $statePath,
-                ], escape: false)"
+                ], escape: false))"
                 :error="$errors->has($statePath)"
                 :prefix="$hasPrefix"
                 :suffix="$hasSuffix"

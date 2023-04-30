@@ -1,12 +1,14 @@
 @props([
     'form',
     'indicatorsCount' => null,
+    'maxHeight' => null,
     'triggerAction',
     'width' => 'xs',
 ])
 
 <x-filament::dropdown
     {{ $attributes->class(['filament-tables-filters']) }}
+    :max-height="$maxHeight"
     placement="bottom-start"
     shift
     :width="$width"
