@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait EntanglesStateWithSingularRelationship
 {
-    protected Model | bool | null $cachedExistingRecord = false;
+    protected ?Model $cachedExistingRecord = null;
 
     protected string | null $relationship = null;
 
@@ -179,7 +179,7 @@ trait EntanglesStateWithSingularRelationship
         return $this->getRelationship()?->getModel()::class;
     }
 
-    public function cachedExistingRecord(Model | bool | null $record): static
+    public function cachedExistingRecord(?Model $record): static
     {
         $this->cachedExistingRecord = $record;
 
@@ -188,18 +188,22 @@ trait EntanglesStateWithSingularRelationship
 
     public function getCachedExistingRecord(): ?Model
     {
-        if ($this->cachedExistingRecord !== false) {
+        if ($this->cachedExistingRecord) {
             return $this->cachedExistingRecord;
         }
 
         $record = $this->getRelationship()?->getResults();
 
-        return $this->cachedExistingRecord = $record?->exists ? $record : null;
+        if (! $record?->exists) {
+            return null;
+        }
+
+        return $this->cachedExistingRecord = $record;
     }
 
     public function clearCachedExistingRecord(): void
     {
-        $this->cachedExistingRecord = false;
+        $this->cachedExistingRecord = null;
     }
 
     public function mutateRelationshipDataBeforeCreateUsing(?Closure $callback): static
