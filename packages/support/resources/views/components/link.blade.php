@@ -5,6 +5,8 @@
     'icon' => null,
     'iconPosition' => 'before',
     'iconSize' => null,
+    'indicator' => null,
+    'indicatorColor' => 'primary',
     'keyBindings' => null,
     'size' => 'md',
     'tag' => 'a',
@@ -16,7 +18,8 @@
     $iconSize ??= $size;
 
     $linkClasses = [
-        'filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline disabled:opacity-70 disabled:pointer-events-none',
+        'filament-link inline-flex items-center justify-center gap-0.5 font-medium relative outline-none hover:underline focus:underline disabled:opacity-70 disabled:pointer-events-none',
+        'pe-4' => $indicator,
         'opacity-70 pointer-events-none' => $disabled,
         match ($color) {
             'danger' => 'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400',
@@ -43,14 +46,29 @@
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-link-icon',
-        'mr-1 rtl:ml-1' => $iconPosition === 'before',
-        'ml-1 rtl:mr-1' => $iconPosition === 'after'
+        'me-1' => $iconPosition === 'before',
+        'ms-1' => $iconPosition === 'after'
     ]);
 
-    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-link-indicator absolute -top-1 -end-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
+        match ($indicatorColor) {
+            'danger' => 'bg-danger-600',
+            'gray' => 'bg-gray-600',
+            'primary' => 'bg-primary-600',
+            'secondary' => 'bg-secondary-600',
+            'success' => 'bg-success-600',
+            'warning' => 'bg-warning-600',
+            default => $indicatorColor,
+        },
+    ]);
+
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+
+    $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
+        $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
 
@@ -85,6 +103,12 @@
                 :size="$iconSize"
                 :class="$iconClasses"
             />
+        @endif
+
+        @if ($indicator)
+            <span class="{{ $indicatorClasses }}">
+                {{ $indicator }}
+            </span>
         @endif
     </a>
 @elseif ($tag === 'button')
@@ -121,7 +145,6 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
@@ -145,12 +168,17 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
+        @endif
+
+        @if ($indicator)
+            <span class="{{ $indicatorClasses }}">
+                {{ $indicator }}
+            </span>
         @endif
     </button>
 @endif

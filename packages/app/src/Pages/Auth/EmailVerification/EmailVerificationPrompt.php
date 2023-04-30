@@ -5,6 +5,7 @@ namespace Filament\Pages\Auth\EmailVerification;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Auth\VerifyEmail;
@@ -35,39 +36,44 @@ class EmailVerificationPrompt extends CardPage
         }
     }
 
-    public function resendNotification(): void
+    public function resendNotificationAction(): Action
     {
-        try {
-            $this->rateLimit(1);
-        } catch (TooManyRequestsException $exception) {
-            Notification::make()
-                ->title(__('filament::pages/auth/email-verification/email-verification-prompt.messages.notification_resend_throttled', [
-                    'seconds' => $exception->secondsUntilAvailable,
-                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
-                ]))
-                ->danger()
-                ->send();
+        return Action::make('resendNotificationAction')
+            ->link()
+            ->label(__('filament::pages/auth/email-verification/email-verification-prompt.buttons.resend_notification.label') . '.')
+            ->action(function (): void {
+                try {
+                    $this->rateLimit(1);
+                } catch (TooManyRequestsException $exception) {
+                    Notification::make()
+                        ->title(__('filament::pages/auth/email-verification/email-verification-prompt.messages.notification_resend_throttled', [
+                            'seconds' => $exception->secondsUntilAvailable,
+                            'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                        ]))
+                        ->danger()
+                        ->send();
 
-            return;
-        }
+                    return;
+                }
 
-        $user = Filament::auth()->user();
+                $user = Filament::auth()->user();
 
-        if (! method_exists($user, 'notify')) {
-            $userClass = $user::class;
+                if (! method_exists($user, 'notify')) {
+                    $userClass = $user::class;
 
-            throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
-        }
+                    throw new Exception("Model [{$userClass}] does not have a [notify()] method.");
+                }
 
-        $notification = new VerifyEmail();
-        $notification->url = Filament::getVerifyEmailUrl($user);
+                $notification = new VerifyEmail();
+                $notification->url = Filament::getVerifyEmailUrl($user);
 
-        $user->notify($notification);
+                $user->notify($notification);
 
-        Notification::make()
-            ->title(__('filament::pages/auth/email-verification/email-verification-prompt.messages.notification_resent'))
-            ->success()
-            ->send();
+                Notification::make()
+                    ->title(__('filament::pages/auth/email-verification/email-verification-prompt.messages.notification_resent'))
+                    ->success()
+                    ->send();
+            });
     }
 
     public static function getName(): string

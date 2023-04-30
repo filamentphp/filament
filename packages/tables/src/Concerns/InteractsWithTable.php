@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms;
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
@@ -18,7 +19,6 @@ trait InteractsWithTable
     use CanPaginateRecords;
     use CanReorderRecords;
     use CanSearchRecords;
-    use CanSelectRecords;
     use CanSortRecords;
     use CanSummarizeRecords;
     use CanToggleColumns;
@@ -68,49 +68,93 @@ trait InteractsWithTable
             $this->tableSortDirection = $this->getTable()->getDefaultSortDirection();
         }
 
-        if (blank($this->toggledTableColumns) || ($this->toggledTableColumns === [])) {
+        if (! count($this->toggledTableColumns ?? [])) {
             $this->getTableColumnToggleForm()->fill(session()->get(
                 $this->getTableColumnToggleFormStateSessionKey(),
                 $this->getDefaultTableColumnToggleState()
             ));
         }
 
+        $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();
         $filtersSessionKey = $this->getTableFiltersSessionKey();
 
-        if ((blank($this->tableFilters) || ($this->tableFilters === [])) && $this->getTable()->persistsFiltersInSession() && session()->has($filtersSessionKey)) {
+        if (! count($this->tableFilters ?? [])) {
+            $this->tableFilters = null;
+        }
+
+        if (($this->tableFilters === null) && $shouldPersistFiltersInSession && session()->has($filtersSessionKey)) {
             $this->tableFilters = array_merge(
                 $this->tableFilters ?? [],
                 session()->get($filtersSessionKey) ?? [],
             );
         }
 
-        if (! count($this->tableFilters ?? [])) {
-            $this->tableFilters = null;
-        }
-
         $this->getTableFiltersForm()->fill($this->tableFilters);
+
+        if ($shouldPersistFiltersInSession) {
+            session()->put(
+                $filtersSessionKey,
+                $this->tableFilters,
+            );
+        }
 
         if ($this->getTable()->isDefaultGroupSelectable()) {
             $this->tableGrouping = $this->getTable()->getDefaultGroup()->getId();
         }
 
+        $shouldPersistSearchInSession = $this->getTable()->persistsSearchInSession();
         $searchSessionKey = $this->getTableSearchSessionKey();
 
-        if (blank($this->tableSearch) && $this->getTable()->persistsSearchInSession() && session()->has($searchSessionKey)) {
+        if (blank($this->tableSearch) && $shouldPersistSearchInSession && session()->has($searchSessionKey)) {
             $this->tableSearch = session()->get($searchSessionKey);
         }
 
         $this->tableSearch = strval($this->tableSearch);
 
-        $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
+        if ($shouldPersistSearchInSession) {
+            session()->put(
+                $searchSessionKey,
+                $this->tableSearch,
+            );
+        }
 
-        if ((blank($this->tableColumnSearches) || ($this->tableColumnSearches === [])) && $this->getTable()->persistsColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
-            $this->tableColumnSearches = session()->get($columnSearchSessionKey) ?? [];
+        $shouldPersistColumnSearchesInSession = $this->getTable()->persistsColumnSearchesInSession();
+        $columnSearchesSessionKey = $this->getTableColumnSearchesSessionKey();
+
+        if ((blank($this->tableColumnSearches) || ($this->tableColumnSearches === [])) && $shouldPersistColumnSearchesInSession && session()->has($columnSearchesSessionKey)) {
+            $this->tableColumnSearches = session()->get($columnSearchesSessionKey) ?? [];
         }
 
         $this->tableColumnSearches = $this->castTableColumnSearches(
             $this->tableColumnSearches ?? [],
         );
+
+        if ($shouldPersistColumnSearchesInSession) {
+            session()->put(
+                $columnSearchesSessionKey,
+                $this->tableColumnSearches,
+            );
+        }
+
+        $shouldPersistSortInSession = $this->getTable()->persistsSortInSession();
+        $sortSessionKey = $this->getTableSortSessionKey();
+
+        if (blank($this->tableSortColumn) && $shouldPersistSortInSession && session()->has($sortSessionKey)) {
+            $sort = session()->get($sortSessionKey);
+
+            $this->tableSortColumn = $sort['column'] ?? null;
+            $this->tableSortDirection = $sort['direction'] ?? null;
+        }
+
+        if ($shouldPersistSortInSession) {
+            session()->put(
+                $sortSessionKey,
+                [
+                    'column' => $this->tableSortColumn,
+                    'direction' => $this->tableSortDirection,
+                ],
+            );
+        }
 
         if ($this->getTable()->isPaginated()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
@@ -158,7 +202,8 @@ trait InteractsWithTable
             ->paginationPageOptions($this->getTableRecordsPerPageSelectOptions())
             ->persistFiltersInSession($this->shouldPersistTableFiltersInSession())
             ->persistSearchInSession($this->shouldPersistTableSearchInSession())
-            ->persistColumnSearchInSession($this->shouldPersistTableColumnSearchInSession())
+            ->persistColumnSearchesInSession($this->shouldPersistTableColumnSearchInSession())
+            ->persistSortInSession($this->shouldPersistTableSortInSession())
             ->pluralModelLabel($this->getTablePluralModelLabel())
             ->poll($this->getTablePollingInterval())
             ->recordAction($this->getTableRecordActionUsing())
@@ -208,6 +253,25 @@ trait InteractsWithTable
     public function getActiveTableLocale(): ?string
     {
         return null;
+    }
+
+    /**
+     * @return class-string<TranslatableContentDriver> | null
+     */
+    public function getTableTranslatableContentDriver(): ?string
+    {
+        return null;
+    }
+
+    public function makeTableTranslatableContentDriver(): ?TranslatableContentDriver
+    {
+        $driver = $this->getTableTranslatableContentDriver();
+
+        if (! $driver) {
+            return null;
+        }
+
+        return app($driver, ['locale' => $this->getActiveTableLocale() ?? app()->getLocale()]);
     }
 
     /**

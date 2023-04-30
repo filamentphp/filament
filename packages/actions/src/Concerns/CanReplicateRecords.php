@@ -31,7 +31,7 @@ trait CanReplicateRecords
 
         $this->modalHeading(fn (): string => __('filament-actions::replicate.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-actions::replicate.single.modal.actions.replicate.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::replicate.single.modal.actions.replicate.label'));
 
         $this->successNotificationTitle(__('filament-actions::replicate.single.messages.replicated'));
 
@@ -100,12 +100,13 @@ trait CanReplicateRecords
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'replica' => $this->getReplica(),
-        ]);
+        return match ($parameterName) {
+            'replica' => [$this->getReplica()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 }

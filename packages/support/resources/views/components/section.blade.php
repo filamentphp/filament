@@ -5,6 +5,7 @@
     'compact' => false,
     'description' => null,
     'heading',
+    'icon' => null,
 ])
 
 <section
@@ -42,7 +43,7 @@
             'filament-section-header-wrapper flex rtl:space-x-reverse overflow-hidden rounded-t-xl',
             'min-h-[40px]' => $compact,
             'min-h-[56px]' => ! $compact,
-            'pr-6 pb-4' => $aside,
+            'pe-6 pb-4' => $aside,
             'px-4 py-2 items-center bg-gray-100 dark:bg-gray-900' => ! $aside,
         ])
         @if ($collapsible)
@@ -55,9 +56,20 @@
             'cursor-pointer' => $collapsible,
         ])>
             <h3 @class([
-                'font-medium leading-6 pointer-events-none',
+                'font-medium leading-6 pointer-events-none flex flex-row items-center',
                 'text-lg'=> ! $compact,
             ])>
+                @if ($icon)
+                    <x-dynamic-component
+                        :component="$icon"
+                        @class([
+                            'me-1',
+                            'h-4 w-4' => $compact,
+                            'h-6 w-6' => ! $compact,
+                        ])
+                    />
+                @endif
+
                 {{ $heading }}
             </h3>
 

@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Tampilkan semua',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Duplikat',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Batalkan semua pilihan',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Tambahkan baris',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Tampilkan semua',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Tambahkan :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Buat tautan',
                     'unlink' => 'Batalkan tautan',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Sebelumnya',

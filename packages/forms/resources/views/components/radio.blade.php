@@ -27,6 +27,10 @@
                 ])"
             >
                 @foreach ($getOptions() as $value => $label)
+                    @php
+                        $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
+                    @endphp
+
                     <div @class([
                         'flex items-start',
                         'gap-3' => ! $isInline,
@@ -39,13 +43,13 @@
                                 type="radio"
                                 value="{{ $value }}"
                                 dusk="filament.forms.{{ $statePath }}"
+                                @disabled($shouldOptionBeDisabled)
                                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
                                 {{ $getExtraInputAttributeBag()->class([
                                     'focus:ring-primary-500 h-4 w-4 text-primary-600 outline-none disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
                                     'border-gray-300 dark:border-gray-500' => ! $errors->has($statePath),
                                     'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                 ]) }}
-                                @disabled($isDisabled || $isOptionDisabled($value, $label))
                                 wire:loading.attr="disabled"
                             />
                         </div>
@@ -55,6 +59,7 @@
                                 'font-medium',
                                 'text-gray-700 dark:text-gray-200' => ! $errors->has($statePath),
                                 'text-danger-600 dark:text-danger-400' => $errors->has($statePath),
+                                'opacity-50' => $shouldOptionBeDisabled,
                             ])>
                                 {{ $label }}
                             </label>

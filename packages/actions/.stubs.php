@@ -50,6 +50,10 @@ namespace Livewire\Testing {
         public function assertHasActionErrors(array $keys = []): static {}
 
         public function assertHasNoActionErrors(array $keys = []): static {}
+
+        public function parseActionName(string $name): string {}
+
+        public function parseNestedActionName(string | array $name): array {}
     }
 
 }

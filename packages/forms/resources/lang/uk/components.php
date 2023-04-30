@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Вміст згорнутий',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Додати до :label',
@@ -50,7 +50,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Додати рядок',
@@ -97,7 +97,7 @@ return [
 
         'collapsed' => 'Вміст згорнутий',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Додати до :label',
@@ -149,7 +149,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Посилання',
                     'unlink' => 'Прибрати посилання',
                 ],
@@ -227,7 +227,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Назад',

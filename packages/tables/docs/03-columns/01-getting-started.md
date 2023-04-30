@@ -2,6 +2,8 @@
 title: Getting started
 ---
 
+## Overview
+
 Column classes can be found in the `Filament\Tables\Columns` namespace. You can put them inside the `$table->columns()` method:
 
 ```php
@@ -16,7 +18,7 @@ public function table(Table $table): Table
 }
 ```
 
-Columns may be created using the static `make()` method, passing its name. The name of the column should correspond to a column or accessor on your model. You may use "dot notation" to access columns within relationships.
+Columns may be created using the static `make()` method, passing its unique name. The name of the column should correspond to a column or accessor on your model. You may use "dot notation" to access columns within relationships.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -56,7 +58,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')->label('Post title')
 ```
 
-Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -110,6 +112,23 @@ public function table(Table $table): Table
             // ...
         ])
         ->defaultSort('stock', 'desc');
+}
+```
+
+### Persist sort in session
+
+To persist the sorting in the user's session, use the `persistSortInSession()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistSortInSession();
 }
 ```
 
@@ -188,7 +207,7 @@ public function table(Table $table): Table
             // ...
         ])
         ->persistSearchInSession()
-        ->persistColumnSearchInSession();
+        ->persistColumnSearchesInSession();
 }
 ```
 

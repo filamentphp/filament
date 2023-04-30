@@ -1,21 +1,33 @@
 @props([
     'prefix' => null,
-    'prefixAction' => null,
+    'prefixActions' => [],
     'prefixIcon' => null,
     'statePath' => null,
     'suffix' => null,
-    'suffixAction' => null,
+    'suffixActions' => [],
     'suffixIcon' => null,
 ])
 
 @php
     $baseAffixClasses = 'whitespace-nowrap group-focus-within:text-primary-500 shadow-sm px-2 border border-gray-300 self-stretch flex items-center dark:border-gray-600 dark:bg-gray-700';
+
+    $prefixActions = array_filter(
+        $prefixActions,
+        fn (\Filament\Forms\Components\Actions\Action $prefixAction): bool => $prefixAction->isVisible(),
+    );
+
+    $suffixActions = array_filter(
+        $suffixActions,
+        fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
+    );
 @endphp
 
 <div {{ $attributes->class(['filament-input-affix-container flex rtl:space-x-reverse group']) }}>
-    @if ($prefixAction?->isVisible())
-        <div class="self-stretch flex items-center pr-2">
-            {{ $prefixAction }}
+    @if (count($prefixActions))
+        <div class="self-stretch flex gap-1 items-center pe-2">
+            @foreach ($prefixActions as $prefixAction)
+                {{ $prefixAction }}
+            @endforeach
         </div>
     @endif
 
@@ -23,7 +35,7 @@
         <span
             @class(array_merge(
                 [$baseAffixClasses],
-                ['rounded-l-lg -mr-px'],
+                ['rounded-s-lg -me-px'],
             ))
             @if (filled($statePath))
                 x-bind:class="{
@@ -44,9 +56,9 @@
     @if ($prefix)
         <span
             @class([
-                    'filament-input-affix-label -mr-px',
+                    'filament-input-affix-label -me-px',
                     $baseAffixClasses,
-                    'rounded-l-lg' => ! $prefixIcon
+                    'rounded-s-lg' => ! $prefixIcon
             ])
             @if (filled($statePath))
                 x-bind:class="{
@@ -66,9 +78,9 @@
     @if ($suffix)
         <span
             @class([
-                    'filament-input-affix-label -ml-px',
+                    'filament-input-affix-label -ms-px',
                     $baseAffixClasses,
-                    'rounded-r-lg' => ! $suffixIcon
+                    'rounded-e-lg' => ! $suffixIcon
             ])
             @if (filled($statePath))
                 x-bind:class="{
@@ -85,7 +97,7 @@
         <span
             @class(array_merge(
                 [$baseAffixClasses],
-                ['rounded-r-lg -ml-px'],
+                ['rounded-e-lg -ms-px'],
             ))
             @if (filled($statePath))
                 x-bind:class="{
@@ -103,9 +115,11 @@
         </span>
     @endif
 
-    @if ($suffixAction?->isVisible())
-        <div class="self-stretch flex items-center pl-2">
-            {{ $suffixAction }}
+    @if (count($suffixActions))
+        <div class="self-stretch flex gap-1 items-center ps-2">
+            @foreach ($suffixActions as $suffixAction)
+                {{ $suffixAction }}
+            @endforeach
         </div>
     @endif
 </div>

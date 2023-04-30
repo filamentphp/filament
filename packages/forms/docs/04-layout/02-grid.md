@@ -2,62 +2,45 @@
 title: Grid
 ---
 
-## Columns
+## Overview
 
-You may create multiple columns within each layout component using the `columns()` method:
+Filament's grid system allows you to create responsive, multi-column layouts using any layout component.
+
+## Responsively setting the number of grid columns
+
+All layout components have a `columns()` method that you can use in a couple of different ways:
+
+- You can pass an integer like `columns(2)`. This integer is the number of columns used on the `lg` breakpoint and higher. All smaller devices will have just 1 column.
+- You can pass an array, where the key is the breakpoint and the value is the number of columns. For example, `columns(['md' => 2, 'xl' => 4])` will create a 2 column layout on medium devices, and a 4 column layout on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
+
+Breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`) are defined by Tailwind, and can be found in the [Tailwind documentation](https://tailwindcss.com/docs/responsive-design#overview).
+
+## Controlling how many columns a component should span
+
+In addition to specifying how many columns a layout component should have, you may also specify how many columns a component should fill within the parent grid, using the `columnSpan()` method. This method accepts an integer, or an array of breakpoints and column spans:
+
+- `columnSpan(2)` will make the component fill up to 2 columns on all breakpoints.
+- `columnSpan(['md' => 2, 'xl' => 4])` will make the component fill up to 2 columns on medium devices, and up to 4 columns on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
+- `columnSpan('full')` or `columnSpanFull()` or `columnSpan(['default' => 'full'])` will make the component fill the full width of the parent grid, regardless of how many columns it has.
+
+## An example of a responsive grid layout
+
+In this example, we have a form with a [card](card) layout component. Since all layout components support the `columns()` method, we can use it to create a responsive grid layout within the card itself.
+
+We pass an array to `columns()` as we want to specify different numbers of columns for different breakpoints. On devices smaller than the `sm` [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview), we want to have 1 column, which is default. On devices larger than the `sm` breakpoint, we want to have 3 columns. On devices larger than the `xl` breakpoint, we want to have 6 columns. On devices larger than the `2xl` breakpoint, we want to have 8 columns.
+
+Inside the card, we have a [text input](../fields/text-input). Since text inputs are form components and all form components have a `columnSpan()` method, we can use it to specify how many columns the text input should fill. On devices smaller than the `sm` breakpoint, we want the text input to fill 1 column, which is default. On devices larger than the `sm` breakpoint, we want the text input to fill 2 columns. On devices larger than the `xl` breakpoint, we want the text input to fill 3 columns. On devices larger than the `2xl` breakpoint, we want the text input to fill 4 columns.
 
 ```php
 use Filament\Forms\Components\Card;
-
-Card::make()->columns(2)
-```
-
-> For more information about creating advanced, responsive column layouts, please see the [grid section](grid). All column options in that section are also available in other layout components.
-
-### Controlling field column span
-
-You may specify the number of columns that any component may span in the parent grid:
-
-```php
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 
-Grid::make(3)
-    ->schema([
-        TextInput::make('name')
-            ->columnSpan(2),
-        // ...
+Card::make()
+    ->columns([
+        'sm' => 3,
+        'xl' => 6,
+        '2xl' => 8,
     ])
-```
-
-You may use `columnSpan('full')` to ensure that a column spans the full width of the parent grid, however many columns it has:
-
-```php
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\TextInput;
-
-Grid::make(3)
-    ->schema([
-        TextInput::make('name')
-            ->columnSpan('full'),
-        // ...
-    ])
-```
-
-Instead, you can even define how many columns a component may consume at any breakpoint:
-
-```php
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\TextInput;
-
-Grid::make([
-    'default' => 1,
-    'sm' => 3,
-    'xl' => 6,
-    '2xl' => 8,
-])
     ->schema([
         TextInput::make('name')
             ->columnSpan([
@@ -71,31 +54,7 @@ Grid::make([
 
 ## Grid component
 
-Generally, form fields are stacked on top of each other in one column. To change this, you may use a grid component:
-
-```php
-use Filament\Forms\Components\Grid;
-
-Grid::make()
-    ->schema([
-        // ...
-    ])
-```
-
-By default, grid components will create a two column grid for [the Tailwind `md` breakpoint](https://tailwindcss.com/docs/responsive-design#overview) and higher.
-
-You may pass a different number of columns to the grid's `md` breakpoint:
-
-```php
-use Filament\Forms\Components\Grid;
-
-Grid::make(3)
-    ->schema([
-        // ...
-    ])
-```
-
-To customize the number of columns in any grid at different [breakpoints](https://tailwindcss.com/docs/responsive-design#overview), you may pass an array of breakpoints and columns:
+All layout components support the `columns()` method, but you also have access to an additional `Grid` component. If you feel that your form schema would benefit from an explicit grid syntax with no extra styling, it may be useful to you. Instead of using the `columns()` method, you can pass your columns configuration directly to `Grid::make()`:
 
 ```php
 use Filament\Forms\Components\Grid;
@@ -113,16 +72,31 @@ Grid::make([
     ])
 ```
 
-Since Tailwind is mobile-first, if you leave out a breakpoint, it will fall back to the one set below it:
+## Setting the starting column of a component in a grid
+
+If you want to start a component in a grid at a specific column, you can use the `columnStart()` method. This method accepts an integer, or an array of breakpoints and which column the component should start at:
+
+- `columnStart(2)` will make the component start at column 2 on all breakpoints.
+- `columnStart(['md' => 2, 'xl' => 4])` will make the component start at column 2 on medium devices, and at column 4 on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
 
 ```php
-use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Card;
 
-Grid::make([
-    'sm' => 2,
-    'xl' => 6,
-])
+Card::make()
+    ->columns([
+        'sm' => 3,
+        'xl' => 6,
+        '2xl' => 8,
+    ])
     ->schema([
+        TextInput::make('name')
+            ->columnStart([
+                'sm' => 2,
+                'xl' => 3,
+                '2xl' => 4,
+            ]),
         // ...
     ])
 ```
+
+In this example, the grid has 3 columns on small devices, 6 columns on extra large devices, and 8 columns on extra extra large devices. The text input will start at column 2 on small devices, column 3 on extra large devices, and column 4 on extra extra large devices. This is essentially producing a layout whereby the text input always starts half way through the grid, regardless of how many columns the grid has.

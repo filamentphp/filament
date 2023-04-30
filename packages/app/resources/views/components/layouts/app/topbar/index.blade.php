@@ -15,7 +15,7 @@
                 x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 @class([
                     'filament-sidebar-open-button shrink-0 flex items-center justify-center w-10 h-10 rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
-                    'lg:mr-4 rtl:lg:mr-0 rtl:lg:ml-4' => filament()->isSidebarFullyCollapsibleOnDesktop(),
+                    'lg:me-4' => filament()->isSidebarFullyCollapsibleOnDesktop(),
                     'lg:hidden' => ! (filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
@@ -31,7 +31,7 @@
                 <a
                     href="{{ filament()->getHomeUrl() }}"
                     data-turbo="false"
-                    class="hidden mr-12 lg:flex"
+                    class="hidden me-12 lg:flex"
                 >
                     <x-filament::logo />
                 </a>
@@ -87,7 +87,9 @@
         <div class="flex items-center shrink-0">
             @livewire('filament.core.global-search')
 
-            @livewire('filament.core.notifications')
+            @if (filament()->hasDatabaseNotifications())
+                @livewire('filament.core.database-notifications')
+            @endif
 
             <x-filament::user-menu />
 

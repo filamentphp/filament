@@ -148,13 +148,14 @@ class Summarizer extends ViewComponent
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-            'table' => $this->getTable(),
-        ]);
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 }

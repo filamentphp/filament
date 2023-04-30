@@ -1,0 +1,28 @@
+{
+    "name": "filament/upgrade",
+    "description": "Upgrade Filament v2 code to Filament v3.",
+    "license": "MIT",
+    "homepage": "https://github.com/filamentphp/filament",
+    "support": {
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
+    },
+    "require": {
+        "php": "^8.0",
+        "nunomaduro/termwind": "^1.0",
+        "rector/rector": "^0.15"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\Upgrade\\": "src"
+        }
+    },
+    "bin": [
+        "bin/filament-v3"
+    ],
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

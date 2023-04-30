@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Concerns\CanBeHidden;
+use Filament\Actions\Concerns\CanBeInline;
 use Filament\Actions\Concerns\CanBeOutlined;
 use Filament\Actions\Concerns\HasColor;
 use Filament\Actions\Concerns\HasDropdown;
@@ -20,6 +21,7 @@ class ActionGroup extends ViewComponent
     use CanBeHidden {
         isHidden as baseIsHidden;
     }
+    use CanBeInline;
     use CanBeOutlined;
     use HasColor;
     use HasDropdown;
@@ -28,6 +30,7 @@ class ActionGroup extends ViewComponent
     use HasIcon {
         getIcon as getBaseIcon;
     }
+    use Concerns\HasIndicator;
     use HasLabel;
     use HasSize;
     use HasTooltip;

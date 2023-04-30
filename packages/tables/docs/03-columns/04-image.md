@@ -2,6 +2,8 @@
 title: Image column
 ---
 
+## Overview
+
 Images can be easily displayed within your table:
 
 ```php

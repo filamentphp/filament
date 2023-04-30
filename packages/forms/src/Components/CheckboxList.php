@@ -3,6 +3,8 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Actions\Action;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -10,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanBeSearchable;
+    use Concerns\HasGridDirection;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
 
@@ -26,6 +29,10 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 
     protected bool | Closure $isBulkToggleable = false;
 
+    protected ?Closure $modifySelectAllActionUsing = null;
+
+    protected ?Closure $modifyDeselectAllActionUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,20 +48,83 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         });
 
         $this->searchDebounce(0);
+
+        $this->registerActions([
+            fn (CheckboxList $component): ?Action => $component->getSelectAllAction(),
+            fn (CheckboxList $component): ?Action => $component->getDeselectAllAction(),
+        ]);
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $titleAttribute, ?Closure $callback = null): static
+    public function getSelectAllAction(): ?Action
     {
-        $this->relationshipTitleAttribute = $titleAttribute;
-        $this->relationship = $relationshipName;
+        $action = Action::make($this->getSelectAllActionName())
+            ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
+            ->livewireClickHandlerEnabled(false)
+            ->link()
+            ->size('sm');
 
-        $this->options(static function (CheckboxList $component) use ($callback): array {
+        if ($this->modifySelectAllActionUsing) {
+            $action = $this->evaluate($this->modifySelectAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function selectAllAction(?Closure $callback): static
+    {
+        $this->modifySelectAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getSelectAllActionName(): string
+    {
+        return 'selectAll';
+    }
+
+    public function getDeselectAllAction(): ?Action
+    {
+        $action = Action::make($this->getDeselectAllActionName())
+            ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
+            ->livewireClickHandlerEnabled(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyDeselectAllActionUsing) {
+            $action = $this->evaluate($this->modifyDeselectAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function deselectAllAction(?Closure $callback): static
+    {
+        $this->modifyDeselectAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getDeselectAllActionName(): string
+    {
+        return 'deselectAll';
+    }
+
+    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
+    {
+        $this->relationship = $relationshipName ?? $this->getName();
+        $this->relationshipTitleAttribute = $titleAttribute;
+
+        $this->options(static function (CheckboxList $component) use ($modifyOptionsQueryUsing): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query();
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -125,7 +195,16 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 
     public function getOptionLabelFromRecord(Model $record): string
     {
-        return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
+        return $this->evaluate(
+            $this->getOptionLabelFromRecordUsing,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
     }
 
     public function getRelationshipTitleAttribute(): string
@@ -133,14 +212,16 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return $this->evaluate($this->relationshipTitleAttribute);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->getRelationship()) {
-            return (string) str($this->getRelationshipName())
+            $label = (string) str($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();

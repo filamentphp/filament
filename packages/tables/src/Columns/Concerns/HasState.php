@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 
@@ -44,7 +45,7 @@ trait HasState
 
     public function getDefaultState(): mixed
     {
-        return $this->evaluate($this->defaultState, exceptParameters: ['state']);
+        return $this->evaluate($this->defaultState);
     }
 
     public function getState(): mixed
@@ -54,7 +55,7 @@ trait HasState
         }
 
         $state = $this->getStateUsing ?
-            $this->evaluate($this->getStateUsing, exceptParameters: ['state']) :
+            $this->evaluate($this->getStateUsing) :
             $this->getStateFromRecord();
 
         if (is_string($state) && ($separator = $this->getSeparator())) {
@@ -91,8 +92,11 @@ trait HasState
             return null;
         }
 
+        $relationshipAttribute = $this->getRelationshipAttribute();
+
         $state = collect($this->getRelationshipResults($record))
-            ->pluck($this->getRelationshipAttribute())
+            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
+            ->pluck($relationshipAttribute)
             ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
             ->values();
 

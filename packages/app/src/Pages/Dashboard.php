@@ -46,9 +46,9 @@ class Dashboard extends Page
     }
 
     /**
-     * @return int | array<string, int | null>
+     * @return int | string | array<string, int | string | null>
      */
-    public function getColumns(): int | array
+    public function getColumns(): int | string | array
     {
         return 2;
     }

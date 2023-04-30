@@ -2,6 +2,8 @@
 title: Rich editor
 ---
 
+## Overview
+
 The rich editor allows you to edit and preview HTML content, as well as upload images.
 
 ```php
@@ -12,9 +14,9 @@ RichEditor::make('content')
 
 ![](https://user-images.githubusercontent.com/41773797/147613608-b1236c72-d5cf-40d5-aa73-70c37a5c7e4d.png)
 
-## Toolbar buttons
+## Customizing the toolbar buttons
 
-You may enable / disable toolbar buttons using a range of convenient methods:
+You may set the toolbar buttons for the editor using the `toolbarButtons()` method:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -35,22 +37,21 @@ RichEditor::make('content')
         'strike',
         'undo',
     ])
+```
+
+Alternatively, you may disable specific buttons using the `disableToolbarButtons()` method:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
 RichEditor::make('content')
     ->disableToolbarButtons([
-        'attachFiles',
-        'codeBlock',
-    ])
-RichEditor::make('content')
-    ->disableAllToolbarButtons()
-    ->enableToolbarButtons([
-        'bold',
-        'bulletList',
-        'italic',
+        'blockquote',
         'strike',
     ])
 ```
 
-## Image uploads
+## Uploading images to the editor
 
 You may customize how images are uploaded using configuration methods:
 

@@ -24,7 +24,7 @@ class DissociateAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::dissociate.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-actions::dissociate.single.modal.actions.dissociate.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::dissociate.single.modal.actions.dissociate.label'));
 
         $this->successNotificationTitle(__('filament-actions::dissociate.single.messages.dissociated'));
 

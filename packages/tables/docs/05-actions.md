@@ -2,6 +2,8 @@
 title: Actions
 ---
 
+## Overview
+
 Filament's tables can use [actions](../actions). They are buttons that can be added to the [end of any table row](#row-actions), or even in the [header](#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](#bulk-actions) can be used to execute code when records in the table are selected. Additionally, actions can be added to any [table column](#column-actions), such that each cell in that column is a trigger for your action.
 
 It's highly advised that you read the documentation about [customizing action trigger buttons](../actions/trigger-button) and [action modals](../actions/modals) to that you are aware of the full capabilities of actions.
@@ -22,7 +24,7 @@ public function table(Table $table): Table
 }
 ```
 
-Actions may be created using the static `make()` method, passing its name. The name of the action should be unique.
+Actions may be created using the static `make()` method, passing its unique name. The name of the action should be unique.
 
 You can then pass a callback to `action()` which executes the task, or a callback to `url()` which generates a link URL:
 
@@ -74,7 +76,7 @@ public function table(Table $table): Table
 }
 ```
 
-Bulk actions may be created using the static `make()` method, passing its name. The name of the action should be unique. You should then pass a callback to `action()` which executes the task:
+Bulk actions may be created using the static `make()` method, passing its unique name. The name of the action should be unique. You should then pass a callback to `action()` which executes the task:
 
 ```php
 use Filament\Tables\Actions\BulkAction;

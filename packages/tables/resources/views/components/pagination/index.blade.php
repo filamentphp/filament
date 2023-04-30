@@ -60,14 +60,14 @@
                     </x-filament::button>
                 @endif
             @else
-                <div class="pl-2 text-sm font-medium dark:text-white">
+                <div class="ps-2 text-sm font-medium dark:text-white">
                     {{ trans_choice(
                         'filament-tables::table.pagination.overview',
                         $paginator->total(),
                         [
-                            'first' => $paginator->firstItem(),
-                            'last' => $paginator->lastItem(),
-                            'total' => $paginator->total(),
+                            'first' => \Filament\Support\format_number($paginator->firstItem()),
+                            'last' => \Filament\Support\format_number($paginator->lastItem()),
+                            'total' => \Filament\Support\format_number($paginator->total()),
                         ],
                     ) }}
                 </div>
@@ -117,7 +117,7 @@
                                         <x-filament-tables::pagination.item
                                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                                             :label="$page"
-                                            :aria-label="__('filament-tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
+                                            :aria-label="trans_choice('filament-tables::table.pagination.buttons.go_to_page.label', $page, ['page' => $page])"
                                             :active="$page === $paginator->currentPage()"
                                             :wire:key="$this->id . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
                                         />

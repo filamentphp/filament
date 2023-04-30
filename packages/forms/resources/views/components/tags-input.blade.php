@@ -99,7 +99,7 @@
                             @unless ($isDisabled)
                                 <x-filament::icon
                                     name="heroicon-m-x-mark"
-                                    alias="filament-forms::components.tags-input.buttons.delete-tag"
+                                    alias="filament-forms::components.tags-input.actions.delete-tag"
                                     size="h-3 w-3"
                                     class="shrink-0"
                                 />

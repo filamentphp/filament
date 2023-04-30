@@ -359,14 +359,14 @@
 
                             <div class="trix-button-group">
                                 <input
-                                    value="{{ __('filament-forms::components.rich_editor.dialogs.link.buttons.link') }}"
+                                    value="{{ __('filament-forms::components.rich_editor.dialogs.link.actions.link') }}"
                                     data-trix-method="setAttribute"
                                     type="button"
                                     class="trix-button trix-button--dialog"
                                 >
 
                                 <input
-                                    value="{{ __('filament-forms::components.rich_editor.dialogs.link.buttons.unlink') }}"
+                                    value="{{ __('filament-forms::components.rich_editor.dialogs.link.actions.unlink') }}"
                                     data-trix-method="removeAttribute"
                                     type="button"
                                     class="trix-button trix-button--dialog"

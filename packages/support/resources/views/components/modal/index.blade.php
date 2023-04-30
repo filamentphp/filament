@@ -2,7 +2,7 @@
     'actions' => null,
     'ariaLabelledby' => null,
     'closeButton' => true,
-    'closeByClickingAway' => true,
+    'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
     'closeEventName' => 'close-modal',
     'displayClasses' => 'inline-block',
     'footer' => null,
@@ -79,6 +79,7 @@
                 'filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50',
                 'cursor-pointer' => $closeByClickingAway,
             ])
+            style="will-change: transform;"
         ></div>
 
         <div
@@ -91,7 +92,7 @@
         >
             <div
                 x-data="{ isShown: false }"
-                x-init="$nextTick(()=> {
+                x-init="$nextTick(() => {
                     isShown = isOpen
                     $watch('isOpen', () => isShown = isOpen)
                 })"
@@ -118,7 +119,7 @@
                 @class([
                     'filament-modal-window w-full py-2 bg-white cursor-default pointer-events-auto dark:bg-gray-800',
                     'relative' => $width !== 'screen',
-                    'h-screen overflow-y-auto ml-auto mr-0 rtl:mr-auto rtl:ml-0' => $slideOver,
+                    'h-screen overflow-y-auto ms-auto' => $slideOver,
                     'rounded-xl mx-auto' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
@@ -139,7 +140,7 @@
                     <button
                         tabindex="-1"
                         type="button"
-                        class="absolute top-2 right-2 rtl:right-auto rtl:left-2"
+                        class="absolute top-2 end-2"
                         @if (filled($id))
                             x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                         @else

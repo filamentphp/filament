@@ -26,7 +26,7 @@ class CreateAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::create.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalButton(__('filament-actions::create.single.modal.actions.create.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
         $this->extraModalActions(function (): array {
             return $this->canCreateAnother() ? [
@@ -36,8 +36,6 @@ class CreateAction extends Action
         });
 
         $this->successNotificationTitle(__('filament-actions::create.single.messages.created'));
-
-        $this->button();
 
         $this->groupedIcon('heroicon-m-plus');
 
@@ -66,8 +64,6 @@ class CreateAction extends Action
             }
 
             $this->success();
-
-            $this->record(null);
         });
     }
 

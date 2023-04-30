@@ -2,7 +2,7 @@
 title: Stats overview widgets
 ---
 
-## Getting started
+## Overview
 
 Filament comes with a "stats overview" widget template, which you can use to display a number of different stats in a single widget, without needing to write a custom view.
 
@@ -37,7 +37,7 @@ class StatsOverview extends BaseWidget
 
 Now, check out your widget in the dashboard.
 
-## Card descriptions and icons
+## Adding a description and icon to a card
 
 You may add a `description()` to provide additional information, along with a `descriptionIcon()`:
 
@@ -58,7 +58,7 @@ protected function getCards(): array
 }
 ```
 
-## Card colors
+## Changing the color of the card
 
 You may also give cards a `color()` (`primary`, `success`, `warning` or `danger`):
 
@@ -82,7 +82,7 @@ protected function getCards(): array
 }
 ```
 
-## Card extra HTML attributes
+## Adding extra HTML attributes to a card
 
 You may also pass extra HTML attributes to cards using `extraAttributes()`:
 
@@ -101,7 +101,7 @@ protected function getCards(): array
 }
 ```
 
-## Card charts
+## Adding a chart to stats cards
 
 You may also add or chain a `chart()` to each card to provide historical data. The `chart()` method accepts an array of data points to plot:
 
@@ -119,7 +119,7 @@ protected function getCards(): array
 }
 ```
 
-## Live updating (polling)
+## Live updating stats (polling)
 
 By default, stats overview widgets refresh their data every 5 seconds.
 

@@ -24,7 +24,7 @@ class DetachAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::detach.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-actions::detach.single.modal.actions.detach.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::detach.single.modal.actions.detach.label'));
 
         $this->successNotificationTitle(__('filament-actions::detach.single.messages.detached'));
 

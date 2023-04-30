@@ -25,6 +25,8 @@ class Section extends Component
 
     protected bool | Closure | null $isAside = null;
 
+    protected string | Closure | null $icon = null;
+
     final public function __construct(string | Htmlable | Closure $heading)
     {
         $this->heading($heading);
@@ -66,6 +68,13 @@ class Section extends Component
         return $this;
     }
 
+    public function icon(string | Closure | null $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
     public function getDescription(): string | Htmlable | null
     {
         return $this->evaluate($this->description);
@@ -94,5 +103,10 @@ class Section extends Component
     public function isAside(): bool
     {
         return (bool) ($this->evaluate($this->isAside) ?? false);
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->evaluate($this->icon);
     }
 }

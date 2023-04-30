@@ -1,6 +1,8 @@
 name: generate-docs-screenshots
 
-on: push
+on:
+  push:
+    tags: '*'
 
 jobs:
   take-screenshots:
@@ -30,6 +32,7 @@ jobs:
         run: |
           cd docs-assets/app
           composer install --no-interaction
+          npm ci && npm run build
           php artisan serve &
       - name: Run script
         run: |

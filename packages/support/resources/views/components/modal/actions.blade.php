@@ -1,5 +1,5 @@
 @props([
-    'alignment' => \Filament\Actions\Modal\Actions\Action::getAlignment(),
+    'alignment' => \Filament\Actions\MountableAction::getModalActionsAlignment(),
     'fullWidth' => false,
 ])
 

@@ -270,10 +270,10 @@ export default function dateTimePickerFormComponent({
                 return true
             }
 
-            if (this.getMaxDate() && date.isAfter(this.getMaxDate())) {
+            if (this.getMaxDate() && date.isAfter(this.getMaxDate(), 'day')) {
                 return true
             }
-            if (this.getMinDate() && date.isBefore(this.getMinDate())) {
+            if (this.getMinDate() && date.isBefore(this.getMinDate(), 'day')) {
                 return true
             }
 
@@ -491,6 +491,7 @@ const locales = {
     it: require('dayjs/locale/it'),
     ja: require('dayjs/locale/ja'),
     ka: require('dayjs/locale/ka'),
+    km: require('dayjs/locale/km'),
     ku: require('dayjs/locale/ku'),
     ms: require('dayjs/locale/ms'),
     my: require('dayjs/locale/my'),

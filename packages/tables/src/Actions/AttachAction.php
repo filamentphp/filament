@@ -46,7 +46,7 @@ class AttachAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::attach.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalButton(__('filament-actions::attach.single.modal.actions.attach.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::attach.single.modal.actions.attach.label'));
 
         $this->modalWidth('lg');
 
@@ -60,8 +60,6 @@ class AttachAction extends Action
         $this->successNotificationTitle(__('filament-actions::attach.single.messages.attached'));
 
         $this->color('gray');
-
-        $this->button();
 
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
@@ -238,9 +236,10 @@ class AttachAction extends Action
                     ! $table->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $table->getInverseRelationship(),
-                        function (Builder $query) use ($table): Builder {
-                            return $query->where($table->getRelationship()->getParent()->getQualifiedKeyName(), $table->getRelationship()->getParent()->getKey());
-                        },
+                        fn (Builder $query): Builder => $query->where(
+                            $query->qualifyColumn($table->getRelationship()->getParent()->getKeyName()),
+                            $table->getRelationship()->getParent()->getKey(),
+                        ),
                     ),
                 )
                 ->get()

@@ -4,7 +4,8 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\MountableAction;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
+use Illuminate\Support\Collection;
 
 class BulkAction extends MountableAction
 {
@@ -29,7 +30,7 @@ class BulkAction extends MountableAction
     public function call(array $parameters = []): mixed
     {
         try {
-            return $this->evaluate($this->getAction(), $parameters);
+            return $this->evaluate($this->getActionFunction(), $parameters);
         } finally {
             if ($this->shouldDeselectRecordsAfterCompletion()) {
                 $this->getLivewire()->deselectAllTableRecords();
@@ -48,28 +49,38 @@ class BulkAction extends MountableAction
         return $action;
     }
 
-    public function getLivewireCallActionName(): string
+    public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedTableBulkAction';
     }
 
-    public function getAlpineMountAction(): ?string
+    public function getAlpineClickHandler(): ?string
     {
         return "mountBulkAction('{$this->getName()}')";
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'records' => $this->resolveEvaluationParameter(
-                'records',
-                fn (): ?Collection => $this->getRecords(),
-            ),
-            'table' => $this->getTable(),
-        ]);
+        return match ($parameterName) {
+            'records' => [$this->getRecords()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        return match ($parameterType) {
+            Collection::class => [$this->getRecords()],
+            EloquentCollection::class => [$this->getRecords()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 
     /**

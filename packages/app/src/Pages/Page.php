@@ -30,6 +30,8 @@ abstract class Page extends BasePage
 
     public static string $formActionsAlignment = 'left';
 
+    public static bool $formActionsAreSticky = false;
+
     public static bool $hasInlineLabels = false;
 
     /**
@@ -72,9 +74,9 @@ abstract class Page extends BasePage
     {
         $context ??= Filament::getCurrentContext()->getId();
 
-        $slug = static::getSlug();
-
-        return "filament.{$context}.pages.{$slug}";
+        return (string) str(static::getSlug())
+            ->replace('/', '.')
+            ->prepend("filament.{$context}.pages.");
     }
 
     /**
@@ -156,9 +158,9 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return int | array<string, int | null>
+     * @return int | string | array<string, int | string | null>
      */
-    public function getHeaderWidgetsColumns(): int | array
+    public function getHeaderWidgetsColumns(): int | string | array
     {
         return 2;
     }
@@ -189,9 +191,9 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return int | array<string, int | null>
+     * @return int | string | array<string, int | string | null>
      */
-    public function getFooterWidgetsColumns(): int | array
+    public function getFooterWidgetsColumns(): int | string | array
     {
         return 2;
     }
@@ -199,6 +201,11 @@ abstract class Page extends BasePage
     public static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;
+    }
+
+    public static function stickyFormActions(bool $condition = true): void
+    {
+        static::$formActionsAreSticky = $condition;
     }
 
     public static function alignFormActionsLeft(): void
@@ -219,6 +226,11 @@ abstract class Page extends BasePage
     public function getFormActionsAlignment(): string
     {
         return static::$formActionsAlignment;
+    }
+
+    public function areFormActionsSticky(): bool
+    {
+        return static::$formActionsAreSticky;
     }
 
     public function hasInlineLabels(): bool

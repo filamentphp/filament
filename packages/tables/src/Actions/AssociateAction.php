@@ -47,7 +47,7 @@ class AssociateAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::associate.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalButton(__('filament-actions::associate.single.modal.actions.associate.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::associate.single.modal.actions.associate.label'));
 
         $this->modalWidth('lg');
 
@@ -61,8 +61,6 @@ class AssociateAction extends Action
         $this->successNotificationTitle(__('filament-actions::associate.single.messages.associated'));
 
         $this->color('gray');
-
-        $this->button();
 
         $this->form(fn (): array => [$this->getRecordSelect()]);
 
@@ -236,11 +234,21 @@ class AssociateAction extends Action
             return $relationshipQuery
                 ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use ($relationship): Builder {
                     if ($relationship instanceof MorphMany) {
-                        return $query->where($relationship->getMorphType(), $relationship->getMorphClass())
-                            ->where($relationship->getQualifiedForeignKeyName(), $relationship->getParent()->getKey());
+                        return $query
+                            ->where(
+                                $relationship->getMorphType(),
+                                $relationship->getMorphClass(),
+                            )
+                            ->where(
+                                $relationship->getQualifiedForeignKeyName(),
+                                $relationship->getParent()->getKey()
+                            );
                     }
 
-                    return $query->where($relationship->getParent()->getQualifiedKeyName(), $relationship->getParent()->getKey());
+                    return $query->where(
+                        $query->qualifyColumn($relationship->getParent()->getKeyName()),
+                        $relationship->getParent()->getKey(),
+                    );
                 })
                 ->get()
                 ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])

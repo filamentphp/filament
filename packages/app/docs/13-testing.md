@@ -2,6 +2,8 @@
 title: Testing
 ---
 
+## Overview
+
 All examples in this guide will be written using [Pest](https://pestphp.com). However, you can easily adapt this to a PHPUnit.
 
 Since all pages in the app are Livewire components, we're just using Livewire testing helpers everywhere. If you've never tested Livewire components before, please read [this guide](https://laravel-livewire.com/docs/testing) from the Livewire docs.
@@ -137,7 +139,7 @@ it('can retrieve data', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
             'author_id' => $post->author->getKey(),
@@ -160,7 +162,7 @@ it('can save', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->fillForm([
             'author_id' => $newData->author->getKey(),
@@ -172,7 +174,7 @@ it('can save', function () {
         ->assertHasNoFormErrors();
 
     expect($post->refresh())
-        ->author->toBeSameModel($newData->author)
+        ->author_id->toBe($newData->author->getKey())
         ->content->toBe($newData->content)
         ->tags->toBe($newData->tags)
         ->title->toBe($newData->title);
@@ -191,7 +193,7 @@ it('can validate input', function () {
     $newData = Post::factory()->make();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->fillForm([
             'title' => null,
@@ -213,7 +215,7 @@ it('can delete', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->callPageAction(DeleteAction::class);
 
@@ -231,7 +233,7 @@ it('can not delete', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\EditPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->assertPageActionHidden(DeleteAction::class);
 });
@@ -262,7 +264,7 @@ it('can retrieve data', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ViewPost::class, [
-        'record' => $post->getKey(),
+        'record' => $post->getRouteKey(),
     ])
         ->assertFormSet([
             'author_id' => $post->author->getKey(),

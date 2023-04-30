@@ -10,6 +10,8 @@ trait HasState
 {
     protected ?string $statePath = null;
 
+    protected string $cachedFullStatePath;
+
     public function callAfterStateHydrated(): void
     {
         foreach ($this->getComponents(withHidden: true) as $component) {
@@ -228,6 +230,10 @@ trait HasState
 
     public function getStatePath(bool $isAbsolute = true): string
     {
+        if (isset($this->cachedFullStatePath)) {
+            return $this->cachedFullStatePath;
+        }
+
         $pathComponents = [];
 
         if ($isAbsolute && $parentComponentStatePath = $this->getParentComponent()?->getStatePath()) {
@@ -238,6 +244,11 @@ trait HasState
             $pathComponents[] = $statePath;
         }
 
-        return implode('.', $pathComponents);
+        return $this->cachedFullStatePath = implode('.', $pathComponents);
+    }
+
+    protected function flushCachedStatePath(): void
+    {
+        unset($this->cachedFullStatePath);
     }
 }

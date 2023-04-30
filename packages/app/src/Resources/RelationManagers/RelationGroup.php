@@ -107,11 +107,32 @@ class RelationGroup extends Component
         return $this->pageClass;
     }
 
-    protected function getDefaultEvaluationParameters(): array
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return [
-            'ownerRecord' => $this->getOwnerRecord(),
-            'pageClass' => $this->getPageClass(),
-        ];
+        return match ($parameterName) {
+            'ownerRecord' => [$this->getOwnerRecord()],
+            'pageClass' => [$this->getPageClass()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $ownerRecord = $this->getOwnerRecord();
+
+        if (! $ownerRecord) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $ownerRecord::class => [$ownerRecord],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

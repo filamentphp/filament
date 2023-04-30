@@ -4,7 +4,7 @@ return [
 
     'builder' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'ထည့်သွင်း :label',
@@ -36,7 +36,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'လိုင်းထည့်ပါ',
@@ -81,7 +81,7 @@ return [
 
     'repeater' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'ထည့်သွင်း :label',
@@ -109,7 +109,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'ချိတ်ပါ',
                     'unlink' => 'မချိတ်ပါ',
                 ],

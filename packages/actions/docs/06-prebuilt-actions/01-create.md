@@ -182,9 +182,9 @@ If you'd like the action modal to close too, you can completely `cancel()` the a
 $action->cancel();
 ```
 
-## Wizards
+## Using a wizard
 
-You may easily transform the creation process into a multistep wizard. Define a `steps()` array and pass your `Step` objects:
+You may easily transform the creation process into a multistep wizard. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -195,7 +195,7 @@ use Filament\Forms\Components\Wizard\Step;
 CreateAction::make()
     ->steps([
         Step::make('Name')
-            ->description('Give the category a clear and unique name')
+            ->description('Give the category a unique name')
             ->schema([
                 TextInput::make('name')
                     ->required()
@@ -204,13 +204,13 @@ CreateAction::make()
                 TextInput::make('slug')
                     ->disabled()
                     ->required()
-                    ->unique(Category::class, 'slug', fn ($record) => $record),
-            ]),
+                    ->unique(Category::class, 'slug'),
+            ])
+            ->columns(2),
         Step::make('Description')
             ->description('Add some extra details')
             ->schema([
-                MarkdownEditor::make('description')
-                    ->columnSpan('full'),
+                MarkdownEditor::make('description'),
             ]),
         Step::make('Visibility')
             ->description('Control who can view it')

@@ -30,9 +30,18 @@ class IconColumn extends Column
 
     protected string | Closure | null $trueIcon = null;
 
+    protected bool | Closure $isListWithLineBreaks = false;
+
     public function boolean(bool | Closure $condition = true): static
     {
         $this->isBoolean = $condition;
+
+        return $this;
+    }
+
+    public function listWithLineBreaks(bool | Closure $condition = true): static
+    {
+        $this->isListWithLineBreaks = $condition;
 
         return $this;
     }
@@ -154,5 +163,10 @@ class IconColumn extends Column
     public function isBoolean(): bool
     {
         return (bool) $this->evaluate($this->isBoolean);
+    }
+
+    public function isListWithLineBreaks(): bool
+    {
+        return $this->evaluate($this->isListWithLineBreaks);
     }
 }

@@ -16,4 +16,14 @@ class TenantSet
         protected Model | Authenticatable | HasTenants $user,
     ) {
     }
+
+    public function getTenant(): Model
+    {
+        return $this->tenant;
+    }
+
+    public function getUser(): Model | Authenticatable | HasTenants
+    {
+        return $this->user;
+    }
 }

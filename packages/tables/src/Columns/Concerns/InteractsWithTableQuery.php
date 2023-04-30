@@ -75,48 +75,40 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
-        $searchOperator = match ($databaseConnection->getDriverName()) {
-            'pgsql' => 'ilike',
-            default => 'like',
-        };
-
         $model = $query->getModel();
+
+        $translatableContentDriver = $this->getLivewire()->makeTableTranslatableContentDriver();
 
         foreach ($this->getSearchColumns() as $searchColumn) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->when(
-                method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchColumn),
-                function (EloquentBuilder $query) use ($searchColumn, $searchOperator, $search, $whereClause, $databaseConnection): EloquentBuilder {
-                    $activeLocale = $this->getLivewire()->getActiveTableLocale() ?: app()->getLocale();
+                $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $searchColumn),
+                fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause),
+                function (EloquentBuilder $query) use ($search, $searchColumn, $whereClause): EloquentBuilder {
+                    /** @var Connection $databaseConnection */
+                    $databaseConnection = $query->getConnection();
 
-                    $searchColumn = match ($databaseConnection->getDriverName()) {
-                        'pgsql' => "{$searchColumn}->>'{$activeLocale}'",
-                        default => "json_extract({$searchColumn}, \"$.{$activeLocale}\")",
+                    $searchOperator = match ($databaseConnection->getDriverName()) {
+                        'pgsql' => 'ilike',
+                        default => 'like',
                     };
 
-                    return $query->{"{$whereClause}Raw"}(
-                        "lower({$searchColumn}) {$searchOperator} ?",
-                        "%{$search}%",
+                    return $query->when(
+                        $this->queriesRelationships($query->getModel()),
+                        fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
+                            $this->getRelationshipName(),
+                            $searchColumn,
+                            $searchOperator,
+                            "%{$search}%",
+                        ),
+                        fn (EloquentBuilder $query): EloquentBuilder => $query->{$whereClause}(
+                            $searchColumn,
+                            $searchOperator,
+                            "%{$search}%",
+                        ),
                     );
                 },
-                fn (EloquentBuilder $query): EloquentBuilder => $query->when(
-                    $this->queriesRelationships($query->getModel()),
-                    fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
-                        $this->getRelationshipName(),
-                        $searchColumn,
-                        $searchOperator,
-                        "%{$search}%",
-                    ),
-                    fn (EloquentBuilder $query): EloquentBuilder => $query->{$whereClause}(
-                        $searchColumn,
-                        $searchOperator,
-                        "%{$search}%",
-                    ),
-                ),
             );
 
             $isFirst = false;

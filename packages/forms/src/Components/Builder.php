@@ -6,6 +6,7 @@ use Closure;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -21,9 +22,9 @@ class Builder extends Field implements Contracts\CanConcealComponents
      */
     protected string $view = 'filament-forms::components.builder';
 
-    protected string | Closure | null $addBetweenButtonLabel = null;
+    protected string | Closure | null $addBetweenActionLabel = null;
 
-    protected string | Closure | null $addButtonLabel = null;
+    protected string | Closure | null $addActionLabel = null;
 
     protected bool | Closure $isReorderable = true;
 
@@ -38,6 +39,28 @@ class Builder extends Field implements Contracts\CanConcealComponents
     protected bool | Closure $hasBlockNumbers = true;
 
     protected bool | Closure $isInset = false;
+
+    protected ?Closure $modifyAddActionUsing = null;
+
+    protected ?Closure $modifyAddBetweenActionUsing = null;
+
+    protected ?Closure $modifyCloneActionUsing = null;
+
+    protected ?Closure $modifyDeleteActionUsing = null;
+
+    protected ?Closure $modifyMoveDownActionUsing = null;
+
+    protected ?Closure $modifyMoveUpActionUsing = null;
+
+    protected ?Closure $modifyReorderActionUsing = null;
+
+    protected ?Closure $modifyCollapseActionUsing = null;
+
+    protected ?Closure $modifyExpandActionUsing = null;
+
+    protected ?Closure $modifyCollapseAllActionUsing = null;
+
+    protected ?Closure $modifyExpandAllActionUsing = null;
 
     protected function setUp(): void
     {
@@ -55,143 +78,19 @@ class Builder extends Field implements Contracts\CanConcealComponents
             $component->state($items);
         });
 
-        $this->registerListeners([
-            'builder::add' => [
-                function (Builder $component, string $statePath, string $block, ?string $afterUuid = null): void {
-                    if (! $component->isAddable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $livewire = $component->getLivewire();
-
-                    $newUuid = (string) Str::uuid();
-                    $newItem = [
-                        'type' => $block,
-                        'data' => [],
-                    ];
-
-                    if ($afterUuid) {
-                        $newItems = [];
-
-                        foreach ($component->getState() ?? [] as $uuid => $item) {
-                            $newItems[$uuid] = $item;
-
-                            if ($uuid === $afterUuid) {
-                                $newItems[$newUuid] = $newItem;
-                            }
-                        }
-
-                        data_set($livewire, $statePath, $newItems);
-                    } else {
-                        data_set($livewire, "{$statePath}.{$newUuid}", $newItem);
-                    }
-
-                    $component->getChildComponentContainers()[$newUuid]->fill();
-
-                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
-                },
-            ],
-            'builder::delete' => [
-                function (Builder $component, string $statePath, string $uuidToDelete): void {
-                    if (! $component->isDeletable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $items = $component->getState();
-
-                    unset($items[$uuidToDelete]);
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, $statePath, $items);
-                },
-            ],
-            'builder::cloneItem' => [
-                function (Builder $component, string $statePath, string $uuidToDuplicate): void {
-                    if (! $component->isCloneable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $newUuid = (string) Str::uuid();
-
-                    $livewire = $component->getLivewire();
-                    data_set(
-                        $livewire,
-                        "{$statePath}.{$newUuid}",
-                        data_get($livewire, "{$statePath}.{$uuidToDuplicate}"),
-                    );
-
-                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
-                },
-            ],
-            'builder::moveItemDown' => [
-                function (Builder $component, string $statePath, string $uuidToMoveDown): void {
-                    if (! $component->isReorderable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $items = array_move_after($component->getState(), $uuidToMoveDown);
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, $statePath, $items);
-                },
-            ],
-            'builder::moveUp' => [
-                function (Builder $component, string $statePath, string $uuidToMoveUp): void {
-                    if (! $component->isReorderable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $items = array_move_before($component->getState(), $uuidToMoveUp);
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, $statePath, $items);
-                },
-            ],
-            'builder::reorder' => [
-                function (Builder $component, string $statePath, array $uuids): void {
-                    if (! $component->isReorderable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $items = array_merge(array_flip($uuids), $component->getState());
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, $statePath, $items);
-                },
-            ],
+        $this->registerActions([
+            fn (Builder $component): ?Action => $component->getAddAction(),
+            fn (Builder $component): ?Action => $component->getAddBetweenAction(),
+            fn (Builder $component): ?Action => $component->getCloneAction(),
+            fn (Builder $component): ?Action => $component->getCollapseAction(),
+            fn (Builder $component): ?Action => $component->getCollapseAllAction(),
+            fn (Builder $component): ?Action => $component->getDeleteAction(),
+            fn (Builder $component): ?Action => $component->getExpandAction(),
+            fn (Builder $component): ?Action => $component->getExpandAllAction(),
+            fn (Builder $component): ?Action => $component->getMoveDownAction(),
+            fn (Builder $component): ?Action => $component->getMoveUpAction(),
+            fn (Builder $component): ?Action => $component->getReorderAction(),
         ]);
-
-        $this->addBetweenButtonLabel(__('filament-forms::components.builder.buttons.add_between.label'));
-
-        $this->addButtonLabel(static function (Builder $component) {
-            return __('filament-forms::components.builder.buttons.add.label', [
-                'label' => Str::lcfirst($component->getLabel()),
-            ]);
-        });
 
         $this->mutateDehydratedStateUsing(static function (?array $state): array {
             return array_values($state ?? []);
@@ -199,45 +98,478 @@ class Builder extends Field implements Contracts\CanConcealComponents
     }
 
     /**
-     * @param  array<Block>  $blocks
+     * @param  array<Block> | Closure  $blocks
      */
-    public function blocks(array $blocks): static
+    public function blocks(array | Closure $blocks): static
     {
         $this->childComponents($blocks);
 
         return $this;
     }
 
-    public function addBetweenButtonLabel(string | Closure | null $label): static
+    public function getAddAction(): ?Action
     {
-        $this->addBetweenButtonLabel = $label;
+        if (! $this->isAddable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getAddActionName())
+            ->label(fn (Builder $component) => $component->getAddActionLabel())
+            ->action(function (array $arguments, Builder $component): void {
+                $newUuid = (string) Str::uuid();
+
+                $items = $component->getState();
+                $items[$newUuid] = [
+                    'type' => $arguments['block'],
+                    'data' => [],
+                ];
+
+                $component->state($items);
+
+                $component->getChildComponentContainers()[$newUuid]->fill();
+
+                $component->collapsed(false, shouldMakeComponentCollapsible: false);
+            })
+            ->livewireClickHandlerEnabled(false)
+            ->button()
+            ->outlined()
+            ->size('sm');
+
+        if ($this->modifyAddActionUsing) {
+            $action = $this->evaluate($this->modifyAddActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function addAction(?Closure $callback): static
+    {
+        $this->modifyAddActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getAddActionName(): string
+    {
+        return 'add';
+    }
+
+    public function getAddBetweenAction(): ?Action
+    {
+        if (! $this->isAddable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getAddBetweenActionName())
+            ->label(fn (Builder $component) => $component->getAddBetweenActionLabel())
+            ->icon('heroicon-m-plus')
+            ->action(function (array $arguments, Builder $component): void {
+                $newUuid = (string) Str::uuid();
+
+                $items = [];
+
+                foreach ($component->getState() ?? [] as $uuid => $item) {
+                    $items[$uuid] = $item;
+
+                    if ($uuid === $arguments['afterItem']) {
+                        $items[$newUuid] = [
+                            'type' => $arguments['block'],
+                            'data' => [],
+                        ];
+                    }
+                }
+
+                $component->state($items);
+
+                $component->getChildComponentContainers()[$newUuid]->fill();
+
+                $component->collapsed(false, shouldMakeComponentCollapsible: false);
+            })
+            ->livewireClickHandlerEnabled(false)
+            ->iconButton()
+            ->size('sm');
+
+        if ($this->modifyAddBetweenActionUsing) {
+            $action = $this->evaluate($this->modifyAddBetweenActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function addBetweenAction(?Closure $callback): static
+    {
+        $this->modifyAddBetweenActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getAddBetweenActionName(): string
+    {
+        return 'addBetween';
+    }
+
+    public function getCloneAction(): ?Action
+    {
+        if (! $this->isCloneable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getCloneActionName())
+            ->label(__('filament-forms::components.builder.actions.clone.label'))
+            ->icon('heroicon-m-square-2-stack')
+            ->color('gray')
+            ->action(function (array $arguments, Builder $component): void {
+                $newUuid = (string) Str::uuid();
+
+                $items = $component->getState();
+                $items[$newUuid] = $items[$arguments['item']];
+
+                $component->state($items);
+
+                $component->collapsed(false, shouldMakeComponentCollapsible: false);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyCloneActionUsing) {
+            $action = $this->evaluate($this->modifyCloneActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function cloneAction(?Closure $callback): static
+    {
+        $this->modifyCloneActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCloneActionName(): string
+    {
+        return 'clone';
+    }
+
+    public function getDeleteAction(): ?Action
+    {
+        if (! $this->isDeletable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getDeleteActionName())
+            ->label(__('filament-forms::components.builder.actions.delete.label'))
+            ->icon('heroicon-m-trash')
+            ->color('danger')
+            ->action(function (array $arguments, Builder $component): void {
+                $items = $component->getState();
+                unset($items[$arguments['item']]);
+
+                $component->state($items);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyDeleteActionUsing) {
+            $action = $this->evaluate($this->modifyDeleteActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function deleteAction(?Closure $callback): static
+    {
+        $this->modifyDeleteActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getDeleteActionName(): string
+    {
+        return 'delete';
+    }
+
+    public function getMoveDownAction(): ?Action
+    {
+        if (! $this->isReorderable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getMoveDownActionName())
+            ->label(__('filament-forms::components.builder.actions.move_down.label'))
+            ->icon('heroicon-m-chevron-down')
+            ->color('gray')
+            ->action(function (array $arguments, Builder $component): void {
+                $items = array_move_after($component->getState(), $arguments['item']);
+
+                $component->state($items);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyMoveDownActionUsing) {
+            $action = $this->evaluate($this->modifyMoveDownActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function moveDownAction(?Closure $callback): static
+    {
+        $this->modifyMoveDownActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getMoveDownActionName(): string
+    {
+        return 'moveDown';
+    }
+
+    public function getMoveUpAction(): ?Action
+    {
+        if (! $this->isReorderable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getMoveUpActionName())
+            ->label(__('filament-forms::components.builder.actions.move_up.label'))
+            ->icon('heroicon-m-chevron-up')
+            ->color('gray')
+            ->action(function (array $arguments, Builder $component): void {
+                $items = array_move_before($component->getState(), $arguments['item']);
+
+                $component->state($items);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyMoveUpActionUsing) {
+            $action = $this->evaluate($this->modifyMoveUpActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function moveUpAction(?Closure $callback): static
+    {
+        $this->modifyMoveUpActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getMoveUpActionName(): string
+    {
+        return 'moveUp';
+    }
+
+    public function getReorderAction(): ?Action
+    {
+        if (! $this->isReorderable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getReorderActionName())
+            ->label(__('filament-forms::components.builder.actions.reorder.label'))
+            ->icon('heroicon-m-arrows-up-down')
+            ->color('gray')
+            ->action(function (array $arguments, Builder $component): void {
+                $items = array_merge(array_flip($arguments['items']), $component->getState());
+
+                $component->state($items);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyReorderActionUsing) {
+            $action = $this->evaluate($this->modifyReorderActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function reorderAction(?Closure $callback): static
+    {
+        $this->modifyReorderActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getReorderActionName(): string
+    {
+        return 'reorder';
+    }
+
+    public function getCollapseAction(): ?Action
+    {
+        $action = Action::make($this->getCollapseActionName())
+            ->label(__('filament-forms::components.builder.actions.collapse.label'))
+            ->icon('heroicon-m-minus')
+            ->color('gray')
+            ->livewireClickHandlerEnabled(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyCollapseActionUsing) {
+            $action = $this->evaluate($this->modifyCollapseActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function collapseAction(?Closure $callback): static
+    {
+        $this->modifyCollapseActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCollapseActionName(): string
+    {
+        return 'collapse';
+    }
+
+    public function getExpandAction(): ?Action
+    {
+        $action = Action::make($this->getExpandActionName())
+            ->label(__('filament-forms::components.builder.actions.expand.label'))
+            ->icon('heroicon-m-plus')
+            ->color('gray')
+            ->livewireClickHandlerEnabled(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyExpandActionUsing) {
+            $action = $this->evaluate($this->modifyExpandActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function expandAction(?Closure $callback): static
+    {
+        $this->modifyExpandActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getExpandActionName(): string
+    {
+        return 'expand';
+    }
+
+    public function getCollapseAllAction(): ?Action
+    {
+        $action = Action::make($this->getCollapseAllActionName())
+            ->label(__('filament-forms::components.builder.actions.collapse_all.label'))
+            ->livewireClickHandlerEnabled(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyCollapseAllActionUsing) {
+            $action = $this->evaluate($this->modifyCollapseAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function collapseAllAction(?Closure $callback): static
+    {
+        $this->modifyCollapseAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCollapseAllActionName(): string
+    {
+        return 'collapseAll';
+    }
+
+    public function getExpandAllAction(): ?Action
+    {
+        $action = Action::make($this->getExpandAllActionName())
+            ->label(__('filament-forms::components.builder.actions.expand_all.label'))
+            ->livewireClickHandlerEnabled(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyExpandAllActionUsing) {
+            $action = $this->evaluate($this->modifyExpandAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function expandAllAction(?Closure $callback): static
+    {
+        $this->modifyExpandAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getExpandAllActionName(): string
+    {
+        return 'expandAll';
+    }
+
+    public function addBetweenActionLabel(string | Closure | null $label): static
+    {
+        $this->addBetweenActionLabel = $label;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `addBetweenButtonLabel()` instead.
+     * @deprecated Use `addBetweenActionLabel()` instead.
      */
     public function createItemBetweenButtonLabel(string | Closure | null $label): static
     {
-        $this->addBetweenButtonLabel($label);
+        $this->addBetweenActionLabel($label);
 
         return $this;
     }
 
-    public function addButtonLabel(string | Closure | null $label): static
+    public function addActionLabel(string | Closure | null $label): static
     {
-        $this->addButtonLabel = $label;
+        $this->addActionLabel = $label;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `addButtonLabel()` instead.
+     * @deprecated Use `addActionLabel()` instead.
      */
     public function createItemButtonLabel(string | Closure | null $label): static
     {
-        $this->addButtonLabel($label);
+        $this->addActionLabel($label);
 
         return $this;
     }
@@ -268,7 +600,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
      */
     public function disableItemCreation(bool | Closure $condition = true): static
     {
-        $this->addable(fn (Repeater $component): bool => ! $this->evaluate($condition));
+        $this->addable(fn (Builder $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
@@ -278,7 +610,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
      */
     public function disableItemDeletion(bool | Closure $condition = true): static
     {
-        $this->deletable(fn (Repeater $component): bool => ! $this->evaluate($condition));
+        $this->deletable(fn (Builder $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
@@ -288,7 +620,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
      */
     public function disableItemMovement(bool | Closure $condition = true): static
     {
-        $this->reorderable(fn (Repeater $component): bool => ! $this->evaluate($condition));
+        $this->reorderable(fn (Builder $component): bool => ! $this->evaluate($condition));
 
         return $this;
     }
@@ -375,21 +707,23 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 fn (array $itemData, $itemIndex): ComponentContainer => $this
                     ->getBlock($itemData['type'])
                     ->getChildComponentContainer()
-                    ->getClone()
                     ->statePath("{$itemIndex}.data")
-                    ->inlineLabel(false),
+                    ->inlineLabel(false)
+                    ->getClone(),
             )
             ->all();
     }
 
-    public function getAddBetweenButtonLabel(): string
+    public function getAddBetweenActionLabel(): string
     {
-        return $this->evaluate($this->addBetweenButtonLabel);
+        return $this->evaluate($this->addBetweenActionLabel) ?? __('filament-forms::components.builder.actions.add_between.label');
     }
 
-    public function getAddButtonLabel(): string
+    public function getAddActionLabel(): string
     {
-        return $this->evaluate($this->addButtonLabel);
+        return $this->evaluate($this->addActionLabel) ?? __('filament-forms::components.builder.actions.add.label', [
+            'label' => Str::lcfirst($this->getLabel()),
+        ]);
     }
 
     public function hasBlock(string $name): bool

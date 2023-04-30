@@ -57,10 +57,7 @@ trait InteractsWithRecord
 
     public function getRecord(): ?Model
     {
-        return $this->evaluate(
-            $this->record,
-            exceptParameters: ['record'],
-        );
+        return $this->evaluate($this->record);
     }
 
     public function getRecordTitle(?Model $record = null): ?string
@@ -70,7 +67,18 @@ trait InteractsWithRecord
 
     public function getCustomRecordTitle(?Model $record = null): ?string
     {
-        return $this->evaluate($this->recordTitle, ['record' => $record ?? $this->getRecord()]);
+        $record ??= $this->getRecord();
+
+        return $this->evaluate(
+            $this->recordTitle,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
     }
 
     public function getModel(): ?string

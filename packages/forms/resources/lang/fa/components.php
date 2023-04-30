@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'محتوا جمع شد',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'همسان‌سازی',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'لغو انتخاب همه',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'افزودن ردیف',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'محتوا جمع شد',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'افزودن به :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'لینک',
                     'unlink' => 'لغو لینک',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'قبلی',

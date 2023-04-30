@@ -6,6 +6,9 @@ trait Cloneable
 {
     public function getClone(): static
     {
-        return clone $this;
+        $clone = clone $this;
+        $clone->flushCachedStatePath();
+
+        return $clone;
     }
 }

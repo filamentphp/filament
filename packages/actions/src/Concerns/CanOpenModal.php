@@ -3,8 +3,8 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
-use Filament\Actions\Modal\Actions\Action;
-use Filament\Actions\Modal\Actions\Action as ModalAction;
+use Filament\Actions\MountableAction;
+use Filament\Actions\StaticAction;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -12,7 +12,7 @@ use Illuminate\Contracts\View\View;
 trait CanOpenModal
 {
     /**
-     * @var array<ModalAction> | Closure
+     * @var array<StaticAction> | Closure
      */
     protected array | Closure $extraModalActions = [];
 
@@ -21,15 +21,15 @@ trait CanOpenModal
     protected bool | Closure $isModalSlideOver = false;
 
     /**
-     * @var array<ModalAction> | Closure | null
+     * @var array<StaticAction> | Closure | null
      */
     protected array | Closure | null $modalActions = null;
 
-    protected ModalAction | Closure | null $modalCancelAction = null;
+    protected StaticAction | bool | Closure | null $modalCancelAction = null;
 
-    protected ModalAction | Closure | null $modalSubmitAction = null;
+    protected StaticAction | bool | Closure | null $modalSubmitAction = null;
 
-    protected string | Closure | null $modalButtonLabel = null;
+    protected string | Closure | null $modalSubmitActionLabel = null;
 
     protected View | Htmlable | Closure | null $modalContent = null;
 
@@ -67,17 +67,27 @@ trait CanOpenModal
     }
 
     /**
-     * @param  array<ModalAction> | Closure | null  $actions
+     * @param  array<StaticAction> | Closure | null  $actions
      */
     public function modalActions(array | Closure | null $actions = null): static
     {
-        $this->modalActions = $actions;
+        if (! is_array($actions)) {
+            $this->modalActions = $actions;
+
+            return $this;
+        }
+
+        $this->modalActions = [];
+
+        foreach ($actions as $action) {
+            $this->modalActions[$action->getName()] = $action;
+        }
 
         return $this;
     }
 
     /**
-     * @param  array<ModalAction> | Closure  $actions
+     * @param  array<StaticAction> | Closure  $actions
      */
     public function extraModalActions(array | Closure $actions): static
     {
@@ -86,23 +96,33 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalSubmitAction(ModalAction | Closure | null $action = null): static
+    public function modalSubmitAction(StaticAction | bool | Closure | null $action = null): static
     {
         $this->modalSubmitAction = $action;
 
         return $this;
     }
 
-    public function modalCancelAction(ModalAction | Closure | null $action = null): static
+    public function modalCancelAction(StaticAction | bool | Closure | null $action = null): static
     {
         $this->modalCancelAction = $action;
 
         return $this;
     }
 
+    public function modalSubmitActionLabel(string | Closure | null $label = null): static
+    {
+        $this->modalSubmitActionLabel = $label;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `modalSubmitActionLabel()` instead.
+     */
     public function modalButton(string | Closure | null $label = null): static
     {
-        $this->modalButtonLabel = $label;
+        $this->modalSubmitActionLabel($label);
 
         return $this;
     }
@@ -142,7 +162,10 @@ trait CanOpenModal
         return $this;
     }
 
-    abstract public function getLivewireCallActionName(): string;
+    public function getLivewireCallMountedActionName(): ?string
+    {
+        return null;
+    }
 
     public function modalHidden(bool | Closure | null $condition = false): static
     {
@@ -152,7 +175,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<Action>
+     * @return array<StaticAction>
      */
     public function getModalActions(): array
     {
@@ -160,75 +183,131 @@ trait CanOpenModal
             return [];
         }
 
-        if ($this->modalActions !== null) {
-            return $this->filterHiddenModalActions(
-                $this->evaluate($this->modalActions),
-            );
+        if (is_array($this->modalActions)) {
+            return $this->modalActions;
         }
 
-        $actions = array_merge(
-            [$this->getModalSubmitAction()],
-            $this->getExtraModalActions(),
-            [$this->getModalCancelAction()],
-        );
+        if ($this->modalActions instanceof Closure) {
+            $actions = [];
+
+            foreach ($this->evaluate($this->modalActions) as $action) {
+                $actions[$action->getName()] = $this->prepareModalAction($action);
+            }
+
+            return $this->modalActions = $actions;
+        }
+
+        $actions = [];
+
+        if ($submitAction = $this->getModalSubmitAction()) {
+            $actions['submit'] = $submitAction;
+        }
+
+        $actions = array_merge($actions, $this->getExtraModalActions());
+
+        if ($cancelAction = $this->getModalCancelAction()) {
+            $actions['cancel'] = $cancelAction;
+        }
 
         if ($this->isModalCentered()) {
             $actions = array_reverse($actions);
         }
 
-        return $this->filterHiddenModalActions($actions);
+        return $this->modalActions = $actions;
+    }
+
+    public function getMountableModalAction(string $name): ?MountableAction
+    {
+        $action = $this->getModalActions()[$name] ?? null;
+
+        if (! $action) {
+            return null;
+        }
+
+        if (! $action instanceof MountableAction) {
+            return null;
+        }
+
+        return $action;
+    }
+
+    public function prepareModalAction(StaticAction $action): StaticAction
+    {
+        if (! $action instanceof MountableAction) {
+            return $action;
+        }
+
+        return $action
+            ->livewire($this->getLivewire());
     }
 
     /**
-     * @param  array<ModalAction>  $actions
-     * @return array<ModalAction>
+     * @return array<StaticAction>
      */
-    protected function filterHiddenModalActions(array $actions): array
+    public function getVisibleModalActions(): array
     {
         return array_filter(
-            $actions,
-            fn (ModalAction $action): bool => $action->isVisible(),
+            $this->getModalActions(),
+            fn (StaticAction $action): bool => $action->isVisible(),
         );
     }
 
-    public function getModalSubmitAction(): ModalAction
+    public function getModalSubmitAction(): ?StaticAction
     {
-        if ($this->modalSubmitAction) {
-            return $this->evaluate($this->modalSubmitAction);
-        }
-
-        return static::makeModalAction('submit')
-            ->label($this->getModalButtonLabel())
-            ->submit($this->getLivewireCallActionName())
+        $action = static::makeModalAction('submit')
+            ->label($this->getModalSubmitActionLabel())
+            ->submit($this->getLivewireCallMountedActionName())
             ->color(match ($color = $this->getColor()) {
                 'gray' => 'primary',
                 default => $color,
             });
-    }
 
-    public function getModalCancelAction(): ModalAction
-    {
-        if ($this->modalCancelAction) {
-            return $this->evaluate($this->modalCancelAction);
+        if ($this->modalSubmitAction !== null) {
+            $action = $this->evaluate($this->modalSubmitAction, ['action' => $action]) ?? $action;
         }
 
-        return static::makeModalAction('cancel')
+        if ($action === false) {
+            return null;
+        }
+
+        return $action;
+    }
+
+    public function getModalCancelAction(): ?StaticAction
+    {
+        $action = static::makeModalAction('cancel')
             ->label(__('filament-actions::modal.actions.cancel.label'))
-            ->cancel()
+            ->close()
             ->color('gray');
+
+        if ($this->modalCancelAction !== null) {
+            $action = $this->evaluate($this->modalCancelAction, ['action' => $action]) ?? $action;
+        }
+
+        if ($action === false) {
+            return null;
+        }
+
+        return $action;
     }
 
     /**
-     * @return array<ModalAction>
+     * @return array<StaticAction>
      */
     public function getExtraModalActions(): array
     {
-        return $this->evaluate($this->extraModalActions);
+        $actions = [];
+
+        foreach ($this->evaluate($this->extraModalActions) as $action) {
+            $actions[$action->getName()] = $this->prepareModalAction($action);
+        }
+
+        return $this->extraModalActions = $actions;
     }
 
-    public function getModalButtonLabel(): string
+    public function getModalSubmitActionLabel(): string
     {
-        return $this->evaluate($this->modalButtonLabel) ?? __('filament-actions::modal.actions.submit.label');
+        return $this->evaluate($this->modalSubmitActionLabel) ?? __('filament-actions::modal.actions.submit.label');
     }
 
     public function getModalContent(): View | Htmlable | null
@@ -279,15 +358,17 @@ trait CanOpenModal
     /**
      * @param  array<string, mixed> | null  $arguments
      */
-    public function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
+    public function makeExtraModalAction(string $name, ?array $arguments = null): StaticAction
     {
         return static::makeModalAction($name)
-            ->action($this->getLivewireCallActionName(), $arguments)
+            ->callParent($this->getLivewireCallMountedActionName())
+            ->arguments($arguments)
             ->color('gray');
     }
 
-    public static function makeModalAction(string $name): ModalAction
+    public function makeModalAction(string $name): StaticAction
     {
-        return ModalAction::make($name);
+        return StaticAction::make($name)
+            ->button();
     }
 }

@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Treść zwinięta',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Duplikuj',
@@ -56,9 +56,25 @@ return [
 
     ],
 
-    'key_value' => [
+    'checkbox_list' => [
 
         'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Odznacz wszystkie',
+            ],
+
+            'select_all' => [
+                'label' => 'Zaznacz wszystkie',
+            ],
+
+        ],
+
+    ],
+
+    'key_value' => [
+
+        'actions' => [
 
             'add' => [
                 'label' => 'Dodaj wiersz',
@@ -109,7 +125,7 @@ return [
 
         'collapsed' => 'Treść zwinięta',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Dodaj do :label',
@@ -161,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Linkuj',
                     'unlink' => 'Usuń link',
                 ],
@@ -242,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Poprzedni',

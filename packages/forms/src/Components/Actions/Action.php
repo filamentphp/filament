@@ -4,6 +4,7 @@ namespace Filament\Forms\Components\Actions;
 
 use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\MountableAction;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Js;
 
 class Action extends MountableAction
@@ -18,15 +19,19 @@ class Action extends MountableAction
         $this->iconButton();
     }
 
-    public function getLivewireCallActionName(): string
+    public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedFormComponentAction';
     }
 
-    public function getLivewireMountAction(): ?string
+    public function getLivewireClickHandler(): ?string
     {
-        if ($this->getUrl()) {
+        if (! $this->isLivewireClickHandlerEnabled()) {
             return null;
+        }
+
+        if (is_string($this->action)) {
+            return $this->action;
         }
 
         $argumentsParameter = '';
@@ -37,16 +42,45 @@ class Action extends MountableAction
             $argumentsParameter .= '';
         }
 
-        return "mountFormComponentAction('{$this->getComponent()->getStatePath()}', '{$this->getName()}'{$argumentsParameter})";
+        return "mountFormComponentAction('{$this->getComponent()->getKey()}', '{$this->getName()}'{$argumentsParameter})";
+    }
+
+    public function toFormComponent(): ActionContainer
+    {
+        return ActionContainer::make($this);
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'component' => $this->getComponent(),
-        ]);
+        return match ($parameterName) {
+            'component' => [$this->getComponent()],
+            'context', 'operation' => [$this->getComponent()->getContainer()->getOperation()],
+            'get' => [$this->getComponent()->getGetCallback()],
+            'model' => [$this->getComponent()->getModel()],
+            'record' => [$this->getComponent()->getRecord()],
+            'set' => [$this->getComponent()->getSetCallback()],
+            'state' => [$this->getComponent()->getState()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getComponent()->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

@@ -17,10 +17,10 @@
     <x-filament::input.affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
-        :prefix-action="$getPrefixAction()"
+        :prefix-actions="$getPrefixActions()"
         :prefix-icon="$prefixIcon"
         :suffix="$suffixLabel"
-        :suffix-action="$getSuffixAction()"
+        :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
         :attributes="$getExtraAttributeBag()"
@@ -37,16 +37,16 @@
                 wire:ignore
                 @if ($isDebounced()) x-on:input.debounce.{{ $getDebounce() }}="$wire.$refresh" @endif
                 @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
-                {{ $getExtraAlpineAttributeBag() }}
             @else
                 x-data="{}"
             @endif
             x-bind:class="{
-                'border-gray-300 dark:border-gray-600': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
                 'border-danger-600 ring-danger-600': (@js($statePath) in $wire.__instance.serverMemo.errors),
             }"
             {{
                 $getExtraInputAttributeBag()
+                    ->merge($getExtraAlpineAttributes(), escape: false)
                     ->merge([
                         'autocapitalize' => $getAutocapitalize(),
                         'autocomplete' => $getAutocomplete(),
@@ -68,9 +68,9 @@
                         $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $statePath : null,
                     ], escape: false)
                     ->class([
-                        'block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
-                        'rounded-l-lg' => ! ($prefixLabel || $prefixIcon),
-                        'rounded-r-lg' => ! ($suffixLabel || $suffixIcon),
+                        'filament-forms-input block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white',
+                        'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
+                        'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
                     ])
             }}
         />

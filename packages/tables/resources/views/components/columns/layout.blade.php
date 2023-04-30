@@ -47,6 +47,12 @@
             :lg="$layoutComponent->getColumnSpan('lg')"
             :xl="$layoutComponent->getColumnSpan('xl')"
             :twoXl="$layoutComponent->getColumnSpan('2xl')"
+            :defaultStart="$layoutComponent->getColumnStart('default')"
+            :smStart="$layoutComponent->getColumnStart('sm')"
+            :mdStart="$layoutComponent->getColumnStart('md')"
+            :lgStart="$layoutComponent->getColumnStart('lg')"
+            :xlStart="$layoutComponent->getColumnStart('xl')"
+            :twoXlStart="$layoutComponent->getColumnStart('2xl')"
             @class([
                 'flex-1 w-full' => $layoutComponent->canGrow(),
                 $getHiddenClasses($layoutComponent),

@@ -1,12 +1,15 @@
 @php
-    $inputClasses = [
-        'filament-select-input-with-prefix' => ($hasPrefix = $getPrefixLabel() || $getPrefixIcon()),
-        'filament-select-input-with-suffix' => ($hasSuffix = $getSuffixLabel() || $getSuffixIcon()),
-    ];
-
     $isDisabled = $isDisabled();
 
     $statePath = $getStatePath();
+
+    $prefixLabel = $getPrefixLabel();
+    $prefixIcon = $getPrefixIcon();
+    $hasPrefix = $prefixLabel || $prefixIcon;
+
+    $suffixLabel = $getSuffixLabel();
+    $suffixIcon = $getSuffixIcon();
+    $hasSuffix = $suffixLabel || $suffixIcon;
 @endphp
 
 <x-dynamic-component
@@ -15,12 +18,12 @@
 >
     <x-filament::input.affixes
         :state-path="$statePath"
-        :prefix="$getPrefixLabel()"
-        :prefix-action="$getPrefixAction()"
-        :prefix-icon="$getPrefixIcon()"
-        :suffix="$getSuffixLabel()"
-        :suffix-action="$getSuffixAction()"
-        :suffix-icon="$getSuffixIcon()"
+        :prefix="$prefixLabel"
+        :prefix-actions="$getPrefixActions()"
+        :prefix-icon="$prefixIcon"
+        :suffix="$suffixLabel"
+        :suffix-actions="$getSuffixActions()"
+        :suffix-icon="$suffixIcon"
         class="filament-forms-select-component"
         :attributes="$getExtraAttributeBag()"
     >
@@ -36,8 +39,12 @@
                 ], escape: false)"
                 :prefix="$hasPrefix"
                 :suffix="$hasSuffix"
-                class="w-full"
+                class="filament-forms-input w-full"
             >
+                @php
+                    $isHtmlAllowed = $isHtmlAllowed();
+                @endphp
+
                 @if ($canSelectPlaceholder())
                     <option value="">@if (! $isDisabled) {{ $getPlaceholder() }} @endif</option>
                 @endif
@@ -47,7 +54,11 @@
                         value="{{ $value }}"
                         @disabled($isOptionDisabled($value, $label))
                     >
-                        {{ $label }}
+                        @if ($isHtmlAllowed)
+                            {!! $label !!}
+                        @else
+                            {{ $label }}
+                        @endif
                     </option>
                 @endforeach
             </x-filament::input.select>
@@ -73,6 +84,7 @@
                     isAutofocused: @js($isAutofocused()),
                     isDisabled: @js($isDisabled),
                     isMultiple: @js($isMultiple()),
+                    livewireId: @js($this->id),
                     hasDynamicOptions: @js($hasDynamicOptions()),
                     hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                     loadingMessage: @js($getLoadingMessage()),
@@ -87,6 +99,7 @@
                     searchingMessage: @js($getSearchingMessage()),
                     searchPrompt: @js($getSearchPrompt()),
                     state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+                    statePath: @js($statePath),
                 })"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 wire:ignore
@@ -96,8 +109,12 @@
                 {{
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
-                        ->merge($getExtraAlpineAttributes())
-                        ->class($inputClasses)
+                        ->merge($getExtraAlpineAttributes(), escape: false)
+                        ->class([
+                            'filament-forms-input',
+                            'filament-select-input-with-prefix' => $hasPrefix,
+                            'filament-select-input-with-suffix' => $hasSuffix,
+                        ])
                 }}
             >
                 <select

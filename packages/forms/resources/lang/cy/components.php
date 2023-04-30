@@ -6,7 +6,7 @@ return [
 
     'builder' => [
 
-        'buttons' => [
+        'actions' => [
 
             'create_item' => [
                 'label' => 'Ychwanegu at :label',
@@ -38,7 +38,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ychwanegu rhes',
@@ -89,7 +89,7 @@ return [
 
     'repeater' => [
 
-        'buttons' => [
+        'actions' => [
 
             'create_item' => [
                 'label' => 'Ychwanegu at: label',
@@ -117,7 +117,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Dolen',
                     'unlink' => 'Datgysylltu',
                 ],

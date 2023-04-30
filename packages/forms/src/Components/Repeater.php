@@ -6,7 +6,9 @@ use Closure;
 use function Filament\Forms\array_move_after;
 use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -25,7 +27,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      */
     protected string $view = 'filament-forms::components.repeater';
 
-    protected string | Closure | null $addButtonLabel = null;
+    protected string | Closure | null $addActionLabel = null;
 
     protected bool | Closure $isAddable = true;
 
@@ -47,7 +49,27 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
-    protected ?Closure $mutateRelationshipDataBeforeAddUsing = null;
+    protected ?Closure $modifyAddActionUsing = null;
+
+    protected ?Closure $modifyCloneActionUsing = null;
+
+    protected ?Closure $modifyDeleteActionUsing = null;
+
+    protected ?Closure $modifyMoveDownActionUsing = null;
+
+    protected ?Closure $modifyMoveUpActionUsing = null;
+
+    protected ?Closure $modifyReorderActionUsing = null;
+
+    protected ?Closure $modifyCollapseActionUsing = null;
+
+    protected ?Closure $modifyExpandActionUsing = null;
+
+    protected ?Closure $modifyCollapseAllActionUsing = null;
+
+    protected ?Closure $modifyExpandAllActionUsing = null;
+
+    protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
 
     protected ?Closure $mutateRelationshipDataBeforeFillUsing = null;
 
@@ -69,141 +91,411 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             $component->state($items);
         });
 
-        $this->registerListeners([
-            'repeater::add' => [
-                function (Repeater $component, string $statePath): void {
-                    if (! $component->isAddable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $newUuid = (string) Str::uuid();
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, "{$statePath}.{$newUuid}", []);
-
-                    $component->getChildComponentContainers()[$newUuid]->fill();
-
-                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
-                },
-            ],
-            'repeater::delete' => [
-                function (Repeater $component, string $statePath, string $uuidToDelete): void {
-                    if (! $component->isDeletable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $items = $component->getState();
-
-                    unset($items[$uuidToDelete]);
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, $statePath, $items);
-                },
-            ],
-            'repeater::cloneItem' => [
-                function (Repeater $component, string $statePath, string $uuidToDuplicate): void {
-                    if (! $component->isCloneable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $newUuid = (string) Str::uuid();
-
-                    $livewire = $component->getLivewire();
-                    data_set(
-                        $livewire,
-                        "{$statePath}.{$newUuid}",
-                        data_get($livewire, "{$statePath}.{$uuidToDuplicate}"),
-                    );
-
-                    $component->collapsed(false, shouldMakeComponentCollapsible: false);
-                },
-            ],
-            'repeater::moveItemDown' => [
-                function (Repeater $component, string $statePath, string $uuidToMoveDown): void {
-                    if (! $component->isReorderable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $items = array_move_after($component->getState(), $uuidToMoveDown);
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, $statePath, $items);
-                },
-            ],
-            'repeater::moveUp' => [
-                function (Repeater $component, string $statePath, string $uuidToMoveUp): void {
-                    if (! $component->isReorderable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $items = array_move_before($component->getState(), $uuidToMoveUp);
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, $statePath, $items);
-                },
-            ],
-            'repeater::reorder' => [
-                function (Repeater $component, string $statePath, array $uuids): void {
-                    if (! $component->isReorderable()) {
-                        return;
-                    }
-
-                    if ($statePath !== $component->getStatePath()) {
-                        return;
-                    }
-
-                    $items = array_merge(array_flip($uuids), $component->getState());
-
-                    $livewire = $component->getLivewire();
-                    data_set($livewire, $statePath, $items);
-                },
-            ],
+        $this->registerActions([
+            fn (Repeater $component): ?Action => $component->getAddAction(),
+            fn (Repeater $component): ?Action => $component->getCloneAction(),
+            fn (Repeater $component): ?Action => $component->getCollapseAction(),
+            fn (Repeater $component): ?Action => $component->getCollapseAllAction(),
+            fn (Repeater $component): ?Action => $component->getDeleteAction(),
+            fn (Repeater $component): ?Action => $component->getExpandAction(),
+            fn (Repeater $component): ?Action => $component->getExpandAllAction(),
+            fn (Repeater $component): ?Action => $component->getMoveDownAction(),
+            fn (Repeater $component): ?Action => $component->getMoveUpAction(),
+            fn (Repeater $component): ?Action => $component->getReorderAction(),
         ]);
-
-        $this->addButtonLabel(static function (Repeater $component) {
-            return __('filament-forms::components.repeater.buttons.add.label', [
-                'label' => Str::lcfirst($component->getLabel()),
-            ]);
-        });
 
         $this->mutateDehydratedStateUsing(static function (?array $state): array {
             return array_values($state ?? []);
         });
     }
 
-    public function addButtonLabel(string | Closure | null $label): static
+    public function getAddAction(): ?Action
     {
-        $this->addButtonLabel = $label;
+        if (! $this->isAddable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getAddActionName())
+            ->label(fn (Repeater $component) => $component->getAddActionLabel())
+            ->action(function (Repeater $component): void {
+                $newUuid = (string) Str::uuid();
+
+                $items = $component->getState();
+                $items[$newUuid] = [];
+
+                $component->state($items);
+
+                $component->getChildComponentContainers()[$newUuid]->fill();
+
+                $component->collapsed(false, shouldMakeComponentCollapsible: false);
+            })
+            ->button()
+            ->outlined()
+            ->size('sm');
+
+        if ($this->modifyAddActionUsing) {
+            $action = $this->evaluate($this->modifyAddActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function addAction(?Closure $callback): static
+    {
+        $this->modifyAddActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getAddActionName(): string
+    {
+        return 'add';
+    }
+
+    public function getCloneAction(): ?Action
+    {
+        if (! $this->isCloneable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getCloneActionName())
+            ->label(__('filament-forms::components.repeater.actions.clone.label'))
+            ->icon('heroicon-m-square-2-stack')
+            ->color('gray')
+            ->action(function (array $arguments, Repeater $component): void {
+                $newUuid = (string) Str::uuid();
+
+                $items = $component->getState();
+                $items[$newUuid] = $items[$arguments['item']];
+
+                $component->state($items);
+
+                $component->collapsed(false, shouldMakeComponentCollapsible: false);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyCloneActionUsing) {
+            $action = $this->evaluate($this->modifyCloneActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function cloneAction(?Closure $callback): static
+    {
+        $this->modifyCloneActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCloneActionName(): string
+    {
+        return 'clone';
+    }
+
+    public function getDeleteAction(): ?Action
+    {
+        if (! $this->isDeletable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getDeleteActionName())
+            ->label(__('filament-forms::components.repeater.actions.delete.label'))
+            ->icon('heroicon-m-trash')
+            ->color('danger')
+            ->action(function (array $arguments, Repeater $component): void {
+                $items = $component->getState();
+                unset($items[$arguments['item']]);
+
+                $component->state($items);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyDeleteActionUsing) {
+            $action = $this->evaluate($this->modifyDeleteActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function deleteAction(?Closure $callback): static
+    {
+        $this->modifyDeleteActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getDeleteActionName(): string
+    {
+        return 'delete';
+    }
+
+    public function getMoveDownAction(): ?Action
+    {
+        if (! $this->isReorderable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getMoveDownActionName())
+            ->label(__('filament-forms::components.repeater.actions.move_down.label'))
+            ->icon('heroicon-m-chevron-down')
+            ->color('gray')
+            ->action(function (array $arguments, Repeater $component): void {
+                $items = array_move_after($component->getState(), $arguments['item']);
+
+                $component->state($items);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyMoveDownActionUsing) {
+            $action = $this->evaluate($this->modifyMoveDownActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function moveDownAction(?Closure $callback): static
+    {
+        $this->modifyMoveDownActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getMoveDownActionName(): string
+    {
+        return 'moveDown';
+    }
+
+    public function getMoveUpAction(): ?Action
+    {
+        if (! $this->isReorderable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getMoveUpActionName())
+            ->label(__('filament-forms::components.repeater.actions.move_up.label'))
+            ->icon('heroicon-m-chevron-up')
+            ->color('gray')
+            ->action(function (array $arguments, Repeater $component): void {
+                $items = array_move_before($component->getState(), $arguments['item']);
+
+                $component->state($items);
+            })
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyMoveUpActionUsing) {
+            $action = $this->evaluate($this->modifyMoveUpActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function moveUpAction(?Closure $callback): static
+    {
+        $this->modifyMoveUpActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getMoveUpActionName(): string
+    {
+        return 'moveUp';
+    }
+
+    public function getReorderAction(): ?Action
+    {
+        if (! $this->isReorderable()) {
+            return null;
+        }
+
+        $action = Action::make($this->getReorderActionName())
+            ->label(__('filament-forms::components.repeater.actions.reorder.label'))
+            ->icon('heroicon-m-arrows-up-down')
+            ->color('gray')
+            ->action(function (array $arguments, Repeater $component): void {
+                $items = array_merge(array_flip($arguments['items']), $component->getState());
+
+                $component->state($items);
+            })
+            ->livewireClickHandlerEnabled(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyReorderActionUsing) {
+            $action = $this->evaluate($this->modifyReorderActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function reorderAction(?Closure $callback): static
+    {
+        $this->modifyReorderActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getReorderActionName(): string
+    {
+        return 'reorder';
+    }
+
+    public function getCollapseAction(): ?Action
+    {
+        $action = Action::make($this->getCollapseActionName())
+            ->label(__('filament-forms::components.repeater.actions.collapse.label'))
+            ->icon('heroicon-m-minus')
+            ->color('gray')
+            ->livewireClickHandlerEnabled(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyCollapseActionUsing) {
+            $action = $this->evaluate($this->modifyCollapseActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function collapseAction(?Closure $callback): static
+    {
+        $this->modifyCollapseActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCollapseActionName(): string
+    {
+        return 'collapse';
+    }
+
+    public function getExpandAction(): ?Action
+    {
+        $action = Action::make($this->getExpandActionName())
+            ->label(__('filament-forms::components.repeater.actions.expand.label'))
+            ->icon('heroicon-m-plus')
+            ->color('gray')
+            ->livewireClickHandlerEnabled(false)
+            ->iconButton()
+            ->inline()
+            ->size('sm');
+
+        if ($this->modifyExpandActionUsing) {
+            $action = $this->evaluate($this->modifyExpandActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function expandAction(?Closure $callback): static
+    {
+        $this->modifyExpandActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getExpandActionName(): string
+    {
+        return 'expand';
+    }
+
+    public function getCollapseAllAction(): ?Action
+    {
+        $action = Action::make($this->getCollapseAllActionName())
+            ->label(__('filament-forms::components.repeater.actions.collapse_all.label'))
+            ->livewireClickHandlerEnabled(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyCollapseAllActionUsing) {
+            $action = $this->evaluate($this->modifyCollapseAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function collapseAllAction(?Closure $callback): static
+    {
+        $this->modifyCollapseAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCollapseAllActionName(): string
+    {
+        return 'collapseAll';
+    }
+
+    public function getExpandAllAction(): ?Action
+    {
+        $action = Action::make($this->getExpandAllActionName())
+            ->label(__('filament-forms::components.repeater.actions.expand_all.label'))
+            ->livewireClickHandlerEnabled(false)
+            ->link()
+            ->size('sm');
+
+        if ($this->modifyExpandAllActionUsing) {
+            $action = $this->evaluate($this->modifyExpandAllActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function expandAllAction(?Closure $callback): static
+    {
+        $this->modifyExpandAllActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getExpandAllActionName(): string
+    {
+        return 'expandAll';
+    }
+
+    public function addActionLabel(string | Closure | null $label): static
+    {
+        $this->addActionLabel = $label;
 
         return $this;
     }
 
     /**
-     * @deprecated Use `addButtonLabel()` instead.
+     * @deprecated Use `addActionLabel()` instead.
      */
     public function createItemButtonLabel(string | Closure | null $label): static
     {
-        $this->addButtonLabel($label);
+        $this->addActionLabel($label);
 
         return $this;
     }
@@ -308,18 +600,20 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         foreach ($this->getState() ?? [] as $itemKey => $itemData) {
             $containers[$itemKey] = $this
                 ->getChildComponentContainer()
-                ->getClone()
                 ->statePath($itemKey)
                 ->model($relationship ? $records[$itemKey] ?? $this->getRelatedModel() : null)
-                ->inlineLabel(false);
+                ->inlineLabel(false)
+                ->getClone();
         }
 
         return $containers;
     }
 
-    public function getAddButtonLabel(): string
+    public function getAddActionLabel(): string
     {
-        return $this->evaluate($this->addButtonLabel);
+        return $this->evaluate($this->addActionLabel) ?? __('filament-forms::components.repeater.actions.add.label', [
+            'label' => Str::lcfirst($this->getLabel()),
+        ]);
     }
 
     public function isReorderable(): bool
@@ -363,18 +657,28 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return (bool) $this->evaluate($this->isInset);
     }
 
-    public function orderable(string | Closure | null $column = 'sort'): static
+    public function orderColumn(string | Closure | null $column = 'sort'): static
     {
         $this->orderColumn = $column;
-        $this->disableItemMovement(static fn (Repeater $component): bool => ! $component->evaluate($column));
+        $this->reorderable($column);
 
         return $this;
     }
 
-    public function relationship(string | Closure | null $name = null, ?Closure $callback = null): static
+    /**
+     * @deprecated Use `orderColumn()` instead.
+     */
+    public function orderable(string | Closure | null $column = 'sort'): static
+    {
+        $this->orderColumn($column);
+
+        return $this;
+    }
+
+    public function relationship(string | Closure | null $name = null, ?Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
-        $this->modifyRelationshipQueryUsing = $callback;
+        $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
         $this->afterStateHydrated(null);
 
@@ -413,7 +717,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             $itemOrder = 1;
             $orderColumn = $component->getOrderColumn();
 
-            $activeLocale = $livewire->getActiveFormLocale();
+            $translatableContentDriver = $livewire->makeFormTranslatableContentDriver();
 
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState(shouldCallHooksBefore: false);
@@ -425,26 +729,25 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 }
 
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
-                    $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
-
                     $itemData = $component->mutateRelationshipDataBeforeSave($itemData, record: $record);
 
-                    $record->fill($itemData)->save();
+                    $translatableContentDriver ?
+                        $translatableContentDriver->updateRecord($record, $itemData) :
+                        $record->fill($itemData)->save();
 
                     continue;
                 }
 
                 $relatedModel = $component->getRelatedModel();
 
-                $record = new $relatedModel();
+                $itemData = $component->mutateRelationshipDataBeforeCreate($itemData);
 
-                if ($activeLocale && method_exists($record, 'setLocale')) {
-                    $record->setLocale($activeLocale);
+                if ($translatableContentDriver) {
+                    $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
+                } else {
+                    $record = new $relatedModel();
+                    $record->fill($itemData);
                 }
-
-                $itemData = $component->mutateRelationshipDataBeforeAdd($itemData);
-
-                $record->fill($itemData);
 
                 $record = $relationship->save($record);
                 $item->model($record)->saveRelationships();
@@ -481,31 +784,29 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             return [];
         }
 
-        $activeLocale = $this->getLivewire()->getActiveFormLocale();
+        $translatableContentDriver = $this->getLivewire()->makeFormTranslatableContentDriver();
 
         return $records
-            ->map(function (Model $record) use ($activeLocale): array {
-                $state = $record->attributesToArray();
+            ->map(function (Model $record) use ($translatableContentDriver): array {
+                $data = $translatableContentDriver ?
+                    $translatableContentDriver->getRecordAttributesToArray($record) :
+                    $record->attributesToArray();
 
-                if ($activeLocale && method_exists($record, 'getTranslatableAttributes') && method_exists($record, 'getTranslation')) {
-                    foreach ($record->getTranslatableAttributes() as $attribute) {
-                        $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
-                    }
-                }
-
-                return $this->mutateRelationshipDataBeforeFill($state);
+                return $this->mutateRelationshipDataBeforeFill($data);
             })
             ->toArray();
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->hasRelationship()) {
-            return (string) str($this->getRelationshipName())
+            $label = (string) str($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();
@@ -539,6 +840,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $relationship = $this->getRelationship();
         $relationshipQuery = $relationship->getQuery();
 
+        if ($relationship instanceof BelongsToMany) {
+            $relationshipQuery->select([
+                $relationship->getTable() . '.*',
+                $relationshipQuery->getModel()->getTable() . '.*',
+            ]);
+        }
+
         if ($this->modifyRelationshipQueryUsing) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
                 'query' => $relationshipQuery,
@@ -556,7 +864,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         );
     }
 
-    public function getItemLabel(string $uuid): ?string
+    public function getItemLabel(string $uuid): string | Htmlable | null
     {
         return $this->evaluate($this->itemLabel, [
             'state' => $this->getChildComponentContainer($uuid)->getRawState(),
@@ -584,9 +892,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return filled($this->getRelationshipName());
     }
 
-    public function mutateRelationshipDataBeforeAddUsing(?Closure $callback): static
+    public function mutateRelationshipDataBeforeCreateUsing(?Closure $callback): static
     {
-        $this->mutateRelationshipDataBeforeAddUsing = $callback;
+        $this->mutateRelationshipDataBeforeCreateUsing = $callback;
 
         return $this;
     }
@@ -595,10 +903,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      * @param  array<array<string, mixed>>  $data
      * @return array<array<string, mixed>>
      */
-    public function mutateRelationshipDataBeforeAdd(array $data): array
+    public function mutateRelationshipDataBeforeCreate(array $data): array
     {
-        if ($this->mutateRelationshipDataBeforeAddUsing instanceof Closure) {
-            $data = $this->evaluate($this->mutateRelationshipDataBeforeAddUsing, [
+        if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
+            $data = $this->evaluate($this->mutateRelationshipDataBeforeCreateUsing, [
                 'data' => $data,
             ]);
         }
@@ -642,10 +950,17 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function mutateRelationshipDataBeforeSave(array $data, Model $record): array
     {
         if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {
-            $data = $this->evaluate($this->mutateRelationshipDataBeforeSaveUsing, [
-                'data' => $data,
-                'record' => $record,
-            ]);
+            $data = $this->evaluate(
+                $this->mutateRelationshipDataBeforeSaveUsing,
+                namedInjections: [
+                    'data' => $data,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
         }
 
         return $data;

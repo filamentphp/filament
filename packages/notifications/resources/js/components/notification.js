@@ -61,7 +61,9 @@ export default (Alpine) => {
             let animation
 
             Livewire.hook('message.received', (_, component) => {
-                if (component.fingerprint.name !== 'notifications') {
+                if (
+                    !component.serverMemo.data.isFilamentNotificationsComponent
+                ) {
                     return
                 }
 
@@ -87,7 +89,9 @@ export default (Alpine) => {
             })
 
             Livewire.hook('message.processed', (_, component) => {
-                if (component.fingerprint.name !== 'notifications') {
+                if (
+                    !component.serverMemo.data.isFilamentNotificationsComponent
+                ) {
                     return
                 }
 
@@ -103,7 +107,7 @@ export default (Alpine) => {
             this.isShown = false
 
             setTimeout(
-                () => Livewire.emit('notificationClosed', notification.id),
+                () => Livewire.emitUp('notificationClosed', notification.id),
                 this.getTransitionDuration(),
             )
         },

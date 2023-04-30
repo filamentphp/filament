@@ -2,7 +2,6 @@ const colors = require('tailwindcss/colors')
 
 module.exports = {
     content: ['./resources/**/*.blade.php', './vendor/filament/**/*.blade.php'],
-    darkMode: 'class',
     theme: {
         extend: {
             colors: {
@@ -11,6 +10,9 @@ module.exports = {
                 secondary: colors.gray,
                 success: colors.green,
                 warning: colors.yellow,
+            },
+            fontFamily: {
+                sans: ['Be Vietnam Pro', 'sans-serif'],
             },
         },
     },

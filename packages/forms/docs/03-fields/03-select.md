@@ -2,6 +2,8 @@
 title: Select
 ---
 
+## Overview
+
 The select component allows you to select from a list of predefined options:
 
 ```php
@@ -24,7 +26,7 @@ You may enable a search input to allow easier access to many options, using the 
 ```php
 use Filament\Forms\Components\Select;
 
-Select::make('authorId')
+Select::make('author_id')
     ->label('Author')
     ->options(User::all()->pluck('name', 'id'))
     ->searchable()
@@ -32,34 +34,21 @@ Select::make('authorId')
 
 ![](https://user-images.githubusercontent.com/41773797/147613023-cb7d1907-e4d3-4a33-aa86-1c25d780c861.png)
 
+### Returning custom search results
+
 If you have lots of options and want to populate them based on a database search or other external data source, you can use the `getSearchResultsUsing()` and `getOptionLabelUsing()` methods instead of `options()`.
 
-The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format.
+The `getSearchResultsUsing()` method accepts a callback that returns search results in `$key => $value` format. The current user's search is available as `$search`, and you should use that to filter your results.
 
-The `getOptionLabelUsing()` method accepts a callback that transforms the selected option `$value` into a label.
+The `getOptionLabelUsing()` method accepts a callback that transforms the selected option `$value` into a label. This is used when the form is first loaded when the user has not made a search yet. Otherwise, the label used to display the currently selected option would not be available.
+
+Both `getSearchResultsUsing()` and `getOptionLabelUsing()` must be used on the select if you want to provide custom search results:
 
 ```php
-Select::make('authorId')
+Select::make('author_id')
     ->searchable()
-    ->getSearchResultsUsing(fn (string $search) => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id'))
+    ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
     ->getOptionLabelUsing(fn ($value): ?string => User::find($value)?->name),
-```
-
-## Disable placeholder selection
-
-You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('status')
-    ->options([
-        'draft' => 'Draft',
-        'reviewing' => 'Reviewing',
-        'published' => 'Published',
-    ])
-    ->default('draft')
-    ->disablePlaceholderSelection()
 ```
 
 ## Multi-select
@@ -96,48 +85,61 @@ class App extends Model
 }
 ```
 
-Instead of `getOptionLabelUsing()`, the `getOptionLabelsUsing()` method can be used to transform the selected options' `$value`s into labels.
+If you're [returning custom search results](#returning-custom-search-results), you should define `getOptionLabelsUsing()` instead of `getOptionLabelUsing()`. `$values` will be passed into the callback instead of `$value`, and you should return a `$key => $value` array of labels and their corresponding values:
 
-## Dependant selects
+```php
+Select::make('technologies')
+    ->multiple()
+    ->searchable()
+    ->getSearchResultsUsing(fn (string $search): array => Technology::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+    ->getOptionLabelsUsing(fn (array $values): array => Technology::whereIn('id', $values)->pluck('name', 'id')->toArray()),
+```
 
-Commonly, you may desire "dependant" select inputs, which populate their options based on the state of another.
+## Integrating with an Eloquent relationship
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/W_eNyimRi3w" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+> If you're building a form inside your Livewire component, make sure you have set up the [form's model](../adding-a-form-to-a-livewire-component#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
 
-Some of the techniques described in the [advanced forms](advanced) section are required to create dependant selects. These techniques can be applied across all form components for many dynamic customization possibilities.
-
-## Populating automatically from a relationship
-
-You may employ the `relationship()` method of the `Select` to configure a `BelongsTo` relationship to automatically retrieve and save options from:
+You may employ the `relationship()` method of the `Select` to configure a `BelongsTo` relationship to automatically retrieve options from. The `titleAttribute` is the name of a column that will be used to generate a label for each option:
 
 ```php
 use Filament\Forms\Components\Select;
 
-Select::make('authorId')
-    ->relationship('author', 'name')
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
 ```
 
-The `multiple()` method may be used in combination with `relationship()` to automatically populate from a `BelongsToMany` relationship:
+The `multiple()` method may be used in combination with `relationship()` to use a `BelongsToMany` relationship. Filament will load the options from the relationship, and save them back to the relationship's pivot table when the form is submitted. If a `relationshipName` is not provided, Filament will use the field name as the relationship name:
 
 ```php
 use Filament\Forms\Components\Select;
 
 Select::make('technologies')
     ->multiple()
-    ->relationship('technologies', 'name')
+    ->relationship(titleAttribute: 'name')
 ```
 
-> To set this functionality up, **you must also follow the instructions set out in the [field relationships](getting-started#field-relationships) section**. If you're using the [app framework](../../app), you can skip this step.
+### Searching relationship options across more than one column
 
-### Preloading relationship options
-
-If you'd like to populate the options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
+By default, if the select is also searchable, Filament will return search results for the relationship based on title column of the relationship. If you'd like to search across more than one column, you can pass an array of columns to the `searchable()` method:
 
 ```php
 use Filament\Forms\Components\Select;
 
-Select::make('authorId')
-    ->relationship('author', 'name')
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable(['name', 'email'])
+```
+
+### Preloading relationship options
+
+If you'd like to populate the searchable options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable()
     ->preload()
 ```
 
@@ -149,13 +151,17 @@ You may customize the database query that retrieves options using the third para
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
 
-Select::make('authorId')
-    ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
+Select::make('author_id')
+    ->relationship(
+        relationshipName: 'author',
+        titleAttribute: 'name',
+        modifyOptionsQueryUsing: fn (Builder $query) => $query->withTrashed(),
+    )
 ```
 
 ### Customizing the relationship option labels
 
-If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you should use a virtual column in your database migration:
+If you'd like to customize the label of each option, maybe to be more descriptive, or to concatenate a first and last name, you could use a virtual column in your database migration:
 
 ```php
 $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
@@ -164,22 +170,27 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 ```php
 use Filament\Forms\Components\Select;
 
-Select::make('authorId')
-    ->relationship('author', 'full_name')
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'full_name')
 ```
 
-Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform the selected option's Eloquent model into a label. But please note, this is much less performant than using a virtual column:
+Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform an option's Eloquent model into a label:
 
 ```php
 use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-Select::make('authorId')
-    ->relationship('author', 'first_name')
+Select::make('author_id')
+    ->relationship(
+        relationshipName: 'author',
+        modifyOptionsQueryUsing: fn (Builder $query) => $query->orderBy('first_name')->orderBy('last_name'),
+    )
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
+    ->searchable(['first_name', 'last_name'])
 ```
 
-### Creating new records
+### Creating a new option in a modal
 
 You may define a custom form that can be used to create a new record and attach it to the `BelongsTo` relationship:
 
@@ -187,8 +198,8 @@ You may define a custom form that can be used to create a new record and attach 
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 
-Select::make('authorId')
-    ->relationship('author', 'name')
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
     ->createOptionForm([
         Forms\Components\TextInput::make('name')
             ->required(),
@@ -200,19 +211,26 @@ Select::make('authorId')
 
 The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
 
-Since HTML does not support nested `<form>` elements, you must also render the modal outside the `<form>` in the view. If you're using the [app framework](../../app), this is included already:
+### Editing the selected option in a modal
 
-```blade
-<form wire:submit.prevent="submit">
-    {{ $this->form }}
+You may define a custom form that can be used to edit the selected record and save it back to the `BelongsTo` relationship:
 
-    <button type="submit">
-        Submit
-    </button>
-</form>
+```php
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Model;
 
-<x-filament-actions::modals />
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->editOptionAction([
+        Forms\Components\TextInput::make('name')
+            ->required(),
+        Forms\Components\TextInput::make('email')
+            ->required()
+            ->email(),
+    ]),
 ```
+
+The form opens in a modal, where the user can fill it with data. Upon form submission, the data from the form is saved back to the record.
 
 ### Handling `MorphTo` relationships
 
@@ -225,12 +243,16 @@ use Filament\Forms\Components\MorphToSelect;
 
 MorphToSelect::make('commentable')
     ->types([
-        MorphToSelect\Type::make(Product::class)->titleAttribute('name'),
-        MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
+        MorphToSelect\Type::make(Product::class)
+            ->titleAttribute('name'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
     ])
 ```
 
-The `titleAttribute()` is used to extract the titles out of each product or post. You can choose to extract the option labels using `getOptionLabelFromRecordUsing` instead if you wish:
+### Customizing the option labels for each morphed type
+
+The `titleAttribute()` is used to extract the titles out of each product or post. If you'd like to customize the label of each option, you can use the `getOptionLabelFromRecordUsing()` method to transform the Eloquent model into a label:
 
 ```php
 use Filament\Forms\Components\MorphToSelect;
@@ -239,9 +261,12 @@ MorphToSelect::make('commentable')
     ->types([
         MorphToSelect\Type::make(Product::class)
             ->getOptionLabelFromRecordUsing(fn (Product $record): string => "{$record->name} - {$record->slug}"),
-        MorphToSelect\Type::make(Post::class)->titleAttribute('title'),
+        MorphToSelect\Type::make(Post::class)
+            ->titleAttribute('title'),
     ])
 ```
+
+### Customizing the relationship query for each morphed type
 
 You may customize the database query that retrieves options using the `modifyOptionsQueryUsing()` method:
 
@@ -261,3 +286,186 @@ MorphToSelect::make('commentable')
 ```
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
+
+## Allowing HTML in the option labels
+
+By default, Filament will escape any HTML in the option labels. If you'd like to allow HTML, you can use the `allowHtml()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technology')
+    ->options([
+        'tailwind' => '<span class="text-blue-500">Tailwind</span>',
+        'alpine' => '<span class="text-green-500">Alpine</span>',
+        'laravel' => '<span class="text-red-500">Laravel</span>',
+        'livewire' => '<span class="text-pink-500">Livewire</span>',
+    ])
+    ->searchable()
+    ->allowHtml()
+```
+
+Be aware that you will need to ensure that the HTML is safe to render, otherwise your application will be vulnerable to XSS attacks.
+
+## Disable placeholder selection
+
+You can prevent the placeholder (null option) from being selected using the `disablePlaceholderSelection()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->disablePlaceholderSelection()
+```
+
+## Disabling specific options
+
+You can disable specific options using the `disableOptionWhen()` method. It accepts a closure, in which you can check if the option with a specific `$value` should be disabled:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->disableOptionWhen(fn (string $value): bool => $value === 'published')
+```
+
+## Adding affix text aside the field
+
+You may place text before and after the input using the `prefix()` and `suffix()` methods:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('domain')
+    ->prefix('https://')
+    ->suffix('.com')
+```
+
+### Using icons as affixes
+
+You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('domain')
+    ->prefixIcon('heroicon-m-arrow-top-right-on-square')
+    ->suffixIcon('heroicon-m-arrow-top-right-on-square')
+```
+
+## Setting a custom loading message
+
+When you're using a searchable select or multi-select, you may want to display a custom message while the options are loading. You can do this using the `loadingMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->loadingMessage('Loading authors...')
+```
+
+## Setting a custom no search results message
+
+When you're using a searchable select or multi-select, you may want to display a custom message when no search results are found. You can do this using the `noSearchResultsMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->noSearchResultsMessage('No authors found.')
+```
+
+## Setting a custom search prompt
+
+When you're using a searchable select or multi-select, you may want to display a custom message when the user has not yet entered a search term. You can do this using the `searchPrompt()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable(['name', 'email'])
+    ->searchPrompt('Search authors by their name or email address')
+```
+
+## Setting a custom searching message
+
+When you're using a searchable select or multi-select, you may want to display a custom message while the search results are being loaded. You can do this using the `searchingMessage()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->searchingMessage('Searching authors...')
+```
+
+## Tweaking the search debounce
+
+By default, Filament will wait 1000 milliseconds (1 second) before searching for options when the user types in a searchable select or multi-select. It will also wait 1000 milliseconds between searches, if the user is continuously typing into the search input. You can change this using the `searchDebounce()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->searchDebounce(500)
+```
+
+Ensure that you are not lowering the debounce too much, as this may cause the select to become slow and unresponsive due to a high number of network requests to retrieve options from server.
+
+## Limiting the number of options
+
+You can limit the number of options that are displayed in a searchable select or multi-select using the `optionsLimit()` method. The default is 50:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->optionsLimit(20)
+```
+
+Ensure that you are not raising the limit too high, as this may cause the select to become slow and unresponsive due to high in-browser memory usage.
+
+## Select validation
+
+As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to selects.
+
+### Selected items validation
+
+You can validate the minimum and maximum number of items that you can select in a [multi-select](#multi-select) by setting the `minItems()` and `maxItems()` methods:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('technologies')
+    ->multiple()
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->minItems(1)
+    ->maxItems(3)
+```

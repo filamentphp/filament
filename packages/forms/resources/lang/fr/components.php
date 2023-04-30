@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Contenu plié',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Cloner',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Désélectionner tout',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ajouter une ligne',
@@ -124,7 +124,7 @@ return [
     'repeater' => [
         'collapsed' => 'Contenu plié',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ajouter à :label',
@@ -175,7 +175,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Lien',
                     'unlink' => 'Dissocier',
                 ],
@@ -255,7 +255,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Précédent',

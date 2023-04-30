@@ -27,7 +27,7 @@ public function context(Context $context): Context
 }
 ```
 
-You may also control [polling](../notifications/database-notifications#polling):
+You may also control [polling](../notifications/database-notifications#polling-for-new-database-notifications):
 
 ```php
 use Filament\Context;
@@ -43,7 +43,7 @@ public function context(Context $context): Context
 
 ## Echo
 
-Some features of the notifications package, including [receiving real-time database notifications](../notifications/database-notifications#echo) and [broadcast notifications](../notifications/broadcast-notifications), require Laravel Echo to be installed.
+Some features of the notifications package, including [receiving real-time database notifications](../notifications/database-notifications#using-echo-to-receive-new-database-notifications-with-websockets) and [broadcast notifications](../notifications/broadcast-notifications), require Laravel Echo to be installed.
 
 Firstly, you must set up a [server-side websockets integration](https://laravel.com/docs/broadcasting#server-side-installation) like Pusher.
 

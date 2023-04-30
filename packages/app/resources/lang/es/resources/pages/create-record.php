@@ -1,7 +1,9 @@
 <?php
 
 return [
+
     'title' => 'Crear :label',
+
     'breadcrumb' => 'Crear',
 
     'form' => [
@@ -17,7 +19,7 @@ return [
             ],
 
             'create_another' => [
-                'label' => 'Crear & crear otro',
+                'label' => 'Crear y crear otro',
             ],
 
         ],

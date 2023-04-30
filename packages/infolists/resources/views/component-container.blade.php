@@ -16,6 +16,12 @@
                 :lg="$infolistComponent->getColumnSpan('lg')"
                 :xl="$infolistComponent->getColumnSpan('xl')"
                 :twoXl="$infolistComponent->getColumnSpan('2xl')"
+                :defaultStart="$infolistComponent->getColumnStart('default')"
+                :smStart="$infolistComponent->getColumnStart('sm')"
+                :mdStart="$infolistComponent->getColumnStart('md')"
+                :lgStart="$infolistComponent->getColumnStart('lg')"
+                :xlStart="$infolistComponent->getColumnStart('xl')"
+                :twoXlStart="$infolistComponent->getColumnStart('2xl')"
                 @class([
                     match ($maxWidth = $infolistComponent->getMaxWidth()) {
                         'xs' => 'max-w-xs',

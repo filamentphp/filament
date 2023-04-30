@@ -9,7 +9,7 @@
         $width = $getWidth() ?? ($isCircular || $isSquare ? $height : null);
     @endphp
 
-    <div {{ $attributes->merge($getExtraAttributes())->class([
+    <div {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
         'filament-infolists-image-entry flex',
         match ($getAlignment()) {
             'center' => 'justify-center',

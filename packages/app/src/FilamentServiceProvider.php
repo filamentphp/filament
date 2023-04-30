@@ -2,6 +2,7 @@
 
 namespace Filament;
 
+use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -70,6 +71,10 @@ class FilamentServiceProvider extends PackageServiceProvider
             SetUpContext::class,
         ]);
 
+        Filament::serving(function () {
+            Filament::setServingStatus();
+        });
+
         if ($this->app->runningInConsole()) {
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
@@ -85,10 +90,12 @@ class FilamentServiceProvider extends PackageServiceProvider
     protected function getCommands(): array
     {
         $commands = [
+            Commands\CompileThemeCommand::class,
             Commands\MakeContextCommand::class,
             Commands\MakePageCommand::class,
             Commands\MakeRelationManagerCommand::class,
             Commands\MakeResourceCommand::class,
+            Commands\MakeThemeCommand::class,
             Commands\MakeUserCommand::class,
         ];
 

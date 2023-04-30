@@ -67,7 +67,9 @@ Route::name('filament.')
                                     ->prefix('/email-verification')
                                     ->group(function () use ($context) {
                                         Route::get('/prompt', $context->getEmailVerificationPromptRouteAction())->name('prompt');
-                                        Route::get('/verify', EmailVerificationController::class)->name('verify');
+                                        Route::get('/verify', EmailVerificationController::class)
+                                            ->middleware(['signed'])
+                                            ->name('verify');
                                     });
                             }
 
@@ -110,6 +112,18 @@ Route::name('filament.')
                                 $routes($context);
                             }
                         });
+
+                    Route::group([], function () use ($context): void {
+                        $hasRoutableTenancy = $context->hasRoutableTenancy();
+                        $tenantSlugAttribute = $context->getTenantSlugAttribute();
+
+                        Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                            ->group(function () use ($context): void {
+                                if ($routes = $context->getTenantRoutes()) {
+                                    $routes($context);
+                                }
+                            });
+                    });
 
                     if ($routes = $context->getRoutes()) {
                         $routes($context);

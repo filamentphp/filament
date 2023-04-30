@@ -3,13 +3,15 @@
 namespace Filament\Tables\Grouping;
 
 use Closure;
+use Filament\Support\Components\Component;
+use Filament\Support\Contracts\HasLabel as LabelInterface;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Arr;
 
-class Group
+class Group extends Component
 {
     protected ?string $column;
 
@@ -28,6 +30,8 @@ class Group
     protected string $id;
 
     protected bool $isCollapsible = false;
+
+    protected bool $isTitlePrefixedWithLabel = true;
 
     final public function __construct(string $id = null)
     {
@@ -102,9 +106,21 @@ class Group
         return $this;
     }
 
+    public function titlePrefixedWithLabel(bool $condition = true): static
+    {
+        $this->isTitlePrefixedWithLabel = $condition;
+
+        return $this;
+    }
+
     public function isCollapsible(): bool
     {
         return $this->isCollapsible;
+    }
+
+    public function isTitlePrefixedWithLabel(): bool
+    {
+        return $this->isTitlePrefixedWithLabel;
     }
 
     public function getColumn(): string
@@ -127,21 +143,34 @@ class Group
             ->ucfirst();
     }
 
-    public function getDescription(Model $record, string $title): ?string
+    public function getDescription(Model $record, ?string $title): ?string
     {
         if (! $this->getDescriptionUsing) {
             return null;
         }
 
-        return app()->call($this->getDescriptionUsing, [
-            'record' => $record,
-            'title' => $title,
-        ]);
+        return $this->evaluate(
+            $this->getDescriptionUsing,
+            namedInjections: [
+                'record' => $record,
+                'title' => $title,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
     }
 
     public function getKey(Model $record): ?string
     {
-        return Arr::get($record, $this->getColumn());
+        $key = Arr::get($record, $this->getColumn());
+
+        if ($key instanceof LabelInterface) {
+            $key = $key->getLabel();
+        }
+
+        return filled($key) ? strval($key) : null;
     }
 
     public function getTitle(Model $record): ?string
@@ -149,19 +178,32 @@ class Group
         $column = $this->getColumn();
 
         if ($this->getTitleFromRecordUsing) {
-            return app()->call($this->getTitleFromRecordUsing, [
-                'column' => $column,
-                'record' => $record,
-            ]);
+            return $this->evaluate(
+                $this->getTitleFromRecordUsing,
+                namedInjections: [
+                    'column' => $column,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
         }
 
-        return Arr::get($record, $column);
+        $title = Arr::get($record, $column);
+
+        if ($title instanceof LabelInterface) {
+            $title = $title->getLabel();
+        }
+
+        return $title;
     }
 
     public function groupQuery(Builder $query, Model $model): Builder
     {
         if ($this->groupQueryUsing) {
-            return app()->call($this->groupQueryUsing, [
+            return $this->evaluate($this->groupQueryUsing, [
                 'column' => $this->getColumn(),
                 'query' => $query,
             ]) ?? $query;
@@ -177,7 +219,7 @@ class Group
     public function orderQuery(EloquentBuilder $query, string $direction): EloquentBuilder
     {
         if ($this->orderQueryUsing) {
-            return app()->call($this->orderQueryUsing, [
+            return $this->evaluate($this->orderQueryUsing, [
                 'column' => $this->getColumn(),
                 'direction' => $direction,
                 'query' => $query,
@@ -190,14 +232,14 @@ class Group
     /**
      * @param  array<string> | null  $relationships
      */
-    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | Builder
+    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null, ?Relation $lastRelationship = null): string | Builder
     {
         $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
             explode('.', $relationshipName) :
             [];
 
         if (! count($relationships)) {
-            return $sortColumn;
+            return $lastRelationship ? $lastRelationship->getQuery()->getModel()->qualifyColumn($sortColumn) : $sortColumn;
         }
 
         $currentRelationshipName = array_shift($relationships);
@@ -214,6 +256,7 @@ class Group
                     $relatedQuery,
                     $sortColumn,
                     $relationships,
+                    $relationship,
                 )],
             )
             ->applyScopes()
@@ -225,11 +268,18 @@ class Group
         $column = $this->getColumn();
 
         if ($this->scopeQueryUsing) {
-            return app()->call($this->scopeQueryUsing, [
-                'column' => $column,
-                'query' => $query,
-                'record' => $record,
-            ]) ?? $query;
+            return $this->evaluate(
+                $this->scopeQueryUsing,
+                namedInjections: [
+                    'column' => $column,
+                    'query' => $query,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            ) ?? $query;
         }
 
         $value = Arr::get($record, $column);

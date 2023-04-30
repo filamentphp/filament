@@ -1,5 +1,5 @@
 @props([
-    'action' => null,
+    'actions' => [],
     'color' => null,
     'icon' => null,
 ])
@@ -30,9 +30,11 @@
         />
     @endif
 
-    @if ($action?->isVisible())
-        <div class="filament-forms-field-wrapper-hint-action">
-            {{ $action }}
+    @if (count($actions))
+        <div class="filament-forms-field-wrapper-hint-action flex gap-1 items-center">
+            @foreach ($actions as $action)
+                {{ $action }}
+            @endforeach
         </div>
     @endif
 </div>

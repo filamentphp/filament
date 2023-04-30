@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Contenuto compresso',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Aggiungi a :label',
@@ -46,7 +46,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Aggiungi riga',
@@ -93,7 +93,7 @@ return [
 
         'collapsed' => 'Contenuto compresso',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Aggiungi a :label',
@@ -141,7 +141,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Collega',
                     'unlink' => 'Rimuovi',
                 ],
@@ -220,7 +220,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Precedente',

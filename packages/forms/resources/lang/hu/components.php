@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Tartalom becsukva',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Másolás',
@@ -54,7 +54,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Sor hozzáadása',
@@ -105,7 +105,7 @@ return [
 
         'collapsed' => 'Tartalom becsukva',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Új :label',
@@ -157,7 +157,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Hivatkozás',
                     'unlink' => 'Hivatkozás törlése',
                 ],
@@ -238,7 +238,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Előző lépés',

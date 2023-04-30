@@ -5,33 +5,28 @@ namespace Filament\Actions;
 use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
-use Livewire\Component;
 
-abstract class MountableAction extends StaticAction
+class MountableAction extends StaticAction
 {
-    use Concerns\CanBeDisabled;
+    use Concerns\BelongsToLivewire;
     use Concerns\CanBeMounted;
-    use Concerns\CanBeOutlined;
     use Concerns\CanNotify;
     use Concerns\CanOpenModal;
-    use Concerns\CanOpenUrl;
     use Concerns\CanRedirect;
     use Concerns\CanRequireConfirmation;
-    use Concerns\HasAction;
-    use Concerns\HasArguments;
     use Concerns\HasForm;
-    use Concerns\HasGroupedIcon;
     use Concerns\HasInfolist;
-    use Concerns\HasKeyBindings;
     use Concerns\HasLifecycleHooks;
-    use Concerns\HasTooltip;
+    use Concerns\HasParentActions;
     use Concerns\HasWizard;
 
-    protected string $view = 'filament-actions::button-action';
+    public static string $modalActionsAlignment = 'left';
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        $this->defaultView(static::BUTTON_VIEW);
 
         $this->failureNotification(fn (Notification $notification): Notification => $notification);
         $this->successNotification(fn (Notification $notification): Notification => $notification);
@@ -42,7 +37,7 @@ abstract class MountableAction extends StaticAction
      */
     public function call(array $parameters = []): mixed
     {
-        return $this->evaluate($this->getAction(), $parameters);
+        return $this->evaluate($this->getActionFunction(), $parameters);
     }
 
     public function cancel(): void
@@ -76,29 +71,35 @@ abstract class MountableAction extends StaticAction
     }
 
     /**
-     * @return Component
+     * @return array<mixed>
      */
-    abstract public function getLivewire();
-
-    public function getLivewireMountAction(): ?string
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return null;
+        return match ($parameterName) {
+            'arguments' => [$this->getArguments()],
+            'data' => [$this->getFormData()],
+            'livewire' => [$this->getLivewire()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 
-    public function getAlpineMountAction(): ?string
+    public static function alignModalActionsLeft(): void
     {
-        return null;
+        static::$modalActionsAlignment = 'left';
     }
 
-    /**
-     * @return array<string, mixed>
-     */
-    protected function getDefaultEvaluationParameters(): array
+    public static function alignModalActionsCenter(): void
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'arguments' => $this->getArguments(),
-            'data' => $this->getFormData(),
-            'livewire' => $this->getLivewire(),
-        ]);
+        static::$modalActionsAlignment = 'center';
+    }
+
+    public static function alignModalActionsRight(): void
+    {
+        static::$modalActionsAlignment = 'right';
+    }
+
+    public static function getModalActionsAlignment(): string
+    {
+        return static::$modalActionsAlignment;
     }
 }

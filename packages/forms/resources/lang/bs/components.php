@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Sadržaj je sažet',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Kloniraj',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Odznači sve',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Dodaj red',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Sadržaj je sažet',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Dodaj :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Otkačite link',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Nazad',

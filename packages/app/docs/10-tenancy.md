@@ -2,6 +2,8 @@
 title: Multi-tenancy
 ---
 
+## Overview
+
 Multi-tenancy is a concept where a single instance of an application serves multiple customers. Each customer has their own data and access rules that prevent them from viewing or modifying each other's data. This is a common pattern in SaaS applications.
 
 There are two main approaches to "ownership" in a multi-tenant application:
@@ -39,6 +41,7 @@ namespace App\Models;
 use Filament\Context;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
 
@@ -68,7 +71,7 @@ A registration page will allow users to create a new tenant. This is useful if y
 
 When visiting your app after logging in, users will be redirected to this page if they don't already have a tenant.
 
-To set up a registration page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\RegisterTenant`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Pages/Tenancy/RegisterTenant.php`:
+To set up a registration page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\RegisterTenant`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Pages/Tenancy/RegisterTeam.php`:
 
 ```php
 namespace App\Filament\Pages\Tenancy;
@@ -159,7 +162,7 @@ public function context(Context $context): Context
 {
     return $context
         // ...
-        ->tenantBillingProvider(SparkBillingProvider::class);
+        ->tenantBillingProvider(new SparkBillingProvider());
 }
 ```
 

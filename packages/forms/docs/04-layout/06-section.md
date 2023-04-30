@@ -2,6 +2,8 @@
 title: Section
 ---
 
+## Overview
+
 You may want to separate your fields into sections, each with a heading and description. To do this, you can use a section component:
 
 ```php
@@ -14,18 +16,19 @@ Section::make('Heading')
     ])
 ```
 
-## Grid columns
+## Adding an icon to the section's header
 
-You may use the `columns()` method to easily create a [grid](grid) within the section:
+You may add an icon to the section's header using the `icon()` method:
 
 ```php
 use Filament\Forms\Components\Section;
 
 Section::make('Heading')
+    ->description('Description')
+    ->icon('heroicon-m-shopping-bag')
     ->schema([
         // ...
     ])
-    ->columns(2)
 ```
 
 ## Positioning the heading and description aside
@@ -81,4 +84,18 @@ Section::make('Heading')
         // ...
     ])
     ->compact()
+```
+
+## Using grid columns within a section
+
+You may use the `columns()` method to easily create a [grid](grid) within the section:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make('Heading')
+    ->schema([
+        // ...
+    ])
+    ->columns(2)
 ```

@@ -3,6 +3,7 @@
 namespace {{ namespace }};
 
 use App\Settings\{{ settingsClass }};
+use Filament\Forms;
 use Filament\Pages\SettingsPage;
 
 class {{ class }} extends SettingsPage

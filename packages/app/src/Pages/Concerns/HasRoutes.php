@@ -20,7 +20,7 @@ trait HasRoutes
 
         Route::get("/{$slug}", static::class)
             ->middleware(static::getRouteMiddleware($context))
-            ->name($slug);
+            ->name((string) str($slug)->replace('/', '.'));
     }
 
     public static function getSlug(): string

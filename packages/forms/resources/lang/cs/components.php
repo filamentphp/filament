@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Obsah je skrytý',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Klonovat',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Odznačit vše',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Přidat řádek',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Obsah je zavřený',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Přidat k :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Přidat odkaz',
                     'unlink' => 'Odebrat odkaz',
                 ],
@@ -257,7 +257,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Zpět',

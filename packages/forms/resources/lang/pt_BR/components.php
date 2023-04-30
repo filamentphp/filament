@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Conteúdo recolhido',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Clonar',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Desmarcar todos',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Adicionar linha',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Conteúdo recolhido',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Adicionar em :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -249,6 +249,7 @@ return [
         'searching_message' => 'Buscando...',
 
         'search_prompt' => 'Comece a digitar para pesquisar...',
+
     ],
 
     'tags_input' => [
@@ -257,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Voltar',

@@ -10,7 +10,7 @@
     x-data="{ label: {{ \Illuminate\Support\Js::from((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }} }"
     class="filament-sidebar-group"
     @if (filled($parentGroup))
-        x-bind:class="{{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }} ? 'ml-11 pr-3 pt-3' : 'hidden'"
+        x-bind:class="{{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }} ? 'ms-11 pe-3 pt-3' : 'hidden'"
     @endif
 >
     @if ($label)
@@ -20,6 +20,9 @@
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
+                x-transition:enter="lg:transition delay-100"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
             @endif
             class="flex items-center justify-between w-full"
         >
@@ -30,7 +33,7 @@
                         alias="app::sidebar.group"
                         color="text-gray-600 dark:text-gray-300"
                         size="h-3 w-3"
-                        class="ml-1 shrink-0"
+                        class="ms-1 shrink-0"
                     />
                 @endif
 
@@ -41,12 +44,11 @@
 
             @if ($collapsible)
                 <x-filament::icon
-                    name="heroicon-m-chevron-down"
+                    name="heroicon-m-chevron-up"
                     alias="app::sidebar.group.collapse"
                     size="h-5 w-5"
                     class="text-gray-600 transition dark:text-gray-300"
-                    x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'"
-                    x-cloak="x-cloak"
+                    x-bind:class="!$store.sidebar.groupIsCollapsed(label) || 'rotate-180'"
                 />
             @endif
         </button>
@@ -54,6 +56,11 @@
 
     <ul
         x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : 'true' }})"
+        @if (filament()->isSidebarCollapsibleOnDesktop())
+            x-transition:enter="lg:transition delay-100"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+        @endif
         x-collapse.duration.200ms
         @class([
             'text-sm space-y-1 -mx-3',

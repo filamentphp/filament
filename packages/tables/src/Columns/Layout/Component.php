@@ -13,6 +13,7 @@ use Filament\Tables\Columns\Concerns\CanGrow;
 use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 
 class Component extends ViewComponent
@@ -116,15 +117,33 @@ class Component extends ViewComponent
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
-            'rowLoop' => $this->getRowLoop(),
-            'table' => $this->getTable(),
-        ]);
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'record' => [$this->getRecord()],
+            'rowLoop' => [$this->getRowLoop()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

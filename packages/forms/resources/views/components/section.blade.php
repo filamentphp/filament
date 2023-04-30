@@ -7,6 +7,7 @@
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"
     :compact="$isCompact()"
+    :icon="$getIcon()"
     {{
         $attributes
             ->merge([

@@ -16,7 +16,7 @@
 >
     <x-filament::loading-indicator
         x-show="isLoading"
-        class="inline-block w-4 h-4 mr-3 rtl:mr-0 rtl:ml-3 text-primary-500"
+        class="inline-block w-4 h-4 me-3 text-primary-500"
     />
 
     <span
@@ -26,7 +26,7 @@
 
     <span id="{{ $this->id }}.table.selection.indicator.record-count.{{ $allRecordsCount }}" x-show="{{ $allRecordsCount }} !== selectedRecords.length">
         <button x-on:click="selectAllRecords" class="text-sm font-medium text-primary-600">
-            {{ __('filament-tables::table.selection_indicator.buttons.select_all.label', ['count' => $allRecordsCount]) }}.
+            {{ trans_choice('filament-tables::table.selection_indicator.buttons.select_all.label', $allRecordsCount) }}.
         </button>
     </span>
 

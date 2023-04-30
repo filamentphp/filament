@@ -3,6 +3,7 @@
 namespace Filament\Infolists;
 
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Database\Eloquent\Model;
 
 class ComponentContainer extends ViewComponent
 {
@@ -27,12 +28,30 @@ class ComponentContainer extends ViewComponent
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->getRecord(),
-        ]);
+        return match ($parameterName) {
+            'record' => [$this->getRecord()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

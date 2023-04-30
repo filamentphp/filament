@@ -4,7 +4,7 @@ return [
 
     'builder' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => ':label में जोड़ें',
@@ -32,7 +32,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'पंक्ति जोड़ें',
@@ -77,7 +77,7 @@ return [
 
     'repeater' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => ':label में जोड़ें',
@@ -105,7 +105,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'लिंक',
                     'unlink' => 'अनलिंक',
                 ],

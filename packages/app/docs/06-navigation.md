@@ -2,7 +2,7 @@
 title: Navigation
 ---
 
-## Getting started
+## Overview
 
 By default, Filament will register navigation items for each of your [resources](resources) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item and its order:
 

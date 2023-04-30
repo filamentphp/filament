@@ -7,7 +7,7 @@ use Filament\Forms\Components\Contracts\CanHaveNumericState;
 use Filament\Forms\Components\TextInput\Mask;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
-class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState
+class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState, Contracts\HasAffixActions
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;

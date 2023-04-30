@@ -70,6 +70,8 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
      */
     protected static ?string $pluralModelLabel = null;
 
+    protected static bool $shouldAuthorizeWithGate = false;
+
     protected static bool $shouldIgnorePolicies = false;
 
     public function isReadOnly(): bool
@@ -215,12 +217,18 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
     protected function can(string $action, ?Model $record = null): bool
     {
+        $user = Filament::auth()->user();
+        $model = $this->getTable()->getModel();
+
+        if (static::shouldAuthorizeWithGate()) {
+            return Gate::forUser($user)->check($action, $record ?? $model);
+        }
+
         if (static::shouldIgnorePolicies()) {
             return true;
         }
 
-        $policy = Gate::getPolicyFor($model = $this->getTable()->getModel());
-        $user = Filament::auth()->user();
+        $policy = Gate::getPolicyFor($model);
 
         if ($policy === null) {
             return true;
@@ -233,9 +241,19 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
         return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
+    public static function authorizeWithGate(bool $condition = true): void
+    {
+        static::$shouldAuthorizeWithGate = $condition;
+    }
+
     public static function ignorePolicies(bool $condition = true): void
     {
         static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldAuthorizeWithGate(): bool
+    {
+        return static::$shouldAuthorizeWithGate;
     }
 
     public static function shouldIgnorePolicies(): bool
@@ -463,7 +481,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
             ->query($this->getTableQuery())
             ->relationship(fn (): Relation | Builder => $this->getRelationship())
             ->inverseRelationship(static::getInverseRelationshipName())
-            ->heading($this->getTableHeading() ?? static::getTitle($this->ownerRecord, $this->pageClass))
+            ->heading($this->getTableHeading() ?? static::getTitle($this->getOwnerRecord(), $this->pageClass))
             ->modelLabel(static::getModelLabel())
             ->pluralModelLabel(static::getPluralModelLabel())
             ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)))
@@ -516,7 +534,7 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
 
                 return null;
             })
-            ->reorderable(condition: static fn (RelationManager $livewire): bool => $livewire->canReorder());
+            ->reorderable(condition: fn (): bool => $this->canReorder());
     }
 
     /**

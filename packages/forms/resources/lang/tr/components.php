@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'İçerik daraltıldı',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => ':label kaynağına ekle',
@@ -46,7 +46,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Satır Ekle',
@@ -93,7 +93,7 @@ return [
 
         'collapsed' => 'İçerik daraltıldı',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => ':label kaynağına ekle',
@@ -137,7 +137,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Bağlantı',
                     'unlink' => 'Bağlantıyı kaldır',
                 ],
@@ -216,7 +216,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Geri',

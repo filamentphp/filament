@@ -21,8 +21,8 @@ class TestsActions
 {
     public function mountTableAction(): Closure
     {
-        return function (string $name, $record = null): static {
-            $name = $this->parseActionName($name);
+        return function (string | array $name, $record = null): static {
+            $name = $this->parseNestedActionName($name);
 
             if ($record instanceof Model) {
                 $record = $this->instance()->getTableRecordKey($record);
@@ -31,19 +31,25 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $this->assertTableActionVisible($name, $record);
 
-            $this->call('mountTableAction', $name, $record);
+            foreach ($name as $actionName) {
+                $this->call(
+                    'mountTableAction',
+                    $actionName,
+                    $record,
+                );
+            }
 
             if (filled($this->instance()->redirectTo)) {
                 return $this;
             }
 
-            if ($this->instance()->mountedTableAction === null) {
+            if (! count($this->instance()->mountedTableActions)) {
                 $this->assertNotDispatchedBrowserEvent('open-modal');
 
                 return $this;
             }
 
-            $this->assertSet('mountedTableAction', $name);
+            $this->assertSet('mountedTableActions', $name);
 
             $this->assertDispatchedBrowserEvent('open-modal', [
                 'id' => "{$this->instance()->id}-table-action",
@@ -56,7 +62,7 @@ class TestsActions
     public function setTableActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::prependKeysWith($data, 'mountedTableActionData.') as $key => $value) {
+            foreach (Arr::prependKeysWith($data, 'mountedTableActionsData.' . array_key_last($this->instance()->mountedTableActionsData) . '.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -68,7 +74,7 @@ class TestsActions
     {
         return function (array $data): static {
             foreach ($data as $key => $value) {
-                $this->assertSet("mountedTableActionData.{$key}", $value);
+                $this->assertSet('mountedTableActionsData.' . array_key_last($this->instance()->mountedTableActionsData) . '.' . $key, $value);
             }
 
             return $this;
@@ -77,7 +83,7 @@ class TestsActions
 
     public function callTableAction(): Closure
     {
-        return function (string $name, $record = null, array $data = [], array $arguments = []): static {
+        return function (string | array $name, $record = null, array $data = [], array $arguments = []): static {
             /** @phpstan-ignore-next-line */
             $this->mountTableAction($name, $record);
 
@@ -110,7 +116,7 @@ class TestsActions
                 return $this;
             }
 
-            if ($this->get('mountedTableAction') !== $action->getName()) {
+            if (! count($this->instance()->mountedTableActions)) {
                 $this->assertDispatchedBrowserEvent('close-modal', [
                     'id' => "{$this->instance()->id}-table-action",
                 ]);
@@ -122,15 +128,18 @@ class TestsActions
 
     public function assertTableActionExists(): Closure
     {
-        return function (string $name): static {
+        return function (string | array $name): static {
+            $name = $this->parseNestedActionName($name);
+
             $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertInstanceOf(
                 Action::class,
                 $action,
-                message: "Failed asserting that a table action with name [{$name}] exists on the [{$livewireClass}] component.",
+                message: "Failed asserting that a table action with name [{$prettyName}] exists on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -139,14 +148,62 @@ class TestsActions
 
     public function assertTableActionDoesNotExist(): Closure
     {
-        return function (string $name): static {
+        return function (string | array $name): static {
+            $name = $this->parseNestedActionName($name);
+
             $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertNull(
                 $action,
-                message: "Failed asserting that a table action with name [{$name}] does not exist on the [{$livewireClass}] component.",
+                message: "Failed asserting that a table action with name [{$prettyName}] does not exist on the [{$livewireClass}] component.",
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getTable()->getActions(),
+                'table',
+                Action::class,
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableHeaderActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getTable()->getHeaderActions(),
+                'table header',
+                Action::class,
+            );
+
+            return $this;
+        };
+    }
+
+    public function assertTableEmptyStateActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getTable()->getEmptyStateActions(),
+                'table empty state',
+                Action::class,
             );
 
             return $this;
@@ -155,7 +212,9 @@ class TestsActions
 
     public function assertTableActionVisible(): Closure
     {
-        return function (string $name, $record = null): static {
+        return function (string | array $name, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -167,12 +226,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertFalse(
                 $action->isHidden(),
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] is visible on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] is visible on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] is visible on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] is visible on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -181,7 +241,9 @@ class TestsActions
 
     public function assertTableActionHidden(): Closure
     {
-        return function (string $name, $record = null): static {
+        return function (string | array $name, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -193,12 +255,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertTrue(
                 $action->isHidden(),
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] is hidden on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] is hidden on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] is hidden on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] is hidden on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -207,7 +270,9 @@ class TestsActions
 
     public function assertTableActionEnabled(): Closure
     {
-        return function (string $name, $record = null): static {
+        return function (string | array $name, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -219,12 +284,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertFalse(
                 $action->isDisabled(),
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] is enabled on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] is enabled on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] is enabled on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] is enabled on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -233,7 +299,9 @@ class TestsActions
 
     public function assertTableActionDisabled(): Closure
     {
-        return function (string $name, $record = null): static {
+        return function (string | array $name, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -245,12 +313,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertFalse(
                 $action->isEnabled(),
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] is disabled on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] is disabled on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] is disabled on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] is disabled on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -259,7 +328,9 @@ class TestsActions
 
     public function assertTableActionHasIcon(): Closure
     {
-        return function (string $name, string $icon, $record = null): static {
+        return function (string | array $name, string $icon, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -271,12 +342,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertTrue(
                 $action->getIcon() === $icon,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] has icon [{$icon}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] has icon [{$icon}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] has icon [{$icon}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -285,7 +357,9 @@ class TestsActions
 
     public function assertTableActionDoesNotHaveIcon(): Closure
     {
-        return function (string $name, string $icon, $record = null): static {
+        return function (string | array $name, string $icon, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -297,12 +371,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertFalse(
                 $action->getIcon() === $icon,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] does not have icon [{$icon}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] does not have icon [{$icon}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] does not have icon [{$icon}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -311,7 +386,9 @@ class TestsActions
 
     public function assertTableActionHasLabel(): Closure
     {
-        return function (string $name, string $label, $record = null): static {
+        return function (string | array $name, string $label, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -323,12 +400,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertTrue(
                 $action->getLabel() === $label,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] has label [{$label}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] has label [{$label}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] has label [{$label}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -337,7 +415,9 @@ class TestsActions
 
     public function assertTableActionDoesNotHaveLabel(): Closure
     {
-        return function (string $name, string $label, $record = null): static {
+        return function (string | array $name, string $label, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -349,12 +429,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertFalse(
                 $action->getLabel() === $label,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] does not have label [{$label}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] does not have label [{$label}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] does not have label [{$label}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -363,7 +444,9 @@ class TestsActions
 
     public function assertTableActionHasColor(): Closure
     {
-        return function (string $name, string $color, $record = null): static {
+        return function (string | array $name, string $color, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -375,12 +458,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertTrue(
                 $action->getColor() === $color,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] has color [{$color}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -389,7 +473,9 @@ class TestsActions
 
     public function assertTableActionDoesNotHaveColor(): Closure
     {
-        return function (string $name, string $color, $record = null): static {
+        return function (string | array $name, string $color, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -401,12 +487,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertFalse(
                 $action->getColor() === $color,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] does not have color [{$color}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -415,7 +502,9 @@ class TestsActions
 
     public function assertTableActionHasUrl(): Closure
     {
-        return function (string $name, string $url, $record = null): static {
+        return function (string | array $name, string $url, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -427,12 +516,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertTrue(
                 $action->getUrl() === $url,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] has URL [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] has URL [{$url}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] has URL [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] has URL [{$url}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -441,7 +531,9 @@ class TestsActions
 
     public function assertTableActionDoesNotHaveUrl(): Closure
     {
-        return function (string $name, string $url, $record = null): static {
+        return function (string | array $name, string $url, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -453,12 +545,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertFalse(
                 $action->getUrl() === $url,
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] does not have URL [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] does not have URL [{$url}] on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] does not have URL [{$url}] on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] does not have URL [{$url}] on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -467,7 +560,9 @@ class TestsActions
 
     public function assertTableActionShouldOpenUrlInNewTab(): Closure
     {
-        return function (string $name, $record = null): static {
+        return function (string | array $name, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -479,12 +574,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertTrue(
                 $action->shouldOpenUrlInNewTab(),
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] should open url in new tab on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] should open url in new tab on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] should open url in new tab on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] should open url in new tab on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -493,7 +589,9 @@ class TestsActions
 
     public function assertTableActionShouldNotOpenUrlInNewTab(): Closure
     {
-        return function (string $name, $record = null): static {
+        return function (string | array $name, $record = null): static {
+            $name = $this->parseNestedActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
@@ -505,12 +603,13 @@ class TestsActions
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
+            $prettyName = implode(' > ', $name);
 
             Assert::assertFalse(
                 $action->shouldOpenUrlInNewTab(),
                 message: filled($record) ?
-                    "Failed asserting that a table action with name [{$name}] should not open url in new tab on the [{$livewireClass}] component for record [{$record}]." :
-                    "Failed asserting that a table action with name [{$name}] should not open url in new tab on the [{$livewireClass}] component.",
+                    "Failed asserting that a table action with name [{$prettyName}] should not open url in new tab on the [{$livewireClass}] component for record [{$record}]." :
+                    "Failed asserting that a table action with name [{$prettyName}] should not open url in new tab on the [{$livewireClass}] component.",
             );
 
             return $this;
@@ -519,13 +618,13 @@ class TestsActions
 
     public function assertTableActionHalted(): Closure
     {
-        return function (string $name): static {
-            $name = $this->parseActionName($name);
+        return function (string | array $name): static {
+            $name = $this->parseNestedActionName($name);
 
             /** @phpstan-ignore-next-line */
             $this->assertTableActionExists($name);
 
-            $this->assertSet('mountedTableAction', $name);
+            $this->assertSet('mountedTableActions', $name);
 
             return $this;
         };
@@ -546,10 +645,10 @@ class TestsActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => "mountedTableActionData.{$value}"];
+                            return [$key => 'mountedTableActionsData.' . array_key_last($this->instance()->mountedTableActionsData) . '.' . $value];
                         }
 
-                        return ["mountedTableActionData.{$key}" => $value];
+                        return ['mountedTableActionsData.' . array_key_last($this->instance()->mountedTableActionsData) . '.' . $key => $value];
                     })
                     ->all(),
             );
@@ -565,10 +664,10 @@ class TestsActions
                 collect($keys)
                     ->mapWithKeys(function ($value, $key): array {
                         if (is_int($key)) {
-                            return [$key => "mountedTableActionData.{$value}"];
+                            return [$key => 'mountedTableActionsData.' . array_key_last($this->instance()->mountedTableActionsData) . '.' . $value];
                         }
 
-                        return ["mountedTableActionData.{$key}" => $value];
+                        return ['mountedTableActionsData.' . array_key_last($this->instance()->mountedTableActionsData) . '.' . $key => $value];
                     })
                     ->all(),
             );

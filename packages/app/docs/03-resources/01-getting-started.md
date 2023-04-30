@@ -2,6 +2,8 @@
 title: Getting started
 ---
 
+## Overview
+
 Resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your app - using tables and forms.
 
 ## Creating a resource

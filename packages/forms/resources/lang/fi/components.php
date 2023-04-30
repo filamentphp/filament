@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Sisältö kutistettu',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Kloonaa',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Poista valinta kaikista',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Lisää rivi',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Sisältö suljettu',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Lisää :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Linkitä',
                     'unlink' => 'Poista linkki',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Edellinen',

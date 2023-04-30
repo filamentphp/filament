@@ -48,7 +48,7 @@
                 return await $wire.reorderUploadedFiles(@js($statePath), files)
             },
             shouldAppendFiles: @js($shouldAppendFiles()),
-            shouldOrientImageFromExif: @js($shouldOrientImageFromExif()),
+            shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
             shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
             uploadButtonPosition: @js($getUploadButtonPosition()),

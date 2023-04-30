@@ -19,21 +19,21 @@
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-data="{}"
                 x-bind:class="{
-                    'lg:pl-[var(--collapsed-sidebar-width)] rtl:lg:pr-[var(--collapsed-sidebar-width)]': ! $store.sidebar.isOpen,
-                    'filament-main-sidebar-open lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]': $store.sidebar.isOpen,
+                    'lg:ps-[--collapsed-sidebar-width]': ! $store.sidebar.isOpen,
+                    'filament-main-sidebar-open lg:ps-[--sidebar-width]': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @elseif (filament()->isSidebarFullyCollapsibleOnDesktop())
                 x-data="{}"
                 x-bind:class="{
-                    'filament-main-sidebar-open lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]': $store.sidebar.isOpen,
+                    'filament-main-sidebar-open lg:ps-[--sidebar-width]': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @endif
             @class([
-                'filament-main flex-col space-y-6 w-screen flex-1 rtl:lg:pl-0',
+                'filament-main flex-col space-y-6 w-screen flex-1 lg:pe-0',
                 'hidden h-full transition-all' => filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop(),
-                'flex lg:pl-[var(--sidebar-width)] rtl:lg:pr-[var(--sidebar-width)]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
+                'flex lg:ps-[--sidebar-width]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
             ])
         >
             <x-filament::layouts.app.topbar
@@ -41,7 +41,22 @@
                 :navigation="$navigation"
             />
 
-            <div class="filament-main-content flex-1 w-full max-w-7xl px-4 mx-auto md:px-6 lg:px-8">
+            <div
+                @class([
+                    'filament-main-content flex-1 w-full px-4 mx-auto md:px-6 lg:px-8',
+                    match ($maxContentWidth ?? filament()->getMaxContentWidth() ?? '7xl') {
+                        'xl' => 'max-w-xl',
+                        '2xl' => 'max-w-2xl',
+                        '3xl' => 'max-w-3xl',
+                        '4xl' => 'max-w-4xl',
+                        '5xl' => 'max-w-5xl',
+                        '6xl' => 'max-w-6xl',
+                        '7xl' => 'max-w-7xl',
+                        'full' => 'max-w-full',
+                        default => $maxContentWidth,
+                    },
+                ])
+            >
                 {{ filament()->renderHook('content.start') }}
 
                 {{ $slot }}

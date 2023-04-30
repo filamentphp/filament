@@ -25,6 +25,7 @@ jobs:
           - support
           - tables
           - widgets
+          - upgrade
     steps:
       - uses: actions/checkout@v2
       - id: previous-tag

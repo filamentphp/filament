@@ -11,6 +11,7 @@ export default function selectFormComponent({
     isMultiple,
     hasDynamicOptions,
     hasDynamicSearchResults,
+    livewireId,
     loadingMessage,
     maxItems,
     maxItemsMessage,
@@ -23,6 +24,7 @@ export default function selectFormComponent({
     searchingMessage,
     searchPrompt,
     state,
+    statePath,
 }) {
     return {
         isSearching: false,
@@ -53,6 +55,7 @@ export default function selectFormComponent({
                 removeItemButton: true,
                 renderChoiceLimit: optionsLimit,
                 searchFields: ['label'],
+                searchPlaceholderValue: searchPrompt,
                 searchResultLimit: optionsLimit,
                 shouldSort: false,
             })
@@ -128,29 +131,59 @@ export default function selectFormComponent({
                 )
             }
 
+            if (!isMultiple) {
+                window.addEventListener(
+                    'filament-forms::select/refreshSelectedOptionLabel',
+                    async (event) => {
+                        if (event.detail.livewireId !== livewireId) {
+                            return
+                        }
+
+                        if (event.detail.statePath !== statePath) {
+                            return
+                        }
+
+                        await this.refreshSelectedOption()
+                    },
+                )
+            }
+
             this.$watch('state', async () => {
+                if (!this.select) {
+                    return
+                }
+
                 this.refreshPlaceholder()
 
                 if (this.isStateBeingUpdated) {
                     return
                 }
 
-                const choices = await this.getChoices({
-                    withInitialOptions: !hasDynamicOptions,
-                })
-
-                this.select.clearStore()
-
-                this.setChoices(choices)
-
-                if (![null, undefined, ''].includes(this.state)) {
-                    this.select.setChoiceByValue(this.formatState(this.state))
-                }
+                await this.refreshSelectedOption()
             })
+        },
+
+        destroy: function () {
+            this.select.destroy()
+            this.select = null
         },
 
         refreshChoices: async function (config = {}) {
             this.setChoices(await this.getChoices(config))
+        },
+
+        refreshSelectedOption: async function () {
+            const choices = await this.getChoices({
+                withInitialOptions: !hasDynamicOptions,
+            })
+
+            this.select.clearStore()
+
+            this.setChoices(choices)
+
+            if (![null, undefined, ''].includes(this.state)) {
+                this.select.setChoiceByValue(this.formatState(this.state))
+            }
         },
 
         setChoices: function (choices) {

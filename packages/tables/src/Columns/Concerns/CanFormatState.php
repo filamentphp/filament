@@ -2,9 +2,10 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use Akaunting\Money;
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
@@ -27,6 +28,8 @@ trait CanFormatState
     protected string | Closure | null $prefix = null;
 
     protected string | Closure | null $suffix = null;
+
+    protected string | Closure | null $placeholder = null;
 
     protected string | Closure | null $timezone = null;
 
@@ -82,28 +85,22 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, bool $shouldConvert = true): static
+    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
     {
-        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $shouldConvert): ?string {
+        $this->formatStateUsing(static function (TextColumn $column, $state) use ($currency, $divideBy): ?string {
             if (blank($state)) {
                 return null;
             }
 
-            if (blank($currency)) {
-                $currency = env('DEFAULT_CURRENCY', 'USD');
-            }
+            $currency = $column->evaluate($currency) ?? Table::$defaultCurrency;
 
-            return (new Money\Money(
-                $state,
-                (new Money\Currency(strtoupper($column->evaluate($currency)))),
-                $shouldConvert,
-            ))->format();
+            return format_money($state, $currency, $divideBy);
         });
 
         return $this;
     }
 
-    public function numeric(int | Closure $decimalPlaces = 0, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
         $this->formatStateUsing(static function (TextColumn $column, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
             if (blank($state)) {
@@ -112,6 +109,10 @@ trait CanFormatState
 
             if (! is_numeric($state)) {
                 return $state;
+            }
+
+            if ($decimalPlaces === null) {
+                return format_number($state);
             }
 
             return number_format(
@@ -137,6 +138,13 @@ trait CanFormatState
     public function timezone(string | Closure | null $timezone): static
     {
         $this->timezone = $timezone;
+
+        return $this;
+    }
+
+    public function placeholder(string | Closure | null $placeholder): static
+    {
+        $this->placeholder = $placeholder;
 
         return $this;
     }
@@ -213,6 +221,10 @@ trait CanFormatState
 
         if ($state instanceof HtmlString) {
             return $state;
+        }
+
+        if (blank($state)) {
+            $state = $this->evaluate($this->placeholder);
         }
 
         if ($this->isHtml()) {

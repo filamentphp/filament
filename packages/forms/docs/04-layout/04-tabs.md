@@ -2,6 +2,8 @@
 title: Tabs
 ---
 
+## Overview
+
 Some forms can be long and complex. You may want to use tabs to reduce the number of components that are visible at once:
 
 ```php
@@ -9,15 +11,15 @@ use Filament\Forms\Components\Tabs;
 
 Tabs::make('Heading')
     ->tabs([
-        Tabs\Tab::make('Label 1')
+        Tabs\Tab::make('Tab 1')
             ->schema([
                 // ...
             ]),
-        Tabs\Tab::make('Label 2')
+        Tabs\Tab::make('Tab 2')
             ->schema([
                 // ...
             ]),
-        Tabs\Tab::make('Label 3')
+        Tabs\Tab::make('Tab 3')
             ->schema([
                 // ...
             ]),
@@ -33,15 +35,15 @@ use Filament\Forms\Components\Tabs;
 
 Tabs::make('Heading')
     ->tabs([
-        Tabs\Tab::make('Label 1')
+        Tabs\Tab::make('Tab 1')
             ->schema([
                 // ...
             ]),
-        Tabs\Tab::make('Label 2')
+        Tabs\Tab::make('Tab 2')
             ->schema([
                 // ...
             ]),
-        Tabs\Tab::make('Label 3')
+        Tabs\Tab::make('Tab 3')
             ->schema([
                 // ...
             ]),
@@ -49,9 +51,57 @@ Tabs::make('Heading')
     ->activeTab(2)
 ```
 
-## Setting a tab icon or badge
+## Persisting the current tab in the URL's query string
 
-Tabs may have an icon and badge, which you can set using the `icon()` and `badge()` methods:
+By default, the current tab is not persisted in the URL's query string. You can change this behavior using the `persistTabInQueryString()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInQueryString()
+```
+
+By default, the current tab is persisted in the URL's query string using the `tab` key. You can change this key by passing it to the `persistTabInQueryString()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->persistTabInQueryString('settings-tab')
+```
+
+## Setting a tab icon
+
+Tabs may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), which you can set using the `icon()` method:
 
 ```php
 use Filament\Forms\Components\Tabs;
@@ -59,11 +109,46 @@ use Filament\Forms\Components\Tabs;
 Tabs::make('Heading')
     ->tabs([
         Tabs\Tab::make('Notifications')
-            ->icon('heroicon-m-bell') // [tl! focus:start]
-            ->badge('39') // [tl! focus:end]
+            ->icon('heroicon-m-bell')
             ->schema([
                 // ...
             ]),
+        // ...
+    ])
+```
+
+## Setting a tab badge
+
+Tabs may have a badge, which you can set using the `badge()` method:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->badge(5)
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
+
+## Using grid columns within a tab
+
+You may use the `columns()` method to customize the [grid](grid) within the tab:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ])
+            ->columns(3),
         // ...
     ])
 ```

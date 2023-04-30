@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'طيّ المحتوى',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'نسخ',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'إلغاء تحديد الكل',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'إضافة صف',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'المحتوى مطوي',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'إضافة إلى :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'ربط',
                     'unlink' => 'فصل',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'الخطوة السابقة',

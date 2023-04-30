@@ -13,9 +13,12 @@
         @livewireStyles
         @filamentStyles
         @vite('resources/css/app.css')
+
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=be-vietnam-pro:400,500,700&amp;display=swap" rel="stylesheet">
     </head>
 
-    <body class="antialiased">
+    <body class="antialiased bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
         {{ $slot }}
 
         @livewire('notifications')

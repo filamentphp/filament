@@ -1,15 +1,16 @@
 <div>
     <div
         @class([
-            'filament-notifications pointer-events-none fixed inset-4 z-50 mx-auto flex justify-end gap-3',
+            'filament-notifications pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3',
             match (static::$horizontalAlignment) {
                 'left' => 'items-start',
                 'center' => 'items-center',
                 'right' => 'items-end',
             },
             match (static::$verticalAlignment) {
-                'top' => 'flex-col-reverse',
-                'bottom' => 'flex-col',
+                'top' => 'flex-col-reverse justify-end',
+                'bottom' => 'flex-col justify-end',
+                'center' => 'flex-col justify-center'
             },
         ])
         role="status"
@@ -18,10 +19,6 @@
             {{ $notification }}
         @endforeach
     </div>
-
-    @if ($this->hasDatabaseNotifications())
-        <x-filament-notifications::database />
-    @endif
 
     @if ($broadcastChannel = $this->getBroadcastChannel())
         <x-filament-notifications::echo :channel="$broadcastChannel" />

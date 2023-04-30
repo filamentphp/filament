@@ -2,12 +2,14 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
-use BackedEnum;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 
 trait HasState
 {
+    use CanGetStateFromRelationships;
+
     protected mixed $defaultState = null;
 
     protected ?Closure $getStateUsing = null;
@@ -15,6 +17,10 @@ trait HasState
     protected ?string $statePath = null;
 
     protected string | Closure | null $separator = null;
+
+    protected bool | Closure $isDistinctList = false;
+
+    protected string $cachedFullStatePath;
 
     public function getStateUsing(?Closure $callback): static
     {
@@ -30,24 +36,33 @@ trait HasState
         return $this;
     }
 
+    public function distinctList(bool | Closure $condition = true): static
+    {
+        $this->isDistinctList = $condition;
+
+        return $this;
+    }
+
+    public function isDistinctList(): bool
+    {
+        return (bool) $this->evaluate($this->isDistinctList);
+    }
+
     public function getDefaultState(): mixed
     {
-        return $this->evaluate($this->defaultState, exceptParameters: ['state']);
+        return $this->evaluate($this->defaultState);
     }
 
     public function getState(): mixed
     {
-        $state = $this->getStateUsing ? $this->evaluate(
-            $this->getStateUsing,
-            exceptParameters: ['state'],
-        ) : data_get($this->getContainer()->getState(), $this->getStatePath());
+        if ($this->getStateUsing) {
+            $state = $this->evaluate($this->getStateUsing);
+        } else {
+            $containerState = $this->getContainer()->getState();
 
-        if (
-            interface_exists(BackedEnum::class) &&
-            ($state instanceof BackedEnum) &&
-            property_exists($state, 'value')
-        ) {
-            $state = $state->value;
+            $state = $containerState instanceof Model ?
+                $this->getStateFromRecord($containerState) :
+                data_get($containerState, $this->getStatePath());
         }
 
         if (is_string($state) && ($separator = $this->getSeparator())) {
@@ -95,6 +110,10 @@ trait HasState
 
     public function getStatePath(bool $isAbsolute = true): string
     {
+        if (isset($this->cachedFullStatePath)) {
+            return $this->cachedFullStatePath;
+        }
+
         $pathComponents = [];
 
         if ($isAbsolute && ($containerStatePath = $this->getContainer()->getStatePath())) {
@@ -105,6 +124,44 @@ trait HasState
             $pathComponents[] = $this->statePath;
         }
 
-        return implode('.', $pathComponents);
+        return $this->cachedFullStatePath = implode('.', $pathComponents);
+    }
+
+    public function getStateFromRecord(Model $record): mixed
+    {
+        $state = data_get($record, $this->getStatePath());
+
+        if ($state !== null) {
+            return $state;
+        }
+
+        if (! $this->hasRelationship($record)) {
+            return null;
+        }
+
+        $relationship = $this->getRelationship($record);
+
+        if (! $relationship) {
+            return null;
+        }
+
+        $relationshipAttribute = $this->getRelationshipAttribute();
+
+        $state = collect($this->getRelationshipResults($record))
+            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
+            ->pluck($relationshipAttribute)
+            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+            ->values();
+
+        if (! $state->count()) {
+            return null;
+        }
+
+        return $state->all();
+    }
+
+    protected function flushCachedStatePath(): void
+    {
+        unset($this->cachedFullStatePath);
     }
 }

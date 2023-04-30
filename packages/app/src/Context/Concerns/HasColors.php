@@ -7,38 +7,38 @@ use Filament\Support\Color;
 trait HasColors
 {
     /**
-     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
      */
     protected ?array $primaryColor = null;
 
     /**
-     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
      */
     protected ?array $secondaryColor = null;
 
     /**
-     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
      */
     protected ?array $grayColor = null;
 
     /**
-     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
      */
     protected ?array $dangerColor = null;
 
     /**
-     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
      */
     protected ?array $warningColor = null;
 
     /**
-     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null
+     * @var array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
      */
     protected ?array $successColor = null;
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string  $color
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string  $color
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string
      */
     public function processColor(array | string $color): array | string
     {
@@ -54,7 +54,7 @@ trait HasColors
     }
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | null  $color
      */
     public function primaryColor(array | string | null $color): static
     {
@@ -64,7 +64,7 @@ trait HasColors
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getPrimaryColor(): array
     {
@@ -72,7 +72,7 @@ trait HasColors
     }
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | null  $color
      */
     public function secondaryColor(array | string | null $color): static
     {
@@ -82,7 +82,7 @@ trait HasColors
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getSecondaryColor(): array
     {
@@ -90,7 +90,7 @@ trait HasColors
     }
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | null  $color
      */
     public function grayColor(array | string | null $color): static
     {
@@ -100,7 +100,7 @@ trait HasColors
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getGrayColor(): array
     {
@@ -108,7 +108,7 @@ trait HasColors
     }
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | null  $color
      */
     public function dangerColor(array | string | null $color): static
     {
@@ -118,7 +118,7 @@ trait HasColors
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getDangerColor(): array
     {
@@ -126,7 +126,7 @@ trait HasColors
     }
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | null  $color
      */
     public function warningColor(array | string | null $color): static
     {
@@ -136,7 +136,7 @@ trait HasColors
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getWarningColor(): array
     {
@@ -144,7 +144,7 @@ trait HasColors
     }
 
     /**
-     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | string | null  $color
+     * @param  array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | string | null  $color
      */
     public function successColor(array | string | null $color): static
     {
@@ -154,7 +154,7 @@ trait HasColors
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getSuccessColor(): array
     {
@@ -163,12 +163,12 @@ trait HasColors
 
     /**
      * @return array{
-     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
      * }
      */
     public function getColors(): array
@@ -177,8 +177,8 @@ trait HasColors
             'primary' => $this->getPrimaryColor(),
             'secondary' => $this->getSecondaryColor(),
             'gray' => $this->getGrayColor(),
-            'warning' => $this->getWarningColor(),
             'danger' => $this->getDangerColor(),
+            'warning' => $this->getWarningColor(),
             'success' => $this->getSuccessColor(),
         ];
     }

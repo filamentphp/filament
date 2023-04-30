@@ -97,7 +97,9 @@ export default function fileUploadFormComponent({
                 styleProgressIndicatorPosition: uploadProgressIndicatorPosition,
                 server: {
                     load: async (source, load) => {
-                        let response = await fetch(source)
+                        let response = await fetch(source, {
+                            cache: 'no-store',
+                        })
                         let blob = await response.blob()
 
                         load(blob)
@@ -158,6 +160,10 @@ export default function fileUploadFormComponent({
             })
 
             this.$watch('state', async () => {
+                if (!this.pond) {
+                    return
+                }
+
                 if (!this.shouldUpdateState) {
                     return
                 }
@@ -224,29 +230,42 @@ export default function fileUploadFormComponent({
                 this.insertOpenLink(fileItem)
             })
 
-            this.pond.on('processfilestart', async () => {
+            this.pond.on('addfilestart', async (file) => {
+                if (file.status !== FilePond.FileStatus.PROCESSING_QUEUED) {
+                    return
+                }
+
                 this.dispatchFormEvent('file-upload-started')
             })
 
-            this.pond.on('processfileprogress', async () => {
-                this.dispatchFormEvent('file-upload-started')
-            })
+            const handleFileProcessing = async () => {
+                if (
+                    this.pond
+                        .getFiles()
+                        .filter(
+                            (file) =>
+                                file.status ===
+                                    FilePond.FileStatus.PROCESSING ||
+                                file.status ===
+                                    FilePond.FileStatus.PROCESSING_QUEUED,
+                        ).length
+                ) {
+                    return
+                }
 
-            this.pond.on('processfile', async () => {
                 this.dispatchFormEvent('file-upload-finished')
-            })
+            }
 
-            this.pond.on('processfiles', async () => {
-                this.dispatchFormEvent('file-upload-finished')
-            })
+            this.pond.on('processfile', handleFileProcessing)
 
-            this.pond.on('processfileabort', async () => {
-                this.dispatchFormEvent('file-upload-finished')
-            })
+            this.pond.on('processfileabort', handleFileProcessing)
 
-            this.pond.on('processfilerevert', async () => {
-                this.dispatchFormEvent('file-upload-finished')
-            })
+            this.pond.on('processfilerevert', handleFileProcessing)
+        },
+
+        destroy: function () {
+            FilePond.destroy(this.$refs.input)
+            this.pond = null
         },
 
         dispatchFormEvent: function (name) {

@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Content collapsed',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Clone',
@@ -17,7 +17,7 @@ return [
             ],
 
             'add_between' => [
-                'label' => 'Insert',
+                'label' => 'Insert between blocks',
             ],
 
             'delete' => [
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Deselect all',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Add row',
@@ -108,15 +108,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Attach files',
+            'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
             'code_block' => 'Code block',
-            'edit' => 'Edit',
+            'heading' => 'Heading',
             'italic' => 'Italic',
             'link' => 'Link',
             'ordered_list' => 'Numbered list',
-            'preview' => 'Preview',
+            'redo' => 'Redo',
             'strike' => 'Strikethrough',
+            'table' => 'Table',
+            'undo' => 'Undo',
         ],
 
     ],
@@ -125,7 +128,7 @@ return [
 
         'collapsed' => 'Content collapsed',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Add to :label',
@@ -177,7 +180,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -235,6 +238,24 @@ return [
 
             ],
 
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Edit',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Save',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
         ],
 
         'boolean' => [
@@ -262,7 +283,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Back',

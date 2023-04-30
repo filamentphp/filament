@@ -93,7 +93,17 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Aucun élément trouvé',
+
+        'buttons' => [
+
+            'reset_column_searches' => [
+                'label' => 'Effacer la recherche de colonne',
+            ],
+
+        ],
+
     ],
 
     'filters' => [
@@ -105,7 +115,7 @@ return [
             ],
 
             'remove_all' => [
-                'label' => 'Supprimer tous les filters',
+                'label' => 'Supprimer tous les filtres',
                 'tooltip' => 'Supprimer tous les filtres',
             ],
 

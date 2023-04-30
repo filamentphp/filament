@@ -2,20 +2,20 @@
 
 namespace Filament\Actions\Concerns;
 
-use Filament\Actions\Contracts\HasActions;
+use Livewire\Component;
 
 trait BelongsToLivewire
 {
-    protected HasActions $livewire;
+    protected Component $livewire;
 
-    public function livewire(HasActions $livewire): static
+    public function livewire(Component $livewire): static
     {
         $this->livewire = $livewire;
 
         return $this;
     }
 
-    public function getLivewire(): HasActions
+    public function getLivewire(): object
     {
         return $this->livewire;
     }

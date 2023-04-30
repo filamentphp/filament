@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Contenido contraido',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Clonar',
@@ -56,9 +56,25 @@ return [
 
     ],
 
-    'key_value' => [
+    'checkbox_list' => [
 
         'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Deseleccionar todos',
+            ],
+
+            'select_all' => [
+                'label' => 'Seleccionar todos',
+            ],
+
+        ],
+
+    ],
+
+    'key_value' => [
+
+        'actions' => [
 
             'add' => [
                 'label' => 'Añadir fila',
@@ -94,7 +110,7 @@ return [
             'attach_files' => 'Adjuntar archivos',
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
-            'code_block' => 'Código',
+            'code_block' => 'Bloque de código',
             'edit' => 'Escribir',
             'italic' => 'Cursiva',
             'link' => 'Enlace',
@@ -109,7 +125,7 @@ return [
 
         'collapsed' => 'Contenido contraido',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Añadir a :label',
@@ -161,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Enlace',
                     'unlink' => 'Quitar enlace',
                 ],
@@ -179,7 +195,7 @@ return [
             'blockquote' => 'Cita',
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
-            'code_block' => 'Código',
+            'code_block' => 'Bloque de código',
             'h1' => 'Título',
             'h2' => 'Encabezado',
             'h3' => 'Subencabezado',
@@ -242,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Anterior',

@@ -2,6 +2,8 @@
 title: Getting started
 ---
 
+## Overview
+
 Filament's table package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [app framework](../app) for displaying [app resources](../app/resources) and [relation managers](../app/resources/relation-managers), as well as for the [table widget](../app/dashboard#table-widgets). Learning the feature's of the table builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
 
 This guide will walk you through the basics of building tables with Filament's table package. If you're planning to add a new table to your own Livewire component, you should [do that first](adding-a-table-to-a-livewire-component) and then come back. If you're adding a table to an [app resource](../app/resources), or another Filament package, you're ready to go!
@@ -22,12 +24,12 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->columns([ // [tl! focus:start]
+        ->columns([
             TextColumn::make('title'),
             TextColumn::make('slug'),
             IconColumn::make('is_featured')
                 ->boolean(),
-        ]); // [tl! focus:end]
+        ]);
 }
 ```
 
@@ -82,7 +84,7 @@ public function table(Table $table): Table
         ->schema([
             // ...
         ])
-        ->filters([ // [tl! focus:start]
+        ->filters([
             Filter::make('is_featured'),
             SelectFilter::make('status')
                 ->options([
@@ -90,7 +92,7 @@ public function table(Table $table): Table
                     'reviewing' => 'Reviewing',
                     'published' => 'Published',
                 ]),
-        ]); // [tl! focus:end]
+        ]);
 }
 ```
 
@@ -116,7 +118,7 @@ public function table(Table $table): Table
         ->schema([
             // ...
         ])
-        ->actions([ // [tl! focus:start]
+        ->actions([
             Action::make('feature')
                 ->action(function (Post $record) {
                     $record->is_featured = true;
@@ -132,7 +134,7 @@ public function table(Table $table): Table
         ])
         ->bulkActions([
             DeleteBulkAction::make(),
-        ]); // [tl! focus:end]
+        ]);
 }
 ```
 

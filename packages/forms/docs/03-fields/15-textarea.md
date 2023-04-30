@@ -2,6 +2,8 @@
 title: Textarea
 ---
 
+## Overview
+
 The textarea allows you to interact with a multi-line string:
 
 ```php
@@ -24,14 +26,38 @@ Textarea::make('description')
     ->cols(20)
 ```
 
-## Validation
+### Autosizing the textarea
 
-You may limit the length of the content by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
+You may allow the textarea to automatically resize to fit its content by setting the `autosize()` method:
 
 ```php
 use Filament\Forms\Components\Textarea;
 
 Textarea::make('description')
-    ->minLength(50)
-    ->maxLength(500)
+    ->autosize()
+```
+
+## Textarea validation
+
+As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to textareas.
+
+### Length validation
+
+You may limit the length of the textarea by setting the `minLength()` and `maxLength()` methods. These methods add both frontend and backend validation:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('description')
+    ->minLength(2)
+    ->maxLength(1024)
+```
+
+You can also specify the exact length of the textarea by setting the `length()`. This method adds both frontend and backend validation:
+
+```php
+use Filament\Forms\Components\Textarea;
+
+Textarea::make('question')
+    ->length(100)
 ```

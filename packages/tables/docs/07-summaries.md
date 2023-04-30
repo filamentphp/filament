@@ -2,7 +2,7 @@
 title: Summaries
 ---
 
-## Getting started
+## Overview
 
 You may render a "summary" section below your table content. This is great for displaying the results of calculations such as averages, sums, counts, and ranges of the data in your table.
 
@@ -231,7 +231,7 @@ TextColumn::make('rating')
 
 ### Currency formatting
 
-The `money()` method allows you to easily format monetary values, in any currency. This functionality uses [`akaunting/laravel-money`](https://github.com/akaunting/laravel-money) internally:
+The `money()` method allows you to easily format monetary values, in any currency:
 
 ```php
 use Filament\Tables\Columns\Summarizers\Sum;

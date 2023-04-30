@@ -4,6 +4,7 @@ namespace Filament\Pages\Auth\PasswordReset;
 
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -123,6 +124,13 @@ class ResetPassword extends CardPage
                     ->required()
                     ->dehydrated(false),
             ]);
+    }
+
+    public function resetPasswordAction(): Action
+    {
+        return Action::make('resetPasswordAction')
+            ->label(__('filament::pages/auth/password-reset/reset-password.buttons.reset.label'))
+            ->submit('resetPassword');
     }
 
     /**

@@ -25,11 +25,9 @@ class EditAction extends Action
 
         $this->modalHeading(fn (): string => __('filament-actions::edit.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-actions::edit.single.modal.actions.save.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::edit.single.modal.actions.save.label'));
 
         $this->successNotificationTitle(__('filament-actions::edit.single.messages.saved'));
-
-        $this->button();
 
         $this->groupedIcon('heroicon-m-pencil-square');
 

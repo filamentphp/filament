@@ -37,6 +37,8 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
+    protected bool $isServing = false;
+
     public function auth(): Guard
     {
         return $this->getCurrentContext()->auth();
@@ -264,6 +266,11 @@ class FilamentManager
         return $this->getCurrentContext()->getLogoutUrl();
     }
 
+    public function getMaxContentWidth(): ?string
+    {
+        return $this->getCurrentContext()->getMaxContentWidth();
+    }
+
     /**
      * @return array<NavigationGroup>
      */
@@ -297,7 +304,7 @@ class FilamentManager
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getPrimaryColor(): array
     {
@@ -305,7 +312,7 @@ class FilamentManager
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getSecondaryColor(): array
     {
@@ -313,7 +320,7 @@ class FilamentManager
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getGrayColor(): array
     {
@@ -321,7 +328,7 @@ class FilamentManager
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getDangerColor(): array
     {
@@ -329,7 +336,7 @@ class FilamentManager
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getWarningColor(): array
     {
@@ -337,7 +344,7 @@ class FilamentManager
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string}
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
     public function getSuccessColor(): array
     {
@@ -346,12 +353,12 @@ class FilamentManager
 
     /**
      * @return array{
-     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
-     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string} | null,
+     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
      * }
      */
     public function getColors(): array
@@ -513,6 +520,11 @@ class FilamentManager
         return $this->getCurrentContext()->hasDarkMode();
     }
 
+    public function hasDarkModeForced(): bool
+    {
+        return $this->getCurrentContext()->hasDarkModeForced();
+    }
+
     public function getBrandName(): string
     {
         return $this->getCurrentContext()->getBrandName();
@@ -571,5 +583,15 @@ class FilamentManager
     public function hasCollapsibleNavigationGroups(): bool
     {
         return $this->getCurrentContext()->hasCollapsibleNavigationGroups();
+    }
+
+    public function setServingStatus(bool $condition = true): void
+    {
+        $this->isServing = $condition;
+    }
+
+    public function isServing(): bool
+    {
+        return $this->isServing;
     }
 }

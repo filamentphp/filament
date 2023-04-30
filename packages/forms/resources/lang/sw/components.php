@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Maudhui yamefichwa',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Iga',
@@ -58,7 +58,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ongeza safu',
@@ -109,7 +109,7 @@ return [
 
         'collapsed' => 'Maudhui yamefichwa',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ongeza kwenye :label',
@@ -161,7 +161,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Unganisha',
                     'unlink' => 'Tenganisha',
                 ],
@@ -242,7 +242,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Nyuma',

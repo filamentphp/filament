@@ -5,6 +5,8 @@
     'icon' => null,
     'iconPosition' => 'before',
     'iconSize' => null,
+    'indicator' => null,
+    'indicatorColor' => 'primary',
     'keyBindings' => null,
     'labelSrOnly' => false,
     'outlined' => false,
@@ -17,7 +19,7 @@
 @php
     $buttonClasses = array_merge(
         [
-            'filament-button inline-grid grid-flow-col items-center justify-center rounded-lg border font-medium outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
+            'filament-button inline-grid grid-flow-col items-center justify-center rounded-lg border font-medium relative outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
             match ($size) {
                 'xs' => 'filament-button-size-xs gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.3)-1px)] text-xs',
                 'sm' => 'filament-button-size-sm gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.[3.5])-1px)] text-sm',
@@ -31,7 +33,7 @@
                 'filament-button-outlined',
                 match ($color) {
                     'danger' => 'filament-button-color-danger border-danger-600 text-danger-600 hover:bg-danger-500/10 focus:bg-danger-500/10 focus:ring-danger-500/50 dark:border-danger-400 dark:text-danger-400',
-                    'gray' => 'filament-button-color-gray border-gray-300 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-gray-500/50 dark:border-gray-600 dark:text-gray-200',
+                    'gray' => 'filament-button-color-gray border-gray-300 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-primary-500/50 dark:border-gray-600 dark:text-gray-200',
                     'primary' => 'filament-button-color-primary border-primary-600 text-primary-600 hover:bg-primary-500/10 focus:bg-primary-500/10 focus:ring-primary-500/50 dark:border-primary-400 dark:text-primary-400',
                     'secondary' => 'filament-button-color-secondary border-secondary-600 text-secondary-600 hover:bg-secondary-500/10 focus:bg-secondary-500/10 focus:ring-secondary-500/50 dark:border-secondary-400 dark:text-secondary-400',
                     'success' => 'filament-button-color-success border-success-600 text-success-600 hover:bg-success-500/10 focus:bg-success-500/10 focus:ring-success-500/50 dark:border-success-400 dark:text-success-400',
@@ -43,7 +45,7 @@
                 'shadow',
                 match ($color) {
                     'danger' => 'filament-button-color-danger border-transparent bg-danger-600 text-white hover:bg-danger-500 focus:bg-danger-500 focus:ring-danger-500/50',
-                    'gray' => 'filament-button-color-gray border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-gray-500/50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700',
+                    'gray' => 'filament-button-color-gray border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-primary-500 focus:border-transparent dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700',
                     'primary' => 'filament-button-color-primary border-transparent bg-primary-600 text-white hover:bg-primary-500 focus:bg-primary-500 focus:ring-primary-500/50',
                     'secondary' => 'filament-button-color-secondary border-transparent bg-secondary-600 text-white hover:bg-secondary-500 focus:bg-secondary-500 focus:ring-secondary-500/50',
                     'success' => 'filament-button-color-success border-transparent bg-success-600 text-white hover:bg-success-500 focus:bg-success-500 focus:ring-success-500/50',
@@ -70,23 +72,36 @@
         'filament-button-icon',
         match ($iconPosition) {
             'before' => match ($size) {
-                'xs' => '-ml-0.5 rtl:ml-0 rtl:-mr-0.5',
-                'sm' => '-ml-0.5 rtl:ml-0 rtl:-mr-0.5',
-                'md' => '-ml-1 rtl:ml-0 rtl:-mr-1',
-                'lg' => '-ml-1 rtl:ml-0 rtl:-mr-1',
-                'xl' => '-ml-1 rtl:ml-0 rtl:-mr-1',
+                'xs' => '-ms-0.5',
+                'sm' => '-ms-0.5',
+                'md' => '-ms-1',
+                'lg' => '-ms-1',
+                'xl' => '-ms-1',
                 default => null,
             },
             'after' => match ($size) {
-                'xs' => '-mr-0.5 rtl:-ml-0.5 rtl:mr-0',
-                'sm' => '-mr-0.5 rtl:-ml-0.5 rtl:mr-0',
-                'md' => '-mr-1 rtl:-ml-1 rtl:mr-0',
-                'lg' => '-mr-1 rtl:-ml-1 rtl:mr-0',
-                'xl' => '-mr-1 rtl:-ml-1 rtl:mr-0',
+                'xs' => '-me-0.5',
+                'sm' => '-me-0.5',
+                'md' => '-me-1',
+                'lg' => '-me-1',
+                'xl' => '-me-1',
                 default => null,
             },
             default => null,
         } => ! $labelSrOnly,
+    ]);
+
+    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-button-indicator absolute -top-1 -end-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
+        match ($indicatorColor) {
+            'danger' => 'bg-danger-600',
+            'gray' => 'bg-gray-600',
+            'primary' => 'bg-primary-600',
+            'secondary' => 'bg-secondary-600',
+            'success' => 'bg-success-600',
+            'warning' => 'bg-warning-600',
+            default => $indicatorColor,
+        },
     ]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -94,11 +109,14 @@
         'sr-only' => $labelSrOnly,
     ]);
 
-    $hasFileUploadLoadingIndicator = ($type === 'submit') && filled($form);
-    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || $hasFileUploadLoadingIndicator;
+
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+
+    $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
+    $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
+        $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
 
@@ -156,7 +174,6 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
@@ -204,7 +221,6 @@
 
             @if ($hasLoadingIndicator)
                 <x-filament::loading-indicator
-                    x-cloak="x-cloak"
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses . ' ' . $iconSize"
@@ -218,6 +234,12 @@
                     :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
+        @endif
+
+        @if ($indicator)
+            <span class="{{ $indicatorClasses }}">
+                {{ $indicator }}
+            </span>
         @endif
     </button>
 @elseif ($tag === 'a')
@@ -253,6 +275,12 @@
                 :size="$iconSize"
                 :class="$iconClasses"
             />
+        @endif
+
+        @if ($indicator)
+            <span class="{{ $indicatorClasses }}">
+                {{ $indicator }}
+            </span>
         @endif
     </a>
 @endif

@@ -10,7 +10,7 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\Carbon;
 use Illuminate\View\ComponentAttributeBag;
 
-class DateTimePicker extends Field
+class DateTimePicker extends Field implements Contracts\HasAffixActions
 {
     use Concerns\CanBeReadOnly;
     use Concerns\HasAffixes;
@@ -56,8 +56,6 @@ class DateTimePicker extends Field
      * @var array<DateTime | string> | Closure
      */
     protected array | Closure $disabledDates = [];
-
-    public static int $defaultFirstDayOfWeek = 1;
 
     public static string $defaultDateDisplayFormat = 'M j, Y';
 
@@ -367,7 +365,7 @@ class DateTimePicker extends Field
 
     public function getFirstDayOfWeek(): int
     {
-        return $this->firstDayOfWeek ?? static::$defaultFirstDayOfWeek;
+        return $this->firstDayOfWeek ?? 1;
     }
 
     public function getFormat(): string

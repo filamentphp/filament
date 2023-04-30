@@ -3,6 +3,7 @@
     :field="$field"
 >
     @php
+        $gridDirection = $getGridDirection();
         $isBulkToggleable = $isBulkToggleable();
         $isDisabled = $isDisabled();
         $isSearchable = $isSearchable();
@@ -20,13 +21,12 @@
         visibleCheckboxListOptions: [],
 
         init: function () {
+            this.updateVisibleCheckboxListOptions()
             this.checkIfAllCheckboxesAreChecked()
 
             Livewire.hook('message.processed', () => {
                 this.checkIfAllCheckboxesAreChecked()
             })
-
-            this.updateVisibleCheckboxListOptions()
 
             $watch('search', () => {
                 this.updateVisibleCheckboxListOptions()
@@ -72,27 +72,23 @@
                 <div
                     x-cloak
                     class="mb-2"
-                    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.buttons"
+                    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
                 >
-                    <x-filament::link
-                        tag="button"
-                        size="sm"
+                    <span
                         x-show="! areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.buttons.select_all"
+                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
                     >
-                        {{ __('filament-forms::components.checkbox_list.buttons.select_all.label') }}
-                    </x-filament::link>
+                        {{ $getAction('selectAll') }}
+                    </span>
 
-                    <x-filament::link
-                        tag="button"
-                        size="sm"
+                    <span
                         x-show="areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.buttons.deselect_all"
+                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.actions.deselect_all"
                     >
-                        {{ __('filament-forms::components.checkbox_list.buttons.deselect_all.label') }}
-                    </x-filament::link>
+                        {{ $getAction('deselectAll') }}
+                    </span>
                 </div>
             @endif
         @endif
@@ -104,9 +100,12 @@
             :lg="$getColumns('lg')"
             :xl="$getColumns('xl')"
             :two-xl="$getColumns('2xl')"
-            direction="column"
+            :direction="$gridDirection ?? 'column'"
             :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
-            :attributes="$attributes->class(['filament-forms-checkbox-list-component gap-1 space-y-2'])"
+            :attributes="$attributes->class([
+                'filament-forms-checkbox-list-component gap-1',
+                'space-y-2' => $gridDirection !== 'row',
+            ])"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}">

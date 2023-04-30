@@ -7,7 +7,6 @@ use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Textarea extends Field implements Contracts\CanBeLengthConstrained
 {
-    use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
     use Concerns\CanBeReadOnly;

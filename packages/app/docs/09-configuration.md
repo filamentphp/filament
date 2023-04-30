@@ -2,6 +2,8 @@
 title: Configuration
 ---
 
+## Overview
+
 By default, the configuration file is located at `app/Providers/Filament/AdminContextProvider.php`. Keep reading to learn more about [contexts](#introducing-contexts) and how each has [its own configuration file](#creating-a-new-context).
 
 ## Introducing contexts
@@ -14,7 +16,7 @@ For example, you could build an app where users can log in at `/app` and access 
 
 ### The default admin context
 
-When you run `filament:install`, a new file is created in `app/Providers/Filament` - `AdminContextProvider.php`. This is the file contains the configuration for the `/admin` context.
+When you run `filament:install`, a new file is created in `app/Providers/Filament` - `AdminContextProvider.php`. This file contains the configuration for the `/admin` context.
 
 When this documentation refers to the "configuration", this is the file you need to edit. It allows you to completely customize the app.
 
@@ -23,7 +25,7 @@ When this documentation refers to the "configuration", this is the file you need
 To create a new context, you can use the `make:filament-context` command, passing in the unique name of the new context:
 
 ```bash
-php artisan make:context app
+php artisan make:filament-context app
 ```
 
 This command will create a new context called "app". A configuration file will be created at `app/Providers/Filament/AppContextProvider.php`. You can access this context at `/app`, but you can [customize the path](#changing-the-path) if you don't want that.
@@ -108,18 +110,20 @@ The available hooks are as follows:
 - `styles.end` - after styles are defined
 - `global-search.start` - before [global search](resources/global-search) input
 - `global-search.end` - after [global search](resources/global-search) input
-- `tenant-menu.start` - before tenant menu
-- `tenant-menu.end` - after tenant menu
-- `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)
-- `user-menu.end` - after [user menu](navigation#customizing-the-user-menu)
-- `user-menu.account.before` - before the account item in the [user menu](navigation#customizing-the-user-menu)
-- `user-menu.account.after` - after the account item in the [user menu](navigation#customizing-the-user-menu)
 - `page.header-widgets.start` - before page header widgets
 - `page.header-widgets.end` - after page header widgets
 - `page.footer-widgets.start` - before page footer widgets
 - `page.footer-widgets.end` - after page footer widgets
 - `page.actions.start` - before page actions
 - `page.actions.end` - after page actions
+- `resource.relation-manager.start` - before the relation manager table
+- `resource.relation-manager.end` - after the relation manager table
+- `tenant-menu.start` - before tenant menu
+- `tenant-menu.end` - after tenant menu
+- `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)
+- `user-menu.end` - after [user menu](navigation#customizing-the-user-menu)
+- `user-menu.account.before` - before the account item in the [user menu](navigation#customizing-the-user-menu)
+- `user-menu.account.after` - after the account item in the [user menu](navigation#customizing-the-user-menu)
 
 ## Setting a domain
 

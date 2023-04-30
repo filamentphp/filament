@@ -2,6 +2,8 @@
 title: Custom pages
 ---
 
+## Overview
+
 Filament allows you to create completely custom pages for resources. To create a new page, you can use:
 
 ```bash

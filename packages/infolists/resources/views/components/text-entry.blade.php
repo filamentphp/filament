@@ -56,7 +56,7 @@
                         <div @class([
                             'inline-flex items-center space-x-1 rtl:space-x-reverse',
                             'justify-center min-h-6 px-2 py-0.5 rounded-xl whitespace-nowrap' => $isBadge,
-                            'prose max-w-none' => $isProse,
+                            'prose max-w-none dark:prose-invert' => $isProse,
                             'whitespace-normal' => $canWrap,
                             ($isBadge ? match ($color = $getColor($state)) {
                                 'danger' => 'text-danger-700 bg-danger-500/10 dark:text-danger-500',
@@ -124,7 +124,9 @@
                                 >
                             @endif
 
-                            {{ $formattedState }}
+                            <div class="inline-block">
+                                {{ $formattedState }}
+                            </div>
 
                             @if ($isCopyable)
                                 </span>

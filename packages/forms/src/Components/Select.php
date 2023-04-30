@@ -6,8 +6,10 @@ use Closure;
 use Exception;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -15,8 +17,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
+use Livewire\Component as LivewireComponent;
 
-class Select extends Field implements Contracts\HasNestedRecursiveValidationRules
+class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
     use Concerns\CanBePreloaded;
@@ -24,10 +27,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     use Concerns\CanDisableOptions;
     use Concerns\CanSelectPlaceholder;
     use Concerns\CanLimitItemsLength;
-    use Concerns\HasAffixes {
-        getActions as getBaseActions;
-        getSuffixAction as getBaseSuffixAction;
-    }
+    use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasLoadingMessage;
@@ -43,11 +43,30 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     /**
      * @var array<Component> | Closure | null
      */
-    protected array | Closure | null $createOptionActionFormSchema = null;
+    protected array | Closure | null $createOptionActionForm = null;
 
     protected ?Closure $createOptionUsing = null;
 
+    protected string | Closure | null $createOptionModalHeading = null;
+
+    protected string | Closure | null $editOptionModalHeading = null;
+
     protected ?Closure $modifyCreateOptionActionUsing = null;
+
+    protected ?Closure $modifyManageOptionActionsUsing = null;
+
+    /**
+     * @var array<Component> | Closure | null
+     */
+    protected array | Closure | null $editOptionActionForm = null;
+
+    protected ?Closure $fillEditOptionActionFormUsing = null;
+
+    protected ?Closure $updateOptionUsing = null;
+
+    protected ?Closure $modifyEditOptionActionUsing = null;
+
+    protected ?Model $cachedSelectedRecord = null;
 
     protected bool | Closure $isMultiple = false;
 
@@ -56,6 +75,8 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     protected ?Closure $getOptionLabelsUsing = null;
 
     protected ?Closure $getSearchResultsUsing = null;
+
+    protected ?Closure $getSelectedRecordUsing = null;
 
     /**
      * @var array<string> | null
@@ -113,6 +134,11 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         });
 
         $this->placeholder(__('filament-forms::components.select.placeholder'));
+
+        $this->suffixActions([
+            fn (Select $component): ?Action => $component->getCreateOptionAction(),
+            fn (Select $component): ?Action => $component->getEditOptionAction(),
+        ]);
     }
 
     public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
@@ -134,53 +160,32 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $this;
     }
 
+    public function manageOptionActions(?Closure $callback): static
+    {
+        $this->modifyManageOptionActionsUsing = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Component> | Closure | null  $schema
+     */
+    public function manageOptionForm(array | Closure | null $schema): static
+    {
+        $this->createOptionForm($schema);
+        $this->editOptionForm($schema);
+
+        return $this;
+    }
+
     /**
      * @param  array<Component> | Closure | null  $schema
      */
     public function createOptionForm(array | Closure | null $schema): static
     {
-        $this->createOptionActionFormSchema = $schema;
+        $this->createOptionActionForm = $schema;
 
         return $this;
-    }
-
-    public function getSuffixAction(): ?Action
-    {
-        $action = $this->getBaseSuffixAction();
-
-        if ($action) {
-            return $action;
-        }
-
-        $createOptionAction = $this->getCreateOptionAction();
-
-        if (! $createOptionAction) {
-            return null;
-        }
-
-        return $createOptionAction;
-    }
-
-    /**
-     * @return array<string, Action>
-     */
-    public function getActions(): array
-    {
-        $actions = $this->getBaseActions();
-
-        $createOptionActionName = $this->getCreateOptionActionName();
-
-        if (array_key_exists($createOptionActionName, $actions)) {
-            return $actions;
-        }
-
-        $createOptionAction = $this->getCreateOptionAction();
-
-        if (! $createOptionAction) {
-            return $actions;
-        }
-
-        return array_merge([$createOptionActionName => $createOptionAction], $actions);
     }
 
     public function createOptionUsing(Closure $callback): static
@@ -202,15 +207,20 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
     public function getCreateOptionAction(): ?Action
     {
-        $actionFormSchema = $this->getCreateOptionActionFormSchema();
+        if ($this->isDisabled()) {
+            return null;
+        }
 
-        if (! $actionFormSchema) {
+        if (! $this->hasCreateOptionActionFormSchema()) {
             return null;
         }
 
         $action = Action::make($this->getCreateOptionActionName())
-            ->component($this)
-            ->form($actionFormSchema)
+            ->form(function (Select $component, Form $form): array | Form | null {
+                return $component->getCreateOptionActionForm($form->model(
+                    $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
+                ));
+            })
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
@@ -240,13 +250,18 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             })
             ->icon('heroicon-m-plus')
             ->iconButton()
-            ->modalHeading(__('filament-forms::components.select.actions.create_option.modal.heading'))
-            ->modalButton(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
+            ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
+            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
             ->extraModalActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
                 $action->makeExtraModalAction('createAnother', ['another' => true])
                     ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
-            ] : [])
-            ->hidden(fn (Component $component): bool => $component->isDisabled());
+            ] : []);
+
+        if ($this->modifyManageOptionActionsUsing) {
+            $action = $this->evaluate($this->modifyManageOptionActionsUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
 
         if ($this->modifyCreateOptionActionUsing) {
             $action = $this->evaluate($this->modifyCreateOptionActionUsing, [
@@ -257,17 +272,180 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $action;
     }
 
-    /**
-     * @return array<Component> | null
-     */
-    public function getCreateOptionActionFormSchema(): ?array
+    public function createOptionModalHeading(string | Closure | null $heading): static
     {
-        return $this->evaluate($this->createOptionActionFormSchema);
+        $this->createOptionModalHeading = $heading;
+
+        return $this;
+    }
+
+    public function editOptionModalHeading(string | Closure | null $heading): static
+    {
+        $this->editOptionModalHeading = $heading;
+
+        return $this;
+    }
+
+    public function editOptionAction(?Closure $callback): static
+    {
+        $this->modifyEditOptionActionUsing = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @return array<Component> | Form | null
+     */
+    public function getCreateOptionActionForm(Form $form): array | Form | null
+    {
+        return $this->evaluate($this->createOptionActionForm, ['form' => $form]);
+    }
+
+    public function hasCreateOptionActionFormSchema(): bool
+    {
+        return (bool) $this->createOptionActionForm;
+    }
+
+    /**
+     * @return array<Component> | Form | null
+     */
+    public function getEditOptionActionForm(Form $form): array | Form | null
+    {
+        return $this->evaluate($this->editOptionActionForm, ['form' => $form]);
+    }
+
+    public function hasEditOptionActionFormSchema(): bool
+    {
+        return (bool) $this->editOptionActionForm;
+    }
+
+    /**
+     * @param  array<Component> | Closure | null  $schema
+     */
+    public function editOptionForm(array | Closure | null $schema): static
+    {
+        $this->editOptionActionForm = $schema;
+        $this->reactive();
+
+        return $this;
+    }
+
+    public function updateOptionUsing(Closure $callback): static
+    {
+        $this->updateOptionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getUpdateOptionUsing(): ?Closure
+    {
+        return $this->updateOptionUsing;
+    }
+
+    public function getEditOptionActionName(): string
+    {
+        return 'editOption';
+    }
+
+    public function getEditOptionAction(): ?Action
+    {
+        if ($this->isDisabled()) {
+            return null;
+        }
+
+        if ($this->isMultiple()) {
+            return null;
+        }
+
+        if (blank($this->getState())) {
+            return null;
+        }
+
+        if (! $this->hasEditOptionActionFormSchema()) {
+            return null;
+        }
+
+        $action = Action::make($this->getEditOptionActionName())
+            ->form(function (Select $component, Form $form): array | Form | null {
+                return $component->getEditOptionActionForm(
+                    $form->model($component->getSelectedRecord()),
+                );
+            })
+            ->fillForm($this->getEditOptionActionFormData())
+            ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
+                $statePath = $component->getStatePath();
+
+                if (! $component->getUpdateOptionUsing()) {
+                    throw new Exception("Select field [{$statePath}] must have a [updateOptionUsing()] closure set.");
+                }
+
+                $component->evaluate($component->getUpdateOptionUsing(), [
+                    'data' => $data,
+                    'form' => $form,
+                ]);
+
+                /** @var LivewireComponent $livewire */
+                $livewire = $component->getLivewire();
+                $livewire->dispatchBrowserEvent('filament-forms::select/refreshSelectedOptionLabel', [
+                    'livewireId' => $livewire->id,
+                    'statePath' => $statePath,
+                ]);
+            })
+            ->icon('heroicon-m-pencil-square')
+            ->iconButton()
+            ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
+            ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
+
+        if ($this->modifyManageOptionActionsUsing) {
+            $action = $this->evaluate($this->modifyManageOptionActionsUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        if ($this->modifyEditOptionActionUsing) {
+            $action = $this->evaluate($this->modifyEditOptionActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getEditOptionActionFormData(): array
+    {
+        return $this->evaluate($this->fillEditOptionActionFormUsing);
+    }
+
+    public function fillEditOptionActionFormUsing(?Closure $callback): static
+    {
+        $this->fillEditOptionActionFormUsing = $callback;
+
+        return $this;
+    }
+
+    public function getCreateOptionModalHeading(): ?string
+    {
+        return $this->evaluate($this->createOptionModalHeading);
+    }
+
+    public function getEditOptionModalHeading(): ?string
+    {
+        return $this->evaluate($this->editOptionModalHeading);
     }
 
     public function getOptionLabelUsing(?Closure $callback): static
     {
         $this->getOptionLabelUsing = $callback;
+
+        return $this;
+    }
+
+    public function getSelectedRecordUsing(?Closure $callback): static
+    {
+        $this->getSelectedRecordUsing = $callback;
 
         return $this;
     }
@@ -338,7 +516,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     public function getOptionLabel(): ?string
     {
         return $this->evaluate($this->getOptionLabelUsing, [
-            'value' => $this->getState(),
+            'value' => fn (): mixed => $this->getState(),
         ]);
     }
 
@@ -348,7 +526,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     public function getOptionLabels(): array
     {
         $labels = $this->evaluate($this->getOptionLabelsUsing, [
-            'values' => $this->getState(),
+            'values' => fn (): array => $this->getState(),
         ]);
 
         if ($labels instanceof Arrayable) {
@@ -440,18 +618,18 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure $relationshipName, string | Closure $titleAttribute, ?Closure $callback = null): static
+    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
     {
-        $this->relationship = $relationshipName;
+        $this->relationship = $relationshipName ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
 
-        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($callback): array {
+        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyOptionsQueryUsing): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query();
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -490,12 +668,19 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
+            if (
+                str_contains($relationshipTitleAttribute, '->') &&
+                (! str_contains($relationshipTitleAttribute, ' as '))
+            ) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+
             return $relationshipQuery
-                ->pluck("{$relationshipTitleAttribute} as {$relationshipTitleAttribute}", $keyName)
+                ->pluck($relationshipTitleAttribute, $keyName)
                 ->toArray();
         });
 
-        $this->options(static function (Select $component) use ($callback): ?array {
+        $this->options(static function (Select $component) use ($modifyOptionsQueryUsing): ?array {
             if (($component->isSearchable()) && ! $component->isPreloaded()) {
                 return null;
             }
@@ -504,8 +689,8 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
             $relationshipQuery = $relationship->getRelated()->query();
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -531,8 +716,15 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
+            if (
+                str_contains($relationshipTitleAttribute, '->') &&
+                (! str_contains($relationshipTitleAttribute, ' as '))
+            ) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+
             return $relationshipQuery
-                ->pluck("{$relationshipTitleAttribute} as {$relationshipTitleAttribute}", $keyName)
+                ->pluck($relationshipTitleAttribute, $keyName)
                 ->toArray();
         });
 
@@ -574,18 +766,8 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             );
         });
 
-        $this->getOptionLabelUsing(static function (Select $component, $value) use ($callback) {
-            $relationship = $component->getRelationship();
-
-            $relationshipQuery = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $value);
-
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
-                    'query' => $relationshipQuery,
-                ]) ?? $relationshipQuery;
-            }
-
-            $record = $relationshipQuery->first();
+        $this->getOptionLabelUsing(static function (Select $component) {
+            $record = $component->getSelectedRecord();
 
             if (! $record) {
                 return null;
@@ -598,15 +780,29 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             return $record->getAttributeValue($component->getRelationshipTitleAttribute());
         });
 
-        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($callback): array {
+        $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyOptionsQueryUsing): ?Model {
+            $relationship = $component->getRelationship();
+
+            $relationshipQuery = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $state);
+
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+                    'query' => $relationshipQuery,
+                ]) ?? $relationshipQuery;
+            }
+
+            return $relationshipQuery->first();
+        });
+
+        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyOptionsQueryUsing): array {
             $relationship = $component->getRelationship();
             $relatedKeyName = $relationship->getRelatedKeyName();
 
             $relationshipQuery = $relationship->getRelated()->query()
                 ->whereIn($relatedKeyName, $values);
 
-            if ($callback) {
-                $relationshipQuery = $component->evaluate($callback, [
+            if ($modifyOptionsQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -622,8 +818,15 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
+            if (
+                str_contains($relationshipTitleAttribute, '->') &&
+                (! str_contains($relationshipTitleAttribute, ' as '))
+            ) {
+                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            }
+
             return $relationshipQuery
-                ->pluck("{$relationshipTitleAttribute} as {$relationshipTitleAttribute}", $relatedKeyName)
+                ->pluck($relationshipTitleAttribute, $relatedKeyName)
                 ->toArray();
         });
 
@@ -654,7 +857,7 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             $record->save();
         });
 
-        $this->createOptionUsing(static function (Select $component, array $data, ComponentContainer $form) {
+        $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
             $record = $component->getRelationship()->getRelated();
             $record->fill($data);
             $record->save();
@@ -662,6 +865,14 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
             $form->model($record)->saveRelationships();
 
             return $record->getKey();
+        });
+
+        $this->fillEditOptionActionFormUsing(static function (Select $component): ?array {
+            return $component->getSelectedRecord()?->attributesToArray();
+        });
+
+        $this->updateOptionUsing(static function (array $data, Form $form) {
+            $form->getRecord()?->update($data);
         });
 
         $this->dehydrated(fn (Select $component): bool => ! $component->isMultiple());
@@ -714,7 +925,16 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
 
     public function getOptionLabelFromRecord(Model $record): string
     {
-        return $this->evaluate($this->getOptionLabelFromRecordUsing, ['record' => $record]);
+        return $this->evaluate(
+            $this->getOptionLabelFromRecordUsing,
+            namedInjections: [
+                'record' => $record,
+            ],
+            typedInjections: [
+                Model::class => $record,
+                $record::class => $record,
+            ],
+        );
     }
 
     public function getRelationshipTitleAttribute(): string
@@ -722,14 +942,16 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
         return $this->evaluate($this->relationshipTitleAttribute);
     }
 
-    public function getLabel(): string
+    public function getLabel(): string | Htmlable | null
     {
         if ($this->label === null && $this->hasRelationship()) {
-            return (string) str($this->getRelationshipName())
+            $label = (string) str($this->getRelationshipName())
                 ->before('.')
                 ->kebab()
                 ->replace(['-', '_'], ' ')
                 ->ucfirst();
+
+            return ($this->shouldTranslateLabel) ? __($label) : $label;
         }
 
         return parent::getLabel();
@@ -749,6 +971,19 @@ class Select extends Field implements Contracts\HasNestedRecursiveValidationRule
     public function getRelationshipName(): ?string
     {
         return $this->evaluate($this->relationship);
+    }
+
+    public function getSelectedRecord(): ?Model
+    {
+        if ($this->cachedSelectedRecord) {
+            return $this->cachedSelectedRecord;
+        }
+
+        if (blank($this->getState())) {
+            return null;
+        }
+
+        return $this->cachedSelectedRecord = $this->evaluate($this->getSelectedRecordUsing);
     }
 
     public function hasRelationship(): bool

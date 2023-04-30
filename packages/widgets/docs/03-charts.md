@@ -2,7 +2,7 @@
 title: Chart widgets
 ---
 
-## Getting started
+## Overview
 
 Filament comes with many "chart" widget template, which you can use to display real-time, interactive charts.
 
@@ -129,7 +129,7 @@ protected function getData(): array
 }
 ```
 
-## Live updating (polling)
+## Live updating chart data (polling)
 
 By default, chart widgets refresh their data every 5 seconds.
 

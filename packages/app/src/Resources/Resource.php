@@ -78,6 +78,8 @@ abstract class Resource
 
     protected static int $globalSearchResultsLimit = 50;
 
+    protected static bool $shouldAuthorizeWithGate = false;
+
     protected static bool $shouldIgnorePolicies = false;
 
     public static function form(Form $form): Form
@@ -137,13 +139,18 @@ abstract class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
+        $user = Filament::auth()->user();
+        $model = static::getModel();
+
+        if (static::shouldAuthorizeWithGate()) {
+            return Gate::forUser($user)->check($action, $record ?? $model);
+        }
+
         if (static::shouldIgnorePolicies()) {
             return true;
         }
 
-        $policy = Gate::getPolicyFor($model = static::getModel());
-        $user = Filament::auth()->user();
-
+        $policy = Gate::getPolicyFor($model);
         if ($policy === null) {
             return true;
         }
@@ -155,9 +162,19 @@ abstract class Resource
         return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
+    public static function authorizeWithGate(bool $condition = true): void
+    {
+        static::$shouldAuthorizeWithGate = $condition;
+    }
+
     public static function ignorePolicies(bool $condition = true): void
     {
         static::$shouldIgnorePolicies = $condition;
+    }
+
+    public static function shouldAuthorizeWithGate(): bool
+    {
+        return static::$shouldAuthorizeWithGate;
     }
 
     public static function shouldIgnorePolicies(): bool
@@ -424,9 +441,9 @@ abstract class Resource
     {
         $context ??= Filament::getCurrentContext()->getId();
 
-        $slug = static::getSlug();
-
-        return "filament.{$context}.resources.{$slug}";
+        return (string) str(static::getSlug())
+            ->replace('/', '.')
+            ->prepend("filament.{$context}.resources.");
     }
 
     public static function getRecordRouteKeyName(): ?string
@@ -438,7 +455,11 @@ abstract class Resource
     {
         $slug = static::getSlug();
 
-        Route::name("{$slug}.")
+        Route::name(
+            (string) str($slug)
+                ->replace('/', '.')
+                ->append('.'),
+        )
             ->prefix($slug)
             ->middleware(static::getRouteMiddleware($context))
             ->group(function () use ($context) {

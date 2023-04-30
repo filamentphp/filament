@@ -18,6 +18,7 @@
         "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^3.0",
         "nunomaduro/larastan": "^2.2",
+        "nunomaduro/termwind": "^1.0",
         "orchestra/testbench": "^7.0|^8.0",
         "pestphp/pest": "^1.17",
         "pestphp/pest-plugin-laravel": "^1.0",
@@ -25,6 +26,7 @@
         "pestphp/pest-plugin-parallel": "^0.3",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.8",
+        "rector/rector": "^0.15",
         "ryangjchandler/blade-capture-directive": "^0.2|^0.3",
         "spatie/color": "^1.5",
         "spatie/invade": "^1.0",
@@ -33,6 +35,7 @@
         "spatie/laravel-ray": "^1.29",
         "spatie/laravel-tags": "^4.2",
         "staudenmeir/belongs-to-through": "^2.5",
+        "staudenmeir/eloquent-has-many-deep":"^1.7",
         "symplify/monorepo-builder": "^10.0",
         "tgalopin/html-sanitizer": "^1.5"
     },
@@ -59,6 +62,7 @@
             "Filament\\Tables\\": "packages/tables/src",
             "Filament\\Tests\\": "tests/src",
             "Filament\\Tests\\Database\\Factories\\": "tests/database/factories",
+            "Filament\\Upgrade\\": "packages/upgrade/src",
             "Filament\\Widgets\\": "packages/widgets/src"
         }
     },

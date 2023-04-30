@@ -1,18 +1,19 @@
 <div>
     @if (filament()->hasLogin())
         <x-slot name="subheading">
-            {{ __('filament::pages/auth/register.buttons.login.before') }} <x-filament::link :href="filament()->getLoginUrl()">
-                {{ __('filament::pages/auth/register.buttons.login.label') }}
-            </x-filament::link>
+            {{ __('filament::pages/auth/register.buttons.login.before') }}
+
+            {{ $this->loginAction }}
         </x-slot>
     @endif
 
-    <form wire:submit.prevent="register" class="space-y-8">
+    <form
+        wire:submit.prevent="register"
+        class="grid gap-y-8"
+    >
         {{ $this->form }}
 
-        <x-filament::button type="submit" form="register" class="w-full">
-            {{ __('filament::pages/auth/register.buttons.register.label') }}
-        </x-filament::button>
+        {{ $this->registerAction }}
     </form>
 </div>
 

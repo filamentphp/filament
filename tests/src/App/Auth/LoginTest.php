@@ -19,8 +19,10 @@ it('can authenticate', function () {
     $userToAuthenticate = User::factory()->create();
 
     livewire(Login::class)
-        ->set('email', $userToAuthenticate->email)
-        ->set('password', 'password')
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
         ->call('authenticate')
         ->assertRedirect(Filament::getUrl());
 
@@ -33,8 +35,10 @@ it('can authenticate and redirect user to their intended URL', function () {
     $userToAuthenticate = User::factory()->create();
 
     livewire(Login::class)
-        ->set('email', $userToAuthenticate->email)
-        ->set('password', 'password')
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
         ->call('authenticate')
         ->assertRedirect($intendedUrl);
 });
@@ -47,10 +51,12 @@ it('cannot authenticate with incorrect credentials', function () {
     $userToAuthenticate = User::factory()->create();
 
     livewire(Login::class)
-        ->set('email', $userToAuthenticate->email)
-        ->set('password', 'incorrect-password')
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'incorrect-password',
+        ])
         ->call('authenticate')
-        ->assertHasErrors(['email']);
+        ->assertHasFormErrors(['email']);
 
     $this->assertGuest();
 });
@@ -62,8 +68,10 @@ it('can throttle authentication attempts', function () {
 
     foreach (range(1, 5) as $i) {
         livewire(Login::class)
-            ->set('email', $userToAuthenticate->email)
-            ->set('password', 'password')
+            ->fillForm([
+                'email' => $userToAuthenticate->email,
+                'password' => 'password',
+            ])
             ->call('authenticate');
 
         $this->assertAuthenticated();
@@ -72,8 +80,10 @@ it('can throttle authentication attempts', function () {
     }
 
     livewire(Login::class)
-        ->set('email', $userToAuthenticate->email)
-        ->set('password', 'password')
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
         ->call('authenticate')
         ->assertNotified();
 
@@ -82,21 +92,21 @@ it('can throttle authentication attempts', function () {
 
 it('can validate `email` is required', function () {
     livewire(Login::class)
-        ->set('email', '')
+        ->fillForm(['email' => ''])
         ->call('authenticate')
-        ->assertHasErrors(['email' => ['required']]);
+        ->assertHasFormErrors(['email' => ['required']]);
 });
 
 it('can validate `email` is valid email', function () {
     livewire(Login::class)
-        ->set('email', 'invalid-email')
+        ->fillForm(['email' => 'invalid-email'])
         ->call('authenticate')
-        ->assertHasErrors(['email' => ['email']]);
+        ->assertHasFormErrors(['email' => ['email']]);
 });
 
 it('can validate `password` is required', function () {
     livewire(Login::class)
-        ->set('password', '')
+        ->fillForm(['password' => ''])
         ->call('authenticate')
-        ->assertHasErrors(['password' => ['required']]);
+        ->assertHasFormErrors(['password' => ['required']]);
 });

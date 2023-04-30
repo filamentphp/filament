@@ -2,6 +2,8 @@
 title: Text column
 ---
 
+## Overview
+
 Text columns display simple text from your database:
 
 ```php
@@ -85,7 +87,7 @@ TextColumn::make('stock')->numeric(
 
 ## Currency formatting
 
-The `money()` method allows you to easily format monetary values, in any currency. This functionality uses [`akaunting/laravel-money`](https://github.com/akaunting/laravel-money) internally:
+The `money()` method allows you to easily format monetary values, in any currency:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -246,6 +248,17 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
+```
+
+## Adding a placeholder if the cell is empty
+
+Sometimes you may want to display a placeholder if the cell's value is empty:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('updated_at')
+    ->placeholder('Never')
 ```
 
 ## Customizing the color

@@ -5,6 +5,7 @@ namespace Filament\Infolists\Components;
 use Filament\Infolists\Concerns\HasColumns;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Illuminate\Database\Eloquent\Model;
 
 class Component extends ViewComponent
 {
@@ -27,16 +28,31 @@ class Component extends ViewComponent
     protected string $evaluationIdentifier = 'component';
 
     /**
-     * @return array<string, mixed>
+     * @return array<mixed>
      */
-    protected function getDefaultEvaluationParameters(): array
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->getRecord(),
-            'state' => $this->resolveEvaluationParameter(
-                'state',
-                fn (): mixed => $this->getState(),
-            ),
-        ]);
+        return match ($parameterName) {
+            'record' => [$this->getRecord()],
+            'state' => [$this->getState()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

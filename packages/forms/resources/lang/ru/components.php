@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Содержимое свернуто',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Клонировать',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Снять выделение',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Добавить строку',
@@ -124,7 +124,7 @@ return [
 
         'collapsed' => 'Содержимое свернуто',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Добавить к :label',
@@ -176,7 +176,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Ссылка',
                     'unlink' => 'Убрать ссылку',
                 ],
@@ -256,7 +256,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Назад',

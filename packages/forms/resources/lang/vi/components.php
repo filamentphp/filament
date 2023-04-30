@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Thu gọn nội dung',
 
-        'buttons' => [
+        'actions' => [
 
             'clone' => [
                 'label' => 'Nhân bản',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Bỏ chọn tất cả',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Thêm dòng',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Thu gọn nội dung',
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Thêm :label mới',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Liên kết',
                     'unlink' => 'Bỏ liên kết',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Trước',

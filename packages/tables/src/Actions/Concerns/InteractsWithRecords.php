@@ -63,9 +63,6 @@ trait InteractsWithRecords
 
     public function getRecords(): ?Collection
     {
-        return $this->evaluate(
-            $this->records,
-            exceptParameters: ['records'],
-        );
+        return $this->evaluate($this->records);
     }
 }

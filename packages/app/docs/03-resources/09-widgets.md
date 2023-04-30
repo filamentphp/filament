@@ -2,7 +2,7 @@
 title: Widgets
 ---
 
-## Getting started
+## Overview
 
 Filament allows you to display widgets inside pages, below the header and above the footer.
 

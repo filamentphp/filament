@@ -8,6 +8,8 @@ trait HasAction
 {
     protected Closure | string | null $action = null;
 
+    protected bool | Closure $isLivewireClickHandlerEnabled = true;
+
     public function action(Closure | string | null $action): static
     {
         $this->action = $action;
@@ -15,14 +17,36 @@ trait HasAction
         return $this;
     }
 
-    public function getAction(): ?Closure
+    public function livewireClickHandlerEnabled(bool | Closure $condition = true): static
     {
-        $action = $this->action;
+        $this->isLivewireClickHandlerEnabled = $condition;
 
-        if (is_string($action)) {
-            $action = Closure::fromCallable(class_exists($action) ? $action : [$this->getLivewire(), $action]);
+        return $this;
+    }
+
+    public function getActionFunction(): ?Closure
+    {
+        if (! $this->action instanceof Closure) {
+            return null;
         }
 
-        return $action;
+        return $this->action;
+    }
+
+    public function isLivewireClickHandlerEnabled(): bool
+    {
+        if (! $this->evaluate($this->isLivewireClickHandlerEnabled)) {
+            return false;
+        }
+
+        if (filled($this->getUrl())) {
+            return false;
+        }
+
+        if ($this->canSubmitForm()) {
+            return false;
+        }
+
+        return true;
     }
 }

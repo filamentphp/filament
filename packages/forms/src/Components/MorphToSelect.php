@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\Components\MorphToSelect\Type;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MorphToSelect extends Component
@@ -112,19 +111,6 @@ class MorphToSelect extends Component
         $this->types = $types;
 
         return $this;
-    }
-
-    public function getLabel(): string | Htmlable | null
-    {
-        $label = parent::getLabel() ?? (string) str($this->getName())
-            ->afterLast('.')
-            ->kebab()
-            ->replace(['-', '_'], ' ')
-            ->ucfirst();
-
-        return (is_string($label) && $this->shouldTranslateLabel) ?
-            __($label) :
-            $label;
     }
 
     public function getRelationship(): MorphTo

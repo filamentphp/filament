@@ -2,11 +2,11 @@
 
 namespace Filament\Pages\Actions\Modal\Actions;
 
-use Filament\Actions\Modal\Actions\Action as BaseAction;
+use Filament\Actions\StaticAction;
 
 /**
- * @deprecated Use `\Filament\Actions\Modal\Actions\Action` instead.
+ * @deprecated Use `\Filament\Actions\StaticAction` instead.
  */
-class Action extends BaseAction
+class Action extends StaticAction
 {
 }

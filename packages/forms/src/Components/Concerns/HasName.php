@@ -2,6 +2,9 @@
 
 namespace Filament\Forms\Components\Concerns;
 
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Str;
+
 trait HasName
 {
     protected string $name;
@@ -16,5 +19,18 @@ trait HasName
     public function getName(): string
     {
         return $this->name;
+    }
+
+    public function getLabel(): string | Htmlable | null
+    {
+        $label = parent::getLabel() ?? (string) Str::of($this->getName())
+            ->afterLast('.')
+            ->kebab()
+            ->replace(['-', '_'], ' ')
+            ->ucfirst();
+
+        return (is_string($label) && $this->shouldTranslateLabel) ?
+            __($label) :
+            $label;
     }
 }

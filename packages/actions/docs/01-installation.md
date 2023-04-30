@@ -75,7 +75,7 @@ module.exports = {
 }
 ```
 
-Of course, you may specify your own custom `primary`, `secondary`, `success`, `warning` and `danger` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 900 variants specified - a single hex code or RGB value won't work here.
+Of course, you may specify your own custom `primary`, `secondary`, `success`, `warning` and `danger` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 950 variants specified - a single hex code or RGB value won't work here.
 
 ### Configuring styles
 
@@ -108,16 +108,16 @@ You may also want to update your `vite.config.js` file to refresh the page after
 
 ```js
 import { defineConfig } from 'vite'
-import laravel, { refreshPaths } from 'laravel-vite-plugin' // [tl! focus]
+import laravel, { refreshPaths } from 'laravel-vite-plugin'
 
 export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.css', 'resources/js/app.js'],
-            refresh: [ // [tl! focus:start]
+            refresh: [
                 ...refreshPaths,
                 'app/Http/Livewire/**',
-            ], // [tl! focus:end]
+            ],
         }),
     ],
 })
@@ -134,7 +134,7 @@ const mix = require('laravel-mix')
 
 mix.js('resources/js/app.js', 'public/js')
     .postCss('resources/css/app.css', 'public/css', [
-        require('tailwindcss'), // [tl! focus]
+        require('tailwindcss'),
     ])
 ```
 

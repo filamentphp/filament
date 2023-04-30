@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
 use Livewire\Exceptions\PropertyNotFoundException;
@@ -215,6 +216,25 @@ trait InteractsWithForms
         }
     }
 
+    /**
+     * @return class-string<TranslatableContentDriver> | null
+     */
+    public function getFormTranslatableContentDriver(): ?string
+    {
+        return null;
+    }
+
+    public function makeFormTranslatableContentDriver(): ?TranslatableContentDriver
+    {
+        $driver = $this->getFormTranslatableContentDriver();
+
+        if (! $driver) {
+            return null;
+        }
+
+        return app($driver, ['locale' => $this->getActiveFormLocale() ?? app()->getLocale()]);
+    }
+
     public function getActiveFormLocale(): ?string
     {
         return null;
@@ -284,10 +304,12 @@ trait InteractsWithForms
 
         $this->hasCachedForms = true;
 
-        $this->cacheForm(
-            'mountedFormComponentActionForm',
-            $this->getMountedFormComponentActionForm(),
-        );
+        foreach ($this->mountedFormComponentActions as $actionNestingIndex => $actionName) {
+            $this->cacheForm(
+                "mountedFormComponentActionForm{$actionNestingIndex}",
+                $this->getMountedFormComponentActionForm($actionNestingIndex),
+            );
+        }
 
         return $this->cachedForms;
     }
@@ -402,7 +424,7 @@ trait InteractsWithForms
      */
     protected function getValidationAttributes(): array
     {
-        $attributes = [];
+        $attributes = parent::getValidationAttributes();
 
         foreach ($this->getCachedForms() as $form) {
             $attributes = array_merge($attributes, $form->getValidationAttributes());

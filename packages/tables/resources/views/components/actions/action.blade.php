@@ -13,14 +13,14 @@
     :component="$component"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"
     :tag="$url ? 'a' : 'button'"
-    :wire:click="$action->getLivewireMountAction()"
+    :wire:click="$action->getLivewireClickHandler()"
     :href="$isDisabled ? null : $url"
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
     :disabled="$isDisabled"
     :color="$action->getColor()"
     :tooltip="$action->getTooltip()"
     :icon="$icon ?? $action->getIcon()"
-    :size="$action->getSize() ?? 'sm'"
+    :size="$action->getSize()"
     dusk="filament.tables.action.{{ $action->getName() }}"
 >
     {{ $slot }}

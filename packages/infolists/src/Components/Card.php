@@ -2,6 +2,8 @@
 
 namespace Filament\Infolists\Components;
 
+use Closure;
+
 class Card extends Component
 {
     use Concerns\EntanglesStateWithSingularRelationship;
@@ -12,9 +14,9 @@ class Card extends Component
     protected string $view = 'filament-infolists::components.card';
 
     /**
-     * @param  array<Component>  $schema
+     * @param  array<Component> | Closure  $schema
      */
-    final public function __construct(array $schema = [])
+    final public function __construct(array | Closure $schema = [])
     {
         $this->schema($schema);
     }
