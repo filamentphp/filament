@@ -28,16 +28,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Desvincular seleccionado',
+        'label' => 'Desvincular seleccionados',
 
         'modal' => [
 
-            'heading' => 'Desvincular seleccionado :label',
+            'heading' => 'Desvincular :label seleccionados',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Desvincular seleccionado',
+                    'label' => 'Desvincular seleccionados',
                 ],
 
             ],
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'detached' => 'Desvinculado',
+            'detached' => 'Desvinculados',
         ],
 
     ],

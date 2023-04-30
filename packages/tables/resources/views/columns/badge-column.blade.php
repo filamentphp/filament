@@ -13,6 +13,8 @@
     $stateIcon = $getStateIcon();
     $iconPosition = $getIconPosition();
     $iconClasses = 'w-4 h-4';
+
+    $isCopyable = $isCopyable();
 @endphp
 
 <div {{ $attributes->merge($getExtraAttributes())->class([
@@ -36,7 +38,17 @@
                 <x-dynamic-component :component="$stateIcon" :class="$iconClasses" />
             @endif
 
-            <span>
+            <span
+                @if ($isCopyable)
+                    x-on:click="
+                        window.navigator.clipboard.writeText(@js($getState()))
+                        $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
+                    "
+                @endif
+                @class([
+                    'cursor-pointer' => $isCopyable,
+                ])
+            >
                 {{ $state }}
             </span>
 

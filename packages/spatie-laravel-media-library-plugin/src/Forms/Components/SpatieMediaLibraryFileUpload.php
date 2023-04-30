@@ -68,10 +68,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 return null;
             }
 
-            $mediaClass = config('media-library.media_model', Media::class);
-
             /** @var ?Media $media */
-            $media = $mediaClass::findByUuid($file);
+            $media = $component->getRecord()->getRelationValue('media')->firstWhere('uuid', $file);
 
             if ($component->getVisibility() === 'private') {
                 try {
@@ -91,8 +89,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         });
 
         $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
-            $component->saveUploadedFiles();
             $component->deleteAbandonedFiles();
+            $component->saveUploadedFiles();
         });
 
         $this->saveUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, TemporaryUploadedFile $file, ?Model $record): ?string {

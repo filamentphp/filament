@@ -57,6 +57,8 @@ class FilamentManager
 
     protected array $renderHooks = [];
 
+    protected bool $isServing = false;
+
     public function auth(): Guard
     {
         return auth()->guard(config('filament.auth.guard'));
@@ -164,6 +166,11 @@ class FilamentManager
     public function pushMeta(array $meta): void
     {
         $this->meta = array_merge($this->meta, $meta);
+    }
+
+    public function setServingStatus(bool $condition = true): void
+    {
+        $this->isServing = $condition;
     }
 
     public function serving(Closure $callback): void
@@ -412,5 +419,10 @@ class FilamentManager
     public function getMeta(): array
     {
         return array_unique($this->meta);
+    }
+
+    public function isServing(): bool
+    {
+        return $this->isServing;
     }
 }

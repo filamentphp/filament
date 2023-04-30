@@ -191,7 +191,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
         });
     }
 
-    public function blocks(array $blocks): static
+    public function blocks(array | Closure $blocks): static
     {
         $this->childComponents($blocks);
 

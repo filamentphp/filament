@@ -125,3 +125,18 @@ BadgeColumn::make('status')
 ## Formatting the text
 
 All formatting options available for [text columns](text) are also available for badge columns.
+
+## Allowing the text to be copied to the clipboard
+
+You may make the text copyable, such that clicking on the cell copies the text to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('email')
+    ->copyable()
+    ->copyMessage('Email address copied')
+    ->copyMessageDuration(1500)
+```
+
+> Filament uses tooltips to display the copy message in the admin panel. If you want to use the copyable feature outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app.

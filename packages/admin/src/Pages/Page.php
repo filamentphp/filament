@@ -188,7 +188,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return $this->filterVisibleWidgets($this->getHeaderWidgets());
     }
 
-    protected function getHeaderWidgetsColumns(): int | array
+    protected function getHeaderWidgetsColumns(): int | string | array
     {
         return 2;
     }
@@ -208,7 +208,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return array_filter($widgets, fn (string $widget): bool => $widget::canView());
     }
 
-    protected function getFooterWidgetsColumns(): int | array
+    protected function getFooterWidgetsColumns(): int | string | array
     {
         return 2;
     }

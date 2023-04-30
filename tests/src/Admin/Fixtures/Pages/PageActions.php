@@ -52,6 +52,7 @@ class PageActions extends Page
             Action::make('has-color')
                 ->color('primary'),
             Action::make('exists'),
+            Action::make('exists_in_order'),
             Action::make('url')
                 ->url('https://filamentphp.com'),
             Action::make('url_in_new_tab')

@@ -473,7 +473,7 @@ trait CanBeValidated
             }
 
             return $rule;
-        }, fn (Field $component, ?String $model): bool => (bool) ($component->evaluate($table) ?? $model));
+        }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
 
         return $this;
     }
