@@ -40,13 +40,12 @@
             wire:ignore.self
             wire:key="{{ $attributes->get('wire:key') }}.panel"
         @endif
+        @if ($maxHeight)
+            style="max-height: {{ $maxHeight }}"
+        @endif
         @class([
             'filament-dropdown-panel absolute z-10 w-full divide-y divide-gray-100 overflow-y-auto rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition',
             'dark:divide-gray-700 dark:bg-gray-800 dark:ring-white/10' => $darkMode,
-            match ($maxHeight) {
-                null => 'max-h-[30rem]',
-                default => $maxHeight,
-            },
             match ($width) {
                 'xs' => 'max-w-xs',
                 'sm' => 'max-w-sm',
