@@ -52,9 +52,9 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
     public function getTitle(): string
     {
         return static::$title ?? (string) str(class_basename(static::class))
-                ->kebab()
-                ->replace('-', ' ')
-                ->title();
+            ->kebab()
+            ->replace('-', ' ')
+            ->title();
     }
 
     public function getMaxContentWidth(): ?string

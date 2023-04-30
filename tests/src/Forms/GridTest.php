@@ -20,12 +20,12 @@ test('can get number of container columns at all breakpoints', function () {
 
     expect($container)
         ->getColumns()
-            ->toHaveKey('default', $defaultColumns)
-            ->toHaveKey('sm', $columnsAtSm)
-            ->toHaveKey('md', $columnsAtMd)
-            ->toHaveKey('lg', $columnsAtLg)
-            ->toHaveKey('xl', $columnsAtXl)
-            ->toHaveKey('2xl', $columnsAt2xl);
+        ->toHaveKey('default', $defaultColumns)
+        ->toHaveKey('sm', $columnsAtSm)
+        ->toHaveKey('md', $columnsAtMd)
+        ->toHaveKey('lg', $columnsAtLg)
+        ->toHaveKey('xl', $columnsAtXl)
+        ->toHaveKey('2xl', $columnsAt2xl);
 });
 
 test('can get number of container columns at one breakpoint', function () {
@@ -81,12 +81,12 @@ test('can get component column span at all breakpoints', function () {
 
     expect($component)
         ->getColumnSpan()
-            ->toHaveKey('default', $defaultSpan)
-            ->toHaveKey('sm', $spanAtSm)
-            ->toHaveKey('md', $spanAtMd)
-            ->toHaveKey('lg', $spanAtLg)
-            ->toHaveKey('xl', $spanAtXl)
-            ->toHaveKey('2xl', $spanAt2xl);
+        ->toHaveKey('default', $defaultSpan)
+        ->toHaveKey('sm', $spanAtSm)
+        ->toHaveKey('md', $spanAtMd)
+        ->toHaveKey('lg', $spanAtLg)
+        ->toHaveKey('xl', $spanAtXl)
+        ->toHaveKey('2xl', $spanAt2xl);
 });
 
 test('can get component column span at one breakpoint', function () {
