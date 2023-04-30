@@ -12,12 +12,12 @@ class Fieldset extends Component implements CanEntangleWithSingularRelationships
 
     protected string $view = 'forms::components.fieldset';
 
-    final public function __construct(string | Htmlable | Closure | null $label)
+    final public function __construct(string | Htmlable | Closure | null $label = '')
     {
         $this->label($label);
     }
 
-    public static function make(string | Htmlable | Closure | null $label): static
+    public static function make(string | Htmlable | Closure | null $label = ''): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();

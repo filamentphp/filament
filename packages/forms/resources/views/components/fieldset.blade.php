@@ -1,3 +1,7 @@
+@php
+    $label = $getLabel();
+@endphp
+
 <fieldset
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([
@@ -5,9 +9,11 @@
         'dark:border-gray-600 dark:text-gray-200' => config('forms.dark_mode'),
     ]) }}
 >
-    <legend class="text-sm leading-tight font-medium px-2 -ml-2">
-        {{ $getLabel() }}
-    </legend>
+    @if ($label)
+        <legend class="text-sm leading-tight font-medium px-2 -ml-2">
+            {{ $label }}
+        </legend>
+    @endif
 
     {{ $getChildComponentContainer() }}
 </fieldset>
