@@ -378,7 +378,7 @@ it('can send invoices', function () {
 
 ### Execution
 
-To check if an action has been halted, you can use `assertPageActionHalted`:
+To check if an action has been halted, you can use `assertPageActionHalted()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -493,7 +493,7 @@ it('can only print a sent invoice', function () {
 });
 ```
 
-To ensure sets of actions exist in the correct order, you can use `assertPageActionsExistInOrder`:
+To ensure sets of actions exist in the correct order, you can use `assertPageActionsExistInOrder()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -508,9 +508,9 @@ it('can not send invoices', function () {
 });
 ```
 
-### Button Style
+### Button appearance
 
-To ensure an action has the correct label, you can use `assertPageActionHasLabel` and `assertPageActionDoesNotHaveLabel`:
+To ensure an action has the correct label, you can use `assertPageActionHasLabel()` and `assertPageActionDoesNotHaveLabel()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -526,7 +526,7 @@ it('send action has correct label', function () {
 });
 ```
 
-To ensure an action's button is showing the correct icon, you can use `assertPageActionHasIcon` or `assertPageActionDoesNotHaveIcon`:
+To ensure an action's button is showing the correct icon, you can use `assertPageActionHasIcon()` or `assertPageActionDoesNotHaveIcon()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -543,7 +543,7 @@ it('when enabled the send button has correct icon', function () {
 });
 ```
 
-To ensure an action's button is displaying the right color, you can use `assertPageActionHasColor` or `assertPageActionDoesNotHaveColor`:
+To ensure an action's button is displaying the right color, you can use `assertPageActionHasColor()` or `assertPageActionDoesNotHaveColor()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -561,7 +561,7 @@ it('actions display proper colors', function () {
 
 ### URL
 
-To ensure an action has the correct URL traits, you can use `assertPageActionHasUrl`, `assertPageActionDoesNotHaveUrl`, `assertPageActionShouldOpenUrlInNewTab`, and `assertPageActionShouldNotOpenUrlInNewTab`.
+To ensure an action has the correct URL, you can use `assertPageActionHasUrl()`, `assertPageActionDoesNotHaveUrl()`, `assertPageActionShouldOpenUrlInNewTab()`, and `assertPageActionShouldNotOpenUrlInNewTab()`:
 
 ```php
 use function Pest\Livewire\livewire;
