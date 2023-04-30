@@ -359,6 +359,42 @@ it('can send invoices', function () {
 });
 ```
 
+If you ever need to only set a page action's data without immediately calling it, you can use `setPageActionData()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can send invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->mountPageAction('send')
+        ->setPageActionData('send', data: [
+            'email' => $email = fake()->email(),
+        ])
+});
+```
+
+### Execution
+
+To check if an action has been halted, you can use `assertPageActionHalted()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('stops sending if invoice has no email address', function () {
+    $invoice = Invoice::factory(['email' => null])->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->callPageAction('send')
+        ->assertPageActionHalted('send');
+});
+```
+
 ### Errors
 
 `assertHasNoPageActionErrors()` is used to assert that no validation errors occurred when submitting the action form.
@@ -410,21 +446,6 @@ it('can send invoices to the primary contact by default', function () {
 
 ### Action State
 
-To check if a page action is hidden to a user, you can use the `assertPageActionHidden()` method:
-
-```php
-use function Pest\Livewire\livewire;
-
-it('can not send invoices', function () {
-    $invoice = Invoice::factory()->create();
-
-    livewire(EditInvoice::class, [
-        'invoice' => $invoice,
-    ])
-        ->assertPageActionHidden('send');
-});
-```
-
 To ensure that an action exists or doesn't in a table, you can use the `assertPageActionExists()` or  `assertPageActionDoesNotExist()` method:
 
 ```php
@@ -441,7 +462,39 @@ it('can send but not unsend invoices', function () {
 });
 ```
 
-To ensure sets of actions exist in the correct order, you can use `assertPageActionsExistInOrder`:
+To ensure a page action is hidden or visible for a user, you can use the `assertPageActionHidden()` or `assertPageActionVisible()` methods:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can only print invoices', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHidden('send')
+        ->assertPageActionVisible('print');
+});
+```
+
+To ensure a page action is enabled or disabled for a user, you can use the `assertPageActionEnabled()` or `assertPageActionDisabled()` methods:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('can only print a sent invoice', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionDisabled('send')
+        ->assertPageActionEnabled('print');
+});
+```
+
+To ensure sets of actions exist in the correct order, you can use `assertPageActionsExistInOrder()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -453,5 +506,76 @@ it('can not send invoices', function () {
         'invoice' => $invoice,
     ])
         ->assertPageActionsExistInOrder(['send', 'export']);
+});
+```
+
+### Button appearance
+
+To ensure an action has the correct label, you can use `assertPageActionHasLabel()` and `assertPageActionDoesNotHaveLabel()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('send action has correct label', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHasLabel('send', 'Email Invoice')
+        ->assertPageActionDoesNotHaveLabel('send', 'Send');
+});
+```
+
+To ensure an action's button is showing the correct icon, you can use `assertPageActionHasIcon()` or `assertPageActionDoesNotHaveIcon()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('when enabled the send button has correct icon', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionEnabled('send')
+        ->assertPageActionHasIcon('send', 'envelope-open')
+        ->assertPageActionDoesNotHaveIcon('send', 'envelope');
+});
+```
+
+To ensure an action's button is displaying the right color, you can use `assertPageActionHasColor()` or `assertPageActionDoesNotHaveColor()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('actions display proper colors', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHasColor('delete', 'danger')
+        ->assertPageActionDoesNotHaveColor('print', 'danger');
+});
+```
+
+### URL
+
+To ensure an action has the correct URL, you can use `assertPageActionHasUrl()`, `assertPageActionDoesNotHaveUrl()`, `assertPageActionShouldOpenUrlInNewTab()`, and `assertPageActionShouldNotOpenUrlInNewTab()`:
+
+```php
+use function Pest\Livewire\livewire;
+
+it('links to the correct Filament sites', function () {
+    $invoice = Invoice::factory()->create();
+
+    livewire(EditInvoice::class, [
+        'invoice' => $invoice,
+    ])
+        ->assertPageActionHasUrl('filament', 'https://filamentphp.com/')
+        ->assertPageActionDoesNotHaveUrl('filament', 'https://github.com/filamentphp/filament')
+        ->assertPageActionShouldOpenUrlInNewTab('filament')
+        ->assertPageActionShouldNotOpenUrlInNewTab('github');
 });
 ```

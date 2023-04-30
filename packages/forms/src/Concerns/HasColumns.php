@@ -8,7 +8,7 @@ trait HasColumns
 {
     protected ?array $columns = null;
 
-    public function columns(array | int | null $columns = 2): static
+    public function columns(array | int | string | null $columns = 2): static
     {
         if (! is_array($columns)) {
             $columns = [
@@ -21,7 +21,7 @@ trait HasColumns
         return $this;
     }
 
-    public function getColumns($breakpoint = null): array | int | null
+    public function getColumns($breakpoint = null): array | int | string | null
     {
         $columns = $this->getColumnsConfig();
 

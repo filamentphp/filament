@@ -829,10 +829,11 @@
                                     @endphp
 
                                     <x-tables::cell
-                                        class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                         wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                         wire:loading.remove.delay
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                        class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
+                                        :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())"
                                     >
                                         <x-tables::columns.column
                                             :column="$column"
