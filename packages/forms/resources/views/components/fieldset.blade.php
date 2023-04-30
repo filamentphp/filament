@@ -1,7 +1,3 @@
-@php
-    $label = $getLabel();
-@endphp
-
 <fieldset
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class([
@@ -9,7 +5,7 @@
         'dark:border-gray-600 dark:text-gray-200' => config('forms.dark_mode'),
     ]) }}
 >
-    @if ($label)
+    @if (filled($label = $getLabel()))
         <legend class="text-sm leading-tight font-medium px-2 -ml-2">
             {{ $label }}
         </legend>
