@@ -10,10 +10,7 @@
             isSticky: false,
 
             evaluatePageScrollPosition: function() {
-                const currentScroll = window.scrollY + window.innerHeight
-                const contentHeight = document.querySelector('#filament-form-actions-end').offsetTop
-
-                this.isSticky = currentScroll <= contentHeight
+                this.isSticky = (window.scrollY + (window.innerHeight * 2)) <= document.body.scrollHeight
             },
 
         }"
@@ -31,5 +28,4 @@
         :full-width="$fullWidth"
         class="filament-form-actions"
     />
-    <div id="filament-form-actions-end"/>
 </div>
