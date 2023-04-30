@@ -31,7 +31,7 @@ trait HasQuery
         return $this;
     }
 
-    public function scopeQuery(Closure $callback): static
+    public function modifyQueryUsing(Closure $callback): static
     {
         $this->queryScopes[] = $callback;
 
