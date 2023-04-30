@@ -244,6 +244,7 @@
                         @if ($hasFiltersPopover)
                             <x-tables::filters.popover
                                 :form="$getFiltersForm()"
+                                :max-height="$getFiltersFormMaxHeight()"
                                 :width="$getFiltersFormWidth()"
                                 :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
                                 class="shrink-0"
@@ -253,6 +254,7 @@
                         @if ($isColumnToggleFormVisible)
                             <x-tables::toggleable
                                 :form="$getColumnToggleForm()"
+                                :max-height="$getColumnToggleFormMaxHeight()"
                                 :width="$getColumnToggleFormWidth()"
                                 class="shrink-0"
                             />
