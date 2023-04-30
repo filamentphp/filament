@@ -2,147 +2,184 @@
     $state = $getState();
 @endphp
 
-<div
-    x-data="{
-        error: undefined,
-        state: @js((bool) $state),
-        isLoading: false,
-    }"
-    x-init="
-        $watch('state', () => $refs.button?.dispatchEvent(new Event('change')))
+<div wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $getName() }}.toggle-column.{{ $state ? 'true' : 'false' }}">
+    <div
+        x-data="{
+            error: undefined,
+            state: @js((bool) $state),
+            isLoading: false,
+        }"
+        x-init="
+            $watch('state', () => $refs.button?.dispatchEvent(new Event('change')))
 
-        Livewire.hook('message.processed', (component) => {
-            if (component.component.id !== @js($this->id)) {
-                return
-            }
+            Livewire.hook('message.processed', (component) => {
+                if (component.component.id !== @js($this->id)) {
+                    return
+                }
 
-            if (! $refs.newState) {
-                return
-            }
+                if (! $refs.newState) {
+                    return
+                }
 
-            let newState = $refs.newState.value === '1' ? true : false
+                let newState = $refs.newState.value === '1' ? true : false
 
-            if (state === newState) {
-                return
-            }
+                if (state === newState) {
+                    return
+                }
 
-            state = newState
-        })
-    "
-    {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
-        'filament-tables-toggle-column',
-    ]) }}
->
-    <input
-        type="hidden"
-        value="{{ $state ? 1 : 0 }}"
-        x-ref="newState"
-    />
-
-    @php
-        $offColor = $getOffColor();
-        $onColor = $getOnColor();
-    @endphp
-
-    <button
-        role="switch"
-        aria-checked="false"
-        x-bind:aria-checked="state.toString()"
-        x-on:click="! isLoading && (state = ! state)"
-        x-ref="button"
-        x-on:change="
-            isLoading = true
-            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
-            error = response?.error ?? undefined
-            isLoading = false
+                state = newState
+            })
         "
-        x-tooltip="error"
-        x-bind:class="
-            (state ? '{{ match ($getOnColor()) {
-                'danger' => 'bg-danger-600',
-                'gray' => 'bg-gray-600',
-                'primary', null => 'bg-primary-600',
-                'secondary' => 'bg-secondary-600',
-                'success' => 'bg-success-600',
-                'warning' => 'bg-warning-600',
-                default => $onColor,
-            } }}' : '{{ match ($getOffColor()) {
-                'danger' => 'bg-danger-600',
-                'gray' => 'bg-gray-600',
-                'primary' => 'bg-primary-600',
-                'secondary' => 'bg-secondary-600',
-                'success' => 'bg-success-600',
-                'warning' => 'bg-warning-600',
-                null => 'bg-gray-200 dark:bg-gray-700',
-                default => $offColor,
-            } }}') +
-            (isLoading ? ' opacity-70 pointer-events-none' : '')
-        "
-        @disabled($isDisabled())
-        wire:ignore.self
-        type="button"
-        class="relative inline-flex shrink-0 ms-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 outline-none disabled:opacity-70 disabled:pointer-events-none"
+        wire:ignore
+        {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
+            'filament-tables-toggle-column',
+        ]) }}
     >
-        <span
-            class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200"
-            x-bind:class="{
-                'translate-x-5 rtl:-translate-x-5': state,
-                'translate-x-0': ! state,
-            }"
-        >
-            <span
-                class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
-                aria-hidden="true"
-                x-bind:class="{
-                    'opacity-0 ease-out duration-100': state,
-                    'opacity-100 ease-in duration-200': ! state,
-                }"
-            >
-                @if ($hasOffIcon())
-                    <x-filament::icon
-                        :name="$getOffIcon()"
-                        alias="filament-tables::columns.toggle.off"
-                        :color="match ($offColor) {
-                            'danger' => 'text-danger-600',
-                            'gray' => 'text-gray-600',
-                            'primary' => 'text-primary-600',
-                            'secondary' => 'text-secondary-600',
-                            'success' => 'text-success-600',
-                            'warning' => 'text-warning-600',
-                            null => 'text-gray-400 dark:text-gray-700',
-                            default => $offColor,
-                        }"
-                        size="h-3 w-3"
-                    />
-                @endif
-            </span>
+        <input
+            type="hidden"
+            value="{{ $state ? 1 : 0 }}"
+            x-ref="newState"
+        />
 
-            <span
-                class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
-                aria-hidden="true"
+        @php
+            $offColor = $getOffColor();
+            $onColor = $getOnColor();
+        @endphp
+
+        <button
+            role="switch"
+            aria-checked="false"
+            x-bind:aria-checked="state.toString()"
+            x-on:click="! isLoading && (state = ! state)"
+            x-ref="button"
+            x-on:change="
+                isLoading = true
+                response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+                error = response?.error ?? undefined
+                isLoading = false
+            "
+            x-tooltip="error"
+            x-bind:class="
+                (state ? '{{ match ($getOnColor()) {
+                    'danger' => 'bg-danger-600',
+                    'gray' => 'bg-gray-600',
+                    'primary', null => 'bg-primary-600',
+                    'secondary' => 'bg-secondary-600',
+                    'success' => 'bg-success-600',
+                    'warning' => 'bg-warning-600',
+                    default => $onColor,
+                } }}' : '{{ match ($getOffColor()) {
+                    'danger' => 'bg-danger-600',
+                    'gray' => 'bg-gray-600',
+                    'primary' => 'bg-primary-600',
+                    'secondary' => 'bg-secondary-600',
+                    'success' => 'bg-success-600',
+                    'warning' => 'bg-warning-600',
+                    null => 'bg-gray-200 dark:bg-gray-700',
+                    default => $offColor,
+                } }}') +
+                (isLoading ? ' opacity-70 pointer-events-none' : '')
+            "
+            @disabled($isDisabled())
+            type="button"
+            class="relative inline-flex shrink-0 ms-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 outline-none disabled:opacity-70 disabled:pointer-events-none"
+        >
+            <button
+                role="switch"
+                aria-checked="false"
+                x-bind:aria-checked="state.toString()"
+                x-on:click="
+                    if (isLoading) {
+                        return
+                    }
+
+                    state = ! state
+
+                    isLoading = true
+                    response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+                    error = response?.error ?? undefined
+
+                    if (error) {
+                        state = ! state
+                    }
+
+                    isLoading = false
+                "
+                x-tooltip="error"
                 x-bind:class="{
-                    'opacity-100 ease-in duration-200': state,
-                    'opacity-0 ease-out duration-100': ! state,
+                    'opacity-70 pointer-events-none': isLoading,
+                    '{{ match ($getOnColor()) {
+                        'danger' => 'bg-danger-500',
+                        'secondary' => 'bg-gray-500',
+                        'success' => 'bg-success-500',
+                        'warning' => 'bg-warning-500',
+                        default => 'bg-primary-600',
+                    } }}': state,
+                    '{{ match ($getOffColor()) {
+                        'danger' => 'bg-danger-500',
+                        'primary' => 'bg-primary-500',
+                        'success' => 'bg-success-500',
+                        'warning' => 'bg-warning-500',
+                        default => 'bg-gray-200',
+                    } }} @if (config('forms.dark_mode')) dark:bg-white/10 @endif': ! state,
                 }"
+                {!! $isDisabled() ? 'disabled' : null !!}
+                type="button"
+                class="relative inline-flex shrink-0 ml-4 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 outline-none focus:ring-1 focus:ring-offset-1 focus:ring-primary-500 disabled:opacity-70 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
-                @if ($hasOnIcon())
-                    <x-filament::icon
-                        :name="$getOnIcon()"
-                        alias="filament-tables::columns.toggle.on"
-                        :color="match ($onColor) {
-                            'danger' => 'text-danger-600',
-                            'gray' => 'text-gray-600',
-                            'primary', null => 'text-primary-600',
-                            'secondary' => 'text-secondary-600',
-                            'success' => 'text-success-600',
-                            'warning' => 'text-warning-600',
-                            default => $onColor,
-                        }"
-                        size="h-3 w-3"
-                        x-cloak="x-cloak"
-                    />
-                @endif
-            </span>
-        </span>
-    </button>
+                <span
+                    class="pointer-events-none relative inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 ease-in-out transition duration-200"
+                    x-bind:class="{
+                        'translate-x-5 rtl:-translate-x-5': state,
+                        'translate-x-0': ! state,
+                    }"
+                >
+                    @if ($hasOffIcon())
+                        <x-filament::icon
+                            :name="$getOffIcon()"
+                            alias="filament-tables::columns.toggle.off"
+                            :color="match ($offColor) {
+                                'danger' => 'text-danger-600',
+                                'gray' => 'text-gray-600',
+                                'primary' => 'text-primary-600',
+                                'secondary' => 'text-secondary-600',
+                                'success' => 'text-success-600',
+                                'warning' => 'text-warning-600',
+                                null => 'text-gray-400 dark:text-gray-700',
+                                default => $offColor,
+                            }"
+                            size="h-3 w-3"
+                        />
+                    @endif
+                </span>
+
+                <span
+                    class="absolute inset-0 h-full w-full flex items-center justify-center transition-opacity"
+                    aria-hidden="true"
+                    x-bind:class="{
+                        'opacity-100 ease-in duration-200': state,
+                        'opacity-0 ease-out duration-100': ! state,
+                    }"
+                >
+                    @if ($hasOnIcon())
+                        <x-filament::icon
+                            :name="$getOnIcon()"
+                            alias="filament-tables::columns.toggle.on"
+                            :color="match ($onColor) {
+                                'danger' => 'text-danger-600',
+                                'gray' => 'text-gray-600',
+                                'primary', null => 'text-primary-600',
+                                'secondary' => 'text-secondary-600',
+                                'success' => 'text-success-600',
+                                'warning' => 'text-warning-600',
+                                default => $onColor,
+                            }"
+                            size="h-3 w-3"
+                            x-cloak="x-cloak"
+                        />
+                    @endif
+                </span>
+            </button>
+        </div>
+    </div>
 </div>
