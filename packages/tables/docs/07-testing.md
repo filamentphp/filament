@@ -111,7 +111,7 @@ it('can search posts by title', function () {
 });
 ```
 
-To search individual columns, you can pass an array of searches to  `searchTableColumns()`
+To search individual columns, you can pass an array of searches to `searchTableColumns()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -146,7 +146,7 @@ it('can get post author names', function () {
 });
 ```
 
-To assert that a certain column has a formatted state or does not have a formatted state for a record you can use `assertTableColumnFormattedStateSet()` and `assertTableColumnFormattedStateNotSet()`::
+To assert that a certain column has a formatted state or does not have a formatted state for a record you can use `assertTableColumnFormattedStateSet()` and `assertTableColumnFormattedStateNotSet()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -189,7 +189,7 @@ it('shows the correct columns', function () {
 
 ### Descriptions
 
-To ensure a column has the correct description above or below you can use the `assertTableColumnHasDescription()` and `assertTableColumnDoesNotHaveDescription()` methods
+To ensure a column has the correct description above or below you can use the `assertTableColumnHasDescription()` and `assertTableColumnDoesNotHaveDescription()` methods:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -277,7 +277,7 @@ it('can filter posts by `author_id`', function () {
 
 ### Resetting filters
 
-To reset all filters to their original state, call `resetTableFilters()`
+To reset all filters to their original state, call `resetTableFilters()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -292,7 +292,7 @@ it('can reset table filters`', function () {
 
 ### Removing Filters
 
-To remove a single filter you can use `removeTableFilter`:
+To remove a single filter you can use `removeTableFilter()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -310,7 +310,7 @@ it('filters list by published', function () {
 });
 ```
 
-To remove all filters you can use `removeTableFilters`:
+To remove all filters you can use `removeTableFilters()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -352,7 +352,7 @@ it('can delete posts', function () {
 
 This example assumes that you have a `DeleteAction` on your table. If you have a custom `Action::make('reorder')`, you may use `callTableAction('reorder')`.
 
-For column actions, you may do the same, using `callTableColumnAction`,
+For column actions, you may do the same, using `callTableColumnAction()`,
 
 ```php
 use function Pest\Livewire\livewire;
@@ -405,7 +405,7 @@ it('can edit posts', function () {
 
 ### Execution
 
-To check if an action or bulk action has been halted, you can use `assertTableActionHalted()`/`assertTableBulkActionHalted()`:
+To check if an action or bulk action has been halted, you can use `assertTableActionHalted()` / `assertTableBulkActionHalted()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -473,7 +473,7 @@ it('can load existing post data for editing', function () {
 
 ### Action state
 
-To ensure that an action or bulk action exists or doesn't in a table, you can use the `assertTableActionExists()`/`assertTableActionDoesNotExist()` or  `assertTableBulkActionExists()`/`assertTableBulkActionDoesNotExist()` method:
+To ensure that an action or bulk action exists or doesn't in a table, you can use the `assertTableActionExists()` / `assertTableActionDoesNotExist()` or  `assertTableBulkActionExists()` / `assertTableBulkActionDoesNotExist()` method:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -501,7 +501,7 @@ it('has all actions in expected order', function () {
 });
 ```
 
-To ensure that an action or bulk action is enabled or disabled for a user, you can use the `assertTableActionEnabled()` `assertTableActionDisabled()` or `assertTableBulkActionEnabled()`/`assertTableBulkActionDisabled()` methods:
+To ensure that an action or bulk action is enabled or disabled for a user, you can use the `assertTableActionEnabled()` / `assertTableActionDisabled()` or `assertTableBulkActionEnabled()` / `assertTableBulkActionDisabled()` methods:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -518,7 +518,7 @@ it('can not publish, but can delete posts', function () {
 ```
 
 
-To ensure that an action or bulk action is visible or hidden for a user, you can use the `assertTableActionVisible()` `assertTableActionHidden()` or `assertTableBulkActionVisible()`/`assertTableBulkActionHidden()` methods:
+To ensure that an action or bulk action is visible or hidden for a user, you can use the `assertTableActionVisible()` / `assertTableActionHidden()` or `assertTableBulkActionVisible()` / `assertTableBulkActionHidden()` methods:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -536,7 +536,7 @@ it('can not publish, but can delete posts', function () {
 
 ### Button Style
 
-To ensure an action or bulk action has the correct label, you can use `assertTableActionHasLabel()`/`assertTableBulkActionHasLabel()` and `assertTableActionDoesNotHaveLabel()`/`assertTableBulkActionDoesNotHaveLabel()`:
+To ensure an action or bulk action has the correct label, you can use `assertTableActionHasLabel()` / `assertTableBulkActionHasLabel()` and `assertTableActionDoesNotHaveLabel()` / `assertTableBulkActionDoesNotHaveLabel()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -552,7 +552,7 @@ it('delete actions have correct labels', function () {
 });
 ```
 
-To ensure an action or bulk action's button is showing the correct icon, you can use `assertTableActionHasIcon()`/`assertTableBulkActionHasIcon()` or `assertTableActionDoesNotHaveIcon()`/`assertTableBulkActionDoesNotHaveIcon()`:
+To ensure an action or bulk action's button is showing the correct icon, you can use `assertTableActionHasIcon()` / `assertTableBulkActionHasIcon()` or `assertTableActionDoesNotHaveIcon()` / `assertTableBulkActionDoesNotHaveIcon()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -568,7 +568,7 @@ it('delete actions have correct icons', function () {
 });
 ```
 
-To ensure an action or bulk action's button is displaying the right color, you can use `assertTableActionHasColor()`/`assertTableBulkActionHasColor()` or `assertTableActionDoesNotHaveColor()`/`assertTableBulkActionDoesNotHaveColor()`:
+To ensure an action or bulk action's button is displaying the right color, you can use `assertTableActionHasColor()` / `assertTableBulkActionHasColor()` or `assertTableActionDoesNotHaveColor()` / `assertTableBulkActionDoesNotHaveColor()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -586,11 +586,11 @@ it('delete actions have correct colors', function () {
 
 ### URL
 
-To ensure an action or bulk action has the correct URL traits, you can use `assertTableActionHasUrl()`, `assertTableActionDoesNotHaveUrl()`, `assertTableActionShouldOpenUrlInNewTab()`, and `assertTableActionShouldNotOpenUrlInNewTab()`.
+To ensure an action or bulk action has the correct URL traits, you can use `assertTableActionHasUrl()`, `assertTableActionDoesNotHaveUrl()`, `assertTableActionShouldOpenUrlInNewTab()`, and `assertTableActionShouldNotOpenUrlInNewTab()`:
 
 ```php
 use function Pest\Livewire\livewire;
-it('links to the correct filament sites', function () {
+it('links to the correct Filament sites', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
