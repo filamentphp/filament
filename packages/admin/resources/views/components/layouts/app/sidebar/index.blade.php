@@ -43,16 +43,20 @@
                 </button>
             @endif
 
-            <a
-                href="{{ config('filament.home_url') }}"
+            <div
                 data-turbo="false"
                 @class([
-                    'block w-full',
+                    'block w-full relative',
                     'lg:ml-3' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
                 ])
             >
-                <x-filament::brand />
-            </a>
+                <a
+                    href="{{ config('filament.home_url') }}"
+                    class="inline-block"
+                >
+                    <x-filament::brand />
+                </a>
+            </div>
         </div>
 
         @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
