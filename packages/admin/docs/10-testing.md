@@ -359,7 +359,7 @@ it('can send invoices', function () {
 });
 ```
 
-If you ever need to only set a page action's data without immediately calling it, you can use `setPageActionData`.
+If you ever need to only set a page action's data without immediately calling it, you can use `setPageActionData()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -370,6 +370,7 @@ it('can send invoices', function () {
     livewire(EditInvoice::class, [
         'invoice' => $invoice,
     ])
+        ->mountPageAction('send')
         ->setPageActionData('send', data: [
             'email' => $email = fake()->email(),
         ])
