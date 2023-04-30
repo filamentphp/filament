@@ -14,41 +14,41 @@ it('can register navigation items from resources and pages', function () {
                 ->toBeInstanceOf(NavigationGroup::class)
                 ->getLabel()->toBeNull()
                 ->getItems()
-                    ->sequence(
-                        fn ($item) => $item
-                            ->getLabel()->toBe('Dashboard')
-                            ->getIcon()->toBe('heroicon-o-home'),
-                        fn ($item) => $item
-                            ->getLabel()->toBe('Users')
-                            ->getIcon()->toBe('heroicon-o-user'),
-                        fn ($item) => $item
-                            ->getLabel()->toBe('Settings')
-                            ->getIcon()->toBe('heroicon-o-cog'),
-                    )
-                    ->each->toBeInstanceOf(NavigationItem::class),
+                ->sequence(
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Dashboard')
+                        ->getIcon()->toBe('heroicon-o-home'),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Users')
+                        ->getIcon()->toBe('heroicon-o-user'),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Settings')
+                        ->getIcon()->toBe('heroicon-o-cog'),
+                )
+                ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
                 ->toBeInstanceOf(NavigationGroup::class)
                 ->getLabel()->toBe('Blog')
                 ->getItems()
-                    ->sequence(
-                        fn ($item) => $item
-                            ->getLabel()->toBe('Posts')
-                            ->getIcon()->toBe('heroicon-o-document-text'),
-                        fn ($item) => $item
-                            ->getLabel()->toBe('Post Categories')
-                            ->getIcon()->toBe('heroicon-o-collection'),
-                    )
-                    ->each->toBeInstanceOf(NavigationItem::class),
+                ->sequence(
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Posts')
+                        ->getIcon()->toBe('heroicon-o-document-text'),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Post Categories')
+                        ->getIcon()->toBe('heroicon-o-collection'),
+                )
+                ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
                 ->toBeInstanceOf(NavigationGroup::class)
                 ->getLabel()->toBe('Shop')
                 ->getItems()
-                    ->sequence(
-                        fn ($item) => $item
-                            ->getLabel()->toBe('Products')
-                            ->getIcon()->toBe('heroicon-o-shopping-bag'),
-                    )
-                    ->each->toBeInstanceOf(NavigationItem::class),
+                ->sequence(
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Products')
+                        ->getIcon()->toBe('heroicon-o-shopping-bag'),
+                )
+                ->each->toBeInstanceOf(NavigationItem::class),
         );
 });
 

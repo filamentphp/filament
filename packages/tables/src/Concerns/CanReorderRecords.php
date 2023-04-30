@@ -42,8 +42,8 @@ trait CanReorderRecords
             ->update([
                 $orderColumn => DB::raw(
                     'case ' . collect($order)
-                    ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $modelKeyName . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($recordIndex + 1))
-                    ->implode(' ') . ' end'
+                        ->map(fn ($recordKey, int $recordIndex): string => 'when ' . $modelKeyName . ' = ' . DB::getPdo()->quote($recordKey) . ' then ' . ($recordIndex + 1))
+                        ->implode(' ') . ' end'
                 ),
             ]);
     }

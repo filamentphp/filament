@@ -113,9 +113,9 @@ class SettingsPage extends Page implements HasFormActions
     public static function getSettings(): string
     {
         return static::$settings ?? (string) Str::of(class_basename(static::class))
-                ->beforeLast('Settings')
-                ->prepend('App\\Settings\\')
-                ->append('Settings');
+            ->beforeLast('Settings')
+            ->prepend('App\\Settings\\')
+            ->append('Settings');
     }
 
     protected function getFormActions(): array
