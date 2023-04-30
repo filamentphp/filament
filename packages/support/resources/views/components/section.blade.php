@@ -3,6 +3,7 @@
     'collapsed' => false,
     'collapsible' => false,
     'compact' => false,
+    'contentBefore' => false,
     'description' => null,
     'heading',
     'icon' => null,
@@ -35,7 +36,10 @@
     {{ $attributes->class([
         'filament-section-component',
         'rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => ! $aside,
-        'grid grid-cols-1 md:grid-cols-2' => $aside,
+        'grid grid-cols-1' => $aside,
+        'md:grid-cols-2' => $aside && ! $compact,
+        'md:grid-cols-3' => $aside && $compact,
+        'md:order-last' => $contentBefore,
     ]) }}
 >
     <div
@@ -43,7 +47,9 @@
             'filament-section-header-wrapper flex rtl:space-x-reverse overflow-hidden rounded-t-xl',
             'min-h-[40px]' => $compact,
             'min-h-[56px]' => ! $compact,
-            'pe-6 pb-4' => $aside,
+            'pb-4' => $aside,
+            'pe-6' => $aside && ! $contentBefore,
+            'ps-6' => $aside && $contentBefore,
             'px-4 py-2 items-center bg-gray-100 dark:bg-gray-900' => ! $aside,
         ])
         @if ($collapsible)
@@ -57,15 +63,15 @@
         ])>
             <h3 @class([
                 'font-medium leading-6 pointer-events-none flex flex-row items-center',
-                'text-lg'=> ! $compact,
+                'text-lg'=> ! $compact || $aside,
             ])>
                 @if ($icon)
                     <x-dynamic-component
                         :component="$icon"
                         @class([
                             'me-1',
-                            'h-4 w-4' => $compact,
-                            'h-6 w-6' => ! $compact,
+                            'h-4 w-4' => $compact && ! $aside,
+                            'h-6 w-6' => ! $compact || $aside,
                         ])
                     />
                 @endif
@@ -76,8 +82,8 @@
             @if ($description?->isNotEmpty())
                 <p @class([
                     'text-gray-500',
-                    'text-sm' => $compact,
-                    'text-base' => ! $compact,
+                    'text-sm' => $compact && ! $aside,
+                    'text-base' => ! $compact || $aside,
                 ])>
                     {{ $description }}
                 </p>
@@ -114,13 +120,17 @@
             x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($collapsed) x-cloak @endif
         @endif
-        class="filament-section-content-wrapper"
+        @class([
+             'filament-section-content-wrapper',
+             'col-span-2' => $aside && $compact,
+             'md:order-first' => $contentBefore,
+         ])
     >
         <div @class([
             'filament-section-content',
             'rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => $aside,
-            'p-6' => ! $compact,
-            'p-4' => $compact,
+            'p-6' => ! $compact || $aside,
+            'p-4' => $compact && ! $aside,
         ])>
             {{ $slot }}
         </div>
