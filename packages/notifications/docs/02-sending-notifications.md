@@ -102,6 +102,28 @@ new Notification()
 
 ![Success, warning and danger notifications](https://user-images.githubusercontent.com/44533235/180995801-3e706ca6-773b-47a0-9fc6-3e28900a9ea9.png)
 
+## Setting a background color
+
+Notifications have no background color by default. You may want to provide additional context to your notification by setting a color as follows:
+
+```php
+use Filament\Notifications\Notification;
+
+Notification::make()
+    ->title('Saved successfully')
+    ->color('success') // [tl! focus]
+    ->send();
+```
+
+Or with JavaScript:
+
+```js
+new Notification()
+    .title('Saved successfully')
+    .color('success') // [tl! focus]
+    .send()
+```
+
 ## Setting a duration
 
 By default, notifications are shown for 6 seconds before they're automatically closed. You may specify a custom duration value in milliseconds as follows:
@@ -306,11 +328,11 @@ You can also `emitSelf`, `emitUp` and `emitTo`:
 Action::make('undo')
     ->color('secondary')
     ->emitSelf('undoEditingPost', [$post->id])
-    
+
 Action::make('undo')
     ->color('secondary')
     ->emitUp('undoEditingPost', [$post->id])
-    
+
 Action::make('undo')
     ->color('secondary')
     ->emitTo('another_component', 'undoEditingPost', [$post->id])

@@ -7,6 +7,7 @@ use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Concerns\CanBeInline;
 use Filament\Notifications\Concerns\HasActions;
 use Filament\Notifications\Concerns\HasBody;
+use Filament\Notifications\Concerns\HasColor;
 use Filament\Notifications\Concerns\HasDate;
 use Filament\Notifications\Concerns\HasDuration;
 use Filament\Notifications\Concerns\HasIcon;
@@ -30,6 +31,7 @@ class Notification extends ViewComponent implements Arrayable
     use CanBeInline;
     use HasActions;
     use HasBody;
+    use HasColor;
     use HasDate;
     use HasDuration;
     use HasIcon;
@@ -75,6 +77,7 @@ class Notification extends ViewComponent implements Arrayable
             'id' => $this->getId(),
             'actions' => array_map(fn (Action | ActionGroup $action): array => $action->toArray(), $this->getActions()),
             'body' => $this->getBody(),
+            'color' => $this->getColor(),
             'duration' => $this->getDuration(),
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
@@ -108,6 +111,7 @@ class Notification extends ViewComponent implements Arrayable
 
         $static->viewData($data['viewData'] ?? []);
         $static->body($data['body'] ?? null);
+        $static->color($data['color'] ?? null);
         $static->duration($data['duration'] ?? $static->getDuration());
         $static->icon($data['icon'] ?? null);
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
