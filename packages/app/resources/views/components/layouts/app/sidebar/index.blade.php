@@ -53,16 +53,20 @@
                 </button>
             @endif
 
-            <a
-                href="{{ filament()->getHomeUrl() }}"
+            <div
                 data-turbo="false"
                 @class([
-                    'block w-full',
+                    'block w-full relative',
                     'lg:ms-3' => filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
-                <x-filament::logo />
-            </a>
+                <a
+                    href="{{ filament()->getHomeUrl() }}"
+                    class="inline-block"
+                >
+                    <x-filament::logo />
+                </a>
+            </div>
         </div>
 
         @if (filament()->isSidebarCollapsibleOnDesktop())

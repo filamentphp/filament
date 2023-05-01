@@ -23,7 +23,7 @@
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
-        :attributes="$getExtraAttributeBag()"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <input
             @if ($hasMask)
@@ -42,7 +42,7 @@
             @endif
             x-bind:class="{
                 'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                'border-danger-600 ring-danger-600': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
             }"
             {{
                 $getExtraInputAttributeBag()

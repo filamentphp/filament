@@ -296,6 +296,7 @@
                                 <x-filament-tables::filters.dropdown
                                     :form="$getFiltersForm()"
                                     :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                    :max-height="$getFiltersFormMaxHeight()"
                                     :trigger-action="$getFiltersTriggerAction()"
                                     :width="$getFiltersFormWidth()"
                                     class="shrink-0"
@@ -305,6 +306,7 @@
                             @if ($isColumnToggleFormVisible)
                                 <x-filament-tables::toggleable
                                     :form="$getColumnToggleForm()"
+                                    :max-height="$getColumnToggleFormMaxHeight()"
                                     :width="$getColumnToggleFormWidth()"
                                     class="shrink-0"
                                 />
@@ -797,7 +799,7 @@
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
                                 class="filament-table-header-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
-                                :attributes="$column->getExtraHeaderAttributeBag()"
+                                :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())"
                                 :wrap="$column->isHeaderWrapped()"
                             >
                                 {{ $column->getLabel() }}
@@ -1034,10 +1036,11 @@
                                         @endphp
 
                                         <x-filament-tables::cell
-                                            class="filament-table-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                             wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                             wire:loading.remove.delay=""
                                             wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+                                            class="filament-table-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
+                                            :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())"
                                         >
                                             <x-filament-tables::columns.column
                                                 :column="$column"

@@ -1,23 +1,28 @@
+@php
+    $isDisabled = $isDisabled();
+    $statePath = $getStatePath();
+
+    $prefixIcon = $getPrefixIcon();
+    $prefixLabel = $getPrefixLabel();
+    $suffixIcon = $getSuffixIcon();
+    $suffixLabel = $getSuffixLabel();
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
 >
     <x-filament::input.affixes
         :state-path="$statePath"
-        :prefix="$getPrefixLabel()"
+        :prefix="$prefixLabel"
         :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$getPrefixIcon()"
-        :suffix="$getSuffixLabel()"
+        :prefix-icon="$prefixIcon"
+        :suffix="$suffixLabel"
         :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$getSuffixIcon()"
+        :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
-        :attributes="$getExtraAttributeBag()"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        @php
-            $isDisabled = $isDisabled();
-            $statePath = $getStatePath();
-        @endphp
-
         <div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
             <div
                 x-ignore
@@ -48,11 +53,11 @@
                                 'type' => 'text',
                             ], escape: false)
                             ->class([
-                                'filament-forms-input text-gray-900 block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
-                                'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
+                                'filament-forms-input text-gray-900 block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white',
+                                'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500' => ! $errors->has($statePath),
                                 'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
-                                'rounded-s-lg' => ! ($getPrefixLabel() || $getPrefixIcon()),
-                                'rounded-e-lg' => ! ($getSuffixLabel() || $getSuffixIcon()),
+                                'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
+                                'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
                             ])
                     }}
                 />

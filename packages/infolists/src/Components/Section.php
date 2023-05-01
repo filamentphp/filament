@@ -27,6 +27,8 @@ class Section extends Component
 
     protected string | Closure | null $icon = null;
 
+    protected bool | Closure $isContentBefore = false;
+
     final public function __construct(string | Htmlable | Closure $heading)
     {
         $this->heading($heading);
@@ -108,5 +110,17 @@ class Section extends Component
     public function getIcon(): ?string
     {
         return $this->evaluate($this->icon);
+    }
+
+    public function contentBefore(bool | Closure $condition = true): static
+    {
+        $this->isContentBefore = $condition;
+
+        return $this;
+    }
+
+    public function isContentBefore(): bool
+    {
+        return (bool) $this->evaluate($this->isContentBefore);
     }
 }

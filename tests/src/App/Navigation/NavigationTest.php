@@ -14,17 +14,17 @@ it('can register navigation items from resources and pages', function () {
                 ->toBeInstanceOf(NavigationGroup::class)
                 ->getLabel()->toBeNull()
                 ->getItems()
-                    ->each->toBeInstanceOf(NavigationItem::class),
+                ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
                 ->toBeInstanceOf(NavigationGroup::class)
                 ->getLabel()->toBe('Blog')
                 ->getItems()
-                    ->each->toBeInstanceOf(NavigationItem::class),
+                ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
                 ->toBeInstanceOf(NavigationGroup::class)
                 ->getLabel()->toBe('Shop')
                 ->getItems()
-                    ->each->toBeInstanceOf(NavigationItem::class),
+                ->each->toBeInstanceOf(NavigationItem::class),
         );
 });
 

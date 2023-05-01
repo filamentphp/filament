@@ -26,9 +26,9 @@
         <div
             x-show="state.length || @js(! $isDisabled)"
             @class([
-                'block w-full transition duration-75 divide-y rounded-lg shadow-sm sm:text-sm border overflow-hidden focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500 dark:divide-gray-600',
-                'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
-                'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
+                'block w-full transition duration-75 divide-y rounded-lg shadow-sm sm:text-sm border ring-1 ring-inset overflow-hidden focus-within:ring-1 dark:divide-gray-600',
+                'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500' => ! $errors->has($statePath),
+                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
             ])
         >
             @unless ($isDisabled)

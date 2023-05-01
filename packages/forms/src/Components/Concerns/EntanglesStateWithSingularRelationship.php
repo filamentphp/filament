@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 trait EntanglesStateWithSingularRelationship
 {
-    protected Model | bool | null $cachedExistingRecord = false;
+    protected ?Model $cachedExistingRecord = null;
 
     protected string | null $relationship = null;
 
@@ -63,6 +63,8 @@ trait EntanglesStateWithSingularRelationship
             }
 
             $relationship->save($record);
+
+            $component->cachedExistingRecord($record);
         });
 
         $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
@@ -103,6 +105,8 @@ trait EntanglesStateWithSingularRelationship
 
             $relationship->associate($record);
             $relationship->getParent()->save();
+
+            $component->cachedExistingRecord($record);
         });
 
         $this->dehydrated(false);
@@ -176,20 +180,31 @@ trait EntanglesStateWithSingularRelationship
         return $this->getRelationship()?->getModel()::class;
     }
 
+    public function cachedExistingRecord(?Model $record): static
+    {
+        $this->cachedExistingRecord = $record;
+
+        return $this;
+    }
+
     public function getCachedExistingRecord(): ?Model
     {
-        if ($this->cachedExistingRecord !== false) {
+        if ($this->cachedExistingRecord) {
             return $this->cachedExistingRecord;
         }
 
         $record = $this->getRelationship()?->getResults();
 
-        return $this->cachedExistingRecord = $record?->exists ? $record : null;
+        if (! $record?->exists) {
+            return null;
+        }
+
+        return $this->cachedExistingRecord = $record;
     }
 
     public function clearCachedExistingRecord(): void
     {
-        $this->cachedExistingRecord = false;
+        $this->cachedExistingRecord = null;
     }
 
     public function mutateRelationshipDataBeforeCreateUsing(?Closure $callback): static
