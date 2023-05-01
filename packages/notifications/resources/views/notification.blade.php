@@ -1,50 +1,69 @@
 @php
-    use Filament\Notifications\Http\Livewire\Notifications;
-
     $color = $getColor();
-    $iconColor = $getIconColor();
     $isInline = $isInline();
 @endphp
+
 <x-filament-notifications::notification
     :notification="$notification"
-    @class([
-        'w-full transition duration-300',
-        'max-w-sm rounded-xl bg-white shadow-lg ring-1 ring-gray-900/10 dark:ring-gray-50/10' => ! $isInline,
-        'dark:bg-gray-800' => ! $color && ! $isInline,
-        'dark:bg-gray-700' => $color,
-    ])
     :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
         'opacity-0',
-        ($this instanceof Notifications) ? match (static::$horizontalAlignment) {
-            'left' => '-translate-x-12',
-            'right' => 'translate-x-12',
-            'center' => match (static::$verticalAlignment) {
-                'top' => '-translate-y-12',
-                'bottom' => 'translate-y-12',
-                'center' => null,
-            },
-        } : null,
+        ($this instanceof \Filament\Notifications\Http\Livewire\Notifications)
+            ? match (static::$horizontalAlignment) {
+                'left' => '-translate-x-12',
+                'right' => 'translate-x-12',
+                'center' => match (static::$verticalAlignment) {
+                    'top' => '-translate-y-12',
+                    'bottom' => 'translate-y-12',
+                    'center' => null,
+                },
+            }
+            : null,
     ])"
     x-transition:leave-end="scale-95 opacity-0"
+    @class([
+        'w-full transition duration-300',
+        ...match ($isInline) {
+            true => [],
+            false => [
+                'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-800',
+                match ($color) {
+                    'primary' => 'ring-primary-500/50',
+                    'secondary' => 'ring-secondary-500/50',
+                    'gray' => 'ring-gray-500/50',
+                    'danger' => 'ring-danger-500/50',
+                    'warning' => 'ring-warning-500/50',
+                    'success' => 'ring-success-500/50',
+                    default => 'ring-gray-900/10 dark:ring-gray-50/10',
+                },
+            ],
+        },
+    ])
 >
     <div
         @class([
             'flex gap-3 w-full',
-            'py-2 pl-6 pr-2' => $isInline,
-            'p-4 rounded-xl border' => ! $isInline,
-            match ($color) {
-                'primary' => 'border-primary-500/50 bg-primary-500/10 dark:bg-primary-500/20',
-                'secondary' => 'border-secondary-500/40 bg-secondary-500/10 dark:bg-secondary-500/20',
-                'danger' => 'border-danger-500/40 bg-danger-500/10 dark:bg-danger-500/20',
-                'success' => 'border-success-500/40 bg-success-500/10 dark:bg-success-500/20',
-                'warning' => 'border-warning-500/40 bg-warning-500/10 dark:bg-warning-500/20',
-                null => 'border-transparent',
-                default => $color,
+            ...match ($isInline) {
+                true => ['py-2 ps-6 pe-2'],
+                false => [
+                    'p-4 rounded-xl',
+                    match ($color) {
+                        'primary' => 'bg-primary-500/10 dark:bg-primary-500/20',
+                        'secondary' => 'bg-secondary-500/10 dark:bg-secondary-500/20',
+                        'gray' => 'bg-gray-500/10 dark:bg-gray-500/20',
+                        'danger' => 'bg-danger-500/10 dark:bg-danger-500/20',
+                        'warning' => 'bg-warning-500/10 dark:bg-warning-500/20',
+                        'success' => 'bg-success-500/10 dark:bg-success-500/20',
+                        default => null,
+                    },
+                ],
             },
         ])
     >
         @if ($icon = $getIcon())
-            <x-filament-notifications::icon :icon="$icon" :color="$iconColor" />
+            <x-filament-notifications::icon
+                :icon="$icon"
+                :color="$getIconColor()"
+            />
         @endif
 
         <div class="grid flex-1">
