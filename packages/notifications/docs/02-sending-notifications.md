@@ -104,7 +104,7 @@ new Notification()
 
 ## Setting a background color
 
-Optionally, a notification can have a background color to help with context.
+Notifications have no background color by default. You may want to provide additional context to your notification by setting a color as follows:
 
 ```php
 use Filament\Notifications\Notification;
