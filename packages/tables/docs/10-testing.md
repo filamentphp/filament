@@ -20,7 +20,7 @@ it('can render page', function () {
 });
 ```
 
-To to test which records are shown, you can use `assertCanSeeTableRecords()`, `assertCanNotSeeTableRecords()` and `assertCountTableRecords()`
+To to test which records are shown, you can use `assertCanSeeTableRecords()`, `assertCanNotSeeTableRecords()` and `assertCountTableRecords()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -225,7 +225,7 @@ it('displays author in red', function () {
 
 ### Select Columns
 
-If you have a select column, you can ensure it has the correct options with `assertSelectColumnHasOptions()` and `assertSelectColumnDoesNotHaveOptions()`
+If you have a select column, you can ensure it has the correct options with `assertSelectColumnHasOptions()` and `assertSelectColumnDoesNotHaveOptions()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -354,7 +354,7 @@ it('can delete posts', function () {
 
 This example assumes that you have a `DeleteAction` on your table. If you have a custom `Action::make('reorder')`, you may use `callTableAction('reorder')`.
 
-For column actions, you may do the same, using `callTableColumnAction()`,
+For column actions, you may do the same, using `callTableColumnAction()`:
 
 ```php
 use function Pest\Livewire\livewire;
