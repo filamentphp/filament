@@ -102,7 +102,7 @@ new Notification()
 
 ![Success, warning and danger notifications](https://user-images.githubusercontent.com/44533235/180995801-3e706ca6-773b-47a0-9fc6-3e28900a9ea9.png)
 
-## Color
+## Setting a background color
 
 Optionally, a notification can have a background color to help with context.
 
