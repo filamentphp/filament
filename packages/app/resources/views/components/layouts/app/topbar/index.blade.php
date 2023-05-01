@@ -84,7 +84,7 @@
             @endif
         </div>
 
-        <div class="flex items-center shrink-0">
+        <div class="flex items-center">
             @livewire('filament.core.global-search')
 
             @if (filament()->hasDatabaseNotifications())
