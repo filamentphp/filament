@@ -257,7 +257,7 @@ trait CanOpenModal
         return (! $this->isModalHidden()) && ($this->hasFormSchema() || $this->getModalSubheading() || $this->getModalContent() || $this->getModalFooter());
     }
 
-    protected function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
+    public function makeExtraModalAction(string $name, ?array $arguments = null): ModalAction
     {
         return static::makeModalAction($name)
             ->action($this->getLivewireCallActionName(), $arguments)
