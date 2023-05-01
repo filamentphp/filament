@@ -19,19 +19,26 @@ it('can register navigation items from resources and pages', function () {
                         ->getLabel()->toBe('Dashboard')
                         ->getIcon()->toBe('heroicon-o-home'),
                     fn ($item) => $item
+                        ->getLabel()->toBe('Actions'),
+                    fn ($item) => $item
                         ->getLabel()->toBe('Users')
                         ->getIcon()->toBe('heroicon-o-user'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Settings')
-                        ->getIcon()->toBe('heroicon-o-cog'),
+                        ->getIcon()->toBe('heroicon-o-cog-6-tooth'),
                 )
+                ->each->toBeInstanceOf(NavigationItem::class),
+            fn ($group) => $group
+                ->toBeInstanceOf(NavigationGroup::class)
+                ->getLabel()->toBe('Blog')
+                ->getItems()
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Posts')
                         ->getIcon()->toBe('heroicon-o-document-text'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Post Categories')
-                        ->getIcon()->toBe('heroicon-o-collection'),
+                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
