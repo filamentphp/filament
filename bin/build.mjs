@@ -25,6 +25,7 @@ const esm = {
     mainFields: ['module', 'main'],
     platform: 'neutral', //output format is set to esm, which uses the export syntax introduced with ECMAScript 2015 (i.e. ES6
     sourcemap: shouldWatch,
+    sourcesContent: shouldWatch,
     treeShaking: true, //removes unused code
     target: ['es2020'], //or es2015? what should Filament support?
     minify: shouldWatch, //includes whitespace, identifiers and syntax
