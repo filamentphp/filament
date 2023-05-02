@@ -1,10 +1,10 @@
 {
     "name": "filament",
     "scripts": {
-        "dev:js": "node bin/build --watch",
+        "dev:js": "node bin/build.mjs --watch",
         "dev:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify --watch",
         "dev": "npm-run-all --parallel dev:*",
-        "build:js": "node bin/build",
+        "build:js": "node bin/build.mjs",
         "build:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify",
         "build": "npm-run-all build:*",
         "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/public' '!**/vendor'"
