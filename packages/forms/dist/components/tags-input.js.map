@@ -1,7 +1,0 @@
-{
-  "version": 3,
-  "sources": ["../../resources/js/components/tags-input.js"],
-  "sourcesContent": ["export default function tagsInputFormComponent({ state }) {\n    return {\n        newTag: '',\n\n        state,\n\n        createTag: function () {\n            this.newTag = this.newTag.trim()\n\n            if (this.newTag === '') {\n                return\n            }\n\n            if (this.state.includes(this.newTag)) {\n                this.newTag = ''\n\n                return\n            }\n\n            this.state.push(this.newTag)\n\n            this.newTag = ''\n        },\n\n        deleteTag: function (tagToDelete) {\n            this.state = this.state.filter((tag) => tag !== tagToDelete)\n        },\n    }\n}\n"],
-  "mappings": "AAAe,SAARA,EAAwC,CAAE,MAAAC,CAAM,EAAG,CACtD,MAAO,CACH,OAAQ,GAER,MAAAA,EAEA,UAAW,UAAY,CAGnB,GAFA,KAAK,OAAS,KAAK,OAAO,KAAK,EAE3B,KAAK,SAAW,GAIpB,IAAI,KAAK,MAAM,SAAS,KAAK,MAAM,EAAG,CAClC,KAAK,OAAS,GAEd,OAGJ,KAAK,MAAM,KAAK,KAAK,MAAM,EAE3B,KAAK,OAAS,GAClB,EAEA,UAAW,SAAUC,EAAa,CAC9B,KAAK,MAAQ,KAAK,MAAM,OAAQC,GAAQA,IAAQD,CAAW,CAC/D,CACJ,CACJ",
-  "names": ["tagsInputFormComponent", "state", "tagToDelete", "tag"]
-}
