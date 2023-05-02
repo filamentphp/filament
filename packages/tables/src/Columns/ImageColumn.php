@@ -216,9 +216,12 @@ class ImageColumn extends Column
         return $this->evaluate($this->isStacked);
     }
 
-    public function getStackedImagePath(string | null $image = null): ?string
+    public function getImagesWithPath(): array
     {
-        return $this->getPath($image);
+        return collect($this->getImages())
+            ->filter(fn ($image) => $this->getPath($image))
+            ->take($this->getLimit())
+            ->toArray();
     }
 
     public function getImages(): array
@@ -330,7 +333,7 @@ class ImageColumn extends Column
 
     protected function getPath(string | null $image = null): ?string
     {
-        $state = $image ?: $this->getState();
+        $state = $image ?? $this->getState();
         
         if (! $state) {
             return null;

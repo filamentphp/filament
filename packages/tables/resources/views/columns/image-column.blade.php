@@ -40,25 +40,23 @@
                     },
                 ])
             >
-                @foreach (array_slice($getImages(), 0, $getLimit()) as $image)
-                    @if ($path = $getStackedImagePath($image))
-                        @php
-                            $imageCount ++;
-                        @endphp
-                        <img
-                            src="{{ $path }}"
-                            style="
-                                {!! $height !== null ? "height: {$height};" : null !!}
-                                {!! $width !== null ? "width: {$width};" : null !!}
-                            "
-                            {{ $getExtraImgAttributeBag()->class([
-                                'max-w-none ring-white',
-                                'dark:ring-gray-800' => config('tables.dark_mode'),
-                                'rounded-full' => $isCircular(),
-                                $ring,
-                            ]) }}
-                        >
-                    @endif
+                @foreach ($getImagesWithPath() as $path)
+                    @php
+                        $imageCount ++;
+                    @endphp
+                    <img
+                        src="{{ $path }}"
+                        style="
+                            {!! $height !== null ? "height: {$height};" : null !!}
+                            {!! $width !== null ? "width: {$width};" : null !!}
+                        "
+                        {{ $getExtraImgAttributeBag()->class([
+                            'max-w-none ring-white',
+                            'dark:ring-gray-800' => config('tables.dark_mode'),
+                            'rounded-full' => $isCircular(),
+                            $ring,
+                        ]) }}
+                    >
                 @endforeach
 
                 @if ($shouldShowRemaining() && (! $shouldShowRemainingAfterStack()) && ($imageCount < count($getImages())))
