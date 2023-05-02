@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": ["../../resources/js/components/textarea.js"],
+  "sourcesContent": ["export default function textareaFormComponent() {\n    return {\n        init: function () {\n            this.$nextTick(() => {\n                this.render()\n            })\n        },\n\n        render: function () {\n            if (this.$el.scrollHeight > 0) {\n                this.$el.style.height = '150px'\n                this.$el.style.height = this.$el.scrollHeight + 2 + 'px'\n            }\n        },\n    }\n}\n"],
+  "mappings": "AAAe,SAARA,GAAyC,CAC5C,MAAO,CACH,KAAM,UAAY,CACd,KAAK,UAAU,IAAM,CACjB,KAAK,OAAO,CAChB,CAAC,CACL,EAEA,OAAQ,UAAY,CACZ,KAAK,IAAI,aAAe,IACxB,KAAK,IAAI,MAAM,OAAS,QACxB,KAAK,IAAI,MAAM,OAAS,KAAK,IAAI,aAAe,EAAI,KAE5D,CACJ,CACJ",
+  "names": ["textareaFormComponent"]
+}

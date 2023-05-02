@@ -1,7 +1,7 @@
-import 'vanilla-colorful/hex-color-picker'
-import 'vanilla-colorful/hsl-string-color-picker'
-import 'vanilla-colorful/rgb-string-color-picker'
-import 'vanilla-colorful/rgba-string-color-picker'
+import 'vanilla-colorful/hex-color-picker.js'
+import 'vanilla-colorful/hsl-string-color-picker.js'
+import 'vanilla-colorful/rgb-string-color-picker.js'
+import 'vanilla-colorful/rgba-string-color-picker.js'
 
 export default function colorPickerFormComponent({
     isAutofocused,
@@ -13,6 +13,7 @@ export default function colorPickerFormComponent({
 
         init: function () {
             if (!(this.state === null || this.state === '')) {
+                console.info('ji')
                 this.setState(this.state)
             }
 

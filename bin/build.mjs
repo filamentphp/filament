@@ -1,7 +1,10 @@
 import * as esbuild from 'esbuild'
-import postcss from 'esbuild-postcss'
+import fs from "fs";
+import Path from "path";
+//import postcss from 'esbuild-postcss'
 
 const shouldWatch = process.argv.includes('--watch')
+let tempPath = null
 
 async function compile(options) {
     const ctx = await esbuild.context(options)
@@ -34,7 +37,7 @@ const esm = {
         '.woff2': 'file',
     },
     plugins: [
-        postcss(), //remove if you don't import css files in your js, else: create a postcss.config.js file
+        //postcss(), //enable if you importing css in .js, and: create a postcss.config.js file
         {
             name: 'watchPlugin',
             setup(build) {
@@ -73,25 +76,32 @@ const formComponents = [
     'text-input',
     'textarea',
 ]
-formComponents.forEach((component) => {
-    esm.entryPoints = `packages/forms/resources/js/components/${component}.js`
-    esm.outfile = `packages/forms/dist/components/${component}.js`
-    compile(esm)
+
+formComponents.forEach((cmp) => {
+    compile({
+        ...esm,
+        entryPoints: [`./packages/forms/resources/js/components/${cmp}.js`],
+        outfile: `./packages/forms/dist/components/${cmp}.js`,
+    })
 })
 
-esm.entryPoints = [`packages/support/resources/js/async-alpine.js`]
-esm.outfile = `packages/support/dist/async-alpine.js`
-compile(esm)
+compile({
+    ...esm,
+    entryPoints: [`./packages/support/resources/js/async-alpine.js`],
+    outfile: `./packages/support/dist/async-alpine.js`,
+})
 
+compile({
+    ...esm,
+    entryPoints: [`./packages/widgets/resources/js/components/chart.js`],
+    outfile: `./packages/widgets/dist/components/chart.js`,
+})
 
-esm.entryPoints = [`packages/widgets/resources/js/components/chart.js`]
-esm.outfile = `packages/widgets/dist/components/chart.js`
-compile(esm)
-
-esm.entryPoints = [`packages/widgets/resources/js/components/stats-overview/card/chart.js`]
-esm.outfile = `packages/widgets/dist/components/stats-overview/card/chart.js`
-compile(esm)
-
+compile({
+    ...esm,
+    entryPoints: [`./packages/widgets/resources/js/components/stats-overview/card/chart.js`],
+    outfile: `./packages/widgets/dist/components/stats-overview/card/chart.js`,
+})
 //--------------------------------------------------------------------------------------------------
 
 //window scripts -----------------------------------------------------------------------------------
@@ -99,13 +109,17 @@ compile(esm)
 const pkgs = ['app', 'forms', 'notifications', 'support', 'tables']
 //renamed package to pkg, because package is a reserved word in JS
 pkgs.forEach((pkg) => {
-    invoked.entryPoints = [`packages/${pkg}/resources/js/index.js`]
-    invoked.outfile = `packages/${pkg}/dist/index.js`
-    compile(invoked)
+    compile({
+        ...invoked,
+        entryPoints: [`./packages/${pkg}/resources/js/index.js`],
+        outfile: `./packages/${pkg}/dist/index.js`,
+    })
 })
 
-invoked.entryPoints = [`packages/app/resources/js/echo.js`]
-invoked.outfile = `packages/app/dist/echo.js`
-compile(invoked)
+compile({
+    ...invoked,
+    entryPoints: [`./packages/app/resources/js/echo.js`],
+    outfile: `./packages/app/dist/echo.js`,
+})
 
 //--------------------------------------------------------------------------------------------------
