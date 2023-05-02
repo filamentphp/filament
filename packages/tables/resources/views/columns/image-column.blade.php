@@ -41,7 +41,7 @@
                 ])
             >
                 @foreach (array_slice($getImages(), 0, $getLimit()) as $image)
-                    @if ($path = $getImagePath($image))
+                    @if ($path = $getStackedImagePath($image))
                         @php
                             $imageCount ++;
                         @endphp

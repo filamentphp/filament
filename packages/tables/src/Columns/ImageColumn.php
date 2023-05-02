@@ -134,41 +134,9 @@ class ImageColumn extends Column
         return $height;
     }
 
-    public function getImagePath(string | null $image = null): ?string
+    public function getImagePath(): ?string
     {
-        $state = $image ?: $this->getState();
-        
-        if (! $state) {
-            return null;
-        }
-
-        if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
-            return $state;
-        }
-
-        /** @var FilesystemAdapter $storage */
-        $storage = $this->getDisk();
-
-        try {
-            if (! $storage->exists($state)) {
-                return null;
-            }
-        } catch (UnableToCheckFileExistence $exception) {
-            return null;
-        }
-
-        if ($this->getVisibility() === 'private') {
-            try {
-                return $storage->temporaryUrl(
-                    $state,
-                    now()->addMinutes(5),
-                );
-            } catch (Throwable $exception) {
-                // This driver does not support creating temporary URLs.
-            }
-        }
-
-        return $storage->url($state);
+        return $this->getPath();
     }
 
     public function getVisibility(): string
@@ -246,6 +214,11 @@ class ImageColumn extends Column
     public function isStacked(): bool
     {
         return $this->evaluate($this->isStacked);
+    }
+
+    public function getStackedImagePath(string | null $image = null): ?string
+    {
+        return $this->getPath($image);
     }
 
     public function getImages(): array
@@ -353,5 +326,42 @@ class ImageColumn extends Column
     public function getRemainingTextSize(): ?string
     {
         return $this->evaluate($this->remainingTextSize);
+    }
+
+    protected function getPath(string | null $image = null): ?string
+    {
+        $state = $image ?: $this->getState();
+        
+        if (! $state) {
+            return null;
+        }
+
+        if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
+            return $state;
+        }
+
+        /** @var FilesystemAdapter $storage */
+        $storage = $this->getDisk();
+
+        try {
+            if (! $storage->exists($state)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
+            return null;
+        }
+
+        if ($this->getVisibility() === 'private') {
+            try {
+                return $storage->temporaryUrl(
+                    $state,
+                    now()->addMinutes(5),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
+        }
+
+        return $storage->url($state);
     }
 }
