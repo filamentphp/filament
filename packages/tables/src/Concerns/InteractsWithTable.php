@@ -14,6 +14,7 @@ use function Livewire\invade;
 
 trait InteractsWithTable
 {
+    use HasSize;
     use CanBeStriped;
     use CanPaginateRecords;
     use CanPollRecords;

@@ -468,4 +468,10 @@ class Table extends ViewComponent
     {
         return $this->getLivewire()->hasTableColumnSearches();
     }
+    
+    public function getSize(): ?string
+    {
+        return $this->getLivewire()->getSize();
+    }
+    
 }

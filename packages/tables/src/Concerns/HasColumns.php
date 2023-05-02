@@ -31,6 +31,12 @@ trait HasColumns
 
         foreach ($components as $component) {
             $component->table($this->getCachedTable());
+            
+            if (in_array('Filament\Tables\Columns\Concerns\HasSize', class_uses_recursive($component))) {
+                if ($component->getSize() === null && $this->getCachedTable()->getSize() !== null) {
+                    $component->size($this->getCachedTable()->getSize());
+                }
+            }
 
             if ($component instanceof Component && $component->isCollapsible()) {
                 $this->cachedTableCollapsibleColumnsLayout = $component;

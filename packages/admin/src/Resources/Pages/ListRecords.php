@@ -389,6 +389,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         return $this->getResourceTable()->getReorderColumn();
     }
+    
+    protected function getTableSize(): ?string
+    {
+        return $this->getResourceTable()->getSize();
+    }
 
     protected function isTableReorderable(): bool
     {

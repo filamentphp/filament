@@ -34,7 +34,9 @@ class Table
     protected ?bool $isLoadingDeferred = false;
 
     protected ?string $reorderColumn = null;
-
+    
+    protected ?string $size = null;
+    
     final public function __construct()
     {
     }
@@ -68,11 +70,12 @@ class Table
 
     public function columns(array $columns): static
     {
+        
         $this->columns = $columns;
 
         return $this;
     }
-
+    
     public function contentGrid(?array $grid): static
     {
         $this->contentGrid = $grid;
@@ -209,6 +212,14 @@ class Table
 
         return $this;
     }
+    
+    public function size(string $size): static
+    {
+        
+        $this->size = $size;
+        
+        return $this;
+    }
 
     public function getActions(): array
     {
@@ -268,6 +279,11 @@ class Table
     public function getReorderColumn(): ?string
     {
         return $this->reorderColumn;
+    }
+    
+    public function getSize(): ?string
+    {
+        return $this->size;
     }
 
     public function getPollingInterval(): ?string
