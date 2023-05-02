@@ -207,7 +207,7 @@ trait HasFormComponentActions
         return $action->getForm(
             $this->makeForm()
                 ->model($this->getMountedFormComponentActionComponent($actionNestingIndex)->getActionFormModel())
-                ->statePath('mountedFormComponentActionData.' . $actionNestingIndex)
+                ->statePath('mountedFormComponentActionsData.' . $actionNestingIndex)
                 ->operation(implode('.', array_slice($this->mountedFormComponentActions, 0, $actionNestingIndex + 1))),
         );
     }
