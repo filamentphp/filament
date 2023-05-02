@@ -219,7 +219,7 @@ class ImageColumn extends Column
     public function getImagesWithPath(): array
     {
         return collect($this->getImages())
-            ->filter(fn ($image) => $this->getPath($image))
+            ->filter(fn ($image) => $this->getPath($image) !== null)
             ->take($this->getLimit())
             ->toArray();
     }
