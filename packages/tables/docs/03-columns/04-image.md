@@ -76,3 +76,71 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('logo')
     ->extraImgAttributes(['title' => 'Company logo']),
 ```
+
+## Stacking images
+
+You may show a relationship of images as a stack using `stacked()`.  The name of the relationship comes first, followed by a period, followed by the name of the column to display:
+
+```php
+ImageColumn::make('users.avatar')
+    ->circular()
+    ->stacked()
+```
+
+### Using a separator
+
+Instead of using a relationship, you may use a separated string by passing the separator into `separator()`:
+
+```php
+ImageColumn::make('product_images')
+    ->separator(',')
+    ->circular()
+    ->stacked()
+```
+
+### Setting a limit
+
+You may set a limit to the number of images you want to display by passing `limit()`:
+
+```php
+ImageColumn::make('orderItems.image')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+```
+
+### Showing the remaining images count
+
+When you set a limit you may also display the count of remaining images by passing `showRemaining()`. 
+
+```php
+ImageColumn::make('orderItems.image')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+    ->showRemaining()
+```
+
+By default, `showRemaining()` will display the count of remaining images as a number stacked on the other images. If you prefer to show the count as a number after the images you may use `showRemainingAfterStack()`. You may also set the text size by using `remainingTextSize('xs')`;
+
+### Customizing the ring width
+
+The default ring width is `ring-3` but you may customize the ring width to be either `0`, `1`, `2`, or `4` which correspond to tailwinds `ring-widths`: `ring-0`, `ring-1`, `ring-2`, and `ring-4` respectively.
+
+```php
+ImageColumn::make('users.avatar')
+    ->circular()
+    ->stacked()
+    ->ring(3)
+```
+
+### Customizing the overlap
+
+The default overlap is `-space-x-1` but you may customize the overlap to be either `0`, `1`, `2`, `3`, or `4` which correspond to tailwinds `space-x` options: `space-x-0`, `-space-x-1`, `-space-x-2`, `-space-x-3`, and `-space-x-4` respectively.
+
+```php
+ImageColumn::make('users.avatar')
+    ->circular()
+    ->stacked()
+    ->overlap(3)
+```

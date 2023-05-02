@@ -28,6 +28,22 @@ class ImageColumn extends Column
 
     protected array $extraImgAttributes = [];
 
+    protected bool | Closure $isStacked = false;
+
+    protected string | Closure | null $separator = null;
+
+    protected int | Closure | null $overlap = null;
+
+    protected int | Closure | null $ring = null;
+    
+    protected int | Closure | null $limit = null;
+
+    protected bool | Closure $shouldShowRemaining = false;
+
+    protected bool | Closure $shouldShowRemainingAfterStack = false;
+
+    protected string | Closure | null $remainingTextSize = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -118,10 +134,10 @@ class ImageColumn extends Column
         return $height;
     }
 
-    public function getImagePath(): ?string
+    public function getImagePath(string | null $image = null): ?string
     {
-        $state = $this->getState();
-
+        $state = $image ?: $this->getState();
+        
         if (! $state) {
             return null;
         }
@@ -218,5 +234,124 @@ class ImageColumn extends Column
     public function getExtraImgAttributeBag(): ComponentAttributeBag
     {
         return new ComponentAttributeBag($this->getExtraImgAttributes());
+    }
+
+    public function stacked(bool | Closure $condition = true): static
+    {
+        $this->isStacked = $condition;
+
+        return $this;
+    }
+
+    public function isStacked(): bool
+    {
+        return $this->evaluate($this->isStacked);
+    }
+
+    public function getImages(): array
+    {        
+        $images = $this->getState();
+
+        if (is_array($images)) {
+            return $images;
+        }
+
+        if (! ($separator = $this->getSeparator())) {
+            return [];
+        }
+
+        $images = explode($separator, $images);
+
+        if (count($images) === 1 && blank($images[0])) {
+            $images = [];
+        }
+
+        return $images;
+    }
+
+    public function separator(string | Closure | null $separator = ','): static
+    {
+        $this->separator = $separator;
+
+        return $this;
+    }
+
+    public function getSeparator(): ?string
+    {
+        return $this->evaluate($this->separator);
+    }
+
+    public function overlap(int | Closure | null $overlap): static
+    {
+        $this->overlap = $overlap;
+
+        return $this;
+    }
+
+    public function getOverlap(): ?int
+    {
+        return $this->evaluate($this->overlap);
+    }
+
+    public function ring(string | Closure | null $ring): static
+    {
+        $this->ring = $ring;
+
+        return $this;
+    }
+
+    public function getRing(): ?int
+    {
+        return $this->evaluate($this->ring);
+    }
+
+    public function limit(int | Closure | null $limit = 3): static
+    {
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    public function getLimit(): ?int
+    {
+        return $this->evaluate($this->limit);
+    }
+
+    public function showRemaining(bool | Closure $condition = true, bool | Closure $showRemainingAfterStack = false, string | Closure | null $remainingTextSize = null): static
+    {
+        $this->shouldShowRemaining = $condition;
+        $this->showRemainingAfterStack($showRemainingAfterStack);
+        $this->remainingTextSize($remainingTextSize);
+
+        return $this;
+    }
+
+    public function showRemainingAfterStack(bool | Closure $condition = true): static
+    {
+        $this->shouldShowRemainingAfterStack = $condition;
+
+        return $this;
+    }
+
+    public function shouldShowRemaining(): bool
+    {
+        return $this->evaluate($this->shouldShowRemaining);
+    }
+
+    public function shouldShowRemainingAfterStack(): bool
+    {
+        return $this->evaluate($this->shouldShowRemainingAfterStack);
+    }
+
+    public function remainingTextSize(string | Closure | null $remainingTextSize): static
+    {
+        $this->remainingTextSize = $remainingTextSize;
+
+        return $this;
+    }
+
+    public function getRemainingTextSize(): ?string
+    {
+        return $this->evaluate($this->remainingTextSize);
     }
 }
