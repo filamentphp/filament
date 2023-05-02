@@ -98,7 +98,7 @@ compile(esm)
 
 const pkgs = ['app', 'forms', 'notifications', 'support', 'tables']
 //renamed package to pkg, because package is a reserved word in JS
-packages.forEach((pkg) => {
+pkgs.forEach((pkg) => {
     invoked.entryPoints = [`packages/${pkg}/resources/js/index.js`]
     invoked.outfile = `packages/${pkg}/dist/index.js`
     compile(invoked)
