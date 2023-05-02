@@ -13,7 +13,6 @@ export default function colorPickerFormComponent({
 
         init: function () {
             if (!(this.state === null || this.state === '')) {
-                console.info('ji')
                 this.setState(this.state)
             }
 
