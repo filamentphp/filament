@@ -1,3 +1,2 @@
-<!-- If your pull request includes visual changes, please include a screenshot or screen recording of before and after the pull request. -->
+<!-- For visual changes, please include a screenshot/recording of before and after. -->
 <!-- This allows us to review the pull request faster. -->
-<!-- Thanks! -->
