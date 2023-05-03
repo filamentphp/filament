@@ -110,7 +110,7 @@
                                             wire:keydown.prevent.arrow-down="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                             type="button"
                                             @class([
-                                                'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition outline-none hover:text-gray-500 focus:bg-gray-500/5 focus:ring-0',
+                                                'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
                                                 'dark:border-gray-700' => config('forms.dark_mode'),
                                             ])
                                         >
@@ -145,7 +145,7 @@
                                                         wire:target="dispatchFormEvent('repeater::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                         wire:loading.attr="disabled"
                                                         @class([
-                                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5 focus:ring-0',
+                                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
                                                             'dark:border-gray-700' => config('forms.dark_mode'),
                                                         ])
                                                     >
@@ -178,7 +178,7 @@
                                                         wire:target="dispatchFormEvent('repeater::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                         wire:loading.attr="disabled"
                                                         @class([
-                                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5 focus:ring-0',
+                                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
                                                             'dark:border-gray-700' => config('forms.dark_mode'),
                                                         ])
                                                     >
@@ -212,7 +212,7 @@
                                                     wire:loading.attr="disabled"
                                                     type="button"
                                                     @class([
-                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5 focus:ring-0',
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
                                                         'dark:border-gray-700' => config('forms.dark_mode'),
                                                     ])
                                                 >
@@ -245,7 +245,7 @@
                                                     wire:loading.attr="disabled"
                                                     type="button"
                                                     @class([
-                                                        'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition outline-none hover:text-danger-500 focus:bg-gray-500/5 focus:ring-0',
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition outline-none hover:text-danger-500 focus:bg-gray-500/5',
                                                         'dark:text-danger-500 dark:hover:text-danger-400' => config('forms.dark_mode'),
                                                     ])
                                                 >
@@ -274,7 +274,7 @@
                                                     x-bind:title="(! isCollapsed) ? '{{ __('forms::components.repeater.buttons.collapse_item.label') }}' : '{{ __('forms::components.repeater.buttons.expand_item.label') }}'"
                                                     x-on:click.stop="isCollapsed = ! isCollapsed"
                                                     type="button"
-                                                    class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5 focus:ring-0"
+                                                    class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5"
                                                 >
                                                     <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
 
