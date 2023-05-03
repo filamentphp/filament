@@ -56,6 +56,8 @@ class ResetPassword extends CardPage
 
     public function resetPassword(): ?PasswordResetResponse
     {
+        $data = $this->form->getState();
+
         try {
             $this->rateLimit(1);
         } catch (TooManyRequestsException $exception) {
@@ -69,8 +71,6 @@ class ResetPassword extends CardPage
 
             return null;
         }
-
-        $data = $this->form->getState();
 
         $data['email'] = $this->email;
         $data['token'] = $this->token;

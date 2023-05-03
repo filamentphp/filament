@@ -45,6 +45,8 @@ class Login extends CardPage
 
     public function authenticate(): ?LoginResponse
     {
+        $data = $this->form->getState();
+
         try {
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
@@ -58,8 +60,6 @@ class Login extends CardPage
 
             return null;
         }
-
-        $data = $this->form->getState();
 
         if (! Filament::auth()->attempt([
             'email' => $data['email'],

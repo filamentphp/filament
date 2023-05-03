@@ -41,6 +41,8 @@ class RequestPasswordReset extends CardPage
 
     public function request(): void
     {
+        $data = $this->form->getState();
+
         try {
             $this->rateLimit(1);
         } catch (TooManyRequestsException $exception) {
@@ -54,8 +56,6 @@ class RequestPasswordReset extends CardPage
 
             return;
         }
-
-        $data = $this->form->getState();
 
         $status = Password::sendResetLink(
             $data,
