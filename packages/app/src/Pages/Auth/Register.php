@@ -146,6 +146,7 @@ class Register extends CardPage
     protected function getMessages(): array
     {
         return [
+            'password.min' => __('validation.min.string', ['attribute' => __('filament::pages/auth/register.fields.password.validation_attribute')]),
             'password.same' => __('validation.confirmed', ['attribute' => __('filament::pages/auth/register.fields.password.validation_attribute')]),
         ];
     }
