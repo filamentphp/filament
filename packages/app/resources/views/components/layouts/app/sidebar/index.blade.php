@@ -56,7 +56,7 @@
             <div
                 data-turbo="false"
                 @class([
-                    'block w-full relative',
+                    'flex items-center w-full relative',
                     'lg:ms-3' => filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
