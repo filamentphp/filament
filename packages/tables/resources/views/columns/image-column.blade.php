@@ -50,8 +50,9 @@
                             {!! $height !== null ? "height: {$height};" : null !!}
                             {!! $width !== null ? "width: {$width};" : null !!}
                         "
+
                         {{ $getExtraImgAttributeBag()->class([
-                            'max-w-none ring-white',
+                            'max-w-none ring-white object-cover object-center',
                             'dark:ring-gray-800' => config('tables.dark_mode'),
                             'rounded-full' => $isCircular(),
                             $ring,
