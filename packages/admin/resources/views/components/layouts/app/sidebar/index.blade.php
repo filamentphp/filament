@@ -46,7 +46,7 @@
             <div
                 data-turbo="false"
                 @class([
-                    'block w-full relative',
+                    'flex items-center w-full relative',
                     'lg:ml-3' => config('filament.layout.sidebar.is_collapsible_on_desktop') && (config('filament.layout.sidebar.collapsed_width') !== 0),
                 ])
             >
