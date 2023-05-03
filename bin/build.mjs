@@ -36,6 +36,7 @@ const esm = {
         '.gif': 'dataurl',
         '.woff': 'file',
         '.woff2': 'file',
+        '.data': 'base64',
     },
     plugins: [
         //postcss(), //enable if you importing css in .js, and: create a postcss.config.js file
