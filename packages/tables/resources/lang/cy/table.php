@@ -25,7 +25,7 @@ return [
         ],
 
         'search_query' => [
-            'label'       => 'Chwilio',
+            'label' => 'Chwilio',
             'placeholder' => 'Chwilio',
         ],
 
