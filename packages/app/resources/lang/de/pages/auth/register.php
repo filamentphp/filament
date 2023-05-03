@@ -2,7 +2,7 @@
 
 return [
 
-    'title' => 'Registrierung',
+    'title' => 'Registrieren',
 
     'heading' => 'Registrieren',
 
@@ -31,7 +31,7 @@ return [
 
         'password' => [
             'label' => 'Passwort',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'Passwort',
         ],
 
         'passwordConfirmation' => [
