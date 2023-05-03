@@ -108,15 +108,15 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Atodi ffeiliau',
-            'bold'         => 'Trwm',
-            'bullet_list'  => 'Rhestr bwled',
-            'code_block'   => 'Bloc côd',
-            'edit'         => 'Golygu',
-            'italic'       => 'Italig',
-            'link'         => 'Dolen',
+            'bold' => 'Trwm',
+            'bullet_list' => 'Rhestr bwled',
+            'code_block' => 'Bloc côd',
+            'edit' => 'Golygu',
+            'italic' => 'Italig',
+            'link' => 'Dolen',
             'ordered_list' => 'Rhestr wedi i rhifo',
-            'preview'      => 'Rhagolwg',
-            'strike'       => 'Llinell drwodd',
+            'preview' => 'Rhagolwg',
+            'strike' => 'Llinell drwodd',
         ],
 
     ],
@@ -178,7 +178,7 @@ return [
             'link' => [
 
                 'buttons' => [
-                    'link'   => 'Dolen',
+                    'link' => 'Dolen',
                     'unlink' => 'Datgysylltu',
                 ],
 
@@ -192,19 +192,19 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Atodi ffeiliau',
-            'blockquote'   => 'Dyfynnod Bloc',
-            'bold'         => 'Trwm',
-            'bullet_list'  => 'Rhestr bwled',
-            'code_block'   => 'Bloc côd',
-            'h1'           => 'Teitl',
-            'h2'           => 'Pennawd',
-            'h3'           => 'Is-bennawd',
-            'italic'       => 'Italig',
-            'link'         => 'Dolen',
+            'blockquote' => 'Dyfynnod Bloc',
+            'bold' => 'Trwm',
+            'bullet_list' => 'Rhestr bwled',
+            'code_block' => 'Bloc côd',
+            'h1' => 'Teitl',
+            'h2' => 'Pennawd',
+            'h3' => 'Is-bennawd',
+            'italic' => 'Italig',
+            'link' => 'Dolen',
             'ordered_list' => 'Rhestr wedi`i rhifo',
-            'redo'         => 'Ail-wneud',
-            'strike'       => 'Llinell drwodd',
-            'undo'         => 'Dadwneud',
+            'redo' => 'Ail-wneud',
+            'strike' => 'Llinell drwodd',
+            'undo' => 'Dadwneud',
         ],
 
     ],
@@ -234,7 +234,7 @@ return [
         ],
 
         'boolean' => [
-            'true'  => 'Ie',
+            'true' => 'Ie',
             'false' => 'Na',
         ],
 
