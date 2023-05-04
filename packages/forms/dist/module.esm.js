@@ -703,6 +703,22 @@ var require_cs = __commonJS((exports, module) => {
   });
 });
 
+// node_modules/dayjs/locale/cy.js
+var require_cy = __commonJS((exports, module) => {
+  !function(d, e2) {
+    typeof exports == "object" && typeof module != "undefined" ? module.exports = e2(require_dayjs_min()) : typeof define == "function" && define.amd ? define(["dayjs"], e2) : (d = typeof globalThis != "undefined" ? globalThis : d || self).dayjs_locale_cy = e2(d.dayjs);
+  }(exports, function(d) {
+    "use strict";
+    function e2(d2) {
+      return d2 && typeof d2 == "object" && "default" in d2 ? d2 : {default: d2};
+    }
+    var _ = e2(d), a2 = {name: "cy", weekdays: "Dydd Sul_Dydd Llun_Dydd Mawrth_Dydd Mercher_Dydd Iau_Dydd Gwener_Dydd Sadwrn".split("_"), months: "Ionawr_Chwefror_Mawrth_Ebrill_Mai_Mehefin_Gorffennaf_Awst_Medi_Hydref_Tachwedd_Rhagfyr".split("_"), weekStart: 1, weekdaysShort: "Sul_Llun_Maw_Mer_Iau_Gwe_Sad".split("_"), monthsShort: "Ion_Chwe_Maw_Ebr_Mai_Meh_Gor_Aws_Med_Hyd_Tach_Rhag".split("_"), weekdaysMin: "Su_Ll_Ma_Me_Ia_Gw_Sa".split("_"), ordinal: function(d2) {
+      return d2;
+    }, formats: {LT: "HH:mm", LTS: "HH:mm:ss", L: "DD/MM/YYYY", LL: "D MMMM YYYY", LLL: "D MMMM YYYY HH:mm", LLLL: "dddd, D MMMM YYYY HH:mm"}, relativeTime: {future: "mewn %s", past: "%s yn \xF4l", s: "ychydig eiliadau", m: "munud", mm: "%d munud", h: "awr", hh: "%d awr", d: "diwrnod", dd: "%d diwrnod", M: "mis", MM: "%d mis", y: "blwyddyn", yy: "%d flynedd"}};
+    return _.default.locale(a2, null, true), a2;
+  });
+});
+
 // node_modules/dayjs/locale/da.js
 var require_da = __commonJS((exports, module) => {
   !function(e2, t2) {
@@ -13102,6 +13118,7 @@ var locales = {
   bs: require_bs(),
   ca: require_ca(),
   cs: require_cs(),
+  cy: require_cy(),
   da: require_da(),
   de: require_de(),
   en: require_en(),
