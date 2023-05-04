@@ -115,8 +115,8 @@
                                         wire:keydown.prevent.arrow-down="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                         type="button"
                                         @class([
-                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition hover:text-gray-500',
-                                            'dark:border-gray-700' => config('forms.dark_mode'),
+                                            'flex items-center justify-center flex-none w-10 h-10 text-gray-400 border-r rtl:border-l rtl:border-r-0 transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
+                                            'dark:border-gray-700 dark:focus:bg-gray-600/20' => config('forms.dark_mode'),
                                         ])
                                     >
                                         <span class="sr-only">
@@ -166,8 +166,8 @@
                                                     wire:target="dispatchFormEvent('builder::moveItemUp', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     wire:loading.attr="disabled"
                                                     @class([
-                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
-                                                        'dark:border-gray-700' => config('forms.dark_mode'),
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
+                                                        'dark:border-gray-700 dark:focus:bg-gray-600/20' => config('forms.dark_mode'),
                                                     ])
                                                 >
                                                     <span class="sr-only">
@@ -199,8 +199,8 @@
                                                     wire:target="dispatchFormEvent('builder::moveItemDown', '{{ $getStatePath() }}', '{{ $uuid }}')"
                                                     wire:loading.attr="disabled"
                                                     @class([
-                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
-                                                        'dark:border-gray-700' => config('forms.dark_mode'),
+                                                        'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
+                                                        'dark:border-gray-700 dark:focus:bg-gray-600/20' => config('forms.dark_mode'),
                                                     ])
                                                 >
                                                     <span class="sr-only">
@@ -233,8 +233,8 @@
                                                 wire:loading.attr="disabled"
                                                 type="button"
                                                 @class([
-                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500',
-                                                    'dark:border-gray-700' => config('forms.dark_mode'),
+                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
+                                                    'dark:border-gray-700 dark:focus:bg-gray-600/20' => config('forms.dark_mode'),
                                                 ])
                                             >
                                                 <span class="sr-only">
@@ -266,8 +266,8 @@
                                                 wire:loading.attr="disabled"
                                                 type="button"
                                                 @class([
-                                                    'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition hover:text-danger-500',
-                                                    'dark:text-danger-500 dark:hover:text-danger-400' => config('forms.dark_mode'),
+                                                    'flex items-center justify-center flex-none w-10 h-10 text-danger-600 transition outline-none hover:text-danger-500 focus:bg-gray-500/5',
+                                                    'dark:text-danger-500 dark:hover:text-danger-400 dark:focus:bg-gray-600/20' => config('forms.dark_mode'),
                                                 ])
                                             >
                                                 <span class="sr-only">
@@ -296,7 +296,10 @@
                                                 x-bind:title="(! isCollapsed) ? '{{ __('forms::components.builder.buttons.collapse_item.label') }}' : '{{ __('forms::components.builder.buttons.expand_item.label') }}'"
                                                 x-on:click.stop="isCollapsed = ! isCollapsed"
                                                 type="button"
-                                                class="flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition hover:text-gray-500"
+                                                @class([
+                                                    'flex items-center justify-center flex-none w-10 h-10 text-gray-400 transition outline-none hover:text-gray-500 focus:bg-gray-500/5',
+                                                    'dark:focus:bg-gray-600/20' => config('forms.dark_mode'),
+                                                ])
                                             >
                                                 <x-heroicon-s-minus-sm class="w-4 h-4" x-show="! isCollapsed"/>
 
