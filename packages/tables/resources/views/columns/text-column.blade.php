@@ -54,7 +54,10 @@
     ]) }}
 >
     @if (filled($descriptionAbove))
-        <div class="text-sm text-gray-500 dark:text-gray-400">
+        <div @class([
+            'text-sm text-gray-500',
+            'dark:text-gray-400' => $darkMode
+        ])>
             {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : \Illuminate\Support\Str::of($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
         </div>
     @endif
@@ -84,7 +87,10 @@
     </div>
 
     @if (filled($descriptionBelow))
-        <div class="text-sm text-gray-500 dark:text-gray-400">
+        <div @class([
+            'text-sm text-gray-500',
+            'dark:text-gray-400' => $darkMode
+        ])>
             {{ $descriptionBelow instanceof \Illuminate\Support\HtmlString ? $descriptionBelow : \Illuminate\Support\Str::of($descriptionBelow)->markdown()->sanitizeHtml()->toHtmlString() }}
         </div>
     @endif
