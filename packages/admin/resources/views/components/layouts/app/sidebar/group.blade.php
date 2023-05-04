@@ -46,8 +46,11 @@
     @endif
 
     <ul
-        x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }})"
-        x-collapse.duration.200ms
+        @if ($collapsible)
+            x-cloak
+            x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }})"
+            x-collapse.duration.200ms
+        @endif
         @class([
             'text-sm space-y-1 -mx-3',
             'mt-2' => $label,
