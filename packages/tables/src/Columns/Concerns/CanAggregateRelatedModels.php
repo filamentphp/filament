@@ -10,7 +10,7 @@ trait CanAggregateRelatedModels
 
     protected string | Closure | null $relationshipToAvg = null;
 
-    protected string | Closure | null | array $relationshipToCount = null;
+    protected string | array | Closure | null $relationshipToCount = null;
 
     protected string | Closure | null $relationshipToExistenceCheck = null;
 
