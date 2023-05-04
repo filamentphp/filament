@@ -1,35 +1,71 @@
 <?php
 
-declare(strict_types=1);
-
 return [
 
     'builder' => [
 
+        'collapsed' => 'Cynnwys wedi Cwympo',
+
         'actions' => [
 
-            'create_item' => [
+            'clone' => [
+                'label' => 'Clôn',
+            ],
+
+            'add' => [
                 'label' => 'Ychwanegu at :label',
             ],
 
-            'create_item_between' => [
-                'label' => 'Ychwanegu rhwng',
+            'add_between' => [
+                'label' => 'Mewnosod',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Dileu',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Symud',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Symud i lawr',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Symud i fyny',
+            ],
+
+            'collapse' => [
+                'label' => 'Cwympo',
+            ],
+
+            'expand' => [
+                'label' => 'Ymledu',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Cwympo popeth',
+            ],
+
+            'expand_all' => [
+                'label' => 'Ymledu popeth',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Dad ddewis popeth',
+            ],
+
+            'select_all' => [
+                'label' => 'Dewis popeth',
             ],
 
         ],
@@ -46,6 +82,10 @@ return [
 
             'delete' => [
                 'label' => 'Dileu rhes',
+            ],
+
+            'reorder' => [
+                'label' => 'Rhes recordiwr',
             ],
 
         ],
@@ -81,30 +121,50 @@ return [
 
     ],
 
-    'multi_select' => [
-        'no_search_results_message' => 'Nid oes unrhyw opsiynau yn cyfateb i`ch chwiliad.',
-        'placeholder' => 'Dewis opsiwn',
-        'search_prompt' => 'Dechrau teipio i chwilio...',
-    ],
-
     'repeater' => [
+
+        'collapsed' => 'Cynnwys wedi Cwympo',
 
         'actions' => [
 
-            'create_item' => [
-                'label' => 'Ychwanegu at: label',
+            'add' => [
+                'label' => 'Ychwanegu at :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Dileu',
             ],
 
-            'move_item_down' => [
+            'clone' => [
+                'label' => 'Clôn',
+            ],
+
+            'reorder' => [
+                'label' => 'Symud',
+            ],
+
+            'move_down' => [
                 'label' => 'Symud i lawr',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Symud i fyny',
+            ],
+
+            'collapse' => [
+                'label' => 'Cwympo',
+            ],
+
+            'expand' => [
+                'label' => 'Ymledu',
+            ],
+
+            'collapse_all' => [
+                'label' => 'Cwympo popeth',
+            ],
+
+            'expand_all' => [
+                'label' => 'Ymledu popeth',
             ],
 
         ],
@@ -150,13 +210,66 @@ return [
     ],
 
     'select' => [
+
+        'actions' => [
+
+            'create_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Creu',
+
+                    'actions' => [
+
+                        'create' => [
+                            'label' => 'Creu',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+        ],
+
+        'boolean' => [
+            'true' => 'Ie',
+            'false' => 'Na',
+        ],
+
+        'loading_message' => 'Llwytho...',
+
+        'max_items_message' => 'Gall dim on :count gael eu dewis.',
+
         'no_search_results_message' => 'Nid oes unrhyw opsiynau yn cyfateb i`ch chwiliad.',
+
         'placeholder' => 'Dewis opsiwn',
+
+        'searching_message' => 'Chwilio...',
+
         'search_prompt' => 'Dechrau teipio i chwilio...',
+
     ],
 
     'tags_input' => [
         'placeholder' => 'Tag newydd',
+    ],
+
+    'wizard' => [
+
+        'buttons' => [
+
+            'previous_step' => [
+                'label' => 'Yn ôl',
+            ],
+
+            'next_step' => [
+                'label' => 'Nesaf',
+            ],
+
+        ],
+
     ],
 
 ];
