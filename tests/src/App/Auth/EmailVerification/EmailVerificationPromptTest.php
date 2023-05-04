@@ -45,15 +45,17 @@ it('can throttle resend notification attempts', function () {
 
     $this->actingAs($userToVerify);
 
+    foreach (range(1, 2) as $i) {
+        livewire(EmailVerificationPrompt::class)
+            ->callAction('resendNotificationAction')
+            ->assertNotified();
+    }
+
+    Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
+
     livewire(EmailVerificationPrompt::class)
         ->callAction('resendNotificationAction')
         ->assertNotified();
 
-    Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 1);
-
-    livewire(EmailVerificationPrompt::class)
-        ->callAction('resendNotificationAction')
-        ->assertNotified();
-
-    Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 1);
+    Notification::assertSentToTimes($userToVerify, VerifyEmail::class, times: 2);
 });

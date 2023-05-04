@@ -67,23 +67,25 @@ it('can throttle registration attempts', function () {
 
     $this->assertGuest();
 
-    $userToRegister = User::factory()->make();
+    foreach (range(1, 2) as $i) {
+        $userToRegister = User::factory()->make();
 
-    livewire(Register::class)
-        ->fillForm([
-            'name' => $userToRegister->name,
-            'email' => $userToRegister->email,
-            'password' => 'password',
-            'passwordConfirmation' => 'password',
-        ])
-        ->call('register')
-        ->assertRedirect(Filament::getUrl());
+        livewire(Register::class)
+            ->fillForm([
+                'name' => $userToRegister->name,
+                'email' => $userToRegister->email,
+                'password' => 'password',
+                'passwordConfirmation' => 'password',
+            ])
+            ->call('register')
+            ->assertRedirect(Filament::getUrl());
 
-    Event::assertDispatchedTimes(Registered::class, times: 1);
+        $this->assertAuthenticated();
 
-    $this->assertAuthenticated();
+        auth()->logout();
+    }
 
-    auth()->logout();
+    Event::assertDispatchedTimes(Registered::class, times: 2);
 
     livewire(Register::class)
         ->fillForm([
@@ -96,7 +98,7 @@ it('can throttle registration attempts', function () {
         ->assertNotified()
         ->assertNoRedirect();
 
-    Event::assertDispatchedTimes(Registered::class, times: 1);
+    Event::assertDispatchedTimes(Registered::class, times: 2);
 
     $this->assertGuest();
 });

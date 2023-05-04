@@ -10,8 +10,14 @@ trait CanAggregateRelatedModels
 
     protected string | Closure | null $relationshipToAvg = null;
 
+    /**
+     * @var string | array<string> | Closure | null
+     */
     protected string | array | Closure | null $relationshipsToCount = null;
 
+    /**
+     * @var string | array<string> | Closure | null
+     */
     protected string | array | Closure | null $relationshipsToExistenceCheck = null;
 
     protected string | Closure | null $columnToMax = null;
@@ -34,6 +40,9 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
+    /**
+     * @param string | array<string> | Closure | null $relationships
+     */
     public function counts(string | array | Closure | null $relationships): static
     {
         $this->relationshipsToCount = $relationships;
@@ -41,6 +50,9 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
+    /**
+     * @param string | array<string> | Closure | null $relationships
+     */
     public function exists(string | array | Closure | null $relationships): static
     {
         $this->relationshipsToExistenceCheck = $relationships;
@@ -82,11 +94,17 @@ trait CanAggregateRelatedModels
         return $this->evaluate($this->relationshipToAvg);
     }
 
+    /**
+     * @return string | array<string> | null
+     */
     public function getRelationshipsToCount(): string | array | null
     {
         return $this->evaluate($this->relationshipsToCount);
     }
 
+    /**
+     * @return string | array<string> | null
+     */
     public function getRelationshipsToExistenceCheck(): string | array | null
     {
         return $this->evaluate($this->relationshipsToExistenceCheck);
