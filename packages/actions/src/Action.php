@@ -69,4 +69,9 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     {
         return $this->livewire;
     }
+
+    public function shouldClearRecordAfter(): bool
+    {
+        return ! $this->getRecord()?->exists;
+    }
 }
