@@ -49,7 +49,7 @@ class Register extends CardPage
     public function register(): ?RegistrationResponse
     {
         try {
-            $this->rateLimit(1);
+            $this->rateLimit(2);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title(__('filament::pages/auth/register.messages.throttled', [

@@ -57,7 +57,7 @@ class ResetPassword extends CardPage
     public function resetPassword(): ?PasswordResetResponse
     {
         try {
-            $this->rateLimit(1);
+            $this->rateLimit(2);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title(__('filament::pages/auth/password-reset/reset-password.messages.throttled', [
