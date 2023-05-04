@@ -477,6 +477,7 @@ const locales = {
     bs: require('dayjs/locale/bs'),
     ca: require('dayjs/locale/ca'),
     cs: require('dayjs/locale/cs'),
+    cy: require('dayjs/locale/cy'),
     da: require('dayjs/locale/da'),
     de: require('dayjs/locale/de'),
     en: require('dayjs/locale/en'),

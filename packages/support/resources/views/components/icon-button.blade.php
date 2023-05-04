@@ -26,7 +26,7 @@
             'danger' => 'text-danger-500',
             'gray' => 'text-gray-500',
             'primary' => 'text-primary-500',
-            'secondary' => 'text-secondary-500',
+            'secondary' => 'text-secondary-500 dark:text-gray-400',
             'success' => 'text-success-500',
             'warning' => 'text-warning-500',
             default => $color,

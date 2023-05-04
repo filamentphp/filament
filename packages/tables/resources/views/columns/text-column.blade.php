@@ -40,7 +40,7 @@
     ])
 }}>
     @if (filled($descriptionAbove))
-        <div class="text-sm text-gray-500">
+        <div class="text-sm text-gray-500 dark:text-gray-400">
             {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : str($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
         </div>
     @endif
@@ -149,7 +149,7 @@
     </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
 
     @if (filled($descriptionBelow))
-        <div class="text-sm text-gray-500">
+        <div class="text-sm text-gray-500 dark:text-gray-400">
             {{ $descriptionBelow instanceof \Illuminate\Support\HtmlString ? $descriptionBelow : str($descriptionBelow)->markdown()->sanitizeHtml()->toHtmlString() }}
         </div>
     @endif
