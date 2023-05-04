@@ -12,7 +12,7 @@ trait CanAggregateRelatedModels
 
     protected string | array | Closure | null $relationshipsToCount = null;
 
-    protected string | Closure | null $relationshipsToExistenceCheck = null;
+    protected string | array | Closure | null $relationshipsToExistenceCheck = null;
 
     protected string | Closure | null $columnToMax = null;
 
