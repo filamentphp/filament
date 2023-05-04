@@ -393,6 +393,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
                 $component->state($items);
             })
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');
