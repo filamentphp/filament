@@ -34,7 +34,7 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
-    public function counts(string | Closure | null | array $relationship): static
+    public function counts(string | array | Closure | null $relationship): static
     {
         $this->relationshipToCount = $relationship;
 
