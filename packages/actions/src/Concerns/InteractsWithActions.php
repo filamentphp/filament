@@ -359,8 +359,8 @@ trait InteractsWithActions
                 'id' => "{$this->id}-action",
             ]);
 
-            if (! $action?->getRecord()?->exists()) {
-                $action?->record(null);
+            if ($action?->shouldResetRecordAfter()) {
+                $action->record(null);
             }
 
             return;

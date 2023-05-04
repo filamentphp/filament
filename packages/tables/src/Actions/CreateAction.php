@@ -86,8 +86,6 @@ class CreateAction extends Action
             }
 
             $this->success();
-
-            $this->record(null);
         });
     }
 
@@ -111,5 +109,10 @@ class CreateAction extends Action
     public function canCreateAnother(): bool
     {
         return (bool) $this->evaluate($this->canCreateAnother);
+    }
+
+    public function shouldResetRecordAfter(): bool
+    {
+        return true;
     }
 }
