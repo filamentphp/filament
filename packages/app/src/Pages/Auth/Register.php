@@ -100,7 +100,8 @@ class Register extends CardPage
                     ->required()
                     ->rule(Password::default())
                     ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->same('passwordConfirmation'),
+                    ->same('passwordConfirmation')
+                    ->validationAttribute(__('filament::pages/auth/register.fields.password.validation_attribute')),
                 TextInput::make('passwordConfirmation')
                     ->label(__('filament::pages/auth/register.fields.passwordConfirmation.label'))
                     ->password()
@@ -138,16 +139,6 @@ class Register extends CardPage
         $provider = $authGuard->getProvider();
 
         return $this->userModel = $provider->getModel();
-    }
-
-    /**
-     * @return array<string, string>
-     */
-    protected function getMessages(): array
-    {
-        return [
-            'password.same' => __('validation.confirmed', ['attribute' => __('filament::pages/auth/register.fields.password.validation_attribute')]),
-        ];
     }
 
     public static function getName(): string
