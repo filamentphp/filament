@@ -48,10 +48,8 @@ class Register extends CardPage
 
     public function register(): ?RegistrationResponse
     {
-        $data = $this->form->getState();
-
         try {
-            $this->rateLimit(1);
+            $this->rateLimit(2);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
                 ->title(__('filament::pages/auth/register.messages.throttled', [
@@ -63,6 +61,8 @@ class Register extends CardPage
 
             return null;
         }
+
+        $data = $this->form->getState();
 
         $user = $this->getUserModel()::create($data);
 
