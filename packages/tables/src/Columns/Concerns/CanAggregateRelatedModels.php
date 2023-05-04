@@ -82,7 +82,7 @@ trait CanAggregateRelatedModels
         return $this->evaluate($this->relationshipToAvg);
     }
 
-    public function getRelationshipToCount(): array | string | null
+    public function getRelationshipToCount(): string | array | null
     {
         return $this->evaluate($this->relationshipToCount);
     }
