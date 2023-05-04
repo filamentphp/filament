@@ -10,7 +10,7 @@ trait CanAggregateRelatedModels
 
     protected string | Closure | null $relationshipToAvg = null;
 
-    protected string | Closure | null $relationshipToCount = null;
+    protected string | Closure | null | array $relationshipToCount = null;
 
     protected string | Closure | null $relationshipToExistenceCheck = null;
 
@@ -34,7 +34,7 @@ trait CanAggregateRelatedModels
         return $this;
     }
 
-    public function counts(string | Closure | null $relationship): static
+    public function counts(string | Closure | null | array $relationship): static
     {
         $this->relationshipToCount = $relationship;
 
@@ -82,7 +82,7 @@ trait CanAggregateRelatedModels
         return $this->evaluate($this->relationshipToAvg);
     }
 
-    public function getRelationshipToCount(): ?string
+    public function getRelationshipToCount(): array|string|null
     {
         return $this->evaluate($this->relationshipToCount);
     }

@@ -17,7 +17,7 @@ trait InteractsWithTableQuery
             fn ($query) => $query->withAvg($this->getRelationshipToAvg(), $this->getColumnToAvg())
         )->when(
             filled($this->getRelationshipToCount()),
-            fn ($query) => $query->withCount([$this->getRelationshipToCount()])
+            fn ($query) => $query->withCount($this->getRelationshipToCount())
         )->when(
             filled($this->getRelationshipToExistenceCheck()),
             fn ($query) => $query->withExists($this->getRelationshipToExistenceCheck())
