@@ -7,5 +7,3 @@ class Page extends \Filament\Pages\Page
         return [];
     }
 }
-
-?>

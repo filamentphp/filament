@@ -41,7 +41,7 @@ trait CanAggregateRelatedModels
     }
 
     /**
-     * @param string | array<string> | Closure | null $relationships
+     * @param  string | array<string> | Closure | null  $relationships
      */
     public function counts(string | array | Closure | null $relationships): static
     {
@@ -51,7 +51,7 @@ trait CanAggregateRelatedModels
     }
 
     /**
-     * @param string | array<string> | Closure | null $relationships
+     * @param  string | array<string> | Closure | null  $relationships
      */
     public function exists(string | array | Closure | null $relationships): static
     {
