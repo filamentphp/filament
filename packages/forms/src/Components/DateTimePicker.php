@@ -320,17 +320,17 @@ class DateTimePicker extends Field
 
     public function hasDate(): bool
     {
-        return ! $this->isWithoutDate;
+        return ! $this->evaluate($this->isWithoutDate);
     }
 
     public function hasSeconds(): bool
     {
-        return ! $this->isWithoutSeconds;
+        return ! $this->evaluate($this->isWithoutSeconds);
     }
 
     public function hasTime(): bool
     {
-        return ! $this->isWithoutTime;
+        return ! $this->evaluate($this->isWithoutTime);
     }
 
     public function getHoursStep(): int
