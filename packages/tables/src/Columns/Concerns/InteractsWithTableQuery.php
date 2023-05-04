@@ -6,6 +6,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait InteractsWithTableQuery
@@ -16,11 +17,11 @@ trait InteractsWithTableQuery
             filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
             fn ($query) => $query->withAvg($this->getRelationshipToAvg(), $this->getColumnToAvg())
         )->when(
-            filled($this->getRelationshipToCount()),
-            fn ($query) => $query->withCount([$this->getRelationshipToCount()])
+            filled($this->getRelationshipsToCount()),
+            fn ($query) => $query->withCount(Arr::wrap($this->getRelationshipsToCount()))
         )->when(
-            filled($this->getRelationshipToExistenceCheck()),
-            fn ($query) => $query->withExists($this->getRelationshipToExistenceCheck())
+            filled($this->getRelationshipsToExistenceCheck()),
+            fn ($query) => $query->withExists(Arr::wrap($this->getRelationshipsToExistenceCheck()))
         )->when(
             filled([$this->getRelationshipToMax(), $this->getColumnToMax()]),
             fn ($query) => $query->withMax($this->getRelationshipToMax(), $this->getColumnToMax())
