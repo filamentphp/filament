@@ -102,9 +102,4 @@ class MountableAction extends StaticAction
     {
         return static::$modalActionsAlignment;
     }
-
-    public function shouldResetRecordAfter(): bool
-    {
-        return ! $this->getRecord()?->exists;
-    }
 }
