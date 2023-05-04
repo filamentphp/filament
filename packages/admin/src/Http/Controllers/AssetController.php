@@ -79,6 +79,7 @@ class AssetController
             'Expires' => $this->getHttpDate($expires),
             'Cache-Control' => $cacheControl,
             'Last-Modified' => $this->getHttpDate($lastModified),
-        ])->send();
+        ])
+        ->send();
     }
 }
