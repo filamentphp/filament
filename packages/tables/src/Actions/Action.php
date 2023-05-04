@@ -101,9 +101,4 @@ class Action extends MountableAction implements Groupable, HasRecord
             ->table($this->getTable())
             ->record($this->getRecord());
     }
-
-    public function shouldResetRecordAfter(): bool
-    {
-        return ! $this->getRecord()?->exists;
-    }
 }

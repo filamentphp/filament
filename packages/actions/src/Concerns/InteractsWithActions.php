@@ -359,7 +359,7 @@ trait InteractsWithActions
                 'id' => "{$this->id}-action",
             ]);
 
-            if ($action?->shouldResetRecordAfter()) {
+            if ($action?->shouldClearRecordAfter()) {
                 $action->record(null);
             }
 
