@@ -38,7 +38,7 @@ class EmailVerificationPrompt extends CardPage
 
     public function resendNotificationAction(): Action
     {
-        return Action::make('resendNotificationAction')
+        return Action::make('resendNotification')
             ->link()
             ->label(__('filament::pages/auth/email-verification/email-verification-prompt.buttons.resend_notification.label') . '.')
             ->action(function (): void {
