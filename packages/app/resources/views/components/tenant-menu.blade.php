@@ -44,9 +44,9 @@
                         }
                     })
                 "
-            x-tooltip.html="tooltip"
-            x-bind:class="{
-                    'justify-center': ! $store.sidebar.isOpen,
+                x-tooltip.html="tooltip"
+                x-bind:class="{
+                    'justify-center': !$store.sidebar.isOpen,
                 }"
             @endif
         >
@@ -74,60 +74,59 @@
         </div>
     </x-slot>
 
-    @if (count($items) || $hasTenantBilling || $canSwitchTenants || $hasTenantRegistration)
+    @if (count($items))
         <x-filament::dropdown.list>
-            @foreach ($items as $key => $item)
+            @foreach ($items as $item)
                 <x-filament::dropdown.list.item
                     :color="$item->getColor() ?? 'gray'"
-                    :icon="$item->getIcon()"
                     :href="$item->getUrl()"
+                    :icon="$item->getIcon()"
                     tag="a"
                 >
                     {{ $item->getLabel() }}
                 </x-filament::dropdown.list.item>
             @endforeach
+        </x-filament::dropdown.list>
+    @endif
 
-            @if ($hasTenantBilling)
+    @if ($hasTenantBilling)
+        <x-filament::dropdown.list>
+            <x-filament::dropdown.list.item
+                :color="$billingItem?->getColor() ?? 'gray'"
+                :href="$billingItemUrl ?? filament()->getTenantBillingUrl($currentTenant)"
+                :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
+                tag="a"
+            >
+                {{ $billingItem?->getLabel() ?? __('filament::layout.buttons.billing.label') }}
+            </x-filament::dropdown.list.item>
+        </x-filament::dropdown.list>
+    @endif
+
+    @if ($canSwitchTenants)
+        <x-filament::dropdown.list>
+            @foreach ($tenants as $tenant)
                 <x-filament::dropdown.list.item
-                    :href="$billingItemUrl ?? filament()->getTenantBillingUrl($currentTenant)"
-                    :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
-                    :color="$billingItem?->getColor() ?? 'gray'"
+                    color="gray"
+                    :href="filament()->getUrl($tenant)"
+                    :image="filament()->getTenantAvatarUrl($tenant)"
                     tag="a"
                 >
-                    {{ $billingItem?->getLabel() ?? __('filament::layout.buttons.billing.label') }}
+                    {{ filament()->getTenantName($tenant) }}
                 </x-filament::dropdown.list.item>
-            @endif
+            @endforeach
+        </x-filament::dropdown.list>
+    @endif
 
-            @if ((count($items) || $hasTenantBilling) && $canSwitchTenants)
-                <x-filament::dropdown.list.separator />
-            @endif
-
-            @if ($canSwitchTenants)
-                @foreach ($tenants as $tenant)
-                    <x-filament::dropdown.list.item
-                        :href="filament()->getUrl($tenant)"
-                        :image="filament()->getTenantAvatarUrl($tenant)"
-                        tag="a"
-                    >
-                        {{ filament()->getTenantName($tenant) }}
-                    </x-filament::dropdown.list.item>
-                @endforeach
-            @endif
-
-            @if ($canSwitchTenants && $hasTenantRegistration)
-                <x-filament::dropdown.list.separator />
-            @endif
-
-            @if ($hasTenantRegistration)
-                <x-filament::dropdown.list.item
-                    :href="$registrationItemUrl ?? filament()->getTenantRegistrationUrl()"
-                    :icon="$registrationItem?->getIcon() ?? 'heroicon-m-plus'"
-                    :color="$registrationItem?->getColor() ?? 'primary'"
-                    tag="a"
-                >
-                    {{ $registrationItem?->getLabel() ?? filament()->getTenantRegistrationPage()::getLabel() }}
-                </x-filament::dropdown.list.item>
-            @endif
+    @if ($hasTenantRegistration)
+        <x-filament::dropdown.list>
+            <x-filament::dropdown.list.item
+                :color="$registrationItem?->getColor() ?? 'gray'"
+                :href="$registrationItemUrl ?? filament()->getTenantRegistrationUrl()"
+                :icon="$registrationItem?->getIcon() ?? 'heroicon-m-plus'"
+                tag="a"
+            >
+                {{ $registrationItem?->getLabel() ?? filament()->getTenantRegistrationPage()::getLabel() }}
+            </x-filament::dropdown.list.item>
         </x-filament::dropdown.list>
     @endif
 </x-filament::dropdown>
