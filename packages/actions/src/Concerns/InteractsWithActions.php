@@ -273,9 +273,7 @@ trait InteractsWithActions
             $name = $firstName;
         }
 
-        $action = $this->cachedActions[$name] ?? null;
-
-        if ($action) {
+        if ($action = $this->cachedActions[$name] ?? null) {
             return $this->getMountableModalActionFromAction(
                 $action,
                 modalActionNames: $modalActionNames ?? [],
@@ -283,17 +281,24 @@ trait InteractsWithActions
             );
         }
 
-        if (! method_exists($this, $name)) {
+        if (
+            (! str($name)->endsWith('Action')) &&
+            method_exists($this, "{$name}Action")
+        ) {
+            $methodName = "{$name}Action";
+        } elseif (method_exists($this, $name)) {
+            $methodName = $name;
+        } else {
             return null;
         }
 
         $action = Action::configureUsing(
             Closure::fromCallable([$this, 'configureAction']),
-            fn () => $this->{$name}(),
+            fn () => $this->{$methodName}(),
         );
 
         if (! $action instanceof Action) {
-            throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [{$name}] method on the Livewire component returned an instance of [" . get_class($action) . '].');
+            throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [{$methodName}] method on the Livewire component returned an instance of [" . get_class($action) . '].');
         }
 
         return $this->getMountableModalActionFromAction(
