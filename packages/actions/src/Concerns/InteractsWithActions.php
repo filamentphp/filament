@@ -198,13 +198,9 @@ trait InteractsWithActions
         return (bool) count($this->getMountedActionForm()?->getComponents() ?? []);
     }
 
-    public function cacheAction(Action $action, ?string $name = null): Action
+    public function cacheAction(Action $action): Action
     {
         $action->livewire($this);
-
-        if (filled($name)) {
-            $action->name($name);
-        }
 
         return $this->cachedActions[$action->getName()] = $action;
     }
@@ -302,7 +298,7 @@ trait InteractsWithActions
         }
 
         return $this->getMountableModalActionFromAction(
-            $this->cacheAction($action, name: $name),
+            $this->cacheAction($action),
             modalActionNames: $modalActionNames ?? [],
             parentActionName: $name,
         );
