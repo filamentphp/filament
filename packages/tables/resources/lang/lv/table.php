@@ -21,6 +21,14 @@ return [
             'placeholder' => 'Meklēt',
         ],
 
+        'bulk_select_page' => [
+            'label' => 'Atlasīt / noņemt atlasi visām lielapjoma darbībām.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Atlasīt / noņemt atlasi priekš :key lielapjoma darbībām.',
+        ],
+
     ],
 
     'pagination' => [
