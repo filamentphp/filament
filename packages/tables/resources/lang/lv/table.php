@@ -16,17 +16,17 @@ return [
 
     'fields' => [
 
-        'search_query' => [
-            'label' => 'Meklēt',
-            'placeholder' => 'Meklēt',
-        ],
-
         'bulk_select_page' => [
-            'label' => 'Atlasīt / noņemt atlasi visām lielapjoma darbībām.',
+            'label' => 'Atlasīt/noņemt atlasi visām lielapjoma darbībām.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Atlasīt / noņemt atlasi priekš :key lielapjoma darbībām.',
+            'label' => 'Atlasīt/noņemt atlasi priekš :key lielapjoma darbībām.',
+        ],
+
+        'search_query' => [
+            'label' => 'Meklēt',
+            'placeholder' => 'Meklēt',
         ],
 
     ],
