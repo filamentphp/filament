@@ -8,7 +8,7 @@ trait HasAction
 {
     protected Closure | string | null $action = null;
 
-    protected bool | Closure $isLivewireClickHandlerEnabled = true;
+    protected bool | Closure | null $isLivewireClickHandlerEnabled = null;
 
     public function action(Closure | string | null $action): static
     {
@@ -17,7 +17,7 @@ trait HasAction
         return $this;
     }
 
-    public function livewireClickHandlerEnabled(bool | Closure $condition = true): static
+    public function livewireClickHandlerEnabled(bool | Closure | null $condition = true): static
     {
         $this->isLivewireClickHandlerEnabled = $condition;
 
@@ -35,8 +35,8 @@ trait HasAction
 
     public function isLivewireClickHandlerEnabled(): bool
     {
-        if (! $this->evaluate($this->isLivewireClickHandlerEnabled)) {
-            return false;
+        if (($isLivewireClickHandlerEnabled = $this->evaluate($this->isLivewireClickHandlerEnabled)) !== null) {
+            return $isLivewireClickHandlerEnabled;
         }
 
         if (filled($this->getUrl())) {
