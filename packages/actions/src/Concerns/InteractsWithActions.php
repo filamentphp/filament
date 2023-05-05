@@ -277,14 +277,9 @@ trait InteractsWithActions
             );
         }
 
-        if (
-            (! str($name)->endsWith('Action')) &&
-            method_exists($this, "{$name}Action")
-        ) {
-            $methodName = "{$name}Action";
-        } elseif (method_exists($this, $name)) {
-            $methodName = $name;
-        } else {
+        $methodName = (string) str($name)->finish('Action');
+
+        if (! method_exists($this, $methodName)) {
             return null;
         }
 
