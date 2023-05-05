@@ -47,7 +47,7 @@
     $hasFiltersDropdown = $hasFilters && ($filtersLayout === FiltersLayout::Dropdown);
     $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
-    $hasFiltersAfterContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
+    $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
@@ -1188,7 +1188,7 @@
             </div>
         @endif
 
-        @if ($hasFiltersAfterContent)
+        @if ($hasFiltersBelowContent)
             <div class="px-2 pb-2">
                 <x-filament::hr/>
 

@@ -253,7 +253,7 @@ TextColumn::make('sku')
     ->summarize(Range::make()->limit(5))
 ```
 
-## Custom
+## Custom summaries
 
 You may create a custom summary by returning the value from the `using()` method:
 
