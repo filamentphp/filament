@@ -60,7 +60,7 @@ export default (Alpine) => {
                         searchPlaceholderValue: searchPrompt,
                         searchResultLimit: optionsLimit,
                         shouldSort: false,
-                        searchFloor: 0,
+                        searchFloor: hasDynamicSearchResults ? 0 : 1,
                     })
 
                     await this.refreshChoices({ withInitialOptions: true })
