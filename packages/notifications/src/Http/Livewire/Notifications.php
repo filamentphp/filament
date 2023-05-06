@@ -82,6 +82,7 @@ class Notifications extends Component
 
     public function getDatabaseNotificationsQuery(): Builder | Relation
     {
+         /** @phpstan-ignore-next-line */
         return match ($this->getUser()->notifications()->getConnection()->getDriverName()) {
             /** @phpstan-ignore-next-line */
             'pgsql' => $this->getUser()->notifications()->where('data', 'like', '%"format":"filament"%'),
