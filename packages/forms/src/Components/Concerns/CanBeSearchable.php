@@ -17,6 +17,10 @@ trait CanBeSearchable
 
     protected string | Htmlable | Closure | null $searchPrompt = null;
 
+    protected bool | Closure $shouldSearchInLabels = true;
+
+    protected bool | Closure $shouldSearchInValues = false;
+
     public function searchable(bool | Closure $condition = true): static
     {
         $this->isSearchable = $condition;
@@ -52,6 +56,20 @@ trait CanBeSearchable
         return $this;
     }
 
+    public function searchInLabels(bool | null $condition = true): static
+    {
+        $this->shouldSearchInLabels = $condition;
+
+        return $this;
+    }
+
+    public function searchInValues(bool | null $condition = true): static
+    {
+        $this->shouldSearchInValues = $condition;
+
+        return $this;
+    }
+
     public function getNoSearchResultsMessage(): string | Htmlable
     {
         return $this->evaluate($this->noSearchResultsMessage) ?? __('forms::components.select.no_search_results_message');
@@ -60,6 +78,24 @@ trait CanBeSearchable
     public function getSearchPrompt(): string | Htmlable
     {
         return $this->evaluate($this->searchPrompt) ?? __('forms::components.select.search_prompt');
+    }
+
+    public function shouldSearchInLabels(): bool
+    {
+        return $this->evaluate($this->shouldSearchInLabels);
+    }
+
+    public function shouldSearchInValues(): bool
+    {
+        return $this->evaluate($this->shouldSearchInValues);
+    }
+
+    public function getSearchFields(): array
+    {
+        return array_merge([],
+            ($this->shouldSearchInLabels ? ['label'] : []),
+            ($this->shouldSearchInValues ? ['value'] : []),
+        );
     }
 
     public function getSearchDebounce(): int
