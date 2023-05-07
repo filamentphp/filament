@@ -34798,7 +34798,8 @@ function src_default(Alpine) {
     };
     panel2.close = function() {
       toggle(false);
-      panel2.trigger.setAttribute("aria-expanded", false);
+      if (panel2.trigger)
+        panel2.trigger.setAttribute("aria-expanded", false);
       if (config.component.trap)
         panel2.setAttribute("x-trap", false);
       cleanup();
