@@ -61,11 +61,20 @@
                     />
 
                     <datalist id="{{ $getId() }}-suggestions">
-                        @foreach ($getSuggestions() as $suggestion)
-                            <template x-if="! state.includes(@js($suggestion))" x-bind:key="@js($suggestion)">
-                                <option value="{{ $suggestion }}" />
-                            </template>
-                        @endforeach
+                        @php($suggestions = $getSuggestions())
+                        @if (\Illuminate\Support\Arr::isAssoc($suggestions))
+                            @foreach ($suggestions as $suggestion => $label)
+                                <template x-if="! state.includes(@js($suggestion)) || ! state.includes(@js($label))" x-bind:key="@js($suggestion)">
+                                    <option value="{{ $suggestion }}">{{ $label }}</option>
+                                </template>
+                            @endforeach
+                        @else
+                            @foreach ($suggestions as $suggestion)
+                                <template x-if="! state.includes(@js($suggestion))" x-bind:key="@js($suggestion)">
+                                    <option value="{{ $suggestion }}" />
+                                </template>
+                            @endforeach
+                        @endif
                     </datalist>
                 </div>
             @endunless
