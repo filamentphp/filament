@@ -86,8 +86,8 @@ class Notifications extends Component
         $query = $this->getUser()->notifications();
 
         return match ($query->getConnection()->getDriverName()) {
-            'pgsql' => $query->notifications()->where('data', 'like', '%"format":"filament"%'),
-            default => $query->notifications()->where('data->format', 'filament'),
+            'pgsql' => $query->where('data', 'like', '%"format":"filament"%'),
+            default => $query->where('data->format', 'filament'),
         };
     }
 
