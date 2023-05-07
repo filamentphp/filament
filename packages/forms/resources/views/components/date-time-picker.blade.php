@@ -19,6 +19,7 @@
             locale: @js(app()->getLocale()),
             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+            hourMode: {{ $getHourMode() }}
         })"
         x-on:keydown.esc="isOpen() && $event.stopPropagation()"
         {{ $getExtraAlpineAttributeBag() }}
@@ -171,8 +172,8 @@
                         ])
                     >
                         <input
-                            max="23"
-                            min="0"
+                            max="{{ $getHourMode() == 12 ? '12' : '23' }}"
+                            min="{{ $getHourMode() == 12 ? '1' : '0' }}"
                             step="{{ $getHoursStep() }}"
                             type="number"
                             inputmode="numeric"
@@ -227,6 +228,20 @@
                                     'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             />
+                        @endif
+
+                        @if ($getHourMode() === 12)
+                            <select 
+                                x-model.debounce="meridiem"
+                                dusk="filament.forms.{{ $getStatePath() }}.meridiem"
+                                style="background-image:none"
+                                @class([
+                                'px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer outline-none focus:ring-0 bg-transparent',
+                                'dark:bg-transparent dark:text-gray-200' => config('forms.dark_mode'),
+                            ])>
+                                <option value="am">AM</option>
+                                <option value="pm">PM</option>
+                            </select>
                         @endif
                     </div>
                 @endif

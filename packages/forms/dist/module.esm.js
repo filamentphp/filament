@@ -12816,7 +12816,8 @@ var date_time_picker_default = (Alpine) => {
     isAutofocused,
     locale,
     shouldCloseOnDateSelection,
-    state: state2
+    state: state2,
+    hourMode
   }) => {
     const timezone2 = esm_default.tz.guess();
     return {
@@ -12833,6 +12834,7 @@ var date_time_picker_default = (Alpine) => {
       state: state2,
       dayLabels: [],
       months: [],
+      meridiem: "am",
       init: function() {
         esm_default.locale(locales[locale] ?? locales["en"]);
         this.focusedDate = esm_default().tz(timezone2);
@@ -12842,9 +12844,10 @@ var date_time_picker_default = (Alpine) => {
         } else if (this.getMinDate() !== null && date.isBefore(this.getMinDate())) {
           date = null;
         }
-        this.hour = date?.hour() ?? 0;
+        this.hour = hourMode == 24 ? date?.hour() ?? 0 : date?.hour() % 12 || 12;
         this.minute = date?.minute() ?? 0;
         this.second = date?.second() ?? 0;
+        this.meridiem = date?.hour() >= 12 ? "pm" : "am";
         this.setDisplayText();
         this.setMonths();
         this.setDayLabels();
@@ -12890,12 +12893,23 @@ var date_time_picker_default = (Alpine) => {
           let hour = +this.hour;
           if (!Number.isInteger(hour)) {
             this.hour = 0;
-          } else if (hour > 23) {
-            this.hour = 0;
-          } else if (hour < 0) {
-            this.hour = 23;
+          }
+          if (hourMode == 24) {
+            if (hour > 23) {
+              this.hour = 0;
+            } else if (hour < 0) {
+              this.hour = 23;
+            } else {
+              this.hour = hour;
+            }
           } else {
-            this.hour = hour;
+            if (hour <= 0) {
+              this.hour = 12;
+            } else if (hour > 12) {
+              this.hour = hour % 12 || 12;
+            } else {
+              this.hour = hour;
+            }
           }
           if (this.isClearingState) {
             return;
@@ -12937,6 +12951,13 @@ var date_time_picker_default = (Alpine) => {
           let date2 = this.getSelectedDate() ?? this.focusedDate;
           this.setState(date2.second(this.second ?? 0));
         });
+        this.$watch("meridiem", () => {
+          if (this.isClearingState) {
+            return;
+          }
+          let date2 = this.getSelectedDate() ?? this.focusedDate;
+          this.setState(date2.hour(this.hour ?? 0));
+        });
         this.$watch("state", () => {
           if (this.state === void 0) {
             return;
@@ -12953,7 +12974,7 @@ var date_time_picker_default = (Alpine) => {
             date2 = null;
           }
           const newHour = date2?.hour() ?? 0;
-          if (this.hour !== newHour) {
+          if (hourMode == 24 && this.hour !== newHour) {
             this.hour = newHour;
           }
           const newMinute = date2?.minute() ?? 0;
@@ -13104,7 +13125,17 @@ var date_time_picker_default = (Alpine) => {
         if (this.dateIsDisabled(date)) {
           return;
         }
-        this.state = date.hour(this.hour ?? 0).minute(this.minute ?? 0).second(this.second ?? 0).format("YYYY-MM-DD HH:mm:ss");
+        let hour = 0;
+        if (hourMode == 24) {
+          hour = this.hour ?? 0;
+        } else {
+          if (this.meridiem == "am") {
+            hour = this.hour == 12 ? 0 : this.hour;
+          } else {
+            hour = this.hour != 12 ? this.hour + 12 : this.hour;
+          }
+        }
+        this.state = date.hour(hour).minute(this.minute ?? 0).second(this.second ?? 0).format("YYYY-MM-DD HH:mm:ss");
         this.setDisplayText();
       },
       isOpen: function() {

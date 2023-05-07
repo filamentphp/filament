@@ -21,6 +21,7 @@ export default (Alpine) => {
             locale,
             shouldCloseOnDateSelection,
             state,
+            hourMode,
         }) => {
             const timezone = dayjs.tz.guess()
 
@@ -51,6 +52,8 @@ export default (Alpine) => {
 
                 months: [],
 
+                meridiem: 'am',
+
                 init: function () {
                     dayjs.locale(locales[locale] ?? locales['en'])
 
@@ -72,9 +75,13 @@ export default (Alpine) => {
                         date = null
                     }
 
-                    this.hour = date?.hour() ?? 0
+                    this.hour =
+                        hourMode == 24
+                            ? date?.hour() ?? 0
+                            : date?.hour() % 12 || 12
                     this.minute = date?.minute() ?? 0
                     this.second = date?.second() ?? 0
+                    this.meridiem = date?.hour() >= 12 ? 'pm' : 'am'
 
                     this.setDisplayText()
                     this.setMonths()
@@ -145,12 +152,24 @@ export default (Alpine) => {
 
                         if (!Number.isInteger(hour)) {
                             this.hour = 0
-                        } else if (hour > 23) {
-                            this.hour = 0
-                        } else if (hour < 0) {
-                            this.hour = 23
+                        }
+
+                        if (hourMode == 24) {
+                            if (hour > 23) {
+                                this.hour = 0
+                            } else if (hour < 0) {
+                                this.hour = 23
+                            } else {
+                                this.hour = hour
+                            }
                         } else {
-                            this.hour = hour
+                            if (hour <= 0) {
+                                this.hour = 12
+                            } else if (hour > 12) {
+                                this.hour = hour % 12 || 12
+                            } else {
+                                this.hour = hour
+                            }
                         }
 
                         if (this.isClearingState) {
@@ -206,6 +225,16 @@ export default (Alpine) => {
                         this.setState(date.second(this.second ?? 0))
                     })
 
+                    this.$watch('meridiem', () => {
+                        if (this.isClearingState) {
+                            return
+                        }
+
+                        let date = this.getSelectedDate() ?? this.focusedDate
+
+                        this.setState(date.hour(this.hour ?? 0))
+                    })
+
                     this.$watch('state', () => {
                         if (this.state === undefined) {
                             return
@@ -233,7 +262,7 @@ export default (Alpine) => {
                         }
 
                         const newHour = date?.hour() ?? 0
-                        if (this.hour !== newHour) {
+                        if (hourMode == 24 && this.hour !== newHour) {
                             this.hour = newHour
                         }
 
@@ -476,8 +505,18 @@ export default (Alpine) => {
                         return
                     }
 
+                    let hour = 0
+                    if (hourMode == 24) {
+                        hour = this.hour ?? 0
+                    } else {
+                        if (this.meridiem == 'am') {
+                            hour = this.hour == 12 ? 0 : this.hour
+                        } else {
+                            hour = this.hour != 12 ? this.hour + 12 : this.hour
+                        }
+                    }
                     this.state = date
-                        .hour(this.hour ?? 0)
+                        .hour(hour)
                         .minute(this.minute ?? 0)
                         .second(this.second ?? 0)
                         .format('YYYY-MM-DD HH:mm:ss')

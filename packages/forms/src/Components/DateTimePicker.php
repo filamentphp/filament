@@ -38,6 +38,8 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
+    protected int | Closure | null $hourMode = 24;
+
     protected array | Closure $disabledDates = [];
 
     protected int | Closure | null $hoursStep = null;
@@ -45,6 +47,8 @@ class DateTimePicker extends Field
     protected int | Closure | null $minutesStep = null;
 
     protected int | Closure | null $secondsStep = null;
+
+    public $hourFormat = 'pm';
 
     protected function setUp(): void
     {
@@ -187,6 +191,20 @@ class DateTimePicker extends Field
         $this->timezone = $timezone;
 
         return $this;
+    }
+
+    public function hourMode(int | Closure | null $hourMode): static
+    {
+        if ($hourMode === 24 || $hourMode === 12) {
+            $this->hourMode = $hourMode;
+        }
+
+        return $this;
+    }
+
+    public function getHourMode(): int
+    {
+        return $this->evaluate($this->hourMode);
     }
 
     public function weekStartsOnMonday(): static
