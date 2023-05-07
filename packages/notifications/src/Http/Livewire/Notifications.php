@@ -55,7 +55,7 @@ class Notifications extends Component
             $this->notifications->forget($id);
         }
 
-        if (! $this->hasDatabaseNotifications()) {
+        if (!$this->hasDatabaseNotifications()) {
             return;
         }
 
@@ -83,11 +83,11 @@ class Notifications extends Component
     public function getDatabaseNotificationsQuery(): Builder | Relation
     {
         /** @phpstan-ignore-next-line */
-        return match ($this->getUser()->notifications()->getConnection()->getDriverName()) {
-            /** @phpstan-ignore-next-line */
-            'pgsql' => $this->getUser()->notifications()->where('data', 'like', '%"format":"filament"%'),
-            /** @phpstan-ignore-next-line */
-            default => $this->getUser()->notifications()->where('data->format', 'filament'),
+        $query = $this->getUser()->notifications();
+
+        return match ($query->getConnection()->getDriverName()) {
+            'pgsql' => $query->notifications()->where('data', 'like', '%"format":"filament"%'),
+            default => $query->notifications()->where('data->format', 'filament'),
         };
     }
 
@@ -104,7 +104,7 @@ class Notifications extends Component
 
     public function handleBroadcastNotification($notification): void
     {
-        if (! is_array($notification)) {
+        if (!is_array($notification)) {
             return;
         }
 
@@ -153,7 +153,7 @@ class Notifications extends Component
     {
         $user = $this->getUser();
 
-        if (! $user) {
+        if (!$user) {
             return null;
         }
 
