@@ -4,9 +4,9 @@
         'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
     ])"
 >
-    {{ \Filament\Facades\Filament::renderHook('table.start') }}
+    {{ \Filament\Facades\Filament::renderHook('resource.table.start') }}
 
     {{ $this->table }}
 
-    {{ \Filament\Facades\Filament::renderHook('table.end') }}
+    {{ \Filament\Facades\Filament::renderHook('resource.table.end') }}
 </x-filament::page>
