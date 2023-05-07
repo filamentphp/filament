@@ -55,7 +55,7 @@ class Notifications extends Component
             $this->notifications->forget($id);
         }
 
-        if (!$this->hasDatabaseNotifications()) {
+        if (! $this->hasDatabaseNotifications()) {
             return;
         }
 
@@ -104,7 +104,7 @@ class Notifications extends Component
 
     public function handleBroadcastNotification($notification): void
     {
-        if (!is_array($notification)) {
+        if (! is_array($notification)) {
             return;
         }
 
@@ -153,7 +153,7 @@ class Notifications extends Component
     {
         $user = $this->getUser();
 
-        if (!$user) {
+        if (! $user) {
             return null;
         }
 
