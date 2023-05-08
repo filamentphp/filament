@@ -6,7 +6,9 @@ title: Summaries
 
 You may render a "summary" section below your table content. This is great for displaying the results of calculations such as averages, sums, counts, and ranges of the data in your table.
 
-Summaries can be added to any [table column](columns) using the `summarize()` method:
+By default, there will be a single summary line for the current page of data, and an additional summary line for the totals for all data if more than one page is available. You may also add summaries for [groups](grouping) of records, see ["Summarising groups of rows"](#summarising-groups-of-rows).
+
+"Summarizer" objects can be added to any [table column](columns) using the `summarize()` method:
 
 ```php
 use Filament\Tables\Columns\Summarizers\Average;
