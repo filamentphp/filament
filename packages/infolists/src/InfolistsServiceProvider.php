@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists;
 
-use Filament\Infolists\Commands;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
