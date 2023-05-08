@@ -113,13 +113,13 @@ trait HasAuth
         return $this->isEmailVerificationRequired;
     }
 
-    public function getEmailVerificationPromptUrl(): ?string
+    public function getEmailVerificationPromptUrl(array $parameters = []): ?string
     {
         if (! $this->hasEmailVerification()) {
             return null;
         }
 
-        return route($this->getEmailVerificationPromptRouteName());
+        return route($this->getEmailVerificationPromptRouteName(), $parameters);
     }
 
     public function getEmailVerificationPromptRouteName(): string
@@ -132,56 +132,65 @@ trait HasAuth
         return "verified:{$this->getEmailVerificationPromptRouteName()}";
     }
 
-    public function getLoginUrl(): ?string
+    public function getLoginUrl(array $parameters = []): ?string
     {
         if (! $this->hasLogin()) {
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.login");
+        return route("filament.{$this->getId()}.auth.login", $parameters);
     }
 
-    public function getRegistrationUrl(): ?string
+    public function getRegistrationUrl(array $parameters = []): ?string
     {
         if (! $this->hasRegistration()) {
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.register");
+        return route("filament.{$this->getId()}.auth.register", $parameters);
     }
 
-    public function getRequestPasswordResetUrl(): ?string
+    public function getRequestPasswordResetUrl(array $parameters = []): ?string
     {
         if (! $this->hasPasswordReset()) {
             return null;
         }
 
-        return route("filament.{$this->getId()}.auth.password-reset.request");
+        return route("filament.{$this->getId()}.auth.password-reset.request", $parameters);
     }
 
-    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user): string
+    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
     {
         return URL::temporarySignedRoute(
             "filament.{$this->getId()}.auth.email-verification.verify",
             now()->addMinutes(config('auth.verification.expire', 60)),
-            [
-                'id' => $user->getKey(),
-                'hash' => sha1($user->getEmailForVerification()),
-            ],
+            array_merge(
+                [
+                    'id' => $user->getKey(),
+                    'hash' => sha1($user->getEmailForVerification()),
+                ],
+                $parameters,
+            ),
         );
     }
 
-    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user): string
+    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
     {
-        return URL::signedRoute("filament.{$this->getId()}.auth.password-reset.reset", [
-            'email' => $user->getEmailForPasswordReset(),
-            'token' => $token,
-        ]);
+        return URL::signedRoute(
+            "filament.{$this->getId()}.auth.password-reset.reset",
+            array_merge(
+                [
+                    'email' => $user->getEmailForPasswordReset(),
+                    'token' => $token,
+                ],
+                $parameters,
+            ),
+        );
     }
 
-    public function getLogoutUrl(): string
+    public function getLogoutUrl(array $parameters = []): string
     {
-        return route("filament.{$this->getId()}.auth.logout");
+        return route("filament.{$this->getId()}.auth.logout", $parameters);
     }
 
     /**

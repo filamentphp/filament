@@ -129,24 +129,30 @@ trait HasTenancy
         return $this->tenantSlugAttribute;
     }
 
-    public function getTenantBillingUrl(Model $tenant): ?string
+    public function getTenantBillingUrl(Model $tenant, array $parameters = []): ?string
     {
         if (! $this->hasTenantBilling()) {
             return null;
         }
 
-        return route("filament.{$this->getId()}.tenant.billing", [
-            'tenant' => $tenant,
-        ]);
+        return route(
+            "filament.{$this->getId()}.tenant.billing",
+            array_merge(
+                [
+                    'tenant' => $tenant,
+                ],
+                $parameters
+            ),
+        );
     }
 
-    public function getTenantRegistrationUrl(): ?string
+    public function getTenantRegistrationUrl(array $parameters = []): ?string
     {
         if (! $this->hasTenantRegistration()) {
             return null;
         }
 
-        return route("filament.{$this->getId()}.tenant.registration");
+        return route("filament.{$this->getId()}.tenant.registration", $parameters);
     }
 
     /**
