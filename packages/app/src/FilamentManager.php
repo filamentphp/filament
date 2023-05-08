@@ -246,9 +246,9 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantBillingProvider();
     }
 
-    public function getTenantBillingUrl(Model $tenant): ?string
+    public function getTenantBillingUrl(?Model $tenant = null): ?string
     {
-        return $this->getCurrentContext()->getTenantBillingUrl($tenant);
+        return $this->getCurrentContext()->getTenantBillingUrl($tenant ?? $this->getTenant());
     }
 
     public function getTenantRegistrationPage(): ?string
