@@ -74,17 +74,11 @@ class AssetController
             ]);
         }
 
-        response()
-            ->file($path, [
-                'Accept-Ranges' => 'bytes',
-                'Content-Length' => filesize($path),
-                'Content-Type' => $contentType,
-                'Expires' => $this->getHttpDate($expires),
-                'Cache-Control' => $cacheControl,
-                'Last-Modified' => $this->getHttpDate($lastModified),
-            ])
-            ->send();
-
-        exit();
+        return response()->file($path, [
+            'Content-Type' => $contentType,
+            'Expires' => $this->getHttpDate($expires),
+            'Cache-Control' => $cacheControl,
+            'Last-Modified' => $this->getHttpDate($lastModified),
+        ]);
     }
 }
