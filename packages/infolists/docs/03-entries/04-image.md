@@ -1,27 +1,27 @@
 ---
-title: Image column
+title: Image entry
 ---
 
 ## Overview
 
-Images can be easily displayed within your table:
+Images can be easily displayed within your infolist:
 
 ```php
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components\ImageEntry;
 
-ImageColumn::make('header_image')
+ImageEntry::make('header_image')
 ```
 
-The column in the database must contain the path to the image, relative to the root directory of its storage disk.
+The entry must contain the path to the image, relative to the root directory of its storage disk.
 
 ## Managing the image disk
 
 By default, the `public` disk will be used to retrieve images. You may pass a custom disk name to the `disk()` method:
 
 ```php
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components\ImageEntry;
 
-ImageColumn::make('header_image')
+ImageEntry::make('header_image')
     ->disk('s3')
 ```
 
@@ -30,9 +30,9 @@ ImageColumn::make('header_image')
 Filament can generate temporary URLs to render private images, you may set the `visibility()` to `private`:
 
 ```php
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components\ImageEntry;
 
-ImageColumn::make('header_image')
+ImageEntry::make('header_image')
     ->visibility('private')
 ```
 
@@ -41,9 +41,9 @@ ImageColumn::make('header_image')
 You may display the image using a 1:1 aspect ratio:
 
 ```php
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components\ImageEntry;
 
-ImageColumn::make('author.avatar')
+ImageEntry::make('author.avatar')
     ->square()
 ```
 
@@ -52,9 +52,9 @@ ImageColumn::make('author.avatar')
 You may make the image fully rounded, which is useful for rendering avatars:
 
 ```php
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components\ImageEntry;
 
-ImageColumn::make('author.avatar')
+ImageEntry::make('author.avatar')
     ->circular()
 ```
 
@@ -63,15 +63,15 @@ ImageColumn::make('author.avatar')
 You may customize the image size by passing a `width()` and `height()`, or both with `size()`:
 
 ```php
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components\ImageEntry;
 
-ImageColumn::make('header_image')
+ImageEntry::make('header_image')
     ->width(200)
 
-ImageColumn::make('header_image')
+ImageEntry::make('header_image')
     ->height(50)
 
-ImageColumn::make('author.avatar')
+ImageEntry::make('author.avatar')
     ->size(40)
 ```
 
@@ -80,8 +80,8 @@ ImageColumn::make('author.avatar')
 You may customize the extra HTML attributes of the image using `extraImgAttributes()`:
 
 ```php
-use Filament\Tables\Columns\ImageColumn;
+use Filament\Infolists\Components\ImageEntry;
 
-ImageColumn::make('logo')
+ImageEntry::make('logo')
     ->extraImgAttributes(['title' => 'Company logo']),
 ```

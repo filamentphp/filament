@@ -1,15 +1,15 @@
 ---
-title: Icon column
+title: Icon entry
 ---
 
 ## Overview
 
-Icon columns render an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) representing their contents:
+Icon entries render an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) representing their contents:
 
 ```php
-use Filament\Tables\Columns\IconColumn;
+use Filament\Infolists\Components\IconEntry;
 
-IconColumn::make('is_featured')
+IconEntry::make('is_featured')
     ->icons([
         'heroicon-o-x-circle',
         'heroicon-o-pencil' => 'draft',
@@ -21,9 +21,9 @@ IconColumn::make('is_featured')
 You may also pass a callback to activate an option, accepting the cell's `$state` and `$record`:
 
 ```php
-use Filament\Tables\Columns\IconColumn;
+use Filament\Infolists\Components\IconEntry;
 
-IconColumn::make('is_featured')
+IconEntry::make('is_featured')
     ->icons([
         'heroicon-o-x-circle',
         'heroicon-o-pencil' => fn ($state, $record): bool => $record->status === 2,
@@ -34,12 +34,12 @@ IconColumn::make('is_featured')
 
 ## Customizing the color
 
-Icon columns may also have a set of icon colors, using the same syntax. They may be either `primary`, `secondary`, `success`, `warning` or `danger`:
+Icon entries may also have a set of icon colors, using the same syntax. They may be either `primary`, `secondary`, `success`, `warning` or `danger`:
 
 ```php
-use Filament\Tables\Columns\IconColumn;
+use Filament\Infolists\Components\IconEntry;
 
-IconColumn::make('is_featured')
+IconEntry::make('is_featured')
     ->icons([
         'heroicon-o-x-circle',
         'heroicon-o-pencil' => 'draft',
@@ -59,9 +59,9 @@ IconColumn::make('is_featured')
 The default icon size is `lg`, but you may customize the size to be either `xs`, `sm`, `md`, `lg` or `xl`:
 
 ```php
-use Filament\Tables\Columns\IconColumn;
+use Filament\Infolists\Components\IconEntry;
 
-IconColumn::make('is_featured')
+IconEntry::make('is_featured')
     ->icons([
         'heroicon-o-x-circle',
         'heroicon-o-pencil' => 'draft',
@@ -73,12 +73,12 @@ IconColumn::make('is_featured')
 
 ## Handling booleans
 
-Icon columns can display a check or cross icon based on the contents of the database column, either true or false, using the `boolean()` method:
+Icon entries can display a check or cross icon based on the contents of the database entry, either true or false, using the `boolean()` method:
 
 ```php
-use Filament\Tables\Columns\IconColumn;
+use Filament\Infolists\Components\IconEntry;
 
-IconColumn::make('is_featured')
+IconEntry::make('is_featured')
     ->boolean()
 ```
 
@@ -87,9 +87,9 @@ IconColumn::make('is_featured')
 You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons v1](https://v1.heroicons.com) are installed:
 
 ```php
-use Filament\Tables\Columns\IconColumn;
+use Filament\Infolists\Components\IconEntry;
 
-IconColumn::make('is_featured')
+IconEntry::make('is_featured')
     ->boolean()
     ->trueIcon('heroicon-o-check-badge')
     ->falseIcon('heroicon-o-x-circle')
@@ -100,9 +100,9 @@ IconColumn::make('is_featured')
 You may customize the icon color representing each state. These may be either `primary`, `secondary`, `success`, `warning` or `danger`:
 
 ```php
-use Filament\Tables\Columns\IconColumn;
+use Filament\Infolists\Components\IconEntry;
 
-IconColumn::make('is_featured')
+IconEntry::make('is_featured')
     ->boolean()
     ->trueColor('primary')
     ->falseColor('warning')
