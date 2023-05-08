@@ -72,7 +72,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static Model | null getTenant()
  * @method static string | null getTenantAvatarUrl(Model $tenant)
  * @method static BillingProvider | null getTenantBillingProvider()
- * @method static string | null getTenantBillingUrl(Model $tenant)
+ * @method static string | null getTenantBillingUrl(Model | null $tenant = null)
  * @method static array<MenuItem> getTenantMenuItems()
  * @method static string | null getTenantModel()
  * @method static string getTenantName(Model $tenant)

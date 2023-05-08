@@ -93,7 +93,7 @@
         <x-filament::dropdown.list>
             <x-filament::dropdown.list.item
                 :color="$billingItem?->getColor() ?? 'gray'"
-                :href="$billingItemUrl ?? filament()->getTenantBillingUrl($currentTenant)"
+                :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
                 :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
                 tag="a"
             >
