@@ -206,6 +206,9 @@ class FilamentManager
         return $this->getCurrentContext()->getHomeUrl();
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getEmailVerificationPromptUrl(array $parameters = []): ?string
     {
         return $this->getCurrentContext()->getEmailVerificationPromptUrl($parameters);
@@ -216,26 +219,41 @@ class FilamentManager
         return $this->getCurrentContext()->getEmailVerifiedMiddleware();
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getLoginUrl(array $parameters = []): ?string
     {
         return $this->getCurrentContext()->getLoginUrl($parameters);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getRegistrationUrl(array $parameters = []): ?string
     {
         return $this->getCurrentContext()->getRegistrationUrl($parameters);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getRequestPasswordResetUrl(array $parameters = []): ?string
     {
         return $this->getCurrentContext()->getRequestPasswordResetUrl($parameters);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
     {
         return $this->getCurrentContext()->getVerifyEmailUrl($user, $parameters);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
     {
         return $this->getCurrentContext()->getResetPasswordUrl($token, $user, $parameters);
@@ -246,6 +264,9 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantBillingProvider();
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getTenantBillingUrl(?Model $tenant = null, array $parameters = []): ?string
     {
         return $this->getCurrentContext()->getTenantBillingUrl($tenant ?? $this->getTenant(), $parameters);
@@ -256,11 +277,17 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantRegistrationPage();
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getTenantRegistrationUrl(array $parameters = []): ?string
     {
         return $this->getCurrentContext()->getTenantRegistrationUrl($parameters);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getLogoutUrl(array $parameters = []): string
     {
         return $this->getCurrentContext()->getLogoutUrl($parameters);

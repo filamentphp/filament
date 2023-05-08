@@ -113,6 +113,9 @@ trait HasAuth
         return $this->isEmailVerificationRequired;
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getEmailVerificationPromptUrl(array $parameters = []): ?string
     {
         if (! $this->hasEmailVerification()) {
@@ -132,6 +135,9 @@ trait HasAuth
         return "verified:{$this->getEmailVerificationPromptRouteName()}";
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getLoginUrl(array $parameters = []): ?string
     {
         if (! $this->hasLogin()) {
@@ -141,6 +147,9 @@ trait HasAuth
         return route("filament.{$this->getId()}.auth.login", $parameters);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getRegistrationUrl(array $parameters = []): ?string
     {
         if (! $this->hasRegistration()) {
@@ -150,6 +159,9 @@ trait HasAuth
         return route("filament.{$this->getId()}.auth.register", $parameters);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getRequestPasswordResetUrl(array $parameters = []): ?string
     {
         if (! $this->hasPasswordReset()) {
@@ -159,6 +171,9 @@ trait HasAuth
         return route("filament.{$this->getId()}.auth.password-reset.request", $parameters);
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
     {
         return URL::temporarySignedRoute(
@@ -174,6 +189,9 @@ trait HasAuth
         );
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
     {
         return URL::signedRoute(
@@ -188,6 +206,9 @@ trait HasAuth
         );
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getLogoutUrl(array $parameters = []): string
     {
         return route("filament.{$this->getId()}.auth.logout", $parameters);

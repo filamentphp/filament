@@ -129,6 +129,9 @@ trait HasTenancy
         return $this->tenantSlugAttribute;
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getTenantBillingUrl(Model $tenant, array $parameters = []): ?string
     {
         if (! $this->hasTenantBilling()) {
@@ -146,6 +149,9 @@ trait HasTenancy
         );
     }
 
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getTenantRegistrationUrl(array $parameters = []): ?string
     {
         if (! $this->hasTenantRegistration()) {
