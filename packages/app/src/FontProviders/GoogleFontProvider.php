@@ -10,7 +10,7 @@ class GoogleFontProvider implements Contracts\FontProvider
     public function getHtml(string $family, ?string $url = null): Htmlable
     {
         $family = urlencode($family);
-        $url ??= "https://fonts.googleapis.com/css2?family={$family}:wght@400;500;700&display=swap";
+        $url ??= "https://fonts.googleapis.com/css2?family={$family}:wght@400;500;600;700&display=swap";
 
         return new HtmlString("
             <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
