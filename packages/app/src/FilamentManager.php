@@ -267,7 +267,7 @@ class FilamentManager
     /**
      * @param  array<mixed>  $parameters
      */
-    public function getTenantBillingUrl(?Model $tenant = null, array $parameters = []): ?string
+    public function getTenantBillingUrl(array $parameters = [], ?Model $tenant = null): ?string
     {
         return $this->getCurrentContext()->getTenantBillingUrl($tenant ?? $this->getTenant(), $parameters);
     }
