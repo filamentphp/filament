@@ -206,9 +206,9 @@ class FilamentManager
         return $this->getCurrentContext()->getHomeUrl();
     }
 
-    public function getEmailVerificationPromptUrl(): ?string
+    public function getEmailVerificationPromptUrl(array $parameters = []): ?string
     {
-        return $this->getCurrentContext()->getEmailVerificationPromptUrl();
+        return $this->getCurrentContext()->getEmailVerificationPromptUrl($parameters);
     }
 
     public function getEmailVerifiedMiddleware(): string
@@ -216,29 +216,29 @@ class FilamentManager
         return $this->getCurrentContext()->getEmailVerifiedMiddleware();
     }
 
-    public function getLoginUrl(): ?string
+    public function getLoginUrl(array $parameters = []): ?string
     {
-        return $this->getCurrentContext()->getLoginUrl();
+        return $this->getCurrentContext()->getLoginUrl($parameters);
     }
 
-    public function getRegistrationUrl(): ?string
+    public function getRegistrationUrl(array $parameters = []): ?string
     {
-        return $this->getCurrentContext()->getRegistrationUrl();
+        return $this->getCurrentContext()->getRegistrationUrl($parameters);
     }
 
-    public function getRequestPasswordResetUrl(): ?string
+    public function getRequestPasswordResetUrl(array $parameters = []): ?string
     {
-        return $this->getCurrentContext()->getRequestPasswordResetUrl();
+        return $this->getCurrentContext()->getRequestPasswordResetUrl($parameters);
     }
 
-    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user): string
+    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
     {
-        return $this->getCurrentContext()->getVerifyEmailUrl($user);
+        return $this->getCurrentContext()->getVerifyEmailUrl($user, $parameters);
     }
 
-    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user): string
+    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
     {
-        return $this->getCurrentContext()->getResetPasswordUrl($token, $user);
+        return $this->getCurrentContext()->getResetPasswordUrl($token, $user, $parameters);
     }
 
     public function getTenantBillingProvider(): ?Billing\Providers\Contracts\Provider
@@ -246,9 +246,9 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantBillingProvider();
     }
 
-    public function getTenantBillingUrl(?Model $tenant = null): ?string
+    public function getTenantBillingUrl(?Model $tenant = null, array $parameters = []): ?string
     {
-        return $this->getCurrentContext()->getTenantBillingUrl($tenant ?? $this->getTenant());
+        return $this->getCurrentContext()->getTenantBillingUrl($tenant ?? $this->getTenant(), $parameters);
     }
 
     public function getTenantRegistrationPage(): ?string
@@ -256,14 +256,14 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantRegistrationPage();
     }
 
-    public function getTenantRegistrationUrl(): ?string
+    public function getTenantRegistrationUrl(array $parameters = []): ?string
     {
-        return $this->getCurrentContext()->getTenantRegistrationUrl();
+        return $this->getCurrentContext()->getTenantRegistrationUrl($parameters);
     }
 
-    public function getLogoutUrl(): string
+    public function getLogoutUrl(array $parameters = []): string
     {
-        return $this->getCurrentContext()->getLogoutUrl();
+        return $this->getCurrentContext()->getLogoutUrl($parameters);
     }
 
     public function getMaxContentWidth(): ?string
