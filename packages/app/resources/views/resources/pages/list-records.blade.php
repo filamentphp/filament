@@ -24,5 +24,9 @@
         </div>
     @endif
 
+    {{ filament()->renderHook('resource.pages.list-records.table.start') }}
+
     {{ $this->table }}
+
+    {{ filament()->renderHook('resource.pages.list-records.table.end') }}
 </x-filament::page>
