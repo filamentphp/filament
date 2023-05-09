@@ -25,9 +25,7 @@
                 $arrayState = implode(
                     ', ',
                     array_map(
-                        fn ($value) => $value instanceof \Filament\Support\Contracts\HasLabel
-                            ? $value->getLabel()
-                            : $value,
+                        fn ($value) => $value instanceof \Filament\Support\Contracts\HasLabel ? $value->getLabel() : $value,
                         $arrayState,
                     ),
                 );
