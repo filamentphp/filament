@@ -41,9 +41,9 @@ class SelectColumn extends Column implements Editable
      */
     public function getRules(): array
     {
-        return array_merge(
-            $this->baseGetRules(),
-            [Rule::in(array_keys($this->getOptions()))],
-        );
+        return [
+            ...$this->baseGetRules(),
+            Rule::in(array_keys($this->getOptions())),
+        ];
     }
 }

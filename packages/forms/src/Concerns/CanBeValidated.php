@@ -23,7 +23,10 @@ trait CanBeValidated
                     continue;
                 }
 
-                $attributes = array_merge($attributes, $container->getValidationAttributes());
+                $attributes = [
+                    ...$attributes,
+                    ...$container->getValidationAttributes(),
+                ];
             }
         }
 
@@ -47,7 +50,10 @@ trait CanBeValidated
                     continue;
                 }
 
-                $rules = array_merge($rules, $container->getValidationRules());
+                $rules = [
+                    ...$rules,
+                    ...$container->getValidationRules(),
+                ];
             }
         }
 

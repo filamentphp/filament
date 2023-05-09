@@ -179,13 +179,11 @@ trait HasAuth
         return URL::temporarySignedRoute(
             "filament.{$this->getId()}.auth.email-verification.verify",
             now()->addMinutes(config('auth.verification.expire', 60)),
-            array_merge(
-                [
-                    'id' => $user->getKey(),
-                    'hash' => sha1($user->getEmailForVerification()),
-                ],
-                $parameters,
-            ),
+            [
+                'id' => $user->getKey(),
+                'hash' => sha1($user->getEmailForVerification()),
+                ...$parameters,
+            ],
         );
     }
 
@@ -196,13 +194,11 @@ trait HasAuth
     {
         return URL::signedRoute(
             "filament.{$this->getId()}.auth.password-reset.reset",
-            array_merge(
-                [
-                    'email' => $user->getEmailForPasswordReset(),
-                    'token' => $token,
-                ],
-                $parameters,
-            ),
+            [
+                'email' => $user->getEmailForPasswordReset(),
+                'token' => $token,
+                ...$parameters,
+            ],
         );
     }
 

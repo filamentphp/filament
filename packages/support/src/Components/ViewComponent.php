@@ -124,7 +124,10 @@ abstract class ViewComponent extends Component implements Htmlable
      */
     public function viewData(array $data): static
     {
-        $this->viewData = array_merge($this->viewData, $data);
+        $this->viewData = [
+            ...$this->viewData,
+            ...$data,
+        ];
 
         return $this;
     }
@@ -162,13 +165,13 @@ abstract class ViewComponent extends Component implements Htmlable
     {
         return view(
             $this->getView(),
-            array_merge(
-                ['attributes' => new ComponentAttributeBag()],
-                $this->extractPublicProperties(),
-                $this->extractPublicMethods(),
-                isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
-                $this->viewData,
-            ),
+            [
+                'attributes' => new ComponentAttributeBag(),
+                ...$this->extractPublicProperties(),
+                ...$this->extractPublicMethods(),
+                ...isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
+                ...$this->viewData,
+            ],
         );
     }
 }

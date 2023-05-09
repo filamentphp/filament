@@ -83,10 +83,10 @@ trait InteractsWithTable
         }
 
         if (($this->tableFilters === null) && $shouldPersistFiltersInSession && session()->has($filtersSessionKey)) {
-            $this->tableFilters = array_merge(
-                $this->tableFilters ?? [],
-                session()->get($filtersSessionKey) ?? [],
-            );
+            $this->tableFilters = [
+                ...$this->tableFilters ?? [],
+                ...session()->get($filtersSessionKey) ?? [],
+            ];
         }
 
         $this->getTableFiltersForm()->fill($this->tableFilters);

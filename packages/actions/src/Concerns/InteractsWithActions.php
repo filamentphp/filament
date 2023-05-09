@@ -75,10 +75,10 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments(array_merge(
-            Arr::last($this->mountedActionsArguments),
-            $arguments,
-        ));
+        $action->arguments([
+            ...Arr::last($this->mountedActionsArguments),
+            ...$arguments,
+        ]);
 
         $form = $this->getMountedActionForm();
 

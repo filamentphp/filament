@@ -50,10 +50,10 @@ trait HasFormComponentActions
             return null;
         }
 
-        $action->arguments(array_merge(
-            Arr::last($this->mountedFormComponentActionsArguments ?? []),
-            $arguments,
-        ));
+        $action->arguments([
+            ...Arr::last($this->mountedFormComponentActionsArguments ?? []),
+            ...$arguments,
+        ]);
 
         $form = $this->getMountedFormComponentActionForm();
 

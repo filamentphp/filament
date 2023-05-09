@@ -56,7 +56,10 @@ class AssetManager
      */
     public function registerScriptData(array $data, string $package): void
     {
-        $this->scriptData[$package] = array_merge($this->scriptData[$package] ?? [], $data);
+        $this->scriptData[$package] = [
+            ...$this->scriptData[$package] ?? [],
+            ...$data,
+        ];
     }
 
     /**
@@ -101,7 +104,10 @@ class AssetManager
                 continue;
             }
 
-            $data = array_merge($data, $packageData);
+            $data = [
+                ...$data,
+                ...$packageData,
+            ];
         }
 
         return $data;

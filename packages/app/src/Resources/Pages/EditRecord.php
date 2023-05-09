@@ -90,10 +90,10 @@ class EditRecord extends Page
      */
     protected function refreshFormData(array $attributes): void
     {
-        $this->data = array_merge(
-            $this->data,
-            $this->getRecord()->only($attributes),
-        );
+        $this->data = [
+            ...$this->data,
+            ...$this->getRecord()->only($attributes),
+        ];
     }
 
     /**

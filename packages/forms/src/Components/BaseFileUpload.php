@@ -541,7 +541,7 @@ class BaseFileUpload extends Field
 
             $validator = Validator::make(
                 [$name => $files],
-                ["{$name}.*" => array_merge(['file'], parent::getValidationRules())],
+                ["{$name}.*" => ['file', ...parent::getValidationRules()]],
                 [],
                 ["{$name}.*" => $this->getValidationAttribute()],
             );
@@ -788,9 +788,10 @@ class BaseFileUpload extends Field
         $state = parent::getStateToDehydrate();
 
         if ($fileNamesStatePath = $this->getFileNamesStatePath()) {
-            $state = array_merge($state, [
+            $state = [
+                ...$state,
                 $fileNamesStatePath => $this->getStoredFileNames(),
-            ]);
+            ];
         }
 
         return $state;

@@ -101,10 +101,10 @@ class CheckTranslationsCommand extends Command
                     ->each(function ($keys, string $file) {
                         $this->table(
                             [$file, ''],
-                            array_merge(
-                                array_map(fn (string $key) => [$key, 'Missing'], $keys['missing']),
-                                array_map(fn (string $key) => [$key, 'Removed'], $keys['removed']),
-                            ),
+                            [
+                                ...array_map(fn (string $key) => [$key, 'Missing'], $keys['missing']),
+                                ...array_map(fn (string $key) => [$key, 'Removed'], $keys['removed']),
+                            ],
                             'box',
                         );
 

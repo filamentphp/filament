@@ -15,11 +15,11 @@
         $name = $icon->name;
     }
 
-    $class = array_merge(
-        $group?->class ?? [],
-        $icon?->class ?? [],
-        Arr::wrap($class),
-    );
+    $class = [
+        ...$group?->class ?? [],
+        ...$icon?->class ?? [],
+        ...Arr::wrap($class),
+    ];
 
     $color = $icon?->color ?? $group?->color ?? $color;
 

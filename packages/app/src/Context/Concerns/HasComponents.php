@@ -54,7 +54,10 @@ trait HasComponents
      */
     public function pages(array $pages): static
     {
-        $this->pages = array_merge($this->pages, $pages);
+        $this->pages = [
+            ...$this->pages,
+            ...$pages,
+        ];
 
         foreach ($pages as $page) {
             $this->queueLivewireComponentForRegistration($page);
@@ -68,7 +71,10 @@ trait HasComponents
      */
     public function resources(array $resources): static
     {
-        $this->resources = array_merge($this->resources, $resources);
+        $this->resources = [
+            ...$this->resources,
+            ...$resources,
+        ];
 
         return $this;
     }
@@ -95,7 +101,10 @@ trait HasComponents
      */
     public function widgets(array $widgets): static
     {
-        $this->widgets = array_merge($this->widgets, $widgets);
+        $this->widgets = [
+            ...$this->widgets,
+            ...$widgets,
+        ];
 
         foreach ($widgets as $widget) {
             $this->queueLivewireComponentForRegistration($widget);

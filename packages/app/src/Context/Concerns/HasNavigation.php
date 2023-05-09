@@ -60,7 +60,10 @@ trait HasNavigation
      */
     public function navigationGroups(array $groups): static
     {
-        $this->navigationGroups = array_merge($this->navigationGroups, $groups);
+        $this->navigationGroups = [
+            ...$this->navigationGroups,
+            ...$groups,
+        ];
 
         return $this;
     }
@@ -70,7 +73,10 @@ trait HasNavigation
      */
     public function navigationItems(array $items): static
     {
-        $this->navigationItems = array_merge($this->navigationItems, $items);
+        $this->navigationItems = [
+            ...$this->navigationItems,
+            ...$items,
+        ];
 
         return $this;
     }
@@ -130,10 +136,10 @@ trait HasNavigation
                 $groupsToSearch = $registeredGroups;
 
                 if (Arr::first($registeredGroups) instanceof NavigationGroup) {
-                    $groupsToSearch = array_merge(
-                        array_keys($registeredGroups),
-                        array_map(fn (NavigationGroup $registeredGroup): string => $registeredGroup->getLabel(), array_values($registeredGroups)),
-                    );
+                    $groupsToSearch = [
+                        ...array_keys($registeredGroups),
+                        ...array_map(fn (NavigationGroup $registeredGroup): string => $registeredGroup->getLabel(), array_values($registeredGroups)),
+                    ];
                 }
 
                 $sort = array_search(

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "0cc782bc14ec9d605375d55f9d00ba0c",
+    "content-hash": "ae6cb76b5cd1d6a69cd3abdab2b911a6",
     "packages": [],
     "packages-dev": [
         {
@@ -132,16 +132,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.269.6",
+            "version": "3.269.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "343f7088f246d4667172e69d5f2bf440496bb708"
+                "reference": "9e9dc24c3c748c91ee5a8c9e058b5ce95fa19dc4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/343f7088f246d4667172e69d5f2bf440496bb708",
-                "reference": "343f7088f246d4667172e69d5f2bf440496bb708",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/9e9dc24c3c748c91ee5a8c9e058b5ce95fa19dc4",
+                "reference": "9e9dc24c3c748c91ee5a8c9e058b5ce95fa19dc4",
                 "shasum": ""
             },
             "require": {
@@ -221,9 +221,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.269.6"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.269.8"
             },
-            "time": "2023-05-04T18:22:48+00:00"
+            "time": "2023-05-08T18:20:53+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -1490,7 +1490,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/support",
-                "reference": "8026a4d53cf380ff22de75da0b2625cb75cc2303"
+                "reference": "b95b98af33ef5e9f7994ea28857079951bad8249"
             },
             "require": {
                 "blade-ui-kit/blade-icons": "^1.4",
@@ -1498,7 +1498,7 @@
                 "illuminate/contracts": "^9.0|^10.0",
                 "illuminate/support": "^9.0|^10.0",
                 "illuminate/view": "^9.0|^10.0",
-                "php": "^8.0",
+                "php": "^8.1",
                 "spatie/color": "^1.5",
                 "spatie/invade": "^1.0",
                 "spatie/laravel-package-tools": "^1.9",
@@ -7072,16 +7072,16 @@
         },
         {
             "name": "sebastian/diff",
-            "version": "4.0.4",
+            "version": "4.0.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/diff.git",
-                "reference": "3461e3fccc7cfdfc2720be910d3bd73c69be590d"
+                "reference": "74be17022044ebaaecfdf0c5cd504fc9cd5a7131"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/3461e3fccc7cfdfc2720be910d3bd73c69be590d",
-                "reference": "3461e3fccc7cfdfc2720be910d3bd73c69be590d",
+                "url": "https://api.github.com/repos/sebastianbergmann/diff/zipball/74be17022044ebaaecfdf0c5cd504fc9cd5a7131",
+                "reference": "74be17022044ebaaecfdf0c5cd504fc9cd5a7131",
                 "shasum": ""
             },
             "require": {
@@ -7126,7 +7126,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/diff/issues",
-                "source": "https://github.com/sebastianbergmann/diff/tree/4.0.4"
+                "source": "https://github.com/sebastianbergmann/diff/tree/4.0.5"
             },
             "funding": [
                 {
@@ -7134,7 +7134,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2020-10-26T13:10:38+00:00"
+            "time": "2023-05-07T05:35:17+00:00"
         },
         {
             "name": "sebastian/environment",
@@ -7933,16 +7933,16 @@
         },
         {
             "name": "spatie/image",
-            "version": "2.2.5",
+            "version": "2.2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/image.git",
-                "reference": "c78e2dbdbced9c1673800e5b813cc8a8127bc5ac"
+                "reference": "f72ca52acd77ca03b7843a0f86e2411ce90aecfc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/image/zipball/c78e2dbdbced9c1673800e5b813cc8a8127bc5ac",
-                "reference": "c78e2dbdbced9c1673800e5b813cc8a8127bc5ac",
+                "url": "https://api.github.com/repos/spatie/image/zipball/f72ca52acd77ca03b7843a0f86e2411ce90aecfc",
+                "reference": "f72ca52acd77ca03b7843a0f86e2411ce90aecfc",
                 "shasum": ""
             },
             "require": {
@@ -7986,7 +7986,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/image/tree/2.2.5"
+                "source": "https://github.com/spatie/image/tree/2.2.6"
             },
             "funding": [
                 {
@@ -7998,7 +7998,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-01-19T17:06:04+00:00"
+            "time": "2023-05-06T10:20:33+00:00"
         },
         {
             "name": "spatie/image-optimizer",
@@ -8447,16 +8447,16 @@
         },
         {
             "name": "spatie/laravel-translatable",
-            "version": "6.5.0",
+            "version": "6.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-translatable.git",
-                "reference": "732e46b8c664a6da6d5d14751185c1844e2b5bc1"
+                "reference": "b8f102492f816608d832cfe9e420da6a856312cf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-translatable/zipball/732e46b8c664a6da6d5d14751185c1844e2b5bc1",
-                "reference": "732e46b8c664a6da6d5d14751185c1844e2b5bc1",
+                "url": "https://api.github.com/repos/spatie/laravel-translatable/zipball/b8f102492f816608d832cfe9e420da6a856312cf",
+                "reference": "b8f102492f816608d832cfe9e420da6a856312cf",
                 "shasum": ""
             },
             "require": {
@@ -8517,7 +8517,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-translatable/issues",
-                "source": "https://github.com/spatie/laravel-translatable/tree/6.5.0"
+                "source": "https://github.com/spatie/laravel-translatable/tree/6.5.1"
             },
             "funding": [
                 {
@@ -8525,7 +8525,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-04-20T08:54:14+00:00"
+            "time": "2023-05-06T10:22:13+00:00"
         },
         {
             "name": "spatie/macroable",
@@ -12054,10 +12054,10 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-intl": "*",
         "composer-runtime-api": "^2.1"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
