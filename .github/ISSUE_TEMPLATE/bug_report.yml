@@ -44,7 +44,7 @@ body:
     attributes:
       label: Laravel Version
       description: Please provide the full Laravel version of your project.
-      placeholder: v8.0.0
+      placeholder: v9.0.0
     validations:
       required: true
   - type: input
@@ -58,7 +58,7 @@ body:
     attributes:
       label: PHP Version
       description: Please provide the full PHP version of your server.
-      placeholder: PHP 8.0.0
+      placeholder: PHP 8.1.0
     validations:
       required: true
   - type: textarea

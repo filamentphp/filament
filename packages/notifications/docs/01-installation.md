@@ -8,8 +8,8 @@ title: Installation
 
 Filament has a few requirements to run:
 
-- PHP 8.0+
-- Laravel v8.0+
+- PHP 8.1+
+- Laravel v9.0+
 - Livewire v2.0+
 
 First, require the actions package using Composer:
