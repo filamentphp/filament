@@ -35,7 +35,7 @@
         "spatie/laravel-ray": "^1.29",
         "spatie/laravel-tags": "^4.2",
         "staudenmeir/belongs-to-through": "^2.5",
-        "staudenmeir/eloquent-has-many-deep":"^1.7",
+        "staudenmeir/eloquent-has-many-deep": "^1.7",
         "symplify/monorepo-builder": "^10.0",
         "tgalopin/html-sanitizer": "^1.5"
     },
