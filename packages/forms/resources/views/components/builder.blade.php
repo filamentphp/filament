@@ -319,7 +319,7 @@
                             </header>
                         @endif
 
-                        <div class="p-6" x-show="! isCollapsed">
+                        <div x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed, 'p-6': !isCollapsed}">
                             {{ $item }}
                         </div>
 
