@@ -10,6 +10,11 @@
         $isProse = $isProse();
 
         $arrayState = $getState();
+
+        if ($arrayState instanceof \Illuminate\Support\Collection) {
+            $arrayState = $arrayState->all();
+        }
+
         if (is_array($arrayState)) {
             if ($listLimit = $getListLimit()) {
                 $limitedArrayState = array_slice($arrayState, $listLimit);
@@ -17,7 +22,13 @@
             }
 
             if ((! $isListWithLineBreaks) && (! $isBadge)) {
-                $arrayState = implode(', ', $arrayState);
+                $arrayState = implode(
+                    ', ',
+                    array_map(
+                        fn ($value) => $value instanceof \Filament\Support\Contracts\HasLabel ? $value->getLabel() : $value,
+                        $arrayState,
+                    ),
+                );
             }
         }
         $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
