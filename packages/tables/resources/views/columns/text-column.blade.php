@@ -59,15 +59,15 @@
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                     <div @class([
                         'inline-flex items-center space-x-1 rtl:space-x-reverse',
-                        'justify-center min-h-6 px-2 py-0.5 rounded-xl whitespace-nowrap' => $isBadge,
+                        'filament-tables-text-column-badge justify-center min-h-6 px-2 py-0.5 rounded-xl whitespace-nowrap' => $isBadge,
                         'whitespace-normal' => $canWrap,
                         ($isBadge ? match ($color = $getColor($state)) {
-                            'danger' => 'text-danger-700 bg-danger-500/10 dark:text-danger-500',
-                            'gray', null => 'text-gray-700 bg-gray-500/10 dark:text-gray-300 dark:bg-gray-500/20',
-                            'primary' => 'text-primary-700 bg-primary-500/10 dark:text-primary-500',
-                            'secondary' => 'text-secondary-700 bg-secondary-500/10 dark:text-secondary-500',
-                            'success' => 'text-success-700 bg-success-500/10 dark:text-success-500',
-                            'warning' => 'text-warning-700 bg-warning-500/10 dark:text-warning-500',
+                            'danger' => 'filament-tables-text-column-badge-color-danger text-danger-700 bg-danger-500/10 dark:text-danger-500',
+                            'gray', null => 'filament-tables-text-column-badge-color-gray text-gray-700 bg-gray-500/10 dark:text-gray-300 dark:bg-gray-500/20',
+                            'primary' => 'filament-tables-text-column-badge-color-primary text-primary-700 bg-primary-500/10 dark:text-primary-500',
+                            'secondary' => 'filament-tables-text-column-badge-color-secondary text-secondary-700 bg-secondary-500/10 dark:text-secondary-500',
+                            'success' => 'filament-tables-text-column-badge-color-success text-success-700 bg-success-500/10 dark:text-success-500',
+                            'warning' => 'filament-tables-text-column-badge-color-warning text-warning-700 bg-warning-500/10 dark:text-warning-500',
                             default => $color,
                         } : null),
                         ((! ($isBadge || $isClickable)) ? match ($color = $getColor($state)) {

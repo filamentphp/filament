@@ -4,7 +4,7 @@
 
 <div {{ $attributes->class(['filament-tables-search-input']) }}>
     <label class="relative flex items-center group">
-        <span class="absolute inset-y-0 start-0 flex items-center justify-center w-9 h-9 pointer-events-none">
+        <span class="filament-tables-search-input-icon absolute inset-y-0 start-0 flex items-center justify-center w-9 h-9 pointer-events-none">
             <x-filament::icon
                 name="heroicon-m-magnifying-glass"
                 alias="filament-tables::search-input.prefix"
