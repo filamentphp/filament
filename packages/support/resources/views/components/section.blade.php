@@ -7,6 +7,8 @@
     'description' => null,
     'heading',
     'icon' => null,
+    'iconColor' => null,
+    'iconSize' => 'md',
 ])
 
 <section
@@ -35,102 +37,95 @@
     @endif
     {{ $attributes->class([
         'filament-section-component',
-        'rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => ! $aside,
-        'grid grid-cols-1' => $aside,
-        'md:grid-cols-2' => $aside && ! $compact,
-        'md:grid-cols-3' => $aside && $compact,
-        'md:order-last' => $contentBefore,
+        match ($aside) {
+            true => 'grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2',
+            false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-white/20',
+        },
     ]) }}
 >
     <div
-        @class([
-            'filament-section-header-wrapper flex rtl:space-x-reverse overflow-hidden rounded-t-xl',
-            'min-h-[40px]' => $compact,
-            'min-h-[56px]' => ! $compact,
-            'pb-4' => $aside,
-            'pe-6' => $aside && ! $contentBefore,
-            'ps-6' => $aside && $contentBefore,
-            'px-4 py-2 items-center bg-gray-100 dark:bg-gray-900' => ! $aside,
-        ])
         @if ($collapsible)
-            x-bind:class="{ 'rounded-b-xl': isCollapsed }"
-            x-on:click="isCollapsed = ! isCollapsed"
+            x-on:click="isCollapsed = !isCollapsed"
         @endif
-    >
-        <div @class([
-            'filament-section-header flex-1 space-y-1',
+        @class([
+            'filament-section-component-header-wrapper flex items-center overflow-hidden',
             'cursor-pointer' => $collapsible,
-        ])>
-            <h3 @class([
-                'font-medium leading-6 pointer-events-none flex flex-row items-center',
-                'text-lg'=> ! $compact || $aside,
-            ])>
+            match ($compact) {
+                true => 'p-4',
+                false => 'p-6',
+            } => ! $aside,
+        ])
+    >
+        <div class="filament-section-component-header grid flex-1 gap-y-1">
+            <div class="filament-section-component-header-heading-wrapper flex items-center gap-x-2">
                 @if ($icon)
-                    <x-dynamic-component
-                        :component="$icon"
-                        @class([
-                            'me-1',
-                            'h-4 w-4' => $compact && ! $aside,
-                            'h-6 w-6' => ! $compact || $aside,
-                        ])
+                    <x-filament::icon
+                        :name="$icon"
+                        alias="support::section.icon"
+                        :color="match ($iconColor) {
+                            'danger' => 'text-danger-400',
+                            'gray', null => 'text-gray-400',
+                            'primary' => 'text-primary-400',
+                            'secondary' => 'text-secondary-400',
+                            'success' => 'text-success-400',
+                            'warning' => 'text-warning-400',
+                            default => $iconColor,
+                        }"
+                        :size="match ($iconSize) {
+                            'sm' => 'h-4 w-4',
+                            'md' => 'h-5 w-5',
+                            'lg' => 'h-6 w-6',
+                            default => $iconSize,
+                        }"
+                        class="filament-section-component-header-icon"
                     />
                 @endif
 
-                {{ $heading }}
-            </h3>
+                <h3 class="filament-section-component-header-heading text-base font-semibold leading-6">
+                    {{ $heading }}
+                </h3>
+            </div>
 
             @if ($description?->isNotEmpty())
-                <p @class([
-                    'text-gray-500',
-                    'text-sm' => $compact && ! $aside,
-                    'text-base' => ! $compact || $aside,
-                ])>
+                <p class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-400">
                     {{ $description }}
                 </p>
             @endif
         </div>
 
         @if ($collapsible)
-            <button
-                x-on:click.stop="isCollapsed = ! isCollapsed"
-                x-bind:class="{
-                    '-rotate-180': !isCollapsed,
-                }"
-                type="button"
-                @class([
-                    'flex items-center justify-center transform rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
-                    'w-10 h-10' => ! $compact,
-                    'w-8 h-8 -my-1' => $compact,
-                    '-rotate-180' => ! $collapsed,
-                ])
-            >
-                <x-filament::icon
-                    name="heroicon-m-chevron-down"
-                    alias="support::section.buttons.collapse"
-                    color="text-primary-500"
-                    :size="$compact ? 'h-5 w-5' : 'h-7 w-7'"
-                />
-            </button>
+            <x-filament::icon-button
+                color="gray"
+                icon="heroicon-m-chevron-down"
+                icon-alias="support::section.buttons.collapse"
+                x-on:click.stop="isCollapsed = !isCollapsed"
+                x-bind:class="{ 'rotate-180': !isCollapsed }"
+                class="-my-2.5 -me-2.5"
+            />
         @endif
     </div>
 
     <div
         @if ($collapsible)
-            x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed }"
-            x-bind:aria-expanded="(! isCollapsed).toString()"
-            @if ($collapsed) x-cloak @endif
+            x-bind:aria-expanded="(!isCollapsed).toString()"
+            @if ($collapsed)
+                x-cloak
+            @endif
+            x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
         @endif
         @class([
-             'filament-section-content-wrapper',
-             'col-span-2' => $aside && $compact,
-             'md:order-first' => $contentBefore,
-         ])
+            'filament-section-component-content-wrapper',
+            'border-t border-gray-100 dark:border-white/10' => ! $aside,
+            'md:order-first' => $contentBefore,
+        ])
     >
         <div @class([
-            'filament-section-content',
-            'rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10' => $aside,
-            'p-6' => ! $compact || $aside,
-            'p-4' => $compact && ! $aside,
+            'filament-section-component-content',
+            'rounded-xl bg-white shadow-sm ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-white/20' => $aside,
+            match ($compact) {
+                true => 'p-4',
+                false => 'p-6',
+            },
         ])>
             {{ $slot }}
         </div>
