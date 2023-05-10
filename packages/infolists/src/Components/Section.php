@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Concerns\HasIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
@@ -13,6 +14,7 @@ class Section extends Component
     use Concerns\CanBeCompacted;
     use Concerns\EntanglesStateWithSingularRelationship;
     use HasExtraAlpineAttributes;
+    use HasIcon;
 
     /**
      * @var view-string
@@ -24,8 +26,6 @@ class Section extends Component
     protected string | Htmlable | Closure $heading;
 
     protected bool | Closure | null $isAside = null;
-
-    protected string | Closure | null $icon = null;
 
     protected bool | Closure $isContentBefore = false;
 
@@ -70,13 +70,6 @@ class Section extends Component
         return $this;
     }
 
-    public function icon(string | Closure | null $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
     public function getDescription(): string | Htmlable | null
     {
         return $this->evaluate($this->description);
@@ -105,11 +98,6 @@ class Section extends Component
     public function isAside(): bool
     {
         return (bool) ($this->evaluate($this->isAside) ?? false);
-    }
-
-    public function getIcon(): ?string
-    {
-        return $this->evaluate($this->icon);
     }
 
     public function contentBefore(bool | Closure $condition = true): static
