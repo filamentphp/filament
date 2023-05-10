@@ -51,8 +51,8 @@
             'filament-section-component-header-wrapper flex items-center overflow-hidden',
             'cursor-pointer' => $collapsible,
             match ($compact) {
-                true => 'p-4',
-                false => 'p-6',
+                true => 'px-4 py-3',
+                false => 'px-6 py-5',
             } => ! $aside,
         ])
     >
@@ -123,8 +123,8 @@
             'filament-section-component-content',
             'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20' => $aside,
             match ($compact) {
-                true => 'p-4',
-                false => 'p-6',
+                true => 'px-4 py-3',
+                false => 'px-6 py-5',
             },
         ])>
             {{ $slot }}
