@@ -33,7 +33,7 @@
                     'danger' => 'ring-danger-500/50',
                     'warning' => 'ring-warning-500/50',
                     'success' => 'ring-success-500/50',
-                    default => 'ring-gray-900/5 dark:ring-white/20',
+                    default => 'ring-gray-950/5 dark:ring-white/20',
                 },
             ],
         },
