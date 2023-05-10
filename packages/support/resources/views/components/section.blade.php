@@ -7,6 +7,8 @@
     'description' => null,
     'heading',
     'icon' => null,
+    'iconColor' => null,
+    'iconSize' => 'md',
 ])
 
 <section
@@ -58,9 +60,23 @@
             <div class="filament-section-component-header-heading-wrapper flex items-center gap-x-2">
                 @if ($icon)
                     <x-filament::icon
-                        color="text-gray-500 dark:text-gray-400"
                         :name="$icon"
-                        size="h-6 w-6"
+                        alias="support::section.icon"
+                        :color="match ($iconColor) {
+                            'danger' => 'text-danger-400',
+                            'gray', null => 'text-gray-400',
+                            'primary' => 'text-primary-400',
+                            'secondary' => 'text-secondary-400',
+                            'success' => 'text-success-400',
+                            'warning' => 'text-warning-400',
+                            default => $iconColor,
+                        }"
+                        :size="match ($iconSize) {
+                            'sm' => 'h-4 w-4',
+                            'md' => 'h-5 w-5',
+                            'lg' => 'h-6 w-6',
+                            default => $iconSize,
+                        }"
                         class="filament-section-component-header-icon"
                     />
                 @endif
