@@ -41,11 +41,10 @@ class AssetManager
             $asset->package($package);
 
             match (true) {
+                $asset instanceof Theme => $this->themes[$asset->getId()] = $asset,
                 $asset instanceof AlpineComponent => $this->alpineComponents[$package][] = $asset,
                 $asset instanceof Css => $this->styles[$package][] = $asset,
                 $asset instanceof Js => $this->scripts[$package][] = $asset,
-                /** @phpstan-ignore-next-line */
-                $asset instanceof Theme => $this->themes[$asset->getId()] = $asset,
                 default => null,
             };
         }
