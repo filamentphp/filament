@@ -40,12 +40,12 @@ class AssetManager
         foreach ($assets as $asset) {
             $asset->package($package);
 
-            match ($asset::class) {
-                AlpineComponent::class => $this->alpineComponents[$package][] = $asset,
-                Css::class => $this->styles[$package][] = $asset,
-                Js::class => $this->scripts[$package][] = $asset,
+            match (true) {
+                $asset instanceof AlpineComponent => $this->alpineComponents[$package][] = $asset,
+                $asset instanceof Css => $this->styles[$package][] = $asset,
+                $asset instanceof Js => $this->scripts[$package][] = $asset,
                 /** @phpstan-ignore-next-line */
-                Theme::class => $this->themes[$asset->getId()] = $asset,
+                $asset instanceof Theme => $this->themes[$asset->getId()] = $asset,
                 default => null,
             };
         }
