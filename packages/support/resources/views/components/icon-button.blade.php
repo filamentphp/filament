@@ -20,7 +20,7 @@
     $iconSize ??= $size;
 
     $buttonClasses = [
-        'filament-icon-button flex items-center justify-center relative outline-none disabled:opacity-70 disabled:pointer-events-none',
+        'filament-icon-button relative flex items-center justify-center outline-none transition disabled:pointer-events-none disabled:opacity-70',
         'rounded-full hover:bg-gray-500/5 dark:hover:bg-gray-300/5' => ! $inline,
         match ($color) {
             'danger' => 'text-danger-500',
