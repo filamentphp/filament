@@ -23,7 +23,7 @@
                 default => $width,
             },
         ])>
-            <div class="filament-card-layout-card relative space-y-4 rounded-xl bg-white/50 p-8 shadow-2xl ring-1 ring-gray-900/10 backdrop-blur-xl dark:bg-gray-900/50 dark:ring-gray-50/10">
+            <div class="filament-card-layout-card relative space-y-4 rounded-xl bg-white/50 p-8 shadow-2xl ring-1 ring-gray-900/5 backdrop-blur-xl dark:bg-gray-900/50 dark:ring-white/20">
                 @if ($livewire->hasLogo())
                     <div class="flex justify-center w-full">
                         <x-filament::logo />

@@ -5,7 +5,7 @@
     'heading' => null,
 ])
 
-<div {{ $attributes->class(['filament-card space-y-2 rounded-xl bg-white p-2 shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10']) }}>
+<div {{ $attributes->class(['filament-card space-y-2 rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-white/20']) }}>
     @if ($actions || $header || $heading)
         <div class="px-4 py-2">
             @if ($header)
