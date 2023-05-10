@@ -71,7 +71,7 @@
             </div>
 
             @if ($description?->isNotEmpty())
-                <p class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-500">
+                <p class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-400">
                     {{ $description }}
                 </p>
             @endif
