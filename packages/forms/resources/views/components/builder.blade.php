@@ -87,7 +87,7 @@
 
                             setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
                         "
-                        class="filament-forms-builder-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-white/20"
+                        class="filament-forms-builder-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
                     >
                         @if ($reorderAction || $hasBlockLabels || $deleteAction || $isCollapsible || $isCloneable)
                             <header

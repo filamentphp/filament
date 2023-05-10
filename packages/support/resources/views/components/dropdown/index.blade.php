@@ -43,7 +43,7 @@
             style="max-height: {{ $maxHeight }}"
         @endif
         @class([
-            'filament-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-900/5 transition dark:divide-gray-700 dark:bg-gray-800 dark:ring-white/20',
+            'filament-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-gray-700 dark:bg-gray-800 dark:ring-white/20',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'sm' => 'max-w-sm',
