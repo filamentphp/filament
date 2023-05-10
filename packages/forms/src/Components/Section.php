@@ -3,7 +3,10 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Concerns\HasHeading;
+use Filament\Support\Concerns\HasIcon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
@@ -12,20 +15,17 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     use Concerns\CanBeCollapsed;
     use Concerns\CanBeCompacted;
     use Concerns\EntanglesStateWithSingularRelationship;
+    use HasDescription;
     use HasExtraAlpineAttributes;
+    use HasHeading;
+    use HasIcon;
 
     /**
      * @var view-string
      */
     protected string $view = 'filament-forms::components.section';
 
-    protected string | Htmlable | Closure | null $description = null;
-
-    protected string | Htmlable | Closure $heading;
-
     protected bool | Closure | null $isAside = null;
-
-    protected string | Closure | null $icon = null;
 
     protected bool | Closure $isFormBefore = false;
 
@@ -49,42 +49,11 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         $this->columnSpan('full');
     }
 
-    public function description(string | Htmlable | Closure | null $description = null): static
-    {
-        $this->description = $description;
-
-        return $this;
-    }
-
-    public function heading(string | Htmlable | Closure $heading): static
-    {
-        $this->heading = $heading;
-
-        return $this;
-    }
-
     public function aside(bool | Closure | null $condition = true): static
     {
         $this->isAside = $condition;
 
         return $this;
-    }
-
-    public function icon(string | Closure | null $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
-    public function getDescription(): string | Htmlable | null
-    {
-        return $this->evaluate($this->description);
-    }
-
-    public function getHeading(): string | Htmlable
-    {
-        return $this->evaluate($this->heading);
     }
 
     public function getId(): ?string
@@ -110,11 +79,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     public function isAside(): bool
     {
         return (bool) ($this->evaluate($this->isAside) ?? false);
-    }
-
-    public function getIcon(): ?string
-    {
-        return $this->evaluate($this->icon);
     }
 
     public function formBefore(bool | Closure $condition = true): static

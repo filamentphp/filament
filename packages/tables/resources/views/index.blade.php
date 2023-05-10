@@ -216,7 +216,7 @@
                 {{ $header }}
             @elseif ($heading || $description || $headerActions)
                 <div @class([
-                    'filament-tables-header-container-content px-2 pt-2',
+                    'filament-tables-header-hr-wrapper px-2 pt-2',
                     'hidden' => ! ($heading || $description) && $isReordering,
                 ])>
                     <x-filament-tables::header
