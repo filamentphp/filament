@@ -5,7 +5,7 @@
 ])
 
 <x-filament::layouts.base :livewire="$livewire">
-    <div class="filament-card-layout flex items-center justify-center min-h-screen bg-gray-100 text-gray-900 py-14 dark:bg-gray-900 dark:text-white">
+    <div class="filament-card-layout flex items-center justify-center min-h-screen py-14">
         <div @class([
             'w-screen px-6 space-y-8 md:mt-0 md:px-2',
             match ($width = $livewire->getCardWidth()) {

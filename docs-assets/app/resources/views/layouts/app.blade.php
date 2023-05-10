@@ -18,7 +18,7 @@
         <link href="https://fonts.bunny.net/css?family=be-vietnam-pro:400,500,700&amp;display=swap" rel="stylesheet">
     </head>
 
-    <body class="antialiased bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
+    <body class="antialiased bg-gray-50 text-gray-900 dark:text-white dark:bg-gray-900">
         {{ $slot }}
 
         @livewire('notifications')
