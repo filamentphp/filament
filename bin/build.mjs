@@ -28,7 +28,7 @@ const esm = {
     sourcesContent: shouldWatch,
     treeShaking: true, //removes unused code
     target: ['es2020'], //or es2015? what should Filament support?
-    minify: shouldWatch, //includes whitespace, identifiers and syntax
+    minify: !shouldWatch, //includes whitespace, identifiers and syntax
     loader: { // convert image urls to embedded images, no need to publish css images
         '.jpg': 'dataurl',
         '.png': 'dataurl',
@@ -89,12 +89,6 @@ formComponents.forEach((cmp) => {
 
 compile({
     ...esm,
-    entryPoints: [`./packages/support/resources/js/async-alpine.js`],
-    outfile: `./packages/support/dist/async-alpine.js`,
-})
-
-compile({
-    ...esm,
     entryPoints: [`./packages/widgets/resources/js/components/chart.js`],
     outfile: `./packages/widgets/dist/components/chart.js`,
 })
@@ -122,6 +116,12 @@ compile({
     ...invoked,
     entryPoints: [`./packages/app/resources/js/echo.js`],
     outfile: `./packages/app/dist/echo.js`,
+})
+
+compile({
+    ...invoked,
+    entryPoints: [`./node_modules/async-alpine/dist/async-alpine.script.js`],
+    outfile: `./packages/support/dist/async-alpine.js`,
 })
 
 //--------------------------------------------------------------------------------------------------
