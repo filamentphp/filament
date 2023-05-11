@@ -7,7 +7,7 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
-import FilePondPluginImageEdit from "filepond-plugin-image-edit";
+import FilePondPluginImageEdit from 'filepond-plugin-image-edit'
 import Cropper from 'cropperjs'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
@@ -178,7 +178,7 @@ export default function fileUploadFormComponent({
                 },
                 allowImageEdit: isCroppable,
                 imageEditEditor: {
-                    open: (file, instructions)  => this.loadCropper(file),
+                    open: (file, instructions) => this.loadCropper(file),
                     onconfirm: (result) => {},
                     oncancel: () => this.cancelCropper(),
                     onclose: () => this.cancelCropper(),
@@ -311,8 +311,8 @@ export default function fileUploadFormComponent({
                 ],
                 crop: function (e) {
                     updateCropperInputs(e.detail)
-                }
-            });
+                },
+            })
         },
 
         cancelCropper() {
@@ -321,62 +321,67 @@ export default function fileUploadFormComponent({
         },
 
         loadCropper(file) {
-            if(disabled || !isCroppable) return;
-            if (file == null) return;
+            if (disabled || !isCroppable) return
+            if (file == null) return
 
-            this.editingFile = file;
+            this.editingFile = file
 
-            const reader = new FileReader();
+            const reader = new FileReader()
             reader.onload = (e) => {
-                this.showCropper = true;
-                this.bindCropper(e.target.result);
-            };
-            reader.readAsDataURL(file);
+                this.showCropper = true
+                this.bindCropper(e.target.result)
+            }
+            reader.readAsDataURL(file)
         },
 
         saveCropper() {
-            if(disabled || !isCroppable) return;
-            this.cropper.getCroppedCanvas({
-                width: imageResizeTargetWidth,
-                height: imageResizeTargetHeight,
-                fillColor: fillColor,
-                imageSmoothingEnabled: true,
-                imageSmoothingQuality: 'high',
-            }).toBlob((croppedImage) => {
+            if (disabled || !isCroppable) return
+            this.cropper
+                .getCroppedCanvas({
+                    width: imageResizeTargetWidth,
+                    height: imageResizeTargetHeight,
+                    fillColor: fillColor,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                })
+                .toBlob((croppedImage) => {
+                    //if editingFile.type is svg set it to png, because a Blob will never return svg
+                    const fileType =
+                        this.editingFile.type === 'image/svg+xml'
+                            ? 'image/png'
+                            : this.editingFile.type
 
-                //if editingFile.type is svg set it to png, because a Blob will never return svg
-                const fileType = this.editingFile.type === 'image/svg+xml' ? 'image/png' : this.editingFile.type;
+                    const file = new File(
+                        [croppedImage],
+                        this.editingFile.name,
+                        {
+                            type: fileType,
+                            lastModified: new Date().getTime(),
+                        },
+                    )
 
-                const file = new File(
-                    [croppedImage],
-                    this.editingFile.name,
-                    {
-                        type: fileType,
-                        lastModified: new Date().getTime(),
-                    }
-                );
+                    //get the filepond file object from the current editing file
+                    const filepondFile = this.pond
+                        .getFiles()
+                        .find((f) => f.filename === this.editingFile.name)
 
-                //get the filepond file object from the current editing file
-                const filepondFile = this.pond.getFiles().find((f) => f.filename === this.editingFile.name);
+                    //remove the filepond file object
+                    this.pond.removeFile(filepondFile.id)
 
-                //remove the filepond file object
-                this.pond.removeFile(filepondFile.id);
-
-                //wait for the filepond file object to be removed
-                this.$nextTick(() => {
-                    this.pond.addFile(file).then(() => {
-                        this.cancelCropper();
-                    });
-                });
-
-            }, this.editingFile.type);
+                    //wait for the filepond file object to be removed
+                    this.$nextTick(() => {
+                        this.pond.addFile(file).then(() => {
+                            this.cancelCropper()
+                        })
+                    })
+                }, this.editingFile.type)
         },
 
         bindCropper(src) {
             //avoid problems with cropper container not being visible when binding
             setTimeout(() => {
-                this.cropper.replace(src);
-            }, 200);
+                this.cropper.replace(src)
+            }, 200)
         },
 
         destroy: function () {

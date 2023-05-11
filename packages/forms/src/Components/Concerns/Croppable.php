@@ -59,7 +59,7 @@ trait Croppable
     /** src: https://github.com/fengyuanchen/cropperjs#viewmode */
     public function viewMode(int $mode): self
     {
-        if(in_array($mode, [0, 1, 2, 3])) {
+        if (in_array($mode, [0, 1, 2, 3])) {
             $this->viewMode = $mode;
         }
 
@@ -89,6 +89,7 @@ trait Croppable
 
         if (is_string($ratio = $this->getImageCropAspectRatio())) {
             [$numerator, $denominator] = explode(':', $ratio);
+
             return $denominator;
         }
 
@@ -103,6 +104,7 @@ trait Croppable
 
         if (is_string($ratio = $this->getImageCropAspectRatio())) {
             [$numerator, $denominator] = explode(':', $ratio);
+
             return $numerator;
         }
 
