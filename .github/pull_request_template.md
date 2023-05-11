@@ -1,2 +1,3 @@
-<!-- For visual changes, please include a screenshot/recording of before and after. -->
-<!-- This allows us to review the pull request faster. -->
+- [ ] Changes have been thoroughly tested to not break existing functionality.
+- [ ] New functionality has been documented or existing documentation has been updated to reflect changes.
+- [ ] Visual changes are explained in the PR description using a screenshot/recording of before and after.
