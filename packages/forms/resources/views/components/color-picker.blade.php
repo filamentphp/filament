@@ -67,7 +67,7 @@
                     class="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none"
                 >
                     <span
-                        x-bind:style="{ 'background-color': state }"
+                        x-bind:style="{ 'background-color': state, ...(state ? { 'background-image': 'none' } : {}) }"
                         class="filament-forms-color-picker-component-preview relative overflow-hidden rounded-md w-7 h-7"
                     ></span>
                 </span>
