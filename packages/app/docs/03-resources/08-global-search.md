@@ -8,7 +8,7 @@ Global search allows you to search across all of your resource records, from any
 
 ## Title
 
-To enable global search on your model, you must [set a title attribute](#setting-a-title-attribute) for your resource:
+To enable global search on your model, you must [set a title attribute](getting-started#record-titles) for your resource:
 
 ```php
 protected static ?string $recordTitleAttribute = 'title';
@@ -112,4 +112,21 @@ use Filament\GlobalSearch\Actions\Action;
 
 Action::make('quickView')
     ->emit('quickView', [$record->id])
+```
+
+## Disabling global search
+
+As [explained above](#title), global search is automatically enables once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
+
+This can be achieved by disabling global search in the [configuration](configuration):
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->globalSearch(false);
+}
 ```
