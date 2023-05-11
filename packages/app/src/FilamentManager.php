@@ -206,9 +206,9 @@ class FilamentManager
         return $this->getCurrentContext()->getAuthGuard();
     }
 
-    public function getHomeUrl(): string
+    public function getHomeUrl(): ?string
     {
-        return $this->getCurrentContext()->getHomeUrl();
+        return $this->getCurrentContext()->getHomeUrl() ?? $this->getCurrentContext()->getUrl();
     }
 
     /**

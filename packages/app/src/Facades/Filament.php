@@ -50,7 +50,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getFontUrl()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
  * @method static array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} getGrayColor()
- * @method static string getHomeUrl()
+ * @method static string | null getHomeUrl()
  * @method static string | null getLoginUrl(array<mixed> $parameters = [])
  * @method static string getLogoutUrl(array<mixed> $parameters = [])
  * @method static string | null getModelResource(string | Model $model)

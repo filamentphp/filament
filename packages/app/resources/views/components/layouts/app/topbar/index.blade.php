@@ -28,13 +28,18 @@
             </button>
 
             @if (filament()->hasTopNavigation())
-                <a
-                    href="{{ filament()->getHomeUrl() }}"
-                    data-turbo="false"
-                    class="hidden me-12 lg:flex"
-                >
-                    <x-filament::logo />
-                </a>
+                <div class="hidden me-12 lg:flex">
+                    @if ($homeUrl = filament()->getHomeUrl())
+                        <a
+                            href="{{ $homeUrl }}"
+                            data-turbo="false"
+                        >
+                            <x-filament::logo />
+                        </a>
+                    @else
+                        <x-filament::logo />
+                    @endif
+                </div>
 
                 <ul class="hidden items-center flex-wrap gap-3 lg:flex">
                     @foreach ($navigation as $group)
