@@ -1142,10 +1142,16 @@ To disable specific dates:
 use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('date')
-    ->label('Appointment date')
-    ->minDate(now())
-    ->maxDate(Carbon::now()->addDays(30))
-    ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
+    ->icon('heroicon-o-calendar')
+```
+
+The calendar icon can be changed, or disabled by passing `icon(false)`
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->icon('heroicon-o-calendar')
 ```
 
 ### Timezones
