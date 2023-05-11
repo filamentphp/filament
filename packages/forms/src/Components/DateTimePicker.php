@@ -38,6 +38,8 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
+    protected string | Closure | null $icon = 'default';
+
     protected array | Closure $disabledDates = [];
 
     protected int | Closure | null $hoursStep = null;
@@ -231,6 +233,13 @@ class DateTimePicker extends Field
         return $this;
     }
 
+    public function icon(string | Closure | null $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
     public function getDisplayFormat(): string
     {
         $format = $this->evaluate($this->displayFormat);
@@ -351,6 +360,11 @@ class DateTimePicker extends Field
     public function shouldCloseOnDateSelection(): bool
     {
         return $this->evaluate($this->shouldCloseOnDateSelection);
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->evaluate($this->icon);
     }
 
     protected function getDefaultFirstDayOfWeek(): int
