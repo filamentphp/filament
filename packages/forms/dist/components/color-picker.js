@@ -499,7 +499,6 @@ function colorPickerFormComponent({
     state,
     init: function() {
       if (!(this.state === null || this.state === "")) {
-        console.info("ji");
         this.setState(this.state);
       }
       if (isAutofocused) {
