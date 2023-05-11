@@ -302,3 +302,20 @@ public function context(Context $context): Context
         ]);
 }
 ```
+
+## Breadcrumbs
+
+The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.
+
+You may disable breadcrumbs in your [configuration](configuration):
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->breadcrumbs(false);
+}
+```
