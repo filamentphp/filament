@@ -1,8 +1,8 @@
 {
     "name": "filament",
     "scripts": {
+        "dev:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify --watch",
         "dev:js": "node bin/build.mjs --dev",
-        "dev:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify",
         "dev": "npm-run-all --parallel dev:*",
         "build:js": "node bin/build.mjs",
         "build:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify",
@@ -25,6 +25,7 @@
         "chart.js": "^3.6.0",
         "choices.js": "^10.1.0",
         "codemirror": "^5.65.8",
+        "cropperjs": "^1.5.13",
         "dayjs": "^1.10.6",
         "easymde": "^2.18.0",
         "esbuild": "^0.17.18",
@@ -33,6 +34,7 @@
         "filepond-plugin-file-validate-size": "^2.2.4",
         "filepond-plugin-file-validate-type": "^1.2.6",
         "filepond-plugin-image-crop": "^2.0.6",
+        "filepond-plugin-image-edit": "^1.6.3",
         "filepond-plugin-image-exif-orientation": "^1.0.11",
         "filepond-plugin-image-preview": "^4.6.7",
         "filepond-plugin-image-resize": "^2.0.10",

@@ -7,6 +7,8 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
+import FilePondPluginImageEdit from "filepond-plugin-image-edit";
+import Cropper from 'cropperjs'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -16,6 +18,7 @@ FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
+FilePond.registerPlugin(FilePondPluginImageEdit)
 
 window.FilePond = FilePond
 
@@ -51,6 +54,14 @@ export default function fileUploadFormComponent({
     uploadButtonPosition,
     uploadProgressIndicatorPosition,
     uploadUsing,
+    disabled,
+    isCroppable,
+    cropperViewPortWidth,
+    cropperViewPortHeight,
+    shape,
+    updateCropperInputs,
+    viewMode,
+    fillColor,
 }) {
     return {
         fileKeyIndex: {},
@@ -64,6 +75,14 @@ export default function fileUploadFormComponent({
         lastState: null,
 
         uploadedFileIndex: {},
+
+        showCropper: false,
+
+        editingFile: {},
+
+        currentRatio: '',
+
+        cropper: {},
 
         init: async function () {
             FilePond.setOptions(locales[locale] ?? locales['en'])
@@ -156,6 +175,13 @@ export default function fileUploadFormComponent({
 
                         load()
                     },
+                },
+                allowImageEdit: isCroppable,
+                imageEditEditor: {
+                    open: (file, instructions)  => this.loadCropper(file),
+                    onconfirm: (result) => {},
+                    oncancel: () => this.cancelCropper(),
+                    onclose: () => this.cancelCropper(),
                 },
             })
 
@@ -261,9 +287,101 @@ export default function fileUploadFormComponent({
             this.pond.on('processfileabort', handleFileProcessing)
 
             this.pond.on('processfilerevert', handleFileProcessing)
+
+            this.$nextTick(() => this.initCropper())
+        },
+
+        initCropper() {
+            this.cropper = new Cropper(this.$refs.cropper, {
+                viewMode: viewMode,
+                aspectRatio: cropperViewPortWidth / cropperViewPortHeight,
+                autoCropArea: 1,
+                guides: true,
+                center: true,
+                highlight: true,
+                cropBoxResizable: true,
+                toggleDragModeOnDblclick: true,
+                wheelZoomRatio: 0.02,
+                responsive: true,
+                preview: [
+                    this.$refs.previewLG,
+                    /*this.$refs.previewMD,
+                    this.$refs.previewSM,
+                    this.$refs.previewXS,*/
+                ],
+                crop: function (e) {
+                    updateCropperInputs(e.detail)
+                }
+            });
+        },
+
+        cancelCropper() {
+            this.editingFile = {}
+            this.showCropper = false
+        },
+
+        loadCropper(file) {
+            if(disabled || !isCroppable) return;
+            if (file == null) return;
+
+            this.editingFile = file;
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                this.showCropper = true;
+                this.bindCropper(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        },
+
+        saveCropper() {
+            if(disabled || !isCroppable) return;
+            this.cropper.getCroppedCanvas({
+                width: imageResizeTargetWidth,
+                height: imageResizeTargetHeight,
+                fillColor: fillColor,
+                imageSmoothingEnabled: true,
+                imageSmoothingQuality: 'high',
+            }).toBlob((croppedImage) => {
+
+                //if editingFile.type is svg set it to png, because a Blob will never return svg
+                const fileType = this.editingFile.type === 'image/svg+xml' ? 'image/png' : this.editingFile.type;
+
+                const file = new File(
+                    [croppedImage],
+                    this.editingFile.name,
+                    {
+                        type: fileType,
+                        lastModified: new Date().getTime(),
+                    }
+                );
+
+                //get the filepond file object from the current editing file
+                const filepondFile = this.pond.getFiles().find((f) => f.filename === this.editingFile.name);
+
+                //remove the filepond file object
+                this.pond.removeFile(filepondFile.id);
+
+                //wait for the filepond file object to be removed
+                this.$nextTick(() => {
+                    this.pond.addFile(file).then(() => {
+                        this.cancelCropper();
+                    });
+                });
+
+            }, this.editingFile.type);
+        },
+
+        bindCropper(src) {
+            //avoid problems with cropper container not being visible when binding
+            setTimeout(() => {
+                this.cropper.replace(src);
+            }, 200);
         },
 
         destroy: function () {
+            this.cropper.destroy()
+            this.cropper = null
             FilePond.destroy(this.$refs.input)
             this.pond = null
         },

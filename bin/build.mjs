@@ -3,15 +3,18 @@ import * as esbuild from 'esbuild'
 const isDev = process.argv.includes('--dev')
 
 async function compile(options) {
-    const context = await esbuild.context(options)
-
-    await context.rebuild()
-    await context.dispose()
+    const ctx = await esbuild.context(options)
+    if (isDev) {
+        await ctx.watch()
+    } else {
+        await ctx.rebuild()
+        await ctx.dispose()
+    }
 }
 
 const defaultOptions = {
     define: {
-        'process.env.NODE_ENV': isDev ? `'production'` : `'development'`,
+        'process.env.NODE_ENV': isDev ? `'development'` : `'production'`,
     },
     bundle: true,
     mainFields: ['module', 'main'],
@@ -21,6 +24,15 @@ const defaultOptions = {
     treeShaking: true,
     target: ['es2020'],
     minify: !isDev,
+    loader: {
+        '.jpg': 'dataurl',
+        '.png': 'dataurl',
+        '.svg': 'text',
+        '.gif': 'dataurl',
+        '.woff': 'file',
+        '.woff2': 'file',
+        '.data': 'base64',
+    },
     plugins: [{
         name: 'watchPlugin',
         setup: function (build) {

@@ -9,6 +9,7 @@ class FileUpload extends BaseFileUpload
 {
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
+    use Concerns\Croppable;
     use HasExtraAlpineAttributes;
 
     /**

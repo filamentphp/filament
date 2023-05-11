@@ -297,4 +297,29 @@ return [
 
     ],
 
+    'cropper' => [
+        'cancel' => 'Cancel',
+        'reset' => 'Reset',
+        'save' => 'Save',
+        'free' => 'Free',
+        'width' => 'Width',
+        'height' => 'Height',
+        'rotate' => 'Rotate',
+        'drag-move' => 'Drag mode "move"',
+        'drag-crop' => 'Drag mode "crop"',
+        'zoom-in' => 'Zoom in',
+        'zoom-out' => 'Zoom out',
+        'zoom-100' => 'Zoom image to 100%',
+        'move-left' => 'Move image to left',
+        'move-right' => 'Move image to right',
+        'move-up' => 'Move image up',
+        'move-down' => 'Move image down',
+        'move-top-left' => 'Move image to top/left corner of the container',
+        'rotate-left' => 'Rotate image to left',
+        'rotate-right' => 'Rotate image to right',
+        'rotate-180' => 'Rotate image 180°',
+        'flip-horizontal' => 'Flip image horizontal',
+        'flip-vertical' => 'Flip image vertical',
+    ],
+
 ];
