@@ -249,6 +249,25 @@ protected function getTableQuery(): Builder
 }
 ```
 
+
+## Customizing Query String
+
+Table search, filters, sorts, and reorder are reflected in the url as query strings (also known as query components, query parameters, or url parameters). By default, with some search and filter active, the url will generally look like `.../admin/customer?tableSearchQuery=Dan+Harrin&tableFilters=[foo][value]=bar`.
+
+If you are not happy with the default query strings, it can be easily modified using [query string aliases](https://laravel-livewire.com/docs/2.x/query-string#query-string-aliases). In your `List{ResourceName}` or `Manage{ResourceName}` class, override the parent's `$queryString` property:
+
+```php
+protected $queryString = [
+    'isTableReordering' => ['except' => false],
+    'tableFilters' => ['as' => 'filters'], // add 'as' modifier
+    'tableSortColumn' => ['except' => ''],
+    'tableSortDirection' => ['except' => ''],
+    'tableSearchQuery' => ['except' => '', 'as' => 'q'],  // add 'as' modifier
+];
+```
+After the modification above, the url will be `.../admin/customer?q=Dan+Harrin&filters=[foo][value]=bar`.
+
+
 ## Custom view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
