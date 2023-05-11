@@ -79,7 +79,7 @@
                         @endif
                     @endforeach
                 </ul>
-            @else
+            @elseif (count($breadcrumbs))
                 <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
             @endif
         </div>

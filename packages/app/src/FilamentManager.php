@@ -156,6 +156,11 @@ class FilamentManager
         }
     }
 
+    public function hasBreadcrumbs(): bool
+    {
+        return $this->getCurrentContext()->hasBreadcrumbs();
+    }
+
     public function hasEmailVerification(): bool
     {
         return $this->getCurrentContext()->hasEmailVerification();
