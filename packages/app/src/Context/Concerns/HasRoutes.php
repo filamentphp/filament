@@ -4,14 +4,11 @@ namespace Filament\Context\Concerns;
 
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait HasRoutes
 {
-    use EvaluatesClosures;
-
     protected ?Closure $routes = null;
 
     protected ?Closure $authenticatedRoutes = null;
