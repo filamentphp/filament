@@ -83,8 +83,8 @@ trait Croppable
 
     public function getCropperViewPortHeight(): int
     {
-        if ($this->imageResizeTargetHeight > 1) {
-            return (int) round($this->imageResizeTargetHeight * $this->getParentTargetSizes(), 0);
+        if ( ($targetH = (int) $this->getImageResizeTargetHeight()) > 1) {
+            return (int) round($targetH * $this->getParentTargetSizes($targetH), 0);
         }
 
         if (is_string($ratio = $this->getImageCropAspectRatio())) {
@@ -97,8 +97,8 @@ trait Croppable
 
     public function getCropperViewPortWidth(): int
     {
-        if ($this->imageResizeTargetWidth > 1) {
-            return (int) round($this->imageResizeTargetWidth * $this->getParentTargetSizes(), 0);
+        if (($targetW = (int) $this->getImageResizeTargetWidth()) > 1) {
+            return (int) round($targetW * $this->getParentTargetSizes($targetW), 0);
         }
 
         if (is_string($ratio = $this->getImageCropAspectRatio())) {
@@ -109,9 +109,9 @@ trait Croppable
         return $this->cropperViewPortWidth;
     }
 
-    protected function getParentTargetSizes(): float
+    protected function getParentTargetSizes(int $withOrHeight): float
     {
-        return $this->imageResizeTargetWidth > 1 ? 360 / $this->imageResizeTargetWidth : 1;
+        return $withOrHeight > 1 ? 360 / (int) $this->getImageResizeTargetWidth() : 1;
     }
 
     public function getShape(): string
