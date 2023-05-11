@@ -96,6 +96,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasDatabaseNotifications()
  * @method static bool hasEmailVerification()
  * @method static bool hasLogin()
+ * @method static bool hasNavigation()
  * @method static bool hasTenancy()
  * @method static bool hasTenantRegistration()
  * @method static bool hasTopNavigation()

@@ -128,6 +128,11 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantOwnershipRelationshipName();
     }
 
+    public function hasNavigation(): bool
+    {
+        return $this->getCurrentContext()->hasNavigation();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentContext()->hasTopNavigation();

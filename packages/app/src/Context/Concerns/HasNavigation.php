@@ -75,15 +75,16 @@ trait HasNavigation
         return $this;
     }
 
+    public function hasNavigation(): bool
+    {
+        return $this->navigationBuilder !== false;
+    }
+
     /**
      * @return array<NavigationGroup>
      */
     public function getNavigation(): array
     {
-        if ($this->navigationBuilder === false) {
-            return [];
-        }
-
         if ($this->navigationBuilder instanceof Closure) {
             return $this->buildNavigation();
         }
