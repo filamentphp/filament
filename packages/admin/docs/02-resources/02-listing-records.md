@@ -254,7 +254,7 @@ protected function getTableQuery(): Builder
 
 Table search, filters, sorts, and reorder are reflected in the url as query strings (also known as query components, query parameters, or url parameters). By default, with some search and filter active, the url will generally look like `.../admin/customer?tableSearchQuery=Dan+Harrin&tableFilters=[foo][value]=bar`.
 
-If you are not happy with the default query strings, it can be easily modified using [query string aliases](https://laravel-livewire.com/docs/2.x/query-string#query-string-aliases). In your `List{ResourceName}` or `Manage{ResourceName}` class, override the parent's `$queryString` property:
+If you are not happy with the default query strings, they can be easily modified using [query string aliases](https://laravel-livewire.com/docs/2.x/query-string#query-string-aliases). In your `List{ResourceName}` or `Manage{ResourceName}` class, override the parent's `$queryString` property:
 
 ```php
 protected $queryString = [
