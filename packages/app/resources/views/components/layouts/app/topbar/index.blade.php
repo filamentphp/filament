@@ -85,7 +85,9 @@
         </div>
 
         <div class="flex items-center">
-            @livewire('filament.core.global-search')
+            @if (filament()->getGlobalSearchProvider() !== null)
+                @livewire('filament.core.global-search')
+            @endif
 
             @if (filament()->hasDatabaseNotifications())
                 @livewire('filament.core.database-notifications')

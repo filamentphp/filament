@@ -76,7 +76,7 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
-    public function getGlobalSearchProvider(): GlobalSearchProvider
+    public function getGlobalSearchProvider(): ?GlobalSearchProvider
     {
         return $this->getCurrentContext()->getGlobalSearchProvider();
     }

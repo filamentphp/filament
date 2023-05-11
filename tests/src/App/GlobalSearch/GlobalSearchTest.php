@@ -50,7 +50,7 @@ it('can retrieve limited search results', function () {
 });
 
 it('can retrieve results via custom search provider', function () {
-    Filament::getCurrentContext()->globalSearchProvider(CustomSearchProvider::class);
+    Filament::getCurrentContext()->globalSearch(CustomSearchProvider::class);
 
     livewire(GlobalSearch::class)
         ->set('search', 'foo')
