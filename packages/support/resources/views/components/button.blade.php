@@ -86,19 +86,18 @@
             form: null,
             isUploadingFile: false,
         }"
-        @unless ($disabled)
-            x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
-        @endunless
         x-bind:disabled="isUploadingFile"
         x-init="
             form = $el.closest('form')
 
             form?.addEventListener('file-upload-started', () => {
                 isUploadingFile = true
+                $el.classList.add('opacity-70', 'cursor-wait')
             })
 
             form?.addEventListener('file-upload-finished', () => {
                 isUploadingFile = false
+                $el.classList.remove('opacity-70', 'cursor-wait')
             })
         "
         {{ $attributes->class($buttonClasses) }}
