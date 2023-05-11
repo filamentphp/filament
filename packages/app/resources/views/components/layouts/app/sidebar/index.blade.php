@@ -61,12 +61,16 @@
                     'lg:ms-3' => filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
-                <a
-                    href="{{ filament()->getHomeUrl() }}"
-                    class="inline-block"
-                >
+                @if ($homeUrl = filament()->getHomeUrl())
+                    <a
+                        href="{{ $homeUrl }}"
+                        class="inline-block"
+                    >
+                        <x-filament::logo />
+                    </a>
+                @else
                     <x-filament::logo />
-                </a>
+                @endif
             </div>
         </div>
 

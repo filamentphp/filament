@@ -4,11 +4,14 @@ namespace Filament\Context\Concerns;
 
 use Closure;
 use Filament\Facades\Filament;
+use Filament\Support\Concerns\EvaluatesClosures;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 
 trait HasRoutes
 {
+    use EvaluatesClosures;
+
     protected ?Closure $routes = null;
 
     protected ?Closure $authenticatedRoutes = null;
@@ -17,7 +20,7 @@ trait HasRoutes
 
     protected ?Closure $authenticatedTenantRoutes = null;
 
-    protected string $homeUrl = '';
+    protected string | Closure | null $homeUrl = null;
 
     protected ?string $domain = null;
 
@@ -37,7 +40,7 @@ trait HasRoutes
         return $this;
     }
 
-    public function homeUrl(string $url): static
+    public function homeUrl(string | Closure | null $url = null): static
     {
         $this->homeUrl = $url;
 
@@ -92,9 +95,9 @@ trait HasRoutes
         return $this->authenticatedTenantRoutes;
     }
 
-    public function getHomeUrl(): string
+    public function getHomeUrl(): ?string
     {
-        return $this->homeUrl;
+        return $this->evaluate($this->homeUrl);
     }
 
     public function getDomain(): ?string
