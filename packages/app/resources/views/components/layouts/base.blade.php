@@ -81,7 +81,7 @@
     {{ filament()->renderHook('head.end') }}
 </head>
 
-<body class="filament-body min-h-screen overscroll-y-none bg-gray-100 text-gray-900 dark:text-gray-100 dark:bg-gray-900">
+<body class="filament-body min-h-screen overscroll-y-none bg-gray-50 text-gray-900 dark:text-white dark:bg-gray-900">
     {{ filament()->renderHook('body.start') }}
 
     {{ $slot }}

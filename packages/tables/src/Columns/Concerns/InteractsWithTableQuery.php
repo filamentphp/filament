@@ -10,9 +10,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Stringable;
-use Znck\Eloquent\Relations\BelongsToThrough;
 
 trait InteractsWithTableQuery
 {
@@ -31,11 +31,11 @@ trait InteractsWithTableQuery
             filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
             fn ($query) => $query->withAvg($this->getRelationshipToAvg(), $this->getColumnToAvg())
         )->when(
-            filled($this->getRelationshipToCount()),
-            fn ($query) => $query->withCount([$this->getRelationshipToCount()])
+            filled($this->getRelationshipsToCount()),
+            fn ($query) => $query->withCount(Arr::wrap($this->getRelationshipsToCount()))
         )->when(
-            filled($this->getRelationshipToExistenceCheck()),
-            fn ($query) => $query->withExists($this->getRelationshipToExistenceCheck())
+            filled($this->getRelationshipsToExistenceCheck()),
+            fn ($query) => $query->withExists(Arr::wrap($this->getRelationshipsToExistenceCheck()))
         )->when(
             filled([$this->getRelationshipToMax(), $this->getColumnToMax()]),
             fn ($query) => $query->withMax($this->getRelationshipToMax(), $this->getColumnToMax())
@@ -273,7 +273,7 @@ trait InteractsWithTableQuery
                 ->when(
                     ($relationship instanceof BelongsTo ||
                     $relationship instanceof BelongsToMany ||
-                    $relationship instanceof BelongsToThrough),
+                    $relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough),
                     fn (Stringable $name) => $name->plural(),
                 )
                 ->camel();

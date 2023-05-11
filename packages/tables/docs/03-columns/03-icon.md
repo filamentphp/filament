@@ -4,7 +4,7 @@ title: Icon column
 
 ## Overview
 
-Icon columns render a Blade icon component representing their contents:
+Icon columns render an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) representing their contents:
 
 ```php
 use Filament\Tables\Columns\IconColumn;

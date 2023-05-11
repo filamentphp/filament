@@ -24,7 +24,7 @@ trait EntanglesStateWithSingularRelationship
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
-    public function relationship(string $relationshipName): static
+    public function relationship(string $relationshipName, bool | Closure $condition = true): static
     {
         $this->relationship = $relationshipName;
         $this->statePath($relationshipName);
@@ -35,16 +35,22 @@ trait EntanglesStateWithSingularRelationship
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
-            $relationship = $component->getRelationship();
+        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire) use ($condition): void {
+            $record = $component->getCachedExistingRecord();
 
-            if ($relationship instanceof BelongsTo) {
+            if (! $component->evaluate($condition)) {
+                $record?->delete();
+
                 return;
             }
 
-            $record = $component->getCachedExistingRecord();
-
             if ($record) {
+                return;
+            }
+
+            $relationship = $component->getRelationship();
+
+            if ($relationship instanceof BelongsTo) {
                 return;
             }
 
@@ -67,7 +73,11 @@ trait EntanglesStateWithSingularRelationship
             $component->cachedExistingRecord($record);
         });
 
-        $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
+        $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire) use ($condition): void {
+            if (! $component->evaluate($condition)) {
+                return;
+            }
+
             $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
             $record = $component->getCachedExistingRecord();

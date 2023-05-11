@@ -34,7 +34,7 @@
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['filament-forms-tabs-component rounded-xl shadow-sm bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10'])
+            ->class(['filament-forms-tabs-component rounded-xl shadow-sm bg-white ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20'])
     }}
 >
     <input

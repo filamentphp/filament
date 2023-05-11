@@ -98,14 +98,14 @@ class Login extends CardPage
 
     public function authenticateAction(): Action
     {
-        return Action::make('authenticateAction')
+        return Action::make('authenticate')
             ->label(__('filament::pages/auth/login.buttons.authenticate.label'))
             ->submit('authenticate');
     }
 
     public function registerAction(): Action
     {
-        return Action::make('registerAction')
+        return Action::make('register')
             ->link()
             ->label(__('filament::pages/auth/login.buttons.register.label'))
             ->url(filament()->getRegistrationUrl());

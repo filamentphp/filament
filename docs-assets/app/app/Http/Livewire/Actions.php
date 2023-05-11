@@ -16,49 +16,49 @@ class Actions extends Component implements HasActions
 
     public function buttonAction(): Action
     {
-        return Action::make('buttonAction')
+        return Action::make('button')
             ->label('Edit')
             ->button();
     }
 
     public function linkAction(): Action
     {
-        return Action::make('linkAction')
+        return Action::make('link')
             ->label('Edit')
             ->link();
     }
 
     public function iconButtonAction(): Action
     {
-        return Action::make('iconButtonAction')
+        return Action::make('iconButton')
             ->icon('heroicon-o-pencil-square')
             ->iconButton();
     }
 
     public function dangerAction(): Action
     {
-        return Action::make('dangerAction')
+        return Action::make('danger')
             ->label('Delete')
             ->color('danger');
     }
 
     public function largeAction(): Action
     {
-        return Action::make('largeAction')
+        return Action::make('large')
             ->label('Create')
             ->size('lg');
     }
 
     public function iconAction(): Action
     {
-        return Action::make('iconAction')
+        return Action::make('icon')
             ->label('Edit')
             ->icon('heroicon-m-pencil-square');
     }
 
     public function iconAfterAction(): Action
     {
-        return Action::make('iconAfterAction')
+        return Action::make('iconAfter')
             ->label('Edit')
             ->icon('heroicon-m-pencil-square')
             ->iconPosition('after');
@@ -66,7 +66,7 @@ class Actions extends Component implements HasActions
 
     public function indicatorAction(): Action
     {
-        return Action::make('indicatorAction')
+        return Action::make('indicator')
             ->iconButton()
             ->icon('heroicon-m-funnel')
             ->indicator(5);
@@ -74,7 +74,7 @@ class Actions extends Component implements HasActions
 
     public function successIndicatorAction(): Action
     {
-        return Action::make('successIndicatorAction')
+        return Action::make('successIndicator')
             ->iconButton()
             ->icon('heroicon-m-funnel')
             ->indicator(5)
@@ -83,7 +83,7 @@ class Actions extends Component implements HasActions
 
     public function outlinedAction(): Action
     {
-        return Action::make('outlinedAction')
+        return Action::make('outlined')
             ->label('Edit')
             ->button()
             ->outlined();
@@ -91,7 +91,7 @@ class Actions extends Component implements HasActions
 
     public function inlineIconAction(): Action
     {
-        return Action::make('inlineIconAction')
+        return Action::make('inlineIcon')
             ->icon('heroicon-o-pencil-square')
             ->iconButton()
             ->inline();
@@ -99,7 +99,7 @@ class Actions extends Component implements HasActions
 
     public function confirmationModalAction(): Action
     {
-        return Action::make('confirmationModalAction')
+        return Action::make('confirmationModal')
             ->label('Delete')
             ->color('danger')
             ->requiresConfirmation()
@@ -108,7 +108,7 @@ class Actions extends Component implements HasActions
 
     public function confirmationModalCustomTextAction(): Action
     {
-        return Action::make('confirmationModalCustomTextAction')
+        return Action::make('confirmationModalCustomText')
             ->label('Delete')
             ->color('danger')
             ->requiresConfirmation()
@@ -120,7 +120,7 @@ class Actions extends Component implements HasActions
 
     public function modalFormAction(): Action
     {
-        return Action::make('modalFormAction')
+        return Action::make('modalForm')
             ->label('Update author')
             ->form([
                 Select::make('authorId')
@@ -132,7 +132,7 @@ class Actions extends Component implements HasActions
 
     public function wizardAction(): Action
     {
-        return Action::make('wizardAction')
+        return Action::make('wizard')
             ->label('Create')
             ->steps([
                 Step::make('Name')
@@ -157,7 +157,7 @@ class Actions extends Component implements HasActions
 
     public function slideOverAction(): Action
     {
-        return Action::make('slideOverAction')
+        return Action::make('slideOver')
             ->label('Update author')
             ->form([
                 Select::make('authorId')

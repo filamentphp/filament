@@ -34,6 +34,17 @@ it('can throttle requests', function () {
 
     $this->assertGuest();
 
+    foreach (range(1, 2) as $i) {
+        $userToResetPassword = User::factory()->create();
+
+        livewire(RequestPasswordReset::class)
+            ->set('email', $userToResetPassword->email)
+            ->call('request')
+            ->assertNotified();
+
+        Notification::assertSentToTimes($userToResetPassword, ResetPassword::class, times: 1);
+    }
+
     $userToResetPassword = User::factory()->create();
 
     livewire(RequestPasswordReset::class)
@@ -41,14 +52,7 @@ it('can throttle requests', function () {
         ->call('request')
         ->assertNotified();
 
-    Notification::assertSentToTimes($userToResetPassword, ResetPassword::class, times: 1);
-
-    livewire(RequestPasswordReset::class)
-        ->set('email', $userToResetPassword->email)
-        ->call('request')
-        ->assertNotified();
-
-    Notification::assertSentToTimes($userToResetPassword, ResetPassword::class, times: 1);
+    Notification::assertNotSentTo($userToResetPassword, ResetPassword::class);
 });
 
 it('can validate `email` is required', function () {

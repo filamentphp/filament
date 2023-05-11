@@ -55,7 +55,8 @@ By default, the label of the column, which is displayed in the header of the tab
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->label('Post title')
+TextColumn::make('title')
+    ->label('Post title')
 ```
 
 Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
@@ -63,7 +64,8 @@ Optionally, you can have the label automatically translated [using Laravel's loc
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->translateLabel() // Equivalent to `label(__('Title'))`
+TextColumn::make('title')
+    ->translateLabel() // Equivalent to `label(__('Title'))`
 ```
 
 ## Sorting
@@ -73,7 +75,8 @@ Columns may be sortable, by clicking on the column label. To make a column sorta
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->sortable()
+TextColumn::make('title')
+    ->sortable()
 ```
 
 If you're using an accessor column, you may pass `sortable()` an array of database columns to sort by:
@@ -81,7 +84,8 @@ If you're using an accessor column, you may pass `sortable()` an array of databa
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('full_name')->sortable(['first_name', 'last_name'])
+TextColumn::make('full_name')
+    ->sortable(['first_name', 'last_name'])
 ```
 
 You may customize how the sorting is applied to the Eloquent query using a callback:
@@ -139,7 +143,8 @@ Columns may be searchable, by using the text input in the top right of the table
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->searchable()
+TextColumn::make('title')
+    ->searchable()
 ```
 
 If you're using an accessor column, you may pass `searchable()` an array of database columns to search within:
@@ -147,7 +152,8 @@ If you're using an accessor column, you may pass `searchable()` an array of data
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('full_name')->searchable(['first_name', 'last_name'])
+TextColumn::make('full_name')
+    ->searchable(['first_name', 'last_name'])
 ```
 
 You may customize how the search is applied to the Eloquent query using a callback:
@@ -171,7 +177,8 @@ You can choose to enable a per-column search input using the `isIndividual` para
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->searchable(isIndividual: true)
+TextColumn::make('title')
+    ->searchable(isIndividual: true)
 ```
 
 If you use the `isIndividual` parameter, you may still search that column using the main "global" search input for the entire table.
@@ -181,7 +188,8 @@ To disable that functionality while still preserving the individual search funct
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
+TextColumn::make('title')
+    ->searchable(isIndividual: true, isGlobal: false)
 ```
 
 You may optionally persist the searches in the query string:
@@ -280,7 +288,8 @@ To set a default value for fields with a `null` state, you may use the `default(
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->default('Untitled')
+TextColumn::make('title')
+    ->default('Untitled')
 ```
 
 ## Hiding columns
@@ -290,9 +299,11 @@ To hide a column conditionally, you may use the `hidden()` and `visible()` metho
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('role')->hidden(! auth()->user()->isAdmin())
+TextColumn::make('role')
+    ->hidden(! auth()->user()->isAdmin())
 // or
-TextColumn::make('role')->visible(auth()->user()->isAdmin())
+TextColumn::make('role')
+    ->visible(auth()->user()->isAdmin())
 ```
 
 ### Toggling column visibility
@@ -302,7 +313,8 @@ Users may hide or show columns themselves in the table. To make a column togglea
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('id')->toggleable()
+TextColumn::make('id')
+    ->toggleable()
 ```
 
 By default, toggleable columns are visible. To make them hidden instead:
@@ -310,7 +322,8 @@ By default, toggleable columns are visible. To make them hidden instead:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('id')->toggleable(isToggledHiddenByDefault: true)
+TextColumn::make('id')
+    ->toggleable(isToggledHiddenByDefault: true)
 ```
 
 ## Calculated state
@@ -356,14 +369,15 @@ The HTML of columns can be customized, by passing an array of `extraAttributes()
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('slug')->extraAttributes(['class' => 'bg-gray-200'])
+TextColumn::make('slug')
+    ->extraAttributes(['class' => 'bg-gray-200'])
 ```
 
 These get merged onto the outer `<div>` element of each cell in that column.
 
 ## Global settings
 
-If you wish to change the default behaviour of all columns globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the columns using. For example, if you wish to make all columns [`sortable()`](#sorting) and [`toggleable()`](#toggling-column-visibility), you can do it like so:
+If you wish to change the default behaviour of all columns globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the columns using. For example, if you wish to make all columns [`searchable()`](#searching) and [`toggleable()`](#toggling-column-visibility), you can do it like so:
 
 ```php
 use Filament\Tables\Columns\Column;
@@ -371,7 +385,7 @@ use Filament\Tables\Columns\Column;
 Column::configureUsing(function (Column $column): void {
     $column
         ->toggleable()
-        ->sortable();
+        ->searchable();
 });
 ```
 
@@ -383,7 +397,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::configureUsing(function (TextColumn $column): void {
     $column
         ->toggleable()
-        ->sortable();
+        ->searchable();
 });
 ```
 
@@ -392,5 +406,6 @@ Of course, you are still able to overwrite this on each column individually:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('name')->toggleable(false)
+TextColumn::make('name')
+    ->toggleable(false)
 ```

@@ -1,21 +1,24 @@
 @props([
     'actions' => [],
+    'button' => false,
     'color' => null,
     'dropdownPlacement' => null,
     'dynamicComponent' => null,
     'group' => null,
     'icon' => null,
+    'iconButton' => false,
     'indicator' => null,
     'indicatorColor' => null,
     'label' => null,
+    'link' => false,
     'size' => null,
     'tooltip' => null,
     'view' => null,
 ])
 
 @if (! ($dynamicComponent && $group))
-    {{
-        \Filament\Actions\ActionGroup::make($actions)
+    @php
+        $group = \Filament\Actions\ActionGroup::make($actions)
             ->color($color)
             ->dropdownPlacement($dropdownPlacement)
             ->icon($icon)
@@ -24,8 +27,22 @@
             ->label($label)
             ->size($size)
             ->tooltip($tooltip)
-            ->view($view)
-    }}
+            ->view($view);
+
+        if ($button) {
+            $group->button();
+        }
+
+        if ($iconButton) {
+            $group->iconButton();
+        }
+
+        if ($link) {
+            $group->link();
+        }
+    @endphp
+
+    {{ $group }}
 @else
     <x-filament::dropdown
         :placement="$group->getDropdownPlacement() ?? 'bottom-start'"

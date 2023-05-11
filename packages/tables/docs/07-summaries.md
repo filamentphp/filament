@@ -6,7 +6,9 @@ title: Summaries
 
 You may render a "summary" section below your table content. This is great for displaying the results of calculations such as averages, sums, counts, and ranges of the data in your table.
 
-Summaries can be added to any [table column](columns) using the `summarize()` method:
+By default, there will be a single summary line for the current page of data, and an additional summary line for the totals for all data if more than one page is available. You may also add summaries for [groups](grouping) of records, see ["Summarising groups of rows"](#summarising-groups-of-rows).
+
+"Summarizer" objects can be added to any [table column](columns) using the `summarize()` method:
 
 ```php
 use Filament\Tables\Columns\Summarizers\Average;
@@ -253,7 +255,7 @@ TextColumn::make('sku')
     ->summarize(Range::make()->limit(5))
 ```
 
-## Custom
+## Custom summaries
 
 You may create a custom summary by returning the value from the `using()` method:
 
@@ -269,3 +271,30 @@ TextColumn::make('name')
 ```
 
 The callback has access to the database `$query` builder instance to perform calculations with. It should return the value to display in the table.
+
+## Summarising groups of rows
+
+You can use summaries with [groups](grouping) to display a summary of the records inside a group. This works automatically if you choose to add a summariser to a column in a grouped table.
+
+### Hiding the grouped rows and showing the summary only
+
+You may hide the rows inside groups and just show the summary of each group using the `groupsOnly()` method. This is very useful in many reporting scenarios.
+
+```php
+use Filament\Tables\Columns\Summarizers\Sum;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            TextColumn::make('views_count')
+                ->summarize(Sum::make()),
+            TextColumn::make('likes_count')
+                ->summarize(Sum::make()),
+        ])
+        ->defaultGroup('category')
+        ->groupsOnly();
+}
+```
