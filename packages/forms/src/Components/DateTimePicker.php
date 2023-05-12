@@ -38,7 +38,7 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
-    protected string | Closure | null $icon = null;
+    protected bool | string | Closure | null $icon = null;
 
     protected array | Closure $disabledDates = [];
 
@@ -362,7 +362,7 @@ class DateTimePicker extends Field
         return $this->evaluate($this->shouldCloseOnDateSelection);
     }
 
-    public function getIcon(): ?string
+    public function getIcon(): null | string | bool
     {
         return $this->evaluate($this->icon);
     }
