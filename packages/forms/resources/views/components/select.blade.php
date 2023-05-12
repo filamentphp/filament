@@ -85,6 +85,7 @@
                     isAutofocused: @js($isAutofocused()),
                     isDisabled: @js($isDisabled),
                     isMultiple: @js($isMultiple()),
+                    isPlaceholderSelectionDisabled: @js($isPlaceholderSelectionDisabled()),
                     livewireId: @js($this->id),
                     hasDynamicOptions: @js($hasDynamicOptions()),
                     hasDynamicSearchResults: @js($hasDynamicSearchResults()),
