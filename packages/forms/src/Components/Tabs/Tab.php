@@ -78,7 +78,7 @@ class Tab extends Component implements CanConcealComponents
 
     public function getIconPosition(): ?string
     {
-        return $this->evaluate($this->iconPosition);
+        return $this->evaluate($this->iconPosition) ?? 'before';
     }
 
     public function geticonColor(): ?string
