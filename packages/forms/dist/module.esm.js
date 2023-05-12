@@ -28151,6 +28151,7 @@ var select_default = (Alpine) => {
     optionsLimit,
     placeholder,
     position,
+    removeItemButton,
     searchDebounce,
     searchingMessage,
     searchPrompt,
@@ -28176,7 +28177,7 @@ var select_default = (Alpine) => {
           noResultsText: noSearchResultsMessage,
           placeholderValue: placeholder,
           position: position ?? "auto",
-          removeItemButton: true,
+          removeItemButton: removeItemButton ?? true,
           renderChoiceLimit: optionsLimit,
           searchFields: ["label"],
           searchPlaceholderValue: searchPrompt,
@@ -34798,7 +34799,8 @@ function src_default(Alpine) {
     };
     panel2.close = function() {
       toggle(false);
-      panel2.trigger.setAttribute("aria-expanded", false);
+      if (panel2.trigger)
+        panel2.trigger.setAttribute("aria-expanded", false);
       if (config.component.trap)
         panel2.setAttribute("x-trap", false);
       cleanup();
