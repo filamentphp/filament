@@ -38,7 +38,7 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $timezone = null;
 
-    protected string | Closure | null $icon = 'default';
+    protected string | Closure | null $icon = null;
 
     protected array | Closure $disabledDates = [];
 

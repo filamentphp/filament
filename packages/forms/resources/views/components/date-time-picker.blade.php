@@ -1,6 +1,7 @@
 @php
     $icon = $getIcon();
 @endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :id="$getId()"
@@ -62,7 +63,7 @@
                 'opacity-70' => $isDisabled(),
                 'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
                 'px-3' => ! $icon,
-                'pl-3 pr-10 rtl:pl-10 rtl:pr-3' => $icon,
+                'pl-3 pr-10 rtl:pl-10 rtl:pr-3' => $icon || $icon === null,
             ]) }}
         >
             <input
@@ -78,22 +79,29 @@
                 ])
             />
 
-            @if ($icon)
-                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
-                    @if ($icon === 'default')
-                        <svg @class([
-                            'w-5 h-5 text-gray-400',
-                            'dark:text-gray-400' => config('forms.dark_mode'),
-                        ]) xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            @if ($icon || $icon === null)
+                <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
+                    @if ($icon === null)
+                        <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor"
+                            @class([
+                                'w-5 h-5 text-gray-400 hover:text-gray-800 focus:text-primary-600',
+                                'dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-primary-600' => config('forms.dark_mode'),
+                            ])
+                        >
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                         </svg>
                     @else
                         <x-dynamic-component
                                 :component="$icon"
                             @class([
-                                'w-5 h-5 text-gray-400',
-                                'dark:text-gray-400' => config('forms.dark_mode'),
-                            ]) />
+                                'w-5 h-5 text-gray-400 hover:text-gray-800 focus:text-primary-600',
+                                'dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-primary-600' => config('forms.dark_mode'),
+                            ])
+                        />
                     @endif
                 </span>
             @endif
@@ -228,7 +236,6 @@
                                     'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
                             >:</span>
-
 
                             <input
                                 max="59"
