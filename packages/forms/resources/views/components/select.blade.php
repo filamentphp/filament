@@ -96,6 +96,7 @@
                         optionsLimit: @js($getOptionsLimit()),
                         placeholder: @js($getPlaceholder()),
                         position: @js($getPosition()),
+                        removeItemButton: ! @js($isPlaceholderSelectionDisabled()),
                         searchDebounce: @js($getSearchDebounce()),
                         searchingMessage: @js($getSearchingMessage()),
                         searchPrompt: @js($getSearchPrompt()),
