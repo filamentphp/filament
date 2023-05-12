@@ -36,8 +36,8 @@ trait HasRoutes
     public static function getRouteMiddleware(Context $context): string | array
     {
         return [
-            ...static::isEmailVerificationRequired($context) ? [static::getEmailVerifiedMiddleware($context)] : [],
-            ...static::isTenantSubscriptionRequired($context) ? [static::getTenantSubscribedMiddleware($context)] : [],
+            ...(static::isEmailVerificationRequired($context) ? [static::getEmailVerifiedMiddleware($context)] : []),
+            ...(static::isTenantSubscriptionRequired($context) ? [static::getTenantSubscribedMiddleware($context)] : []),
             ...static::$routeMiddleware,
         ];
     }

@@ -57,7 +57,7 @@ class AssetManager
     public function registerScriptData(array $data, string $package): void
     {
         $this->scriptData[$package] = [
-            ...$this->scriptData[$package] ?? [],
+            ...($this->scriptData[$package] ?? []),
             ...$data,
         ];
     }

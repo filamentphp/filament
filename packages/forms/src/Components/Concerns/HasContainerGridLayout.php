@@ -21,7 +21,7 @@ trait HasContainerGridLayout
         }
 
         $this->gridColumns = [
-            ...$this->gridColumns ?? [],
+            ...($this->gridColumns ?? []),
             ...$columns,
         ];
 

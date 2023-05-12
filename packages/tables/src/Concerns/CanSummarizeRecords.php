@@ -88,7 +88,7 @@ trait CanSummarizeRecords
         }
 
         $query->joins = [
-            ...$query->joins ?? [],
+            ...($query->joins ?? []),
             ...$joins,
         ];
 

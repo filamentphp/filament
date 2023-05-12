@@ -102,8 +102,8 @@ class CheckTranslationsCommand extends Command
                         $this->table(
                             [$file, ''],
                             [
-                                ...array_map(fn (string $key) => [$key, 'Missing'], $keys['missing']),
-                                ...array_map(fn (string $key) => [$key, 'Removed'], $keys['removed']),
+                                ...array_map(fn (string $key): array => [$key, 'Missing'], $keys['missing']),
+                                ...array_map(fn (string $key): array => [$key, 'Removed'], $keys['removed']),
                             ],
                             'box',
                         );

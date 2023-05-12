@@ -182,7 +182,7 @@ class CreateRecord extends Page
     {
         return [
             $this->getCreateFormAction(),
-            ...static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : [],
+            ...(static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : []),
             $this->getCancelFormAction(),
         ];
     }

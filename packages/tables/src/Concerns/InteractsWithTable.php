@@ -77,8 +77,8 @@ trait InteractsWithTable
 
         if (($this->tableFilters === null) && $shouldPersistFiltersInSession && session()->has($filtersSessionKey)) {
             $this->tableFilters = [
-                ...$this->tableFilters ?? [],
-                ...session()->get($filtersSessionKey) ?? [],
+                ...($this->tableFilters ?? []),
+                ...(session()->get($filtersSessionKey) ?? []),
             ];
         }
 

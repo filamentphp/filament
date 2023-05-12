@@ -45,7 +45,7 @@ class Grid extends Component
         }
 
         $this->columns = [
-            ...$this->columns ?? [],
+            ...($this->columns ?? []),
             ...$columns,
         ];
 

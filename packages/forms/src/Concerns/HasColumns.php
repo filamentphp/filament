@@ -23,7 +23,7 @@ trait HasColumns
         }
 
         $this->columns = [
-            ...$this->columns ?? [],
+            ...($this->columns ?? []),
             ...$columns,
         ];
 

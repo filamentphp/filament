@@ -117,7 +117,7 @@ class MakePageCommand extends Command
 
         $files = [
             $path,
-            ...$resourcePage === 'custom' ? [$viewPath] : [],
+            ...($resourcePage === 'custom' ? [$viewPath] : []),
         ];
 
         if (! $this->option('force') && $this->checkForCollision($files)) {

@@ -16,8 +16,8 @@
     }
 
     $class = [
-        ...$group?->class ?? [],
-        ...$icon?->class ?? [],
+        ...($group?->class ?? []),
+        ...($icon?->class ?? []),
         ...Arr::wrap($class),
     ];
 

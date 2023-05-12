@@ -59,7 +59,7 @@ abstract class Page extends BasePage
 
         return [
             $resource::getUrl() => $resource::getBreadcrumb(),
-            ...filled($breadcrumb) ? [$breadcrumb] : [],
+            ...(filled($breadcrumb) ? [$breadcrumb] : []),
         ];
     }
 

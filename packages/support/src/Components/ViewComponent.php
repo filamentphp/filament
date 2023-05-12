@@ -169,7 +169,7 @@ abstract class ViewComponent extends Component implements Htmlable
                 'attributes' => new ComponentAttributeBag(),
                 ...$this->extractPublicProperties(),
                 ...$this->extractPublicMethods(),
-                ...isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
+                ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
                 ...$this->viewData,
             ],
         );

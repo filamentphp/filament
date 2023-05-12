@@ -428,7 +428,7 @@ trait CanBeValidated
 
         $this->rules = [
             ...$this->rules,
-            ...array_map(static fn (string | object $rule) => [$rule, $condition], $rules),
+            ...array_map(static fn (string | object $rule): array => [$rule, $condition], $rules),
         ];
 
         return $this;
