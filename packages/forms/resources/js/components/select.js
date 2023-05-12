@@ -23,7 +23,7 @@ export default (Alpine) => {
             optionsLimit,
             placeholder,
             position,
-            removeItemButton,
+            isPlaceholderSelectionDisabled,
             searchDebounce,
             searchingMessage,
             searchPrompt,
