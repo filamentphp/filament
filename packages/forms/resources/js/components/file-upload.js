@@ -1,30 +1,34 @@
 import * as FilePond from 'filepond'
+import Cropper from 'cropperjs'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginImageCrop from 'filepond-plugin-image-crop'
+import FilePondPluginImageEdit from 'filepond-plugin-image-edit'
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
-import FilePondPluginImageEdit from 'filepond-plugin-image-edit'
-import Cropper from 'cropperjs'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
 FilePond.registerPlugin(FilePondPluginImageCrop)
+FilePond.registerPlugin(FilePondPluginImageEdit)
 FilePond.registerPlugin(FilePondPluginImageExifOrientation)
 FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
-FilePond.registerPlugin(FilePondPluginImageEdit)
 
 window.FilePond = FilePond
 
 export default function fileUploadFormComponent({
     acceptedFileTypes,
+    cropperViewPortHeight,
+    cropperViewPortWidth,
     deleteUploadedFileUsing,
+    disabled,
+    fillColor,
     getUploadedFilesUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
@@ -33,35 +37,31 @@ export default function fileUploadFormComponent({
     imageResizeTargetWidth,
     imageResizeUpscale,
     isAvatar,
+    isCroppable,
     isDownloadable,
     isOpenable,
     isPreviewable,
     isReorderable,
     loadingIndicatorPosition,
     locale,
+    maxSize,
+    minSize,
     panelAspectRatio,
     panelLayout,
     placeholder,
-    maxSize,
-    minSize,
     removeUploadedFileButtonPosition,
     removeUploadedFileUsing,
     reorderUploadedFilesUsing,
+    shape,
     shouldAppendFiles,
     shouldOrientImageFromExif,
     shouldTransformImage,
     state,
+    updateCropperInputs,
     uploadButtonPosition,
     uploadProgressIndicatorPosition,
     uploadUsing,
-    disabled,
-    isCroppable,
-    cropperViewPortWidth,
-    cropperViewPortHeight,
-    shape,
-    updateCropperInputs,
     viewMode,
-    fillColor,
 }) {
     return {
         fileKeyIndex: {},
@@ -387,6 +387,7 @@ export default function fileUploadFormComponent({
         destroy: function () {
             this.cropper.destroy()
             this.cropper = null
+
             FilePond.destroy(this.$refs.input)
             this.pond = null
         },

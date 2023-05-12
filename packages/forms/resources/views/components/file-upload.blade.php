@@ -19,9 +19,13 @@
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
             acceptedFileTypes: @js($getAcceptedFileTypes()),
+            cropperViewPortHeight: {{ $getCropperViewPortHeight() }},
+            cropperViewPortWidth: {{ $getCropperViewPortWidth() }},
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile(@js($statePath), fileKey)
             },
+            disabled: @js($isDisabled),
+            fillColor: '{{ $getFillColor() }}',
             getUploadedFilesUsing: async () => {
                 return await $wire.getUploadedFiles(@js($statePath))
             },
@@ -32,6 +36,7 @@
             imageResizeTargetWidth: @js($imageResizeTargetWidth),
             imageResizeUpscale: @js($getImageResizeUpscale()),
             isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
+            isCroppable: @js($isCroppable()),
             isDownloadable: @js($isDownloadable()),
             isOpenable: @js($isOpenable()),
             isPreviewable: @js($isPreviewable()),
@@ -50,24 +55,11 @@
             reorderUploadedFilesUsing: async (files) => {
                 return await $wire.reorderUploadedFiles(@js($statePath), files)
             },
+            shape: '{{ $getShape() }}',
             shouldAppendFiles: @js($shouldAppendFiles()),
             shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
             shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
-            uploadButtonPosition: @js($getUploadButtonPosition()),
-            uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
-            uploadUsing: (fileKey, file, success, error, progress) => {
-                $wire.upload(`{{ $statePath }}.${fileKey}`, file, () => {
-                    success(fileKey)
-                }, error, progress)
-            },
-            disabled: @js($isDisabled),
-            shape: '{{ $getShape() }}',
-            viewMode: {{ $getViewMode() }},
-            fillColor: '{{ $getFillColor() }}',
-            isCroppable: @js($isCroppable()),
-            cropperViewPortWidth: {{ $getCropperViewPortWidth() }},
-            cropperViewPortHeight: {{ $getCropperViewPortHeight() }},
             updateCropperInputs: (details) => {
                 $refs.inputX.value = Math.round(details.x)
                 $refs.inputY.value = Math.round(details.y)
@@ -77,6 +69,14 @@
                 //$refs.inputScaleX.value = details.scaleX
                 //$refs.inputScaleY.value = details.scaleY
             },
+            uploadButtonPosition: @js($getUploadButtonPosition()),
+            uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
+            uploadUsing: (fileKey, file, success, error, progress) => {
+                $wire.upload(`{{ $statePath }}.${fileKey}`, file, () => {
+                    success(fileKey)
+                }, error, progress)
+            },
+            viewMode: {{ $getViewMode() }},
         })"
         wire:ignore
         style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"

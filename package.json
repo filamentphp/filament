@@ -1,8 +1,8 @@
 {
     "name": "filament",
     "scripts": {
-        "dev:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify --watch",
         "dev:js": "node bin/build.mjs --dev",
+        "dev:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify --watch",
         "dev": "npm-run-all --parallel dev:*",
         "build:js": "node bin/build.mjs",
         "build:css": "npx tailwindcss -c ./packages/app/tailwind.config.js -i ./packages/app/resources/css/theme.css -o ./packages/app/dist/theme.css --minify",
