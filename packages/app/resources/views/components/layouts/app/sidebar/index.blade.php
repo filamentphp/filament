@@ -121,16 +121,18 @@
             }
         </script>
 
-        <ul class="px-6 space-y-6">
-            @foreach ($navigation as $group)
-                <x-filament::layouts.app.sidebar.group
-                    :label="$group->getLabel()"
-                    :icon="$group->getIcon()"
-                    :collapsible="$group->isCollapsible()"
-                    :items="$group->getItems()"
-                />
-            @endforeach
-        </ul>
+        @if (filament()->hasNavigation())
+            <ul class="px-6 space-y-6">
+                @foreach ($navigation as $group)
+                    <x-filament::layouts.app.sidebar.group
+                        :label="$group->getLabel()"
+                        :icon="$group->getIcon()"
+                        :collapsible="$group->isCollapsible()"
+                        :items="$group->getItems()"
+                    />
+                @endforeach
+            </ul>
+        @endif
 
         {{ filament()->renderHook('sidebar.end') }}
     </nav>

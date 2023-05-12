@@ -193,7 +193,9 @@ protected static bool $shouldRegisterNavigation = false;
 
 ## Advanced navigation customization
 
-The `navigation()` method can be called from the [configuration](configuration). Once you add this function, Filament's default automatic navigation will be disabled and your sidebar will be empty. This is done on purpose, since this API is designed to give you complete control over the navigation.
+The `navigation()` method can be called from the [configuration](configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.
+
+### Registering custom navigation items
 
 To register navigation items, call the `items()` method:
 
@@ -222,23 +224,48 @@ public function context(Context $context): Context
 }
 ```
 
+### Registering custom navigation groups
+
 If you want to register groups, you can call the `groups()` method:
 
 ```php
 use App\Filament\Pages\HomePageSettings;
 use App\Filament\Resources\CategoryResource;
 use App\Filament\Resources\PageResource;
+use Filament\Context;
+use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationGroup;
 
-$builder
-    ->groups([
-        NavigationGroup::make('Website')
-            ->items([
-                ...PageResource::getNavigationItems(),
-                ...CategoryResource::getNavigationItems(),
-                ...HomePageSettings::getNavigationItems(),
-            ]),
-    ])
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+            return $builder->groups([
+                NavigationGroup::make('Website')
+                    ->items([
+                        ...PageResource::getNavigationItems(),
+                        ...CategoryResource::getNavigationItems(),
+                        ...HomePageSettings::getNavigationItems(),
+                    ]),
+            ]);
+        });
+}
+```
+
+### Disabling navigation
+
+You may disable navigation entirely by passing `false` to the `navigation()` method:
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->navigation(false);
+}
 ```
 
 ## Customizing the user menu
@@ -300,5 +327,22 @@ public function context(Context $context): Context
             'logout' => MenuItem::make()->label('Log out'),
             // ...
         ]);
+}
+```
+
+## Breadcrumbs
+
+The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.
+
+You may disable breadcrumbs in your [configuration](configuration):
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->breadcrumbs(false);
 }
 ```

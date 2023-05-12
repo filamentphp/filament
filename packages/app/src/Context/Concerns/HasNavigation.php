@@ -22,9 +22,9 @@ trait HasNavigation
      */
     protected array $navigationItems = [];
 
-    protected ?Closure $navigationBuilder = null;
+    protected Closure | bool $navigationBuilder = true;
 
-    public function navigation(Closure $builder): static
+    public function navigation(Closure | bool $builder = true): static
     {
         $this->navigationBuilder = $builder;
 
@@ -81,12 +81,17 @@ trait HasNavigation
         return $this;
     }
 
+    public function hasNavigation(): bool
+    {
+        return $this->navigationBuilder !== false;
+    }
+
     /**
      * @return array<NavigationGroup>
      */
     public function getNavigation(): array
     {
-        if ($this->navigationBuilder !== null) {
+        if ($this->navigationBuilder instanceof Closure) {
             return $this->buildNavigation();
         }
 
