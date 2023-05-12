@@ -1148,13 +1148,22 @@ DateTimePicker::make('date')
     ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
 ```
 
-The calendar icon can be changed, or disabled by passing `icon(false)`
+The calendar icon can be changed:
 
 ```php
 use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('date')
     ->icon('heroicon-o-calendar')
+```
+
+Or you may pass `false` to hide the icon:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->icon(false)
 ```
 
 ### Timezones
