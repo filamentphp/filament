@@ -83,7 +83,7 @@ trait Croppable
 
     public function getCropperViewPortHeight(): int
     {
-        if ( ($targetH = (int) $this->getImageResizeTargetHeight()) > 1) {
+        if (($targetH = (int) $this->getImageResizeTargetHeight()) > 1) {
             return (int) round($targetH * $this->getParentTargetSizes($targetH), 0);
         }
 
