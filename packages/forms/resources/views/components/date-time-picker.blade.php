@@ -80,7 +80,7 @@
                 ])
             />
 
-            @if ($icon || $icon === null)
+            @if ($icon !== false)
                 <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
                     @if ($icon === null)
                         <svg
