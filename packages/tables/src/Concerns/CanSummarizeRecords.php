@@ -87,7 +87,10 @@ trait CanSummarizeRecords
             }
         }
 
-        $query->joins = array_merge($query->joins ?? [], $joins);
+        $query->joins = [
+            ...($query->joins ?? []),
+            ...$joins,
+        ];
 
         return $query
             ->selectRaw(implode(', ', $selects))

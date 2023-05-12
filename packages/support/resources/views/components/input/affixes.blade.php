@@ -33,15 +33,15 @@
 
     @if ($prefixIcon)
         <span
-            @class(array_merge(
-                [$baseAffixClasses],
-                ['rounded-s-lg -me-px'],
-            ))
+            @class([
+                $baseAffixClasses,
+                'rounded-s-lg -me-px',
+            ])
             @if (filled($statePath))
                 x-bind:class="{
-                'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
-            }"
+                    'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                }"
             @endif
         >
             <x-filament::icon
@@ -95,15 +95,15 @@
 
     @if ($suffixIcon)
         <span
-            @class(array_merge(
-                [$baseAffixClasses],
-                ['rounded-e-lg -ms-px'],
-            ))
+            @class([
+                $baseAffixClasses,
+                'rounded-e-lg -ms-px',
+            ])
             @if (filled($statePath))
                 x-bind:class="{
-                'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
-            }"
+                    'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                }"
             @endif
         >
             <x-filament::icon

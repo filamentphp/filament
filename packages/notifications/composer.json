@@ -8,7 +8,7 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "blade-ui-kit/blade-heroicons": "^2.0",
         "filament/actions": "self.version",
         "filament/support": "self.version",

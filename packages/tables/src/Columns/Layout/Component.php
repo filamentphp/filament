@@ -95,7 +95,10 @@ class Component extends ViewComponent
                 continue;
             }
 
-            $columns = array_merge($columns, $component->getColumns());
+            $columns = [
+                ...$columns,
+                ...$component->getColumns(),
+            ];
         }
 
         return $columns;

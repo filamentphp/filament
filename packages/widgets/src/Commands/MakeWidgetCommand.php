@@ -69,13 +69,13 @@ class MakeWidgetCommand extends Command
                 /** @var ?Context $context */
                 $context = $contexts[$this->choice(
                     'Where would you like to create this widget?',
-                    array_unique(array_merge(
-                        array_map(
+                    array_unique([
+                        ...array_map(
                             fn (Context $context): string => $context->getWidgetNamespace() ?? 'App\\Filament\\Widgets',
                             $contexts,
                         ),
-                        ['' => 'App\\Http\\Livewire' . ($widgetNamespace ? '\\' . $widgetNamespace : '')],
-                    )),
+                        '' => 'App\\Http\\Livewire' . ($widgetNamespace ? '\\' . $widgetNamespace : ''),
+                    ]),
                 )] ?? null;
             }
         }
