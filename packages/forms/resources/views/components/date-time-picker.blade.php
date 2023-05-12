@@ -62,8 +62,9 @@
                 'dark:border-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
                 'opacity-70' => $isDisabled(),
                 'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
-                'px-3' => ! $icon,
-                'pl-3 pr-10 rtl:pl-10 rtl:pr-3' => $icon || $icon === null,
+                $icon === false
+                    ? 'px-3'
+                    : 'pl-3 pr-10 rtl:pl-10 rtl:pr-3',
             ]) }}
         >
             <input
