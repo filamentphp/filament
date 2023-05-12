@@ -53,7 +53,7 @@
                         'warning' => 'filament-button-color-warning border-transparent bg-warning-600 text-white hover:bg-warning-500 focus:bg-warning-500 focus:ring-warning-500/50',
                         default => $color,
                     },
-                ],
+                ]
         ),
     ];
 
