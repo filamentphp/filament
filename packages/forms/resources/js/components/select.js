@@ -53,7 +53,7 @@ export default function selectFormComponent({
                 noResultsText: noSearchResultsMessage,
                 placeholderValue: placeholder,
                 position: position ?? 'auto',
-                removeItemButton: ! isPlaceholderSelectionDisabled,
+                removeItemButton: !isPlaceholderSelectionDisabled,
                 renderChoiceLimit: optionsLimit,
                 searchFields: ['label'],
                 searchPlaceholderValue: searchPrompt,
