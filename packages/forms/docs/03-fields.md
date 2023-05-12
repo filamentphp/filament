@@ -1157,7 +1157,7 @@ DateTimePicker::make('date')
     ->icon('heroicon-o-calendar')
 ```
 
-Or you may pass `false` to hide the icon:
+Alternatively, you may remove the icon altogether by passing `false`:
 
 ```php
 use Filament\Forms\Components\DateTimePicker;
