@@ -55,7 +55,7 @@ export default (Alpine) => {
                         noResultsText: noSearchResultsMessage,
                         placeholderValue: placeholder,
                         position: position ?? 'auto',
-                        removeItemButton: removeItemButton ?? true,
+                        removeItemButton: ! isPlaceholderSelectionDisabled,
                         renderChoiceLimit: optionsLimit,
                         searchFields: ['label'],
                         searchPlaceholderValue: searchPrompt,
