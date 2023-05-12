@@ -102,7 +102,7 @@
                         'dark:border-gray-600' => config('tables.dark_mode'),
                     ])>
                         <ol @class([
-                            'flex items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300',
+                            'flex gap-px items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300',
                             'dark:text-gray-400 dark:divide-gray-600' => config('tables.dark_mode'),
                         ])>
                             @if (! $paginator->onFirstPage())
