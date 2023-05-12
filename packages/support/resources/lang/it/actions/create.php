@@ -17,7 +17,7 @@ return [
                 ],
 
                 'create_another' => [
-                    'label' => 'Salva & un altro nuovo',
+                    'label' => 'Salva & crea uno nuovo',
                 ],
 
             ],
