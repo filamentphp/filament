@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Slava :label',
+            'heading' => 'Salva :label',
 
             'actions' => [
 
