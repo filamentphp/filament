@@ -233,7 +233,7 @@ class DateTimePicker extends Field
         return $this;
     }
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(bool | string | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -362,7 +362,7 @@ class DateTimePicker extends Field
         return $this->evaluate($this->shouldCloseOnDateSelection);
     }
 
-    public function getIcon(): null | string | bool
+    public function getIcon(): null | bool | string
     {
         return $this->evaluate($this->icon);
     }
