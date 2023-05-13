@@ -100,6 +100,7 @@
                         searchDebounce: @js($getSearchDebounce()),
                         searchingMessage: @js($getSearchingMessage()),
                         searchPrompt: @js($getSearchPrompt()),
+                        searchableOptionFields: @js($getSearchableOptionFields()),
                         state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
                     })"
                     x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
