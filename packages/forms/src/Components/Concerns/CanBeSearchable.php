@@ -17,9 +17,9 @@ trait CanBeSearchable
 
     protected string | Htmlable | Closure | null $searchPrompt = null;
 
-    protected bool | Closure $shouldSearchInLabels = true;
+    protected bool | Closure $shouldSearchLabels = true;
 
-    protected bool | Closure $shouldSearchInValues = false;
+    protected bool | Closure $shouldSearchValues = false;
 
     public function searchable(bool | Closure $condition = true): static
     {
@@ -56,16 +56,16 @@ trait CanBeSearchable
         return $this;
     }
 
-    public function searchInLabels(bool | null $condition = true): static
+    public function searchLabels(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchInLabels = $condition;
+        $this->shouldSearchLabels = $condition;
 
         return $this;
     }
 
-    public function searchInValues(bool | null $condition = true): static
+    public function searchValues(bool | Closure | null $condition = true): static
     {
-        $this->shouldSearchInValues = $condition;
+        $this->shouldSearchValues = $condition;
 
         return $this;
     }
@@ -80,21 +80,21 @@ trait CanBeSearchable
         return $this->evaluate($this->searchPrompt) ?? __('forms::components.select.search_prompt');
     }
 
-    public function shouldSearchInLabels(): bool
+    public function shouldSearchLabels(): bool
     {
         return $this->evaluate($this->shouldSearchInLabels);
     }
 
-    public function shouldSearchInValues(): bool
+    public function shouldSearchValues(): bool
     {
         return $this->evaluate($this->shouldSearchInValues);
     }
 
     public function getSearchFields(): array
     {
-        return array_merge([],
-            ($this->shouldSearchInLabels ? ['label'] : []),
-            ($this->shouldSearchInValues ? ['value'] : []),
+        return array_merge(
+            ($this->shouldSearchLabels() ? ['label'] : []),
+            ($this->shouldSearchValues() ? ['value'] : []),
         );
     }
 
