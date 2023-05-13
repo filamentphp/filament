@@ -13,10 +13,26 @@
     $content = $getContent();
     $contentGrid = $getContentGrid();
     $contentFooter = $getContentFooter();
-    $filterIndicators = collect($getFilters())
-        ->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])
-        ->filter(fn (array $indicators): bool => count($indicators))
-        ->all();
+    $filterIndicators = [
+        ...($hasSearch() ? ['resetTableSearch' => $getSearchIndicator()] : []),
+        ...collect($getColumnSearchIndicators())
+            ->mapWithKeys(fn (string $indicator, string $column): array => [
+                "resetTableColumnSearch('{$column}')" => $indicator,
+            ])
+            ->all(),
+        ...array_reduce(
+            $getFilters(),
+            fn (array $carry, \Filament\Tables\Filters\BaseFilter $filter): array => [
+                ...$carry,
+                ...collect($filter->getIndicators())
+                    ->mapWithKeys(fn (string $label, int | string $field) => [
+                        "removeTableFilter('{$filter->getName()}'" . (is_string($field) ? ' , \'' . $field . '\'' : null) . ')' => $label,
+                    ])
+                    ->all(),
+            ],
+            [],
+        ),
+    ];
     $hasColumnsLayout = $hasColumnsLayout();
     $hasSummary = $hasSummary();
     $header = $getHeader();
@@ -337,10 +353,12 @@
             </x-filament-tables::selection-indicator>
         @endif
 
-        <x-filament-tables::filters.indicators
-            :indicators="$filterIndicators"
-            class="border-t dark:border-gray-700"
-        />
+        <div>
+            <x-filament-tables::filters.indicators
+                :indicators="$filterIndicators"
+                class="border-t dark:border-gray-700"
+            />
+        </div>
 
         <div
             @if ($pollingInterval = $getPollingInterval())
@@ -1157,7 +1175,6 @@
                                 <x-filament-tables::empty-state
                                     :icon="$getEmptyStateIcon()"
                                     :actions="$getEmptyStateActions()"
-                                    :column-searches="$hasColumnSearches()"
                                 >
                                     <x-slot name="heading">
                                         {{ $getEmptyStateHeading() }}

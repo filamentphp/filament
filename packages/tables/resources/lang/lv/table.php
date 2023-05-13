@@ -95,15 +95,6 @@ return [
 
     'empty' => [
         'heading' => 'Nav atrasts neviens ieraksts',
-
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Notīrīt kolonnas meklēšanu',
-            ],
-
-        ],
-
     ],
 
     'filters' => [

@@ -97,14 +97,6 @@ return [
 
         'heading' => 'Илэрц хоосон',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Цэвэрлэх',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
