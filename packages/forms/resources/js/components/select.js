@@ -114,7 +114,9 @@ export default (Alpine) => {
                             async (event) => {
                                 let search = event.detail.value?.trim()
 
-                                let label = [null, undefined, ''].includes(search)
+                                let label = [null, undefined, ''].includes(
+                                    search,
+                                )
                                     ? loadingMessage
                                     : searchingMessage
 
