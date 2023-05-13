@@ -72,10 +72,6 @@ export default (Alpine) => {
                         date = null
                     }
 
-                    this.hour = date?.hour() ?? 0
-                    this.minute = date?.minute() ?? 0
-                    this.second = date?.second() ?? 0
-
                     this.setDisplayText()
                     this.setMonths()
                     this.setDayLabels()
@@ -249,6 +245,10 @@ export default (Alpine) => {
 
                         this.setDisplayText()
                     })
+
+                    this.hour = date?.hour() ?? 0
+                    this.minute = date?.minute() ?? 0
+                    this.second = date?.second() ?? 0
                 },
 
                 clearState: function () {
