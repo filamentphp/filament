@@ -90,6 +90,9 @@ trait CanBeSearchable
         return (bool) $this->evaluate($this->shouldSearchValues);
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSearchableOptionFields(): array
     {
         return [
