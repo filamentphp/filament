@@ -249,6 +249,20 @@ protected function getTableQuery(): Builder
 }
 ```
 
+## Customizing the query string
+
+Table search, filters, sorts and other stateful properties are stored in the URL as query strings. Since Filament uses Livewire internally, this behaviour can be modified by overriding the `$queryString` property on the List page of the resource. For instance, you can employ [query string aliases](https://laravel-livewire.com/docs/2.x/query-string#query-string-aliases) to rename some of the properties using `as`:
+
+```php
+protected $queryString = [
+    'isTableReordering' => ['except' => false],
+    'tableFilters' => ['as' => 'filters'], // `tableFilters` is now replaced with `filters` in the query string
+    'tableSortColumn' => ['except' => ''],
+    'tableSortDirection' => ['except' => ''],
+    'tableSearchQuery' => ['except' => '', 'as' => 'search'], // `tableSearchQuery` is now replaced with `search` in the query string
+];
+```
+
 ## Custom view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
