@@ -24,6 +24,7 @@ export default function selectFormComponent({
     searchDebounce,
     searchingMessage,
     searchPrompt,
+    searchableOptionFields,
     state,
     statePath,
 }) {
@@ -55,7 +56,7 @@ export default function selectFormComponent({
                 position: position ?? 'auto',
                 removeItemButton: canSelectPlaceholder,
                 renderChoiceLimit: optionsLimit,
-                searchFields: ['label'],
+                searchFields: searchableOptionFields ?? ['label'],
                 searchPlaceholderValue: searchPrompt,
                 searchResultLimit: optionsLimit,
                 shouldSort: false,
