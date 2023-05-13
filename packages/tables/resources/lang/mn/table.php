@@ -33,18 +33,18 @@ return [
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Хуудас',
 
-        'overview' => '{1} Showing 1 result|[2,*] Showing :first to :last of :total results',
+        'overview' => '{1} Нийт 1 |[2,*] Нийт :total бичлэг :first - :last',
 
         'fields' => [
 
             'records_per_page' => [
 
-                'label' => 'per page',
+                'label' => 'хуудас',
 
                 'options' => [
-                    'all' => 'All',
+                    'all' => 'Бүгд',
                 ],
 
             ],
@@ -54,15 +54,15 @@ return [
         'buttons' => [
 
             'go_to_page' => [
-                'label' => 'Go to page :page',
+                'label' => 'Хуудасруу очих :page',
             ],
 
             'next' => [
-                'label' => 'Next',
+                'label' => 'Дараах',
             ],
 
             'previous' => [
-                'label' => 'Previous',
+                'label' => 'Өмнөх',
             ],
 
         ],
@@ -72,35 +72,35 @@ return [
     'buttons' => [
 
         'disable_reordering' => [
-            'label' => 'Finish reordering records',
+            'label' => 'Эрэмбэлэлтийг дуусгах',
         ],
 
         'enable_reordering' => [
-            'label' => 'Reorder records',
+            'label' => 'Мөрүүдийг эрэмбэлэх',
         ],
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'Шүүлтүүр',
         ],
 
         'open_actions' => [
-            'label' => 'Open actions',
+            'label' => 'Үйлдэл',
         ],
 
         'toggle_columns' => [
-            'label' => 'Toggle columns',
+            'label' => 'Баганыг нээх/хаах',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => 'No records found',
+        'heading' => 'Илэрц хоосон',
 
         'buttons' => [
 
             'reset_column_searches' => [
-                'label' => 'Clear column search',
+                'label' => 'Цэвэрлэх',
             ],
 
         ],
@@ -112,58 +112,58 @@ return [
         'buttons' => [
 
             'remove' => [
-                'label' => 'Remove filter',
+                'label' => 'Цэвэрлэх',
             ],
 
             'remove_all' => [
-                'label' => 'Remove all filters',
-                'tooltip' => 'Remove all filters',
+                'label' => 'Бүгдийг цэвэрлэх',
+                'tooltip' => 'Бүгдийг цэвэрлэх',
             ],
 
             'reset' => [
-                'label' => 'Reset filters',
+                'label' => 'Филтерийг болиулах',
             ],
 
         ],
 
-        'indicator' => 'Active filters',
+        'indicator' => 'Филтерийг идэвхижүүлэх',
 
         'multi_select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'Бүгд',
         ],
 
         'select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'Бүгд',
         ],
 
         'trashed' => [
 
-            'label' => 'Deleted records',
+            'label' => 'Бичлэгийг устгах',
 
-            'only_trashed' => 'Only deleted records',
+            'only_trashed' => 'Зөвхөн устгасан бичлэг',
 
-            'with_trashed' => 'With deleted records',
+            'with_trashed' => 'Устгасан бичлэг',
 
-            'without_trashed' => 'Without deleted records',
+            'without_trashed' => 'Устгаагүй бичлэг',
 
         ],
 
     ],
 
-    'reorder_indicator' => 'Drag and drop the records into order.',
+    'reorder_indicator' => 'Чирж эрэмбэлэх.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selected.|:count records selected.',
+        'selected_count' => '1 бичлэг сонгогдов.|:count -г сонгов.',
 
         'buttons' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => 'Бүгдийг сонго :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'Бүгдийг эс сонго',
             ],
 
         ],
@@ -175,16 +175,16 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Sort by',
+                'label' => 'Эрэмбэлэх',
             ],
 
             'direction' => [
 
-                'label' => 'Sort direction',
+                'label' => 'Эрэмбэлэх',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'Өсөх',
+                    'desc' => 'Буурах',
                 ],
 
             ],
