@@ -92,10 +92,10 @@ trait CanBeSearchable
 
     public function getSearchableOptionFields(): array
     {
-        return array_merge(
-            ($this->shouldSearchLabels() ? ['label'] : []),
-            ($this->shouldSearchValues() ? ['value'] : []),
-        );
+        return [
+            ...($this->shouldSearchLabels() ? ['label'] : []),
+            ...($this->shouldSearchValues() ? ['value'] : []),
+        ];
     }
 
     public function getSearchDebounce(): int
