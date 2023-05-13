@@ -26,7 +26,7 @@ export default (Alpine) => {
             searchDebounce,
             searchingMessage,
             searchPrompt,
-            searchFields,
+            searchableOptionFields,
             state,
         }) => {
             return {
@@ -57,7 +57,7 @@ export default (Alpine) => {
                         position: position ?? 'auto',
                         removeItemButton: true,
                         renderChoiceLimit: optionsLimit,
-                        searchFields: searchFields ?? ['label'],
+                        searchFields: searchableOptionFields ?? ['label'],
                         searchPlaceholderValue: searchPrompt,
                         searchResultLimit: optionsLimit,
                         shouldSort: false,
