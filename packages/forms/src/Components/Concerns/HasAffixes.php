@@ -60,7 +60,10 @@ trait HasAffixes
      */
     public function prefixActions(array $actions): static
     {
-        $this->prefixActions = array_merge($this->prefixActions, $actions);
+        $this->prefixActions = [
+            ...$this->prefixActions,
+            ...$actions,
+        ];
 
         return $this;
     }
@@ -77,7 +80,10 @@ trait HasAffixes
      */
     public function suffixActions(array $actions): static
     {
-        $this->suffixActions = array_merge($this->suffixActions, $actions);
+        $this->suffixActions = [
+            ...$this->suffixActions,
+            ...$actions,
+        ];
 
         return $this;
     }

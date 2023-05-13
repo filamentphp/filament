@@ -323,7 +323,10 @@ trait InteractsWithForms
 
         foreach (class_uses_recursive($class = static::class) as $trait) {
             if (method_exists($class, $method = 'get' . class_basename($trait) . 'Forms')) {
-                $forms = array_merge($forms, $this->{$method}());
+                $forms = [
+                    ...$forms,
+                    ...$this->{$method}(),
+                ];
             }
         }
 
@@ -413,7 +416,10 @@ trait InteractsWithForms
         $rules = parent::getRules();
 
         foreach ($this->getCachedForms() as $form) {
-            $rules = array_merge($rules, $form->getValidationRules());
+            $rules = [
+                ...$rules,
+                ...$form->getValidationRules(),
+            ];
         }
 
         return $rules;
@@ -427,7 +433,10 @@ trait InteractsWithForms
         $attributes = parent::getValidationAttributes();
 
         foreach ($this->getCachedForms() as $form) {
-            $attributes = array_merge($attributes, $form->getValidationAttributes());
+            $attributes = [
+                ...$attributes,
+                ...$form->getValidationAttributes(),
+            ];
         }
 
         return $attributes;

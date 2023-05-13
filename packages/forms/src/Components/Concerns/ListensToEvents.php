@@ -26,7 +26,10 @@ trait ListensToEvents
     public function registerListeners(array $listeners): static
     {
         foreach ($listeners as $event => $callbacks) {
-            $this->listeners[$event] = array_merge($this->getListeners($event), $callbacks);
+            $this->listeners[$event] = [
+                ...$this->getListeners($event),
+                ...$callbacks,
+            ];
         }
 
         return $this;

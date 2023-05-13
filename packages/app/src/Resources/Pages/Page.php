@@ -57,10 +57,10 @@ abstract class Page extends BasePage
 
         $breadcrumb = $this->getBreadcrumb();
 
-        return array_merge(
-            [$resource::getUrl() => $resource::getBreadcrumb()],
-            (filled($breadcrumb) ? [$breadcrumb] : []),
-        );
+        return [
+            $resource::getUrl() => $resource::getBreadcrumb(),
+            ...(filled($breadcrumb) ? [$breadcrumb] : []),
+        ];
     }
 
     public static function authorizeResourceAccess(): void

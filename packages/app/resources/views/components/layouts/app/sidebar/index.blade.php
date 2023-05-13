@@ -61,12 +61,16 @@
                     'lg:ms-3' => filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
-                <a
-                    href="{{ filament()->getHomeUrl() }}"
-                    class="inline-block"
-                >
+                @if ($homeUrl = filament()->getHomeUrl())
+                    <a
+                        href="{{ $homeUrl }}"
+                        class="inline-block"
+                    >
+                        <x-filament::logo />
+                    </a>
+                @else
                     <x-filament::logo />
-                </a>
+                @endif
             </div>
         </div>
 
@@ -117,16 +121,18 @@
             }
         </script>
 
-        <ul class="px-6 space-y-6">
-            @foreach ($navigation as $group)
-                <x-filament::layouts.app.sidebar.group
-                    :label="$group->getLabel()"
-                    :icon="$group->getIcon()"
-                    :collapsible="$group->isCollapsible()"
-                    :items="$group->getItems()"
-                />
-            @endforeach
-        </ul>
+        @if (filament()->hasNavigation())
+            <ul class="px-6 space-y-6">
+                @foreach ($navigation as $group)
+                    <x-filament::layouts.app.sidebar.group
+                        :label="$group->getLabel()"
+                        :icon="$group->getIcon()"
+                        :collapsible="$group->isCollapsible()"
+                        :items="$group->getItems()"
+                    />
+                @endforeach
+            </ul>
+        @endif
 
         {{ filament()->renderHook('sidebar.end') }}
     </nav>

@@ -76,7 +76,7 @@ class FilamentManager
         Event::listen(ServingFilament::class, $callback);
     }
 
-    public function getGlobalSearchProvider(): GlobalSearchProvider
+    public function getGlobalSearchProvider(): ?GlobalSearchProvider
     {
         return $this->getCurrentContext()->getGlobalSearchProvider();
     }
@@ -128,6 +128,11 @@ class FilamentManager
         return $this->getCurrentContext()->getTenantOwnershipRelationshipName();
     }
 
+    public function hasNavigation(): bool
+    {
+        return $this->getCurrentContext()->hasNavigation();
+    }
+
     public function hasTopNavigation(): bool
     {
         return $this->getCurrentContext()->hasTopNavigation();
@@ -154,6 +159,11 @@ class FilamentManager
         if ($tenant) {
             event(new TenantSet($tenant, $this->auth()->user()));
         }
+    }
+
+    public function hasBreadcrumbs(): bool
+    {
+        return $this->getCurrentContext()->hasBreadcrumbs();
     }
 
     public function hasEmailVerification(): bool
@@ -201,9 +211,9 @@ class FilamentManager
         return $this->getCurrentContext()->getAuthGuard();
     }
 
-    public function getHomeUrl(): string
+    public function getHomeUrl(): ?string
     {
-        return $this->getCurrentContext()->getHomeUrl();
+        return $this->getCurrentContext()->getHomeUrl() ?? $this->getCurrentContext()->getUrl();
     }
 
     /**

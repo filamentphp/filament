@@ -19,10 +19,10 @@ trait HasMiddleware
      */
     public function middleware(array $middleware): static
     {
-        $this->middleware = array_merge(
-            $this->middleware,
-            $middleware,
-        );
+        $this->middleware = [
+            ...$this->middleware,
+            ...$middleware,
+        ];
 
         return $this;
     }
@@ -32,10 +32,10 @@ trait HasMiddleware
      */
     public function authMiddleware(array $middleware): static
     {
-        $this->authMiddleware = array_merge(
-            $this->authMiddleware,
-            $middleware,
-        );
+        $this->authMiddleware = [
+            ...$this->authMiddleware,
+            ...$middleware,
+        ];
 
         return $this;
     }
@@ -45,10 +45,10 @@ trait HasMiddleware
      */
     public function getMiddleware(): array
     {
-        return array_merge(
-            ["context:{$this->getId()}"],
-            $this->middleware,
-        );
+        return [
+            "context:{$this->getId()}",
+            ...$this->middleware,
+        ];
     }
 
     /**

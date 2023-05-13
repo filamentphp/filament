@@ -222,7 +222,7 @@ TextEntry::make('updated_at')
 
 ## Customizing the color
 
-You may set a color for the text, either `primary`, `secondary`, `success`, `warning` or `danger`:
+You may set a color for the text, either `primary`, `gray`, `secondary`, `success`, `warning` or `danger`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;

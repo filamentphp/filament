@@ -10,6 +10,7 @@ export default defineConfig({
                 'app/Filament/**',
                 'app/Forms/Components/**',
                 'app/Http/Livewire/**',
+                'app/Providers/Filament/**',
                 'app/Tables/Columns/**',
             ],
         }),

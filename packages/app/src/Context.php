@@ -3,13 +3,15 @@
 namespace Filament;
 
 use Closure;
+use Filament\Support\Components\Component;
 use Filament\Support\Facades\FilamentIcon;
 
-class Context
+class Context extends Component
 {
     use Context\Concerns\HasAuth;
     use Context\Concerns\HasAvatars;
     use Context\Concerns\HasBrandName;
+    use Context\Concerns\HasBreadcrumbs;
     use Context\Concerns\HasColors;
     use Context\Concerns\HasComponents;
     use Context\Concerns\HasDarkMode;

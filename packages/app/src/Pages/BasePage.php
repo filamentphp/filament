@@ -33,10 +33,11 @@ abstract class BasePage extends Component implements HasActions, RendersActionMo
     public function render(): View
     {
         return view(static::$view, $this->getViewData())
-            ->layout(static::$layout, array_merge([
+            ->layout(static::$layout, [
                 'livewire' => $this,
                 'maxContentWidth' => $this->getMaxContentWidth(),
-            ], $this->getLayoutData()));
+                ...$this->getLayoutData(),
+            ]);
     }
 
     public function getHeading(): string | Htmlable

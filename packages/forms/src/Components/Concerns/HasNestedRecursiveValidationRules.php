@@ -20,10 +20,10 @@ trait HasNestedRecursiveValidationRules
             $rules = explode('|', $rules);
         }
 
-        $this->nestedRecursiveValidationRules = array_merge(
-            $this->nestedRecursiveValidationRules,
-            array_map(static fn (string | object $rule) => [$rule, $condition], $rules),
-        );
+        $this->nestedRecursiveValidationRules = [
+            ...$this->nestedRecursiveValidationRules,
+            ...array_map(static fn (string | object $rule): array => [$rule, $condition], $rules),
+        ];
 
         return $this;
     }

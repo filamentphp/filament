@@ -119,7 +119,10 @@ trait HasQuery
         ];
 
         if (! $this->allowsDuplicates()) {
-            $columns = array_merge(invade($relationship)->aliasedPivotColumns(), $columns);
+            $columns = [
+                ...invade($relationship)->aliasedPivotColumns(),
+                ...$columns,
+            ];
         }
 
         $query->select($columns);

@@ -291,27 +291,29 @@
                             </div>
                         @endif
 
-                        <div class="flex items-center">
-                            @if ($hasFiltersDropdown)
-                                <x-filament-tables::filters.dropdown
-                                    :form="$getFiltersForm()"
-                                    :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
-                                    :max-height="$getFiltersFormMaxHeight()"
-                                    :trigger-action="$getFiltersTriggerAction()"
-                                    :width="$getFiltersFormWidth()"
-                                    class="shrink-0"
-                                />
-                            @endif
+                        @if ($hasFiltersDropdown || $isColumnToggleFormVisible)
+                            <div class="flex items-center">
+                                @if ($hasFiltersDropdown)
+                                    <x-filament-tables::filters.dropdown
+                                        :form="$getFiltersForm()"
+                                        :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                        :max-height="$getFiltersFormMaxHeight()"
+                                        :trigger-action="$getFiltersTriggerAction()"
+                                        :width="$getFiltersFormWidth()"
+                                        class="shrink-0"
+                                    />
+                                @endif
 
-                            @if ($isColumnToggleFormVisible)
-                                <x-filament-tables::toggleable
-                                    :form="$getColumnToggleForm()"
-                                    :max-height="$getColumnToggleFormMaxHeight()"
-                                    :width="$getColumnToggleFormWidth()"
-                                    class="shrink-0"
-                                />
-                            @endif
-                        </div>
+                                @if ($isColumnToggleFormVisible)
+                                    <x-filament-tables::toggleable
+                                        :form="$getColumnToggleForm()"
+                                        :max-height="$getColumnToggleFormMaxHeight()"
+                                        :width="$getColumnToggleFormWidth()"
+                                        class="shrink-0"
+                                    />
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 @endif
             </div>
@@ -565,16 +567,14 @@
                                     x-bind:class="{
                                         'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                     }"
-                                    @class(array_merge(
-                                        [
-                                            'h-full relative px-4 transition',
-                                            'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
-                                            'dark:border-gray-600' => ! $contentGrid,
-                                            'group' => $isReordering,
-                                            'rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid,
-                                        ],
-                                        $getRecordClasses($record),
-                                    ))
+                                    @class([
+                                        'h-full relative px-4 transition',
+                                        'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
+                                        'dark:border-gray-600' => ! $contentGrid,
+                                        'group' => $isReordering,
+                                        'rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid,
+                                        ...$getRecordClasses($record),
+                                    ])
                                 >
                                     <div @class([
                                         'items-center gap-4 md:flex md:me-0' => (! $contentGrid),
@@ -975,12 +975,10 @@
                                         'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
                                         'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                     }"
-                                    @class(array_merge(
-                                        [
-                                            'group cursor-move' => $isReordering,
-                                        ],
-                                        $getRecordClasses($record),
-                                    ))
+                                    @class([
+                                        'group cursor-move' => $isReordering,
+                                        ...$getRecordClasses($record),
+                                    ])
                                 >
                                     <x-filament-tables::reorder.cell @class([
                                         'hidden' => ! $isReordering,

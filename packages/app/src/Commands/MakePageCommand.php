@@ -115,10 +115,10 @@ class MakePageCommand extends Command
                 ->append('.blade.php'),
         );
 
-        $files = array_merge(
-            [$path],
-            $resourcePage === 'custom' ? [$viewPath] : [],
-        );
+        $files = [
+            $path,
+            ...($resourcePage === 'custom' ? [$viewPath] : []),
+        ];
 
         if (! $this->option('force') && $this->checkForCollision($files)) {
             return static::INVALID;

@@ -122,10 +122,10 @@ class Notification extends ViewComponent implements Arrayable
      */
     public function safeViews(string | array $safeViews): static
     {
-        $this->safeViews = array_merge(
-            $this->safeViews,
-            Arr::wrap($safeViews),
-        );
+        $this->safeViews = [
+            ...$this->safeViews,
+            ...Arr::wrap($safeViews),
+        ];
 
         return $this;
     }

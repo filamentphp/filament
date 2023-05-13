@@ -50,7 +50,11 @@ trait HasColumns
             }
 
             $this->hasColumnsLayout = true;
-            $this->columns = array_merge($this->columns, $component->getColumns());
+
+            $this->columns = [
+                ...$this->columns,
+                ...$component->getColumns(),
+            ];
         }
 
         foreach ($this->columns as $column) {

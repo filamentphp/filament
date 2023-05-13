@@ -3,7 +3,7 @@
     "description": "A collection of tools for rapidly building beautiful TALL stack apps, designed for humans.",
     "license": "MIT",
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-intl": "*",
         "composer-runtime-api": "^2.1"
     },

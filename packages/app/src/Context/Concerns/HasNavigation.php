@@ -22,9 +22,9 @@ trait HasNavigation
      */
     protected array $navigationItems = [];
 
-    protected ?Closure $navigationBuilder = null;
+    protected Closure | bool $navigationBuilder = true;
 
-    public function navigation(Closure $builder): static
+    public function navigation(Closure | bool $builder = true): static
     {
         $this->navigationBuilder = $builder;
 
@@ -60,7 +60,10 @@ trait HasNavigation
      */
     public function navigationGroups(array $groups): static
     {
-        $this->navigationGroups = array_merge($this->navigationGroups, $groups);
+        $this->navigationGroups = [
+            ...$this->navigationGroups,
+            ...$groups,
+        ];
 
         return $this;
     }
@@ -70,9 +73,17 @@ trait HasNavigation
      */
     public function navigationItems(array $items): static
     {
-        $this->navigationItems = array_merge($this->navigationItems, $items);
+        $this->navigationItems = [
+            ...$this->navigationItems,
+            ...$items,
+        ];
 
         return $this;
+    }
+
+    public function hasNavigation(): bool
+    {
+        return $this->navigationBuilder !== false;
     }
 
     /**
@@ -80,7 +91,7 @@ trait HasNavigation
      */
     public function getNavigation(): array
     {
-        if ($this->navigationBuilder !== null) {
+        if ($this->navigationBuilder instanceof Closure) {
             return $this->buildNavigation();
         }
 
@@ -130,10 +141,10 @@ trait HasNavigation
                 $groupsToSearch = $registeredGroups;
 
                 if (Arr::first($registeredGroups) instanceof NavigationGroup) {
-                    $groupsToSearch = array_merge(
-                        array_keys($registeredGroups),
-                        array_map(fn (NavigationGroup $registeredGroup): string => $registeredGroup->getLabel(), array_values($registeredGroups)),
-                    );
+                    $groupsToSearch = [
+                        ...array_keys($registeredGroups),
+                        ...array_map(fn (NavigationGroup $registeredGroup): string => $registeredGroup->getLabel(), array_values($registeredGroups)),
+                    ];
                 }
 
                 $sort = array_search(

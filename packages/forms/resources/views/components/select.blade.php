@@ -69,6 +69,7 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
+                    canSelectPlaceholder: @js($canSelectPlaceholder()),
                     isHtmlAllowed: @js($isHtmlAllowed()),
                     getOptionLabelUsing: async () => {
                         return await $wire.getSelectOptionLabel(@js($statePath))
@@ -99,6 +100,7 @@
                     searchDebounce: @js($getSearchDebounce()),
                     searchingMessage: @js($getSearchingMessage()),
                     searchPrompt: @js($getSearchPrompt()),
+                    searchableOptionFields: @js($getSearchableOptionFields()),
                     state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
                     statePath: @js($statePath),
                 })"

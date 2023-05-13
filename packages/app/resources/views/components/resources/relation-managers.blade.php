@@ -36,6 +36,8 @@
                         :active="$activeManager === $tabKey"
                         :badge="filled($tabKey) ? ($isGroup ? $manager->getBadge() : $manager::getBadge($ownerRecord, $pageClass)) : null"
                         :icon="filled($tabKey) ? ($isGroup ? $manager->getIcon() : $manager::getIcon($ownerRecord, $pageClass)) : null"
+                        :icon-color="filled($tabKey) ? ($isGroup ? $manager->getIconColor() : $manager::getIconColor($ownerRecord, $pageClass)) : null"
+                        :icon-position="filled($tabKey) ? ($isGroup ? $manager->getIconPosition() : $manager::getIconPosition($ownerRecord, $pageClass)) : null"
                     >
                         @if (filled($tabKey))
                             {{ $isGroup ? $manager->getLabel() : $manager::getTitle($ownerRecord, $pageClass) }}

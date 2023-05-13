@@ -1,6 +1,7 @@
 import Choices from 'choices.js'
 
 export default function selectFormComponent({
+    canSelectPlaceholder,
     isHtmlAllowed,
     getOptionLabelUsing,
     getOptionLabelsUsing,
@@ -23,6 +24,7 @@ export default function selectFormComponent({
     searchDebounce,
     searchingMessage,
     searchPrompt,
+    searchableOptionFields,
     state,
     statePath,
 }) {
@@ -52,15 +54,14 @@ export default function selectFormComponent({
                 noResultsText: noSearchResultsMessage,
                 placeholderValue: placeholder,
                 position: position ?? 'auto',
-                removeItemButton: true,
+                removeItemButton: canSelectPlaceholder,
                 renderChoiceLimit: optionsLimit,
-                searchFields: ['label'],
+                searchFields: searchableOptionFields ?? ['label'],
                 searchPlaceholderValue: searchPrompt,
                 searchResultLimit: optionsLimit,
                 shouldSort: false,
+                searchFloor: hasDynamicSearchResults ? 0 : 1,
             })
-
-            await this.refreshChoices({ withInitialOptions: true })
 
             if (![null, undefined, ''].includes(this.state)) {
                 this.select.setChoiceByValue(this.formatState(this.state))
@@ -103,16 +104,16 @@ export default function selectFormComponent({
                 this.$refs.input.addEventListener('search', async (event) => {
                     let search = event.detail.value?.trim()
 
-                    if ([null, undefined, ''].includes(search)) {
-                        return
-                    }
+                    let label = [null, undefined, ''].includes(search)
+                        ? loadingMessage
+                        : searchingMessage
 
                     this.isSearching = true
 
                     this.select.clearChoices()
                     await this.select.setChoices([
                         {
-                            label: searchingMessage,
+                            label: label,
                             value: '',
                             disabled: true,
                         },

@@ -28,64 +28,73 @@
             </button>
 
             @if (filament()->hasTopNavigation())
-                <a
-                    href="{{ filament()->getHomeUrl() }}"
-                    data-turbo="false"
-                    class="hidden me-12 lg:flex"
-                >
-                    <x-filament::logo />
-                </a>
+                <div class="hidden me-12 lg:flex">
+                    @if ($homeUrl = filament()->getHomeUrl())
+                        <a
+                            href="{{ $homeUrl }}"
+                            data-turbo="false"
+                        >
+                            <x-filament::logo />
+                        </a>
+                    @else
+                        <x-filament::logo />
+                    @endif
+                </div>
 
-                <ul class="hidden items-center flex-wrap gap-3 lg:flex">
-                    @foreach ($navigation as $group)
-                        @if ($groupLabel = $group->getLabel())
-                            <x-filament::dropdown placement="bottom-start">
-                                <x-slot name="trigger">
-                                    <x-filament::layouts.app.topbar.item
-                                        :active="$group->isActive()"
-                                        :icon="$group->getIcon()"
-                                    >
-                                        {{ $groupLabel }}
-                                    </x-filament::layouts.app.topbar.item>
-                                </x-slot>
-
-                                <x-filament::dropdown.list>
-                                    @foreach ($group->getItems() as $item)
-                                        <x-filament::dropdown.list.item
-                                            :icon="$item->isActive() ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
-                                            :href="$item->getUrl()"
-                                            :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
-                                            tag="a"
+                @if (filament()->hasNavigation())
+                    <ul class="hidden items-center flex-wrap gap-3 lg:flex">
+                        @foreach ($navigation as $group)
+                            @if ($groupLabel = $group->getLabel())
+                                <x-filament::dropdown placement="bottom-start">
+                                    <x-slot name="trigger">
+                                        <x-filament::layouts.app.topbar.item
+                                            :active="$group->isActive()"
+                                            :icon="$group->getIcon()"
                                         >
-                                            {{ $item->getLabel() }}
-                                        </x-filament::dropdown.list.item>
-                                    @endforeach
-                                </x-filament::dropdown.list>
-                            </x-filament::dropdown>
-                        @else
-                            @foreach ($group->getItems() as $item)
-                                <x-filament::layouts.app.topbar.item
-                                    :active="$item->isActive()"
-                                    :icon="$item->getIcon()"
-                                    :active-icon="$item->getActiveIcon()"
-                                    :url="$item->getUrl()"
-                                    :badge="$item->getBadge()"
-                                    :badgeColor="$item->getBadgeColor()"
-                                    :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
-                                >
-                                    {{ $item->getLabel() }}
-                                </x-filament::layouts.app.topbar.item>
-                            @endforeach
-                        @endif
-                    @endforeach
-                </ul>
-            @else
+                                            {{ $groupLabel }}
+                                        </x-filament::layouts.app.topbar.item>
+                                    </x-slot>
+
+                                    <x-filament::dropdown.list>
+                                        @foreach ($group->getItems() as $item)
+                                            <x-filament::dropdown.list.item
+                                                :icon="$item->isActive() ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
+                                                :href="$item->getUrl()"
+                                                :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                                tag="a"
+                                            >
+                                                {{ $item->getLabel() }}
+                                            </x-filament::dropdown.list.item>
+                                        @endforeach
+                                    </x-filament::dropdown.list>
+                                </x-filament::dropdown>
+                            @else
+                                @foreach ($group->getItems() as $item)
+                                    <x-filament::layouts.app.topbar.item
+                                        :active="$item->isActive()"
+                                        :icon="$item->getIcon()"
+                                        :active-icon="$item->getActiveIcon()"
+                                        :url="$item->getUrl()"
+                                        :badge="$item->getBadge()"
+                                        :badgeColor="$item->getBadgeColor()"
+                                        :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
+                                    >
+                                        {{ $item->getLabel() }}
+                                    </x-filament::layouts.app.topbar.item>
+                                @endforeach
+                            @endif
+                        @endforeach
+                    </ul>
+                @endif
+            @elseif (count($breadcrumbs))
                 <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
             @endif
         </div>
 
         <div class="flex items-center">
-            @livewire('filament.core.global-search')
+            @if (filament()->getGlobalSearchProvider() !== null)
+                @livewire('filament.core.global-search')
+            @endif
 
             @if (filament()->hasDatabaseNotifications())
                 @livewire('filament.core.database-notifications')

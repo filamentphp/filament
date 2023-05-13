@@ -212,19 +212,22 @@ trait InteractsWithTableQuery
 
             if ($currentRelationshipValue instanceof Collection) {
                 if (! count($relationships)) {
-                    $results = array_merge($results, $currentRelationshipValue->all());
+                    $results = [
+                        ...$results,
+                        ...$currentRelationshipValue->all(),
+                    ];
 
                     continue;
                 }
 
                 foreach ($currentRelationshipValue as $valueRecord) {
-                    $results = array_merge(
-                        $results,
-                        $this->getRelationshipResults(
+                    $results = [
+                        ...$results,
+                        ...$this->getRelationshipResults(
                             $valueRecord,
                             $relationships,
                         ),
-                    );
+                    ];
                 }
 
                 break;

@@ -257,9 +257,10 @@ class EditUser extends EditRecord
 
     protected function getFormActions(): array
     {
-        return array_merge(parent::getFormActions(), [
+        return [
+            ...parent::getFormActions(),
             Action::make('close')->action('saveAndClose'),
-        ]);
+        ];
     }
 
     public function saveAndClose(): void

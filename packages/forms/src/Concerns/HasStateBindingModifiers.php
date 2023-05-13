@@ -55,7 +55,10 @@ trait HasStateBindingModifiers
             $modifiers = $lazilyEntangledModifiers;
         }
 
-        return implode('.', array_merge([$expression], $modifiers));
+        return implode('.', [
+            $expression,
+            ...$modifiers,
+        ]);
     }
 
     /**

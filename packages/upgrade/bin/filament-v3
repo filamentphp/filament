@@ -116,10 +116,10 @@ if (InstalledVersions::isInstalled('filament/filament')) {
 
 $hasIndividualFilamentPackagesInstalled = false;
 
-foreach (array_merge(
-    glob('resources/css/*.css'),
-    glob('resources/css/**/*.css'),
-) as $file) {
+foreach ([
+    ...glob('resources/css/*.css'),
+    ...glob('resources/css/**/*.css'),
+] as $file) {
     $fileContents = file_get_contents($file);
 
     if (str_contains($fileContents, 'filament/forms/dist/module.esm.css')) {
@@ -137,10 +137,10 @@ foreach (array_merge(
     file_put_contents($file, $fileContents);
 }
 
-foreach (array_merge(
-    glob('resources/js/*.js'),
-    glob('resources/js/**/*.js'),
-) as $file) {
+foreach ([
+    ...glob('resources/js/*.js'),
+    ...glob('resources/js/**/*.js'),
+] as $file) {
     $fileContents = file_get_contents($file);
 
     if (
@@ -181,10 +181,10 @@ if (file_exists('tailwind.config.js')) {
 }
 
 if ($hasIndividualFilamentPackagesInstalled) {
-    foreach (array_merge(
-        glob('resources/views/*.blade.php'),
-        glob('resources/views/**/*.blade.php'),
-    ) as $file) {
+    foreach ([
+        ...glob('resources/views/*.blade.php'),
+        ...glob('resources/views/**/*.blade.php'),
+    ] as $file) {
         $fileContents = file_get_contents($file);
 
         if (

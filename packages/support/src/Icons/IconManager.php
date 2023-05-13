@@ -14,7 +14,10 @@ class IconManager
      */
     public function register(array $icons): void
     {
-        $this->icons = array_merge($this->icons, $icons);
+        $this->icons = [
+            ...$this->icons,
+            ...$icons,
+        ];
     }
 
     public function resolve(string $name): ?Icon
