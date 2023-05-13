@@ -249,24 +249,19 @@ protected function getTableQuery(): Builder
 }
 ```
 
+## Customizing the query string
 
-## Customizing Query String
-
-Table search, filters, sorts, and reorder are reflected in the url as query strings (also known as query components, query parameters, or url parameters). By default, with some search and filter active, the url will generally look like `.../admin/customer?tableSearchQuery=Dan+Harrin&tableFilters=[foo][value]=bar`.
-
-If you are not happy with the default query strings, they can be easily modified using [query string aliases](https://laravel-livewire.com/docs/2.x/query-string#query-string-aliases). In your `List{ResourceName}` or `Manage{ResourceName}` class, override the parent's `$queryString` property:
+Table search, filters, sorts and other stateful properties are stored in the URL as query strings. Since Filament uses Livewire internally, this behaviour can be modified by overriding the `$queryString` property on the List page of the resource. For instance, you can employ [query string aliases](https://laravel-livewire.com/docs/2.x/query-string#query-string-aliases) to rename some of the properties using `as`:
 
 ```php
 protected $queryString = [
     'isTableReordering' => ['except' => false],
-    'tableFilters' => ['as' => 'filters'], // add 'as' modifier
+    'tableFilters' => ['as' => 'filters'], // `tableFilters` is now replaced with `filters` in the query string
     'tableSortColumn' => ['except' => ''],
     'tableSortDirection' => ['except' => ''],
-    'tableSearchQuery' => ['except' => '', 'as' => 'q'],  // add 'as' modifier
+    'tableSearchQuery' => ['except' => '', 'as' => 'search'], // `tableSearchQuery` is now replaced with `search` in the query string
 ];
 ```
-After the modification above, the url will be `.../admin/customer?q=Dan+Harrin&filters=[foo][value]=bar`.
-
 
 ## Custom view
 
