@@ -44,6 +44,7 @@
                     @php
                         $imageCount ++;
                     @endphp
+                    
                     <img
                         src="{{ $path }}"
                         style="

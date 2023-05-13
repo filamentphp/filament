@@ -213,7 +213,7 @@ class ImageColumn extends Column
 
     public function isStacked(): bool
     {
-        return $this->evaluate($this->isStacked);
+        return (bool) $this->evaluate($this->isStacked);
     }
 
     public function getImagesWithPath(): array
@@ -311,12 +311,12 @@ class ImageColumn extends Column
 
     public function shouldShowRemaining(): bool
     {
-        return $this->evaluate($this->shouldShowRemaining);
+        return (bool) $this->evaluate($this->shouldShowRemaining);
     }
 
     public function shouldShowRemainingAfterStack(): bool
     {
-        return $this->evaluate($this->shouldShowRemainingAfterStack);
+        return (bool) $this->evaluate($this->shouldShowRemainingAfterStack);
     }
 
     public function remainingTextSize(string | Closure | null $remainingTextSize): static
