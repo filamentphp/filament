@@ -82,12 +82,12 @@ trait CanBeSearchable
 
     public function shouldSearchLabels(): bool
     {
-        return $this->evaluate($this->shouldSearchInLabels);
+        return (bool) $this->evaluate($this->shouldSearchLabels);
     }
 
     public function shouldSearchValues(): bool
     {
-        return $this->evaluate($this->shouldSearchInValues);
+        return (bool) $this->evaluate($this->shouldSearchValues);
     }
 
     public function getSearchFields(): array
