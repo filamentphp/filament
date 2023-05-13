@@ -202,7 +202,7 @@ return [
             'italic' => 'Italic',
             'link' => 'Линк',
             'ordered_list' => 'Numbered list',
-            'redo' => 'Дахих хий',
+            'redo' => 'Дахин хий',
             'strike' => 'Strikethrough',
             'undo' => 'Буцаа',
         ],
