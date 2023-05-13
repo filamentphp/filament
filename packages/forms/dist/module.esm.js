@@ -12842,9 +12842,6 @@ var date_time_picker_default = (Alpine) => {
         } else if (this.getMinDate() !== null && date.isBefore(this.getMinDate())) {
           date = null;
         }
-        this.hour = date?.hour() ?? 0;
-        this.minute = date?.minute() ?? 0;
-        this.second = date?.second() ?? 0;
         this.setDisplayText();
         this.setMonths();
         this.setDayLabels();
@@ -12966,6 +12963,9 @@ var date_time_picker_default = (Alpine) => {
           }
           this.setDisplayText();
         });
+        this.hour = date?.hour() ?? 0;
+        this.minute = date?.minute() ?? 0;
+        this.second = date?.second() ?? 0;
       },
       clearState: function() {
         this.isClearingState = true;
@@ -28151,10 +28151,11 @@ var select_default = (Alpine) => {
     optionsLimit,
     placeholder,
     position,
-    removeItemButton,
+    isPlaceholderSelectionDisabled,
     searchDebounce,
     searchingMessage,
     searchPrompt,
+    searchableOptionFields,
     state: state2
   }) => {
     return {
@@ -28177,12 +28178,13 @@ var select_default = (Alpine) => {
           noResultsText: noSearchResultsMessage,
           placeholderValue: placeholder,
           position: position ?? "auto",
-          removeItemButton: removeItemButton ?? true,
+          removeItemButton: !isPlaceholderSelectionDisabled,
           renderChoiceLimit: optionsLimit,
-          searchFields: ["label"],
+          searchFields: searchableOptionFields ?? ["label"],
           searchPlaceholderValue: searchPrompt,
           searchResultLimit: optionsLimit,
-          shouldSort: false
+          shouldSort: false,
+          searchFloor: hasDynamicSearchResults ? 0 : 1
         });
         await this.refreshChoices({withInitialOptions: true});
         if (![null, void 0, ""].includes(this.state)) {
@@ -28217,14 +28219,12 @@ var select_default = (Alpine) => {
         if (hasDynamicSearchResults) {
           this.$refs.input.addEventListener("search", async (event) => {
             let search = event.detail.value?.trim();
-            if ([null, void 0, ""].includes(search)) {
-              return;
-            }
+            let label = [null, void 0, ""].includes(search) ? loadingMessage : searchingMessage;
             this.isSearching = true;
             this.select.clearChoices();
             await this.select.setChoices([
               {
-                label: searchingMessage,
+                label,
                 value: "",
                 disabled: true
               }
@@ -34799,8 +34799,7 @@ function src_default(Alpine) {
     };
     panel2.close = function() {
       toggle(false);
-      if (panel2.trigger)
-        panel2.trigger.setAttribute("aria-expanded", false);
+      panel2.trigger.setAttribute("aria-expanded", false);
       if (config.component.trap)
         panel2.setAttribute("x-trap", false);
       cleanup();
