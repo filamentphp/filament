@@ -117,6 +117,44 @@ Tabs::make('Heading')
     ])
 ```
 
+### Setting the tab icon color
+
+The icon of the tab may have a color to indicate its significance using the `iconColor()` method. It may be either `primary`, `gray`, `secondary`, `success`, `warning` or `danger`:
+
+```php
+use Filament\Infolists\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->icon('heroicon-m-bell')
+            ->iconColor('primary')
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
+
+### Setting the tab icon position
+
+The icon of the tab may be positioned before or after the label using the `iconPosition()` method:
+
+```php
+use Filament\Infolists\Components\Tabs;
+
+Tabs::make('Heading')
+    ->tabs([
+        Tabs\Tab::make('Notifications')
+            ->icon('heroicon-m-bell')
+            ->iconPosition('after')
+            ->schema([
+                // ...
+            ]),
+        // ...
+    ])
+```
+
 ## Setting a tab badge
 
 Tabs may have a badge, which you can set using the `badge()` method:

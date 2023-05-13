@@ -69,6 +69,7 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
+                    canSelectPlaceholder: @js($canSelectPlaceholder()),
                     isHtmlAllowed: @js($isHtmlAllowed()),
                     getOptionLabelUsing: async () => {
                         return await $wire.getSelectOptionLabel(@js($statePath))
@@ -85,7 +86,6 @@
                     isAutofocused: @js($isAutofocused()),
                     isDisabled: @js($isDisabled),
                     isMultiple: @js($isMultiple()),
-                    isPlaceholderSelectionDisabled: @js($isPlaceholderSelectionDisabled()),
                     livewireId: @js($this->id),
                     hasDynamicOptions: @js($hasDynamicOptions()),
                     hasDynamicSearchResults: @js($hasDynamicSearchResults()),

@@ -1,6 +1,7 @@
 import Choices from 'choices.js'
 
 export default function selectFormComponent({
+    canSelectPlaceholder,
     isHtmlAllowed,
     getOptionLabelUsing,
     getOptionLabelsUsing,
@@ -9,7 +10,6 @@ export default function selectFormComponent({
     isAutofocused,
     isDisabled,
     isMultiple,
-    isPlaceholderSelectionDisabled,
     hasDynamicOptions,
     hasDynamicSearchResults,
     livewireId,
@@ -53,7 +53,7 @@ export default function selectFormComponent({
                 noResultsText: noSearchResultsMessage,
                 placeholderValue: placeholder,
                 position: position ?? 'auto',
-                removeItemButton: ! isPlaceholderSelectionDisabled,
+                removeItemButton: canSelectPlaceholder,
                 renderChoiceLimit: optionsLimit,
                 searchFields: ['label'],
                 searchPlaceholderValue: searchPrompt,
