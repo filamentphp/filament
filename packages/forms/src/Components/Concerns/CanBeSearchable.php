@@ -90,7 +90,7 @@ trait CanBeSearchable
         return (bool) $this->evaluate($this->shouldSearchValues);
     }
 
-    public function getSearchFields(): array
+    public function getSearchableOptionFields(): array
     {
         return array_merge(
             ($this->shouldSearchLabels() ? ['label'] : []),
