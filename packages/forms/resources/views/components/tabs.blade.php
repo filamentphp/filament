@@ -60,16 +60,18 @@
                 $iconPosition = $tab->getIconPosition();
                 $iconColor = $tab->getIconColor();
 
-                $iconColorClasses = match ($iconColor) {
-                    'danger' => \Illuminate\Support\Arr::toCssClasses(['text-danger-700', 'dark:text-danger-500' => config('tables.dark_mode')]),
-                    'primary' => \Illuminate\Support\Arr::toCssClasses(['text-primary-700', 'dark:text-primary-500' => config('tables.dark_mode')]),
-                    'success' => \Illuminate\Support\Arr::toCssClasses(['text-success-700', 'dark:text-success-500' => config('tables.dark_mode')]),
-                    'warning' => \Illuminate\Support\Arr::toCssClasses(['text-warning-700', 'dark:text-warning-500' => config('tables.dark_mode')]),
-                    'secondary' => \Illuminate\Support\Arr::toCssClasses(['text-gray-700', 'dark:text-gray-300' => config('tables.dark_mode')]),
-                    default => $iconColor,
-                };
+                $iconColorClasses = \Illuminate\Support\Arr::toCssClasses(
+                    match ($iconColor) {
+                        'danger' => ['text-danger-700', 'dark:text-danger-500' => config('tables.dark_mode')],
+                        'primary' => ['text-primary-700', 'dark:text-primary-500' => config('tables.dark_mode')],
+                        'success' => ['text-success-700', 'dark:text-success-500' => config('tables.dark_mode')],
+                        'warning' => ['text-warning-700', 'dark:text-warning-500' => config('tables.dark_mode')],
+                        'secondary' => ['text-gray-700', 'dark:text-gray-300' => config('tables.dark_mode')],
+                        default => [$iconColor],
+                    },
+                );
             @endphp
-            
+
             <button
                 type="button"
                 aria-controls="{{ $tab->getId() }}"
