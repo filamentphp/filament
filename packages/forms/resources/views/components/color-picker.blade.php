@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        @if ($label = $getSuffixLabel())
+        @if (filled($label = $getSuffixLabel()) && ($getSuffixLabel() !== false))
             <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
