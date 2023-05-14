@@ -120,10 +120,10 @@ trait HasFilters
 
     public function getTableFilterState(string $name): ?array
     {
-        return $this->getTableFiltersForm()->getRawState()[$this->parseFilterName($name)] ?? null;
+        return $this->getTableFiltersForm()->getRawState()[$this->parseTableFilterName($name)] ?? null;
     }
 
-    public function parseFilterName(string $name): string
+    public function parseTableFilterName(string $name): string
     {
         if (! class_exists($name)) {
             return $name;

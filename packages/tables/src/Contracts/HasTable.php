@@ -36,7 +36,7 @@ interface HasTable extends HasForms
 
     public function getSelectedTableRecords(): Collection;
 
-    public function parseFilterName(string $name): string;
+    public function parseTableFilterName(string $name): string;
 
     public function getTableGrouping(): ?Group;
 

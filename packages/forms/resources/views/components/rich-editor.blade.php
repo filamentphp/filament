@@ -21,7 +21,7 @@
             let attachment = $event.attachment
 
             $wire.upload(`componentFileAttachments.{{ $statePath }}`, attachment.file, () => {
-                $wire.getComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
+                $wire.getFormComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
                     attachment.setAttributes({
                         url: url,
                         href: url,

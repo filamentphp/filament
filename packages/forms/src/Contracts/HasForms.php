@@ -13,38 +13,38 @@ interface HasForms
 
     public function makeFormTranslatableContentDriver(): ?TranslatableContentDriver;
 
-    public function getComponentFileAttachment(string $statePath): ?TemporaryUploadedFile;
+    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile;
 
-    public function getComponentFileAttachmentUrl(string $statePath): ?string;
-
-    /**
-     * @return array<array{'label': string, 'value': string}>
-     */
-    public function getSelectOptionLabels(string $statePath): array;
-
-    public function getSelectOptionLabel(string $statePath): ?string;
+    public function getFormComponentFileAttachmentUrl(string $statePath): ?string;
 
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    public function getSelectOptions(string $statePath): array;
+    public function getFormSelectOptionLabels(string $statePath): array;
+
+    public function getFormSelectOptionLabel(string $statePath): ?string;
 
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    public function getSelectSearchResults(string $statePath, string $search): array;
+    public function getFormSelectOptions(string $statePath): array;
+
+    /**
+     * @return array<array{'label': string, 'value': string}>
+     */
+    public function getFormSelectSearchResults(string $statePath, string $search): array;
 
     /**
      * @return array<array{name: string, size: int, type: string, url: string} | null> | null
      */
-    public function getUploadedFiles(string $statePath): ?array;
+    public function getFormUploadedFiles(string $statePath): ?array;
 
-    public function removeUploadedFile(string $statePath, string $fileKey): void;
+    public function removeFormUploadedFile(string $statePath, string $fileKey): void;
 
     /**
      * @param  array<array-key>  $fileKeys
      */
-    public function reorderUploadedFiles(string $statePath, array $fileKeys): void;
+    public function reorderFormUploadedFiles(string $statePath, array $fileKeys): void;
 
     /**
      * @param  array<string, array<mixed>> | null  $rules

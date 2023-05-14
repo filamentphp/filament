@@ -57,12 +57,12 @@ trait InteractsWithForms
         }
     }
 
-    public function getComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
+    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
     {
         return data_get($this->componentFileAttachments, $statePath);
     }
 
-    public function getComponentFileAttachmentUrl(string $statePath): ?string
+    public function getFormComponentFileAttachmentUrl(string $statePath): ?string
     {
         $this->skipRender();
 
@@ -78,7 +78,7 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    public function getSelectOptionLabels(string $statePath): array
+    public function getFormSelectOptionLabels(string $statePath): array
     {
         $this->skipRender();
 
@@ -91,7 +91,7 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getSelectOptionLabel(string $statePath): ?string
+    public function getFormSelectOptionLabel(string $statePath): ?string
     {
         $this->skipRender();
 
@@ -107,7 +107,7 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    public function getSelectOptions(string $statePath): array
+    public function getFormSelectOptions(string $statePath): array
     {
         $this->skipRender();
 
@@ -123,7 +123,7 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    public function getSelectSearchResults(string $statePath, string $search): array
+    public function getFormSelectSearchResults(string $statePath, string $search): array
     {
         $this->skipRender();
 
@@ -146,7 +146,7 @@ trait InteractsWithForms
     /**
      * @return array<array{name: string, size: int, type: string, url: string} | null> | null
      */
-    public function getUploadedFiles(string $statePath): ?array
+    public function getFormUploadedFiles(string $statePath): ?array
     {
         $this->skipRender();
 
@@ -159,14 +159,14 @@ trait InteractsWithForms
         return null;
     }
 
-    public function removeUploadedFile(string $statePath, string $fileKey): void
+    public function removeFormUploadedFile(string $statePath, string $fileKey): void
     {
         foreach ($this->getCachedForms() as $form) {
             $form->removeUploadedFile($statePath, $fileKey);
         }
     }
 
-    public function reorderUploadedFiles(string $statePath, array $fileKeys): void
+    public function reorderFormUploadedFiles(string $statePath, array $fileKeys): void
     {
         foreach ($this->getCachedForms() as $form) {
             $form->reorderUploadedFiles($statePath, $fileKeys);

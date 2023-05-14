@@ -19,7 +19,7 @@
                 translations: @js(__('filament-forms::components.markdown_editor')),
                 uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
                     $wire.upload(`componentFileAttachments.{{ $statePath }}`, file, () => {
-                        $wire.getComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
+                        $wire.getFormComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
                             if (! url) {
                                 return onError()
                             }
