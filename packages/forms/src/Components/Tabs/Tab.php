@@ -18,9 +18,9 @@ class Tab extends Component implements CanConcealComponents
 
     protected string | Closure | null $icon = null;
 
-    protected string | Closure | null $iconPosition = null;
-
     protected string | Closure | null $iconColor = null;
+
+    protected string | Closure | null $iconPosition = null;
 
     final public function __construct(string $label)
     {
@@ -43,16 +43,16 @@ class Tab extends Component implements CanConcealComponents
         return $this;
     }
 
-    public function iconPosition(string | Closure | null $position): static
+    public function iconColor(string | Closure | null $color): static
     {
-        $this->iconPosition = $position;
+        $this->iconColor = $color;
 
         return $this;
     }
 
-    public function iconColor(string | Closure | null $color): static
+    public function iconPosition(string | Closure | null $position): static
     {
-        $this->iconColor = $color;
+        $this->iconPosition = $position;
 
         return $this;
     }

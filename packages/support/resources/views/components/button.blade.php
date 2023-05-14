@@ -140,15 +140,14 @@
 
                 form?.addEventListener('file-upload-started', () => {
                     isUploadingFile = true
-                    $el.classList.add('opacity-70', 'cursor-wait')
                 })
 
                 form?.addEventListener('file-upload-finished', () => {
                     isUploadingFile = false
-                    $el.classList.remove('opacity-70', 'cursor-wait')
                 })
             "
         @endif
+        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         {{
             $attributes
                 ->merge([
