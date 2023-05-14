@@ -30,7 +30,7 @@
             <x-dynamic-component :component="$icon" class="w-5 h-5" />
         @endif
 
-        @if ($label = $getPrefixLabel())
+        @if (filled($label = $getPrefixLabel()) && ($getPrefixLabel() !== false))
             <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
