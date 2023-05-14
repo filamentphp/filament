@@ -115,18 +115,16 @@ export default (Alpine) => {
                             async (event) => {
                                 let search = event.detail.value?.trim()
 
-                                let label = [null, undefined, ''].includes(
-                                    search,
-                                )
-                                    ? loadingMessage
-                                    : searchingMessage
-
                                 this.isSearching = true
 
                                 this.select.clearChoices()
                                 await this.select.setChoices([
                                     {
-                                        label: label,
+                                        label: [null, undefined, ''].includes(
+                                            search,
+                                        )
+                                            ? loadingMessage
+                                            : searchingMessage,
                                         value: '',
                                         disabled: true,
                                     },
