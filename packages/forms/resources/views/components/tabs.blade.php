@@ -60,8 +60,8 @@
                 $iconPosition = $tab->getIconPosition();
                 $iconColor = $tab->getIconColor();
 
-                $iconColorClasses = \Illuminate\Support\Arr::toCssClasses([
-                    ...match ($iconColor) {
+                $iconColorClasses = \Illuminate\Support\Arr::toCssClasses(
+                    match ($iconColor) {
                         'danger' => ['text-danger-700', 'dark:text-danger-500' => config('tables.dark_mode')],
                         'primary' => ['text-primary-700', 'dark:text-primary-500' => config('tables.dark_mode')],
                         'success' => ['text-success-700', 'dark:text-success-500' => config('tables.dark_mode')],
@@ -69,7 +69,7 @@
                         'secondary' => ['text-gray-700', 'dark:text-gray-300' => config('tables.dark_mode')],
                         default => [$iconColor],
                     },
-                ]);
+                );
             @endphp
 
             <button
