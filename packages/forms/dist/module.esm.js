@@ -28219,12 +28219,11 @@ var select_default = (Alpine) => {
         if (hasDynamicSearchResults) {
           this.$refs.input.addEventListener("search", async (event) => {
             let search = event.detail.value?.trim();
-            let label = [null, void 0, ""].includes(search) ? loadingMessage : searchingMessage;
             this.isSearching = true;
             this.select.clearChoices();
             await this.select.setChoices([
               {
-                label,
+                label: [null, void 0, ""].includes(search) ? loadingMessage : searchingMessage,
                 value: "",
                 disabled: true
               }
