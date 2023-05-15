@@ -441,7 +441,7 @@ Alternatively, you may use the `getModelLabel()` to define a dynamic label:
 ```php
 public static function getModelLabel(): string
 {
-    return __('filament::resources/customer.label');
+    return __('filament/resources/customer.label');
 }
 ```
 
@@ -460,7 +460,7 @@ Alternatively, you may set a dynamic plural label in the `getPluralModelLabel()`
 ```php
 public static function getPluralModelLabel(): string
 {
-    return __('filament::resources/customer.plural_label');
+    return __('filament/resources/customer.plural_label');
 }
 ```
 
@@ -479,7 +479,7 @@ Alternatively, you may set a dynamic navigation label in the `getNavigationLabel
 ```php
 public static function getNavigationLabel(): string
 {
-    return __('filament::resources/customer.navigation_label');
+    return __('filament/resources/customer.navigation_label');
 }
 ```
 
@@ -530,7 +530,7 @@ Alternatively, you may use the `getNavigationGroup()` method to set a dynamic gr
 ```php
 protected static function getNavigationGroup(): ?string
 {
-    return __('filament::navigation.groups.shop');
+    return __('filament/navigation.groups.shop');
 }
 ```
 
