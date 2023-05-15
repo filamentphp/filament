@@ -132,9 +132,7 @@ trait InteractsWithTable
 
             $this->tableSortColumn = $sort['column'] ?? null;
             $this->tableSortDirection = $sort['direction'] ?? null;
-        }
-
-        if ($shouldPersistTableSortInSession) {
+        } elseif ($shouldPersistTableSortInSession) {
             session()->put(
                 $sortSessionKey,
                 [
@@ -144,6 +142,9 @@ trait InteractsWithTable
             );
         }
 
+        $this->tableSortColumn ??= $this->getDefaultTableSortColumn();
+        $this->tableSortDirection ??= $this->getDefaultTableSortDirection();
+
         $this->hasMounted = true;
     }
 
@@ -152,9 +153,6 @@ trait InteractsWithTable
         if ($this->isTablePaginationEnabled()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
-
-        $this->tableSortColumn ??= $this->getDefaultTableSortColumn();
-        $this->tableSortDirection ??= $this->getDefaultTableSortDirection();
     }
 
     protected function getCachedTable(): Table
