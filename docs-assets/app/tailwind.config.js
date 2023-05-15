@@ -6,6 +6,7 @@ module.exports = {
         extend: {
             colors: {
                 danger: colors.rose,
+                info: colors.blue,
                 primary: colors.blue,
                 secondary: colors.gray,
                 success: colors.green,

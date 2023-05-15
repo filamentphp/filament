@@ -24,6 +24,7 @@
         match ($color) {
             'danger' => 'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400',
             'gray' => 'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200',
+            'info' => 'text-info-600 hover:text-info-500 dark:text-info-500 dark:hover:text-info-400',
             'primary' => 'text-primary-600 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400',
             'secondary' => 'text-secondary-600 hover:text-secondary-500 dark:text-secondary-500 dark:hover:text-secondary-400',
             'success' => 'text-success-600 hover:text-success-500 dark:text-success-500 dark:hover:text-success-400',
@@ -55,6 +56,7 @@
         match ($indicatorColor) {
             'danger' => 'bg-danger-600',
             'gray' => 'bg-gray-600',
+            'info' => 'bg-info-600',
             'primary' => 'bg-primary-600',
             'secondary' => 'bg-secondary-600',
             'success' => 'bg-success-600',

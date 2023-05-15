@@ -13,6 +13,7 @@
     $iconColorClasses = $active ? null : match ($iconColor) {
         'danger' => 'text-danger-600 dark:text-danger-400',
         'gray' => 'text-gray-600 dark:text-gray-400',
+        'info' => 'text-info-600 dark:text-info-400',
         'primary' => 'text-primary-600 dark:text-primary-400',
         'secondary' => 'text-secondary-600 dark:text-secondary-400',
         'success' => 'text-success-600 dark:text-success-400',

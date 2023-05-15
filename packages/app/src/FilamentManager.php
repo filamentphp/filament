@@ -28,16 +28,16 @@ use Illuminate\Support\Facades\Event;
 
 class FilamentManager
 {
-    protected ?Context $currentContext = null;
-
     /**
      * @var array<string, Context>
      */
     protected array $contexts = [];
 
-    protected ?Model $tenant = null;
+    protected ?Context $currentContext = null;
 
     protected bool $isServing = false;
+
+    protected ?Model $tenant = null;
 
     public function auth(): Guard
     {
@@ -57,38 +57,35 @@ class FilamentManager
         return $this->getCurrentContext()->buildNavigation();
     }
 
-    public function mountNavigation(): void
+    public function getAuthGuard(): string
     {
-        $this->getCurrentContext()->mountNavigation();
+        return $this->getCurrentContext()->getAuthGuard();
     }
 
-    public function registerContext(Context $context): void
+    public function getBrandName(): string
     {
-        $this->contexts[$context->getId()] = $context;
-
-        if ($context->isDefault()) {
-            $this->setCurrentContext($context);
-        }
+        return $this->getCurrentContext()->getBrandName();
     }
 
-    public function serving(Closure $callback): void
+    /**
+     * @return array{
+     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'info': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     * }
+     */
+    public function getColors(): array
     {
-        Event::listen(ServingFilament::class, $callback);
+        return $this->getCurrentContext()->getColors();
     }
 
-    public function getGlobalSearchProvider(): ?GlobalSearchProvider
+    public function getCollapsedSidebarWidth(): string
     {
-        return $this->getCurrentContext()->getGlobalSearchProvider();
-    }
-
-    public function renderHook(string $name): Htmlable
-    {
-        return $this->getCurrentContext()->getRenderHook($name);
-    }
-
-    public function getCurrentContext(): ?Context
-    {
-        return $this->currentContext ?? null;
+        return $this->getCurrentContext()->getCollapsedSidebarWidth();
     }
 
     public function getContext(?string $id = null): Context
@@ -96,13 +93,9 @@ class FilamentManager
         return $this->contexts[$id] ?? $this->getDefaultContext();
     }
 
-    public function getDefaultContext(): Context
+    public function getCurrentContext(): ?Context
     {
-        return Arr::first(
-            $this->contexts,
-            fn (Context $context): bool => $context->isDefault(),
-            fn () => throw new Exception('No default Filament context is set. You may do this with the `default()` method inside a Filament provider\'s `context()` configuration.'),
-        );
+        return $this->currentContext ?? null;
     }
 
     /**
@@ -113,107 +106,31 @@ class FilamentManager
         return $this->contexts;
     }
 
-    public function getTenant(): ?Model
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getDangerColor(): array
     {
-        return $this->tenant;
+        return $this->getCurrentContext()->getDangerColor();
     }
 
-    public function getTenantModel(): ?string
+    public function getDatabaseNotificationsPollingInterval(): ?string
     {
-        return $this->getCurrentContext()->getTenantModel();
+        return $this->getCurrentContext()->getDatabaseNotificationsPollingInterval();
     }
 
-    public function getTenantOwnershipRelationshipName(): string
+    public function getDefaultAvatarProvider(): string
     {
-        return $this->getCurrentContext()->getTenantOwnershipRelationshipName();
+        return $this->getCurrentContext()->getDefaultAvatarProvider();
     }
 
-    public function hasNavigation(): bool
+    public function getDefaultContext(): Context
     {
-        return $this->getCurrentContext()->hasNavigation();
-    }
-
-    public function hasTopNavigation(): bool
-    {
-        return $this->getCurrentContext()->hasTopNavigation();
-    }
-
-    public function getRoutableTenant(): ?Model
-    {
-        if (! $this->getCurrentContext()->hasRoutableTenancy()) {
-            return null;
-        }
-
-        return $this->getTenant();
-    }
-
-    public function setCurrentContext(?Context $context): void
-    {
-        $this->currentContext = $context;
-    }
-
-    public function setTenant(?Model $tenant): void
-    {
-        $this->tenant = $tenant;
-
-        if ($tenant) {
-            event(new TenantSet($tenant, $this->auth()->user()));
-        }
-    }
-
-    public function hasBreadcrumbs(): bool
-    {
-        return $this->getCurrentContext()->hasBreadcrumbs();
-    }
-
-    public function hasEmailVerification(): bool
-    {
-        return $this->getCurrentContext()->hasEmailVerification();
-    }
-
-    public function hasLogin(): bool
-    {
-        return $this->getCurrentContext()->hasLogin();
-    }
-
-    public function hasRegistration(): bool
-    {
-        return $this->getCurrentContext()->hasRegistration();
-    }
-
-    public function hasPasswordReset(): bool
-    {
-        return $this->getCurrentContext()->hasPasswordReset();
-    }
-
-    public function hasTenancy(): bool
-    {
-        return $this->getCurrentContext()->hasTenancy();
-    }
-
-    public function hasTenantBilling(): bool
-    {
-        return $this->getCurrentContext()->hasTenantBilling();
-    }
-
-    public function hasTenantRegistration(): bool
-    {
-        return $this->getCurrentContext()->hasTenantRegistration();
-    }
-
-    public function hasRoutableTenancy(): bool
-    {
-        return $this->getCurrentContext()->hasRoutableTenancy();
-    }
-
-    public function getAuthGuard(): string
-    {
-        return $this->getCurrentContext()->getAuthGuard();
-    }
-
-    public function getHomeUrl(): ?string
-    {
-        return $this->getCurrentContext()->getHomeUrl() ?? $this->getCurrentContext()->getUrl();
+        return Arr::first(
+            $this->contexts,
+            fn (Context $context): bool => $context->isDefault(),
+            fn () => throw new Exception('No default Filament context is set. You may do this with the `default()` method inside a Filament provider\'s `context()` configuration.'),
+        );
     }
 
     /**
@@ -229,70 +146,63 @@ class FilamentManager
         return $this->getCurrentContext()->getEmailVerifiedMiddleware();
     }
 
+    public function getFavicon(): ?string
+    {
+        return $this->getCurrentContext()->getFavicon();
+    }
+
+    public function getFontFamily(): string
+    {
+        return $this->getCurrentContext()->getFontFamily();
+    }
+
+    public function getFontProvider(): string
+    {
+        return $this->getCurrentContext()->getFontProvider();
+    }
+
+    public function getFontUrl(): ?string
+    {
+        return $this->getCurrentContext()->getFontUrl();
+    }
+
+    public function getFontHtml(): Htmlable
+    {
+        return $this->getCurrentContext()->getFontHtml();
+    }
+
+    public function getGlobalSearchProvider(): ?GlobalSearchProvider
+    {
+        return $this->getCurrentContext()->getGlobalSearchProvider();
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getGrayColor(): array
+    {
+        return $this->getCurrentContext()->getGrayColor();
+    }
+
+    public function getHomeUrl(): ?string
+    {
+        return $this->getCurrentContext()->getHomeUrl() ?? $this->getCurrentContext()->getUrl();
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getInfoColor(): array
+    {
+        return $this->getCurrentContext()->getInfoColor();
+    }
+
     /**
      * @param  array<mixed>  $parameters
      */
     public function getLoginUrl(array $parameters = []): ?string
     {
         return $this->getCurrentContext()->getLoginUrl($parameters);
-    }
-
-    /**
-     * @param  array<mixed>  $parameters
-     */
-    public function getRegistrationUrl(array $parameters = []): ?string
-    {
-        return $this->getCurrentContext()->getRegistrationUrl($parameters);
-    }
-
-    /**
-     * @param  array<mixed>  $parameters
-     */
-    public function getRequestPasswordResetUrl(array $parameters = []): ?string
-    {
-        return $this->getCurrentContext()->getRequestPasswordResetUrl($parameters);
-    }
-
-    /**
-     * @param  array<mixed>  $parameters
-     */
-    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
-    {
-        return $this->getCurrentContext()->getVerifyEmailUrl($user, $parameters);
-    }
-
-    /**
-     * @param  array<mixed>  $parameters
-     */
-    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
-    {
-        return $this->getCurrentContext()->getResetPasswordUrl($token, $user, $parameters);
-    }
-
-    public function getTenantBillingProvider(): ?Billing\Providers\Contracts\Provider
-    {
-        return $this->getCurrentContext()->getTenantBillingProvider();
-    }
-
-    /**
-     * @param  array<mixed>  $parameters
-     */
-    public function getTenantBillingUrl(array $parameters = [], ?Model $tenant = null): ?string
-    {
-        return $this->getCurrentContext()->getTenantBillingUrl($tenant ?? $this->getTenant(), $parameters);
-    }
-
-    public function getTenantRegistrationPage(): ?string
-    {
-        return $this->getCurrentContext()->getTenantRegistrationPage();
-    }
-
-    /**
-     * @param  array<mixed>  $parameters
-     */
-    public function getTenantRegistrationUrl(array $parameters = []): ?string
-    {
-        return $this->getCurrentContext()->getTenantRegistrationUrl($parameters);
     }
 
     /**
@@ -306,6 +216,20 @@ class FilamentManager
     public function getMaxContentWidth(): ?string
     {
         return $this->getCurrentContext()->getMaxContentWidth();
+    }
+
+    public function getModelResource(string | Model $model): ?string
+    {
+        return $this->getCurrentContext()->getModelResource($model);
+    }
+
+    public function getNameForDefaultAvatar(Model | Authenticatable $record): string
+    {
+        if ($this->getTenantModel() === $record::class) {
+            return $this->getTenantName($record);
+        }
+
+        return $this->getUserName($record);
     }
 
     /**
@@ -340,6 +264,11 @@ class FilamentManager
         return $this->getCurrentContext()->getPages();
     }
 
+    public function getPlugin(string $id): Plugin
+    {
+        return $this->getCurrentContext()->getPlugin($id);
+    }
+
     /**
      * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
@@ -349,68 +278,27 @@ class FilamentManager
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     * @param  array<mixed>  $parameters
      */
-    public function getSecondaryColor(): array
+    public function getRegistrationUrl(array $parameters = []): ?string
     {
-        return $this->getCurrentContext()->getSecondaryColor();
+        return $this->getCurrentContext()->getRegistrationUrl($parameters);
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     * @param  array<mixed>  $parameters
      */
-    public function getGrayColor(): array
+    public function getRequestPasswordResetUrl(array $parameters = []): ?string
     {
-        return $this->getCurrentContext()->getGrayColor();
+        return $this->getCurrentContext()->getRequestPasswordResetUrl($parameters);
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     * @param  array<mixed>  $parameters
      */
-    public function getDangerColor(): array
+    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
     {
-        return $this->getCurrentContext()->getDangerColor();
-    }
-
-    /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getWarningColor(): array
-    {
-        return $this->getCurrentContext()->getWarningColor();
-    }
-
-    /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getSuccessColor(): array
-    {
-        return $this->getCurrentContext()->getSuccessColor();
-    }
-
-    /**
-     * @return array{
-     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     * }
-     */
-    public function getColors(): array
-    {
-        return $this->getCurrentContext()->getColors();
-    }
-
-    public function getSidebarWidth(): string
-    {
-        return $this->getCurrentContext()->getSidebarWidth();
-    }
-
-    public function getCollapsedSidebarWidth(): string
-    {
-        return $this->getCurrentContext()->getCollapsedSidebarWidth();
+        return $this->getCurrentContext()->getResetPasswordUrl($token, $user, $parameters);
     }
 
     /**
@@ -421,35 +309,39 @@ class FilamentManager
         return $this->getCurrentContext()->getResources();
     }
 
-    /**
-     * @return array<MenuItem>
-     */
-    public function getTenantMenuItems(): array
+    public function getRoutableTenant(): ?Model
     {
-        return $this->getCurrentContext()->getTenantMenuItems();
+        if (! $this->getCurrentContext()->hasRoutableTenancy()) {
+            return null;
+        }
+
+        return $this->getTenant();
     }
 
     /**
-     * @return array<MenuItem>
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
      */
-    public function getUserMenuItems(): array
+    public function getSecondaryColor(): array
     {
-        return $this->getCurrentContext()->getUserMenuItems();
+        return $this->getCurrentContext()->getSecondaryColor();
     }
 
-    public function getModelResource(string | Model $model): ?string
+    public function getSidebarWidth(): string
     {
-        return $this->getCurrentContext()->getModelResource($model);
+        return $this->getCurrentContext()->getSidebarWidth();
     }
 
-    public function getTheme(): Theme
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getSuccessColor(): array
     {
-        return $this->getCurrentContext()->getTheme();
+        return $this->getCurrentContext()->getSuccessColor();
     }
 
-    public function getUrl(?Model $tenant = null): ?string
+    public function getTenant(): ?Model
     {
-        return $this->getCurrentContext()->getUrl($tenant);
+        return $this->tenant;
     }
 
     public function getTenantAvatarUrl(Model $tenant): string
@@ -467,6 +359,32 @@ class FilamentManager
         return app($this->getDefaultAvatarProvider())->get($tenant);
     }
 
+    public function getTenantBillingProvider(): ?Billing\Providers\Contracts\Provider
+    {
+        return $this->getCurrentContext()->getTenantBillingProvider();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getTenantBillingUrl(array $parameters = [], ?Model $tenant = null): ?string
+    {
+        return $this->getCurrentContext()->getTenantBillingUrl($tenant ?? $this->getTenant(), $parameters);
+    }
+
+    /**
+     * @return array<MenuItem>
+     */
+    public function getTenantMenuItems(): array
+    {
+        return $this->getCurrentContext()->getTenantMenuItems();
+    }
+
+    public function getTenantModel(): ?string
+    {
+        return $this->getCurrentContext()->getTenantModel();
+    }
+
     public function getTenantName(Model $tenant): string
     {
         if ($tenant instanceof HasName) {
@@ -476,13 +394,27 @@ class FilamentManager
         return $tenant->getAttributeValue('name');
     }
 
-    public function getNameForDefaultAvatar(Model | Authenticatable $record): string
+    public function getTenantOwnershipRelationshipName(): string
     {
-        if ($this->getTenantModel() === $record::class) {
-            return $this->getTenantName($record);
-        }
+        return $this->getCurrentContext()->getTenantOwnershipRelationshipName();
+    }
 
-        return $this->getUserName($record);
+    public function getTenantRegistrationPage(): ?string
+    {
+        return $this->getCurrentContext()->getTenantRegistrationPage();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getTenantRegistrationUrl(array $parameters = []): ?string
+    {
+        return $this->getCurrentContext()->getTenantRegistrationUrl($parameters);
+    }
+
+    public function getTheme(): Theme
+    {
+        return $this->getCurrentContext()->getTheme();
     }
 
     public function getUserAvatarUrl(Model | Authenticatable $user): string
@@ -498,6 +430,30 @@ class FilamentManager
         }
 
         return app($this->getDefaultAvatarProvider())->get($user);
+    }
+
+    public function getUserDefaultTenant(HasTenants | Model | Authenticatable $user): ?Model
+    {
+        $tenant = null;
+        $context = $this->getCurrentContext();
+
+        if ($user instanceof HasDefaultTenant) {
+            $tenant = $user->getDefaultTenant($context);
+        }
+
+        if (! $tenant) {
+            $tenant = Arr::first($this->getUserTenants($user));
+        }
+
+        return $tenant;
+    }
+
+    /**
+     * @return array<MenuItem>
+     */
+    public function getUserMenuItems(): array
+    {
+        return $this->getCurrentContext()->getUserMenuItems();
     }
 
     public function getUserName(Model | Authenticatable $user): string
@@ -523,20 +479,25 @@ class FilamentManager
         return $tenants;
     }
 
-    public function getUserDefaultTenant(HasTenants | Model | Authenticatable $user): ?Model
+    public function getUrl(?Model $tenant = null): ?string
     {
-        $tenant = null;
-        $context = $this->getCurrentContext();
+        return $this->getCurrentContext()->getUrl($tenant);
+    }
 
-        if ($user instanceof HasDefaultTenant) {
-            $tenant = $user->getDefaultTenant($context);
-        }
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
+    {
+        return $this->getCurrentContext()->getVerifyEmailUrl($user, $parameters);
+    }
 
-        if (! $tenant) {
-            $tenant = Arr::first($this->getUserTenants($user));
-        }
-
-        return $tenant;
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getWarningColor(): array
+    {
+        return $this->getCurrentContext()->getWarningColor();
     }
 
     /**
@@ -547,9 +508,14 @@ class FilamentManager
         return $this->getCurrentContext()->getWidgets();
     }
 
-    public function getFavicon(): ?string
+    public function hasBreadcrumbs(): bool
     {
-        return $this->getCurrentContext()->getFavicon();
+        return $this->getCurrentContext()->hasBreadcrumbs();
+    }
+
+    public function hasCollapsibleNavigationGroups(): bool
+    {
+        return $this->getCurrentContext()->hasCollapsibleNavigationGroups();
     }
 
     public function hasDarkMode(): bool
@@ -562,49 +528,64 @@ class FilamentManager
         return $this->getCurrentContext()->hasDarkModeForced();
     }
 
-    public function getBrandName(): string
-    {
-        return $this->getCurrentContext()->getBrandName();
-    }
-
     public function hasDatabaseNotifications(): bool
     {
         return $this->getCurrentContext()->hasDatabaseNotifications();
     }
 
-    public function getDatabaseNotificationsPollingInterval(): ?string
+    public function hasEmailVerification(): bool
     {
-        return $this->getCurrentContext()->getDatabaseNotificationsPollingInterval();
+        return $this->getCurrentContext()->hasEmailVerification();
     }
 
-    public function getFontHtml(): Htmlable
+    public function hasLogin(): bool
     {
-        return $this->getCurrentContext()->getFontHtml();
+        return $this->getCurrentContext()->hasLogin();
     }
 
-    public function getFontFamily(): string
+    public function hasNavigation(): bool
     {
-        return $this->getCurrentContext()->getFontFamily();
+        return $this->getCurrentContext()->hasNavigation();
     }
 
-    public function getFontProvider(): string
+    public function hasPasswordReset(): bool
     {
-        return $this->getCurrentContext()->getFontProvider();
+        return $this->getCurrentContext()->hasPasswordReset();
     }
 
-    public function getFontUrl(): ?string
+    public function hasRegistration(): bool
     {
-        return $this->getCurrentContext()->getFontUrl();
+        return $this->getCurrentContext()->hasRegistration();
     }
 
-    public function getDefaultAvatarProvider(): string
+    public function hasRoutableTenancy(): bool
     {
-        return $this->getCurrentContext()->getDefaultAvatarProvider();
+        return $this->getCurrentContext()->hasRoutableTenancy();
     }
 
-    public function getPlugin(string $id): Plugin
+    public function hasTenancy(): bool
     {
-        return $this->getCurrentContext()->getPlugin($id);
+        return $this->getCurrentContext()->hasTenancy();
+    }
+
+    public function hasTenantBilling(): bool
+    {
+        return $this->getCurrentContext()->hasTenantBilling();
+    }
+
+    public function hasTenantRegistration(): bool
+    {
+        return $this->getCurrentContext()->hasTenantRegistration();
+    }
+
+    public function hasTopNavigation(): bool
+    {
+        return $this->getCurrentContext()->hasTopNavigation();
+    }
+
+    public function isServing(): bool
+    {
+        return $this->isServing;
     }
 
     public function isSidebarCollapsibleOnDesktop(): bool
@@ -617,9 +598,33 @@ class FilamentManager
         return $this->getCurrentContext()->isSidebarFullyCollapsibleOnDesktop();
     }
 
-    public function hasCollapsibleNavigationGroups(): bool
+    public function mountNavigation(): void
     {
-        return $this->getCurrentContext()->hasCollapsibleNavigationGroups();
+        $this->getCurrentContext()->mountNavigation();
+    }
+
+    public function registerContext(Context $context): void
+    {
+        $this->contexts[$context->getId()] = $context;
+
+        if ($context->isDefault()) {
+            $this->setCurrentContext($context);
+        }
+    }
+
+    public function renderHook(string $name): Htmlable
+    {
+        return $this->getCurrentContext()->getRenderHook($name);
+    }
+
+    public function serving(Closure $callback): void
+    {
+        Event::listen(ServingFilament::class, $callback);
+    }
+
+    public function setCurrentContext(?Context $context): void
+    {
+        $this->currentContext = $context;
     }
 
     public function setServingStatus(bool $condition = true): void
@@ -627,8 +632,12 @@ class FilamentManager
         $this->isServing = $condition;
     }
 
-    public function isServing(): bool
+    public function setTenant(?Model $tenant): void
     {
-        return $this->isServing;
+        $this->tenant = $tenant;
+
+        if ($tenant) {
+            event(new TenantSet($tenant, $this->auth()->user()));
+        }
     }
 }

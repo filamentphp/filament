@@ -21,6 +21,7 @@
                         ? '{{ match ($onColor) {
                             'danger' => 'bg-danger-600',
                             'gray' => 'bg-gray-600',
+                            'info' => 'bg-info-600',
                             'primary', null => 'bg-primary-600',
                             'secondary' => 'bg-secondary-600',
                             'success' => 'bg-success-600',
@@ -30,6 +31,7 @@
                         : '{{ match ($offColor) {
                             'danger' => 'bg-danger-600',
                             'gray' => 'bg-gray-600',
+                            'info' => 'bg-info-600',
                             'primary' => 'bg-primary-600',
                             'secondary' => 'bg-secondary-600',
                             'success' => 'bg-success-600',
@@ -77,6 +79,7 @@
                                 :color="match ($offColor) {
                                     'danger' => 'text-danger-600',
                                     'gray' => 'text-gray-600',
+                                    'info' => 'text-info-600',
                                     'primary' => 'text-primary-600',
                                     'secondary' => 'text-secondary-600',
                                     'success' => 'text-success-600',
@@ -104,6 +107,7 @@
                                 :color="match ($onColor) {
                                     'danger' => 'text-danger-600',
                                     'gray' => 'text-gray-600',
+                                    'info' => 'text-info-600',
                                     'primary', null => 'text-primary-600',
                                     'secondary' => 'text-secondary-600',
                                     'success' => 'text-success-600',

@@ -213,11 +213,28 @@ class Notification extends ViewComponent implements Arrayable
     public function status(string $status): static
     {
         return match ($status) {
+            'danger' => $this->danger(),
+            'info' => $this->info(),
             'success' => $this->success(),
             'warning' => $this->warning(),
-            'danger' => $this->danger(),
             default => $this,
         };
+    }
+
+    public function danger(): static
+    {
+        $this->icon('heroicon-o-x-circle');
+        $this->iconColor('danger');
+
+        return $this;
+    }
+
+    public function info(): static
+    {
+        $this->icon('heroicon-o-information-circle');
+        $this->iconColor('info');
+
+        return $this;
     }
 
     public function success(): static
@@ -232,14 +249,6 @@ class Notification extends ViewComponent implements Arrayable
     {
         $this->icon('heroicon-o-exclamation-circle');
         $this->iconColor('warning');
-
-        return $this;
-    }
-
-    public function danger(): static
-    {
-        $this->icon('heroicon-o-x-circle');
-        $this->iconColor('danger');
 
         return $this;
     }

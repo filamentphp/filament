@@ -16,6 +16,7 @@
                     :color="match ($color = $getColor($state)) {
                         'danger' => 'text-danger-500',
                         'gray', null => 'text-gray-500',
+                        'info' => 'text-info-500',
                         'primary' => 'text-primary-500',
                         'secondary' => 'text-secondary-500',
                         'success' => 'text-success-500',
