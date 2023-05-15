@@ -1,4 +1,5 @@
 @props([
+    'actions' => [],
     'color' => null,
     'icon' => null,
 ])
@@ -28,5 +29,13 @@
             alias="filament-infolists::entry-wrapper.hint"
             size="h-5 w-5"
         />
+    @endif
+
+    @if (count($actions))
+        <div class="filament-infolists-entry-wrapper-hint-action flex gap-1 items-center">
+            @foreach ($actions as $action)
+                {{ $action }}
+            @endforeach
+        </div>
     @endif
 </div>

@@ -201,7 +201,7 @@ trait HasFormComponentActions
         }
 
         if ((! $this->isCachingForms) && $this->hasCachedForm("mountedFormComponentActionForm{$actionNestingIndex}")) {
-            return $this->getCachedForm("mountedFormComponentActionForm{$actionNestingIndex}");
+            return $this->getForm("mountedFormComponentActionForm{$actionNestingIndex}");
         }
 
         return $action->getForm(

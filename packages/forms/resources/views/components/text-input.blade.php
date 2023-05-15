@@ -14,7 +14,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <x-filament::input.affixes
+    <x-filament-forms::affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
         :prefix-actions="$getPrefixActions()"
@@ -74,7 +74,7 @@
                     ])
             }}
         />
-    </x-filament::input.affixes>
+    </x-filament-forms::affixes>
 
     @if ($datalistOptions)
         <datalist id="{{ $id }}-list">

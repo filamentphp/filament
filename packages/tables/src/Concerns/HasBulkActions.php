@@ -273,7 +273,7 @@ trait HasBulkActions
         }
 
         if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableBulkActionForm')) {
-            return $this->getCachedForm('mountedTableBulkActionForm');
+            return $this->getForm('mountedTableBulkActionForm');
         }
 
         return $action->getForm(

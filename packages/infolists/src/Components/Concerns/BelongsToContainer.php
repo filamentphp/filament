@@ -2,7 +2,11 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
+use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\ComponentContainer;
+use Filament\Infolists\Contracts\HasInfolists;
+use Filament\Infolists\Infolist;
+use Livewire\Component;
 
 trait BelongsToContainer
 {
@@ -18,5 +22,15 @@ trait BelongsToContainer
     public function getContainer(): ComponentContainer
     {
         return $this->container;
+    }
+
+    public function getInfolist(): Infolist
+    {
+        return $this->getContainer()->getInfolist();
+    }
+
+    public function getLivewire(): Component
+    {
+        return $this->getContainer()->getLivewire();
     }
 }

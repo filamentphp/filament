@@ -91,6 +91,99 @@
     @endphp
 @endif
 
+@if ($this instanceof \Filament\Infolists\Contracts\HasInfolists && (! $this->hasInfolistsModalRendered))
+    <form wire:submit.prevent="callMountedInfolistAction">
+        @php
+            $action = $this->getMountedInfolistAction();
+        @endphp
+
+        <x-filament::modal
+            :id="$this->id . '-infolist-action'"
+            :wire:key="$action ? $this->id . '.infolist.actions.' . $action->getName() . '.modal' : null"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            :slide-over="$action?->isModalSlideOver()"
+            :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
+            display-classes="block"
+            x-init="livewire = $wire.__instance"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedInfolistActions.length) open()"
+            x-on:modal-closed.stop="
+                const mountedInfolistActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedInfolistActionShouldOpenModal()) }}
+
+                if (! mountedInfolistActionShouldOpenModal) {
+                    return
+                }
+
+                if (
+                    ('mountedFormComponentActions' in livewire?.serverMemo.data) &&
+                    livewire.serverMemo.data.mountedFormComponentActions.length
+                ) {
+                    return
+                }
+
+                if ('mountedInfolistActions' in livewire?.serverMemo.data) {
+                    livewire.call('unmountInfolistAction', false)
+                }
+            "
+        >
+            @if ($action)
+                @if ($action->isModalCentered())
+                    @if ($heading = $action->getModalHeading())
+                        <x-slot name="heading">
+                            {{ $heading }}
+                        </x-slot>
+                    @endif
+
+                    @if ($subheading = $action->getModalSubheading())
+                        <x-slot name="subheading">
+                            {{ $subheading }}
+                        </x-slot>
+                    @endif
+                @else
+                    <x-slot name="header">
+                        @if ($heading = $action->getModalHeading())
+                            <x-filament::modal.heading>
+                                {{ $heading }}
+                            </x-filament::modal.heading>
+                        @endif
+
+                        @if ($subheading = $action->getModalSubheading())
+                            <x-filament::modal.subheading>
+                                {{ $subheading }}
+                            </x-filament::modal.subheading>
+                        @endif
+                    </x-slot>
+                @endif
+
+                {{ $action->getModalContent() }}
+
+                @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
+                    {{ $infolist }}
+                @elseif ($this->mountedInfolistActionHasForm())
+                    {{ $this->getMountedInfolistActionForm() }}
+                @endif
+
+                {{ $action->getModalFooter() }}
+
+                @if (count($modalActions = $action->getVisibleModalActions()))
+                    <x-slot name="footer">
+                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
+                            @foreach ($modalActions as $modalAction)
+                                {{ $modalAction }}
+                            @endforeach
+                        </x-filament::modal.actions>
+                    </x-slot>
+                @endif
+            @endif
+        </x-filament::modal>
+    </form>
+
+    @php
+        $this->hasInfolistsModalRendered = true;
+    @endphp
+@endif
+
 @if ($this instanceof \Filament\Tables\Contracts\HasTable && (! $this->hasTableModalRendered))
     <form wire:submit.prevent="callMountedTableAction">
         @php

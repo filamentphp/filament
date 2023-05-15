@@ -198,7 +198,7 @@ trait HasActions
         }
 
         if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableActionForm')) {
-            return $this->getCachedForm('mountedTableActionForm');
+            return $this->getForm('mountedTableActionForm');
         }
 
         return $action->getForm(

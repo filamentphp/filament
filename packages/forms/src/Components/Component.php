@@ -20,8 +20,8 @@ class Component extends ViewComponent
     use Concerns\HasActions;
     use Concerns\HasChildComponents;
     use Concerns\HasFieldWrapper;
-    use Concerns\HasInlineLabel;
     use Concerns\HasId;
+    use Concerns\HasInlineLabel;
     use Concerns\HasKey;
     use Concerns\HasLabel;
     use Concerns\HasMaxWidth;

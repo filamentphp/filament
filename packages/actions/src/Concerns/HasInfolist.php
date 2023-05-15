@@ -26,7 +26,7 @@ trait HasInfolist
 
     public function getInfolist(): ?Infolist
     {
-        $infolist = Infolist::make();
+        $infolist = Infolist::make($this->getLivewire());
 
         if ($this instanceof HasRecord) {
             $infolist->record($this->getRecord());

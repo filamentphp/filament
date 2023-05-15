@@ -45,13 +45,15 @@
         $copyMessageDuration = $getCopyMessageDuration();
     @endphp
 
-    <div {{ $attributes
-        ->merge($getExtraAttributes(), escape: false)
-        ->class([
+    <x-filament-infolists::affixes
+        :prefix-actions="$getPrefixActions()"
+        :suffix-actions="$getSuffixActions()"
+        @class([
             'filament-infolists-text-entry',
             'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $url && (! $isBadge),
         ])
-    }}>
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
+    >
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }} @class([
             'list-disc list-inside' => $isBulleted(),
             'flex flex-wrap gap-1' => $isBadge,
@@ -166,5 +168,5 @@
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
         </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
-    </div>
+    </x-filament-infolists::affixes>
 </x-dynamic-component>

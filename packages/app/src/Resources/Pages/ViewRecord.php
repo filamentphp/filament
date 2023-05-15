@@ -9,6 +9,8 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Illuminate\Database\Eloquent\Model;
@@ -16,11 +18,12 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property Form $form
  */
-class ViewRecord extends Page
+class ViewRecord extends Page implements HasInfolists
 {
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
+    use InteractsWithInfolists;
 
     /**
      * @var view-string
@@ -38,8 +41,6 @@ class ViewRecord extends Page
     protected $queryString = [
         'activeRelationManager',
     ];
-
-    protected ?Infolist $cachedInfolist = null;
 
     public function getBreadcrumb(): string
     {
@@ -68,7 +69,7 @@ class ViewRecord extends Page
 
     protected function hasInfolist(): bool
     {
-        return (bool) count($this->getCachedInfolist()->getComponents());
+        return (bool) count($this->getInfolist('infolist')->getComponents());
     }
 
     protected function fillForm(): void
@@ -82,11 +83,6 @@ class ViewRecord extends Page
         $this->form->fill($data);
 
         $this->callHook('afterFill');
-    }
-
-    protected function getCachedInfolist(): Infolist
-    {
-        return $this->cachedInfolist ??= $this->getInfolist();
     }
 
     /**
@@ -192,10 +188,10 @@ class ViewRecord extends Page
         );
     }
 
-    public function getInfolist(): Infolist
+    public function infolist(Infolist $infolist): Infolist
     {
         return static::getResource()::infolist(
-            Infolist::make()
+            $infolist
                 ->record($this->getRecord())
                 ->columns($this->hasInlineLabels() ? 1 : 2)
                 ->inlineLabel($this->hasInlineLabels()),

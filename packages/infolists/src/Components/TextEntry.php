@@ -3,11 +3,13 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\Infolists\Components\Contracts\HasAffixActions;
 
-class TextEntry extends Entry
+class TextEntry extends Entry implements HasAffixActions
 {
     use Concerns\CanBeCopied;
     use Concerns\CanFormatState;
+    use Concerns\HasAffixes;
     use Concerns\HasColor;
     use Concerns\HasFontFamily;
     use Concerns\HasIcon;

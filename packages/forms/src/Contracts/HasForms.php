@@ -2,6 +2,7 @@
 
 namespace Filament\Forms\Contracts;
 
+use Filament\Forms\Form;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Livewire\TemporaryUploadedFile;
 
@@ -12,6 +13,8 @@ interface HasForms
     public function getActiveFormLocale(): ?string;
 
     public function makeFormTranslatableContentDriver(): ?TranslatableContentDriver;
+
+    public function getForm(string $name): ?Form;
 
     public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile;
 
@@ -38,6 +41,8 @@ interface HasForms
      * @return array<array{name: string, size: int, type: string, url: string} | null> | null
      */
     public function getFormUploadedFiles(string $statePath): ?array;
+
+    public function isCachingForms(): bool;
 
     public function removeFormUploadedFile(string $statePath, string $fileKey): void;
 

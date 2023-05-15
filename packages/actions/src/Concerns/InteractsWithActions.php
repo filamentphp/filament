@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -18,9 +19,8 @@ use Livewire\Exceptions\PropertyNotFoundException;
  */
 trait InteractsWithActions
 {
-    use Forms\Concerns\InteractsWithForms {
-        __get as __getForm;
-    }
+    use Forms\Concerns\InteractsWithForms;
+    use ResolvesDynamicLivewireProperties;
 
     /**
      * @var array<string> | null
@@ -43,22 +43,6 @@ trait InteractsWithActions
     protected array $cachedActions = [];
 
     protected bool $hasActionsModalRendered = false;
-
-    /**
-     * @param  string  $property
-     */
-    public function __get($property): mixed
-    {
-        try {
-            return $this->__getForm($property);
-        } catch (PropertyNotFoundException $exception) {
-            if ($action = $this->getAction($property)) {
-                return $action;
-            }
-
-            throw $exception;
-        }
-    }
 
     /**
      * @param  array<string, mixed>  $arguments
@@ -237,7 +221,7 @@ trait InteractsWithActions
         }
 
         if ((! $this->isCachingForms) && $this->hasCachedForm('mountedActionForm')) {
-            return $this->getCachedForm('mountedActionForm');
+            return $this->getForm('mountedActionForm');
         }
 
         return $action->getForm(
