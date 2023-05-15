@@ -22,7 +22,7 @@ Trix.config.blockAttributes.subHeading = {
 }
 
 Trix.config.textAttributes.underline = {
-    style: { 'textDecoration': 'underline' },
+    style: { textDecoration: 'underline' },
     inheritable: true,
     parser: (element) => {
         const style = window.getComputedStyle(element)
