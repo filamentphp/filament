@@ -149,8 +149,8 @@
                     isUploadingFile = false
                 })
             "
+            x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         @endif
-        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         {{
             $attributes
                 ->merge([
