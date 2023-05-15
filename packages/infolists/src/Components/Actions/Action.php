@@ -4,7 +4,6 @@ namespace Filament\Infolists\Components\Actions;
 
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
-use Filament\Infolists\Components\Actions\ActionContainer;
 use Illuminate\Database\Eloquent\Model;
 
 class Action extends MountableAction

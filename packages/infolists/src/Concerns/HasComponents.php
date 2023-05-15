@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Concerns;
 
 use Closure;
-use Filament\Infolists\ComponentContainer;
 use Filament\Infolists\Components\Component;
 
 trait HasComponents

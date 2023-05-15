@@ -2,9 +2,7 @@
 
 namespace Filament\Infolists\Components\Concerns;
 
-use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\ComponentContainer;
-use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Livewire\Component;
 

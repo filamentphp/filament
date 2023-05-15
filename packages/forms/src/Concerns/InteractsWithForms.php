@@ -10,7 +10,6 @@ use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 

@@ -31,7 +31,7 @@ trait BelongsToParentComponent
         $parentComponent = $this->getParentComponent();
 
         if (! $parentComponent) {
-            throw new Exception("Tried to access a non-existent root infolist of a component.");
+            throw new Exception('Tried to access a non-existent root infolist of a component.');
         }
 
         return $parentComponent->getInfolist();

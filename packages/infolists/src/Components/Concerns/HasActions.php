@@ -6,8 +6,6 @@ use Closure;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Contracts\HasAffixActions;
 use Filament\Infolists\Components\Contracts\HasHintActions;
-use Filament\Tables\Actions\ActionGroup;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
@@ -50,7 +48,7 @@ trait HasActions
     }
 
     /**
-     * @param string | array<string> | null $name
+     * @param  string | array<string> | null  $name
      */
     public function getAction(string | array | null $name = null): ?Action
     {

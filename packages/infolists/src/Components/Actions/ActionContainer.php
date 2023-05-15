@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists\Components\Actions;
 
-use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Component;
 
 class ActionContainer extends Component

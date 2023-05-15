@@ -4,7 +4,6 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Component;
 
 class Actions extends Component
 {

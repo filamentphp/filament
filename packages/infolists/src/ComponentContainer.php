@@ -2,8 +2,6 @@
 
 namespace Filament\Infolists;
 
-use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Support\Components\ViewComponent;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component;

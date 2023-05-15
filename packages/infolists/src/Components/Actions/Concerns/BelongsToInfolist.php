@@ -3,8 +3,6 @@
 namespace Filament\Infolists\Components\Actions\Concerns;
 
 use Filament\Infolists\Components\Component;
-use Filament\Infolists\Contracts\HasInfolists;
-use Filament\Infolists\Infolist;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component as LivewireComponent;
 

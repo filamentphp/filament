@@ -11,13 +11,15 @@ trait ResolvesDynamicLivewireProperties
 {
     /**
      * @param  string  $property
+     *
      * @throws PropertyNotFoundException
      */
     public function __get($property): mixed
     {
         try {
             return parent::__get($property);
-        } catch (PropertyNotFoundException $exception) {}
+        } catch (PropertyNotFoundException $exception) {
+        }
 
         if (
             $this instanceof HasForms &&

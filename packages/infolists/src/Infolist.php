@@ -2,8 +2,6 @@
 
 namespace Filament\Infolists;
 
-use Filament\Infolists\Components\Actions\Action;
-
 class Infolist extends ComponentContainer
 {
     protected string $name;
