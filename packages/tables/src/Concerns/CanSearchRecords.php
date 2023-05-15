@@ -160,6 +160,12 @@ trait CanSearchRecords
         $this->updatedTableColumnSearches(null, $column);
     }
 
+    public function resetTableColumnSearches(): void
+    {
+        $this->tableColumnSearches = [];
+        $this->updatedTableColumnSearches();
+    }
+
     public function getTableSearchIndicator(): string
     {
         return __('filament-tables::table.fields.search.indicator') . ': ' . $this->getTableSearch();

@@ -88,6 +88,9 @@ trait HasFilters
         }
 
         $this->updatedTableFilters();
+
+        $this->resetTableSearch();
+        $this->resetTableColumnSearches();
     }
 
     public function resetTableFiltersForm(): void
