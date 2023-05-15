@@ -132,7 +132,9 @@ trait InteractsWithTable
 
             $this->tableSortColumn = $sort['column'] ?? null;
             $this->tableSortDirection = $sort['direction'] ?? null;
-        } elseif ($shouldPersistTableSortInSession) {
+        }
+
+        if ($shouldPersistTableSortInSession) {
             session()->put(
                 $sortSessionKey,
                 [
