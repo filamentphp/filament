@@ -206,4 +206,14 @@ class ViewRecord extends Page
     {
         return $this->getRecord();
     }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getWidgetData(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
 }
