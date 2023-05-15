@@ -33,6 +33,16 @@ class Notification {
 
     status(status) {
         switch (status) {
+            case 'danger':
+                this.danger()
+
+                break
+
+            case 'info':
+                this.info()
+
+                break
+
             case 'success':
                 this.success()
 
@@ -40,11 +50,6 @@ class Notification {
 
             case 'warning':
                 this.warning()
-
-                break
-
-            case 'danger':
-                this.danger()
 
                 break
         }
@@ -88,6 +93,20 @@ class Notification {
         return this
     }
 
+    danger() {
+        this.icon('heroicon-o-x-circle')
+        this.iconColor('danger')
+
+        return this
+    }
+
+    info() {
+        this.icon('heroicon-o-information-circle')
+        this.iconColor('info')
+
+        return this
+    }
+
     success() {
         this.icon('heroicon-o-check-circle')
         this.iconColor('success')
@@ -98,13 +117,6 @@ class Notification {
     warning() {
         this.icon('heroicon-o-exclamation-circle')
         this.iconColor('warning')
-
-        return this
-    }
-
-    danger() {
-        this.icon('heroicon-o-x-circle')
-        this.iconColor('danger')
 
         return this
     }

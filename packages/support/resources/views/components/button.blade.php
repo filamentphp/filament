@@ -35,6 +35,7 @@
                     match ($color) {
                         'danger' => 'filament-button-color-danger border-danger-600 text-danger-600 hover:bg-danger-500/10 focus:bg-danger-500/10 focus:ring-danger-500/50 dark:border-danger-400 dark:text-danger-400',
                         'gray' => 'filament-button-color-gray border-gray-300 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-primary-500/50 dark:border-gray-600 dark:text-gray-200',
+                        'info' => 'filament-button-color-info border-info-600 text-info-600 hover:bg-info-500/10 focus:bg-info-500/10 focus:ring-info-500/50 dark:border-info-400 dark:text-info-400',
                         'primary' => 'filament-button-color-primary border-primary-600 text-primary-600 hover:bg-primary-500/10 focus:bg-primary-500/10 focus:ring-primary-500/50 dark:border-primary-400 dark:text-primary-400',
                         'secondary' => 'filament-button-color-secondary border-secondary-600 text-secondary-600 hover:bg-secondary-500/10 focus:bg-secondary-500/10 focus:ring-secondary-500/50 dark:border-secondary-400 dark:text-secondary-400',
                         'success' => 'filament-button-color-success border-success-600 text-success-600 hover:bg-success-500/10 focus:bg-success-500/10 focus:ring-success-500/50 dark:border-success-400 dark:text-success-400',
@@ -47,6 +48,7 @@
                     match ($color) {
                         'danger' => 'filament-button-color-danger border-transparent bg-danger-600 text-white hover:bg-danger-500 focus:bg-danger-500 focus:ring-danger-500/50',
                         'gray' => 'filament-button-color-gray border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-primary-500 focus:border-transparent dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700',
+                        'info' => 'filament-button-color-info border-transparent bg-info-600 text-white hover:bg-info-500 focus:bg-info-500 focus:ring-info-500/50',
                         'primary' => 'filament-button-color-primary border-transparent bg-primary-600 text-white hover:bg-primary-500 focus:bg-primary-500 focus:ring-primary-500/50',
                         'secondary' => 'filament-button-color-secondary border-transparent bg-secondary-600 text-white hover:bg-secondary-500 focus:bg-secondary-500 focus:ring-secondary-500/50',
                         'success' => 'filament-button-color-success border-transparent bg-success-600 text-white hover:bg-success-500 focus:bg-success-500 focus:ring-success-500/50',
@@ -98,6 +100,7 @@
         match ($indicatorColor) {
             'danger' => 'bg-danger-600',
             'gray' => 'bg-gray-600',
+            'info' => 'bg-info-600',
             'primary' => 'bg-primary-600',
             'secondary' => 'bg-secondary-600',
             'success' => 'bg-success-600',

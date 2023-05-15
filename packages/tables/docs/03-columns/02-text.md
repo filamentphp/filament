@@ -244,7 +244,7 @@ TextColumn::make('updated_at')
 
 ## Customizing the color
 
-You may set a color for the text, either `primary`, `gray`, `secondary`, `success`, `warning` or `danger`:
+You may set a color for the text, either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;

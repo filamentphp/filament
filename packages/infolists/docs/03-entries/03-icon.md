@@ -34,7 +34,7 @@ IconEntry::make('is_featured')
 
 ## Customizing the color
 
-Icon entries may also have a set of icon colors, using the same syntax. They may be either `primary`, `gray`, `secondary`, `success`, `warning` or `danger`:
+Icon entries may also have a set of icon colors, using the same syntax. They may be either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
@@ -97,7 +97,7 @@ IconEntry::make('is_featured')
 
 ### Customizing the boolean colors
 
-You may customize the icon color representing each state. These may be either `primary`, `gray`, `secondary`, `success`, `warning` or `danger`:
+You may customize the icon color representing each state. These may be either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`:
 
 ```php
 use Filament\Infolists\Components\IconEntry;

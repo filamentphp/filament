@@ -43,7 +43,7 @@ Toggle::make('is_admin')
 
 ## Customizing the color of the toggle button
 
-You may also customize the color representing the "on" or "off" state of the toggle. These may be either `primary`, `gray`, `secondary`, `success`, `warning` or `danger`. To add a color to the "on" state, use the `onColor()` method. To add a color to the "off" state, use the `offColor()` method:
+You may also customize the color representing the "on" or "off" state of the toggle. These may be either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`. To add a color to the "on" state, use the `onColor()` method. To add a color to the "off" state, use the `offColor()` method:
 
 ```php
 use Filament\Forms\Components\Toggle;

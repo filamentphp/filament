@@ -64,6 +64,7 @@
                         ($isBadge ? match ($color = $getColor($state)) {
                             'danger' => 'filament-tables-text-column-badge-color-danger text-danger-700 bg-danger-500/10 dark:text-danger-500',
                             'gray', null => 'filament-tables-text-column-badge-color-gray text-gray-700 bg-gray-500/10 dark:text-gray-300 dark:bg-gray-500/20',
+                            'info' => 'filament-tables-text-column-badge-color-info text-info-700 bg-info-500/10 dark:text-info-500',
                             'primary' => 'filament-tables-text-column-badge-color-primary text-primary-700 bg-primary-500/10 dark:text-primary-500',
                             'secondary' => 'filament-tables-text-column-badge-color-secondary text-secondary-700 bg-secondary-500/10 dark:text-secondary-500',
                             'success' => 'filament-tables-text-column-badge-color-success text-success-700 bg-success-500/10 dark:text-success-500',
@@ -73,6 +74,7 @@
                         ((! ($isBadge || $isClickable)) ? match ($color = $getColor($state)) {
                             'danger' => 'text-danger-600',
                             'gray' => 'text-gray-600 dark:text-gray-400',
+                            'info' => 'text-info-600',
                             'primary' => 'text-primary-600',
                             'secondary' => 'text-secondary-600',
                             'success' => 'text-success-600',

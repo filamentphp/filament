@@ -10,6 +10,7 @@
     :color="match ($color) {
         'danger' => 'text-danger-400',
         'gray', null => 'text-gray-400',
+        'info' => 'text-info-400',
         'primary' => 'text-primary-400',
         'secondary' => 'text-secondary-400',
         'success' => 'text-success-400',

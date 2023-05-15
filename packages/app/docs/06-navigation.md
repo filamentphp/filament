@@ -27,7 +27,7 @@ public static function getNavigationBadge(): ?string
 }
 ```
 
-If a badge value is returned by `getNavigationBadge()`, it will display using the primary Tailwind color by default. To style the badge contextually, return either `danger`, `warning`, `success` or `secondary` from the `getNavigationBadgeColor()` method:
+If a badge value is returned by `getNavigationBadge()`, it will display using the primary color by default. To style the badge contextually, return either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning` from the `getNavigationBadgeColor()` method:
 
 ```php
 public static function getNavigationBadgeColor(): ?string

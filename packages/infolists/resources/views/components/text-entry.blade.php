@@ -72,6 +72,7 @@
                             ($isBadge ? match ($color = $getColor($state)) {
                                 'danger' => 'text-danger-700 bg-danger-500/10 dark:text-danger-500',
                                 'gray', null => 'text-gray-700 bg-gray-500/10 dark:text-gray-300 dark:bg-gray-500/20',
+                                'info' => 'text-info-700 bg-info-500/10 dark:text-info-500',
                                 'primary' => 'text-primary-700 bg-primary-500/10 dark:text-primary-500',
                                 'secondary' => 'text-secondary-700 bg-secondary-500/10 dark:text-secondary-500',
                                 'success' => 'text-success-700 bg-success-500/10 dark:text-success-500',
@@ -81,6 +82,7 @@
                             ((! ($isBadge || $url)) ? match ($color = $getColor($state)) {
                                 'danger' => 'text-danger-600',
                                 'gray' => 'text-gray-600 dark:text-gray-400',
+                                'info' => 'text-info-600',
                                 'primary' => 'text-primary-600',
                                 'secondary' => 'text-secondary-600',
                                 'success' => 'text-success-600',
