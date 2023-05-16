@@ -29,7 +29,7 @@
             <x-dynamic-component :component="$icon" class="w-5 h-5" />
         @endif
 
-        @if ($label = $getPrefixLabel())
+        @if (filled($label = $getPrefixLabel()))
             <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
@@ -102,7 +102,7 @@
             </div>
         </div>
 
-        @if ($label = $getSuffixLabel())
+        @if (filled($label = $getSuffixLabel()))
             <span @class($affixLabelClasses)>
                 {{ $label }}
             </span>
