@@ -2,6 +2,7 @@
     'actions' => [],
     'button' => false,
     'color' => null,
+    'divided' => false,
     'dropdownPlacement' => null,
     'dynamicComponent' => null,
     'group' => null,
@@ -20,6 +21,7 @@
     @php
         $group = \Filament\Actions\ActionGroup::make($actions)
             ->color($color)
+            ->divided($divided)
             ->dropdownPlacement($dropdownPlacement)
             ->icon($icon)
             ->indicator($indicator)
