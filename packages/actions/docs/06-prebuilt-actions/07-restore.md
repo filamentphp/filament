@@ -28,10 +28,12 @@ public function table(Table $table): Table
             RestoreAction::make(),
             // ...
         ])
-        ->bulkActions([BulkActionGroup::make([
-            RestoreBulkAction::make(),
-            // ...
-        ])]);
+        ->bulkActions([
+            BulkActionGroup::make([
+                RestoreBulkAction::make(),
+                // ...
+            ]),
+        ]);
 }
 ```
 

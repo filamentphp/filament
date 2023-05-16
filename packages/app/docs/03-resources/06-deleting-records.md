@@ -43,12 +43,14 @@ public static function table(Table $table): Table
             Tables\Actions\RestoreAction::make(),
             // ...
         ])
-        ->bulkActions([Tables\Actions\BulkActionGroup::make([
-            Tables\Actions\DeleteBulkAction::make(),
-            Tables\Actions\ForceDeleteBulkAction::make(),
-            Tables\Actions\RestoreBulkAction::make(),
-            // ...
-        ])]);
+        ->bulkActions([
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\ForceDeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make(),
+                // ...
+            ]),
+        ]);
 }
 
 public static function getEloquentQuery(): Builder
