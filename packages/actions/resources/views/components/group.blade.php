@@ -61,7 +61,7 @@
 
         foreach ($actions as $action) {
             if ($action instanceof \Filament\Actions\ActionGroup && (! $action->hasDropdown())) {
-                if (filled($actionList)) {
+                if (count($actionList)) {
                     $actionLists[] = $actionList;
                     $actionList = [];
                 }
@@ -72,7 +72,7 @@
             }
         }
 
-        if (filled($actionList)) {
+        if (count($actionList)) {
             $actionLists[] = $actionList;
         }
     @endphp
