@@ -14,7 +14,7 @@ Filament includes several [dedicated validation methods](#available-rules), but 
 
 ### Active URL
 
-The field must have a valid A or AAAA record according to the `dns_get_record()` PHP function. [See the Laravel documentation](https://laravel.com/docs/validation#rule-active-url)
+The field must have a valid A or AAAA record according to the `dns_get_record()` PHP function. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-active-url)
 
 ```php
 Field::make('name')->activeUrl()
@@ -22,7 +22,7 @@ Field::make('name')->activeUrl()
 
 ### After (date)
 
-The field value must be a value after a given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-after)
+The field value must be a value after a given date. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-after)
 
 ```php
 Field::make('startDate')->after('tomorrow')
@@ -37,7 +37,7 @@ Field::make('endDate')->after('startDate')
 
 ### After or equal to (date)
 
-The field value must be a date after or equal to the given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-after-or-equal)
+The field value must be a date after or equal to the given date. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-after-or-equal)
 
 ```php
 Field::make('startDate')->afterOrEqual('tomorrow')
@@ -52,7 +52,7 @@ Field::make('endDate')->afterOrEqual('startDate')
 
 ### Alpha
 
-The field must be entirely alphabetic characters. [See the Laravel documentation](https://laravel.com/docs/validation#rule-alpha)
+The field must be entirely alphabetic characters. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-alpha)
 
 ```php
 Field::make('name')->alpha()
@@ -60,7 +60,7 @@ Field::make('name')->alpha()
 
 ### Alpha Dash
 
-The field may have alpha-numeric characters, as well as dashes and underscores. [See the Laravel documentation](https://laravel.com/docs/validation#rule-alpha-dash)
+The field may have alpha-numeric characters, as well as dashes and underscores. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-alpha-dash)
 
 ```php
 Field::make('name')->alphaDash()
@@ -68,15 +68,23 @@ Field::make('name')->alphaDash()
 
 ### Alpha Numeric
 
-The field must be entirely alpha-numeric characters. [See the Laravel documentation](https://laravel.com/docs/validation#rule-alpha-num)
+The field must be entirely alpha-numeric characters. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-alpha-num)
 
 ```php
 Field::make('name')->alphaNum()
 ```
 
+### ASCII
+
+The field must be entirely 7-bit ASCII characters. [See the Laravel documentation.](https://laravel.com/docs/10.x/validation#rule-ascii)
+
+```php
+Field::make('name')->ascii()
+```
+
 ### Before (date)
 
-The field value must be a date before a given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-before)
+The field value must be a date before a given date. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-before)
 
 ```php
 Field::make('startDate')->before('first day of next month')
@@ -91,7 +99,7 @@ Field::make('endDate')
 
 ### Before or equal to (date)
 
-The field value must be a date before or equal to the given date. [See the Laravel documentation](https://laravel.com/docs/validation#rule-before-or-equal)
+The field value must be a date before or equal to the given date. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-before-or-equal)
 
 ```php
 Field::make('startDate')->beforeOrEqual('end of this month')
@@ -106,7 +114,7 @@ Field::make('endDate')
 
 ### Confirmed
 
-The field must have a matching field of `{field}_confirmation`. [See the Laravel documentation](https://laravel.com/docs/validation#rule-confirmed)
+The field must have a matching field of `{field}_confirmation`. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-confirmed)
 
 ```php
 Field::make('password')->confirmed()
@@ -115,7 +123,7 @@ Field::make('password_confirmation')
 
 ### Different
 
-The field value must be different to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-different)
+The field value must be different to another. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-different)
 
 ```php
 Field::make('backupEmail')->different('email')
@@ -123,7 +131,7 @@ Field::make('backupEmail')->different('email')
 
 ### Doesnt Start With
 
-The field must not start with one of the given values. [See the Laravel documentation](https://laravel.com/docs/validation#rule-doesnt-start-with)
+The field must not start with one of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-doesnt-start-with)
 
 ```php
 Field::make('name')->doesntStartWith(['admin'])
@@ -131,7 +139,7 @@ Field::make('name')->doesntStartWith(['admin'])
 
 ### Doesnt End With
 
-The field must not end with one of the given values. [See the Laravel documentation](https://laravel.com/docs/validation#rule-doesnt-end-with)
+The field must not end with one of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-doesnt-end-with)
 
 ```php
 Field::make('name')->doesntEndWith(['admin'])
@@ -139,7 +147,7 @@ Field::make('name')->doesntEndWith(['admin'])
 
 ### Ends With
 
-The field must end with one of the given values. [See the Laravel documentation](https://laravel.com/docs/validation#rule-ends-with)
+The field must end with one of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-ends-with)
 
 ```php
 Field::make('name')->endsWith(['bot'])
@@ -147,7 +155,7 @@ Field::make('name')->endsWith(['bot'])
 
 ### Enum
 
-The field must contain a valid enum value. [See the Laravel documentation](https://laravel.com/docs/validation#rule-enum)
+The field must contain a valid enum value. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-enum)
 
 ```php
 Field::make('status')->enum(MyStatus::class)
@@ -155,7 +163,7 @@ Field::make('status')->enum(MyStatus::class)
 
 ### Exists
 
-The field value must exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-exists).
+The field value must exist in the database. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-exists).
 
 ```php
 Field::make('invitation')->exists()
@@ -188,7 +196,7 @@ Field::make('invitation')
 
 ### Filled
 
-The field must not be empty when it is present. [See the Laravel documentation](https://laravel.com/docs/validation#rule-filled)
+The field must not be empty when it is present. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-filled)
 
 ```php
 Field::make('name')->filled()
@@ -196,7 +204,7 @@ Field::make('name')->filled()
 
 ### Greater than
 
-The field value must be greater than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gt)
+The field value must be greater than another. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-gt)
 
 ```php
 Field::make('newNumber')->gt('oldNumber')
@@ -204,14 +212,14 @@ Field::make('newNumber')->gt('oldNumber')
 
 ### Greater than or equal to
 
-The field value must be greater than or equal to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-gte)
+The field value must be greater than or equal to another. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-gte)
 
 ```php
 Field::make('newNumber')->gte('oldNumber')
 ```
 
 ### In
-The field must be included in the given list of values. [See the Laravel documentation](https://laravel.com/docs/validation#rule-in)
+The field must be included in the given list of values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-in)
 
 ```php
 Field::make('status')->in(['pending', 'completed'])
@@ -219,7 +227,7 @@ Field::make('status')->in(['pending', 'completed'])
 
 ### Ip Address
 
-The field must be an IP address. [See the Laravel documentation](https://laravel.com/docs/validation#rule-ip)
+The field must be an IP address. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-ip)
 
 ```php
 Field::make('ip_address')->ip()
@@ -229,7 +237,7 @@ Field::make('ip_address')->ipv6()
 
 ### JSON
 
-The field must be a valid JSON string. [See the Laravel documentation](https://laravel.com/docs/validation#rule-json)
+The field must be a valid JSON string. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-json)
 
 ```php
 Field::make('ip_address')->json()
@@ -237,7 +245,7 @@ Field::make('ip_address')->json()
 
 ### Less than
 
-The field value must be less than another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-lt)
+The field value must be less than another. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-lt)
 
 ```php
 Field::make('newNumber')->lt('oldNumber')
@@ -245,7 +253,7 @@ Field::make('newNumber')->lt('oldNumber')
 
 ### Less than or equal to
 
-The field value must be less than or equal to another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-lte)
+The field value must be less than or equal to another. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-lte)
 
 ```php
 Field::make('newNumber')->lte('oldNumber')
@@ -253,7 +261,7 @@ Field::make('newNumber')->lte('oldNumber')
 
 ### Mac Address
 
-The field must be a MAC address. [See the Laravel documentation](https://laravel.com/docs/validation#rule-mac)
+The field must be a MAC address. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-mac)
 
 ```php
 Field::make('mac_address')->macAddress()
@@ -261,7 +269,7 @@ Field::make('mac_address')->macAddress()
 
 ### Multiple Of
 
-The field must be a multiple of value. [See the Laravel documentation](https://laravel.com/docs/validation#multiple-of)
+The field must be a multiple of value. [See the Laravel documentation.](https://laravel.com/docs/validation#multiple-of)
 
 ```php
 Field::make('number')->multipleOf(2)
@@ -269,7 +277,7 @@ Field::make('number')->multipleOf(2)
 
 ### Not In
 
-The field must not be included in the given list of values. [See the Laravel documentation](https://laravel.com/docs/validation#rule-not-in)
+The field must not be included in the given list of values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-not-in)
 
 ```php
 Field::make('status')->notIn(['cancelled', 'rejected'])
@@ -277,7 +285,7 @@ Field::make('status')->notIn(['cancelled', 'rejected'])
 
 ### Not Regex
 
-The field must not match the given regular expression. [See the Laravel documentation](https://laravel.com/docs/validation#rule-not-regex)
+The field must not match the given regular expression. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-not-regex)
 
 ```php
 Field::make('email')->notRegex('/^.+$/i')
@@ -285,7 +293,7 @@ Field::make('email')->notRegex('/^.+$/i')
 
 ### Nullable
 
-The field value can be empty. This rule is applied by default if the `required` rule is not present. [See the Laravel documentation](https://laravel.com/docs/validation#rule-nullable)
+The field value can be empty. This rule is applied by default if the `required` rule is not present. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-nullable)
 
 ```php
 Field::make('name')->nullable()
@@ -293,7 +301,7 @@ Field::make('name')->nullable()
 
 ### Prohibited
 
-The field value must be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-prohibited)
+The field value must be empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-prohibited)
 
 ```php
 Field::make('name')->prohibited()
@@ -301,7 +309,7 @@ Field::make('name')->prohibited()
 
 ### Required
 
-The field value must not be empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required)
+The field value must not be empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required)
 
 ```php
 Field::make('name')->required()
@@ -309,7 +317,7 @@ Field::make('name')->required()
 
 ### Required With
 
-The field value must not be empty _only if_ any of the other specified fields are not empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required-with)
+The field value must not be empty _only if_ any of the other specified fields are not empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-with)
 
 ```php
 Field::make('name')->requiredWith('field,another_field')
@@ -317,7 +325,7 @@ Field::make('name')->requiredWith('field,another_field')
 
 ### Required With All
 
-The field value must not be empty _only if_ all of the other specified fields are not empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required-with-all)
+The field value must not be empty _only if_ all of the other specified fields are not empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-with-all)
 
 ```php
 Field::make('name')->requiredWithAll('field,another_field')
@@ -325,7 +333,7 @@ Field::make('name')->requiredWithAll('field,another_field')
 
 ### Required Without
 
-The field value must not be empty _only when_ any of the other specified fields are empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required-without)
+The field value must not be empty _only when_ any of the other specified fields are empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-without)
 
 ```php
 Field::make('name')->requiredWithout('field,another_field')
@@ -333,7 +341,7 @@ Field::make('name')->requiredWithout('field,another_field')
 
 ### Required Without All
 
-The field value must not be empty _only when_ all of the other specified fields are empty. [See the Laravel documentation](https://laravel.com/docs/validation#rule-required-without-all)
+The field value must not be empty _only when_ all of the other specified fields are empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-without-all)
 
 ```php
 Field::make('name')->requiredWithoutAll('field,another_field')
@@ -341,7 +349,7 @@ Field::make('name')->requiredWithoutAll('field,another_field')
 
 ### Regex
 
-The field must match the given regular expression. [See the Laravel documentation](https://laravel.com/docs/validation#rule-regex)
+The field must match the given regular expression. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-regex)
 
 ```php
 Field::make('email')->regex('/^.+@.+$/i')
@@ -349,7 +357,7 @@ Field::make('email')->regex('/^.+@.+$/i')
 
 ### Same
 
-The field value must be the same as another. [See the Laravel documentation](https://laravel.com/docs/validation#rule-same)
+The field value must be the same as another. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-same)
 
 ```php
 Field::make('password')->same('passwordConfirmation')
@@ -357,7 +365,7 @@ Field::make('password')->same('passwordConfirmation')
 
 ### Starts With
 
-The field must start with one of the given values. [See the Laravel documentation](https://laravel.com/docs/validation#rule-starts-with)
+The field must start with one of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-starts-with)
 
 ```php
 Field::make('name')->startsWith(['a'])
@@ -365,14 +373,14 @@ Field::make('name')->startsWith(['a'])
 
 ### String
 
-The field must be a string. [See the Laravel documentation](https://laravel.com/docs/validation#rule-string)
+The field must be a string. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-string)
 ```php
 Field::make('name')->string()
 ```
 
 ### Unique
 
-The field value must not exist in the database. [See the Laravel documentation](https://laravel.com/docs/validation#rule-unique)
+The field value must not exist in the database. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-unique)
 
 ```php
 Field::make('email')->unique()
@@ -417,7 +425,7 @@ Field::make('email')
 
 ### UUID
 
-The field must be a valid RFC 4122 (version 1, 3, 4, or 5) universally unique identifier (UUID). [See the Laravel documentation](https://laravel.com/docs/validation#rule-uuid)
+The field must be a valid RFC 4122 (version 1, 3, 4, or 5) universally unique identifier (UUID). [See the Laravel documentation.](https://laravel.com/docs/validation#rule-uuid)
 
 ```php
 Field::make('identifer')->uuid()
