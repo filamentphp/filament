@@ -93,9 +93,9 @@ public function deleteAction(): Action
 }
 ```
 
-## Grouping actions
+## Grouping actions in a Livewire view
 
-You may group actions together into a dropdown menu by using the `<x-filament-actions::group>` Blade component, passing in the `actions` array as an attribute:
+You may [group actions together into a dropdown menu](grouping-actions) by using the `<x-filament-actions::group>` Blade component, passing in the `actions` array as an attribute:
 
 ```blade
 <div>
@@ -109,7 +109,7 @@ You may group actions together into a dropdown menu by using the `<x-filament-ac
 </div>
 ```
 
-You can also pass in a `label`, `icon`, `color`, `size`, `tooltip`, and `dropdown-placement` to the group, as attributes:
+You can also pass in any attributes to customize the appearance of the trigger button and dropdown:
 
 ```blade
 <div>

@@ -107,3 +107,17 @@ Filament includes several prebuilt actions that you can add to your app. Their a
 - [Replicate](prebuilt-actions/replicate)
 - [Force-delete](prebuilt-actions/force-delete)
 - [Restore](prebuilt-actions/restore)
+
+## Grouping actions
+
+You may group actions together into a dropdown menu by using an `ActionGroup` object. Groups may contain many actions, or other groups:
+
+```php
+ActionGroup::make([
+    Action::make('view'),
+    Action::make('edit'),
+    Action::make('delete'),
+])
+```
+
+To learn about how to group actions, see the [Grouping actions](grouping-actions) page.

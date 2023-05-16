@@ -41,6 +41,17 @@ Action::make('edit')
 
 <AutoScreenshot name="actions/trigger-button/icon-button" alt="Icon button trigger" version="3.x" />
 
+### Using an icon button on mobile devices only
+
+You may want to use a button style with a label on desktop, but remove the label on mobile. This will transform it into an icon button. You can do this with the `labeledFrom()` method, passing in the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) at which you want the label to be added to the button:
+
+```php
+Action::make('edit')
+    ->icon('heroicon-o-pencil-square')
+    ->button()
+    ->labeledFrom('md')
+```
+
 ## Setting a label
 
 By default, the label of the trigger button is generated from its name. You may customize this using the `label()` method:

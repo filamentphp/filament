@@ -358,9 +358,9 @@ public function table(Table $table): Table
 }
 ```
 
-## Controlling the max height of the filters dropdown
+## Controlling the maximum height of the filters dropdown
 
-To add a max height to the filters dropdown content, so that they scroll, you may use the `filtersFormMaxHeight()` method, passing a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
+To add a maximum height to the filters dropdown content, so that they scroll, you may use the `filtersFormMaxHeight()` method, passing a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
 
 ```php
 use Filament\Tables\Table;
