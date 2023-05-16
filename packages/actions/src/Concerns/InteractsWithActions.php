@@ -189,7 +189,7 @@ trait InteractsWithActions
     }
 
     /**
-     * @param array<string, Action> $actions
+     * @param  array<string, Action>  $actions
      */
     protected function mergeCachedActions(array $actions): void
     {

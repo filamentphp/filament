@@ -3,7 +3,6 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
@@ -71,7 +70,7 @@ trait HasBulkActions
     }
 
     /**
-     * @param array<string, BulkAction> $actions
+     * @param  array<string, BulkAction>  $actions
      */
     protected function mergeCachedFlatBulkActions(array $actions): void
     {
