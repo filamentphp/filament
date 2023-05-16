@@ -51,17 +51,15 @@
     @endforeach
 @else
     @php
-        $actions = array_values(
-            array_filter(
-                $group->getActions(),
-                fn ($action): bool => $action->isVisible(),
-            ),
+        $actions = array_filter(
+            $group->getActions(),
+            fn ($action): bool => $action->isVisible(),
         );
 
         $actionLists = [];
         $actionList = [];
 
-        foreach ($actions as $key => $action) {
+        foreach ($actions as $action) {
             if ($action instanceof \Filament\Actions\ActionGroup && (! $action->hasDropdown())) {
                 if (filled($actionList)) {
                     $actionLists[] = $actionList;
