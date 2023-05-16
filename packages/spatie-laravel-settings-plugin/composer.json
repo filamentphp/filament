@@ -13,7 +13,7 @@
         "illuminate/console": "^8.6|^9.0|^10.0",
         "illuminate/filesystem": "^8.6|^9.0|^10.0",
         "illuminate/support": "^8.6|^9.0|^10.0",
-        "spatie/laravel-settings": "^2.2"
+        "spatie/laravel-settings": "^2.2|^3.0"
     },
     "autoload": {
         "psr-4": {
