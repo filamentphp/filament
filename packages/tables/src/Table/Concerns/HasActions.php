@@ -5,7 +5,6 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\Contracts\HasTable;
 use Filament\Tables\Actions\Position;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -134,7 +133,7 @@ trait HasActions
     }
 
     /**
-     * @param array<string, Action> $actions
+     * @param  array<string, Action>  $actions
      */
     protected function mergeCachedFlatActions(array $actions): void
     {

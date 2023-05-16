@@ -590,6 +590,7 @@ class TestsActions
                     }
 
                     $carry[$action->getName()] = $action;
+
                     return $carry;
                 },
                 initial: [],
