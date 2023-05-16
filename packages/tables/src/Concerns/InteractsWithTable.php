@@ -144,9 +144,6 @@ trait InteractsWithTable
             );
         }
 
-        $this->tableSortColumn ??= $this->getDefaultTableSortColumn();
-        $this->tableSortDirection ??= $this->getDefaultTableSortDirection();
-
         $this->hasMounted = true;
     }
 
