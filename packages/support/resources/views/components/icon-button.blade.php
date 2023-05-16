@@ -86,14 +86,14 @@
 
 @if ($tag === 'button')
     <button
+        @if ($keyBindings || $tooltip)
+            x-data="{}"
+        @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
-        @endif
-        @if ($keyBindings || $tooltip)
-            x-data="{}"
         @endif
         {{
             $attributes
@@ -137,14 +137,14 @@
     </button>
 @elseif ($tag === 'a')
     <a
+        @if ($keyBindings || $tooltip)
+            x-data="{}"
+        @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
-        @endif
-        @if ($keyBindings || $tooltip)
-            x-data="{}"
         @endif
         {{
             $attributes
