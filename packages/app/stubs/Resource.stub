@@ -39,9 +39,9 @@ class {{ resourceClass }} extends Resource
             ->actions([
 {{ tableActions }}
             ])
-            ->bulkActions([
+            ->bulkActions([Tables\Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
-            ]);
+            ])]);
     }
 {{ relations }}
     public static function getPages(): array

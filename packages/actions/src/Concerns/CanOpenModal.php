@@ -175,7 +175,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<StaticAction>
+     * @return array<string, StaticAction>
      */
     public function getModalActions(): array
     {

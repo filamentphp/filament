@@ -2,33 +2,46 @@
 
 namespace Filament\Tables\Actions;
 
+use Closure;
 use Filament\Actions\ActionGroup as BaseActionGroup;
 use Filament\Actions\Concerns\InteractsWithRecord;
+use Filament\Actions\Contracts\HasRecord;
+use Filament\Tables\Actions\Contracts\HasTable;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property array<Action | BulkAction> $actions
  */
-class ActionGroup extends BaseActionGroup
+class ActionGroup extends BaseActionGroup implements HasRecord, HasTable
 {
     use InteractsWithRecord;
 
-    /**
-     * @return array<Action | BulkAction>
-     */
-    public function getActions(): array
+    public function record(Model | Closure | null $record): static
     {
-        $actions = [];
+        $this->record = $record;
 
         foreach ($this->actions as $action) {
-            $action->grouped();
-
-            if (! $action instanceof BulkAction) {
-                $action->record($this->getRecord());
+            if (! $action instanceof HasRecord) {
+                continue;
             }
 
-            $actions[$action->getName()] = $action;
+            $action->record($record);
         }
 
-        return $actions;
+        return $this;
+    }
+
+    public function table(Table $table): static
+    {
+        foreach ($this->actions as $action) {
+            if (! $action instanceof HasTable) {
+                continue;
+            }
+
+            $action->table($table);
+        }
+
+        return $this;
     }
 }

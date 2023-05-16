@@ -43,9 +43,28 @@
     @endphp
 
     {{ $group }}
+@elseif (! $group->hasDropdown())
+    @foreach ($group->getActions() as $action)
+        @if ($action->isVisible())
+            {{ $action }}
+        @endif
+    @endforeach
 @else
+    @php
+        if ($group->isDivided()) {
+            $actionLists = array_map(
+                fn ($action): array => [$action],
+                $group->getActions(),
+            );
+        } else {
+            $actionLists = [$group->getActions()];
+        }
+    @endphp
+
     <x-filament::dropdown
+        :max-height="$group->getDropdownMaxHeight()"
         :placement="$group->getDropdownPlacement() ?? 'bottom-start'"
+        :width="$group->getDropdownWidth()"
         teleport
     >
         <x-slot name="trigger">
@@ -64,12 +83,14 @@
             </x-dynamic-component>
         </x-slot>
 
-        <x-filament::dropdown.list>
-            @foreach ($group->getActions() as $action)
-                @if ($action->isVisible())
-                    {{ $action }}
-                @endif
-            @endforeach
-        </x-filament::dropdown.list>
+        @foreach ($actionLists as $actions)
+            <x-filament::dropdown.list>
+                @foreach ($actions as $action)
+                    @if ($action->isVisible())
+                        {{ $action }}
+                    @endif
+                @endforeach
+            </x-filament::dropdown.list>
+        @endforeach
     </x-filament::dropdown>
 @endif

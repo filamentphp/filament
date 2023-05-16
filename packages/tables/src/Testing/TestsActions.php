@@ -131,7 +131,7 @@ class TestsActions
         return function (string | array $name): static {
             $name = $this->parseNestedActionName($name);
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', $name);
@@ -151,7 +151,7 @@ class TestsActions
         return function (string | array $name): static {
             $name = $this->parseNestedActionName($name);
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
 
             $livewireClass = $this->instance()::class;
             $prettyName = implode(' > ', $name);
@@ -222,7 +222,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -251,7 +251,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -280,7 +280,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -309,7 +309,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -338,7 +338,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -367,7 +367,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -396,7 +396,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -425,7 +425,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -454,7 +454,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -483,7 +483,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -512,7 +512,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -541,7 +541,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -570,7 +570,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;
@@ -599,7 +599,7 @@ class TestsActions
                 $record = $this->instance()->getTableRecord($record);
             }
 
-            $action = $this->instance()->getTable()->getAction($name) ?? $this->instance()->getTable()->getEmptyStateAction($name) ?? $this->instance()->getTable()->getHeaderAction($name);
+            $action = $this->instance()->getTable()->getAction($name);
             $action->record($record);
 
             $livewireClass = $this->instance()::class;

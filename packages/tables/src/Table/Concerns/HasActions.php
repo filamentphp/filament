@@ -5,6 +5,7 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\Contracts\HasTable;
 use Filament\Tables\Actions\Position;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -13,9 +14,14 @@ use InvalidArgumentException;
 trait HasActions
 {
     /**
-     * @var array<string, Action | ActionGroup>
+     * @var array<Action | ActionGroup>
      */
     protected array $actions = [];
+
+    /**
+     * @var array<string, Action>
+     */
+    protected array $flatActions = [];
 
     protected string | Closure | null $actionsColumnLabel = null;
 
@@ -28,30 +34,24 @@ trait HasActions
      */
     public function actions(array | ActionGroup $actions, string | Closure | null $position = null): static
     {
-        foreach (Arr::wrap($actions) as $index => $action) {
+        foreach (Arr::wrap($actions) as $action) {
+            $action->table($this);
+
             if ($action instanceof ActionGroup) {
-                foreach ($action->getActions() as $groupedAction) {
-                    if (! $groupedAction instanceof Action) {
-                        throw new InvalidArgumentException('Table actions within a group must be an instance of ' . Action::class . '.');
-                    }
+                /** @var array<string, Action> $flatActions */
+                $flatActions = $action->getFlatActions();
 
-                    $groupedAction->table($this);
-                }
+                $this->mergeCachedFlatActions($flatActions);
+            } elseif ($action instanceof Action) {
+                $action->defaultSize('sm');
+                $action->defaultView($action::LINK_VIEW);
 
-                $this->actions[$index] = $action;
-
-                continue;
-            }
-
-            if (! $action instanceof Action) {
+                $this->cacheAction($action);
+            } else {
                 throw new InvalidArgumentException('Table actions must be an instance of ' . Action::class . ' or ' . ActionGroup::class . '.');
             }
 
-            $action->defaultSize('sm');
-            $action->defaultView($action::LINK_VIEW);
-            $action->table($this);
-
-            $this->actions[$action->getName()] = $action;
+            $this->actions[] = $action;
         }
 
         $this->actionsPosition($position);
@@ -106,41 +106,7 @@ trait HasActions
 
         $mountedRecord = $this->getLivewire()->getMountedTableActionRecord();
 
-        $actions = $this->getActions();
-
-        $action = $actions[$name] ?? null;
-
-        if ($action) {
-            return $this->getMountableModalActionFromAction(
-                $action->record($mountedRecord),
-                modalActionNames: $modalActionNames ?? [],
-                parentActionName: $name,
-                mountedRecord: $mountedRecord,
-            );
-        }
-
-        foreach ($actions as $action) {
-            if (! $action instanceof ActionGroup) {
-                continue;
-            }
-
-            $groupedAction = $action->getActions()[$name] ?? null;
-
-            if (! $groupedAction) {
-                continue;
-            }
-
-            return $this->getMountableModalActionFromAction(
-                $groupedAction->record($mountedRecord),
-                modalActionNames: $modalActionNames ?? [],
-                parentActionName: $name,
-                mountedRecord: $mountedRecord,
-            );
-        }
-
-        $actions = $this->columnActions;
-
-        $action = $actions[$name] ?? null;
+        $action = $this->getFlatActions()[$name] ?? null;
 
         if (! $action) {
             return null;
@@ -152,6 +118,30 @@ trait HasActions
             parentActionName: $name,
             mountedRecord: $mountedRecord,
         );
+    }
+
+    /**
+     * @return array<string, Action>
+     */
+    public function getFlatActions(): array
+    {
+        return $this->flatActions;
+    }
+
+    protected function cacheAction(Action $action): void
+    {
+        $this->flatActions[$action->getName()] = $action;
+    }
+
+    /**
+     * @param array<string, Action> $actions
+     */
+    protected function mergeCachedFlatActions(array $actions): void
+    {
+        $this->flatActions = [
+            ...$this->flatActions,
+            ...$actions,
+        ];
     }
 
     /**

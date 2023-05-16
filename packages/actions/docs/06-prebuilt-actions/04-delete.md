@@ -16,6 +16,7 @@ DeleteAction::make()
 If you want to delete table rows, you can use the `Filament\Tables\Actions\DeleteAction` instead, or `Filament\Tables\Actions\DeleteBulkAction` to delete more than one at once:
 
 ```php
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Table;
@@ -27,10 +28,10 @@ public function table(Table $table): Table
             DeleteAction::make(),
             // ...
         ])
-        ->bulkActions([
+        ->bulkActions([BulkActionGroup::make([
             DeleteBulkAction::make(),
             // ...
-        ]);
+        ])]);
 }
 ```
 

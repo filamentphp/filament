@@ -16,6 +16,7 @@ RestoreAction::make()
 If you want to restore table rows, you can use the `Filament\Tables\Actions\RestoreAction` instead, or `Filament\Tables\Actions\RestoreBulkAction` to restore more than one at once:
 
 ```php
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Actions\RestoreBulkAction;
 use Filament\Tables\Table;
@@ -27,10 +28,10 @@ public function table(Table $table): Table
             RestoreAction::make(),
             // ...
         ])
-        ->bulkActions([
+        ->bulkActions([BulkActionGroup::make([
             RestoreBulkAction::make(),
             // ...
-        ]);
+        ])]);
 }
 ```
 

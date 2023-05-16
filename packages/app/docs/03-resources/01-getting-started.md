@@ -168,9 +168,9 @@ public static function table(Table $table): Table
         ->actions([
             Tables\Actions\EditAction::make(),
         ])
-        ->bulkActions([
+        ->bulkActions([Tables\Actions\BulkActionGroup::make([
             Tables\Actions\DeleteBulkAction::make(),
-        ]);
+        ])]);
 }
 ```
 

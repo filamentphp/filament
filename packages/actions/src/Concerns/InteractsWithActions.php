@@ -188,6 +188,17 @@ trait InteractsWithActions
         return $this->cachedActions[$action->getName()] = $action;
     }
 
+    /**
+     * @param array<string, Action> $actions
+     */
+    protected function mergeCachedActions(array $actions): void
+    {
+        $this->cachedActions = [
+            ...$this->cachedActions,
+            ...$actions,
+        ];
+    }
+
     protected function configureAction(Action $action): void
     {
     }

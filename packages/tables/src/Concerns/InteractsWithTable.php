@@ -166,7 +166,7 @@ trait InteractsWithTable
             ->actions($this->getTableActions())
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
             ->actionsPosition($this->getTableActionsPosition())
-            ->bulkActions($this->getTableBulkActions())
+            ->groupedBulkActions($this->getTableBulkActions())
             ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
             ->columns($this->getTableColumns())
             ->columnToggleFormColumns($this->getTableColumnToggleFormColumns())

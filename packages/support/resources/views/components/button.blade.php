@@ -8,6 +8,7 @@
     'indicator' => null,
     'indicatorColor' => 'primary',
     'keyBindings' => null,
+    'labeledFrom' => null,
     'labelSrOnly' => false,
     'outlined' => false,
     'size' => 'md',
@@ -19,13 +20,22 @@
 @php
     $buttonClasses = [
         ...[
-            'filament-button inline-grid grid-flow-col items-center justify-center rounded-lg border font-medium relative outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
-            match ($size) {
+            'filament-button grid-flow-col items-center justify-center rounded-lg border font-medium relative outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
+             match ($size) {
                 'xs' => 'filament-button-size-xs gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.3)-1px)] text-xs',
                 'sm' => 'filament-button-size-sm gap-1.5 py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.[3.5])-1px)] text-sm',
                 'md' => 'filament-button-size-md gap-2 py-[calc(theme(spacing[2.5])-1px)] px-[calc(theme(spacing.4)-1px)] text-sm',
                 'lg' => 'filament-button-size-lg gap-2 py-[calc(theme(spacing.3)-1px)] px-[calc(theme(spacing.5)-1px)] text-sm',
                 'xl' => 'filament-button-size-xl gap-2 py-[calc(theme(spacing.3)-1px)] px-[calc(theme(spacing.6)-1px)] text-base',
+            },
+            'hidden' => $labeledFrom,
+            match ($labeledFrom) {
+                'sm' => 'sm:inline-grid',
+                'md' => 'md:inline-grid',
+                'lg' => 'lg:inline-grid',
+                'xl' => 'xl:inline-grid',
+                '2xl' => '2xl:inline-grid',
+                default => 'inline-grid',
             },
         ],
         ...(
@@ -124,6 +134,33 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
+
+@if ($labeledFrom)
+    <x-filament::icon-button
+        :color="$color"
+        :disabled="$disabled"
+        :form="$form"
+        :icon="$icon"
+        :icon-size="$iconSize"
+        :indicator="$indicator"
+        :indicator-color="$indicatorColor"
+        :key-bindings="$keyBindings"
+        :label="$slot"
+        :size="$size"
+        :tag="$tag"
+        :tooltip="$tooltip"
+        :type="$type"
+        :class="match ($labeledFrom) {
+            'sm' => 'sm:hidden',
+            'md' => 'md:hidden',
+            'lg' => 'lg:hidden',
+            'xl' => 'xl:hidden',
+            '2xl' => '2xl:hidden',
+            default => 'hidden',
+        }"
+        :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
+    />
+@endif
 
 @if ($tag === 'button')
     <button

@@ -110,7 +110,9 @@ Filament's tables can use [actions](../actions/overview). They are buttons that 
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\Action;use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 public function table(Table $table): Table
 {
@@ -132,9 +134,9 @@ public function table(Table $table): Table
                 })
                 ->visible(fn (Post $record): bool => $record->is_featured),
         ])
-        ->bulkActions([
+        ->bulkActions([BulkActionGroup::make([
             DeleteBulkAction::make(),
-        ]);
+        ])]);
 }
 ```
 
