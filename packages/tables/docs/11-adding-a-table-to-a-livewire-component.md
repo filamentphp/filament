@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('products', ListProducts::class);
 ```
 
-### Adding the table
+## Adding the table
 
 There are 3 tasks when adding a table to a Livewire component class:
 

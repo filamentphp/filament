@@ -25,7 +25,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('posts/create', CreatePost::class);
 ```
 
-### Adding the form
+## Adding the form
 
 There are 5 main tasks when adding a form to a Livewire component class. Each one is essential:
 
