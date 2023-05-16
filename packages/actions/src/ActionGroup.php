@@ -9,7 +9,6 @@ use Livewire\Component;
 
 class ActionGroup extends ViewComponent implements HasLivewire
 {
-    use Concerns\CanBeDivided;
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
     }
