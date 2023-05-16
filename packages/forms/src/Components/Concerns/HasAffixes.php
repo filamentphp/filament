@@ -162,11 +162,6 @@ trait HasAffixes
         return $this->evaluate($this->prefixLabel);
     }
 
-    public function getPostfixLabel(): ?string
-    {
-        return $this->getSuffixLabel();
-    }
-
     public function getSuffixLabel(): ?string
     {
         return $this->evaluate($this->suffixLabel);

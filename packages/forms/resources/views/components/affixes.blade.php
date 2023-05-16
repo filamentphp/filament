@@ -53,7 +53,7 @@
         </span>
     @endif
 
-    @if ($prefix)
+    @if (filled($prefix))
         <span
             @class([
                 'filament-input-affix-label -me-px',
@@ -75,7 +75,7 @@
         {{ $slot }}
     </div>
 
-    @if ($suffix)
+    @if (filled($suffix))
         <span
             @class([
                 'filament-input-affix-label -ms-px',
