@@ -53,29 +53,31 @@
     @endforeach
 @else
     @php
-        $actions = array_filter(
-            $group->getActions(),
-            fn ($action): bool => $action->isVisible(),
-        );
-
         $actionLists = [];
-        $actionList = [];
+        $singleActions = [];
 
-        foreach ($actions as $action) {
+        foreach ($group->getActions() as $action) {
+            if ($action->isHidden()) {
+                continue;
+            }
+
             if ($action instanceof \Filament\Actions\ActionGroup && (! $action->hasDropdown())) {
-                if (count($actionList)) {
-                    $actionLists[] = $actionList;
-                    $actionList = [];
+                if (count($singleActions)) {
+                    $actionLists[] = $singleActions;
+                    $singleActions = [];
                 }
 
-                $actionLists[] = $action->getActions();
+                $actionLists[] = array_filter(
+                    $action->getActions(),
+                    fn ($action): bool => $action->isVisible(),
+                );
             } else {
-                $actionList[] = $action;
+                $singleActions[] = $action;
             }
         }
 
-        if (count($actionList)) {
-            $actionLists[] = $actionList;
+        if (count($singleActions)) {
+            $actionLists[] = $singleActions;
         }
     @endphp
 

@@ -44,27 +44,18 @@ ActionGroup::make([
 
 ## Adding dividers between actions
 
-You may add dividers between each action in the dropdown by using the `divided()` method:
+You may add dividers between groups of actions by using nested `ActionGroup` objects:
 
 ```php
 ActionGroup::make([
+    ActionGroup::make([
+        // Array of actions
+    ])->dropdown(false),
     // Array of actions
 ])
-    ->divided()
 ```
 
-If you'd like to group multiple actions together within one division, you may nest another `ActionGroup` within the main `ActionGroup`, and disable the dropdown on the nested group using `dropdown(false)`:
-
-```php
-ActionGroup::make([
-    // Array of individually divided actions
-    ActionGroup::make([
-        // Array of actions within one division 
-    ])->dropdown(false),
-    // Array of individually divided actions
-])
-    ->divided()
-```
+The `dropdown(false)` method puts the actions inside the parent dropdown, instead of a new nested dropdown.
 
 ## Setting the width of the dropdown
 
