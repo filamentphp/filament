@@ -54,7 +54,13 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        return $query->with([$this->getRelationshipName()]);
+        $relationshipName = $this->getRelationshipName();
+
+        if (array_key_exists($relationshipName, $query->getEagerLoads())) {
+            return $query;
+        }
+
+        return $query->with([$relationshipName]);
     }
 
     public function applySearchConstraint(EloquentBuilder $query, string $search, bool &$isFirst): EloquentBuilder

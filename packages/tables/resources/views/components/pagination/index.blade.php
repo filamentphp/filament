@@ -1,6 +1,6 @@
 @props([
     'paginator',
-    'pageOptions',
+    'pageOptions' => [],
 ])
 
 @php
