@@ -32,6 +32,8 @@ trait HasHeaderActions
     public function headerActions(array | ActionGroup $actions, string | Closure | null $position = null): static
     {
         foreach (Arr::wrap($actions) as $action) {
+            $action->table($this);
+
             if ($action instanceof ActionGroup) {
                 foreach ($action->getFlatActions() as $flatAction) {
                     if ($flatAction instanceof BulkAction) {
@@ -42,12 +44,10 @@ trait HasHeaderActions
                 }
             } elseif ($action instanceof Action) {
                 $action->defaultSize('sm');
-                $action->table($this);
 
                 $this->cacheAction($action);
             } elseif ($action instanceof BulkAction) {
                 $action->defaultSize('sm');
-                $action->table($this);
 
                 $this->cacheBulkAction($action);
             } else {
