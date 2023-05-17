@@ -63,6 +63,8 @@ export default function selectFormComponent({
                 searchFloor: hasDynamicSearchResults ? 0 : 1,
             })
 
+            await this.refreshChoices({ withInitialOptions: true })
+
             if (![null, undefined, ''].includes(this.state)) {
                 this.select.setChoiceByValue(this.formatState(this.state))
             }
