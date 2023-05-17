@@ -39,12 +39,18 @@ trait InteractsWithTableQuery
         if ($this->isHidden()) {
             return $query;
         }
+        
+        if (! $this->queriesRelationships($query->getModel())) {
+            return $query;
+        }
+        
+        $relationshipName = $this->getRelationshipName();
 
-        if ($this->queriesRelationships($query->getModel()) && !isset($query->getEagerLoads()[$this->getRelationshipName()])) {
-            $query->with([$this->getRelationshipName()]);
+        if (array_key_exists($relationshipName, $query->getEagerLoads())) {
+            return $query;
         }
 
-        return $query;
+        return $query->with([$this->getRelationshipName()]);
     }
 
     public function applySearchConstraint(Builder $query, string $search, bool &$isFirst, bool $isIndividual = false): Builder
