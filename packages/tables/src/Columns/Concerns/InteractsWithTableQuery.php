@@ -40,7 +40,7 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        if ($this->queriesRelationships($query->getModel())) {
+        if ($this->queriesRelationships($query->getModel()) && !isset($query->getEagerLoads()[$this->getRelationshipName()])) {
             $query->with([$this->getRelationshipName()]);
         }
 
