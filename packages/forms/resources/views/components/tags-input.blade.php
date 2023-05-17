@@ -16,6 +16,7 @@
         x-data="tagsInputFormComponent({
             state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
         })"
+        wire:ignore
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
