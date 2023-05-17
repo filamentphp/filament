@@ -1,6 +1,6 @@
 @props([
     'paginator',
-    'recordsPerPageSelectOptions',
+    'recordsPerPageSelectOptions' => [],
 ])
 
 @php
