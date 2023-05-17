@@ -423,6 +423,8 @@ class FilamentManager
 
         if ($user instanceof HasAvatar) {
             $avatar = $user->getFilamentAvatarUrl();
+        } else {
+            $avatar = $user->getAttributeValue('avatar_url');
         }
 
         if ($avatar) {
