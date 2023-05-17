@@ -39,11 +39,11 @@ trait InteractsWithTableQuery
         if ($this->isHidden()) {
             return $query;
         }
-        
+
         if (! $this->queriesRelationships($query->getModel())) {
             return $query;
         }
-        
+
         $relationshipName = $this->getRelationshipName();
 
         if (array_key_exists($relationshipName, $query->getEagerLoads())) {
