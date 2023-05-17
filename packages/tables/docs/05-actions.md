@@ -106,6 +106,53 @@ BulkAction::make('delete')
 
 The function allows you to access the current table `$records` that are selected. It is an Eloquent collection of models.
 
+### Grouping bulk actions
+
+You may use a `BulkActionGroup` object to [group multiple bulk actions together](../actions/grouping-actions) in a dropdown. Any bulk actions that remain outside of the `BulkActionGroup` will be rendered next to the dropdown's trigger button:
+
+```php
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->bulkActions([
+            BulkActionGroup::make([
+                BulkAction::make('delete')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->delete()),
+                BulkAction::make('forceDelete')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->forceDelete()),
+            ]),
+            BulkAction::make('export')->action(fn (Collection $records) => ...),
+        ]);
+}
+```
+
+Alternatively, if all of your bulk actions are grouped, you can use the shorthand `groupedBulkActions()` method:
+
+```php
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groupedBulkActions([
+            BulkAction::make('delete')
+                ->requiresConfirmation()
+                ->action(fn (Collection $records) => $records->each->delete()),
+            BulkAction::make('forceDelete')
+                ->requiresConfirmation()
+                ->action(fn (Collection $records) => $records->each->forceDelete()),
+        ]);
+}
+```
+
 ### Deselecting records once a bulk action has finished
 
 You may deselect the records after a bulk action has been executed using the `deselectRecordsAfterCompletion()` method:

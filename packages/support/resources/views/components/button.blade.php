@@ -164,6 +164,9 @@
 
 @if ($tag === 'button')
     <button
+        @if (($keyBindings || $tooltip) && (! $hasFileUploadLoadingIndicator))
+            x-data="{}"
+        @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
