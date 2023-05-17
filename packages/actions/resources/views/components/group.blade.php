@@ -53,13 +53,29 @@
     @endforeach
 @else
     @php
-        if ($group->isDivided()) {
-            $actionLists = array_map(
-                fn ($action): array => [$action],
-                $group->getActions(),
-            );
-        } else {
-            $actionLists = [$group->getActions()];
+        $actions = array_filter(
+            $group->getActions(),
+            fn ($action): bool => $action->isVisible(),
+        );
+
+        $actionLists = [];
+        $actionList = [];
+
+        foreach ($actions as $action) {
+            if ($action instanceof \Filament\Actions\ActionGroup && (! $action->hasDropdown())) {
+                if (count($actionList)) {
+                    $actionLists[] = $actionList;
+                    $actionList = [];
+                }
+
+                $actionLists[] = $action->getActions();
+            } else {
+                $actionList[] = $action;
+            }
+        }
+
+        if (count($actionList)) {
+            $actionLists[] = $actionList;
         }
     @endphp
 
@@ -88,9 +104,7 @@
         @foreach ($actionLists as $actions)
             <x-filament::dropdown.list>
                 @foreach ($actions as $action)
-                    @if ($action->isVisible())
-                        {{ $action }}
-                    @endif
+                    {{ $action }}
                 @endforeach
             </x-filament::dropdown.list>
         @endforeach

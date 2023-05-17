@@ -41,8 +41,10 @@ class {{ managerClass }} extends RelationManager
             ->actions([
 {{ tableActions }}
             ])
-            ->bulkActions([Tables\Actions\BulkActionGroup::make([
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
-            ])]);
+                ]),
+            ]);
     }{{ eloquentQuery }}
 }

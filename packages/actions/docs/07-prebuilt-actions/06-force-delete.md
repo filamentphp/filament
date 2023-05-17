@@ -28,10 +28,12 @@ public function table(Table $table): Table
             ForceDeleteAction::make(),
             // ...
         ])
-        ->bulkActions([BulkActionGroup::make([
-            ForceDeleteBulkAction::make(),
-            // ...
-        ])]);
+        ->bulkActions([
+            BulkActionGroup::make([
+                ForceDeleteBulkAction::make(),
+                // ...
+            ]),
+        ]);
 }
 ```
 

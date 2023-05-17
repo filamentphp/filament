@@ -181,7 +181,7 @@ class MakeResourceCommand extends Command
             'resource' => "{$namespace}\\{$resourceClass}",
             'resourceClass' => $resourceClass,
             'tableActions' => $this->indentString($tableActions, 4),
-            'tableBulkActions' => $this->indentString($tableBulkActions, 4),
+            'tableBulkActions' => $this->indentString($tableBulkActions, 5),
             'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
                 'App\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
             ) : '//', 4),
