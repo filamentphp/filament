@@ -36,8 +36,8 @@ abstract class ViewComponent extends Component implements Htmlable
     {
         $this->view = $view;
 
-        if ($viewData) {
-            $this->viewData = $viewData;
+        if ($viewData !== []) {
+            $this->viewData($viewData);
         }
 
         return $this;
