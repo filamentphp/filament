@@ -45,6 +45,8 @@ trait HasEmptyState
     public function emptyStateActions(array | ActionGroup $actions): static
     {
         foreach (Arr::wrap($actions) as $action) {
+            $action->table($this);
+
             if ($action instanceof ActionGroup) {
                 /** @var array<string, Action> $flatActions */
                 $flatActions = $action->getFlatActions();
