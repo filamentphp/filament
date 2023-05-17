@@ -51,7 +51,7 @@ abstract class ViewComponent extends Component implements Htmlable
 
     /**
      * @param  view-string | null  $view
-     * @param array<string, mixed> $viewData
+     * @param  array<string, mixed>  $viewData
      */
     public function view(?string $view, array $viewData = []): static
     {
