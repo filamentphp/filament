@@ -81,7 +81,7 @@
             />
 
             @if ($icon !== false)
-                <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
+                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
                     <x-dynamic-component
                         :component="$icon ?? 'heroicon-o-calendar'"
                         @class([
