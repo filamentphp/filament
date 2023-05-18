@@ -36,9 +36,9 @@ class DateTimePicker extends Field
 
     protected CarbonInterface | string | Closure | null $minDate = null;
 
-    protected string | Closure | null $timezone = null;
-
     protected string | bool | Closure | null $icon = null;
+
+    protected string | Closure | null $timezone = null;
 
     protected array | Closure $disabledDates = [];
 
