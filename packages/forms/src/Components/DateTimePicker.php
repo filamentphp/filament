@@ -24,6 +24,8 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $format = null;
 
+    protected string | bool | Closure | null $icon = null;
+
     protected bool | Closure $isWithoutDate = false;
 
     protected bool | Closure $isWithoutSeconds = false;
@@ -35,8 +37,6 @@ class DateTimePicker extends Field
     protected CarbonInterface | string | Closure | null $maxDate = null;
 
     protected CarbonInterface | string | Closure | null $minDate = null;
-
-    protected string | bool | Closure | null $icon = null;
 
     protected string | Closure | null $timezone = null;
 
@@ -123,6 +123,13 @@ class DateTimePicker extends Field
     public function format(string | Closure | null $format): static
     {
         $this->format = $format;
+
+        return $this;
+    }
+
+    public function icon(string | bool | Closure | null $icon): static
+    {
+        $this->icon = $icon;
 
         return $this;
     }
@@ -229,13 +236,6 @@ class DateTimePicker extends Field
     public function closeOnDateSelection(bool | Closure $condition = true): static
     {
         $this->shouldCloseOnDateSelection = $condition;
-
-        return $this;
-    }
-
-    public function icon(string | bool | Closure | null $icon): static
-    {
-        $this->icon = $icon;
 
         return $this;
     }
@@ -362,13 +362,13 @@ class DateTimePicker extends Field
         return $this->evaluate($this->shouldCloseOnDateSelection);
     }
 
-    public function getIcon(): string | bool | null
-    {
-        return $this->evaluate($this->icon);
-    }
-
     protected function getDefaultFirstDayOfWeek(): int
     {
         return config('forms.components.date_time_picker.first_day_of_week', 1);
+    }
+
+    public function getIcon(): string | bool | null
+    {
+        return $this->evaluate($this->icon);
     }
 }
