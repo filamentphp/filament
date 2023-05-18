@@ -54,17 +54,22 @@ class ViewRecord extends Page implements HasInfolists
 
     public function mount(int | string $record): void
     {
-        static::authorizeResourceAccess();
-
         $this->record = $this->resolveRecord($record);
 
-        abort_unless(static::getResource()::canView($this->getRecord()), 403);
+        $this->authorizeAccess();
 
         if ($this->hasInfolist()) {
             return;
         }
 
         $this->fillForm();
+    }
+
+    protected function authorizeAccess(): void
+    {
+        static::authorizeResourceAccess();
+
+        abort_unless(static::getResource()::canView($this->getRecord()), 403);
     }
 
     protected function hasInfolist(): bool
