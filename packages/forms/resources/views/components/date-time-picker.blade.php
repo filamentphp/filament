@@ -83,7 +83,7 @@
             @if ($icon !== false)
                 <span class="absolute inset-y-0 right-0 flex items-center pr-2 cursor-pointer pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
                     <x-dynamic-component
-                        :component="$icon ?? 'heroicon-s-calendar'"
+                        :component="$icon ?? 'heroicon-o-calendar'"
                         @class([
                             'w-5 h-5 text-gray-400 hover:text-gray-800 focus:text-primary-600',
                             'dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-primary-600' => config('forms.dark_mode'),
