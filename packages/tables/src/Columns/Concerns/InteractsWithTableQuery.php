@@ -50,7 +50,7 @@ trait InteractsWithTableQuery
             return $query;
         }
 
-        return $query->with([$this->getRelationshipName()]);
+        return $query->with([$relationshipName]);
     }
 
     public function applySearchConstraint(Builder $query, string $search, bool &$isFirst, bool $isIndividual = false): Builder
