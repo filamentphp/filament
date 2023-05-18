@@ -264,9 +264,4 @@ class CreateRecord extends Page
     {
         return static::$canCreateAnother;
     }
-
-    public static function disableCreateAnother(): void
-    {
-        static::$canCreateAnother = false;
-    }
 }
