@@ -81,6 +81,8 @@ BulkAction::make('delete')
     ->action(fn (Collection $records) => $records->each->delete())
 ```
 
+> Please note that the parameter name `$records` in the `action` callback function is required, any other name won't work here.
+
 You may deselect the records after a bulk action has been executed using the `deselectRecordsAfterCompletion()` method:
 
 ```php
