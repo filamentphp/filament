@@ -83,5 +83,16 @@ You may customize the extra HTML attributes of the image using `extraImgAttribut
 use Filament\Tables\Columns\ImageColumn;
 
 ImageColumn::make('logo')
-    ->extraImgAttributes(['title' => 'Company logo']),
+    ->extraImgAttributes(['loading' => 'lazy']),
+```
+
+You can access the current record using a `$record` parameter:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('logo')
+    ->extraImgAttributes(fn (Company $record): array => [
+        'alt' => "{$record->name} logo",
+    ]),
 ```

@@ -83,5 +83,8 @@ You may customize the extra HTML attributes of the image using `extraImgAttribut
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('logo')
-    ->extraImgAttributes(['title' => 'Company logo']),
+    ->extraImgAttributes([
+        'alt' => 'Logo',
+        'loading' => 'lazy',
+    ]),
 ```
