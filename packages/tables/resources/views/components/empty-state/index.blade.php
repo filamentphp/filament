@@ -1,13 +1,12 @@
 @props([
     'actions' => null,
-    'columnSearches' => false,
     'description' => null,
     'heading',
     'icon',
 ])
 
 <div {{ $attributes->class(['filament-tables-empty-state flex flex-1 flex-col items-center justify-center p-6 mx-auto space-y-6 text-center bg-white dark:bg-gray-800']) }}>
-    <div class="flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50 dark:bg-gray-700">
+    <div class="filament-tables-empty-state-icon-wrapper flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50 dark:bg-gray-700">
         <x-filament::icon
             :name="$icon"
             alias="filament-tables::empty-state"
@@ -23,7 +22,7 @@
         />
     </div>
 
-    <div class="max-w-md space-y-1">
+    <div class="filament-tables-empty-state-textual-content-wrapper max-w-md space-y-1">
         <x-filament-tables::empty-state.heading>
             {{ $heading }}
         </x-filament-tables::empty-state.heading>
@@ -41,16 +40,5 @@
             alignment="center"
             wrap
         />
-    @endif
-
-    @if ($columnSearches)
-        <x-filament::link
-            wire:click="$set('tableColumnSearches', [])"
-            color="danger"
-            tag="button"
-            size="sm"
-        >
-            {{ __('filament-tables::table.empty.buttons.reset_column_searches.label') }}
-        </x-filament::link>
     @endif
 </div>

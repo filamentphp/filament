@@ -40,7 +40,7 @@
         },
 
         scrollToTop: function () {
-            this.$el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+            this.$root.scrollIntoView({ behavior: 'smooth', block: 'start' })
         },
 
         autofocusFields: function () {

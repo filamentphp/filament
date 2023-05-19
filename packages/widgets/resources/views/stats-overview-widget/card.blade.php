@@ -10,7 +10,7 @@
         href="{{ $url }}"
         @if ($shouldOpenUrlInNewTab()) target="_blank" @endif
     @endif
-    {{ $getExtraAttributeBag()->class(['filament-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10']) }}
+    {{ $getExtraAttributeBag()->class(['filament-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20']) }}
 >
     <div @class([
         'space-y-2',
@@ -38,6 +38,7 @@
                 match ($descriptionColor = $getDescriptionColor()) {
                     'danger' => 'text-danger-600',
                     'gray', null => 'text-gray-600',
+                    'info' => 'text-info-600',
                     'primary' => 'text-primary-600',
                     'secondary' => 'text-secondary-600',
                     'success' => 'text-success-600',
@@ -97,6 +98,7 @@
                     match ($chartColor) {
                         'danger' => 'text-danger-50 dark:text-danger-700',
                         'gray', null => 'text-gray-50 dark:text-gray-700',
+                        'info' => 'text-info-50 dark:text-info-700',
                         'primary' => 'text-primary-50 dark:text-primary-700',
                         'secondary' => 'text-secondary-50 dark:text-secondary-700',
                         'success' => 'text-success-50 dark:text-success-700',
@@ -112,6 +114,7 @@
                     match ($chartColor) {
                         'danger' => 'text-danger-400',
                         'gray', null => 'text-gray-400',
+                        'info' => 'text-info-400',
                         'primary' => 'text-primary-400',
                         'secondary' => 'text-secondary-400',
                         'success' => 'text-success-400',

@@ -44,7 +44,7 @@ trait CanToggleColumns
     public function getTableColumnToggleForm(): Form
     {
         if ((! $this->isCachingForms) && $this->hasCachedForm('toggleTableColumnForm')) {
-            return $this->getCachedForm('toggleTableColumnForm');
+            return $this->getForm('toggleTableColumnForm');
         }
 
         return $this->makeForm()
@@ -99,6 +99,14 @@ trait CanToggleColumns
      * @deprecated Override the `table()` method to configure the table.
      */
     protected function getTableColumnToggleFormWidth(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableColumnToggleFormMaxHeight(): ?string
     {
         return null;
     }

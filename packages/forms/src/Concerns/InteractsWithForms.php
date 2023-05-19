@@ -6,10 +6,10 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
+use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use Livewire\Exceptions\PropertyNotFoundException;
 use Livewire\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
@@ -17,6 +17,7 @@ trait InteractsWithForms
 {
     use WithFileUploads;
     use HasFormComponentActions;
+    use ResolvesDynamicLivewireProperties;
 
     /**
      * @var array <string, TemporaryUploadedFile | null>
@@ -34,22 +35,6 @@ trait InteractsWithForms
 
     protected bool $hasFormsModalRendered = false;
 
-    /**
-     * @param  string  $property
-     */
-    public function __get($property): mixed
-    {
-        try {
-            return parent::__get($property);
-        } catch (PropertyNotFoundException $exception) {
-            if ((! $this->isCachingForms) && $form = $this->getCachedForm($property)) {
-                return $form;
-            }
-
-            throw $exception;
-        }
-    }
-
     public function dispatchFormEvent(mixed ...$args): void
     {
         foreach ($this->getCachedForms() as $form) {
@@ -57,12 +42,12 @@ trait InteractsWithForms
         }
     }
 
-    public function getComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
+    public function getFormComponentFileAttachment(string $statePath): ?TemporaryUploadedFile
     {
         return data_get($this->componentFileAttachments, $statePath);
     }
 
-    public function getComponentFileAttachmentUrl(string $statePath): ?string
+    public function getFormComponentFileAttachmentUrl(string $statePath): ?string
     {
         $this->skipRender();
 
@@ -78,7 +63,7 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    public function getSelectOptionLabels(string $statePath): array
+    public function getFormSelectOptionLabels(string $statePath): array
     {
         $this->skipRender();
 
@@ -91,7 +76,7 @@ trait InteractsWithForms
         return [];
     }
 
-    public function getSelectOptionLabel(string $statePath): ?string
+    public function getFormSelectOptionLabel(string $statePath): ?string
     {
         $this->skipRender();
 
@@ -107,7 +92,7 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    public function getSelectOptions(string $statePath): array
+    public function getFormSelectOptions(string $statePath): array
     {
         $this->skipRender();
 
@@ -123,7 +108,7 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
-    public function getSelectSearchResults(string $statePath, string $search): array
+    public function getFormSelectSearchResults(string $statePath, string $search): array
     {
         $this->skipRender();
 
@@ -146,7 +131,7 @@ trait InteractsWithForms
     /**
      * @return array<array{name: string, size: int, type: string, url: string} | null> | null
      */
-    public function getUploadedFiles(string $statePath): ?array
+    public function getFormUploadedFiles(string $statePath): ?array
     {
         $this->skipRender();
 
@@ -159,14 +144,14 @@ trait InteractsWithForms
         return null;
     }
 
-    public function removeUploadedFile(string $statePath, string $fileKey): void
+    public function removeFormUploadedFile(string $statePath, string $fileKey): void
     {
         foreach ($this->getCachedForms() as $form) {
             $form->removeUploadedFile($statePath, $fileKey);
         }
     }
 
-    public function reorderUploadedFiles(string $statePath, array $fileKeys): void
+    public function reorderFormUploadedFiles(string $statePath, array $fileKeys): void
     {
         foreach ($this->getCachedForms() as $form) {
             $form->reorderUploadedFiles($statePath, $fileKeys);
@@ -323,7 +308,10 @@ trait InteractsWithForms
 
         foreach (class_uses_recursive($class = static::class) as $trait) {
             if (method_exists($class, $method = 'get' . class_basename($trait) . 'Forms')) {
-                $forms = array_merge($forms, $this->{$method}());
+                $forms = [
+                    ...$forms,
+                    ...$this->{$method}(),
+                ];
             }
         }
 
@@ -335,7 +323,7 @@ trait InteractsWithForms
         return array_key_exists($name, $this->getCachedForms());
     }
 
-    public function getCachedForm(string $name): ?Form
+    public function getForm(string $name): ?Form
     {
         return $this->getCachedForms()[$name] ?? null;
     }
@@ -413,7 +401,10 @@ trait InteractsWithForms
         $rules = parent::getRules();
 
         foreach ($this->getCachedForms() as $form) {
-            $rules = array_merge($rules, $form->getValidationRules());
+            $rules = [
+                ...$rules,
+                ...$form->getValidationRules(),
+            ];
         }
 
         return $rules;
@@ -427,7 +418,10 @@ trait InteractsWithForms
         $attributes = parent::getValidationAttributes();
 
         foreach ($this->getCachedForms() as $form) {
-            $attributes = array_merge($attributes, $form->getValidationAttributes());
+            $attributes = [
+                ...$attributes,
+                ...$form->getValidationAttributes(),
+            ];
         }
 
         return $attributes;
@@ -436,5 +430,10 @@ trait InteractsWithForms
     protected function makeForm(): Form
     {
         return Form::make($this);
+    }
+
+    public function isCachingForms(): bool
+    {
+        return $this->isCachingForms;
     }
 }

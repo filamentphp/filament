@@ -7,7 +7,10 @@
     :collapsed="$isCollapsed()"
     :collapsible="$isCollapsible() && (! $isAside)"
     :compact="$isCompact()"
+    :content-before="$isFormBefore()"
     :icon="$getIcon()"
+    :icon-color="$getIconColor()"
+    :icon-size="$getIconSize()"
     {{
         $attributes
             ->merge([

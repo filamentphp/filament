@@ -4,7 +4,8 @@ on:
   pull_request:
     branches:
       - 3.x
-    types: [closed]
+    types:
+      - closed
 
 jobs:
   npm-build:

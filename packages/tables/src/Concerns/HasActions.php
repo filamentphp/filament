@@ -186,7 +186,7 @@ trait HasActions
             return null;
         }
 
-        return $this->getTable()->getAction($this->mountedTableActions) ?? $this->getTable()->getEmptyStateAction($this->mountedTableActions) ?? $this->getTable()->getHeaderAction($this->mountedTableActions);
+        return $this->getTable()->getAction($this->mountedTableActions);
     }
 
     public function getMountedTableActionForm(): ?Form
@@ -198,7 +198,7 @@ trait HasActions
         }
 
         if ((! $this->isCachingForms) && $this->hasCachedForm('mountedTableActionForm')) {
-            return $this->getCachedForm('mountedTableActionForm');
+            return $this->getForm('mountedTableActionForm');
         }
 
         return $action->getForm(

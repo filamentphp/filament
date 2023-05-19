@@ -10,6 +10,10 @@ class RelationGroup extends Component
 {
     protected string | Closure | null $icon = null;
 
+    protected string | Closure | null $iconPosition = null;
+
+    protected string | Closure | null $iconColor = null;
+
     protected string | Closure | null $badge = null;
 
     protected ?Model $ownerRecord = null;
@@ -64,6 +68,20 @@ class RelationGroup extends Component
         return $this;
     }
 
+    public function iconPosition(string | Closure | null $position): static
+    {
+        $this->iconPosition = $position;
+
+        return $this;
+    }
+
+    public function iconColor(string | Closure | null $color): static
+    {
+        $this->iconColor = $color;
+
+        return $this;
+    }
+
     public function getLabel(): string
     {
         return $this->evaluate($this->label);
@@ -95,6 +113,16 @@ class RelationGroup extends Component
     public function getIcon(): ?string
     {
         return $this->evaluate($this->icon);
+    }
+
+    public function getIconPosition(): ?string
+    {
+        return $this->evaluate($this->iconPosition) ?? 'before';
+    }
+
+    public function getIconColor(): ?string
+    {
+        return $this->evaluate($this->iconColor);
     }
 
     public function getOwnerRecord(): ?Model

@@ -16,7 +16,10 @@ trait HasUserMenu
      */
     public function userMenuItems(array $items): static
     {
-        $this->userMenuItems = array_merge($this->userMenuItems, $items);
+        $this->userMenuItems = [
+            ...$this->userMenuItems,
+            ...$items,
+        ];
 
         return $this;
     }

@@ -1,0 +1,15 @@
+<?php
+
+namespace {{ namespace }};
+
+use Filament\Infolists\Components\Component;
+
+class {{ class }} extends Component
+{
+    protected string $view = '{{ view }}';
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+}

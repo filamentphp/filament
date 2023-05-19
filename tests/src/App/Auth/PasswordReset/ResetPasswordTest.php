@@ -93,19 +93,21 @@ it('can throttle reset password attempts', function () {
 
     $this->assertGuest();
 
-    $userToResetPassword = User::factory()->create();
-    $token = Password::createToken($userToResetPassword);
+    foreach (range(1, 2) as $i) {
+        $userToResetPassword = User::factory()->create();
+        $token = Password::createToken($userToResetPassword);
 
-    livewire(ResetPassword::class)
-        ->set('email', $userToResetPassword->email)
-        ->set('token', $token)
-        ->set('password', 'new-password')
-        ->set('passwordConfirmation', 'new-password')
-        ->call('resetPassword')
-        ->assertNotified()
-        ->assertRedirect(Filament::getLoginUrl());
+        livewire(ResetPassword::class)
+            ->set('email', $userToResetPassword->email)
+            ->set('token', $token)
+            ->set('password', 'new-password')
+            ->set('passwordConfirmation', 'new-password')
+            ->call('resetPassword')
+            ->assertNotified()
+            ->assertRedirect(Filament::getLoginUrl());
+    }
 
-    Event::assertDispatchedTimes(PasswordReset::class, times: 1);
+    Event::assertDispatchedTimes(PasswordReset::class, times: 2);
 
     $this->assertCredentials([
         'email' => $userToResetPassword->email,
@@ -121,7 +123,7 @@ it('can throttle reset password attempts', function () {
         ->assertNotified()
         ->assertNoRedirect();
 
-    Event::assertDispatchedTimes(PasswordReset::class, times: 1);
+    Event::assertDispatchedTimes(PasswordReset::class, times: 2);
 
     $this->assertCredentials([
         'email' => $userToResetPassword->email,

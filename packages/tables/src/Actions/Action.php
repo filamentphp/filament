@@ -7,9 +7,10 @@ use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
+use Filament\Tables\Actions\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends MountableAction implements Groupable, HasRecord
+class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
     use Concerns\BelongsToTable;
     use InteractsWithRecord;

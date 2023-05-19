@@ -39,7 +39,10 @@ trait HasTenancy
      */
     public function tenantMenuItems(array $items): static
     {
-        $this->tenantMenuItems = array_merge($this->tenantMenuItems, $items);
+        $this->tenantMenuItems = [
+            ...$this->tenantMenuItems,
+            ...$items,
+        ];
 
         return $this;
     }
@@ -129,24 +132,34 @@ trait HasTenancy
         return $this->tenantSlugAttribute;
     }
 
-    public function getTenantBillingUrl(Model $tenant): ?string
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getTenantBillingUrl(Model $tenant, array $parameters = []): ?string
     {
         if (! $this->hasTenantBilling()) {
             return null;
         }
 
-        return route("filament.{$this->getId()}.tenant.billing", [
-            'tenant' => $tenant,
-        ]);
+        return route(
+            "filament.{$this->getId()}.tenant.billing",
+            [
+                'tenant' => $tenant,
+                ...$parameters,
+            ],
+        );
     }
 
-    public function getTenantRegistrationUrl(): ?string
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getTenantRegistrationUrl(array $parameters = []): ?string
     {
         if (! $this->hasTenantRegistration()) {
             return null;
         }
 
-        return route("filament.{$this->getId()}.tenant.registration");
+        return route("filament.{$this->getId()}.tenant.registration", $parameters);
     }
 
     /**

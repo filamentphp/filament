@@ -26,6 +26,7 @@ class Column extends ViewComponent
     use Concerns\CanSpanColumns;
     use Concerns\CanWrapHeader;
     use Concerns\HasAlignment;
+    use Concerns\HasExtraCellAttributes;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
     use Concerns\HasRowLoopObject;

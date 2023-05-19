@@ -1,6 +1,6 @@
-@props([
-    'widgetData' => [],
-])
+@php
+    $widgetData = $this->getWidgetData();
+@endphp
 
 <div {{ $attributes->class(['filament-page']) }}>
     {{ filament()->renderHook('page.start') }}

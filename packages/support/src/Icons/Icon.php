@@ -24,7 +24,7 @@ class Icon
 
     public static function make(?string $name = null): static
     {
-        return new static($name);
+        return app(static::class, ['name' => $name]);
     }
 
     public function size(?string $size): static

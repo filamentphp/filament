@@ -20,6 +20,8 @@ trait HasFilters
      */
     protected int | array | Closure $filtersFormColumns = 1;
 
+    protected string | Closure | null $filtersFormMaxHeight = null;
+
     protected string | Closure | null $filtersFormWidth = null;
 
     protected string | Closure | null $filtersLayout = null;
@@ -59,6 +61,13 @@ trait HasFilters
     public function filtersFormColumns(int | array | Closure $columns): static
     {
         $this->filtersFormColumns = $columns;
+
+        return $this;
+    }
+
+    public function filtersFormMaxHeight(string | Closure | null $height): static
+    {
+        $this->filtersFormMaxHeight = $height;
 
         return $this;
     }
@@ -148,6 +157,11 @@ trait HasFilters
             ],
             default => 1,
         };
+    }
+
+    public function getFiltersFormMaxHeight(): ?string
+    {
+        return $this->evaluate($this->filtersFormMaxHeight);
     }
 
     public function getFiltersFormWidth(): ?string

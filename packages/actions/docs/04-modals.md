@@ -1,7 +1,7 @@
 ---
 title: Modals
 ---
-import PreviewScreenshot from "@components/PreviewScreenshot.astro"
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -17,7 +17,7 @@ Action::make('delete')
     ->requiresConfirmation()
 ```
 
-<PreviewScreenshot name="actions/modal/confirmation" alt="Confirmation modal" version="3.x" />
+<AutoScreenshot name="actions/modal/confirmation" alt="Confirmation modal" version="3.x" />
 
 > Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
 
@@ -44,7 +44,7 @@ Action::make('updateAuthor')
     })
 ```
 
-<PreviewScreenshot name="actions/modal/form" alt="Modal with form" version="3.x" />
+<AutoScreenshot name="actions/modal/form" alt="Modal with form" version="3.x" />
 
 ### Filling the form with existing data
 
@@ -111,7 +111,7 @@ Action::make('create')
     ])
 ```
 
-<PreviewScreenshot name="actions/modal/wizard" alt="Modal with wizard" version="3.x" />
+<AutoScreenshot name="actions/modal/wizard" alt="Modal with wizard" version="3.x" />
 
 ### Disabling all form fields
 
@@ -150,7 +150,7 @@ Action::make('delete')
     ->modalSubmitActionLabel('Yes, delete it')
 ```
 
-<PreviewScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
+<AutoScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
 
 ## Custom modal content
 
@@ -185,7 +185,7 @@ Action::make('updateAuthor')
     ->slideOver()
 ```
 
-<PreviewScreenshot name="actions/modal/slide-over" alt="Slide over with form" version="3.x" />
+<AutoScreenshot name="actions/modal/slide-over" alt="Slide over with form" version="3.x" />
 
 Instead of opening in the center of the screen, the modal content will now slide in from the right and consume the entire height of the browser.
 

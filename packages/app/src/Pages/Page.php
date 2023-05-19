@@ -198,6 +198,14 @@ abstract class Page extends BasePage
         return 2;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
+    public function getWidgetData(): array
+    {
+        return [];
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
         return static::$shouldRegisterNavigation;

@@ -60,7 +60,8 @@ You may use the `date()` and `dateTime()` methods to format the column's state u
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('created_at')->dateTime()
+TextColumn::make('created_at')
+    ->dateTime()
 ```
 
 You may use the `since()` method to format the column's state using [Carbon's `diffForHumans()`](https://carbon.nesbot.com/docs/#api-humandiff):
@@ -68,7 +69,8 @@ You may use the `since()` method to format the column's state using [Carbon's `d
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('created_at')->since()
+TextColumn::make('created_at')
+    ->since()
 ```
 
 ## Number formatting
@@ -78,11 +80,12 @@ The `numeric()` method allows you to format a column as a number, using PHP's `n
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('stock')->numeric(
-    decimalPlaces: 0,
-    decimalSeparator: '.',
-    thousandsSeparator: ',',
-)
+TextColumn::make('stock')
+    ->numeric(
+        decimalPlaces: 0,
+        decimalSeparator: '.',
+        thousandsSeparator: ',',
+    )
 ```
 
 ## Currency formatting
@@ -92,7 +95,8 @@ The `money()` method allows you to easily format monetary values, in any currenc
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('price')->money('eur')
+TextColumn::make('price')
+    ->money('eur')
 ```
 
 ## Limiting text length
@@ -102,7 +106,8 @@ You may `limit()` the length of the cell's value:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('description')->limit(50)
+TextColumn::make('description')
+    ->limit(50)
 ```
 
 You may also reuse the value that is being passed to `limit()`:
@@ -131,7 +136,8 @@ You may limit the number of `words()` displayed in the cell:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('description')->words(10)
+TextColumn::make('description')
+    ->words(10)
 ```
 
 ## Wrapping content
@@ -141,7 +147,8 @@ If you'd like your column's content to wrap if it's too long, you may use the `w
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('description')->wrap()
+TextColumn::make('description')
+    ->wrap()
 ```
 
 ## Listing multiple values
@@ -198,45 +205,19 @@ If your column value is HTML, you may render it using `html()`:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('description')->html()
+TextColumn::make('description')
+    ->html()
 ```
 
-## Displaying the row index
+### Rendering Markdown as HTML
 
-You may want a column to contain the number of the current row in the table:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Contracts\HasTable;
-
-TextColumn::make('index')->getStateUsing(
-    static function (HasTable $livewire, stdClass $rowLoop): string {
-        return (string) (
-            $rowLoop->iteration +
-            ($livewire->getTableRecordsPerPage() * (
-                $livewire->getTablePage() - 1
-            ))
-        );
-    }
-),
-```
-
-As `$rowLoop` is Laravel Blade's `$loop` object, you can reference all other `$loop` properties.
-
-As a shortcut, you may use the `rowIndex()` method:
+If your column contains Markdown, you may render it using `markdown()`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('index')->rowIndex()
-```
-
-To start counting from 0 instead of 1, use `isFromZero: true`:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('index')->rowIndex(isFromZero: true)
+TextColumn::make('description')
+    ->markdown()
 ```
 
 ## Custom formatting
@@ -263,7 +244,7 @@ TextColumn::make('updated_at')
 
 ## Customizing the color
 
-You may set a color for the text, either `primary`, `secondary`, `success`, `warning` or `danger`:
+You may set a color for the text, either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -353,3 +334,43 @@ TextColumn::make('email')
 ```
 
 > Filament uses tooltips to display the copy message in the admin panel. If you want to use the copyable feature outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app.
+
+## Displaying the row index
+
+You may want a column to contain the number of the current row in the table:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Contracts\HasTable;
+
+TextColumn::make('index')->getStateUsing(
+    static function (HasTable $livewire, stdClass $rowLoop): string {
+        return (string) (
+            $rowLoop->iteration +
+            ($livewire->getTableRecordsPerPage() * (
+                $livewire->getTablePage() - 1
+            ))
+        );
+    }
+),
+```
+
+As `$rowLoop` is Laravel Blade's `$loop` object, you can reference all other `$loop` properties.
+
+As a shortcut, you may use the `rowIndex()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')
+    ->rowIndex()
+```
+
+To start counting from 0 instead of 1, use `isFromZero: true`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('index')
+    ->rowIndex(isFromZero: true)
+```

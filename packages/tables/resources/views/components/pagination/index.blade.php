@@ -1,6 +1,6 @@
 @props([
     'paginator',
-    'pageOptions',
+    'pageOptions' => [],
 ])
 
 @php
@@ -65,8 +65,8 @@
                         'filament-tables::table.pagination.overview',
                         $paginator->total(),
                         [
-                            'first' => \Filament\Support\format_number($paginator->firstItem()),
-                            'last' => \Filament\Support\format_number($paginator->lastItem()),
+                            'first' => \Filament\Support\format_number($paginator->firstItem() ?? 0),
+                            'last' => \Filament\Support\format_number($paginator->lastItem() ?? 0),
                             'total' => \Filament\Support\format_number($paginator->total()),
                         ],
                     ) }}
@@ -97,7 +97,7 @@
             @else
                 @if ($paginator->hasPages())
                     <div class="py-3 border rounded-lg dark:border-gray-600">
-                        <ol class="flex items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300 dark:text-gray-400 dark:divide-gray-600">
+                        <ol class="flex gap-px items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300 dark:text-gray-400 dark:divide-gray-600">
                             @if (! $paginator->onFirstPage())
                                 <x-filament-tables::pagination.item
                                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"

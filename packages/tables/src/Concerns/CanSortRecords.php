@@ -40,7 +40,22 @@ trait CanSortRecords
 
     public function updatedTableSortColumn(): void
     {
-        if ($this->shouldPersistTableSortInSession()) {
+        if ($this->getTable()->persistsSortInSession()) {
+            session()->put(
+                $this->getTableSortSessionKey(),
+                [
+                    'column' => $this->tableSortColumn,
+                    'direction' => $this->tableSortDirection,
+                ],
+            );
+        }
+
+        $this->resetPage();
+    }
+
+    public function updatedTableSortDirection(): void
+    {
+        if ($this->getTable()->persistsSortInSession()) {
             session()->put(
                 $this->getTableSortSessionKey(),
                 [
@@ -83,7 +98,7 @@ trait CanSortRecords
     protected function applyDefaultSortingToTableQuery(Builder $query): Builder
     {
         $sortColumnName = $this->getTable()->getDefaultSortColumn();
-        $sortDirection = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
+        $sortDirection = ($this->getTable()->getDefaultSortDirection() ?? $this->tableSortDirection) === 'desc' ? 'desc' : 'asc';
 
         if (
             $sortColumnName &&

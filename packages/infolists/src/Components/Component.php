@@ -14,10 +14,12 @@ class Component extends ViewComponent
     use Concerns\CanGrow;
     use Concerns\CanSpanColumns;
     use Concerns\Cloneable;
+    use Concerns\HasActions;
     use Concerns\HasChildComponents;
     use Concerns\HasEntryWrapper;
     use Concerns\HasId;
     use Concerns\HasInlineLabel;
+    use Concerns\HasKey;
     use Concerns\HasLabel;
     use Concerns\HasMaxWidth;
     use Concerns\HasMeta;

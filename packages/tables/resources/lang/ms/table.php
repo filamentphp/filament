@@ -16,6 +16,14 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Pilih/nyahpilih semua item untuk tindakan pukal.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Pilih/nyahpilih item :key untuk tindakan pukal.',
+        ],
+
         'search' => [
             'label' => 'Cari',
             'placeholder' => 'Carian',
@@ -86,7 +94,9 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Tiada rekod dijumpai',
+
     ],
 
     'filters' => [

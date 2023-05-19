@@ -15,7 +15,7 @@ class Group extends Component
 {
     protected ?string $column;
 
-    protected ?Closure $getDescriptionUsing = null;
+    protected ?Closure $getDescriptionFromRecordUsing = null;
 
     protected ?Closure $getTitleFromRecordUsing = null;
 
@@ -71,9 +71,19 @@ class Group extends Component
         return $this;
     }
 
+    public function getDescriptionFromRecordUsing(?Closure $callback): static
+    {
+        $this->getDescriptionFromRecordUsing = $callback;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use the `getDescriptionFromRecordUsing()` method instead.
+     */
     public function getDescriptionUsing(?Closure $callback): static
     {
-        $this->getDescriptionUsing = $callback;
+        $this->getDescriptionFromRecordUsing($callback);
 
         return $this;
     }
@@ -145,12 +155,12 @@ class Group extends Component
 
     public function getDescription(Model $record, ?string $title): ?string
     {
-        if (! $this->getDescriptionUsing) {
+        if (! $this->getDescriptionFromRecordUsing) {
             return null;
         }
 
         return $this->evaluate(
-            $this->getDescriptionUsing,
+            $this->getDescriptionFromRecordUsing,
             namedInjections: [
                 'record' => $record,
                 'title' => $title,

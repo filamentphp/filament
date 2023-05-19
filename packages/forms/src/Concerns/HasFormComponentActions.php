@@ -50,10 +50,10 @@ trait HasFormComponentActions
             return null;
         }
 
-        $action->arguments(array_merge(
-            Arr::last($this->mountedFormComponentActionsArguments ?? []),
-            $arguments,
-        ));
+        $action->arguments([
+            ...Arr::last($this->mountedFormComponentActionsArguments ?? []),
+            ...$arguments,
+        ]);
 
         $form = $this->getMountedFormComponentActionForm();
 
@@ -201,13 +201,13 @@ trait HasFormComponentActions
         }
 
         if ((! $this->isCachingForms) && $this->hasCachedForm("mountedFormComponentActionForm{$actionNestingIndex}")) {
-            return $this->getCachedForm("mountedFormComponentActionForm{$actionNestingIndex}");
+            return $this->getForm("mountedFormComponentActionForm{$actionNestingIndex}");
         }
 
         return $action->getForm(
             $this->makeForm()
                 ->model($this->getMountedFormComponentActionComponent($actionNestingIndex)->getActionFormModel())
-                ->statePath('mountedFormComponentActionData.' . $actionNestingIndex)
+                ->statePath('mountedFormComponentActionsData.' . $actionNestingIndex)
                 ->operation(implode('.', array_slice($this->mountedFormComponentActions, 0, $actionNestingIndex + 1))),
         );
     }

@@ -3,9 +3,24 @@
     'alpineActive' => null,
     'badge' => null,
     'icon' => null,
+    'iconColor' => null,
+    'iconPosition' => 'before',
     'tag' => 'button',
     'type' => 'button',
 ])
+
+@php
+    $iconColorClasses = $active ? null : match ($iconColor) {
+        'danger' => 'text-danger-600 dark:text-danger-400',
+        'gray' => 'text-gray-600 dark:text-gray-400',
+        'info' => 'text-info-600 dark:text-info-400',
+        'primary' => 'text-primary-600 dark:text-primary-400',
+        'secondary' => 'text-secondary-600 dark:text-secondary-400',
+        'success' => 'text-success-600 dark:text-success-400',
+        'warning' => 'text-warning-600 dark:text-warning-400',
+        default => $iconColor,
+    };
+@endphp
 
 <{{ $tag }}
     @if ($tag === 'button')
@@ -28,17 +43,33 @@
             'text-primary-600 shadow bg-white dark:text-white dark:bg-primary-600' => $active,
         ]) }}
 >
-    @if ($icon)
+    @if ($icon && $iconPosition === 'before')
         <x-filament::icon
             :name="$icon"
+            :color="$iconColorClasses"
             alias="support::tabs.item"
             size="h-5 w-5"
+            x-bind:class="{
+                '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
+            }"
         />
     @endif
 
     <span>
         {{ $slot }}
     </span>
+
+    @if ($icon && $iconPosition === 'after')
+        <x-filament::icon
+            :name="$icon"
+            :color="$iconColorClasses"
+            alias="support::tabs.item"
+            size="h-5 w-5"
+            x-bind:class="{
+                '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
+            }"
+        />
+    @endif
 
     @if ($badge)
         <span

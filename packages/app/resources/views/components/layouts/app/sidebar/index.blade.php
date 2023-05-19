@@ -18,6 +18,7 @@
     @class([
         'filament-sidebar fixed inset-y-0 start-0 z-20 flex h-screen w-[--sidebar-width] flex-col bg-white transition-all dark:bg-gray-800 lg:bg-transparent lg:dark:bg-transparent lg:z-0',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
+        'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
 >
     <header class="filament-sidebar-header border-b h-[4rem] shrink-0 flex items-center justify-center relative bg-white dark:bg-gray-800 dark:border-gray-700">
@@ -53,16 +54,24 @@
                 </button>
             @endif
 
-            <a
-                href="{{ filament()->getHomeUrl() }}"
+            <div
                 data-turbo="false"
                 @class([
-                    'block w-full',
+                    'flex items-center w-full relative',
                     'lg:ms-3' => filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
-                <x-filament::logo />
-            </a>
+                @if ($homeUrl = filament()->getHomeUrl())
+                    <a
+                        href="{{ $homeUrl }}"
+                        class="inline-block"
+                    >
+                        <x-filament::logo />
+                    </a>
+                @else
+                    <x-filament::logo />
+                @endif
+            </div>
         </div>
 
         @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -112,16 +121,18 @@
             }
         </script>
 
-        <ul class="px-6 space-y-6">
-            @foreach ($navigation as $group)
-                <x-filament::layouts.app.sidebar.group
-                    :label="$group->getLabel()"
-                    :icon="$group->getIcon()"
-                    :collapsible="$group->isCollapsible()"
-                    :items="$group->getItems()"
-                />
-            @endforeach
-        </ul>
+        @if (filament()->hasNavigation())
+            <ul class="px-6 space-y-6">
+                @foreach ($navigation as $group)
+                    <x-filament::layouts.app.sidebar.group
+                        :label="$group->getLabel()"
+                        :icon="$group->getIcon()"
+                        :collapsible="$group->isCollapsible()"
+                        :items="$group->getItems()"
+                    />
+                @endforeach
+            </ul>
+        @endif
 
         {{ filament()->renderHook('sidebar.end') }}
     </nav>

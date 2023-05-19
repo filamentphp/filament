@@ -20,7 +20,7 @@
                 return await $wire.deleteUploadedFile(@js($statePath), fileKey)
             },
             getUploadedFilesUsing: async () => {
-                return await $wire.getUploadedFiles(@js($statePath))
+                return await $wire.getFormUploadedFiles(@js($statePath))
             },
             imageCropAspectRatio: @js($imageCropAspectRatio),
             imagePreviewHeight: @js($getImagePreviewHeight()),
@@ -41,11 +41,11 @@
             maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
             minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
             removeUploadedFileUsing: async (fileKey) => {
-                return await $wire.removeUploadedFile(@js($statePath), fileKey)
+                return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
             },
             removeUploadedFileButtonPosition: @js($getRemoveUploadedFileButtonPosition()),
             reorderUploadedFilesUsing: async (files) => {
-                return await $wire.reorderUploadedFiles(@js($statePath), files)
+                return await $wire.reorderFormUploadedFiles(@js($statePath), files)
             },
             shouldAppendFiles: @js($shouldAppendFiles()),
             shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),

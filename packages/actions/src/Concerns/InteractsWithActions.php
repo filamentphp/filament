@@ -11,17 +11,12 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
-use Livewire\Exceptions\PropertyNotFoundException;
 
 /**
  * @property Forms\Form $mountedActionForm
  */
 trait InteractsWithActions
 {
-    use Forms\Concerns\InteractsWithForms {
-        __get as __getForm;
-    }
-
     /**
      * @var array<string> | null
      */
@@ -45,22 +40,6 @@ trait InteractsWithActions
     protected bool $hasActionsModalRendered = false;
 
     /**
-     * @param  string  $property
-     */
-    public function __get($property): mixed
-    {
-        try {
-            return $this->__getForm($property);
-        } catch (PropertyNotFoundException $exception) {
-            if ($action = $this->getAction($property)) {
-                return $action;
-            }
-
-            throw $exception;
-        }
-    }
-
-    /**
      * @param  array<string, mixed>  $arguments
      */
     public function callMountedAction(array $arguments = []): mixed
@@ -75,10 +54,10 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments(array_merge(
-            Arr::last($this->mountedActionsArguments),
-            $arguments,
-        ));
+        $action->arguments([
+            ...Arr::last($this->mountedActionsArguments),
+            ...$arguments,
+        ]);
 
         $form = $this->getMountedActionForm();
 
@@ -198,15 +177,22 @@ trait InteractsWithActions
         return (bool) count($this->getMountedActionForm()?->getComponents() ?? []);
     }
 
-    public function cacheAction(Action $action, ?string $name = null): Action
+    public function cacheAction(Action $action): Action
     {
         $action->livewire($this);
 
-        if (filled($name)) {
-            $action->name($name);
-        }
-
         return $this->cachedActions[$action->getName()] = $action;
+    }
+
+    /**
+     * @param  array<string, Action>  $actions
+     */
+    protected function mergeCachedActions(array $actions): void
+    {
+        $this->cachedActions = [
+            ...$this->cachedActions,
+            ...$actions,
+        ];
     }
 
     protected function configureAction(Action $action): void
@@ -241,7 +227,7 @@ trait InteractsWithActions
         }
 
         if ((! $this->isCachingForms) && $this->hasCachedForm('mountedActionForm')) {
-            return $this->getCachedForm('mountedActionForm');
+            return $this->getForm('mountedActionForm');
         }
 
         return $action->getForm(
@@ -273,9 +259,7 @@ trait InteractsWithActions
             $name = $firstName;
         }
 
-        $action = $this->cachedActions[$name] ?? null;
-
-        if ($action) {
+        if ($action = $this->cachedActions[$name] ?? null) {
             return $this->getMountableModalActionFromAction(
                 $action,
                 modalActionNames: $modalActionNames ?? [],
@@ -283,21 +267,28 @@ trait InteractsWithActions
             );
         }
 
-        if (! method_exists($this, $name)) {
+        if (
+            (! str($name)->endsWith('Action')) &&
+            method_exists($this, "{$name}Action")
+        ) {
+            $methodName = "{$name}Action";
+        } elseif (method_exists($this, $name)) {
+            $methodName = $name;
+        } else {
             return null;
         }
 
         $action = Action::configureUsing(
             Closure::fromCallable([$this, 'configureAction']),
-            fn () => $this->{$name}(),
+            fn () => $this->{$methodName}(),
         );
 
         if (! $action instanceof Action) {
-            throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [{$name}] method on the Livewire component returned an instance of [" . get_class($action) . '].');
+            throw new InvalidArgumentException('Actions must be an instance of ' . Action::class . ". The [{$methodName}] method on the Livewire component returned an instance of [" . get_class($action) . '].');
         }
 
         return $this->getMountableModalActionFromAction(
-            $this->cacheAction($action, name: $name),
+            $this->cacheAction($action),
             modalActionNames: $modalActionNames ?? [],
             parentActionName: $name,
         );
@@ -359,7 +350,9 @@ trait InteractsWithActions
                 'id' => "{$this->id}-action",
             ]);
 
-            $action?->record(null);
+            if ($action?->shouldClearRecordAfter()) {
+                $action->record(null);
+            }
 
             return;
         }

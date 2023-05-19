@@ -29,7 +29,6 @@
                     'dark:border-gray-700' => ! $notification->unread(),
                 ])>
                     <div @class([
-                        'py-2 ps-4 pe-2',
                         'bg-primary-50 -mb-px dark:bg-gray-700' => $notification->unread(),
                     ])>
                         {{ $this->getNotification($notification)->inline() }}

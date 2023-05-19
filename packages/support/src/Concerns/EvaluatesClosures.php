@@ -50,7 +50,7 @@ trait EvaluatesClosures
         $typedParameterClassName = $this->getTypedReflectionParameterClassName($parameter);
 
         if (filled($typedParameterClassName) && array_key_exists($typedParameterClassName, $typedInjections)) {
-            return value($typedInjections[$parameterName]);
+            return value($typedInjections[$typedParameterClassName]);
         }
 
         // Dependencies are wrapped in an array to differentiate between null and no value.

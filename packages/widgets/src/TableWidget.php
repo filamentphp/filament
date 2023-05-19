@@ -2,14 +2,16 @@
 
 namespace Filament\Widgets;
 
+use Filament\Forms;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 
-class TableWidget extends Widget implements Tables\Contracts\HasTable
+class TableWidget extends Widget implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
+    use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
     }

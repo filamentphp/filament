@@ -180,11 +180,11 @@ class CreateRecord extends Page
      */
     protected function getFormActions(): array
     {
-        return array_merge(
-            [$this->getCreateFormAction()],
-            static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : [],
-            [$this->getCancelFormAction()],
-        );
+        return [
+            $this->getCreateFormAction(),
+            ...(static::canCreateAnother() ? [$this->getCreateAnotherFormAction()] : []),
+            $this->getCancelFormAction(),
+        ];
     }
 
     protected function getCreateFormAction(): Action

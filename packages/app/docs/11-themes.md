@@ -4,7 +4,7 @@ title: Themes
 
 ## Changing the colors
 
-In the [configuration](configuration), you can easily change the colors that are used. Filament ships with 6 predefined colors that are used everywhere within the framework. They are customizable as follows:
+In the [configuration](configuration), you can easily change the colors that are used. Filament ships with 7 predefined colors that are used everywhere within the framework. They are customizable as follows:
 
 ```php
 use Filament\Context;
@@ -14,12 +14,13 @@ public function context(Context $context): Context
 {
     return $context
         // ...
+        ->dangerColor(Color::Rose)
+        ->grayColor(Color::Gray)
+        ->infoColor(Color::Blue)
         ->primaryColor(Color::Indigo)
         ->secondaryColor(Color::Sky)
-        ->grayColor(Color::Gray)
-        ->dangerColor(Color::Rose)
-        ->warningColor(Color::Orange)
-        ->successColor(Color::Emerald);
+        ->successColor(Color::Emerald)
+        ->warningColor(Color::Orange);
 }
 ```
 

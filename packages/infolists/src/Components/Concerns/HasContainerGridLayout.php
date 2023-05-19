@@ -20,7 +20,10 @@ trait HasContainerGridLayout
             ];
         }
 
-        $this->gridColumns = array_merge($this->gridColumns ?? [], $columns);
+        $this->gridColumns = [
+            ...($this->gridColumns ?? []),
+            ...$columns,
+        ];
 
         return $this;
     }

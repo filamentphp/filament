@@ -21,10 +21,10 @@
                 :two-xl="$getColumns('2xl')"
                 :is-grid="! $isInline"
                 direction="column"
-                :attributes="$attributes->merge($getExtraAttributes(), escape: false)->class([
+                :attributes="\Filament\Support\prepare_inherited_attributes($attributes->merge($getExtraAttributes(), escape: false)->class([
                     'filament-forms-radio-component flex flex-wrap gap-3',
                     'flex-col' => ! $isInline,
-                ])"
+                ]))"
             >
                 @foreach ($getOptions() as $value => $label)
                     @php
@@ -46,9 +46,9 @@
                                 @disabled($shouldOptionBeDisabled)
                                 {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
                                 {{ $getExtraInputAttributeBag()->class([
-                                    'focus:ring-primary-500 h-4 w-4 text-primary-600 outline-none disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
-                                    'border-gray-300 dark:border-gray-500' => ! $errors->has($statePath),
-                                    'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
+                                    'h-4 w-4 text-primary-600 outline-none ring-1 ring-inset disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
+                                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500' => ! $errors->has($statePath),
+                                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                 ]) }}
                                 wire:loading.attr="disabled"
                             />

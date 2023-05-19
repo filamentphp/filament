@@ -120,7 +120,7 @@ abstract class RegisterTenant extends CardPage
 
     public function registerAction(): Action
     {
-        return Action::make('registerAction')
+        return Action::make('register')
             ->label(static::getLabel())
             ->submit('register');
     }

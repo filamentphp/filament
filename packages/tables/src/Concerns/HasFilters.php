@@ -21,7 +21,7 @@ trait HasFilters
     public function getTableFiltersForm(): Form
     {
         if ((! $this->isCachingForms) && $this->hasCachedForm('tableFiltersForm')) {
-            return $this->getCachedForm('tableFiltersForm');
+            return $this->getForm('tableFiltersForm');
         }
 
         return $this->makeForm()
@@ -88,6 +88,9 @@ trait HasFilters
         }
 
         $this->updatedTableFilters();
+
+        $this->resetTableSearch();
+        $this->resetTableColumnSearches();
     }
 
     public function resetTableFiltersForm(): void
@@ -120,10 +123,10 @@ trait HasFilters
 
     public function getTableFilterState(string $name): ?array
     {
-        return $this->getTableFiltersForm()->getRawState()[$this->parseFilterName($name)] ?? null;
+        return $this->getTableFiltersForm()->getRawState()[$this->parseTableFilterName($name)] ?? null;
     }
 
-    public function parseFilterName(string $name): string
+    public function parseTableFilterName(string $name): string
     {
         if (! class_exists($name)) {
             return $name;
@@ -194,6 +197,14 @@ trait HasFilters
      * @deprecated Override the `table()` method to configure the table.
      */
     protected function getTableFiltersFormWidth(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableFiltersFormMaxHeight(): ?string
     {
         return null;
     }

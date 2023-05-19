@@ -8,7 +8,7 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "filament/actions": "self.version",
         "filament/forms": "self.version",

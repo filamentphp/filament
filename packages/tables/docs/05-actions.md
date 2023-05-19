@@ -24,28 +24,28 @@ public function table(Table $table): Table
 }
 ```
 
-Actions may be created using the static `make()` method, passing its unique name. The name of the action should be unique.
+Actions may be created using the static `make()` method, passing its unique name.
 
-You can then pass a callback to `action()` which executes the task, or a callback to `url()` which generates a link URL:
+You can then pass a function to `action()` which executes the task, or a function to `url()` which creates a link:
 
 ```php
 use App\Models\Post;
 use Filament\Tables\Actions\Action;
 
-Action::make('edit')
-    ->url(fn (Post $record): string => route('posts.edit', $record))
-    ->openUrlInNewTab()
-
 Action::make('delete')
     ->requiresConfirmation()
     ->action(fn (Post $record) => $record->delete())
+
+Action::make('edit')
+    ->url(fn (Post $record): string => route('posts.edit', $record))
+    ->openUrlInNewTab()
 ```
 
 All methods on the action accept callback functions, where you can access the current table `$record` that was clicked.
 
-### Row actions position
+### Positioning row actions before columns
 
-By default, the row actions in your table are rendered in the final cell. You may change the position by using the `position` argument:
+By default, the row actions in your table are rendered in the final cell of each row. You may move them before the columns by using the `position` argument:
 
 ```php
 use Filament\Tables\Actions\Position;
@@ -57,6 +57,23 @@ public function table(Table $table): Table
         ->actions([
             // ...
         ], position: Position::BeforeColumns);
+}
+```
+
+### Positioning row actions before the checkbox column
+
+By default, the row actions in your table are rendered in the final cell of each row. You may move them before the checkbox column by using the `position` argument:
+
+```php
+use Filament\Tables\Actions\Position;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->actions([
+            // ...
+        ], position: Position::BeforeCells);
 }
 ```
 
@@ -76,7 +93,7 @@ public function table(Table $table): Table
 }
 ```
 
-Bulk actions may be created using the static `make()` method, passing its unique name. The name of the action should be unique. You should then pass a callback to `action()` which executes the task:
+Bulk actions may be created using the static `make()` method, passing its unique name. You should then pass a callback to `action()` which executes the task:
 
 ```php
 use Filament\Tables\Actions\BulkAction;
@@ -87,7 +104,54 @@ BulkAction::make('delete')
     ->action(fn (Collection $records) => $records->each->delete())
 ```
 
-All methods on the bulk action accept callback functions, where you can access the current table `$records` that are selected. It is an Eloquent collection of models.
+The function allows you to access the current table `$records` that are selected. It is an Eloquent collection of models.
+
+### Grouping bulk actions
+
+You may use a `BulkActionGroup` object to [group multiple bulk actions together](../actions/grouping-actions) in a dropdown. Any bulk actions that remain outside of the `BulkActionGroup` will be rendered next to the dropdown's trigger button:
+
+```php
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->bulkActions([
+            BulkActionGroup::make([
+                BulkAction::make('delete')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->delete()),
+                BulkAction::make('forceDelete')
+                    ->requiresConfirmation()
+                    ->action(fn (Collection $records) => $records->each->forceDelete()),
+            ]),
+            BulkAction::make('export')->action(fn (Collection $records) => ...),
+        ]);
+}
+```
+
+Alternatively, if all of your bulk actions are grouped, you can use the shorthand `groupedBulkActions()` method:
+
+```php
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groupedBulkActions([
+            BulkAction::make('delete')
+                ->requiresConfirmation()
+                ->action(fn (Collection $records) => $records->each->delete()),
+            BulkAction::make('forceDelete')
+                ->requiresConfirmation()
+                ->action(fn (Collection $records) => $records->each->forceDelete()),
+        ]);
+}
+```
 
 ### Deselecting records once a bulk action has finished
 
@@ -102,7 +166,7 @@ BulkAction::make('delete')
     ->deselectRecordsAfterCompletion()
 ```
 
-### Disabling record bulk actions
+### Disabling bulk actions for some rows
 
 You may conditionally disable bulk actions for a specific record:
 
@@ -178,4 +242,90 @@ public function table(Table $table): Table
             // ...
         ]);
 }
+```
+
+### Choosing a action group button style
+
+Out of the box, action group triggers have 3 styles - "button", "link", and "icon button".
+
+"Icon button" triggers are circular buttons with an [icon](#setting-the-action-group-button-icon) and no label. Usually, this is the default button style, but you can use it manually with the `iconButton()` method:
+
+```php
+Action::make('edit')
+    ->icon('heroicon-o-pencil-square')
+    ->iconButton()
+```
+
+"Button" triggers have a background color, label, and optionally an [icon](#setting-the-action-group-button-icon). You can switch to that style with the `button()` method:
+
+```php
+Action::make('edit')
+    ->button()
+```
+
+"Link" triggers have no background color. They must have a label and optionally an [icon](#setting-the-action-group-button-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
+
+```php
+Action::make('edit')
+    ->link()
+```
+
+### Setting the action group button label
+
+You may set the label of the action group button using the `label()` method:
+
+```php
+use Filament\Tables\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->label('Actions');
+```
+
+### Setting the action group button icon
+
+You may set the [icon](https://blade-ui-kit.com/blade-icons?set=1#search) of the action group button using the `icon()` method:
+
+```php
+use Filament\Tables\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->icon('heroicon-m-ellipsis-vertical');
+```
+
+### Setting the action group button color
+
+You may set the color of the action group button using the `color()` method:
+
+```php
+use Filament\Tables\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->color('primary');
+```
+
+### Setting the action group button size
+
+Buttons come in 3 sizes - `sm`, `md` or `lg`. You may set the size of the action group button using the `size()` method:
+
+```php
+use Filament\Tables\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->size('md');
+```
+
+### Setting the action group tooltip
+
+You may set the tooltip of the action group using the `tooltip()` method:
+
+```php
+use Filament\Tables\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->tooltip('More actions');
 ```

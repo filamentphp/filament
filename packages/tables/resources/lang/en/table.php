@@ -27,6 +27,7 @@ return [
         'search' => [
             'label' => 'Search',
             'placeholder' => 'Search',
+            'indicator' => 'Search',
         ],
 
     ],
@@ -128,14 +129,6 @@ return [
     'empty' => [
 
         'heading' => 'No records found',
-
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Clear column search',
-            ],
-
-        ],
 
     ],
 

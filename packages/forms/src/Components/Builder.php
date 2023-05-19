@@ -389,10 +389,14 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->icon('heroicon-m-arrows-up-down')
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {
-                $items = array_merge(array_flip($arguments['items']), $component->getState());
+                $items = [
+                    ...array_flip($arguments['items']),
+                    ...$component->getState(),
+                ];
 
                 $component->state($items);
             })
+            ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
             ->size('sm');

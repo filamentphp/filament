@@ -13,7 +13,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <x-filament::input.affixes
+    <x-filament-forms::affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
         :prefix-actions="$getPrefixActions()"
@@ -22,14 +22,14 @@
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
-        :attributes="$getExtraAttributeBag()"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @if ($isNative())
             <input
                 x-data="{}"
                 x-bind:class="{
-                    'border-gray-300 dark:border-gray-600': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'border-danger-600 ring-danger-600': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
                 }"
                 {{
                     $getExtraInputAttributeBag()
@@ -49,7 +49,7 @@
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                         ->class([
-                            'block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                            'block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white',
                             'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
                             'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
                         ])
@@ -98,9 +98,9 @@
                     @disabled($isDisabled)
                     {{ $getExtraTriggerAttributeBag()->class([
                         'bg-white relative w-full border py-2 ps-3 pe-10 text-start cursor-default shadow-sm outline-none sm:text-sm dark:bg-gray-700',
-                        'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled,
-                        'border-gray-300 dark:border-gray-600' => ! $errors->has($statePath),
-                        'border-danger-600 dark:border-danger-400' => $errors->has($statePath),
+                        'focus-within:ring-1 focus-within:ring-inset' => ! $isDisabled,
+                        'border-gray-300 focus-within:border-primary-500 focus-within:ring-primary-500 dark:border-gray-600 dark:focus-within:border-primary-500' => ! $errors->has($statePath),
+                        'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                         'opacity-70 dark:text-gray-300' => $isDisabled,
                         'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
                         'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
@@ -113,7 +113,7 @@
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
-                            'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 outline-none focus:placeholder-gray-500 focus:ring-0 dark:bg-gray-700 dark:placeholder-gray-400',
+                            'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 outline-none focus:outline-none focus:placeholder-gray-500 focus:ring-0 dark:bg-gray-700 dark:placeholder-gray-400',
                             'cursor-default' => $isDisabled,
                         ])
                     />
@@ -244,7 +244,7 @@
                 </div>
             </div>
         @endif
-    </x-filament::input.affixes>
+    </x-filament-forms::affixes>
 
     @if ($datalistOptions)
         <datalist id="{{ $id }}-list">

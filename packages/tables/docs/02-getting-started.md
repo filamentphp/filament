@@ -4,7 +4,7 @@ title: Getting started
 
 ## Overview
 
-Filament's table package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [app framework](../app) for displaying [app resources](../app/resources) and [relation managers](../app/resources/relation-managers), as well as for the [table widget](../app/dashboard#table-widgets). Learning the feature's of the table builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
+Filament's table package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [app framework](../app) for displaying [app resources](../app/resources) and [relation managers](../app/resources/relation-managers), as well as for the [table widget](../app/dashboard#table-widgets). Learning the features of the table builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
 
 This guide will walk you through the basics of building tables with Filament's table package. If you're planning to add a new table to your own Livewire component, you should [do that first](adding-a-table-to-a-livewire-component) and then come back. If you're adding a table to an [app resource](../app/resources), or another Filament package, you're ready to go!
 
@@ -110,7 +110,9 @@ Filament's tables can use [actions](../actions/overview). They are buttons that 
 
 ```php
 use App\Models\Post;
-use Filament\Tables\Actions\Action;use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 
 public function table(Table $table): Table
 {
@@ -133,7 +135,9 @@ public function table(Table $table): Table
                 ->visible(fn (Post $record): bool => $record->is_featured),
         ])
         ->bulkActions([
-            DeleteBulkAction::make(),
+            BulkActionGroup::make([
+                DeleteBulkAction::make(),
+            ]),
         ]);
 }
 ```

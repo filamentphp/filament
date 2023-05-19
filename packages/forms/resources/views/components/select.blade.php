@@ -16,7 +16,7 @@
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <x-filament::input.affixes
+    <x-filament-forms::affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
         :prefix-actions="$getPrefixActions()"
@@ -25,7 +25,7 @@
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
         class="filament-forms-select-component"
-        :attributes="$getExtraAttributeBag()"
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @unless ($isSearchable() || $isMultiple())
             <x-filament::input.select
@@ -34,9 +34,10 @@
                 :id="$getId()"
                 dusk="filament.forms.{{ $statePath }}"
                 :required="$isRequired() && (! ! $isConcealed())"
-                :attributes="$getExtraInputAttributeBag()->merge([
+                :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag()->merge([
                     $applyStateBindingModifiers('wire:model') => $statePath,
-                ], escape: false)"
+                ], escape: false))"
+                :error="$errors->has($statePath)"
                 :prefix="$hasPrefix"
                 :suffix="$hasSuffix"
                 class="filament-forms-input w-full"
@@ -68,18 +69,19 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
+                    canSelectPlaceholder: @js($canSelectPlaceholder()),
                     isHtmlAllowed: @js($isHtmlAllowed()),
                     getOptionLabelUsing: async () => {
-                        return await $wire.getSelectOptionLabel(@js($statePath))
+                        return await $wire.getFormSelectOptionLabel(@js($statePath))
                     },
                     getOptionLabelsUsing: async () => {
-                        return await $wire.getSelectOptionLabels(@js($statePath))
+                        return await $wire.getFormSelectOptionLabels(@js($statePath))
                     },
                     getOptionsUsing: async () => {
-                        return await $wire.getSelectOptions(@js($statePath))
+                        return await $wire.getFormSelectOptions(@js($statePath))
                     },
                     getSearchResultsUsing: async (search) => {
-                        return await $wire.getSelectSearchResults(@js($statePath), search)
+                        return await $wire.getFormSelectSearchResults(@js($statePath), search)
                     },
                     isAutofocused: @js($isAutofocused()),
                     isDisabled: @js($isDisabled),
@@ -98,6 +100,7 @@
                     searchDebounce: @js($getSearchDebounce()),
                     searchingMessage: @js($getSearchingMessage()),
                     searchPrompt: @js($getSearchPrompt()),
+                    searchableOptionFields: @js($getSearchableOptionFields()),
                     state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
                     statePath: @js($statePath),
                 })"
@@ -130,5 +133,5 @@
                 ></select>
             </div>
         @endif
-    </x-filament::input.affixes>
+    </x-filament-forms::affixes>
 </x-dynamic-component>

@@ -13,11 +13,6 @@ trait HasColumns
     protected ?ColumnLayoutComponent $collapsibleColumnsLayout = null;
 
     /**
-     * @var array<string, Action>
-     */
-    protected array $columnActions = [];
-
-    /**
      * @var array<string, Column>
      */
     protected array $columns = [];
@@ -50,7 +45,11 @@ trait HasColumns
             }
 
             $this->hasColumnsLayout = true;
-            $this->columns = array_merge($this->columns, $component->getColumns());
+
+            $this->columns = [
+                ...$this->columns,
+                ...$component->getColumns(),
+            ];
         }
 
         foreach ($this->columns as $column) {
@@ -68,15 +67,7 @@ trait HasColumns
                 throw new InvalidArgumentException('Table column actions must be an instance of ' . Action::class . '.');
             }
 
-            $actionName = $action->getName();
-
-            if (array_key_exists($actionName, $this->columnActions)) {
-                continue;
-            }
-
-            $action->table($this);
-
-            $this->columnActions[$actionName] = $action;
+            $this->cacheAction($action->table($this));
         }
 
         return $this;
@@ -104,14 +95,6 @@ trait HasColumns
     public function getColumn(string $name): ?Column
     {
         return $this->getColumns()[$name] ?? null;
-    }
-
-    /**
-     * @return array<string, Action>
-     */
-    public function getColumnActions(): array
-    {
-        return $this->columnActions;
     }
 
     /**

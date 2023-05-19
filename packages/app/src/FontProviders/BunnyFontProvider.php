@@ -11,7 +11,7 @@ class BunnyFontProvider implements Contracts\FontProvider
     public function getHtml(string $family, ?string $url = null): Htmlable
     {
         $family = Str::kebab($family);
-        $url ??= "https://fonts.bunny.net/css?family={$family}:400,500,700&display=swap";
+        $url ??= "https://fonts.bunny.net/css?family={$family}:400,500,600,700&display=swap";
 
         return new HtmlString("
             <link rel=\"preconnect\" href=\"https://fonts.bunny.net\">

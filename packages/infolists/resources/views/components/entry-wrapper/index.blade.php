@@ -1,6 +1,7 @@
 @props([
-    'alignment' => null,
     'entry' => null,
+    'action' => null,
+    'alignment' => null,
     'id' => null,
     'label' => null,
     'labelPrefix' => null,
@@ -8,6 +9,7 @@
     'labelSuffix' => null,
     'helperText' => null,
     'hint' => null,
+    'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
     'shouldOpenUrlInNewTab' => null,
@@ -18,12 +20,14 @@
 
 @php
     if ($entry) {
+        $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
         $id ??= $entry->getId();
         $label ??= $entry->getLabel();
         $labelSrOnly ??= $entry->isLabelHidden();
         $helperText ??= $entry->getHelperText();
         $hint ??= $entry->getHint();
+        $hintActions ??= $entry->getHintActions();
         $hintColor ??= $entry->getHintColor();
         $hintIcon ??= $entry->getHintIcon();
         $shouldOpenUrlInNewTab ??= $entry->shouldOpenUrlInNewTab();
@@ -31,6 +35,11 @@
         $tooltip ??= $entry->getTooltip();
         $url ??= $entry->getUrl();
     }
+
+    $hintActions = array_filter(
+        $hintActions ?? [],
+        fn (\Filament\Infolists\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
+    );
 @endphp
 
 <div {{ $attributes->class(['filament-infolists-entry-wrapper']) }}>
@@ -56,8 +65,8 @@
                     {{ $labelSuffix }}
                 @endif
 
-                @if ($hint || $hintIcon)
-                    <x-filament-infolists::entry-wrapper.hint :color="$hintColor" :icon="$hintIcon">
+                @if ($hint || $hintIcon || count($hintActions))
+                    <x-filament-infolists::entry-wrapper.hint :actions="$hintActions" :color="$hintColor" :icon="$hintIcon">
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
                     </x-filament-infolists::entry-wrapper.hint>
                 @endif
@@ -89,6 +98,20 @@
                 >
                     {{ $slot }}
                 </a>
+            @elseif ($action)
+                @php
+                    $wireClickAction = $action->getLivewireClickHandler();
+                @endphp
+
+                <button
+                    wire:click="{{ $wireClickAction }}"
+                    wire:target="{{ $wireClickAction }}"
+                    wire:loading.attr="disabled"
+                    type="button"
+                    class="block"
+                >
+                    {{ $slot }}
+                </button>
             @else
                 {{ $slot }}
             @endif

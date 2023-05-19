@@ -12,6 +12,8 @@ trait CanToggleColumns
      */
     protected int | array | Closure $columnToggleFormColumns = 1;
 
+    protected string | Closure | null $columnToggleFormMaxHeight = null;
+
     protected string | Closure | null $columnToggleFormWidth = null;
 
     /**
@@ -20,6 +22,13 @@ trait CanToggleColumns
     public function columnToggleFormColumns(int | array | Closure $columns): static
     {
         $this->columnToggleFormColumns = $columns;
+
+        return $this;
+    }
+
+    public function columnToggleFormMaxHeight(string | Closure | null $height): static
+    {
+        $this->columnToggleFormMaxHeight = $height;
 
         return $this;
     }
@@ -42,6 +51,11 @@ trait CanToggleColumns
     public function getColumnToggleFormColumns(): int | array
     {
         return $this->evaluate($this->columnToggleFormColumns) ?? 1;
+    }
+
+    public function getColumnToggleFormMaxHeight(): ?string
+    {
+        return $this->evaluate($this->columnToggleFormMaxHeight);
     }
 
     public function getColumnToggleFormWidth(): ?string

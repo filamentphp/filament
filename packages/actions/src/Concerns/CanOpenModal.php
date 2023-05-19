@@ -175,7 +175,7 @@ trait CanOpenModal
     }
 
     /**
-     * @return array<StaticAction>
+     * @return array<string, StaticAction>
      */
     public function getModalActions(): array
     {
@@ -203,7 +203,10 @@ trait CanOpenModal
             $actions['submit'] = $submitAction;
         }
 
-        $actions = array_merge($actions, $this->getExtraModalActions());
+        $actions = [
+            ...$actions,
+            ...$this->getExtraModalActions(),
+        ];
 
         if ($cancelAction = $this->getModalCancelAction()) {
             $actions['cancel'] = $cancelAction;

@@ -249,8 +249,10 @@ public function table(Table $table): Table
             Tables\Actions\DetachAction::make(),
         ])
         ->bulkActions([
-            // ...
-            Tables\Actions\DetachBulkAction::make(),
+            Tables\Actions\BulkActionGroup::make([
+                // ...
+                Tables\Actions\DetachBulkAction::make(),
+            ]),
         ]);
 }
 ```
@@ -339,8 +341,10 @@ public function table(Table $table): Table
             Tables\Actions\DissociateAction::make(),
         ])
         ->bulkActions([
-            // ...
-            Tables\Actions\DissociateBulkAction::make(),
+            Tables\Actions\BulkActionGroup::make([
+                // ...
+                Tables\Actions\DissociateBulkAction::make(),
+            ]),
         ]);
 }
 ```
@@ -427,10 +431,12 @@ public function table(Table $table): Table
             // ...
         ])
         ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
-            Tables\Actions\ForceDeleteBulkAction::make(),
-            Tables\Actions\RestoreBulkAction::make(),
-            // ...
+            BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\ForceDeleteBulkAction::make(),
+                Tables\Actions\RestoreBulkAction::make(),
+                // ...
+            ]),
         ]);
 }
 

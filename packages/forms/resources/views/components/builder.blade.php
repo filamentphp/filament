@@ -87,7 +87,7 @@
 
                             setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
                         "
-                        class="filament-forms-builder-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10"
+                        class="filament-forms-builder-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
                     >
                         @if ($reorderAction || $hasBlockLabels || $deleteAction || $isCollapsible || $isCloneable)
                             <header
@@ -167,7 +167,7 @@
                             </header>
                         @endif
 
-                        <div class="p-6" x-show="! isCollapsed">
+                        <div x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed, 'p-6': !isCollapsed}">
                             {{ $item }}
                         </div>
 

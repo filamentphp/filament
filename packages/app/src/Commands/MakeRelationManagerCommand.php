@@ -151,7 +151,7 @@ class MakeRelationManagerCommand extends Command
             'recordTitleAttribute' => $recordTitleAttribute,
             'relationship' => $relationship,
             'tableActions' => $this->indentString($tableActions, 4),
-            'tableBulkActions' => $this->indentString($tableBulkActions, 4),
+            'tableBulkActions' => $this->indentString($tableBulkActions, 5),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make()' : '//',
                 4,

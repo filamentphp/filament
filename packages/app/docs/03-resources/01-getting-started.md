@@ -169,7 +169,9 @@ public static function table(Table $table): Table
             Tables\Actions\EditAction::make(),
         ])
         ->bulkActions([
-            Tables\Actions\DeleteBulkAction::make(),
+            Tables\Actions\BulkActionGroup::make([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]),
         ]);
 }
 ```

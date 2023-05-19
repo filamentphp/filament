@@ -10,6 +10,11 @@
         $isProse = $isProse();
 
         $arrayState = $getState();
+
+        if ($arrayState instanceof \Illuminate\Support\Collection) {
+            $arrayState = $arrayState->all();
+        }
+
         if (is_array($arrayState)) {
             if ($listLimit = $getListLimit()) {
                 $limitedArrayState = array_slice($arrayState, $listLimit);
@@ -17,7 +22,13 @@
             }
 
             if ((! $isListWithLineBreaks) && (! $isBadge)) {
-                $arrayState = implode(', ', $arrayState);
+                $arrayState = implode(
+                    ', ',
+                    array_map(
+                        fn ($value) => $value instanceof \Filament\Support\Contracts\HasLabel ? $value->getLabel() : $value,
+                        $arrayState,
+                    ),
+                );
             }
         }
         $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
@@ -34,13 +45,15 @@
         $copyMessageDuration = $getCopyMessageDuration();
     @endphp
 
-    <div {{ $attributes
-        ->merge($getExtraAttributes(), escape: false)
-        ->class([
+    <x-filament-infolists::affixes
+        :prefix-actions="$getPrefixActions()"
+        :suffix-actions="$getSuffixActions()"
+        @class([
             'filament-infolists-text-entry',
             'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $url && (! $isBadge),
         ])
-    }}>
+        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
+    >
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }} @class([
             'list-disc list-inside' => $isBulleted(),
             'flex flex-wrap gap-1' => $isBadge,
@@ -61,6 +74,7 @@
                             ($isBadge ? match ($color = $getColor($state)) {
                                 'danger' => 'text-danger-700 bg-danger-500/10 dark:text-danger-500',
                                 'gray', null => 'text-gray-700 bg-gray-500/10 dark:text-gray-300 dark:bg-gray-500/20',
+                                'info' => 'text-info-700 bg-info-500/10 dark:text-info-500',
                                 'primary' => 'text-primary-700 bg-primary-500/10 dark:text-primary-500',
                                 'secondary' => 'text-secondary-700 bg-secondary-500/10 dark:text-secondary-500',
                                 'success' => 'text-success-700 bg-success-500/10 dark:text-success-500',
@@ -70,6 +84,7 @@
                             ((! ($isBadge || $url)) ? match ($color = $getColor($state)) {
                                 'danger' => 'text-danger-600',
                                 'gray' => 'text-gray-600 dark:text-gray-400',
+                                'info' => 'text-info-600',
                                 'primary' => 'text-primary-600',
                                 'secondary' => 'text-secondary-600',
                                 'success' => 'text-success-600',
@@ -153,5 +168,5 @@
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
         </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
-    </div>
+    </x-filament-infolists::affixes>
 </x-dynamic-component>

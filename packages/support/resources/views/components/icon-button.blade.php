@@ -20,13 +20,14 @@
     $iconSize ??= $size;
 
     $buttonClasses = [
-        'filament-icon-button flex items-center justify-center relative outline-none disabled:opacity-70 disabled:pointer-events-none',
+        'filament-icon-button relative flex items-center justify-center outline-none transition disabled:pointer-events-none disabled:opacity-70',
         'rounded-full hover:bg-gray-500/5 dark:hover:bg-gray-300/5' => ! $inline,
         match ($color) {
             'danger' => 'text-danger-500',
             'gray' => 'text-gray-500',
+            'info' => 'text-info-500',
             'primary' => 'text-primary-500',
-            'secondary' => 'text-secondary-500',
+            'secondary' => 'text-secondary-500 dark:text-gray-400',
             'success' => 'text-success-500',
             'warning' => 'text-warning-500',
             default => $color,
@@ -34,6 +35,7 @@
         match ($color) {
             'danger' => 'focus:bg-danger-500/10',
             'gray' => 'focus:bg-gray-500/10',
+            'info' => 'focus:bg-info-500/10',
             'primary' => 'focus:bg-primary-500/10',
             'secondary' => 'focus:bg-secondary-500/10',
             'success' => 'focus:bg-success-500/10',
@@ -64,6 +66,7 @@
         match ($indicatorColor) {
             'danger' => 'bg-danger-600',
             'gray' => 'bg-gray-600',
+            'info' => 'bg-info-600',
             'primary' => 'bg-primary-600',
             'secondary' => 'bg-secondary-600',
             'success' => 'bg-success-600',
@@ -83,14 +86,14 @@
 
 @if ($tag === 'button')
     <button
+        @if ($keyBindings || $tooltip)
+            x-data="{}"
+        @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
-        @endif
-        @if ($keyBindings || $tooltip)
-            x-data="{}"
         @endif
         {{
             $attributes
@@ -134,14 +137,14 @@
     </button>
 @elseif ($tag === 'a')
     <a
+        @if ($keyBindings || $tooltip)
+            x-data="{}"
+        @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
-        @endif
-        @if ($keyBindings || $tooltip)
-            x-data="{}"
         @endif
         {{
             $attributes

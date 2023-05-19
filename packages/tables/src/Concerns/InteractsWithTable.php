@@ -27,7 +27,6 @@ trait InteractsWithTable
     use HasColumns;
     use HasFilters;
     use HasRecords;
-    use Forms\Concerns\InteractsWithForms;
     use CanBeStriped;
     use CanPollRecords;
     use HasContent;
@@ -61,23 +60,11 @@ trait InteractsWithTable
             return;
         }
 
-        $defaultSortColumnName = $this->getTable()->getDefaultSortColumn();
-
-        if ($defaultSortColumnName && $this->getTable()->getSortableVisibleColumn($defaultSortColumnName)) {
-            $this->tableSortColumn = $defaultSortColumnName;
-            $this->tableSortDirection = $this->getTable()->getDefaultSortDirection();
-        }
-
         if (! count($this->toggledTableColumns ?? [])) {
             $this->getTableColumnToggleForm()->fill(session()->get(
                 $this->getTableColumnToggleFormStateSessionKey(),
                 $this->getDefaultTableColumnToggleState()
             ));
-        } else {
-            session()->put(
-                $this->getTableColumnToggleFormStateSessionKey(),
-                $this->toggledTableColumns,
-            );
         }
 
         $shouldPersistFiltersInSession = $this->getTable()->persistsFiltersInSession();
@@ -88,10 +75,10 @@ trait InteractsWithTable
         }
 
         if (($this->tableFilters === null) && $shouldPersistFiltersInSession && session()->has($filtersSessionKey)) {
-            $this->tableFilters = array_merge(
-                $this->tableFilters ?? [],
-                session()->get($filtersSessionKey) ?? [],
-            );
+            $this->tableFilters = [
+                ...($this->tableFilters ?? []),
+                ...(session()->get($filtersSessionKey) ?? []),
+            ];
         }
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
@@ -178,10 +165,11 @@ trait InteractsWithTable
             ->actions($this->getTableActions())
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
             ->actionsPosition($this->getTableActionsPosition())
-            ->bulkActions($this->getTableBulkActions())
+            ->groupedBulkActions($this->getTableBulkActions())
             ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
             ->columns($this->getTableColumns())
             ->columnToggleFormColumns($this->getTableColumnToggleFormColumns())
+            ->columnToggleFormMaxHeight($this->getTableColumnToggleFormMaxHeight())
             ->columnToggleFormWidth($this->getTableColumnToggleFormWidth())
             ->content($this->getTableContent())
             ->contentFooter($this->getTableContentFooter())
@@ -197,6 +185,7 @@ trait InteractsWithTable
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->filters($this->getTableFilters())
             ->filtersFormColumns($this->getTableFiltersFormColumns())
+            ->filtersFormMaxHeight($this->getTableFiltersFormMaxHeight())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
             ->filtersLayout($this->getTableFiltersLayout())
             ->header($this->getTableHeader())

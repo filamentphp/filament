@@ -20,7 +20,7 @@
             class="gap-6"
         >
             @foreach ($getChildComponentContainers() as $container)
-                <li class="block p-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10">
+                <li class="block p-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20">
                     {{ $container }}
                 </li>
             @endforeach

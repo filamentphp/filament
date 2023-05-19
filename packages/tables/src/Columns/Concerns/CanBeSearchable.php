@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Support\Arr;
 
 trait CanBeSearchable
 {
@@ -20,20 +21,20 @@ trait CanBeSearchable
     protected ?Closure $searchQuery = null;
 
     /**
-     * @param  bool | array<string>  $condition
+     * @param  bool | array<string> | string  $condition
      */
     public function searchable(
-        bool | array $condition = true,
+        bool | array | string $condition = true,
         ?Closure $query = null,
         bool $isIndividual = false,
         bool $isGlobal = true,
     ): static {
-        if (is_array($condition)) {
-            $this->isSearchable = true;
-            $this->searchColumns = $condition;
-        } else {
+        if (is_bool($condition)) {
             $this->isSearchable = $condition;
             $this->searchColumns = null;
+        } else {
+            $this->isSearchable = true;
+            $this->searchColumns = Arr::wrap($condition);
         }
 
         $this->isGloballySearchable = $isGlobal;
