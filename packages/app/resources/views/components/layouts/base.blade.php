@@ -70,9 +70,9 @@
 
     @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
         <script>
-            const theme = localStorage.getItem('theme')
+            const theme = localStorage.getItem('theme') ?? 'system'
 
-            if ((theme === 'dark') || (! theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            if ((theme === 'dark') || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark')
             }
         </script>
