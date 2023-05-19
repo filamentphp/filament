@@ -130,3 +130,18 @@ public function context(Context $context): Context
         ->globalSearch(false);
 }
 ```
+
+## Registering global search keybindings
+
+The global search input can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](configuration):
+
+```php
+use Filament\Context;
+
+public function context(Context $context): Context
+{
+    return $context
+        // ...
+        ->globalSearchKeyBindings(['command+k', 'ctrl+k']);
+}
+```

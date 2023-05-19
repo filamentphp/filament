@@ -642,4 +642,12 @@ class FilamentManager
             event(new TenantSet($tenant, $this->auth()->user()));
         }
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getGlobalSearchKeyBindings(): array
+    {
+        return $this->getCurrentContext()->getGlobalSearchKeyBindings();
+    }
 }

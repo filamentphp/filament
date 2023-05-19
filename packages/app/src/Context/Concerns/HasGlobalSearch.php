@@ -8,6 +8,11 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 
 trait HasGlobalSearch
 {
+    /**
+     * @var array<string>
+     */
+    protected array $globalSearchKeyBindings = [];
+
     protected string | bool $globalSearchProvider = true;
 
     public function globalSearch(string | bool $provider = true): static
@@ -19,6 +24,24 @@ trait HasGlobalSearch
         $this->globalSearchProvider = $provider;
 
         return $this;
+    }
+
+    /**
+     * @param array<string> $keyBindings
+     */
+    public function globalSearchKeyBindings(array $keyBindings): static
+    {
+        $this->globalSearchKeyBindings = $keyBindings;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getGlobalSearchKeyBindings(): array
+    {
+        return $this->globalSearchKeyBindings;
     }
 
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
