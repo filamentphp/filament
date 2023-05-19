@@ -7,7 +7,6 @@ use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Component;
 use Filament\Infolists\Infolist;
-use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 
