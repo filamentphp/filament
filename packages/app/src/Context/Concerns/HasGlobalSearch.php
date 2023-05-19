@@ -27,7 +27,7 @@ trait HasGlobalSearch
     }
 
     /**
-     * @param array<string> $keyBindings
+     * @param  array<string>  $keyBindings
      */
     public function globalSearchKeyBindings(array $keyBindings): static
     {
