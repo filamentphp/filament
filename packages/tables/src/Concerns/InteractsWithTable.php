@@ -27,7 +27,6 @@ trait InteractsWithTable
     use HasColumns;
     use HasFilters;
     use HasRecords;
-    use Forms\Concerns\InteractsWithForms;
     use CanBeStriped;
     use CanPollRecords;
     use HasContent;

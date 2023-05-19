@@ -13,9 +13,6 @@ use Filament\Support\Exceptions\Halt;
 
 trait InteractsWithInfolists
 {
-    use Forms\Concerns\InteractsWithForms;
-    use ResolvesDynamicLivewireProperties;
-
     protected bool $hasInfolistsModalRendered = false;
 
     /**

@@ -4,16 +4,40 @@ title: Adding an action to a Livewire component
 
 ## Setting up the Livewire component
 
-You must use the `InteractsWithActions` trait and implement the `HasActions` interface on your Livewire component class:
+First, generate a new Livewire component:
+
+```bash
+php artisan make:livewire ManageProduct
+```
+
+Then, render your Livewire component on the page:
+
+```blade
+@livewire('manage-product')
+```
+
+Alternatively, you can use a full-page Livewire component:
+
+```php
+use App\Http\Livewire\ManageProduct;
+use Illuminate\Support\Facades\Route;
+
+Route::get('products/{product}/manage', ManageProduct::class);
+```
+
+You must use the `InteractsWithActions` and `InteractsWithForms` traits, and implement the `HasActions` and `HasForms` interfaces on your Livewire component class:
 
 ```php
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
 
-class ManagePost extends Component implements HasActions
+class ManagePost extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
+    use InteractsWithForms;
 
     // ...
 }
@@ -28,11 +52,14 @@ use App\Models\Post;
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
 
-class ManagePost extends Component implements HasActions
+class ManagePost extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
+    use InteractsWithForms;
     
     public Post $post;
     

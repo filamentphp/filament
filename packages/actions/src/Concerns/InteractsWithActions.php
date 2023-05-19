@@ -18,9 +18,6 @@ use InvalidArgumentException;
  */
 trait InteractsWithActions
 {
-    use Forms\Concerns\InteractsWithForms;
-    use ResolvesDynamicLivewireProperties;
-
     /**
      * @var array<string> | null
      */

@@ -25,6 +25,24 @@ use Illuminate\Support\Facades\Route;
 Route::get('products/{product}', ViewProduct::class);
 ```
 
+You must use the `InteractsWithInfolists` and `InteractsWithForms` traits, and implement the `HasInfolists` and `HasForms` interfaces on your Livewire component class:
+
+```php
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Concerns\InteractsWithInfolists;
+use Filament\Infolists\Contracts\HasInfolists;
+use Livewire\Component;
+
+class ViewProduct extends Component implements HasInfolists, HasForms
+{
+    use InteractsWithInfolists;
+    use InteractsWithForms;
+
+    // ...
+}
+```
+
 ## Adding the infolist
 
 Next, add a method to the Livewire component which accepts an `$infolist` object, modifies it, and returns it:

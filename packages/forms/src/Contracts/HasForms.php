@@ -57,5 +57,5 @@ interface HasForms
      * @param  array<string, string>  $attributes
      * @return array<string, mixed>
      */
-    public function validate(?array $rules = null, array $messages = [], array $attributes = []): array;
+    public function validate($rules = null, $messages = [], $attributes = []);
 }

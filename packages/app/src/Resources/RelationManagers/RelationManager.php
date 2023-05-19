@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -17,8 +18,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class RelationManager extends Component implements Tables\Contracts\HasTable
+class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
+    use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
     }
