@@ -6,7 +6,6 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
