@@ -1148,6 +1148,24 @@ DateTimePicker::make('date')
     ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
 ```
 
+You may change the calendar icon using the `icon()` method:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->icon('heroicon-o-calendar')
+```
+
+Alternatively, you may remove the icon altogether by passing `false`:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->icon(false)
+```
+
 ### Timezones
 
 If you'd like users to be able to manage dates in their own timezone, you can use the `timezone()` method:

@@ -24,6 +24,8 @@ class DateTimePicker extends Field
 
     protected string | Closure | null $format = null;
 
+    protected string | bool | Closure | null $icon = null;
+
     protected bool | Closure $isWithoutDate = false;
 
     protected bool | Closure $isWithoutSeconds = false;
@@ -121,6 +123,13 @@ class DateTimePicker extends Field
     public function format(string | Closure | null $format): static
     {
         $this->format = $format;
+
+        return $this;
+    }
+
+    public function icon(string | bool | Closure | null $icon): static
+    {
+        $this->icon = $icon;
 
         return $this;
     }
@@ -356,5 +365,10 @@ class DateTimePicker extends Field
     protected function getDefaultFirstDayOfWeek(): int
     {
         return config('forms.components.date_time_picker.first_day_of_week', 1);
+    }
+
+    public function getIcon(): string | bool | null
+    {
+        return $this->evaluate($this->icon);
     }
 }
