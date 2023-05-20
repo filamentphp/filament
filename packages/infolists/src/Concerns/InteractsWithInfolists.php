@@ -140,10 +140,14 @@ trait InteractsWithInfolists
         $action = $this->getMountedInfolistAction();
 
         if (! $action) {
+            $this->unmountInfolistAction();
+
             return null;
         }
 
         if ($action->isDisabled()) {
+            $this->unmountInfolistAction();
+
             return null;
         }
 

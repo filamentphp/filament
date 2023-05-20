@@ -105,10 +105,14 @@ trait HasFormComponentActions
         $action = $this->getMountedFormComponentAction();
 
         if (! $action) {
+            $this->unmountFormComponentAction();
+
             return null;
         }
 
         if ($action->isDisabled()) {
+            $this->unmountFormComponentAction();
+
             return null;
         }
 
@@ -224,11 +228,10 @@ trait HasFormComponentActions
         foreach ($this->getCachedForms() as $form) {
             $formStatePath = $form->getStatePath();
 
-            if (blank($formStatePath)) {
-                continue;
-            }
-
-            if (! str($componentStatePath)->startsWith($formStatePath)) {
+            if (
+                filled($formStatePath) &&
+                (! str($componentStatePath)->startsWith("{$formStatePath}."))
+            ) {
                 continue;
             }
 

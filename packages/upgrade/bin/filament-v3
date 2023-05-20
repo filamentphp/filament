@@ -307,6 +307,19 @@ foreach (['.env', '.env.ci', '.env.example', '.env.testing'] as $envFile) {
     }
 }
 
+if (file_exists('resources/views/vendor/filament/brand.blade.php')) {
+    rename(
+        'resources/views/vendor/filament/brand.blade.php',
+        'resources/views/vendor/filament/logo.blade.php',
+    );
+
+    render(<<<HTML
+        <p>
+            Renamed <strong>brand.blade.php</strong> to <strong>logo.blade.php</strong>.
+        </p>
+    HTML);
+}
+
 $appDirectory = $argv[1] ?? 'app';
 
 render(<<<HTML

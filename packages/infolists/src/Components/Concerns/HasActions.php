@@ -7,7 +7,6 @@ use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Contracts\HasAffixActions;
 use Filament\Infolists\Components\Contracts\HasHintActions;
 use Illuminate\Support\Arr;
-use InvalidArgumentException;
 
 trait HasActions
 {
@@ -79,7 +78,7 @@ trait HasActions
             $action = $action->getMountableModalAction($modalActionName);
 
             if (! $action) {
-                throw new InvalidArgumentException("The [{$modalActionName}] action has not been registered on the [{$name}] table action.");
+                return null;
             }
 
             $name = $modalActionName;
