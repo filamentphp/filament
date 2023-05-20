@@ -171,6 +171,14 @@ class FilamentManager
         return $this->getCurrentContext()->getFontHtml();
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getGlobalSearchKeyBindings(): array
+    {
+        return $this->getCurrentContext()->getGlobalSearchKeyBindings();
+    }
+
     public function getGlobalSearchProvider(): ?GlobalSearchProvider
     {
         return $this->getCurrentContext()->getGlobalSearchProvider();
@@ -641,13 +649,5 @@ class FilamentManager
         if ($tenant) {
             event(new TenantSet($tenant, $this->auth()->user()));
         }
-    }
-
-    /**
-     * @return array<string>
-     */
-    public function getGlobalSearchKeyBindings(): array
-    {
-        return $this->getCurrentContext()->getGlobalSearchKeyBindings();
     }
 }
