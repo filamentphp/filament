@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 class SpatieTagsColumn extends TagsColumn
@@ -45,7 +46,7 @@ class SpatieTagsColumn extends TagsColumn
         return $this->type;
     }
 
-    public function applyEagerLoading(Builder $query): Builder
+    public function applyEagerLoading(Builder | Relation $query): Builder | Relation
     {
         if ($this->isHidden()) {
             return $query;
