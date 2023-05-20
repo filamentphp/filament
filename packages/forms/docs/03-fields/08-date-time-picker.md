@@ -193,6 +193,28 @@ DateTimePicker::make('at')
     ->suffixIcon('heroicon-m-clock')
 ```
 
+## Customizing the icon
+
+You may change the icon using the `icon()` method, which accepts an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) name:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->native(false)
+    ->icon('heroicon-o-calendar')
+```
+
+Alternatively, you may remove the icon altogether by passing `false`:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->native(false)
+    ->icon(false)
+```
+
 ## Date-time picker validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to date-time pickers.
