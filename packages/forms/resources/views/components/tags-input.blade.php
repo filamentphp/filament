@@ -23,7 +23,7 @@
                 ->class(['filament-forms-tags-input-component'])
         }}
     >
-        <div x-show="state.length || @js(! $isDisabled)">
+        <div x-show="state?.length || @js(! $isDisabled)">
             <div @class([
                 'block w-full transition duration-75 divide-y rounded-lg shadow-sm sm:text-sm border overflow-hidden focus-within:ring-1 dark:divide-gray-600',
                 'border-gray-300 focus-within:border-primary-500 focus-within:ring-primary-500 dark:border-gray-600 dark:focus-within:border-primary-500' => ! $errors->has($statePath),
@@ -77,7 +77,7 @@
 
                 <div wire:ignore>
                     <template
-                        x-if="state.length"
+                        x-if="state?.length"
                         x-cloak
                     >
                         <div class="relative w-full p-2 overflow-hidden flex flex-wrap gap-1">
