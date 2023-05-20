@@ -23,6 +23,24 @@ return [
             'description' => 'Kijk later nog eens',
         ],
 
+        'pagination' => [
+
+            'label' => 'Paginering navigatie',
+
+            'buttons' => [
+
+                'next' => [
+                    'label' => 'Volgende',
+                ],
+
+                'previous' => [
+                    'label' => 'Vorige',
+                ],
+
+            ],
+
+        ],
+
     ],
 
 ];

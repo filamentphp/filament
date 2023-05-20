@@ -25,7 +25,7 @@ return [
 
         'pagination' => [
 
-            'label' => 'Pagination Navigation',
+            'label' => 'Pagination navigation',
 
             'buttons' => [
 
