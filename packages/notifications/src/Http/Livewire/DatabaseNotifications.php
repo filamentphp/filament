@@ -19,6 +19,8 @@ class DatabaseNotifications extends Component
      * @var array<string, string>
      */
     protected $listeners = [
+        'markedNotificationAsRead' => 'markNotificationAsRead',
+        'markedNotificationAsUnread' => 'markNotificationAsUnread',
         'notificationClosed' => 'removeNotification',
     ];
 
@@ -31,6 +33,20 @@ class DatabaseNotifications extends Component
         $this->getNotificationsQuery()
             ->where('id', $id)
             ->delete();
+    }
+
+    public function markNotificationAsRead(string $id): void
+    {
+        $this->getNotificationsQuery()
+            ->where('id', $id)
+            ->update(['read_at' => now()]);
+    }
+
+    public function markNotificationAsUnread(string $id): void
+    {
+        $this->getNotificationsQuery()
+            ->where('id', $id)
+            ->update(['read_at' => null]);
     }
 
     public function clearNotifications(): void

@@ -112,6 +112,14 @@ export default (Alpine) => {
             )
         },
 
+        markAsRead: function () {
+            Livewire.emit('markedNotificationAsRead', notification.id)
+        },
+
+        markAsUnread: function () {
+            Livewire.emit('markedNotificationAsUnread', notification.id)
+        },
+
         getTransitionDuration: function () {
             return parseFloat(this.computedStyle.transitionDuration) * 1000
         },
