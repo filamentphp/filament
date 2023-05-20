@@ -156,7 +156,10 @@ class DatabaseNotifications extends Component
         static::$pollingInterval = $interval;
     }
 
-    public function queryStringWithPagination()
+    /**
+     * @return array<mixed>
+     */
+    public function queryStringWithPagination(): array
     {
         return [];
     }

@@ -228,6 +228,11 @@ trait HasBulkActions
             $query = $table->getQuery()->whereIn(app($table->getModel())->getQualifiedKeyName(), $this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 
+            foreach ($this->getTable()->getColumns() as $column) {
+                $column->applyEagerLoading($query);
+                $column->applyRelationshipAggregates($query);
+            }
+
             return $this->cachedSelectedTableRecords = $query->get();
         }
 
@@ -237,9 +242,16 @@ trait HasBulkActions
         $pivotClass = $relationship->getPivotClass();
         $pivotKeyName = app($pivotClass)->getKeyName();
 
-        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords($table->selectPivotDataInQuery(
-            $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords),
-        )->get());
+        $relationship->wherePivotIn($pivotKeyName, $this->selectedTableRecords);
+
+        foreach ($this->getTable()->getColumns() as $column) {
+            $column->applyEagerLoading($relationship);
+            $column->applyRelationshipAggregates($relationship);
+        }
+
+        return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords(
+            $table->selectPivotDataInQuery($relationship)->get(),
+        );
     }
 
     public function shouldSelectCurrentPageOnly(): bool

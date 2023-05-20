@@ -25,7 +25,7 @@ trait InteractsWithTableQuery
         return $this;
     }
 
-    public function applyRelationshipAggregates(EloquentBuilder $query): EloquentBuilder
+    public function applyRelationshipAggregates(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
         return $query->when(
             filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
@@ -48,7 +48,7 @@ trait InteractsWithTableQuery
         );
     }
 
-    public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
+    public function applyEagerLoading(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
         if (! $this->queriesRelationships($query->getModel())) {
             return $query;
