@@ -152,7 +152,7 @@ trait HasActions
             $action = $action->getMountableModalAction($modalActionName);
 
             if (! $action) {
-                throw new InvalidArgumentException("The [{$modalActionName}] action has not been registered on the [{$parentActionName}] table action.");
+                return null;
             }
 
             if ($action instanceof Action) {

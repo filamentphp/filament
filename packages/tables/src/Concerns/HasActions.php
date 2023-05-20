@@ -109,14 +109,20 @@ trait HasActions
         $action = $this->getMountedTableAction();
 
         if (! $action) {
+            $this->unmountTableAction();
+
             return null;
         }
 
         if (filled($record) && ($action->getRecord() === null)) {
+            $this->unmountTableAction();
+
             return null;
         }
 
         if ($action->isDisabled()) {
+            $this->unmountTableAction();
+
             return null;
         }
 

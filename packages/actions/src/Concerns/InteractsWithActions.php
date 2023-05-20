@@ -108,10 +108,14 @@ trait InteractsWithActions
         $action = $this->getMountedAction();
 
         if (! $action) {
+            $this->unmountAction();
+
             return null;
         }
 
         if ($action->isDisabled()) {
+            $this->unmountAction();
+
             return null;
         }
 
@@ -303,7 +307,7 @@ trait InteractsWithActions
             $action = $action->getMountableModalAction($modalActionName);
 
             if (! $action) {
-                throw new InvalidArgumentException("The [{$modalActionName}] action has not been registered on the [{$parentActionName}] action.");
+                return null;
             }
 
             $parentActionName = $modalActionName;
