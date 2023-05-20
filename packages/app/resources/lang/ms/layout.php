@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Tukar mod gelap',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Buka pemberitahuan',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Tukar mod terang',
         ],
 

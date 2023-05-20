@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Activer le mode sombre',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Ouvrir les notifications',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Désactiver le mode sombre',
         ],
 

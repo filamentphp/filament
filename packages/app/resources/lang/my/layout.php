@@ -6,11 +6,11 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'အနက်နောက်ခံပုံစံ',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'အဖြူနောက်ခံပုံစံ',
         ],
 

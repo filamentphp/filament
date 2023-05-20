@@ -32,62 +32,99 @@
 
     {{ filament()->renderHook('user-menu.account.after') }}
 
-    <x-filament::dropdown.list
-        x-data="{
-            mode: null,
+    @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
+        <div
+            x-data="{
+                theme: null,
 
-            theme: null,
+                init: function () {
+                    this.theme = localStorage.getItem('theme') || 'system'
 
-            init: function () {
-                this.theme = localStorage.getItem('theme') || (this.isSystemDark() ? 'dark' : 'light')
-                this.mode = localStorage.getItem('theme') ? 'manual' : 'auto'
+                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
+                        if (this.theme !== 'system') {
+                            return
+                        }
 
-                window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-                    if (this.mode === 'manual') return
+                        if (event.matches && (! document.documentElement.classList.contains('dark'))) {
+                            document.documentElement.classList.add('dark')
+                        } else if ((! event.matches) && document.documentElement.classList.contains('dark')) {
+                            document.documentElement.classList.remove('dark')
+                        }
+                    })
 
-                    if (event.matches && (! document.documentElement.classList.contains('dark'))) {
-                        this.theme = 'dark'
+                    $watch('theme', () => {
+                        localStorage.setItem('theme', this.theme)
 
-                        document.documentElement.classList.add('dark')
-                    } else if ((! event.matches) && document.documentElement.classList.contains('dark')) {
-                        this.theme = 'light'
+                        if (this.theme === 'dark' && (! document.documentElement.classList.contains('dark'))) {
+                            document.documentElement.classList.add('dark')
+                        } else if (this.theme === 'light' && document.documentElement.classList.contains('dark')) {
+                            document.documentElement.classList.remove('dark')
+                        } else if (this.theme === 'system') {
+                            if (this.isSystemDark() && (! document.documentElement.classList.contains('dark'))) {
+                                document.documentElement.classList.add('dark')
+                            } else if ((! this.isSystemDark()) && document.documentElement.classList.contains('dark')) {
+                                document.documentElement.classList.remove('dark')
+                            }
+                        }
 
-                        document.documentElement.classList.remove('dark')
-                    }
-                })
+                        $dispatch('theme-changed', this.theme)
+                    })
+                },
 
-                $watch('theme', () => {
-                    if (this.mode === 'auto') return
+                isSystemDark: function () {
+                    return window.matchMedia('(prefers-color-scheme: dark)').matches
+                },
+            }"
+            class="filament-theme-switcher flex items-center border-b border-gray-950/5 divide-x divide-gray-950/5 dark:border-gray-700 dark:divide-gray-700"
+        >
+            <button
+                type="button"
+                aria-label="{{ __('filament::layout.buttons.light_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.buttons.light_theme.label') }}'"
+                x-on:click="theme = 'light'"
+                x-bind:class="theme === 'light' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
+                class="flex-1 flex items-center justify-center p-2 hover:bg-gray-500/10 focus:bg-gray-500/10"
+            >
+                <x-filament::icon
+                    name="heroicon-m-sun"
+                    alias="app::theme.light"
+                    size="h-5 w-5"
+                />
+            </button>
 
-                    localStorage.setItem('theme', this.theme)
+            <button
+                type="button"
+                aria-label="{{ __('filament::layout.buttons.dark_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.buttons.dark_theme.label') }}'"
+                x-on:click="theme = 'dark'"
+                x-bind:class="theme === 'dark' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
+                class="flex-1 flex items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
+            >
+                <x-filament::icon
+                    name="heroicon-m-moon"
+                    alias="app::theme.dark"
+                    size="h-5 w-5"
+                />
+            </button>
 
-                    if (this.theme === 'dark' && (! document.documentElement.classList.contains('dark'))) {
-                        document.documentElement.classList.add('dark')
-                    } else if (this.theme === 'light' && document.documentElement.classList.contains('dark')) {
-                        document.documentElement.classList.remove('dark')
-                    }
-
-                    $dispatch('dark-mode-toggled', this.theme)
-                })
-            },
-
-            isSystemDark: function () {
-                return window.matchMedia('(prefers-color-scheme: dark)').matches
-            },
-        }"
-    >
-        <div>
-            @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
-                <x-filament::dropdown.list.item icon="heroicon-m-moon" x-show="theme === 'dark'" x-on:click="close(); mode = 'manual'; theme = 'light'">
-                    {{ __('filament::layout.buttons.light_mode.label') }}
-                </x-filament::dropdown.list.item>
-
-                <x-filament::dropdown.list.item icon="heroicon-m-sun" x-show="theme === 'light'" x-on:click="close(); mode = 'manual'; theme = 'dark'">
-                    {{ __('filament::layout.buttons.dark_mode.label') }}
-                </x-filament::dropdown.list.item>
-            @endif
+            <button
+                type="button"
+                aria-label="{{ __('filament::layout.buttons.system_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.buttons.system_theme.label') }}'"
+                x-on:click="theme = 'system'"
+                x-bind:class="theme === 'system' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
+                class="flex-1 flex items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
+            >
+                <x-filament::icon
+                    name="heroicon-m-computer-desktop"
+                    alias="app::theme.system"
+                    size="h-5 w-5"
+                />
+            </button>
         </div>
+    @endif
 
+    <x-filament::dropdown.list>
         @foreach ($items as $key => $item)
             <x-filament::dropdown.list.item
                 :color="$item->getColor() ?? 'gray'"

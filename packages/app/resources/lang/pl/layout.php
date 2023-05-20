@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Tryb ciemny',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Otwórz powiadomienia',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Tryb jasny',
         ],
 

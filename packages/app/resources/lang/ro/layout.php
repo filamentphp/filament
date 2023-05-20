@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Comutați modul întunecat',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Deschideți notificările',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Comutați modul deschis',
         ],
 

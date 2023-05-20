@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Växla till mörkt läge',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Öppna aviseringar',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Växla till ljust läge',
         ],
 

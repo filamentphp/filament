@@ -77,7 +77,7 @@
                 values: @js(array_values($chart)),
             })"
             wire:ignore
-            x-on:dark-mode-toggled.window="
+            x-on:theme-changed.window="
                 chart.destroy()
                 initChart()
             "

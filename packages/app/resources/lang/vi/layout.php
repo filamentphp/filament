@@ -10,7 +10,7 @@ return [
             'label' => 'Quản lý gói đăng ký',
         ],
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Chuyển chế độ tối',
         ],
 
@@ -18,7 +18,7 @@ return [
             'label' => 'Mở thông báo',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Chuyển chế độ sáng',
         ],
 
