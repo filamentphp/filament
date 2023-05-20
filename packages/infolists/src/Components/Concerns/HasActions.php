@@ -7,7 +7,6 @@ use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Contracts\HasAffixActions;
 use Filament\Infolists\Components\Contracts\HasHintActions;
 use Illuminate\Support\Arr;
-use InvalidArgumentException;
 
 trait HasActions
 {
