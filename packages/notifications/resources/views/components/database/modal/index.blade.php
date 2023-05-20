@@ -21,18 +21,12 @@
             />
         </x-slot>
 
-        <div class="mt-[calc(-1rem-1px)]">
+        <div class="mt-[calc(-1rem-1px)] -mx-6 border-b divide-y dark:border-gray-700">
             @foreach ($notifications as $notification)
                 <div @class([
-                    '-mx-6 border-b',
-                    'border-t dark:border-gray-800' => $notification->unread(),
-                    'dark:border-gray-700' => ! $notification->unread(),
+                    'bg-primary-50 dark:bg-gray-700' => $notification->unread(),
                 ])>
-                    <div @class([
-                        'bg-primary-50 -mb-px dark:bg-gray-700' => $notification->unread(),
-                    ])>
-                        {{ $this->getNotification($notification)->inline() }}
-                    </div>
+                    {{ $this->getNotification($notification)->inline() }}
                 </div>
             @endforeach
         </div>

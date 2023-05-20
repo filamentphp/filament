@@ -129,6 +129,44 @@ Notification::make()
 event(new DatabaseNotificationsSent($recipient));
 ```
 
+## Marking database notifications as read
+
+There is a button at the top of the modal to mark all notifications as read at once. You may also add [actions](sending-notifications#adding-notification-actions) to notifications, which you can use to mark individual notifications as read. To do this, use the `markAsRead()` method on the action:
+
+```php
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+
+Notification::make()
+    ->title('Saved successfully')
+    ->success()
+    ->body('Changes to the **post** have been saved.')
+    ->actions([
+        Action::make('view')
+            ->button()
+            ->markAsRead(),
+    ])
+    ->send();
+```
+
+Alternatively, you may use the `markAsUnread()` method to mark a notification as unread:
+
+```php
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
+
+Notification::make()
+    ->title('Saved successfully')
+    ->success()
+    ->body('Changes to the **post** have been saved.')
+    ->actions([
+        Action::make('markAsUnread')
+            ->button()
+            ->markAsUnread(),
+    ])
+    ->send();
+```
+
 ## Opening the database notifications modal
 
 Instead of rendering the trigger button as described above, you can always open the database notifications modal from anywhere by dispatching an `open-modal` browser event:
