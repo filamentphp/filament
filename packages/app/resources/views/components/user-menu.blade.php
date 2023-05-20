@@ -83,7 +83,12 @@
                 x-bind:class="theme === 'light' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 x-on:click="close(); theme = 'light'"
             >
-                @svg('heroicon-m-sun', 'h-5 w-5 mx-auto')
+                <x-filament::icon
+                    name="heroicon-m-sun"
+                    alias="app::mode.light"
+                    size="h-5 w-5"
+                    class="mx-auto"
+                />
             </button>
             <button
                 type="button"
@@ -93,7 +98,12 @@
                 x-bind:class="theme === 'dark' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 x-on:click="close(); theme = 'dark'"
             >
-                @svg('heroicon-m-moon', 'h-5 w-5 mx-auto')
+                <x-filament::icon
+                    name="heroicon-m-moon"
+                    alias="app::mode.dark"
+                    size="h-5 w-5"
+                    class="mx-auto"
+                />
             </button>
             <button
                 type="button"
@@ -103,7 +113,12 @@
                 x-bind:class="theme === 'system' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 x-on:click="close(); theme = 'system'"
             >
-                @svg('heroicon-m-computer-desktop', 'h-5 w-5 mx-auto')
+                <x-filament::icon
+                    name="heroicon-m-computer-desktop"
+                    alias="app::mode.system"
+                    size="h-5 w-5"
+                    class="mx-auto"
+                />
             </button>
         </div>
     @endif
