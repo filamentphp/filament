@@ -41,7 +41,9 @@
                     this.theme = localStorage.getItem('theme') || 'system'
 
                     window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-                        if (this.mode !== 'system') return
+                        if (this.theme !== 'system') {
+                            return
+                        }
 
                         if (event.matches && (! document.documentElement.classList.contains('dark'))) {
                             document.documentElement.classList.add('dark')
@@ -65,59 +67,58 @@
                             }
                         }
 
-                        $dispatch('dark-mode-toggled', this.theme)
+                        $dispatch('theme-changed', this.theme)
                     })
                 },
 
                 isSystemDark: function () {
                     return window.matchMedia('(prefers-color-scheme: dark)').matches
-                }
+                },
             }"
-            class="filament-mode-toggle flex items-center border-b border-gray-950/5 divide-x divide-gray-950/5 dark:border-gray-700 dark:divide-gray-700"
+            class="filament-theme-switcher flex items-center border-b border-gray-950/5 divide-x divide-gray-950/5 dark:border-gray-700 dark:divide-gray-700"
         >
             <button
                 type="button"
-                class="flex-1 p-2 hover:bg-gray-500/10 focus:bg-gray-500/10"
-                aria-label="{{ __('filament::layout.buttons.light_mode.label') }}"
-                x-tooltip="'{{ __('filament::layout.buttons.light_mode.label') }}'"
+                aria-label="{{ __('filament::layout.buttons.light_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.buttons.light_theme.label') }}'"
+                x-on:click="theme = 'light'"
                 x-bind:class="theme === 'light' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
-                x-on:click="close(); theme = 'light'"
+                class="flex-1 flex items-center justify-center p-2 hover:bg-gray-500/10 focus:bg-gray-500/10"
             >
                 <x-filament::icon
                     name="heroicon-m-sun"
-                    alias="app::mode.light"
+                    alias="app::theme.light"
                     size="h-5 w-5"
-                    class="mx-auto"
                 />
             </button>
+
             <button
                 type="button"
-                class="flex-1 p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
-                aria-label="{{ __('filament::layout.buttons.dark_mode.label') }}"
-                x-tooltip="'{{ __('filament::layout.buttons.dark_mode.label') }}'"
+                aria-label="{{ __('filament::layout.buttons.dark_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.buttons.dark_theme.label') }}'"
+                x-on:click="theme = 'dark'"
                 x-bind:class="theme === 'dark' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
-                x-on:click="close(); theme = 'dark'"
+                class="flex-1 flex items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
             >
                 <x-filament::icon
                     name="heroicon-m-moon"
-                    alias="app::mode.dark"
+                    alias="app::theme.dark"
                     size="h-5 w-5"
-                    class="mx-auto"
                 />
             </button>
+
             <button
                 type="button"
-                class="flex-1 p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
-                aria-label="{{ __('filament::layout.buttons.system_mode.label') }}"
-                x-tooltip="'{{ __('filament::layout.buttons.system_mode.label') }}'"
+                aria-label="{{ __('filament::layout.buttons.system_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.buttons.system_theme.label') }}'"
+                x-on:click="theme = 'system'"
                 x-bind:class="theme === 'system' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
-                x-on:click="close(); theme = 'system'"
+                class="flex-1 flex items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
             >
                 <x-filament::icon
                     name="heroicon-m-computer-desktop"
-                    alias="app::mode.system"
+                    alias="app::theme.system"
                     size="h-5 w-5"
-                    class="mx-auto"
                 />
             </button>
         </div>

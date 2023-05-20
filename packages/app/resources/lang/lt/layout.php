@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Perjungti tamsos režimą',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Atidaryti pranešimus',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Perjungti šviesos režimą',
         ],
 

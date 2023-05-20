@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'ダークモードに切り替える',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'お知らせを確認',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'ライトモードに切り替える',
         ],
 

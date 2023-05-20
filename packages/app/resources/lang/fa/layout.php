@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'حالت تیره',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'نمایش اعلانات',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'حالت روشن',
         ],
 

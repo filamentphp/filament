@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Uključite tamni način rada',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Otvorite notifikacije',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Uključite svjijetli način rada',
         ],
 
