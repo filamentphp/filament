@@ -5,6 +5,8 @@ namespace Filament\Notifications\Http\Livewire;
 use Carbon\CarbonInterface;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -12,9 +14,12 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class DatabaseNotifications extends Component
 {
+    use WithPagination;
+
     /**
      * @var array<string, string>
      */
@@ -23,6 +28,8 @@ class DatabaseNotifications extends Component
         'markedNotificationAsUnread' => 'markNotificationAsUnread',
         'notificationClosed' => 'removeNotification',
     ];
+
+    public static bool $isPaginated = true;
 
     public static ?string $trigger = null;
 
@@ -59,10 +66,19 @@ class DatabaseNotifications extends Component
         $this->getUnreadNotificationsQuery()->update(['read_at' => now()]);
     }
 
-    public function getNotifications(): DatabaseNotificationCollection
+    public function getNotifications(): DatabaseNotificationCollection | Paginator
     {
-        /** @phpstan-ignore-next-line */
-        return $this->getNotificationsQuery()->get();
+        if (! $this->isPaginated()) {
+            /** @phpstan-ignore-next-line */
+            return $this->getNotificationsQuery()->get();
+        }
+
+        return $this->getNotificationsQuery()->simplePaginate(50);
+    }
+
+    public function isPaginated(): bool
+    {
+        return static::$isPaginated;
     }
 
     public function getNotificationsQuery(): Builder | Relation
@@ -139,6 +155,11 @@ class DatabaseNotifications extends Component
     public static function pollingInterval(?string $interval): void
     {
         static::$pollingInterval = $interval;
+    }
+
+    public function queryStringWithPagination()
+    {
+        return [];
     }
 
     public function render(): View
