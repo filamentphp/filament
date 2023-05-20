@@ -152,9 +152,6 @@ trait InteractsWithTable
         if ($this->isTablePaginationEnabled()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
-
-        $this->tableSortColumn ??= $this->getDefaultTableSortColumn();
-        $this->tableSortDirection ??= $this->getDefaultTableSortDirection();
     }
 
     protected function getCachedTable(): Table
