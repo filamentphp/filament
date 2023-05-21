@@ -24,14 +24,14 @@ You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-media
 
 > For more information, check out [Spatie's documentation](https://spatie.be/docs/laravel-medialibrary).
 
-## Form components
+## Form component
 
 You may use the field in the same way as the [original file upload](/docs/forms/fields/file-upload) field:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-SpatieMediaLibraryFileUpload::make('avatar'),
+SpatieMediaLibraryFileUpload::make('avatar')
 ```
 
 The media library file upload supports all the customization options of the [original file upload component](/docs/forms/fields/file-upload).
@@ -45,7 +45,8 @@ Optionally, you may pass a [`collection()`](https://spatie.be/docs/laravel-media
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-SpatieMediaLibraryFileUpload::make('avatar')->collection('avatars'),
+SpatieMediaLibraryFileUpload::make('avatar')
+    ->collection('avatars')
 ```
 
 ### Reordering files
@@ -59,7 +60,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
-    ->enableReordering(),
+    ->enableReordering()
 ```
 
 You may now drag and drop files into order.
@@ -73,7 +74,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
-    ->customProperties(['zip_filename_prefix' => 'folder/subfolder/']),
+    ->customProperties(['zip_filename_prefix' => 'folder/subfolder/'])
 ```
 
 ### Generating responsive images
@@ -85,7 +86,7 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
-    ->responsiveImages(),
+    ->responsiveImages()
 ```
 
 ### Using conversions
@@ -95,7 +96,8 @@ You may also specify a `conversion()` to load the file from showing it in the fo
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-SpatieMediaLibraryFileUpload::make('attachments')->conversion('thumb'),
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->conversion('thumb')
 ```
 
 #### Storing conversions on a separate disk
@@ -105,7 +107,8 @@ You can store your conversions and responsive images on a disk other than the on
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
-SpatieMediaLibraryFileUpload::make('attachments')->conversionsDisk('s3'),
+SpatieMediaLibraryFileUpload::make('attachments')
+    ->conversionsDisk('s3')
 ```
 
 ### Storing media-specific manipulations
@@ -119,17 +122,17 @@ SpatieMediaLibraryFileUpload::make('attachments')
     ->multiple()
     ->manipulations([
         'thumb' => ['orientation' => '90'],
-    ]),
+    ])
 ```
 
-## Table columns
+## Table column
 
 To use the media library image column:
 
 ```php
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
-SpatieMediaLibraryImageColumn::make('avatar'),
+SpatieMediaLibraryImageColumn::make('avatar')
 ```
 
 The media library image column supports all the customization options of the [original image column](/docs/tables/columns/image).
@@ -141,17 +144,55 @@ Optionally, you may pass a `collection()`:
 ```php
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
-SpatieMediaLibraryImageColumn::make('avatar')->collection('avatars'),
+SpatieMediaLibraryImageColumn::make('avatar')
+    ->collection('avatars')
 ```
 
 The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) you to group files into categories.
 
 ### Using conversions
 
-You may also specify a `conversion()` to load the file from showing it in the form, if present:
+You may also specify a `conversion()` to load the file from showing it in the table, if present:
 
 ```php
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
-SpatieMediaLibraryImageColumn::make('avatar')->conversion('thumb'),
+SpatieMediaLibraryImageColumn::make('avatar')
+    ->conversion('thumb')
+```
+
+## Infolist entry
+
+To use the media library image entry:
+
+```php
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+
+SpatieMediaLibraryImageEntry::make('avatar')
+```
+
+The media library image entry supports all the customization options of the [original image entry](/docs/infolists/entries/image).
+
+### Passing a collection
+
+Optionally, you may pass a `collection()`:
+
+```php
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+
+SpatieMediaLibraryImageEntry::make('avatar')
+    ->collection('avatars')
+```
+
+The [collection](https://spatie.be/docs/laravel-medialibrary/working-with-media-collections/simple-media-collections) you to group files into categories.
+
+### Using conversions
+
+You may also specify a `conversion()` to load the file from showing it in the infolist, if present:
+
+```php
+use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
+
+SpatieMediaLibraryImageEntry::make('avatar')
+    ->conversion('thumb')
 ```
