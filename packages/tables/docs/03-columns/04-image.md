@@ -76,3 +76,13 @@ use Filament\Tables\Columns\ImageColumn;
 ImageColumn::make('logo')
     ->extraImgAttributes(['title' => 'Company logo']),
 ```
+
+## Adding default image url
+
+You can display a placeholder image if the model doesn't have any media. To use it:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('avatar')->defaultImageUrl(url('/images/placeholder.png')),
+```
