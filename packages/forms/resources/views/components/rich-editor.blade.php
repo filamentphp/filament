@@ -52,7 +52,7 @@
             >
                 <div class="flex justify-between space-x-4 rtl:space-x-reverse overflow-x-auto items-stretch overflow-y-hidden">
                     <div class="flex items-stretch space-x-4 outline-none rtl:space-x-reverse">
-                        @if ($hasToolbarButton(['bold', 'italic', 'strike', 'link']))
+                        @if ($hasToolbarButton(['bold', 'italic', 'underline', 'strike', 'link']))
                             <div data-trix-button-group="text-tools" class="flex items-stretch space-x-1 rtl:space-x-reverse">
                                 @if ($hasToolbarButton('bold'))
                                     <x-filament-forms::rich-editor.toolbar-button
@@ -97,6 +97,19 @@
                                             <path fill="currentColor" d="M384 64.01c0 17.69-14.31 32-32 32h-58.67l-133.3 320H224c17.69 0 32 14.31 32 32s-14.31 32-32 32H32c-17.69 0-32-14.31-32-32s14.31-32 32-32h58.67l133.3-320H160c-17.69 0-32-14.31-32-32s14.31-32 32-32h192C369.7 32.01 384 46.33 384 64.01z"></path>
                                         </svg>
                                     </x-filament-forms::rich-editor.toolbar-button>
+                                @endif
+
+                                @if ($hasToolbarButton('underline'))
+                                    <x-forms::rich-editor.toolbar-button
+                                        data-trix-attribute="underline"
+                                        title="{{ __('forms::components.rich_editor.toolbar_buttons.underline') }}"
+                                        tabindex="-1"
+                                    >
+                                        <svg @class([
+                                            'h-4',
+                                            'dark:fill-current' => config('forms.dark_mode'),
+                                        ]) aria-hidden="true" focusable="false" data-prefix="fas" data-icon="underline" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><path fill="currentColor" d="M16 64c0-17.7 14.3-32 32-32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32h-16v128c0 53 43 96 96 96s96-43 96-96V96h-16c-17.7 0-32-14.3-32-32s14.3-32 32-32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32h-16v128c0 88.4-71.6 160-160 160S64 312.4 64 224V96H48c-17.7 0-32-14.3-32-32zM0 448c0-17.7 14.3-32 32-32h384c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32z"/></svg>
+                                    </x-forms::rich-editor.toolbar-button>
                                 @endif
 
                                 @if ($hasToolbarButton('strike'))
