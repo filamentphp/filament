@@ -4,6 +4,7 @@ const isDev = process.argv.includes('--dev')
 
 async function compile(options) {
     const ctx = await esbuild.context(options)
+
     if (isDev) {
         await ctx.watch()
     } else {
