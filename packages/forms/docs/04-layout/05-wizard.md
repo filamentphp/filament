@@ -37,7 +37,7 @@ Wizard\Step::make('Order')
     ]),
 ```
 
-> We have different setup instructions you're looking to add a wizard to the creation process inside an [app framework resource](../../app/resources/creating-records#using-a-wizard) or an [action modal](../../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
+> We have different setup instructions if you're looking to add a wizard to the creation process inside an [app framework resource](../../app/resources/creating-records#using-a-wizard) or an [action modal](../../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
 
 ## Rendering a submit button on the last step
 
