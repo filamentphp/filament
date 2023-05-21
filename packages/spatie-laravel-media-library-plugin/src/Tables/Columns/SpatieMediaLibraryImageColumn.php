@@ -13,8 +13,6 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
     protected string $conversion = '';
 
-    protected ?string $defaultImageUrl = null;
-
     public function collection(string $collection): static
     {
         $this->collection = $collection;
@@ -37,13 +35,6 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     public function getConversion(): string
     {
         return $this->conversion ?? '';
-    }
-
-    public function defaultImageUrl(?string $url): static
-    {
-        $this->defaultImageUrl = $url;
-
-        return $this;
     }
 
     public function getImagePath(): ?string
@@ -76,7 +67,9 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             return $state;
         }
 
-        return $record->getFirstMediaUrl($this->getCollection(), $this->getConversion()) ?? $this->defaultImageUrl;
+        $firstMediaUrl = $record->getFirstMediaUrl($this->getCollection(), $this->getConversion());
+
+        return !empty($firstMediaUrl) ? $firstMediaUrl : $this->defaultImageUrl;
     }
 
     public function applyEagerLoading(Builder | Relation $query): Builder | Relation
