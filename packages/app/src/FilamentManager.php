@@ -7,6 +7,7 @@ use Exception;
 use Filament\Contracts\Plugin;
 use Filament\Events\ServingFilament;
 use Filament\Events\TenantSet;
+use Filament\Exceptions\NoDefaultContextSetException;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
@@ -15,7 +16,10 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Assets\AssetManager;
+use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
+use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
@@ -124,12 +128,15 @@ class FilamentManager
         return $this->getCurrentContext()->getDefaultAvatarProvider();
     }
 
+    /**
+     * @throws NoDefaultContextSetException
+     */
     public function getDefaultContext(): Context
     {
         return Arr::first(
             $this->contexts,
             fn (Context $context): bool => $context->isDefault(),
-            fn () => throw new Exception('No default Filament context is set. You may do this with the `default()` method inside a Filament provider\'s `context()` configuration.'),
+            fn () => throw NoDefaultContextSetException::make(),
         );
     }
 
@@ -648,6 +655,155 @@ class FilamentManager
 
         if ($tenant) {
             event(new TenantSet($tenant, $this->auth()->user()));
+        }
+    }
+
+    /**
+     * @deprecated Use the `navigationGroups()` method on the context configuration instead.
+     *
+     * @param array<string | int, NavigationGroup | string> $groups
+     */
+    public function registerNavigationGroups(array $groups): void
+    {
+        try {
+            $this->getDefaultContext()->navigationGroups($groups);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `navigationGroups()` method on the context configuration to register navigation groups.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `navigationItems()` method on the context configuration instead.
+     *
+     * @param array<NavigationItem> $items
+     */
+    public function registerNavigationItems(array $items): void
+    {
+        try {
+            $this->getDefaultContext()->navigationItems($items);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `navigationItems()` method on the context configuration to register navigation items.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `pages()` method on the context configuration instead.
+     *
+     * @param array<class-string> $pages
+     */
+    public function registerPages(array $pages): void
+    {
+        try {
+            $this->getDefaultContext()->pages($pages);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `pages()` method on the context configuration to register pages.');
+        }
+    }
+
+    public function registerRenderHook(string $name, Closure $callback): void
+    {
+        try {
+            $this->getDefaultContext()->renderHook($name, $callback);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `renderHook()` method on the context configuration to register render hooks.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `resources()` method on the context configuration instead.
+     *
+     * @param array<class-string> $resources
+     */
+    public function registerResources(array $resources): void
+    {
+        try {
+            $this->getDefaultContext()->resources($resources);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `resources()` method on the context configuration to register resources.');
+        }
+    }
+
+    /**
+     * @deprecated Register scripts using the `FilamentAsset` facade instead.
+     *
+     * @param array<mixed> $scripts
+     */
+    public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
+    {
+        throw new Exception('Please use the `FilamentAsset` facade to register scripts.');
+    }
+
+    /**
+     * @deprecated Register script data using the `FilamentAsset` facade instead.
+     *
+     * @param array<string, mixed> $data
+     */
+    public function registerScriptData(array $data): void
+    {
+        FilamentAsset::registerScriptData($data);
+    }
+
+    /**
+     * @deprecated Register styles using the `FilamentAsset` facade instead.
+     *
+     * @param array<mixed> $styles
+     */
+    public function registerStyles(array $styles): void
+    {
+        throw new Exception('Please use the `FilamentAsset` facade to register styles.');
+    }
+
+    /**
+     * @deprecated Use the `theme()` method on the context configuration instead.
+     */
+    public function registerTheme(string | Htmlable | null $theme): void
+    {
+        try {
+            $this->getDefaultContext()->theme($theme);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `theme()` method on the context configuration to register themes.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `viteTheme()` method on the context configuration instead.
+     *
+     * @param string | array<string> $theme
+     */
+    public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
+    {
+        try {
+            $this->getDefaultContext()->viteTheme($theme, $buildDirectory);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `viteTheme()` method on the context configuration to register themes.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `userMenuItems()` method on the context configuration instead.
+     *
+     * @param array<MenuItem> $items
+     */
+    public function registerUserMenuItems(array $items): void
+    {
+        try {
+            $this->getDefaultContext()->userMenuItems($items);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `userMenuItems()` method on the context configuration to register user menu items.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `widgets()` method on the context configuration instead.
+     *
+     * @param array<class-string> $widgets
+     */
+    public function registerWidgets(array $widgets): void
+    {
+        try {
+            $this->getDefaultContext()->widgets($widgets);
+        } catch (NoDefaultContextSetException $exception) {
+            throw new Exception('Please use the `widgets()` method on the context configuration to register widgets.');
         }
     }
 }

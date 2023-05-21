@@ -35,7 +35,7 @@ class AssetManager
     /**
      * @param  array<Asset>  $assets
      */
-    public function register(array $assets, string $package): void
+    public function register(array $assets, ?string $package = null): void
     {
         foreach ($assets as $asset) {
             $asset->package($package);
@@ -53,7 +53,7 @@ class AssetManager
     /**
      * @param  array<string, mixed>  $data
      */
-    public function registerScriptData(array $data, string $package): void
+    public function registerScriptData(array $data, ?string $package = null): void
     {
         $this->scriptData[$package] = [
             ...($this->scriptData[$package] ?? []),
