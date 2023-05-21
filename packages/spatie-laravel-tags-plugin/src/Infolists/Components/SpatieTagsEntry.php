@@ -2,9 +2,6 @@
 
 namespace Filament\Infolists\Components;
 
-use Filament\Infolists\Components\TextEntry;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 
 class SpatieTagsEntry extends TextEntry
