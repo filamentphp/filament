@@ -34,6 +34,8 @@ class ImageColumn extends Column
      */
     protected array $extraImgAttributes = [];
 
+    protected string | Closure | null $defaultImageUrl = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -124,12 +126,19 @@ class ImageColumn extends Column
         return $height;
     }
 
+    public function defaultImageUrl(string | Closure | null $url): static
+    {
+        $this->defaultImageUrl = $url;
+
+        return $this;
+    }
+
     public function getImagePath(): ?string
     {
         $state = $this->getState();
 
         if (! $state) {
-            return null;
+            return $this->getDefaultImageUrl();
         }
 
         if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
@@ -159,6 +168,11 @@ class ImageColumn extends Column
         }
 
         return $storage->url($state);
+    }
+    
+    public function getDefaultImageUrl(): ?string
+    {
+        return $this->evaluate($this->defaultImageUrl);
     }
 
     public function getVisibility(): string
