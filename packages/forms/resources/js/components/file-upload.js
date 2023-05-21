@@ -422,7 +422,9 @@ export default function fileUploadFormComponent({
                 crop: (event) => {
                     this.$refs.inputX.value = Math.round(event.detail.x)
                     this.$refs.inputY.value = Math.round(event.detail.y)
-                    this.$refs.inputHeight.value = Math.round(event.detail.height)
+                    this.$refs.inputHeight.value = Math.round(
+                        event.detail.height,
+                    )
                     this.$refs.inputWidth.value = Math.round(event.detail.width)
                     this.$refs.inputRotate.value = event.detail.rotate
                 },
@@ -445,9 +447,9 @@ export default function fileUploadFormComponent({
         loadCropper: function (file) {
             if (disabled) return
 
-            if (! isCroppable) return
+            if (!isCroppable) return
 
-            if (! file) return
+            if (!file) return
 
             this.editingFile = file
 
@@ -464,7 +466,7 @@ export default function fileUploadFormComponent({
         saveCropper: function () {
             if (disabled) return
 
-            if (! isCroppable) return
+            if (!isCroppable) return
 
             this.cropper
                 .getCroppedCanvas({
@@ -476,7 +478,13 @@ export default function fileUploadFormComponent({
                 })
                 .toBlob((croppedImage) => {
                     this.pond.removeFile(
-                        this.pond.getFiles().find((uploadedFile) => uploadedFile.filename === this.editingFile.name)
+                        this.pond
+                            .getFiles()
+                            .find(
+                                (uploadedFile) =>
+                                    uploadedFile.filename ===
+                                    this.editingFile.name,
+                            ),
                     )
 
                     this.$nextTick(() => {
@@ -486,9 +494,11 @@ export default function fileUploadFormComponent({
                                     [croppedImage],
                                     this.editingFile.name,
                                     {
-                                        type: this.editingFile.type === 'image/svg+xml' ?
-                                            'image/png' :
-                                            this.editingFile.type,
+                                        type:
+                                            this.editingFile.type ===
+                                            'image/svg+xml'
+                                                ? 'image/png'
+                                                : this.editingFile.type,
                                         lastModified: new Date().getTime(),
                                     },
                                 ),
