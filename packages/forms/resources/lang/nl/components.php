@@ -204,6 +204,7 @@ return [
             'ordered_list' => 'Genummerde lijst',
             'redo' => 'Opnieuw uitvoeren',
             'strike' => 'Doorhalen',
+            'underline' => 'Onderstrepen',
             'undo' => 'Ongedaan maken',
         ],
 

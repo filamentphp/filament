@@ -29,6 +29,7 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
         'orderedList',
         'redo',
         'strike',
+        'underline',
         'undo',
     ];
 }
