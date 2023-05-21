@@ -25,7 +25,6 @@
     >
         <div x-show="state.length || @js(! $isDisabled)">
             <div 
-                x-bind:class="{ 'divide-y dark:divide-gray-600': state?.length }"
                 @class([
                     'block w-full transition duration-75 rounded-lg shadow-sm sm:text-sm border overflow-hidden focus-within:ring-1',
                     'border-gray-300 focus-within:border-primary-500 focus-within:ring-primary-500 dark:border-gray-600 dark:focus-within:border-primary-500' => ! $errors->has($statePath),
@@ -83,7 +82,7 @@
                         x-if="state.length"
                         x-cloak
                     >
-                        <div class="relative w-full p-2 overflow-hidden flex flex-wrap gap-1">
+                        <div class="relative w-full p-2 overflow-hidden flex flex-wrap gap-1 border-t dark:border-gray-600">
                             <template class="hidden" x-for="tag in state" x-bind:key="tag">
                                 <button
                                     @unless ($isDisabled)
