@@ -163,7 +163,7 @@ class ImageColumn extends Column
 
         return $storage->url($state);
     }
-    
+
     public function getDefaultImageUrl(): ?string
     {
         return $this->evaluate($this->defaultImageUrl);
