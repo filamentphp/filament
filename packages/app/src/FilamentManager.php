@@ -16,8 +16,6 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-use Filament\Support\Assets\AssetManager;
-use Filament\Support\Assets\Js;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -661,7 +659,7 @@ class FilamentManager
     /**
      * @deprecated Use the `navigationGroups()` method on the context configuration instead.
      *
-     * @param array<string | int, NavigationGroup | string> $groups
+     * @param  array<string | int, NavigationGroup | string>  $groups
      */
     public function registerNavigationGroups(array $groups): void
     {
@@ -675,7 +673,7 @@ class FilamentManager
     /**
      * @deprecated Use the `navigationItems()` method on the context configuration instead.
      *
-     * @param array<NavigationItem> $items
+     * @param  array<NavigationItem>  $items
      */
     public function registerNavigationItems(array $items): void
     {
@@ -689,7 +687,7 @@ class FilamentManager
     /**
      * @deprecated Use the `pages()` method on the context configuration instead.
      *
-     * @param array<class-string> $pages
+     * @param  array<class-string>  $pages
      */
     public function registerPages(array $pages): void
     {
@@ -712,7 +710,7 @@ class FilamentManager
     /**
      * @deprecated Use the `resources()` method on the context configuration instead.
      *
-     * @param array<class-string> $resources
+     * @param  array<class-string>  $resources
      */
     public function registerResources(array $resources): void
     {
@@ -726,7 +724,7 @@ class FilamentManager
     /**
      * @deprecated Register scripts using the `FilamentAsset` facade instead.
      *
-     * @param array<mixed> $scripts
+     * @param  array<mixed>  $scripts
      */
     public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
     {
@@ -736,7 +734,7 @@ class FilamentManager
     /**
      * @deprecated Register script data using the `FilamentAsset` facade instead.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     public function registerScriptData(array $data): void
     {
@@ -746,7 +744,7 @@ class FilamentManager
     /**
      * @deprecated Register styles using the `FilamentAsset` facade instead.
      *
-     * @param array<mixed> $styles
+     * @param  array<mixed>  $styles
      */
     public function registerStyles(array $styles): void
     {
@@ -768,7 +766,7 @@ class FilamentManager
     /**
      * @deprecated Use the `viteTheme()` method on the context configuration instead.
      *
-     * @param string | array<string> $theme
+     * @param  string | array<string>  $theme
      */
     public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
     {
@@ -782,7 +780,7 @@ class FilamentManager
     /**
      * @deprecated Use the `userMenuItems()` method on the context configuration instead.
      *
-     * @param array<MenuItem> $items
+     * @param  array<MenuItem>  $items
      */
     public function registerUserMenuItems(array $items): void
     {
@@ -796,7 +794,7 @@ class FilamentManager
     /**
      * @deprecated Use the `widgets()` method on the context configuration instead.
      *
-     * @param array<class-string> $widgets
+     * @param  array<class-string>  $widgets
      */
     public function registerWidgets(array $widgets): void
     {
