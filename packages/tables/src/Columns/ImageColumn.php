@@ -36,13 +36,6 @@ class ImageColumn extends Column
 
     protected string | Closure | null $defaultImageUrl = null;
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->disk(config('filament.default_filesystem_disk'));
-    }
-
     public function disk(string | Closure | null $disk): static
     {
         $this->disk = $disk;
@@ -169,7 +162,7 @@ class ImageColumn extends Column
 
         return $storage->url($state);
     }
-    
+
     public function getDefaultImageUrl(): ?string
     {
         return $this->evaluate($this->defaultImageUrl);
