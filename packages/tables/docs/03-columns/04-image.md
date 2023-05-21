@@ -66,6 +66,17 @@ ImageColumn::make('header_image')->height(50)
 ImageColumn::make('author.avatar')->size(40)
 ```
 
+## Adding a default image URL
+
+You can display a placeholder image if one doesn't exist yet, by passing a URL to the `defaultImageUrl()` method:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('avatar')
+    ->defaultImageUrl(url('/images/placeholder.png'))
+```
+
 ## Custom attributes
 
 You may customize the extra HTML attributes of the image using `extraImgAttributes()`:

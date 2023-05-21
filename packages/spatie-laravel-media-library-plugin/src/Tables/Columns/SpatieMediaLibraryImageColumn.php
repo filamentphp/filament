@@ -67,7 +67,9 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             return $state;
         }
 
-        return $record->getFirstMediaUrl($this->getCollection(), $this->getConversion());
+        $firstMediaUrl = $record->getFirstMediaUrl($this->getCollection(), $this->getConversion());
+
+        return filled($firstMediaUrl) ? $firstMediaUrl : $this->getDefaultImageUrl();
     }
 
     public function applyEagerLoading(Builder | Relation $query): Builder | Relation
