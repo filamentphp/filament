@@ -39,7 +39,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $this->conversion ?? '';
     }
 
-    public function defaultImageUrl(string $url): static
+    public function defaultImageUrl(?string $url): static
     {
         $this->defaultImageUrl = $url;
 
