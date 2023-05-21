@@ -28,6 +28,8 @@ class ImageColumn extends Column
 
     protected array $extraImgAttributes = [];
 
+    protected ?string $defaultImageUrl = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -118,12 +120,19 @@ class ImageColumn extends Column
         return $height;
     }
 
+    public function defaultImageUrl(?string $url): static
+    {
+        $this->defaultImageUrl = $url;
+
+        return $this;
+    }
+
     public function getImagePath(): ?string
     {
         $state = $this->getState();
 
         if (! $state) {
-            return null;
+            return $this->defaultImageUrl;
         }
 
         if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
