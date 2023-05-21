@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications\Actions;
 
+use Closure;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
 use Illuminate\Contracts\Support\Arrayable;
@@ -11,6 +12,10 @@ class Action extends StaticAction implements Arrayable, Groupable
 {
     protected string $viewIdentifier = 'action';
 
+    protected bool | Closure $shouldMarkAsRead = false;
+
+    protected bool | Closure $shouldMarkAsUnread = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -18,6 +23,20 @@ class Action extends StaticAction implements Arrayable, Groupable
         $this->defaultView(static::LINK_VIEW);
 
         $this->defaultSize('sm');
+    }
+
+    public function markAsRead(bool | Closure $condition = true): static
+    {
+        $this->shouldMarkAsRead = $condition;
+
+        return $this;
+    }
+
+    public function markAsUnread(bool | Closure $condition = true): static
+    {
+        $this->shouldMarkAsUnread = $condition;
+
+        return $this;
     }
 
     /**
@@ -40,6 +59,8 @@ class Action extends StaticAction implements Arrayable, Groupable
             'isDisabled' => $this->isDisabled(),
             'label' => $this->getLabel(),
             'shouldClose' => $this->shouldClose(),
+            'shouldMarkAsRead' => $this->shouldMarkAsRead(),
+            'shouldMarkAsUnread' => $this->shouldMarkAsUnread(),
             'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
             'size' => $this->getSize(),
             'url' => $this->getUrl(),
@@ -80,10 +101,25 @@ class Action extends StaticAction implements Arrayable, Groupable
         $static->iconPosition($data['iconPosition'] ?? null);
         $static->iconSize($data['iconSize'] ?? null);
         $static->label($data['label'] ?? null);
+        $static->markAsRead($data['shouldMarkAsRead'] ?? false);
+        $static->markAsUnread($data['shouldMarkAsUnread'] ?? false);
         $static->outlined($data['isOutlined'] ?? false);
         $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
 
         return $static;
+    }
+
+    public function getAlpineClickHandler(): ?string
+    {
+        if ($this->shouldMarkAsRead()) {
+            return 'markAsRead()';
+        }
+
+        if ($this->shouldMarkAsUnread()) {
+            return 'markAsUnread()';
+        }
+
+        return parent::getAlpineClickHandler();
     }
 
     /**
@@ -92,5 +128,15 @@ class Action extends StaticAction implements Arrayable, Groupable
     protected static function isViewSafe(string $view): bool
     {
         return Str::startsWith($view, 'filament-actions::');
+    }
+
+    public function shouldMarkAsRead(): bool
+    {
+        return (bool) $this->evaluate($this->shouldMarkAsRead);
+    }
+
+    public function shouldMarkAsUnread(): bool
+    {
+        return (bool) $this->evaluate($this->shouldMarkAsUnread);
     }
 }

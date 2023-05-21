@@ -52,4 +52,44 @@ trait HasComponents
             fn (Component $component) => $component->isVisible(),
         );
     }
+
+    public function getComponent(string | Closure $callback, bool $withHidden = false): ?Component
+    {
+        if (is_string($callback)) {
+            $callback = static function (Component $component) use ($callback): bool {
+                $key = $component->getKey();
+
+                if ($key === null) {
+                    return false;
+                }
+
+                return $key === $callback;
+            };
+        }
+
+        return collect($this->getFlatComponents($withHidden))->first($callback);
+    }
+
+    /**
+     * @return array<Component>
+     */
+    public function getFlatComponents(bool $withHidden = false): array
+    {
+        return array_reduce(
+            $this->getComponents($withHidden),
+            function (array $carry, Component $component) use ($withHidden): array {
+                $carry[] = $component;
+
+                foreach ($component->getChildComponentContainers($withHidden) as $childComponentContainer) {
+                    $carry = [
+                        ...$carry,
+                        ...$childComponentContainer->getFlatComponents($withHidden),
+                    ];
+                }
+
+                return $carry;
+            },
+            initial: [],
+        );
+    }
 }

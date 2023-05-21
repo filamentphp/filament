@@ -97,14 +97,6 @@ return [
 
         'heading' => 'Keine Datensätze gefunden',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Suche zurücksetzen',
-            ],
-
-        ],
-
     ],
 
     'filters' => [

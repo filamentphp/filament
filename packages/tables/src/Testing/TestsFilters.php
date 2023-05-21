@@ -22,7 +22,7 @@ class TestsFilters
     public function filterTable(): Closure
     {
         return function (string $name, $data = null): static {
-            $name = $this->instance()->parseFilterName($name);
+            $name = $this->instance()->parseTableFilterName($name);
 
             /** @phpstan-ignore-next-line */
             $this->assertTableFilterExists($name);
@@ -66,7 +66,7 @@ class TestsFilters
     public function removeTableFilter(): Closure
     {
         return function (string $filter, ?string $field = null): static {
-            $this->call('removeTableFilter', $this->instance()->parseFilterName($filter), $field);
+            $this->call('removeTableFilter', $this->instance()->parseTableFilterName($filter), $field);
 
             return $this;
         };
@@ -84,7 +84,7 @@ class TestsFilters
     public function assertTableFilterExists(): Closure
     {
         return function (string $name): static {
-            $name = $this->instance()->parseFilterName($name);
+            $name = $this->instance()->parseTableFilterName($name);
 
             $filter = $this->instance()->getTable()->getFilter($name);
 

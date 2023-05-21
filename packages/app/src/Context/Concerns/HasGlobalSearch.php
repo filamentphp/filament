@@ -8,11 +8,16 @@ use Filament\GlobalSearch\DefaultGlobalSearchProvider;
 
 trait HasGlobalSearch
 {
-    protected string $globalSearchProvider = DefaultGlobalSearchProvider::class;
+    /**
+     * @var array<string>
+     */
+    protected array $globalSearchKeyBindings = [];
 
-    public function globalSearchProvider(string $provider): static
+    protected string | bool $globalSearchProvider = true;
+
+    public function globalSearch(string | bool $provider = true): static
     {
-        if (! in_array(GlobalSearchProvider::class, class_implements($provider))) {
+        if (is_string($provider) && (! in_array(GlobalSearchProvider::class, class_implements($provider)))) {
             throw new Exception("Global search provider {$provider} does not implement the " . GlobalSearchProvider::class . ' interface.');
         }
 
@@ -21,8 +26,36 @@ trait HasGlobalSearch
         return $this;
     }
 
-    public function getGlobalSearchProvider(): GlobalSearchProvider
+    /**
+     * @param  array<string>  $keyBindings
+     */
+    public function globalSearchKeyBindings(array $keyBindings): static
     {
-        return app($this->globalSearchProvider);
+        $this->globalSearchKeyBindings = $keyBindings;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getGlobalSearchKeyBindings(): array
+    {
+        return $this->globalSearchKeyBindings;
+    }
+
+    public function getGlobalSearchProvider(): ?GlobalSearchProvider
+    {
+        $provider = $this->globalSearchProvider;
+
+        if ($provider === false) {
+            return null;
+        }
+
+        if ($provider === true) {
+            $provider = DefaultGlobalSearchProvider::class;
+        }
+
+        return app($provider);
     }
 }

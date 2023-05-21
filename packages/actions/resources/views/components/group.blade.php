@@ -2,6 +2,7 @@
     'actions' => [],
     'button' => false,
     'color' => null,
+    'divided' => false,
     'dropdownPlacement' => null,
     'dynamicComponent' => null,
     'group' => null,
@@ -20,6 +21,7 @@
     @php
         $group = \Filament\Actions\ActionGroup::make($actions)
             ->color($color)
+            ->divided($divided)
             ->dropdownPlacement($dropdownPlacement)
             ->icon($icon)
             ->indicator($indicator)
@@ -43,9 +45,46 @@
     @endphp
 
     {{ $group }}
+@elseif (! $group->hasDropdown())
+    @foreach ($group->getActions() as $action)
+        @if ($action->isVisible())
+            {{ $action }}
+        @endif
+    @endforeach
 @else
+    @php
+        $actionLists = [];
+        $singleActions = [];
+
+        foreach ($group->getActions() as $action) {
+            if ($action->isHidden()) {
+                continue;
+            }
+
+            if ($action instanceof \Filament\Actions\ActionGroup && (! $action->hasDropdown())) {
+                if (count($singleActions)) {
+                    $actionLists[] = $singleActions;
+                    $singleActions = [];
+                }
+
+                $actionLists[] = array_filter(
+                    $action->getActions(),
+                    fn ($action): bool => $action->isVisible(),
+                );
+            } else {
+                $singleActions[] = $action;
+            }
+        }
+
+        if (count($singleActions)) {
+            $actionLists[] = $singleActions;
+        }
+    @endphp
+
     <x-filament::dropdown
+        :max-height="$group->getDropdownMaxHeight()"
         :placement="$group->getDropdownPlacement() ?? 'bottom-start'"
+        :width="$group->getDropdownWidth()"
         teleport
     >
         <x-slot name="trigger">
@@ -64,12 +103,12 @@
             </x-dynamic-component>
         </x-slot>
 
-        <x-filament::dropdown.list>
-            @foreach ($group->getActions() as $action)
-                @if ($action->isVisible())
+        @foreach ($actionLists as $actions)
+            <x-filament::dropdown.list>
+                @foreach ($actions as $action)
                     {{ $action }}
-                @endif
-            @endforeach
-        </x-filament::dropdown.list>
+                @endforeach
+            </x-filament::dropdown.list>
+        @endforeach
     </x-filament::dropdown>
 @endif

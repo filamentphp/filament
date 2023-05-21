@@ -22,7 +22,7 @@
     );
 @endphp
 
-<div {{ $attributes->class(['filament-input-affix-container flex rtl:space-x-reverse group']) }}>
+<div {{ $attributes->class(['filament-forms-affix-container flex rtl:space-x-reverse group']) }}>
     @if (count($prefixActions))
         <div class="self-stretch flex gap-1 items-center pe-2">
             @foreach ($prefixActions as $prefixAction)
@@ -33,19 +33,19 @@
 
     @if ($prefixIcon)
         <span
-            @class(array_merge(
-                [$baseAffixClasses],
-                ['rounded-s-lg -me-px'],
-            ))
+            @class([
+                $baseAffixClasses,
+                'rounded-s-lg -me-px',
+            ])
             @if (filled($statePath))
                 x-bind:class="{
-                'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
-            }"
+                    'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                }"
             @endif
         >
             <x-filament::icon
-                alias="support::input.affixes.prefix"
+                alias="forms::components.affixes.prefix"
                 :name="$prefixIcon"
                 size="h-5 w-5"
                 class="filament-input-affix-icon"
@@ -53,12 +53,12 @@
         </span>
     @endif
 
-    @if ($prefix)
+    @if (filled($prefix))
         <span
             @class([
-                    'filament-input-affix-label -me-px',
-                    $baseAffixClasses,
-                    'rounded-s-lg' => ! $prefixIcon
+                'filament-input-affix-label -me-px',
+                $baseAffixClasses,
+                'rounded-s-lg' => ! $prefixIcon
             ])
             @if (filled($statePath))
                 x-bind:class="{
@@ -75,12 +75,12 @@
         {{ $slot }}
     </div>
 
-    @if ($suffix)
+    @if (filled($suffix))
         <span
             @class([
-                    'filament-input-affix-label -ms-px',
-                    $baseAffixClasses,
-                    'rounded-e-lg' => ! $suffixIcon
+                'filament-input-affix-label -ms-px',
+                $baseAffixClasses,
+                'rounded-e-lg' => ! $suffixIcon
             ])
             @if (filled($statePath))
                 x-bind:class="{
@@ -95,19 +95,19 @@
 
     @if ($suffixIcon)
         <span
-            @class(array_merge(
-                [$baseAffixClasses],
-                ['rounded-e-lg -ms-px'],
-            ))
+            @class([
+                $baseAffixClasses,
+                'rounded-e-lg -ms-px',
+            ])
             @if (filled($statePath))
                 x-bind:class="{
-                'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
-            }"
+                    'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                }"
             @endif
         >
             <x-filament::icon
-                alias="support::input.affixes.suffix"
+                alias="forms::components.affixes.suffix"
                 :name="$suffixIcon"
                 size="h-5 w-5"
                 class="filament-input-affix-icon"

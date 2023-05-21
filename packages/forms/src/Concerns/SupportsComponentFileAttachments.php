@@ -11,7 +11,7 @@ trait SupportsComponentFileAttachments
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof HasFileAttachments && $component instanceof Field && $component->getStatePath() === $statePath) {
-                $attachment = $this->getLivewire()->getComponentFileAttachment($statePath);
+                $attachment = $this->getLivewire()->getFormComponentFileAttachment($statePath);
 
                 if (! $attachment) {
                     return null;

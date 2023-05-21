@@ -50,7 +50,7 @@ trait HasChildComponents
             return $this->getChildComponentContainers()[$key];
         }
 
-        return ComponentContainer::make()
+        return ComponentContainer::make($this->getLivewire())
             ->parentComponent($this)
             ->components($this->getChildComponents());
     }

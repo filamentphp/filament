@@ -15,6 +15,7 @@
             false => match ($badgeColor) {
                 'danger' => 'text-danger-700 bg-danger-500/10 dark:text-danger-500',
                 'gray' => 'text-gray-700 bg-gray-500/10 dark:text-gray-500',
+                'info' => 'text-info-700 bg-info-500/10 dark:text-info-500',
                 'primary', null => 'text-primary-700 bg-primary-500/10 dark:text-primary-500',
                 'secondary' => 'text-secondary-700 bg-secondary-500/10 dark:text-secondary-500',
                 'success' => 'text-success-700 bg-success-500/10 dark:text-success-500',

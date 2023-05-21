@@ -6,11 +6,11 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'डार्क मोड टॉगल करें',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'लाइट मोड टॉगल करें',
         ],
 

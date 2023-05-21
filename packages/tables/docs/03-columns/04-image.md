@@ -75,6 +75,17 @@ ImageColumn::make('author.avatar')
     ->size(40)
 ```
 
+## Adding a default image URL
+
+You can display a placeholder image if one doesn't exist yet, by passing a URL to the `defaultImageUrl()` method:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('avatar')
+    ->defaultImageUrl(url('/images/placeholder.png'))
+```
+
 ## Custom attributes
 
 You may customize the extra HTML attributes of the image using `extraImgAttributes()`:
@@ -83,5 +94,16 @@ You may customize the extra HTML attributes of the image using `extraImgAttribut
 use Filament\Tables\Columns\ImageColumn;
 
 ImageColumn::make('logo')
-    ->extraImgAttributes(['title' => 'Company logo']),
+    ->extraImgAttributes(['loading' => 'lazy']),
+```
+
+You can access the current record using a `$record` parameter:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('logo')
+    ->extraImgAttributes(fn (Company $record): array => [
+        'alt' => "{$record->name} logo",
+    ]),
 ```

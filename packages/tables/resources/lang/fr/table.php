@@ -96,14 +96,6 @@ return [
 
         'heading' => 'Aucun élément trouvé',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Effacer la recherche de colonne',
-            ],
-
-        ],
-
     ],
 
     'filters' => [

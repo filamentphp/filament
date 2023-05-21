@@ -16,7 +16,10 @@ trait HasIcons
      */
     public function icons(array $icons): static
     {
-        $this->icons = array_merge($this->icons, $icons);
+        $this->icons = [
+            ...$this->icons,
+            ...$icons,
+        ];
 
         return $this;
     }

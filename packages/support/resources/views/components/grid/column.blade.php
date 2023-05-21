@@ -40,7 +40,7 @@
         @if ($twoXlStart) --col-start-2xl: {{ $twoXlStart }}; @endif
     "
     {{ $attributes->class([
-        'hidden' => $hidden,
+        'hidden' => $hidden || $default === 'hidden',
         'col-[--col-span-default]' => $default && (! $hidden),
         'sm:col-[--col-span-sm]' => $sm && (! $hidden),
         'md:col-[--col-span-md]' => $md && (! $hidden),

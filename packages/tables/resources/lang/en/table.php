@@ -27,13 +27,14 @@ return [
         'search' => [
             'label' => 'Search',
             'placeholder' => 'Search',
+            'indicator' => 'Search',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Pagination navigation',
 
         'overview' => '{1} Showing 1 result|[2,*] Showing :first to :last of :total results',
 
@@ -128,14 +129,6 @@ return [
     'empty' => [
 
         'heading' => 'No records found',
-
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Clear column search',
-            ],
-
-        ],
 
     ],
 

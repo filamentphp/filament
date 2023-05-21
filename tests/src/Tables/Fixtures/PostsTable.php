@@ -4,6 +4,8 @@ namespace Filament\Tests\Tables\Fixtures;
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
@@ -12,8 +14,9 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder;
 use Livewire\Component;
 
-class PostsTable extends Component implements Tables\Contracts\HasTable
+class PostsTable extends Component implements HasForms, Tables\Contracts\HasTable
 {
+    use InteractsWithForms;
     use Tables\Concerns\InteractsWithTable;
 
     public function table(Table $table): Table

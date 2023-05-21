@@ -50,8 +50,6 @@ class Placeholder extends Component implements Contracts\HasHintActions
 
     public function getContent(): mixed
     {
-        return $this->evaluate(
-            $this->content,
-        );
+        return $this->evaluate($this->content);
     }
 }

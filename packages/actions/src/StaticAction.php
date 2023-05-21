@@ -13,6 +13,8 @@ class StaticAction extends ViewComponent
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
     use Concerns\CanBeInline;
+    use Concerns\CanBeLabeledFrom;
+    use Concerns\CanBeOutlined;
     use Concerns\CanCallParentAction;
     use Concerns\CanClose;
     use Concerns\CanEmitEvent;
@@ -27,7 +29,6 @@ class StaticAction extends ViewComponent
     use Concerns\HasKeyBindings;
     use Concerns\HasLabel;
     use Concerns\HasName;
-    use Concerns\CanBeOutlined;
     use Concerns\HasSize;
     use Concerns\HasTooltip;
     use Conditionable;

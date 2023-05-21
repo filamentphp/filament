@@ -97,14 +97,6 @@ return [
 
         'heading' => 'No se encontraron registros',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Limpiar la búsqueda de columna',
-            ],
-
-        ],
-
     ],
 
     'filters' => [

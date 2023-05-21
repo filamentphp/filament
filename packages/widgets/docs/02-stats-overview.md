@@ -60,7 +60,7 @@ protected function getCards(): array
 
 ## Changing the color of the card
 
-You may also give cards a `color()` (`primary`, `success`, `warning` or `danger`):
+You may also give cards a `color()` (`danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`):
 
 ```php
 protected function getCards(): array

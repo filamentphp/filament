@@ -25,7 +25,7 @@ trait InteractsWithTableQuery
         return $this;
     }
 
-    public function applyRelationshipAggregates(EloquentBuilder $query): EloquentBuilder
+    public function applyRelationshipAggregates(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
         return $query->when(
             filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
@@ -48,13 +48,19 @@ trait InteractsWithTableQuery
         );
     }
 
-    public function applyEagerLoading(EloquentBuilder $query): EloquentBuilder
+    public function applyEagerLoading(EloquentBuilder | Relation $query): EloquentBuilder | Relation
     {
         if (! $this->queriesRelationships($query->getModel())) {
             return $query;
         }
 
-        return $query->with([$this->getRelationshipName()]);
+        $relationshipName = $this->getRelationshipName();
+
+        if (array_key_exists($relationshipName, $query->getEagerLoads())) {
+            return $query;
+        }
+
+        return $query->with([$relationshipName]);
     }
 
     public function applySearchConstraint(EloquentBuilder $query, string $search, bool &$isFirst): EloquentBuilder
@@ -212,19 +218,22 @@ trait InteractsWithTableQuery
 
             if ($currentRelationshipValue instanceof Collection) {
                 if (! count($relationships)) {
-                    $results = array_merge($results, $currentRelationshipValue->all());
+                    $results = [
+                        ...$results,
+                        ...$currentRelationshipValue->all(),
+                    ];
 
                     continue;
                 }
 
                 foreach ($currentRelationshipValue as $valueRecord) {
-                    $results = array_merge(
-                        $results,
-                        $this->getRelationshipResults(
+                    $results = [
+                        ...$results,
+                        ...$this->getRelationshipResults(
                             $valueRecord,
                             $relationships,
                         ),
-                    );
+                    ];
                 }
 
                 break;

@@ -38,6 +38,9 @@ class InfolistsServiceProvider extends PackageServiceProvider
             $aliases[] = $class;
         }
 
-        return array_merge($commands, $aliases);
+        return [
+            ...$commands,
+            ...$aliases,
+        ];
     }
 }

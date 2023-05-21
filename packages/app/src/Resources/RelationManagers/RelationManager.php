@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManagers;
 
 use Filament\Facades\Filament;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
@@ -17,8 +18,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
 
-class RelationManager extends Component implements Tables\Contracts\HasTable
+class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
+    use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
     }
@@ -32,6 +34,10 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     protected static ?string $title = null;
 
     protected static ?string $icon = null;
+
+    protected static ?string $iconColor = null;
+
+    protected static ?string $iconPosition = 'before';
 
     protected static ?string $badge = null;
 
@@ -317,6 +323,16 @@ class RelationManager extends Component implements Tables\Contracts\HasTable
     public static function getIcon(Model $ownerRecord, string $pageClass): ?string
     {
         return static::$icon;
+    }
+
+    public static function getIconColor(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$iconColor;
+    }
+
+    public static function getIconPosition(Model $ownerRecord, string $pageClass): ?string
+    {
+        return static::$iconPosition;
     }
 
     public static function getBadge(Model $ownerRecord, string $pageClass): ?string

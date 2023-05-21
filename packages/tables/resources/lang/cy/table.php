@@ -97,14 +97,6 @@ return [
 
         'heading' => 'Ni ddarganfuwyd unrhyw gofnodion',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Clirio colofn chwilio',
-            ],
-
-        ],
-
     ],
 
     'filters' => [

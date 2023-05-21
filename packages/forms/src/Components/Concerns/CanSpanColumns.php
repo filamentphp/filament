@@ -41,7 +41,10 @@ trait CanSpanColumns
             ];
         }
 
-        $this->columnSpan = array_merge($this->columnSpan, $span);
+        $this->columnSpan = [
+            ...$this->columnSpan,
+            ...$span,
+        ];
 
         return $this;
     }
@@ -64,7 +67,10 @@ trait CanSpanColumns
             ];
         }
 
-        $this->columnStart = array_merge($this->columnStart, $start);
+        $this->columnStart = [
+            ...$this->columnStart,
+            ...$start,
+        ];
 
         return $this;
     }

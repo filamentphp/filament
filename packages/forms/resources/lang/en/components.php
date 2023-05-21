@@ -207,6 +207,7 @@ return [
             'ordered_list' => 'Numbered list',
             'redo' => 'Redo',
             'strike' => 'Strikethrough',
+            'underline' => 'Underline',
             'undo' => 'Undo',
         ],
 

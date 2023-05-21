@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Σκοτεινή λειτουργία',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Προβολή ειδοποιήσεων',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Φωτεινή λειτουργία',
         ],
 

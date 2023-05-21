@@ -75,6 +75,17 @@ ImageEntry::make('author.avatar')
     ->size(40)
 ```
 
+## Adding a default image URL
+
+You can display a placeholder image if one doesn't exist yet, by passing a URL to the `defaultImageUrl()` method:
+
+```php
+use Filament\Infolists\Components\ImageEntry;
+
+ImageEntry::make('avatar')
+    ->defaultImageUrl(url('/images/placeholder.png'))
+```
+
 ## Custom attributes
 
 You may customize the extra HTML attributes of the image using `extraImgAttributes()`:
@@ -83,5 +94,8 @@ You may customize the extra HTML attributes of the image using `extraImgAttribut
 use Filament\Infolists\Components\ImageEntry;
 
 ImageEntry::make('logo')
-    ->extraImgAttributes(['title' => 'Company logo']),
+    ->extraImgAttributes([
+        'alt' => 'Logo',
+        'loading' => 'lazy',
+    ]),
 ```

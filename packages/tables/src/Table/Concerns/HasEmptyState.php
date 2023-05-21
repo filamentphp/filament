@@ -7,6 +7,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Arr;
 use InvalidArgumentException;
 
 trait HasEmptyState
@@ -20,7 +21,7 @@ trait HasEmptyState
     protected string | Closure | null $emptyStateIcon = null;
 
     /**
-     * @var array<string, Action | ActionGroup>
+     * @var array<Action | ActionGroup>
      */
     protected array $emptyStateActions = [];
 
@@ -43,14 +44,21 @@ trait HasEmptyState
      */
     public function emptyStateActions(array | ActionGroup $actions): static
     {
-        foreach ($actions as $action) {
-            if (! $action instanceof Action) {
-                throw new InvalidArgumentException('Table empty state actions must be an instance of ' . Action::class . '.');
-            }
-
+        foreach (Arr::wrap($actions) as $action) {
             $action->table($this);
 
-            $this->emptyStateActions[$action->getName()] = $action;
+            if ($action instanceof ActionGroup) {
+                /** @var array<string, Action> $flatActions */
+                $flatActions = $action->getFlatActions();
+
+                $this->mergeCachedFlatActions($flatActions);
+            } elseif ($action instanceof Action) {
+                $this->cacheAction($action);
+            } else {
+                throw new InvalidArgumentException('Table empty state actions must be an instance of ' . Action::class . ' or ' . ActionGroup::class . '.');
+            }
+
+            $this->emptyStateActions[] = $action;
         }
 
         return $this;
@@ -76,40 +84,11 @@ trait HasEmptyState
     }
 
     /**
-     * @return array<string, Action | ActionGroup>
+     * @return array<Action | ActionGroup>
      */
     public function getEmptyStateActions(): array
     {
         return $this->emptyStateActions;
-    }
-
-    /**
-     * @param  string | array<string>  $name
-     */
-    public function getEmptyStateAction(string | array $name): ?Action
-    {
-        if (is_string($name) && str($name)->contains('.')) {
-            $name = explode('.', $name);
-        }
-
-        if (is_array($name)) {
-            $firstName = array_shift($name);
-            $modalActionNames = $name;
-
-            $name = $firstName;
-        }
-
-        $action = $this->getEmptyStateActions()[$name] ?? null;
-
-        if (! $action) {
-            return null;
-        }
-
-        return $this->getMountableModalActionFromAction(
-            $action,
-            modalActionNames: $modalActionNames ?? [],
-            parentActionName: $name,
-        );
     }
 
     public function getEmptyStateDescription(): string | Htmlable | null

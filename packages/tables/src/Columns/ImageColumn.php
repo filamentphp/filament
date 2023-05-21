@@ -34,12 +34,7 @@ class ImageColumn extends Column
      */
     protected array $extraImgAttributes = [];
 
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->disk(config('filament.default_filesystem_disk'));
-    }
+    protected string | Closure | null $defaultImageUrl = null;
 
     public function disk(string | Closure | null $disk): static
     {
@@ -124,12 +119,19 @@ class ImageColumn extends Column
         return $height;
     }
 
+    public function defaultImageUrl(string | Closure | null $url): static
+    {
+        $this->defaultImageUrl = $url;
+
+        return $this;
+    }
+
     public function getImagePath(): ?string
     {
         $state = $this->getState();
 
         if (! $state) {
-            return null;
+            return $this->getDefaultImageUrl();
         }
 
         if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
@@ -159,6 +161,11 @@ class ImageColumn extends Column
         }
 
         return $storage->url($state);
+    }
+
+    public function getDefaultImageUrl(): ?string
+    {
+        return $this->evaluate($this->defaultImageUrl);
     }
 
     public function getVisibility(): string

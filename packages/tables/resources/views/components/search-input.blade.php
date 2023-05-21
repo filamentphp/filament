@@ -16,9 +16,9 @@
         <input
             wire:model.debounce.500ms="{{ $wireModel }}"
             placeholder="{{ __('filament-tables::table.fields.search.placeholder') }}"
-            type="search"
+            type="text"
             autocomplete="off"
-            class="block w-full max-w-xs h-9 ps-9 placeholder-gray-400 transition duration-75 border-gray-300 rounded-lg shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
+            class="block w-full max-w-xs min-w-[8rem] h-9 ps-9 placeholder-gray-400 transition duration-75 border-gray-300 rounded-lg shadow-sm outline-none sm:text-sm focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400"
         />
 
         <span class="sr-only">

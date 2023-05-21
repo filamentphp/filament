@@ -164,6 +164,10 @@ During v2, we noticed performance issues with Blade icon components. We've decid
 
 A side effect of this change is that all custom icons that you use must now be [registered in a set](https://github.com/blade-ui-kit/blade-icons#defining-sets). We no longer allow arbitrary Blade components to be used as custom icons.
 
+#### Logo customization
+
+In v2, you can customize the logo of the admin panel using a `brand.blade.php` file. In v3, this has been renamed to `logo.blade.php`.
+
 #### Plugins
 
 Filament v3 has a new universal plugin system that breaches the constraints of the admin panel. Learn how to build v3 plugins [here](plugins).

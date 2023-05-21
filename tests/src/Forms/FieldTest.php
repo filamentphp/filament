@@ -36,5 +36,14 @@ it('has state binding modifiers', function () {
         ->stateBindingModifiers($modifiers = [Str::random(), Str::random()]);
 
     expect($field)
-        ->applyStateBindingModifiers($expression = Str::random())->toBe(implode('.', array_merge([$expression], $modifiers)));
+        ->applyStateBindingModifiers($expression = Str::random())
+        ->toBe(
+            implode(
+                '.',
+                [
+                    $expression,
+                    ...$modifiers,
+                ],
+            ),
+        );
 });

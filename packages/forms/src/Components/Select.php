@@ -231,9 +231,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     'form' => $form,
                 ]);
 
-                $state = $component->isMultiple() ?
-                    array_merge($component->getState(), [$createdOptionKey]) :
-                    $createdOptionKey;
+                $state = $component->isMultiple()
+                    ? [
+                        ...$component->getState(),
+                        $createdOptionKey,
+                    ]
+                    : $createdOptionKey;
 
                 $component->state($state);
                 $component->callAfterStateUpdated();

@@ -54,9 +54,9 @@ abstract class TestCase extends BaseTestCase
     {
         $app['config']->set('auth.passwords.users.table', 'password_reset_tokens');
         $app['config']->set('auth.providers.users.model', User::class);
-        $app['config']->set('view.paths', array_merge(
-            $app['config']->get('view.paths'),
-            [__DIR__ . '/../resources/views'],
-        ));
+        $app['config']->set('view.paths', [
+            ...$app['config']->get('view.paths'),
+            __DIR__ . '/../resources/views',
+        ]);
     }
 }

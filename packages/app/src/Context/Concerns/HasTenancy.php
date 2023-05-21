@@ -39,7 +39,10 @@ trait HasTenancy
      */
     public function tenantMenuItems(array $items): static
     {
-        $this->tenantMenuItems = array_merge($this->tenantMenuItems, $items);
+        $this->tenantMenuItems = [
+            ...$this->tenantMenuItems,
+            ...$items,
+        ];
 
         return $this;
     }
@@ -140,12 +143,10 @@ trait HasTenancy
 
         return route(
             "filament.{$this->getId()}.tenant.billing",
-            array_merge(
-                [
-                    'tenant' => $tenant,
-                ],
-                $parameters
-            ),
+            [
+                'tenant' => $tenant,
+                ...$parameters,
+            ],
         );
     }
 

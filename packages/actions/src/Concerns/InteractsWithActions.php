@@ -11,17 +11,12 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
-use Livewire\Exceptions\PropertyNotFoundException;
 
 /**
  * @property Forms\Form $mountedActionForm
  */
 trait InteractsWithActions
 {
-    use Forms\Concerns\InteractsWithForms {
-        __get as __getForm;
-    }
-
     /**
      * @var array<string> | null
      */
@@ -45,22 +40,6 @@ trait InteractsWithActions
     protected bool $hasActionsModalRendered = false;
 
     /**
-     * @param  string  $property
-     */
-    public function __get($property): mixed
-    {
-        try {
-            return $this->__getForm($property);
-        } catch (PropertyNotFoundException $exception) {
-            if ($action = $this->getAction($property)) {
-                return $action;
-            }
-
-            throw $exception;
-        }
-    }
-
-    /**
      * @param  array<string, mixed>  $arguments
      */
     public function callMountedAction(array $arguments = []): mixed
@@ -75,10 +54,10 @@ trait InteractsWithActions
             return null;
         }
 
-        $action->arguments(array_merge(
-            Arr::last($this->mountedActionsArguments),
-            $arguments,
-        ));
+        $action->arguments([
+            ...Arr::last($this->mountedActionsArguments),
+            ...$arguments,
+        ]);
 
         $form = $this->getMountedActionForm();
 
@@ -129,10 +108,14 @@ trait InteractsWithActions
         $action = $this->getMountedAction();
 
         if (! $action) {
+            $this->unmountAction();
+
             return null;
         }
 
         if ($action->isDisabled()) {
+            $this->unmountAction();
+
             return null;
         }
 
@@ -205,6 +188,17 @@ trait InteractsWithActions
         return $this->cachedActions[$action->getName()] = $action;
     }
 
+    /**
+     * @param  array<string, Action>  $actions
+     */
+    protected function mergeCachedActions(array $actions): void
+    {
+        $this->cachedActions = [
+            ...$this->cachedActions,
+            ...$actions,
+        ];
+    }
+
     protected function configureAction(Action $action): void
     {
     }
@@ -237,7 +231,7 @@ trait InteractsWithActions
         }
 
         if ((! $this->isCachingForms) && $this->hasCachedForm('mountedActionForm')) {
-            return $this->getCachedForm('mountedActionForm');
+            return $this->getForm('mountedActionForm');
         }
 
         return $action->getForm(
@@ -313,7 +307,7 @@ trait InteractsWithActions
             $action = $action->getMountableModalAction($modalActionName);
 
             if (! $action) {
-                throw new InvalidArgumentException("The [{$modalActionName}] action has not been registered on the [{$parentActionName}] action.");
+                return null;
             }
 
             $parentActionName = $modalActionName;

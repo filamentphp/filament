@@ -6,11 +6,11 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Միացնել մութ ռեժիմը',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Միացնել լուսային ռեժիմը',
         ],
 

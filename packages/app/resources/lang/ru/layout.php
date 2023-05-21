@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Включить темный режим',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Открыть уведомления',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Включить светлый режим',
         ],
 

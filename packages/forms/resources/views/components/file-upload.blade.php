@@ -27,7 +27,7 @@
             disabled: @js($isDisabled),
             fillColor: '{{ $getFillColor() }}',
             getUploadedFilesUsing: async () => {
-                return await $wire.getUploadedFiles(@js($statePath))
+                return await $wire.getFormUploadedFiles(@js($statePath))
             },
             imageCropAspectRatio: @js($imageCropAspectRatio),
             imagePreviewHeight: @js($getImagePreviewHeight()),
@@ -49,11 +49,11 @@
             maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
             minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
             removeUploadedFileUsing: async (fileKey) => {
-                return await $wire.removeUploadedFile(@js($statePath), fileKey)
+                return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
             },
             removeUploadedFileButtonPosition: @js($getRemoveUploadedFileButtonPosition()),
             reorderUploadedFilesUsing: async (files) => {
-                return await $wire.reorderUploadedFiles(@js($statePath), files)
+                return await $wire.reorderFormUploadedFiles(@js($statePath), files)
             },
             shape: '{{ $getShape() }}',
             shouldAppendFiles: @js($shouldAppendFiles()),

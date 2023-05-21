@@ -112,7 +112,7 @@ TextInput::make('password')
 
 ### Changing the text color of the hint
 
-You can change the text color of the hint. By default it's gray, but you may use `primary`, `secondary`, `success`, `warning`, or `danger`:
+You can change the text color of the hint. By default it's gray, but you may use `danger`, `gray`, `info`, `primary`, `secondary`, `success` and `warning`:
 
 ```php
 use Filament\Forms\Components\RichEditor;

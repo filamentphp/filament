@@ -6,7 +6,7 @@ return [
 
     'buttons' => [
 
-        'dark_mode' => [
+        'dark_theme' => [
             'label' => 'Koyu tema',
         ],
 
@@ -14,7 +14,7 @@ return [
             'label' => 'Bildirimleri aç',
         ],
 
-        'light_mode' => [
+        'light_theme' => [
             'label' => 'Açık tema',
         ],
 
