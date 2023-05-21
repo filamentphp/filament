@@ -33,3 +33,12 @@ use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 
 SpatieMediaLibraryImageColumn::make('avatar')->conversion('thumb'),
 ```
+
+## Adding default image url
+
+You can display a placeholder image if the model doesn't have any media. To use it:
+
+```php
+use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+SpatieMediaLibraryImageColumn::make('avatar')->default(url('/images/placeholder.png')),
+```
