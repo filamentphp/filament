@@ -180,13 +180,13 @@
                                 {{-- reset, cancel and save buttons --}}
                                 <div class="flex items-center justify-center gap-3 py-3 px-4 border-t border-gray-300 dark:border-gray-800 dark:bg-black/10">
                                     <x-filament::button type="button" size="sm" color="secondary" x-on:click.stop.prevent="cropper.reset()">
-                                        @lang('filament-forms::components.cropper.reset')
+                                        {{ __('filament-forms::components.file_upload.cropper.actions.reset.label') }}
                                     </x-filament::button>
                                     <x-filament::button type="button" size="sm" color="warning" x-on:click.prevent="pond.imageEditEditor.oncancel">
-                                        @lang('filament-forms::components.cropper.cancel')
+                                        {{ __('filament-forms::components.file_upload.cropper.actions.cancel.label') }}
                                     </x-filament::button>
                                     <x-filament::button type="button" size="sm" color="success" x-on:click.prevent="saveCropper">
-                                        @lang('filament-forms::components.cropper.save')
+                                        {{ __('filament-forms::components.file_upload.cropper.actions.save.label') }}
                                     </x-filament::button>
                                 </div>
                             </div>

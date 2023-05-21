@@ -72,6 +72,106 @@ return [
 
     ],
 
+    'file_upload' => [
+
+        'cropper' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Ångra',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Dragläge "beskär"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Dragläge "flytta"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Vänd bilden horisontellt',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Vänd bilden vertikalt',
+                ],
+
+                'free' => [
+                    'label' => 'Fritt',
+                ],
+
+                'height' => [
+                    'label' => 'Höjd',
+                ],
+
+                'move_down' => [
+                    'label' => 'Flytta bilden nedåt',
+                ],
+
+                'move_left' => [
+                    'label' => 'Flytta bilden åt vänster',
+                ],
+
+                'move_right' => [
+                    'label' => 'Flytta bilden åt höger',
+                ],
+
+                'move_top_left' => [
+                    'label' => 'Flytta bilden till vänstra hörnet',
+                ],
+
+                'move_up' => [
+                    'label' => 'Flytta bilden uppåt',
+                ],
+
+                'reset' => [
+                    'label' => 'Reset',
+                ],
+
+                'rotate' => [
+                    'label' => 'Rotera',
+                ],
+
+                'rotate_180' => [
+                    'label' => 'Rotera bilden 180°',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Rotera bilden åt vänster',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Rotera bilden åt höger',
+                ],
+
+                'save' => [
+                    'label' => 'Spara',
+                ],
+
+                'width' => [
+                    'label' => 'Bredd',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Zooma bilden till 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Zooma in',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Zooma ut',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'actions' => [
@@ -270,30 +370,6 @@ return [
 
         ],
 
-    ],
-    'cropper' => [
-        'cancel' => 'Ångra',
-        'drag-crop' => 'Dragläge "beskär"',
-        'drag-move' => 'Dragläge "flytta"',
-        'flip-horizontal' => 'Vänd bilden horisontellt',
-        'flip-vertical' => 'Vänd bilden vertikalt',
-        'free' => 'Fritt',
-        'height' => 'Höjd',
-        'move-down' => 'Flytta bilden nedåt',
-        'move-left' => 'Flytta bilden åt vänster',
-        'move-right' => 'Flytta bilden åt höger',
-        'move-top-left' => 'Flytta bilden till vänstra hörnet',
-        'move-up' => 'Flytta bilden uppåt',
-        'reset' => 'Reset',
-        'rotate' => 'Rotera',
-        'rotate-180' => 'Rotera bilden 180°',
-        'rotate-left' => 'Rotera bilden åt vänster',
-        'rotate-right' => 'Rotera bilden åt höger',
-        'save' => 'Spara',
-        'width' => 'Bredd',
-        'zoom-100' => 'Zooma bilden till 100%',
-        'zoom-in' => 'Zooma in',
-        'zoom-out' => 'Zooma ut',
     ],
 
 ];

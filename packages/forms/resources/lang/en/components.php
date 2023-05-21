@@ -72,6 +72,106 @@ return [
 
     ],
 
+    'file_upload' => [
+
+        'cropper' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Drag mode "crop"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Drag mode "move"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Flip image horizontal',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Flip image vertical',
+                ],
+
+                'free' => [
+                    'label' => 'Free',
+                ],
+
+                'height' => [
+                    'label' => 'Height',
+                ],
+
+                'move_down' => [
+                    'label' => 'Move image down',
+                ],
+
+                'move_left' => [
+                    'label' => 'Move image to left',
+                ],
+
+                'move_right' => [
+                    'label' => 'Move image to right',
+                ],
+
+                'move_top_left' => [
+                    'label' => 'Move image to top/left corner of the container',
+                ],
+
+                'move_up' => [
+                    'label' => 'Move image up',
+                ],
+
+                'reset' => [
+                    'label' => 'Reset',
+                ],
+
+                'rotate' => [
+                    'label' => 'Rotate',
+                ],
+
+                'rotate_180' => [
+                    'label' => 'Rotate image 180°',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Rotate image to left',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Rotate image to right',
+                ],
+
+                'save' => [
+                    'label' => 'Save',
+                ],
+
+                'width' => [
+                    'label' => 'Width',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Zoom image to 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Zoom in',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Zoom out',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'actions' => [
@@ -296,31 +396,6 @@ return [
 
         ],
 
-    ],
-
-    'cropper' => [
-        'cancel' => 'Cancel',
-        'drag-crop' => 'Drag mode "crop"',
-        'drag-move' => 'Drag mode "move"',
-        'flip-horizontal' => 'Flip image horizontal',
-        'flip-vertical' => 'Flip image vertical',
-        'free' => 'Free',
-        'height' => 'Height',
-        'move-down' => 'Move image down',
-        'move-left' => 'Move image to left',
-        'move-right' => 'Move image to right',
-        'move-top-left' => 'Move image to top/left corner of the container',
-        'move-up' => 'Move image up',
-        'reset' => 'Reset',
-        'rotate' => 'Rotate',
-        'rotate-180' => 'Rotate image 180°',
-        'rotate-left' => 'Rotate image to left',
-        'rotate-right' => 'Rotate image to right',
-        'save' => 'Save',
-        'width' => 'Width',
-        'zoom-100' => 'Zoom image to 100%',
-        'zoom-in' => 'Zoom in',
-        'zoom-out' => 'Zoom out',
     ],
 
 ];

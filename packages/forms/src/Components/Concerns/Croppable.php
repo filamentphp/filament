@@ -149,7 +149,7 @@ trait Croppable
             foreach (array_unique($ratios) as $ratio) {
 
                 if ($validRatio = $this->makeRatio($ratio)) {
-                    $compiled[$ratio ?? __('filament-forms::components.cropper.free')] = $validRatio;
+                    $compiled[$ratio ?? __('filament-forms::components.file_upload.cropper.actions.free.label')] = $validRatio;
                 }
 
             }
@@ -190,54 +190,54 @@ trait Croppable
         return [
             'zoom' => [
                 [
-                    'tooltip' => __('filament-forms::components.cropper.drag-move'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.drag_move.label'),
                     'icon' => new HtmlString('<svg class="' . $size . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M13 6v5h5V7.75L22.25 12L18 16.25V13h-5v5h3.25L12 22.25L7.75 18H11v-5H6v3.25L1.75 12L6 7.75V11h5V6H7.75L12 1.75L16.25 6H13Z"/></svg>'),
                     'click' => "cropper.setDragMode('move')",
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.drag-crop'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.drag_crop.label'),
                     'icon' => new HtmlString('<svg class="' . $size . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M17 23v-4H7q-.825 0-1.412-.587Q5 17.825 5 17V7H1V5h4V1h2v16h16v2h-4v4Zm0-8V7H9V5h8q.825 0 1.413.588Q19 6.175 19 7v8Z"/></svg>'),
                     'click' => "cropper.setDragMode('crop')",
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.zoom-in'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.zoom_in.label'),
                     'icon' => svg('heroicon-o-magnifying-glass-plus', $size)->toHtml(),
                     'click' => 'cropper.zoom(0.1)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.zoom-out'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.zoom_out.label'),
                     'icon' => svg('heroicon-o-magnifying-glass-minus', $size)->toHtml(),
                     'click' => 'cropper.zoom(-0.1)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.zoom-100'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.zoom_100.label'),
                     'icon' => svg('heroicon-o-arrows-pointing-out', $size)->toHtml(),
                     'click' => 'cropper.zoomTo(1)',
                 ],
             ],
             'move' => [
                 [
-                    'tooltip' => __('filament-forms::components.cropper.move-left'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.move_left.label'),
                     'icon' => svg('heroicon-o-arrow-left-circle', $size)->toHtml(),
                     'click' => 'cropper.move(-10, 0)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.move-right'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.move_right.label'),
                     'icon' => svg('heroicon-o-arrow-right-circle', $size)->toHtml(),
                     'click' => 'cropper.move(10, 0)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.move-up'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.move_up.label'),
                     'icon' => svg('heroicon-o-arrow-up-circle', $size)->toHtml(),
                     'click' => 'cropper.move(0, -10)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.move-down'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.move_down.label'),
                     'icon' => svg('heroicon-o-arrow-down-circle', $size)->toHtml(),
                     'click' => 'cropper.move(0, 10)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.move-top-left'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.move_top_left.label'),
                     'icon' => new HtmlString('<svg  class="' . $size . '" width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M4 16.01L4.01 15.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
                                 <path d="M4 20.01L4.01 19.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
@@ -257,27 +257,27 @@ trait Croppable
             ],
             'rotate_flip' => [
                 [
-                    'tooltip' => __('filament-forms::components.cropper.rotate-left'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.rotate_left.label'),
                     'icon' => svg('heroicon-o-arrow-uturn-left', $size)->toHtml(),
                     'click' => 'cropper.rotate(-45)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.rotate-right'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.rotate_right.label'),
                     'icon' => svg('heroicon-o-arrow-uturn-right', $size)->toHtml(),
                     'click' => 'cropper.rotate(45)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.rotate-180'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.rotate_180.label'),
                     'icon' => svg('heroicon-o-arrow-uturn-down', $size)->toHtml(),
                     'click' => 'cropper.rotate(180)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.flip-horizontal'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.flip_horizontal.label'),
                     'icon' => new HtmlString('<svg class="' . $size . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 3l-5 5l-5-5h10m0 18l-5-5l-5 5h10M4 12H2m8 0H8m8 0h-2m8 0h-2"/></svg>'),
                     'click' => 'cropper.scaleX(-cropper.getData().scaleX || -1)',
                 ],
                 [
-                    'tooltip' => __('filament-forms::components.cropper.flip-vertical'),
+                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.flip_vertical.label'),
                     'icon' => new HtmlString('<svg class="' . $size . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 7l5 5l-5 5V7m18 0l-5 5l5 5V7m-9 13v2m0-8v2m0-8v2m0-8v2"/></svg>'),
                     'click' => 'cropper.scaleY(-cropper.getData().scaleY || -1)',
                 ],
@@ -303,21 +303,21 @@ trait Croppable
                 'onEnter' => 'cropper.moveTo($refs.inputX.value, +$el.value)',
             ],
             [
-                'label' => __('filament-forms::components.cropper.width'),
+                'label' => __('filament-forms::components.file_upload.cropper.actions.width.label'),
                 'name' => 'inputWidth',
                 'placeholder' => 'width',
                 'unit' => 'px',
                 'onEnter' => 'cropper.setCropBoxData({...cropper.getCropBoxData(), width:+$el.value})',
             ],
             [
-                'label' => __('filament-forms::components.cropper.height'),
+                'label' => __('filament-forms::components.file_upload.cropper.actions.height.label'),
                 'name' => 'inputHeight',
                 'placeholder' => 'height',
                 'unit' => 'px',
                 'onEnter' => 'cropper.setCropBoxData({...cropper.getCropBoxData(), height:+$el.value})',
             ],
             [
-                'label' => __('filament-forms::components.cropper.rotate'),
+                'label' => __('filament-forms::components.file_upload.cropper.actions.rotate.label'),
                 'name' => 'inputRotate',
                 'placeholder' => 'rotate',
                 'unit' => 'deg',
