@@ -132,6 +132,11 @@ trait HasBulkActions
         ) ?? true;
     }
 
+    public function getAllSelectableRecordsCount(): int
+    {
+        return $this->getLivewire()->getAllSelectableTableRecordsCount();
+    }
+
     public function isSelectionEnabled(): bool
     {
         return (bool) count(array_filter(
