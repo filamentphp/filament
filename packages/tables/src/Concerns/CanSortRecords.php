@@ -86,11 +86,18 @@ trait CanSortRecords
             return $query;
         }
 
-        if ($sortColumn === $this->getDefaultTableSortColumn()) {
-            return $query->orderBy($sortColumn, $sortDirection);
-        }
+        $this->applyDefaultSortingToTableQuery($query, $sortColumn, $sortDirection);
 
         return $query;
+    }
+
+    protected function applyDefaultSortingToTableQuery(Builder $query, string $sortColumn, string $sortDirection): Builder
+    {
+        if ($sortColumn !== $this->getDefaultTableSortColumn()) {
+            return $query;
+        }
+        
+        return $query->orderBy($sortColumn, $sortDirection);
     }
 
     public function getTableSortSessionKey(): string
