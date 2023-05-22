@@ -80,9 +80,9 @@ class Table extends ViewComponent
         return invade($livewire)->getTableActionsColumnLabel();
     }
 
-    public function getAllRecordsCount(): int
+    public function getAllSelectableRecordsCount(): int
     {
-        return $this->getLivewire()->getAllTableRecordsCount();
+        return $this->getLivewire()->getAllSelectableTableRecordsCount();
     }
 
     public function getBulkActions(): array

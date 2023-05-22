@@ -62,8 +62,18 @@ trait CanSelectRecords
         );
     }
 
-    public function getAllTableRecordsCount(): int
+    public function getAllSelectableTableRecordsCount(): int
     {
+        if ($this->isTableRecordSelectable() !== null) {
+            $records = $this->shouldSelectCurrentPageOnly() ?
+                $this->getTableRecords() :
+                $this->getFilteredTableQuery()->get();
+
+            return $records
+                ->filter(fn (Model $record): bool => $this->isTableRecordSelectable()($record))
+                ->count();
+        }
+
         if ($this->shouldSelectCurrentPageOnly()) {
             return $this->records->count();
         }
@@ -72,16 +82,16 @@ trait CanSelectRecords
             return $this->records->total();
         }
 
-        $query = $this->getFilteredTableQuery();
+        return $this->getFilteredTableQuery()->count();
+    }
 
-        if ($this->isTableRecordSelectable() !== null) {
-            return $query
-                ->get()
-                ->filter(fn (Model $record): bool => $this->isTableRecordSelectable()($record))
-                ->count();
+    public function getAllTableRecordsCount(): int
+    {
+        if ($this->records instanceof LengthAwarePaginator) {
+            return $this->records->total();
         }
 
-        return $query->count();
+        return $this->getFilteredTableQuery()->count();
     }
 
     public function getSelectedTableRecords(): Collection
