@@ -27,8 +27,6 @@ interface HasTable extends HasForms
      */
     public function getAllSelectableTableRecordKeys(): array;
 
-    public function getAllSelectableTableRecordsCount(): int;
-
     public function getAllTableRecordsCount(): int;
 
     public function getAllSelectableTableRecordsCount(): int;
