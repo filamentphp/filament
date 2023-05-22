@@ -146,34 +146,6 @@ public function isTableRecordSelectable(): ?Closure
 }
 ```
 
-Please note that this will only hide the checkbox, and the record will still be selectable by clicking "Select All". This is because checking if each record is selectable is a very expensive operation and is not done by default, since it requires every model to be loaded into memory. If you are aware of the performance implications, you can enable this behaviour by overriding the `getAllSelectableTableRecordKeys()` method:
-
-```php
-use Illuminate\Database\Eloquent\Model;
-
-public function getAllSelectableTableRecordKeys(): array
-{
-    $query = $this->getFilteredTableQuery();
-
-    $records = $this->shouldSelectCurrentPageOnly() ?
-        $this->getTableRecords() :
-        $query->get();
-
-    return $records->reduce(
-        function (array $carry, Model $record): array {
-            if (! $this->isTableRecordSelectable($record)) {
-                return $carry;
-            }
-
-            $carry[] = (string) $record->getKey();
-            
-            return $carry;
-        },
-        initial: [],
-    );
-}
-```
-
 ## Setting a size
 
 The default size for table actions is `sm` but you may also change it to either `md` or `lg`:

@@ -31,15 +31,35 @@ trait CanSelectRecords
     public function getAllSelectableTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
+        $checkIfRecordIsSelectableUsing = $this->isTableRecordSelectable();
+
+        if (! $checkIfRecordIsSelectableUsing) {
+            $records = $this->shouldSelectCurrentPageOnly() ?
+                $this->getTableRecords() :
+                $query;
+
+            return $records
+                ->pluck($query->getModel()->getQualifiedKeyName())
+                ->map(fn ($key): string => (string) $key)
+                ->all();
+        }
 
         $records = $this->shouldSelectCurrentPageOnly() ?
             $this->getTableRecords() :
-            $query;
+            $query->get();
 
-        return $records
-            ->pluck($query->getModel()->getQualifiedKeyName())
-            ->map(fn ($key): string => (string) $key)
-            ->all();
+        return $records->reduce(
+            function (array $carry, Model $record) use ($checkIfRecordIsSelectableUsing): array {
+                if (! $checkIfRecordIsSelectableUsing($record)) {
+                    return $carry;
+                }
+
+                $carry[] = (string) $record->getKey();
+
+                return $carry;
+            },
+            initial: [],
+        );
     }
 
     public function getAllTableRecordsCount(): int
