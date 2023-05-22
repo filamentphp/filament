@@ -28101,6 +28101,14 @@ import_trix.default.config.blockAttributes.subHeading = {
   breakOnReturn: true,
   group: false
 };
+import_trix.default.config.textAttributes.underline = {
+  style: {textDecoration: "underline"},
+  inheritable: true,
+  parser: (element) => {
+    const style = window.getComputedStyle(element);
+    return style.textDecoration.includes("underline");
+  }
+};
 import_trix.default.Block.prototype.breaksOnReturn = function() {
   const lastAttribute = this.getLastAttribute();
   const blockConfig = import_trix.default.getBlockConfig(lastAttribute ? lastAttribute : "default");
@@ -30816,7 +30824,7 @@ var text_input_default = (Alpine) => {
         if (!getMaskOptionsUsing) {
           return;
         }
-        if (this.state) {
+        if (typeof this.state !== "undefined") {
           this.$el.value = this.state?.valueOf();
         }
         this.mask = IMask(this.$el, getMaskOptionsUsing(IMask)).on("accept", () => {
