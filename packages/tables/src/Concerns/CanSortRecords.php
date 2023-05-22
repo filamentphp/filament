@@ -86,8 +86,15 @@ trait CanSortRecords
             return $query;
         }
 
+        $this->applyDefaultSortingToTableQuery($query, $sortColumn, $sortDirection);
+
+        return $query;
+    }
+
+    protected function applyDefaultSortingToTableQuery(Builder $query, string $sortColumn, string $sortDirection): Builder
+    {
         if ($sortColumn === $this->getDefaultTableSortColumn()) {
-            return $query->orderBy($sortColumn, $sortDirection);
+            $query->orderBy($sortColumn, $sortDirection);
         }
 
         return $query;
