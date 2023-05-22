@@ -3,7 +3,6 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
-use Illuminate\Pagination\LengthAwarePaginator;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 use Illuminate\Contracts\Pagination\Paginator;
