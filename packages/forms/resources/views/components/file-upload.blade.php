@@ -134,28 +134,29 @@
                                                         'name' => 'inputX',
                                                         'placeholder' => 'x',
                                                         'unit' => 'px',
-                                                        'onEnter' => 'cropper.moveTo(+$el.value, $refs.inputY.value)',
+                                                        'onEnter' => 'cropper.setData({...cropper.getData(true), x: +$el.value})',
+
                                                     ],
                                                     [
                                                         'label' => 'Y',
                                                         'name' => 'inputY',
                                                         'placeholder' => 'y',
                                                         'unit' => 'px',
-                                                        'onEnter' => 'cropper.moveTo($refs.inputX.value, +$el.value)',
+                                                        'onEnter' => 'cropper.setData({...cropper.getData(true), y: +$el.value})',
                                                     ],
                                                     [
                                                         'label' => __('filament-forms::components.file_upload.cropper.actions.width.label'),
                                                         'name' => 'inputWidth',
                                                         'placeholder' => 'width',
                                                         'unit' => 'px',
-                                                        'onEnter' => 'cropper.setCropBoxData({...cropper.getCropBoxData(), width: +$el.value})',
+                                                        'onEnter' => 'cropper.setData({...cropper.getData(true), width: +$el.value})',
                                                     ],
                                                     [
                                                         'label' => __('filament-forms::components.file_upload.cropper.actions.height.label'),
                                                         'name' => 'inputHeight',
                                                         'placeholder' => 'height',
                                                         'unit' => 'px',
-                                                        'onEnter' => 'cropper.setCropBoxData({...cropper.getCropBoxData(), height: +$el.value})',
+                                                        'onEnter' => 'cropper.setData({...cropper.getData(true), height: +$el.value})',
                                                     ],
                                                     [
                                                         'label' => __('filament-forms::components.file_upload.cropper.actions.rotate.label'),

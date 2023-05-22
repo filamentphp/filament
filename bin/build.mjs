@@ -3,13 +3,13 @@ import * as esbuild from 'esbuild'
 const isDev = process.argv.includes('--dev')
 
 async function compile(options) {
-    const ctx = await esbuild.context(options)
+    const context = await esbuild.context(options)
 
     if (isDev) {
-        await ctx.watch()
+        await context.watch()
     } else {
-        await ctx.rebuild()
-        await ctx.dispose()
+        await context.rebuild()
+        await context.dispose()
     }
 }
 

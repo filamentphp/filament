@@ -53,7 +53,7 @@ class FileUpload extends BaseFileUpload
 
     protected int $cropperViewportHeight = 360;
 
-    protected int $cropperMode = 0;
+    protected int $cropperMode = 1;
 
     protected string $cropperEmptyFillColor = 'transparent';
 
@@ -303,7 +303,8 @@ class FileUpload extends BaseFileUpload
     // https://github.com/fengyuanchen/cropperjs#viewmode
     public function cropperMode(int $mode): static
     {
-        if (in_array($mode, [0, 1, 2, 3])) {
+        //setting data via inputs won't work with viewMode 0 src: https://github.com/fengyuanchen/cropperjs#setdatadata, see "note"
+        if (in_array($mode, [1, 2, 3])) {
             $this->cropperMode = $mode;
         }
 
