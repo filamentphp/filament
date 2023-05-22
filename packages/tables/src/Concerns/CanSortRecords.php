@@ -96,7 +96,7 @@ trait CanSortRecords
         if ($sortColumn !== $this->getDefaultTableSortColumn()) {
             return $query;
         }
-        
+
         return $query->orderBy($sortColumn, $sortDirection);
     }
 
