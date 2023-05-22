@@ -7,10 +7,11 @@ use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\BulkAction;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 /**
  * @property Form $mountedTableBulkActionForm
@@ -29,7 +30,7 @@ trait HasBulkActions
      */
     public ?array $mountedTableBulkActionData = [];
 
-    protected Collection $cachedSelectedTableRecords;
+    protected EloquentCollection $cachedSelectedTableRecords;
 
     protected function configureTableBulkAction(BulkAction $action): void
     {
@@ -214,6 +215,7 @@ trait HasBulkActions
     public function getAllSelectableTableRecordsCount(): int
     {
         if ($this->getTable()->checksIfRecordIsSelectable()) {
+            /** @var Collection $records */
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords() :
                 $this->getFilteredTableQuery()->get();
@@ -234,7 +236,7 @@ trait HasBulkActions
         return $this->getFilteredTableQuery()->count();
     }
 
-    public function getSelectedTableRecords(): Collection
+    public function getSelectedTableRecords(): EloquentCollection
     {
         if (isset($this->cachedSelectedTableRecords)) {
             return $this->cachedSelectedTableRecords;
