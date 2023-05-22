@@ -17,11 +17,11 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Олонг сонгох/болих.',
+            'label' => 'Олонг сонгох/Цуцлах.',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Олонг сонгох/болих :key.',
+            'label' => 'Олонг сонгох/Цуцлах :key.',
         ],
 
         'search_query' => [
@@ -41,7 +41,7 @@ return [
 
             'records_per_page' => [
 
-                'label' => 'хуудас',
+                'label' => 'хуудас бүр',
 
                 'options' => [
                     'all' => 'Бүгд',
@@ -130,13 +130,13 @@ return [
 
         'trashed' => [
 
-            'label' => 'Бичлэгийг устгах',
+            'label' => 'Хогийн сав',
 
-            'only_trashed' => 'Зөвхөн устгасан бичлэг',
+            'only_trashed' => 'Зөвхөн устгасанг',
 
-            'with_trashed' => 'Устгасан бичлэг',
+            'with_trashed' => 'Аль алиныг',
 
-            'without_trashed' => 'Устгаагүй бичлэг',
+            'without_trashed' => 'Хэвийн',
 
         ],
 
