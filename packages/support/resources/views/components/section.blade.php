@@ -51,8 +51,8 @@
             'filament-section-component-header-wrapper flex items-center overflow-hidden',
             'cursor-pointer' => $collapsible,
             match ($compact) {
-                true => 'px-4 py-3',
-                false => 'px-6 py-5',
+                true => 'px-4 py-2.5',
+                false => 'px-6 py-4',
             } => ! $aside,
         ])
     >
