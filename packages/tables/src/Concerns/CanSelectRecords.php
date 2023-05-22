@@ -5,10 +5,11 @@ namespace Filament\Tables\Concerns;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\RecordCheckboxPosition;
 use Filament\Tables\Contracts\HasRelationshipTable;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as EloquentCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 
 trait CanSelectRecords
 {
@@ -16,7 +17,7 @@ trait CanSelectRecords
 
     protected bool $shouldSelectCurrentPageOnly = false;
 
-    protected Collection $cachedSelectedTableRecords;
+    protected EloquentCollection $cachedSelectedTableRecords;
 
     public function deselectAllTableRecords(): void
     {
@@ -65,6 +66,7 @@ trait CanSelectRecords
     public function getAllSelectableTableRecordsCount(): int
     {
         if ($this->isTableRecordSelectable() !== null) {
+            /** @var Collection $records */
             $records = $this->shouldSelectCurrentPageOnly() ?
                 $this->getTableRecords() :
                 $this->getFilteredTableQuery()->get();
@@ -94,7 +96,7 @@ trait CanSelectRecords
         return $this->getFilteredTableQuery()->count();
     }
 
-    public function getSelectedTableRecords(): Collection
+    public function getSelectedTableRecords(): EloquentCollection
     {
         if (isset($this->cachedSelectedTableRecords)) {
             return $this->cachedSelectedTableRecords;
