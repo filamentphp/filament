@@ -5,9 +5,12 @@
 ])
 
 @php
-    if ((! $action->getAction()) || $action->getUrl()) {
+    if (! $action->getAction() || $action->getUrl()) {
         $wireClickAction = null;
-    } elseif ($action->shouldOpenModal() || ($action->getAction() instanceof \Closure)) {
+    } elseif (
+        $action->shouldOpenModal() ||
+        $action->getAction() instanceof \Closure
+    ) {
         $wireClickAction = "mountAction('{$action->getName()}')";
     } else {
         $wireClickAction = $action->getAction();

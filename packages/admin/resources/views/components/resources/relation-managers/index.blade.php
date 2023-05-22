@@ -8,7 +8,7 @@
 ])
 
 <div class="filament-resources-relation-managers-container space-y-2">
-    @if ((count($managers) > 1) || $form)
+    @if (count($managers) > 1 || $form)
         <div class="flex justify-center">
             <x-filament::tabs>
                 @php
@@ -35,9 +35,11 @@
                         @class([
                             'flex whitespace-nowrap items-center h-8 px-5 font-medium rounded-lg outline-none focus:ring-2 focus:ring-primary-600 focus:ring-inset',
                             'hover:text-gray-800 focus:text-primary-600' => $activeManager !== $tabKey,
-                            'dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' => ($activeManager !== $tabKey) && config('filament.dark_mode'),
+                            'dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' =>
+                                $activeManager !== $tabKey && config('filament.dark_mode'),
                             'text-primary-600 shadow bg-white' => $activeManager === $tabKey,
-                            'dark:text-white dark:bg-primary-600' => ($activeManager === $tabKey) && config('filament.dark_mode'),
+                            'dark:text-white dark:bg-primary-600' =>
+                                $activeManager === $tabKey && config('filament.dark_mode'),
                         ])
                     >
                         @if (filled($tabKey))
@@ -61,7 +63,7 @@
             class="space-y-4 outline-none"
         >
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
-                @foreach($managers[$activeManager]->getManagers(ownerRecord: $ownerRecord) as $groupedManager)
+                @foreach ($managers[$activeManager]->getManagers(ownerRecord: $ownerRecord) as $groupedManager)
                     @livewire(\Livewire\Livewire::getAlias($groupedManager, $groupedManager::getName()), ['ownerRecord' => $ownerRecord], key($groupedManager))
                 @endforeach
             @else

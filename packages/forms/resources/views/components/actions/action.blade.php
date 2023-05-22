@@ -4,9 +4,10 @@
 ])
 
 @php
-    $wireClickAction = ($action->getAction() && (! $action->getUrl())) ?
-        "mountFormComponentAction('{$action->getComponent()->getStatePath()}', '{$action->getName()}')" :
-        null;
+    $wireClickAction =
+        $action->getAction() && ! $action->getUrl()
+            ? "mountFormComponentAction('{$action->getComponent()->getStatePath()}', '{$action->getName()}')"
+            : null;
 @endphp
 
 <x-dynamic-component

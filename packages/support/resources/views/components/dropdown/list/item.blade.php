@@ -9,23 +9,33 @@
 ])
 
 @php
-    $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
+    $hasHoverAndFocusState = $tag !== 'a' || filled($attributes->get('href'));
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item filament-dropdown-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm outline-none',
         'hover:text-white focus:text-white' => $hasHoverAndFocusState,
-        'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
-        'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
-        'hover:bg-success-500 focus:bg-success-500' => $color === 'success' && $hasHoverAndFocusState,
-        'hover:bg-warning-500 focus:bg-warning-500' => $color === 'warning' && $hasHoverAndFocusState,
+        'hover:bg-primary-500 focus:bg-primary-500' =>
+            ($color === 'primary' || $color === 'secondary') &&
+            $hasHoverAndFocusState,
+        'hover:bg-danger-500 focus:bg-danger-500' =>
+            $color === 'danger' && $hasHoverAndFocusState,
+        'hover:bg-success-500 focus:bg-success-500' =>
+            $color === 'success' && $hasHoverAndFocusState,
+        'hover:bg-warning-500 focus:bg-warning-500' =>
+            $color === 'warning' && $hasHoverAndFocusState,
     ]);
 
     $detailClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item-detail ml-auto text-xs text-gray-500',
-        'group-hover:text-primary-100 group-focus:text-primary-100' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
-        'group-hover:text-danger-100 group-focus:text-danger-100' => $color === 'danger' && $hasHoverAndFocusState,
-        'group-hover:text-success-100 group-focus:text-success-100' => $color === 'success' && $hasHoverAndFocusState,
-        'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
+        'group-hover:text-primary-100 group-focus:text-primary-100' =>
+            ($color === 'primary' || $color === 'secondary') &&
+            $hasHoverAndFocusState,
+        'group-hover:text-danger-100 group-focus:text-danger-100' =>
+            $color === 'danger' && $hasHoverAndFocusState,
+        'group-hover:text-success-100 group-focus:text-success-100' =>
+            $color === 'success' && $hasHoverAndFocusState,
+        'group-hover:text-warning-100 group-focus:text-warning-100' =>
+            $color === 'warning' && $hasHoverAndFocusState,
     ]);
 
     $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-start';
@@ -40,7 +50,9 @@
         'text-warning-500' => $color === 'warning',
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+    $wireTarget = $attributes
+        ->whereStartsWith(['wire:target', 'wire:click'])
+        ->first();
 
     $hasLoadingIndicator = filled($wireTarget);
 
@@ -54,7 +66,7 @@
         type="{{ $type }}"
         wire:loading.attr="disabled"
         {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
-        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
+        {!! $hasLoadingIndicator && $loadingIndicatorTarget ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
         {{ $attributes->class([$buttonClasses]) }}
     >
         @if ($icon)
@@ -102,7 +114,9 @@
         @endif
     </a>
 @elseif ($tag === 'form')
-    <form {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}>
+    <form
+        {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}
+    >
         @csrf
 
         <button
@@ -110,7 +124,10 @@
             {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
         >
             @if ($icon)
-                <x-dynamic-component :component="$icon" :class="$iconClasses" />
+                <x-dynamic-component
+                    :component="$icon"
+                    :class="$iconClasses"
+                />
             @endif
 
             <span class="{{ $labelClasses }}">

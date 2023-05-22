@@ -10,7 +10,7 @@
             match (config('notifications.layout.alignment.vertical')) {
                 'top' => 'flex-col-reverse justify-end',
                 'bottom' => 'flex-col justify-end',
-                'center' => 'flex-col justify-center'
+                'center' => 'flex-col justify-center',
             },
         ])
         role="status"

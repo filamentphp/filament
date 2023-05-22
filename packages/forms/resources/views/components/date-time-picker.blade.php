@@ -29,12 +29,18 @@
         {{
             $attributes
                 ->merge($getExtraAttributes())
-                ->class(['filament-forms-date-time-picker-component relative'])
+                ->class([
+                    'filament-forms-date-time-picker-component relative',
+                ])
         }}
     >
         <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
         <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
-        <input x-ref="disabledDates" type="hidden" value="{{ json_encode($getDisabledDates()) }}" />
+        <input
+            x-ref="disabledDates"
+            type="hidden"
+            value="{{ json_encode($getDisabledDates()) }}"
+        />
 
         <button
             x-ref="button"
@@ -52,19 +58,34 @@
             type="button"
             tabindex="-1"
             @if ($isDisabled()) disabled @endif
-            {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border py-2 text-start cursor-default rounded-lg shadow-sm outline-none',
-                'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
-                'dark:bg-gray-700' => config('forms.dark_mode'),
-                'border-gray-300' => ! $errors->has($getStatePath()),
-                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                'border-danger-600' => $errors->has($getStatePath()),
-                'dark:border-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
-                'opacity-70' => $isDisabled(),
-                'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
-                'px-3' => $icon === false,
-                'pl-3 pr-10 rtl:pl-10 rtl:pr-3' => $icon !== false,
-            ]) }}
+            {{
+                $getExtraTriggerAttributeBag()->class([
+                    'bg-white relative w-full border py-2 text-start cursor-default rounded-lg shadow-sm outline-none',
+                    'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
+                    'dark:bg-gray-700' => config(
+                        'forms.dark_mode',
+                    ),
+                    'border-gray-300' => ! $errors->has(
+                        $getStatePath(),
+                    ),
+                    'dark:border-gray-600' =>
+                        ! $errors->has($getStatePath()) &&
+                        config('forms.dark_mode'),
+                    'border-danger-600' => $errors->has(
+                        $getStatePath(),
+                    ),
+                    'dark:border-danger-400' =>
+                        $errors->has($getStatePath()) &&
+                        config('forms.dark_mode'),
+                    'opacity-70' => $isDisabled(),
+                    'dark:text-gray-300' =>
+                        $isDisabled() &&
+                        config('forms.dark_mode'),
+                    'px-3' => $icon === false,
+                    'pl-3 pr-10 rtl:pl-10 rtl:pr-3' =>
+                        $icon !== false,
+                ])
+            }}
         >
             <input
                 readonly
@@ -80,12 +101,16 @@
             />
 
             @if ($icon !== false)
-                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
+                <span
+                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 rtl:left-0 rtl:right-auto rtl:pl-2"
+                >
                     <x-dynamic-component
                         :component="$icon ?? 'heroicon-o-calendar'"
                         @class([
                             'w-5 h-5 text-gray-400 hover:text-gray-800 focus:text-primary-600',
-                            'dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-primary-600' => config('forms.dark_mode'),
+                            'dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-primary-600' => config(
+                                'forms.dark_mode',
+                            ),
                         ])
                     />
                 </span>
@@ -106,7 +131,9 @@
         >
             <div class="space-y-3">
                 @if ($hasDate())
-                    <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
+                    <div
+                        class="flex items-center justify-between space-x-1 rtl:space-x-reverse"
+                    >
                         <select
                             x-model="focusedMonth"
                             @class([
@@ -116,7 +143,10 @@
                             dusk="filament.forms.{{ $getStatePath() }}.focusedMonth"
                         >
                             <template x-for="(month, index) in months">
-                                <option x-bind:value="index" x-text="month"></option>
+                                <option
+                                    x-bind:value="index"
+                                    x-text="month"
+                                ></option>
                             </template>
                         </select>
 
@@ -133,7 +163,10 @@
                     </div>
 
                     <div class="grid grid-cols-7 gap-1">
-                        <template x-for="(day, index) in dayLabels" :key="index">
+                        <template
+                            x-for="(day, index) in dayLabels"
+                            :key="index"
+                        >
                             <div
                                 x-text="day"
                                 @class([
@@ -145,11 +178,19 @@
                     </div>
 
                     <div role="grid" class="grid grid-cols-7 gap-1">
-                        <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
-                            <div class="text-sm text-center border border-transparent"></div>
+                        <template
+                            x-for="day in emptyDaysInFocusedMonth"
+                            x-bind:key="day"
+                        >
+                            <div
+                                class="border border-transparent text-center text-sm"
+                            ></div>
                         </template>
 
-                        <template x-for="day in daysInFocusedMonth" x-bind:key="day">
+                        <template
+                            x-for="day in daysInFocusedMonth"
+                            x-bind:key="day"
+                        >
                             <div
                                 x-text="day"
                                 x-on:click="dayIsDisabled(day) || selectDate(day)"
@@ -157,16 +198,16 @@
                                 role="option"
                                 x-bind:aria-selected="focusedDate.date() === day"
                                 x-bind:class="{
-                                    'text-gray-700 @if (config('forms.dark_mode')) dark:text-gray-300 @endif': ! dayIsSelected(day),
+                                    'text-gray-700 @if (config('forms.dark_mode')) dark:text-gray-300 @endif ': ! dayIsSelected(day),
                                     'cursor-pointer': ! dayIsDisabled(day),
-                                    'bg-primary-50 @if (config('forms.dark_mode')) dark:bg-primary-100 dark:text-gray-600 @endif': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                    'bg-primary-200 @if (config('forms.dark_mode')) dark:text-gray-600 @endif': focusedDate.date() === day && ! dayIsSelected(day),
+                                    'bg-primary-50 @if (config('forms.dark_mode')) dark:bg-primary-100 dark:text-gray-600 @endif ': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
+                                    'bg-primary-200 @if (config('forms.dark_mode')) dark:text-gray-600 @endif ': focusedDate.date() === day && ! dayIsSelected(day),
                                     'bg-primary-500 text-white': dayIsSelected(day),
                                     'cursor-not-allowed pointer-events-none': dayIsDisabled(day),
                                     'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                 }"
                                 x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.focusedDate.' + day"
-                                class="text-sm leading-loose text-center transition duration-100 ease-in-out rounded-full"
+                                class="rounded-full text-center text-sm leading-loose transition duration-100 ease-in-out"
                             ></div>
                         </template>
                     </div>
@@ -198,7 +239,9 @@
                                 'text-xl font-medium bg-gray-50 text-gray-700',
                                 'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                             ])
-                        >:</span>
+                        >
+                            :
+                        </span>
 
                         <input
                             max="59"
@@ -220,7 +263,9 @@
                                     'text-xl font-medium text-gray-700 bg-gray-50',
                                     'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
                                 ])
-                            >:</span>
+                            >
+                                :
+                            </span>
 
                             <input
                                 max="59"

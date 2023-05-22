@@ -36,7 +36,7 @@
     @endif
     {{ $attributes->class(['filament-tables-column-wrapper']) }}
 >
-    @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
+    @if (($url || ($recordUrl && $action === null)) && ! $isClickDisabled)
         <a
             href="{{ $url ?: $recordUrl }}"
             {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
@@ -44,7 +44,7 @@
         >
             {{ $slot }}
         </a>
-    @elseif (($action || $recordAction) && (! $isClickDisabled))
+    @elseif (($action || $recordAction) && ! $isClickDisabled)
         @php
             if ($action instanceof \Filament\Tables\Actions\Action) {
                 $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";

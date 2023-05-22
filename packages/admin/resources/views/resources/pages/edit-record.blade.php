@@ -21,7 +21,7 @@
         $relationManagers = $this->getRelationManagers();
     @endphp
 
-    @if ((! $this->hasCombinedRelationManagerTabsWithForm()) || (! count($relationManagers)))
+    @if (! $this->hasCombinedRelationManagerTabsWithForm() || ! count($relationManagers))
         {{ $form() }}
     @endif
 

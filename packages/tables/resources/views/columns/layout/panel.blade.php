@@ -4,7 +4,9 @@
             ->merge($getExtraAttributes())
             ->class([
                 'px-4 py-3 bg-gray-100 rounded-lg',
-                'dark:bg-gray-900' => config('forms.dark_mode'),
+                'dark:bg-gray-900' => config(
+                    'forms.dark_mode',
+                ),
             ])
     }}
 >

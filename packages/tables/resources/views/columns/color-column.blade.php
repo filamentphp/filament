@@ -21,5 +21,4 @@
                 'cursor-pointer' => $isCopyable,
             ])
     }}
->
-</div>
+></div>

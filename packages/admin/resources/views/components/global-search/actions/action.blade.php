@@ -9,7 +9,9 @@
     if ($action->getEvent()) {
         $emitArguments = collect([$action->getEvent()])
             ->merge($action->getEventData())
-            ->map(fn (mixed $value) => \Illuminate\Support\Js::from($value)->toHtml())
+            ->map(
+                fn (mixed $value) => \Illuminate\Support\Js::from($value)->toHtml(),
+            )
             ->implode(', ');
 
         $wireClickAction = "\$emit($emitArguments)";

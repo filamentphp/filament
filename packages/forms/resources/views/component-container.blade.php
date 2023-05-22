@@ -10,15 +10,15 @@
     @foreach ($getComponents(withHidden: true) as $formComponent)
         @php
             /**
-            * Instead of only rendering the hidden components, we should
-            * render the `<div>` wrappers for all fields, regardless of
-            * if they are hidden or not. This is to solve Livewire DOM
-            * diffing issues.
-            *
-            * Additionally, any `<div>` elements that wrap hidden
-            * components need to have `class="hidden"`, so that they
-            * don't consume grid space.
-            */
+             * Instead of only rendering the hidden components, we should
+             * render the `<div>` wrappers for all fields, regardless of
+             * if they are hidden or not. This is to solve Livewire DOM
+             * diffing issues.
+             *
+             * Additionally, any `<div>` elements that wrap hidden
+             * components need to have `class="hidden"`, so that they
+             * don't consume grid space.
+             */
             $isHidden = $formComponent->isHidden();
         @endphp
 
