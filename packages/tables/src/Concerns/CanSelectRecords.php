@@ -28,7 +28,7 @@ trait CanSelectRecords
         return true;
     }
 
-    public function getAllTableRecordKeys(): array
+    public function getAllSelectableTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
 
