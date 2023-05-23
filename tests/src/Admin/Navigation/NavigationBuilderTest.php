@@ -109,19 +109,16 @@ it('can register navigation groups individually', function () {
 it('can register navigation groups with hidden items', function () {
     Filament::navigation(function (NavigationBuilder $navigation): NavigationBuilder {
         return $navigation
-            ->group('Shop', [
-                ...[
-                    NavigationGroup::make()
-                        ->label('Store')
-                        ->items([
-                            NavigationItem::make('Products')
-                                ->visible(false)
-                                ->label('Products'),
-                            NavigationItem::make('Orders')
-                                ->hidden(true)
-                                ->label('Orders'),
-                        ]),
-                ],
+            ->items([
+                NavigationItem::make('Products')
+                    ->visible(false)
+                    ->label('Products'),
+                NavigationItem::make('Orders')
+                    ->hidden(true)
+                    ->label('Orders'),
+                ...Dashboard::getNavigationItems(),
+                ...UserResource::getNavigationItems(),
+                ...Settings::getNavigationItems(),
             ]);
     });
 
@@ -129,7 +126,7 @@ it('can register navigation groups with hidden items', function () {
         ->sequence(
             fn ($group) => $group
                 ->toBeInstanceOf(NavigationGroup::class)
-                ->getLabel()->toBe('Store')
+                ->getLabel()->toBeNull()
                 ->getItems()
                 ->sequence(
                     fn ($item) => $item
@@ -138,6 +135,20 @@ it('can register navigation groups with hidden items', function () {
                     fn ($item) => $item
                         ->getLabel()->toBe('Orders')
                         ->getHidden()->toBe(true),
-                ),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Dashboard')
+                        ->getIcon()->toBe('heroicon-o-home')
+                        ->getVisible()->toBeNull(),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Users')
+                        ->getIcon()->toBe('heroicon-o-user')
+                        ->getHidden()->toBeNull(),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Settings')
+                        ->getIcon()->toBe('heroicon-o-cog')
+                        ->getVisible()->toBeNull()
+                        ->getHidden()->toBeNull(),
+                )
+                ->each->toBeInstanceOf(NavigationItem::class),
         );
 });
