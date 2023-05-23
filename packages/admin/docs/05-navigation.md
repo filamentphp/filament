@@ -130,6 +130,22 @@ Filament::serving(function () {
 });
 ```
 
+You can also set the visibility of the navigation item by using `visible` or `hidden` methods
+
+```php
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationItem;
+
+Filament::serving(function () {
+    Filament::registerNavigationItems([
+        NavigationItem::make('Analytics')
+            ->visible(false)
+            // or
+            ->hidden(true),
+    ]);
+});
+```
+
 ## Disabling resource or page navigation items
 
 To prevent resources or pages from showing up in navigation, you may use:
