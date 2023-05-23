@@ -20,6 +20,10 @@
                 return
             }
 
+            if (! $refs.newState) {
+                return
+            }
+
             let newState = $refs.newState.value
 
             if (state === newState) {

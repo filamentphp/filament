@@ -7,6 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\ComponentAttributeBag;
+use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 
 class ImageColumn extends Column
@@ -26,6 +27,8 @@ class ImageColumn extends Column
     protected int | string | Closure | null $width = null;
 
     protected array $extraImgAttributes = [];
+
+    protected string | Closure | null $defaultImageUrl = null;
 
     protected function setUp(): void
     {
@@ -117,12 +120,19 @@ class ImageColumn extends Column
         return $height;
     }
 
+    public function defaultImageUrl(string | Closure | null $url): static
+    {
+        $this->defaultImageUrl = $url;
+
+        return $this;
+    }
+
     public function getImagePath(): ?string
     {
         $state = $this->getState();
 
         if (! $state) {
-            return null;
+            return $this->getDefaultImageUrl();
         }
 
         if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
@@ -132,7 +142,11 @@ class ImageColumn extends Column
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        if (! $storage->exists($state)) {
+        try {
+            if (! $storage->exists($state)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
             return null;
         }
 
@@ -148,6 +162,11 @@ class ImageColumn extends Column
         }
 
         return $storage->url($state);
+    }
+
+    public function getDefaultImageUrl(): ?string
+    {
+        return $this->evaluate($this->defaultImageUrl);
     }
 
     public function getVisibility(): string

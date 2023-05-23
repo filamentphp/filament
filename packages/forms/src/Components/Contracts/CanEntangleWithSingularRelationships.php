@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 interface CanEntangleWithSingularRelationships
 {
+    public function cachedExistingRecord(?Model $record): static;
+
     public function clearCachedExistingRecord(): void;
 
     public function fillFromRelationship(): void;

@@ -22,6 +22,18 @@ return [
             'label' => 'Salir',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Contraer barra lateral',
+            ],
+
+            'expand' => [
+                'label' => 'Expandir barra lateral',
+            ],
+
+        ],
+
         'user_menu' => [
             'label' => 'Menú del Usuario',
         ],

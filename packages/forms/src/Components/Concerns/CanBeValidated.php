@@ -50,6 +50,13 @@ trait CanBeValidated
         return $this;
     }
 
+    public function ascii(bool | Closure $condition = true): static
+    {
+        $this->rule('ascii', $condition);
+
+        return $this;
+    }
+
     public function confirmed(bool | Closure $condition = true): static
     {
         $this->rule('confirmed', $condition);
@@ -473,7 +480,7 @@ trait CanBeValidated
             }
 
             return $rule;
-        }, fn (Field $component, ?String $model): bool => (bool) ($component->evaluate($table) ?? $model));
+        }, fn (Field $component, ?string $model): bool => (bool) ($component->evaluate($table) ?? $model));
 
         return $this;
     }

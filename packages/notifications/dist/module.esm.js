@@ -338,7 +338,7 @@ var notification_default = (Alpine) => {
     configureAnimations: function() {
       let animation;
       Livewire.hook("message.received", (_, component) => {
-        if (component.fingerprint.name !== "filament.core.notifications") {
+        if (!component.serverMemo.data.isFilamentNotificationsComponent) {
           return;
         }
         const getTop = () => this.$el.getBoundingClientRect().top;
@@ -355,7 +355,7 @@ var notification_default = (Alpine) => {
         this.$el.getAnimations().forEach((animation2) => animation2.finish());
       });
       Livewire.hook("message.processed", (_, component) => {
-        if (component.fingerprint.name !== "filament.core.notifications") {
+        if (!component.serverMemo.data.isFilamentNotificationsComponent) {
           return;
         }
         if (!this.isShown) {

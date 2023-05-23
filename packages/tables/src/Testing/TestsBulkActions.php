@@ -136,6 +136,8 @@ class TestsBulkActions
     public function assertTableBulkActionExists(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
@@ -154,6 +156,8 @@ class TestsBulkActions
     public function assertTableBulkActionDoesNotExist(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
@@ -168,9 +172,26 @@ class TestsBulkActions
         };
     }
 
+    public function assertTableBulkActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedTableBulkActions(),
+                'table bulk',
+                BulkAction::class,
+            );
+
+            return $this;
+        };
+    }
+
     public function assertTableBulkActionVisible(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -191,6 +212,8 @@ class TestsBulkActions
     public function assertTableBulkActionHidden(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -211,6 +234,8 @@ class TestsBulkActions
     public function assertTableBulkActionEnabled(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -231,6 +256,8 @@ class TestsBulkActions
     public function assertTableBulkActionDisabled(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -251,6 +278,8 @@ class TestsBulkActions
     public function assertTableBulkActionHasIcon(): Closure
     {
         return function (string $name, string $icon, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -271,6 +300,8 @@ class TestsBulkActions
     public function assertTableBulkActionDoesNotHaveIcon(): Closure
     {
         return function (string $name, string $icon, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -291,6 +322,8 @@ class TestsBulkActions
     public function assertTableBulkActionHasLabel(): Closure
     {
         return function (string $name, string $label, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -311,6 +344,8 @@ class TestsBulkActions
     public function assertTableBulkActionDoesNotHaveLabel(): Closure
     {
         return function (string $name, string $label, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -331,6 +366,8 @@ class TestsBulkActions
     public function assertTableBulkActionHasColor(): Closure
     {
         return function (string $name, string $color, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 
@@ -351,6 +388,8 @@ class TestsBulkActions
     public function assertTableBulkActionDoesNotHaveColor(): Closure
     {
         return function (string $name, string $color, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertTableBulkActionExists($name);
 

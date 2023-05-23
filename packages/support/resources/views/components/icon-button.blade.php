@@ -19,6 +19,7 @@
         'text-primary-500 focus:bg-primary-500/10' => $color === 'primary',
         'text-danger-500 focus:bg-danger-500/10' => $color === 'danger',
         'text-gray-500 focus:bg-gray-500/10' => $color === 'secondary',
+        'dark:text-gray-400' => $color === 'secondary' && $darkMode,
         'text-success-500 focus:bg-success-500/10' => $color === 'success',
         'text-warning-500 focus:bg-warning-500/10' => $color === 'warning',
         'dark:hover:bg-gray-300/5' => $darkMode,
@@ -45,10 +46,12 @@
         'bg-warning-500/10' => $color === 'warning',
     ]);
 
-    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+
+    $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
+        $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
 

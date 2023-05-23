@@ -108,6 +108,7 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\Action::make('has-color')
                 ->color('primary'),
             Tables\Actions\Action::make('exists'),
+            Tables\Actions\Action::make('exists-in-order'),
             Tables\Actions\Action::make('url')
                 ->url('https://filamentphp.com'),
             Tables\Actions\Action::make('url_in_new_tab')
@@ -162,6 +163,15 @@ class PostsTable extends Component implements Tables\Contracts\HasTable
             Tables\Actions\BulkAction::make('has-color')
                 ->color('primary'),
             Tables\Actions\BulkAction::make('exists'),
+            Tables\Actions\BulkAction::make('exists_in_order'),
+        ];
+    }
+
+    protected function getTableEmptyStateActions(): array
+    {
+        return [
+            Tables\Actions\Action::make('empty-exists'),
+            Tables\Actions\Action::make('empty-exists-in-order'),
         ];
     }
 

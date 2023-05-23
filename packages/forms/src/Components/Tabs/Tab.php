@@ -15,6 +15,10 @@ class Tab extends Component implements CanConcealComponents
 
     protected string | Closure | null $icon = null;
 
+    protected string | Closure | null $iconColor = null;
+
+    protected string | Closure | null $iconPosition = null;
+
     final public function __construct(string $label)
     {
         $this->label($label);
@@ -32,6 +36,20 @@ class Tab extends Component implements CanConcealComponents
     public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function iconColor(string | Closure | null $color): static
+    {
+        $this->iconColor = $color;
+
+        return $this;
+    }
+
+    public function iconPosition(string | Closure | null $position): static
+    {
+        $this->iconPosition = $position;
 
         return $this;
     }
@@ -56,6 +74,16 @@ class Tab extends Component implements CanConcealComponents
     public function getIcon(): ?string
     {
         return $this->evaluate($this->icon);
+    }
+
+    public function getIconPosition(): ?string
+    {
+        return $this->evaluate($this->iconPosition) ?? 'before';
+    }
+
+    public function getIconColor(): ?string
+    {
+        return $this->evaluate($this->iconColor);
     }
 
     public function getBadge(): ?string

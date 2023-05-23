@@ -63,7 +63,7 @@ In `config/filament.php`, set the `layouts.sidebar.is_collapsible_on_desktop` to
 
 By default, the topbar sticks to the top of the page.
 
-You may make the topbar scroll out of view instead by adding the following styles to your [theme](#building-theme) or by [registering a new stylesheet](#including-frontend-assets):
+You may make the topbar scroll out of view instead by adding the following styles to your [theme](#building-themes) or by [registering a new stylesheet](#including-frontend-assets):
 
 ```css
 .filament-main-topbar {
@@ -320,3 +320,7 @@ The available hooks are as follows:
 - `page.footer-widgets.end` - after page footer widgets
 - `page.actions.start` - before page actions
 - `page.actions.end` - after page actions
+- `resource.pages.list-records.table.start` - before the resource table
+- `resource.pages.list-records.table.end` - after the resource table
+- `resource.relation-manager.start` - before the relation manager table
+- `resource.relation-manager.end` - after the relation manager table

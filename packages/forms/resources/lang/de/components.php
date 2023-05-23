@@ -9,11 +9,11 @@ return [
         'buttons' => [
 
             'clone_item' => [
-                'label' => 'Klonen',
+                'label' => 'Kopieren',
             ],
 
             'create_item' => [
-                'label' => 'Zu :label hinzufügen',
+                'label' => 'Hinzufügen',
             ],
 
             'create_item_between' => [
@@ -128,7 +128,7 @@ return [
         'buttons' => [
 
             'create_item' => [
-                'label' => 'Zu :label hinzufügen',
+                'label' => 'Hinzufügen',
             ],
 
             'delete_item' => [
@@ -136,7 +136,7 @@ return [
             ],
 
             'clone_item' => [
-                'label' => 'Klonen',
+                'label' => 'Kopieren',
             ],
 
             'move_item' => [

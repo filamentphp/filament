@@ -60,10 +60,12 @@
         'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm') && (! $labelSrOnly),
     ]);
 
-    $hasLoadingIndicator = filled($attributes->get('wire:target')) || filled($attributes->get('wire:click')) || (($type === 'submit') && filled($form));
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+
+    $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
     if ($hasLoadingIndicator) {
-        $loadingIndicatorTarget = html_entity_decode($attributes->get('wire:target', $attributes->get('wire:click', $form)), ENT_QUOTES);
+        $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
 
@@ -84,9 +86,6 @@
             form: null,
             isUploadingFile: false,
         }"
-        @unless ($disabled)
-            x-bind:class="{ 'opacity-70 cursor-wait': isUploadingFile }"
-        @endunless
         x-bind:disabled="isUploadingFile"
         x-init="
             form = $el.closest('form')
@@ -99,6 +98,7 @@
                 isUploadingFile = false
             })
         "
+        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         {{ $attributes->class($buttonClasses) }}
     >
         @if ($iconPosition === 'before')

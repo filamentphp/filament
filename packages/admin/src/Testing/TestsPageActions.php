@@ -119,6 +119,8 @@ class TestsPageActions
     public function assertPageActionExists(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
@@ -137,6 +139,8 @@ class TestsPageActions
     public function assertPageActionDoesNotExist(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             $livewire = $this->instance();
             $livewireClass = $livewire::class;
 
@@ -151,9 +155,26 @@ class TestsPageActions
         };
     }
 
+    public function assertPageActionsExistInOrder(): Closure
+    {
+        return function (array $names): static {
+            $livewire = $this->instance();
+            $this->assertActionListInOrder(
+                $names,
+                $livewire->getCachedActions(),
+                'page',
+                Action::class,
+            );
+
+            return $this;
+        };
+    }
+
     public function assertPageActionVisible(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -174,6 +195,8 @@ class TestsPageActions
     public function assertPageActionHidden(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -194,6 +217,8 @@ class TestsPageActions
     public function assertPageActionEnabled(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -214,6 +239,8 @@ class TestsPageActions
     public function assertPageActionDisabled(): Closure
     {
         return function (string $name): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -234,6 +261,8 @@ class TestsPageActions
     public function assertPageActionHasIcon(): Closure
     {
         return function (string $name, string $icon, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -254,6 +283,8 @@ class TestsPageActions
     public function assertPageActionDoesNotHaveIcon(): Closure
     {
         return function (string $name, string $icon, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -274,6 +305,8 @@ class TestsPageActions
     public function assertPageActionHasLabel(): Closure
     {
         return function (string $name, string $label, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -294,6 +327,8 @@ class TestsPageActions
     public function assertPageActionDoesNotHaveLabel(): Closure
     {
         return function (string $name, string $label, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -314,6 +349,8 @@ class TestsPageActions
     public function assertPageActionHasColor(): Closure
     {
         return function (string $name, string $color, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -334,6 +371,8 @@ class TestsPageActions
     public function assertPageActionDoesNotHaveColor(): Closure
     {
         return function (string $name, string $color, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -354,6 +393,8 @@ class TestsPageActions
     public function assertPageActionHasUrl(): Closure
     {
         return function (string $name, string $url, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -374,6 +415,8 @@ class TestsPageActions
     public function assertPageActionDoesNotHaveUrl(): Closure
     {
         return function (string $name, string $url, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -394,6 +437,8 @@ class TestsPageActions
     public function assertPageActionShouldOpenUrlInNewTab(): Closure
     {
         return function (string $name, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 
@@ -414,6 +459,8 @@ class TestsPageActions
     public function assertPageActionShouldNotOpenUrlInNewTab(): Closure
     {
         return function (string $name, $record = null): static {
+            $name = $this->parseActionName($name);
+
             /** @phpstan-ignore-next-line */
             $this->assertPageActionExists($name);
 

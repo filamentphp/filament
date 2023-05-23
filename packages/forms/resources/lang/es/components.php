@@ -56,6 +56,22 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'buttons' => [
+
+            'deselect_all' => [
+                'label' => 'Deseleccionar todos',
+            ],
+
+            'select_all' => [
+                'label' => 'Seleccionar todos',
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'buttons' => [
@@ -94,7 +110,7 @@ return [
             'attach_files' => 'Adjuntar archivos',
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
-            'code_block' => 'Código',
+            'code_block' => 'Bloque de código',
             'edit' => 'Escribir',
             'italic' => 'Cursiva',
             'link' => 'Enlace',
@@ -119,12 +135,12 @@ return [
                 'label' => 'Borrar',
             ],
 
-            'move_item' => [
-                'label' => 'Mover',
-            ],
-
             'clone_item' => [
                 'label' => 'Clonar',
+            ],
+
+            'move_item' => [
+                'label' => 'Mover',
             ],
 
             'move_item_down' => [
@@ -179,7 +195,7 @@ return [
             'blockquote' => 'Cita',
             'bold' => 'Negrita',
             'bullet_list' => 'Viñetas',
-            'code_block' => 'Código',
+            'code_block' => 'Bloque de código',
             'h1' => 'Título',
             'h2' => 'Encabezado',
             'h3' => 'Subencabezado',

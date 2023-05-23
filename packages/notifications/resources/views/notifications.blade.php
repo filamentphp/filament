@@ -1,15 +1,16 @@
 <div>
     <div
         @class([
-            'filament-notifications pointer-events-none fixed inset-4 z-50 mx-auto flex justify-end gap-3',
+            'filament-notifications pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3',
             match (config('notifications.layout.alignment.horizontal')) {
                 'left' => 'items-start',
                 'center' => 'items-center',
                 'right' => 'items-end',
             },
             match (config('notifications.layout.alignment.vertical')) {
-                'top' => 'flex-col-reverse',
-                'bottom' => 'flex-col',
+                'top' => 'flex-col-reverse justify-end',
+                'bottom' => 'flex-col justify-end',
+                'center' => 'flex-col justify-center'
             },
         ])
         role="status"

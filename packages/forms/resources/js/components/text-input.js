@@ -14,7 +14,7 @@ export default (Alpine) => {
                     return
                 }
 
-                if (this.state) {
+                if (typeof this.state !== 'undefined') {
                     this.$el.value = this.state?.valueOf()
                 }
 

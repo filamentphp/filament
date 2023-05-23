@@ -1,5 +1,6 @@
 @props([
     'darkMode' => false,
+    'maxHeight' => null,
     'offset' => 8,
     'placement' => null,
     'shift' => false,
@@ -39,6 +40,9 @@
             wire:ignore.self
             wire:key="{{ $attributes->get('wire:key') }}.panel"
         @endif
+        @if ($maxHeight)
+            style="max-height: {{ $maxHeight }}"
+        @endif
         @class([
             'filament-dropdown-panel absolute z-10 w-full divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-black/5 transition',
             'dark:divide-gray-700 dark:bg-gray-800 dark:ring-white/10' => $darkMode,
@@ -56,6 +60,7 @@
                 '7xl' => 'max-w-7xl',
                 default => 'max-w-[14rem]',
             },
+            'overflow-y-auto' => $maxHeight,
         ])
     >
         {{ $slot }}

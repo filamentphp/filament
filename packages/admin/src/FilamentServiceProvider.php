@@ -110,6 +110,10 @@ class FilamentServiceProvider extends PluginServiceProvider
             }
         }
 
+        Filament::serving(function () {
+            Filament::setServingStatus();
+        });
+
         TestableLivewire::mixin(new TestsPageActions());
     }
 

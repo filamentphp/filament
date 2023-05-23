@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
@@ -67,10 +68,8 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 return null;
             }
 
-            $mediaClass = config('media-library.media_model', Media::class);
-
             /** @var ?Media $media */
-            $media = $mediaClass::findByUuid($file);
+            $media = $component->getRecord()->getRelationValue('media')->firstWhere('uuid', $file);
 
             if ($component->getVisibility() === 'private') {
                 try {
@@ -90,6 +89,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         });
 
         $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
+            $component->deleteAbandonedFiles();
             $component->saveUploadedFiles();
         });
 
@@ -98,7 +98,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 return $file;
             }
 
-            if (! $file->exists()) {
+            try {
+                if (! $file->exists()) {
+                    return null;
+                }
+            } catch (UnableToCheckFileExistence $exception) {
                 return null;
             }
 
@@ -120,21 +124,14 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $media->getAttributeValue('uuid');
         });
 
-        $this->deleteUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): void {
-            if (! $file) {
-                return;
-            }
+        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state): array {
+            $uuids = array_filter(array_values($state));
 
             $mediaClass = config('media-library.media_model', Media::class);
 
-            $mediaClass::findByUuid($file)?->delete();
-        });
+            $mappedIds = $mediaClass::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
 
-        $this->reorderUploadedFilesUsing(static function (SpatieMediaLibraryFileUpload $component, array $state): array {
-            $uuids = array_filter(array_values($state));
-            $mappedIds = Media::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
-
-            Media::setNewOrder(array_merge(array_flip($uuids), $mappedIds));
+            $mediaClass::setNewOrder(array_merge(array_flip($uuids), $mappedIds));
 
             return $state;
         });
@@ -187,6 +184,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         $this->hasResponsiveImages = $condition;
 
         return $this;
+    }
+
+    public function deleteAbandonedFiles(): void
+    {
+        /** @var Model&HasMedia $record */
+        $record = $this->getRecord();
+
+        $record
+            ->getMedia($this->getCollection())
+            ->whereNotIn('uuid', array_keys($this->getState() ?? []))
+            ->each(fn (Media $media) => $media->delete());
     }
 
     public function getCollection(): string

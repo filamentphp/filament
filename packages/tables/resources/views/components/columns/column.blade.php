@@ -9,20 +9,22 @@
 
 @php
     $action = $column->getAction();
-    $alignment = $column->getAlignment();
     $name = $column->getName();
     $shouldOpenUrlInNewTab = $column->shouldOpenUrlInNewTab();
     $tooltip = $column->getTooltip();
     $url = $column->getUrl();
 
-    $alignmentClass = match ($alignment) {
-        'center' => 'text-center',
-        'end' => 'text-end',
-        'left' => 'text-left',
-        'right' => 'text-right',
-        'justify' => 'text-justify',
-        default => 'text-start',
-    };
+    $columnClasses = \Illuminate\Support\Arr::toCssClasses([
+        'flex w-full',
+        match ($column->getAlignment()) {
+            'center' => 'justify-center text-center',
+            'end' => 'justify-end text-end',
+            'left' => 'justify-start text-left',
+            'right' => 'justify-end text-right',
+            'justify' => 'justify-between text-justify',
+            default => 'justify-start text-start',
+        },
+    ]);
 
     $slot = $column->viewData(['recordKey' => $recordKey]);
 @endphp
@@ -38,10 +40,7 @@
         <a
             href="{{ $url ?: $recordUrl }}"
             {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
-            @class([
-                'block w-full',
-                $alignmentClass,
-            ])
+            class="{{ $columnClasses }}"
         >
             {{ $slot }}
         </a>
@@ -66,15 +65,12 @@
             wire:loading.attr="disabled"
             wire:loading.class="cursor-wait opacity-70"
             type="button"
-            @class([
-                'block w-full',
-                $alignmentClass,
-            ])
+            class="{{ $columnClasses }}"
         >
             {{ $slot }}
         </button>
     @else
-        <div @class([$alignmentClass])>
+        <div class="{{ $columnClasses }}">
             {{ $slot }}
         </div>
     @endif

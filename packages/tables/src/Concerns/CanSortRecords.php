@@ -50,6 +50,16 @@ trait CanSortRecords
 
     public function updatedTableSort(): void
     {
+        if ($this->shouldPersistTableSortInSession()) {
+            session()->put(
+                $this->getTableSortSessionKey(),
+                [
+                    'column' => $this->tableSortColumn,
+                    'direction' => $this->tableSortDirection,
+                ],
+            );
+        }
+
         $this->resetPage();
     }
 
@@ -59,13 +69,14 @@ trait CanSortRecords
             return $query->orderBy($this->getTableReorderColumn());
         }
 
-        $sortColumn = $this->tableSortColumn;
+        $sortColumn = $this->tableSortColumn ?? $this->getDefaultTableSortColumn();
 
         if (! $sortColumn) {
             return $query;
         }
 
-        $sortDirection = $this->tableSortDirection === 'desc' ? 'desc' : 'asc';
+        $sortDirection = $this->tableSortDirection ?? $this->getDefaultTableSortDirection();
+        $sortDirection = $sortDirection === 'desc' ? 'desc' : 'asc';
 
         $column = $this->getCachedTableColumn($sortColumn);
 
@@ -75,10 +86,29 @@ trait CanSortRecords
             return $query;
         }
 
-        if ($sortColumn === $this->getDefaultTableSortColumn()) {
-            return $query->orderBy($sortColumn, $sortDirection);
-        }
+        $this->applyDefaultSortingToTableQuery($query, $sortColumn, $sortDirection);
 
         return $query;
+    }
+
+    protected function applyDefaultSortingToTableQuery(Builder $query, string $sortColumn, string $sortDirection): Builder
+    {
+        if ($sortColumn !== $this->getDefaultTableSortColumn()) {
+            return $query;
+        }
+
+        return $query->orderBy($sortColumn, $sortDirection);
+    }
+
+    public function getTableSortSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_sort";
+    }
+
+    protected function shouldPersistTableSortInSession(): bool
+    {
+        return false;
     }
 }

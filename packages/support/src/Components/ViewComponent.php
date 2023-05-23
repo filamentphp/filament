@@ -32,9 +32,13 @@ abstract class ViewComponent extends Component implements Htmlable
 
     protected static array $methodCache = [];
 
-    public function view(string $view): static
+    public function view(string $view, array $viewData = []): static
     {
         $this->view = $view;
+
+        if ($viewData !== []) {
+            $this->viewData($viewData);
+        }
 
         return $this;
     }

@@ -1,6 +1,6 @@
 @props([
     'paginator',
-    'recordsPerPageSelectOptions',
+    'recordsPerPageSelectOptions' => [],
 ])
 
 @php
@@ -102,7 +102,7 @@
                         'dark:border-gray-600' => config('tables.dark_mode'),
                     ])>
                         <ol @class([
-                            'flex items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300',
+                            'flex gap-px items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300',
                             'dark:text-gray-400 dark:divide-gray-600' => config('tables.dark_mode'),
                         ])>
                             @if (! $paginator->onFirstPage())
@@ -124,7 +124,7 @@
                                         <x-tables::pagination.item
                                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                                             :label="$page"
-                                            :aria-label="__('tables::table.pagination.buttons.go_to_page.label', ['page' => $page])"
+                                            :aria-label="trans_choice('tables::table.pagination.buttons.go_to_page.label', $page, ['page' => $page])"
                                             :active="$page === $paginator->currentPage()"
                                             :wire:key="$this->id . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
                                         />

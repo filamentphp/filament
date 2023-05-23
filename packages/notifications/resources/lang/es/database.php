@@ -20,7 +20,7 @@ return [
 
         'empty' => [
             'heading' => 'No hay notificaciones',
-            'description' => 'Por favor, compruébelo más tarde',
+            'description' => 'Por favor, compruebe más tarde',
         ],
 
     ],

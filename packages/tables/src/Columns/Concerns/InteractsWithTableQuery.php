@@ -6,21 +6,22 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 trait InteractsWithTableQuery
 {
-    public function applyRelationshipAggregates(Builder $query): Builder
+    public function applyRelationshipAggregates(Builder | Relation $query): Builder | Relation
     {
         return $query->when(
             filled([$this->getRelationshipToAvg(), $this->getColumnToAvg()]),
             fn ($query) => $query->withAvg($this->getRelationshipToAvg(), $this->getColumnToAvg())
         )->when(
-            filled($this->getRelationshipToCount()),
-            fn ($query) => $query->withCount([$this->getRelationshipToCount()])
+            filled($this->getRelationshipsToCount()),
+            fn ($query) => $query->withCount(Arr::wrap($this->getRelationshipsToCount()))
         )->when(
-            filled($this->getRelationshipToExistenceCheck()),
-            fn ($query) => $query->withExists($this->getRelationshipToExistenceCheck())
+            filled($this->getRelationshipsToExistenceCheck()),
+            fn ($query) => $query->withExists(Arr::wrap($this->getRelationshipsToExistenceCheck()))
         )->when(
             filled([$this->getRelationshipToMax(), $this->getColumnToMax()]),
             fn ($query) => $query->withMax($this->getRelationshipToMax(), $this->getColumnToMax())
@@ -33,17 +34,23 @@ trait InteractsWithTableQuery
         );
     }
 
-    public function applyEagerLoading(Builder $query): Builder
+    public function applyEagerLoading(Builder | Relation $query): Builder | Relation
     {
         if ($this->isHidden()) {
             return $query;
         }
 
-        if ($this->queriesRelationships($query->getModel())) {
-            $query->with([$this->getRelationshipName()]);
+        if (! $this->queriesRelationships($query->getModel())) {
+            return $query;
         }
 
-        return $query;
+        $relationshipName = $this->getRelationshipName();
+
+        if (array_key_exists($relationshipName, $query->getEagerLoads())) {
+            return $query;
+        }
+
+        return $query->with([$relationshipName]);
     }
 
     public function applySearchConstraint(Builder $query, string $search, bool &$isFirst, bool $isIndividual = false): Builder

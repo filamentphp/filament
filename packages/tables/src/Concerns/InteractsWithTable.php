@@ -67,38 +67,82 @@ trait InteractsWithTable
             ));
         }
 
+        if (! count($this->tableFilters ?? [])) {
+            $this->tableFilters = null;
+        }
+
+        $shouldPersistTableFiltersInSession = $this->shouldPersistTableFiltersInSession();
         $filtersSessionKey = $this->getTableFiltersSessionKey();
 
-        if ((blank($this->tableFilters) || ($this->tableFilters === [])) && $this->shouldPersistTableFiltersInSession() && session()->has($filtersSessionKey)) {
+        if (($this->tableFilters === null) && $shouldPersistTableFiltersInSession && session()->has($filtersSessionKey)) {
             $this->tableFilters = array_merge(
                 $this->tableFilters ?? [],
                 session()->get($filtersSessionKey) ?? [],
             );
         }
 
-        if (! count($this->tableFilters ?? [])) {
-            $this->tableFilters = null;
-        }
-
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
+        if ($shouldPersistTableFiltersInSession) {
+            session()->put(
+                $filtersSessionKey,
+                $this->tableFilters,
+            );
+        }
+
+        $shouldPersistTableSearchInSession = $this->shouldPersistTableSearchInSession();
         $searchSessionKey = $this->getTableSearchSessionKey();
 
-        if (blank($this->tableSearchQuery) && $this->shouldPersistTableSearchInSession() && session()->has($searchSessionKey)) {
+        if (blank($this->tableSearchQuery) && $shouldPersistTableSearchInSession && session()->has($searchSessionKey)) {
             $this->tableSearchQuery = session()->get($searchSessionKey);
         }
 
         $this->tableSearchQuery = strval($this->tableSearchQuery);
 
+        if ($shouldPersistTableSearchInSession) {
+            session()->put(
+                $searchSessionKey,
+                $this->tableSearchQuery,
+            );
+        }
+
+        $shouldPersistTableColumnSearchInSession = $this->shouldPersistTableColumnSearchInSession();
         $columnSearchSessionKey = $this->getTableColumnSearchSessionKey();
 
-        if ((blank($this->tableColumnSearchQueries) || ($this->tableColumnSearchQueries === [])) && $this->shouldPersistTableColumnSearchInSession() && session()->has($columnSearchSessionKey)) {
+        if ((blank($this->tableColumnSearchQueries) || ($this->tableColumnSearchQueries === [])) && $shouldPersistTableColumnSearchInSession && session()->has($columnSearchSessionKey)) {
             $this->tableColumnSearchQueries = session()->get($columnSearchSessionKey);
         }
 
         $this->tableColumnSearchQueries = $this->castTableColumnSearchQueries(
             $this->tableColumnSearchQueries ?? [],
         );
+
+        if ($shouldPersistTableColumnSearchInSession) {
+            session()->put(
+                $columnSearchSessionKey,
+                $this->tableColumnSearchQueries,
+            );
+        }
+
+        $shouldPersistTableSortInSession = $this->shouldPersistTableSortInSession();
+        $sortSessionKey = $this->getTableSortSessionKey();
+
+        if (blank($this->tableSortColumn) && $shouldPersistTableSortInSession && session()->has($sortSessionKey)) {
+            $sort = session()->get($sortSessionKey);
+
+            $this->tableSortColumn = $sort['column'] ?? null;
+            $this->tableSortDirection = $sort['direction'] ?? null;
+        }
+
+        if ($shouldPersistTableSortInSession) {
+            session()->put(
+                $sortSessionKey,
+                [
+                    'column' => $this->tableSortColumn,
+                    'direction' => $this->tableSortDirection,
+                ],
+            );
+        }
 
         $this->hasMounted = true;
     }
@@ -108,9 +152,6 @@ trait InteractsWithTable
         if ($this->isTablePaginationEnabled()) {
             $this->tableRecordsPerPage = $this->getDefaultTableRecordsPerPageSelectOption();
         }
-
-        $this->tableSortColumn ??= $this->getDefaultTableSortColumn();
-        $this->tableSortDirection ??= $this->getDefaultTableSortDirection();
     }
 
     protected function getCachedTable(): Table

@@ -176,6 +176,11 @@ trait HasFilters
         };
     }
 
+    protected function getTableFiltersFormMaxHeight(): ?string
+    {
+        return null;
+    }
+
     protected function getTableFiltersFormSchema(): array
     {
         $schema = [];

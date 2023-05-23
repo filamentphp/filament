@@ -22,6 +22,10 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     protected bool | Closure | null $isAside = null;
 
+    protected string | Closure | null $icon = null;
+
+    protected bool | Closure $isFormBefore = false;
+
     final public function __construct(string | Htmlable | Closure $heading)
     {
         $this->heading($heading);
@@ -96,5 +100,29 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     public function isAside(): bool
     {
         return (bool) ($this->evaluate($this->isAside) ?? false);
+    }
+
+    public function icon(string | Closure | null $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->evaluate($this->icon);
+    }
+
+    public function formBefore(bool | Closure $condition = true): static
+    {
+        $this->isFormBefore = $condition;
+
+        return $this;
+    }
+
+    public function isFormBefore(): bool
+    {
+        return (bool) $this->evaluate($this->isFormBefore);
     }
 }

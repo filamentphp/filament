@@ -52,7 +52,7 @@
 
             @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
                 <x-forms::field-wrapper.error-message>
-                    {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
+                    {{ $errors->first($statePath) ?: ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
                 </x-forms::field-wrapper.error-message>
             @endif
 

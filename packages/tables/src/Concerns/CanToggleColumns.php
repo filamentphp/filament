@@ -82,6 +82,11 @@ trait CanToggleColumns
         return 1;
     }
 
+    protected function getTableColumnToggleFormMaxHeight(): ?string
+    {
+        return null;
+    }
+
     protected function getTableColumnToggleFormWidth(): ?string
     {
         return match ($this->getTableColumnToggleFormColumns()) {

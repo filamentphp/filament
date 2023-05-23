@@ -55,6 +55,23 @@
         ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $tab)
+            @php
+                $icon = $tab->getIcon();
+                $iconPosition = $tab->getIconPosition();
+                $iconColor = $tab->getIconColor();
+
+                $iconColorClasses = \Illuminate\Support\Arr::toCssClasses(
+                    match ($iconColor) {
+                        'danger' => ['text-danger-700', 'dark:text-danger-500' => config('tables.dark_mode')],
+                        'primary' => ['text-primary-700', 'dark:text-primary-500' => config('tables.dark_mode')],
+                        'success' => ['text-success-700', 'dark:text-success-500' => config('tables.dark_mode')],
+                        'warning' => ['text-warning-700', 'dark:text-warning-500' => config('tables.dark_mode')],
+                        'secondary' => ['text-gray-700', 'dark:text-gray-300' => config('tables.dark_mode')],
+                        default => [$iconColor],
+                    },
+                );
+            @endphp
+
             <button
                 type="button"
                 aria-controls="{{ $tab->getId() }}"
@@ -64,18 +81,31 @@
                 x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
                 class="filament-forms-tabs-component-button flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
                 x-bind:class="{
-                    'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== '{{ $tab->getId() }}',
+                    'text-gray-500 hover:text-gray-800 focus:text-primary-600 @if (config('forms.dark_mode')) dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-primary-600 @endif': tab !== '{{ $tab->getId() }}',
                     'filament-forms-tabs-component-button-active bg-white text-primary-600 @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}',
                 }"
             >
-                @if ($icon = $tab->getIcon())
+                @if ($icon && $iconPosition === 'before')
                     <x-dynamic-component
                         :component="$icon"
-                        class="h-5 w-5"
+                        @class([
+                            'w-4 h-4',
+                            $iconColorClasses,
+                        ])
                     />
                 @endif
 
                 <span>{{ $tab->getLabel() }}</span>
+
+                @if ($icon && $iconPosition === 'after')
+                    <x-dynamic-component
+                        :component="$icon"
+                        @class([
+                            'w-4 h-4',
+                            $iconColorClasses,
+                        ])
+                    />
+                @endif
 
                 @if ($badge = $tab->getBadge())
                     <span
