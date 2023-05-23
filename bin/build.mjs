@@ -1,17 +1,22 @@
 import * as esbuild from 'esbuild'
+import { exec } from 'child_process'
 
 const isDev = process.argv.includes('--dev')
 
 async function compile(options) {
     const context = await esbuild.context(options)
 
-    await context.rebuild()
-    await context.dispose()
+    if (isDev) {
+        await context.watch()
+    } else {
+        await context.rebuild()
+        await context.dispose()
+    }
 }
 
 const defaultOptions = {
     define: {
-        'process.env.NODE_ENV': isDev ? `'production'` : `'development'`,
+        'process.env.NODE_ENV': isDev ? `'development'` : `'production'`,
     },
     bundle: true,
     mainFields: ['module', 'main'],
@@ -33,6 +38,17 @@ const defaultOptions = {
                     console.log(`Build failed at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`, result.errors)
                 } else {
                     console.log(`Build finished at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`)
+                    exec('php artisan filament:assets', (error, stdout, stderr) => {
+                        if (error) {
+                            console.log(`error: ${error.message}`);
+                            return;
+                        }
+                        if (stderr) {
+                            console.log(`stderr: ${stderr}`);
+                            return;
+                        }
+                        console.log(`stdout: ${stdout}`);
+                    })
                 }
             })
         }
