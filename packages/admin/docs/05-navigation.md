@@ -139,9 +139,9 @@ use Filament\Navigation\NavigationItem;
 Filament::serving(function () {
     Filament::registerNavigationItems([
         NavigationItem::make('Analytics')
-            ->visible(false)
+            ->visible(fn (): bool => false)
             // or
-            ->hidden(true),
+            ->hidden(fn (): bool => true),
     ]);
 });
 ```
