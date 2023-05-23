@@ -26,9 +26,9 @@ class NavigationItem
 
     protected string | Closure | null $url = null;
 
-    protected ?bool $hidden = null;
+    protected ?bool $isHidden = null;
 
-    protected ?bool $visible = null;
+    protected ?bool $isVisible = null;
 
     final public function __construct(?string $label = null)
     {
@@ -64,16 +64,16 @@ class NavigationItem
         return $this;
     }
 
-    public function visible(Closure $callback): static
+    public function visible(bool | Closure $condition = null): static
     {
-        $this->visible = $callback;
+        $this->isVisible = $condition;
 
         return $this;
     }
 
-    public function hidden(Closure $callback): static
+    public function hidden(bool | Closure $condition = null): static
     {
-        $this->hidden = $callback;
+        $this->isHidden = $condition;
 
         return $this;
     }
@@ -143,12 +143,12 @@ class NavigationItem
 
     public function getVisible(): ?bool
     {
-        return $this->visible;
+        return $this->isVisible;
     }
 
     public function getHidden(): ?bool
     {
-        return $this->hidden;
+        return $this->isHidden;
     }
 
     public function getActiveIcon(): ?string

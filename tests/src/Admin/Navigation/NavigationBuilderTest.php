@@ -105,3 +105,39 @@ it('can register navigation groups individually', function () {
                 ->each->toBeInstanceOf(NavigationItem::class),
         );
 });
+
+it('can register navigation groups with hidden items', function () {
+    Filament::navigation(function (NavigationBuilder $navigation): NavigationBuilder {
+        return $navigation
+            ->group('Shop', [
+                ...[
+                    NavigationGroup::make()
+                        ->label('Store')
+                        ->items([
+                            NavigationItem::make('Products')
+                                ->visible(false)
+                                ->label('Products'),
+                            NavigationItem::make('Orders')
+                                ->hidden(true)
+                                ->label('Orders'),
+                        ]),
+                ],
+            ]);
+    });
+
+    expect(Filament::getNavigation())
+        ->sequence(
+            fn ($group) => $group
+                ->toBeInstanceOf(NavigationGroup::class)
+                ->getLabel()->toBe('Store')
+                ->getItems()
+                ->sequence(
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Products')
+                        ->getVisible()->toBe(false),
+                    fn ($item) => $item
+                        ->getLabel()->toBe('Orders')
+                        ->getHidden()->toBe(true),
+                ),
+        );
+});
