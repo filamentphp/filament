@@ -4,11 +4,18 @@
     'badge' => null,
     'badgeColor' => null,
     'icon',
+    'visible' => null,
+    'hidden' => null,
     'shouldOpenUrlInNewTab' => false,
     'url',
 ])
 
-<li @class(['filament-sidebar-item overflow-hidden', 'filament-sidebar-item-active' => $active])>
+<li @class([
+        'filament-sidebar-item overflow-hidden',
+        'filament-sidebar-item-active' => $active,
+        'hidden' => ! $visible,
+        'hidden'=> $hidden,
+    ])>
     <a
         href="{{ $url }}"
         {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : '' !!}
