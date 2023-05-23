@@ -26,6 +26,10 @@ class NavigationItem
 
     protected string | Closure | null $url = null;
 
+    protected ?bool $hidden = null;
+
+    protected ?bool $visible = null;
+
     final public function __construct(?string $label = null)
     {
         if (filled($label)) {
@@ -56,6 +60,20 @@ class NavigationItem
     public function icon(string $icon): static
     {
         $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function visible(Closure $callback): static
+    {
+        $this->visible = $callback;
+
+        return $this;
+    }
+
+    public function hidden(Closure $callback): static
+    {
+        $this->hidden = $callback;
 
         return $this;
     }
@@ -121,6 +139,16 @@ class NavigationItem
     public function getIcon(): string
     {
         return $this->icon;
+    }
+
+    public function getVisible(): ?bool
+    {
+        return $this->visible;
+    }
+
+    public function getHidden(): ?bool
+    {
+        return $this->hidden;
     }
 
     public function getActiveIcon(): ?string
