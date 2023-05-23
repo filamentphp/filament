@@ -66,14 +66,18 @@ class NavigationItem
 
     public function visible(bool | Closure $condition = null): static
     {
-        $this->isVisible = $condition;
+        $this->isVisible = is_callable($condition)
+                                ? $condition()
+                                : $condition;
 
         return $this;
     }
 
     public function hidden(bool | Closure $condition = null): static
     {
-        $this->isHidden = $condition;
+        $this->isHidden = is_callable($condition)
+                                ? $condition()
+                                : $condition;
 
         return $this;
     }

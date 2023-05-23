@@ -111,7 +111,7 @@ it('can register navigation groups with hidden items', function () {
         return $navigation
             ->items([
                 NavigationItem::make('Products')
-                    ->visible(false)
+                    ->visible(fn (): bool => false)
                     ->label('Products'),
                 NavigationItem::make('Orders')
                     ->hidden(true)
