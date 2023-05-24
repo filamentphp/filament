@@ -16,6 +16,18 @@ trait CanDisableOptions
     }
 
     /**
+     * @return array<string>
+     */
+    public function getEnabledOptions(): array
+    {
+        return array_filter(
+            $this->getOptions(),
+            fn ($label, $value) => ! $this->isOptionDisabled($value, $label),
+            ARRAY_FILTER_USE_BOTH,
+        );
+    }
+
+    /**
      * @param  array-key  $value
      */
     public function isOptionDisabled($value, string $label): bool
