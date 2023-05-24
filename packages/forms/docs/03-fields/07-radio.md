@@ -79,7 +79,7 @@ Radio::make('status')
     ->options([
         'draft' => 'Draft',
         'scheduled' => 'Scheduled',
-        'published' => 'Published'
+        'published' => 'Published',
     ])
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
@@ -92,10 +92,9 @@ use Filament\Forms\Components\Radio;
 Radio::make('status')
     ->options([
         'draft' => 'Draft',
-        'reviewing' => 'Reviewing',
+        'scheduled' => 'Scheduled',
         'published' => 'Published',
     ])
-    ->default('draft')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
     ->in(fn (Radio $component): array => array_keys($component->getEnabledOptions()))
 ```
