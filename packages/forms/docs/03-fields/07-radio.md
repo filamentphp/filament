@@ -87,9 +87,9 @@ Radio::make('status')
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
 ```php
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Radio;
 
-Select::make('status')
+Radio::make('status')
     ->options([
         'draft' => 'Draft',
         'reviewing' => 'Reviewing',
@@ -97,5 +97,5 @@ Select::make('status')
     ])
     ->default('draft')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
-    ->in(fn (Select $component): array => array_keys($component->getEnabledOptions()))
+    ->in(fn (Radio $component): array => array_keys($component->getEnabledOptions()))
 ```
