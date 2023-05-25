@@ -26,7 +26,7 @@ return [
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirm your password',
+            'label' => 'Confirm password',
         ],
 
     ],
