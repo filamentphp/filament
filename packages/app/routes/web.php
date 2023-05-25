@@ -120,13 +120,15 @@ Route::name('filament.')
                             }
                         });
 
-                    Route::middleware($hasTenancy ? [IdentifyTenant::class] : [])
-                        ->prefix($hasTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
-                        ->group(function () use ($context): void {
-                            if ($routes = $context->getTenantRoutes()) {
-                                $routes($context);
-                            }
-                        });
+                    if ($hasTenancy) {
+                        Route::middleware([IdentifyTenant::class])
+                            ->prefix('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}')
+                            ->group(function () use ($context): void {
+                                if ($routes = $context->getTenantRoutes()) {
+                                    $routes($context);
+                                }
+                            });
+                    }
 
                     if ($routes = $context->getRoutes()) {
                         $routes($context);
