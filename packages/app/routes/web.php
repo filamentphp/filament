@@ -5,7 +5,6 @@ use Filament\Http\Controllers\Auth\EmailVerificationController;
 use Filament\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Middleware\IdentifyTenant;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')

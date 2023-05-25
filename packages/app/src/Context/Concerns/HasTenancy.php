@@ -4,7 +4,6 @@ namespace Filament\Context\Concerns;
 
 use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
 use Filament\Navigation\MenuItem;
-use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 

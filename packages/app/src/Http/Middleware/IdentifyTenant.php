@@ -4,7 +4,6 @@ namespace Filament\Http\Middleware;
 
 use Closure;
 use Filament\Facades\Filament;
-use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
