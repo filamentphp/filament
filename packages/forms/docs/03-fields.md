@@ -1401,7 +1401,6 @@ RichEditor::make('content')
         'bulletList',
         'italic',
         'strike',
-        'underline',
     ])
 ```
 
