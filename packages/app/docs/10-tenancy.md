@@ -4,18 +4,11 @@ title: Multi-tenancy
 
 ## Overview
 
-Multi-tenancy is a concept where a single instance of an application serves multiple customers. Each customer has their own data and access rules that prevent them from viewing or modifying each other's data. This is a common pattern in SaaS applications.
-
-There are two main approaches to "ownership" in a multi-tenant application:
-
-- Users own records they create. This is by far the simplest approach.
-- Users belong to groups of users (often called teams or organizations). Records are owned by the group, and users can be members of multiple groups. This is a more complex approach, but is suitable for applications where users need to collaborate on data. More UI is required to support this approach, which is used to [register tenants](#tenant-registration). Often, you'll also want a page where users can manage the tenant and its members.
-
-Filament supports both of these approaches. If users own records then the `App\Models\User` model is the "tenant model". If users belong to teams then the `App\Models\Team` model is the "tenant model". When reading this guide, we will refer to this as the "tenant model".
+Multi-tenancy is a concept where a single instance of an application serves multiple customers. Each customer has their own data and access rules that prevent them from viewing or modifying each other's data. This is a common pattern in SaaS applications. Users often belong to groups of users (often called teams or organizations). Records are owned by the group, and users can be members of multiple groups. This is suitable for applications where users need to collaborate on data.
 
 ## Setting up tenancy
 
-To set up tenancy, you'll need to specify the tenant model in the [configuration](configuration):
+To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
 
 ```php
 use App\Models\Team;
@@ -29,9 +22,7 @@ public function context(Context $context): Context
 }
 ```
 
-If you're using the `App\Models\User` model as the tenant model, then you can pass this instead. Now, users will only be able to see and edit records in [resources](resources) that they own. No additional setup is required.
-
-If you're using a different tenant model, you'll need to tell Filament which tenants a user belongs to. You can do this by implementing the `HasTenants` interface on the `App\Models\User` model:
+You'll also need to tell Filament which tenants a user belongs to. You can do this by implementing the `HasTenants` interface on the `App\Models\User` model:
 
 ```php
 <?php
@@ -67,7 +58,7 @@ You'll also want users to be able to [register new teams](#registration).
 
 ## Registration
 
-A registration page will allow users to create a new tenant. This is useful if you're using a tenant model other than `App\Models\User`.
+A registration page will allow users to create a new tenant.
 
 When visiting your app after logging in, users will be redirected to this page if they don't already have a tenant.
 

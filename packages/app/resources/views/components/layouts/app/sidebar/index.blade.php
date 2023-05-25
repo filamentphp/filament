@@ -97,7 +97,7 @@
     <nav class="flex-1 py-6 overflow-x-hidden overflow-y-auto filament-sidebar-nav">
         {{ filament()->renderHook('sidebar.start') }}
 
-        @if (filament()->hasRoutableTenancy())
+        @if (filament()->hasTenancy())
             <div class="px-6 space-y-6 mb-6">
                 <x-filament::tenant-menu />
 

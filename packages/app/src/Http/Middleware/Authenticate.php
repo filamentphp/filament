@@ -38,30 +38,18 @@ class Authenticate extends Middleware
                 (config('app.env') !== 'local'),
             403,
         );
-
-        if (! $context->hasTenancy()) {
-            return;
-        }
-
-        $this->setTenant($request, $context);
     }
 
     protected function setTenant(Request $request, Context $context): void
     {
-        /** @var Model $user */
-        $user = $context->auth()->user();
-
-        if (! $context->hasRoutableTenancy()) {
-            Filament::setTenant($user);
-
-            return;
-        }
-
         if (! $request->route()->hasParameter('tenant')) {
             return;
         }
 
         $tenant = $context->getTenant($request->route()->parameter('tenant'));
+
+        /** @var Model $user */
+        $user = $context->auth()->user();
 
         if ($user instanceof HasTenants && $user->canAccessTenant($tenant)) {
             Filament::setTenant($tenant);

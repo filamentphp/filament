@@ -113,15 +113,17 @@ trait HasRoutes
             return $this->hasLogin() ? $this->getLoginUrl() : url($this->getPath());
         }
 
-        if ((! $tenant) && $this->hasRoutableTenancy()) {
+        $hasTenancy = $this->hasTenancy();
+
+        if ((! $tenant) && $hasTenancy) {
             $tenant = Filament::getUserDefaultTenant($this->auth()->user());
         }
 
-        if ((! $tenant) && $this->hasRoutableTenancy()) {
+        if ((! $tenant) && $hasTenancy) {
             return $this->hasTenantRegistration() ? $this->getTenantRegistrationUrl() : null;
         }
 
-        if ($tenant && $this->hasRoutableTenancy()) {
+        if ($tenant) {
             $originalTenant = Filament::getTenant();
             Filament::setTenant($tenant);
 

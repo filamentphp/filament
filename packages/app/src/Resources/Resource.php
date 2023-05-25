@@ -521,7 +521,7 @@ abstract class Resource
      */
     public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
     {
-        $parameters['tenant'] ??= ($tenant ?? Filament::getRoutableTenant());
+        $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
 
         $routeBaseName = static::getRouteBaseName(context: $context);
 

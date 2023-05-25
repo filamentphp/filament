@@ -3,7 +3,9 @@
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\Auth\EmailVerificationController;
 use Filament\Http\Controllers\Auth\LogoutController;
+use Filament\Http\Middleware\IdentifyTenant;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
@@ -11,12 +13,15 @@ Route::name('filament.')
         foreach (Filament::getContexts() as $context) {
             /** @var \Filament\Context $context */
             $contextId = $context->getId();
+            $hasTenancy = $context->hasTenancy();
+            $hasTenantRegistration = $context->hasTenantRegistration();
+            $tenantSlugAttribute = $context->getTenantSlugAttribute();
 
             Route::domain($context->getDomain())
                 ->middleware($context->getMiddleware())
                 ->name("{$contextId}.")
                 ->prefix($context->getPath())
-                ->group(function () use ($context) {
+                ->group(function () use ($context, $hasTenancy, $hasTenantRegistration, $tenantSlugAttribute) {
                     Route::name('auth.')->group(function () use ($context) {
                         if ($context->hasLogin()) {
                             Route::get('/login', $context->getLoginRouteAction())->name('login');
@@ -41,17 +46,16 @@ Route::name('filament.')
                     });
 
                     Route::middleware($context->getAuthMiddleware())
-                        ->group(function () use ($context): void {
-                            $hasRoutableTenancy = $context->hasRoutableTenancy();
-                            $hasTenantRegistration = $context->hasTenantRegistration();
-                            $tenantSlugAttribute = $context->getTenantSlugAttribute();
-
-                            if ($hasRoutableTenancy) {
+                        ->group(function () use ($context, $hasTenancy, $hasTenantRegistration, $tenantSlugAttribute): void {
+                            if ($hasTenancy) {
                                 Route::get('/', function () use ($context, $hasTenantRegistration): RedirectResponse {
                                     $tenant = Filament::getUserDefaultTenant(Filament::auth()->user());
 
                                     if ($tenant) {
-                                        return redirect($context->getUrl($tenant));
+                                        $url = $context->getUrl($tenant);
+                                        abort_if(blank($url), 404);
+
+                                        return redirect($url);
                                     }
 
                                     if (! $hasTenantRegistration) {
@@ -80,10 +84,14 @@ Route::name('filament.')
                                     }
                                 });
 
-                            Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                            Route::middleware($hasTenancy ? [IdentifyTenant::class] : [])
+                                ->prefix($hasTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                                 ->group(function () use ($context): void {
                                     Route::get('/', function () use ($context): RedirectResponse {
-                                        return redirect($context->getUrl(Filament::getTenant()));
+                                        $url = $context->getUrl(Filament::getTenant());
+                                        abort_if(blank($url), 404);
+
+                                        return redirect($url);
                                     })->name('tenant');
 
                                     if ($context->hasTenantBilling()) {
@@ -113,17 +121,13 @@ Route::name('filament.')
                             }
                         });
 
-                    Route::group([], function () use ($context): void {
-                        $hasRoutableTenancy = $context->hasRoutableTenancy();
-                        $tenantSlugAttribute = $context->getTenantSlugAttribute();
-
-                        Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
-                            ->group(function () use ($context): void {
-                                if ($routes = $context->getTenantRoutes()) {
-                                    $routes($context);
-                                }
-                            });
-                    });
+                    Route::middleware($hasTenancy ? [IdentifyTenant::class] : [])
+                        ->prefix($hasTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
+                        ->group(function () use ($context): void {
+                            if ($routes = $context->getTenantRoutes()) {
+                                $routes($context);
+                            }
+                        });
 
                     if ($routes = $context->getRoutes()) {
                         $routes($context);

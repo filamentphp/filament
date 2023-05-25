@@ -11,7 +11,7 @@
     $registrationItemUrl = $registrationItem?->getUrl();
     $hasTenantRegistration = filament()->hasTenantRegistration() || $registrationItemUrl;
 
-    $canSwitchTenants = filament()->hasRoutableTenancy() && count($tenants = array_filter(
+    $canSwitchTenants = count($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
         fn (\Illuminate\Database\Eloquent\Model $tenant): bool => ! $tenant->is($currentTenant),
     ));

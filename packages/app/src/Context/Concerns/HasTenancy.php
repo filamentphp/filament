@@ -70,14 +70,6 @@ trait HasTenancy
         return $this;
     }
 
-    public function hasRoutableTenancy(): bool
-    {
-        /** @var EloquentUserProvider $userProvider */
-        $userProvider = $this->auth()->getProvider();
-
-        return $this->hasTenancy() && ($userProvider->getModel() !== $this->getTenantModel());
-    }
-
     public function hasTenancy(): bool
     {
         return filled($this->getTenantModel());
