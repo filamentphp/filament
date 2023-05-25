@@ -120,7 +120,7 @@ class ResetPassword extends CardPage
                     ->same('passwordConfirmation')
                     ->validationAttribute(__('filament::pages/auth/password-reset/reset-password.fields.password.validation_attribute')),
                 TextInput::make('passwordConfirmation')
-                    ->label(__('filament::pages/auth/password-reset/reset-password.fields.passwordConfirmation.label'))
+                    ->label(__('filament::pages/auth/password-reset/reset-password.fields.password_confirmation.label'))
                     ->password()
                     ->required()
                     ->dehydrated(false),

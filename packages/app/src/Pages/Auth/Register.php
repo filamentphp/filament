@@ -103,7 +103,7 @@ class Register extends CardPage
                     ->same('passwordConfirmation')
                     ->validationAttribute(__('filament::pages/auth/register.fields.password.validation_attribute')),
                 TextInput::make('passwordConfirmation')
-                    ->label(__('filament::pages/auth/register.fields.passwordConfirmation.label'))
+                    ->label(__('filament::pages/auth/register.fields.password_confirmation.label'))
                     ->password()
                     ->required()
                     ->dehydrated(false),

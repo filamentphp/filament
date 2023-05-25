@@ -25,7 +25,7 @@ return [
             'validation_attribute' => 'password',
         ],
 
-        'passwordConfirmation' => [
+        'password_confirmation' => [
             'label' => 'Confirm your password',
         ],
 
