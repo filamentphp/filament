@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists\Concerns;
 
-use Exception;
 use Livewire\Component;
 
 trait BelongsToLivewire
