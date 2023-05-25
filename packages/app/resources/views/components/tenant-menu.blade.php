@@ -1,6 +1,6 @@
 @php
     $currentTenant = filament()->getTenant();
-    $currentTenantName = filament()->getTenantName($currentTenant);
+    $currentTenantName = $currentTenant ? filament()->getTenantName($currentTenant) : null;
     $items = filament()->getTenantMenuItems();
 
     $billingItem = $items['billing'] ?? null;
@@ -50,10 +50,14 @@
                 }"
             @endif
         >
-            <x-filament::avatar.tenant
-                :tenant="$currentTenant"
-                class="shrink-0"
-            />
+            @if ($currentTenant)
+                <x-filament::avatar.tenant
+                    :tenant="$currentTenant"
+                    class="shrink-0"
+                />
+            @else
+                TODO: add placeholder here
+            @endif
 
             <div
                 @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -89,7 +93,7 @@
         </x-filament::dropdown.list>
     @endif
 
-    @if ($hasTenantBilling)
+    @if ($currentTenant && $hasTenantBilling)
         <x-filament::dropdown.list>
             <x-filament::dropdown.list.item
                 :color="$billingItem?->getColor() ?? 'gray'"

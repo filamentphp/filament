@@ -519,11 +519,15 @@ abstract class Resource
     /**
      * @param  array<mixed>  $parameters
      */
-    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
+    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): ?string
     {
         $parameters['tenant'] ??= ($tenant ?? Filament::getRoutableTenant());
 
-        $routeBaseName = static::getRouteBaseName(context: $context);
+        if (empty($parameters['tenant'])) {
+            return null;
+        }
+
+        $routeBaseName = static::getRouteBaseName($context);
 
         return route("{$routeBaseName}.{$name}", $parameters, $isAbsolute);
     }
@@ -647,7 +651,7 @@ abstract class Resource
         static::$navigationSort = $sort;
     }
 
-    public static function getNavigationUrl(): string
+    public static function getNavigationUrl(): ?string
     {
         return static::getUrl();
     }

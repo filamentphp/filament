@@ -80,6 +80,10 @@ Route::name('filament.')
                                     }
                                 });
 
+                            if ($routes = $context->getAuthenticatedRoutes()) {
+                                $routes($context);
+                            }
+
                             Route::prefix($hasRoutableTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                                 ->group(function () use ($context): void {
                                     Route::get('/', function () use ($context): RedirectResponse {
@@ -107,10 +111,6 @@ Route::name('filament.')
                                         $routes($context);
                                     }
                                 });
-
-                            if ($routes = $context->getAuthenticatedRoutes()) {
-                                $routes($context);
-                            }
                         });
 
                     Route::group([], function () use ($context): void {

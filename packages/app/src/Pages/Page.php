@@ -37,9 +37,13 @@ abstract class Page extends BasePage
     /**
      * @param  array<mixed>  $parameters
      */
-    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): string
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $context = null, ?Model $tenant = null): ?string
     {
         $parameters['tenant'] ??= ($tenant ?? Filament::getRoutableTenant());
+
+        if (empty($parameters['tenant'])) {
+            return null;
+        }
 
         return route(static::getRouteName($context), $parameters, $isAbsolute);
     }
@@ -126,7 +130,7 @@ abstract class Page extends BasePage
         return static::$navigationSort;
     }
 
-    public static function getNavigationUrl(): string
+    public static function getNavigationUrl(): ?string
     {
         return static::getUrl();
     }

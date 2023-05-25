@@ -382,7 +382,13 @@ class FilamentManager
      */
     public function getTenantBillingUrl(array $parameters = [], ?Model $tenant = null): ?string
     {
-        return $this->getCurrentContext()->getTenantBillingUrl($tenant ?? $this->getTenant(), $parameters);
+        $tenant ??= $this->getTenant();
+
+        if ($tenant === null) {
+            return null;
+        }
+
+        return $this->getCurrentContext()->getTenantBillingUrl($tenant, $parameters);
     }
 
     /**
