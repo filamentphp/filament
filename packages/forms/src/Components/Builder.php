@@ -16,6 +16,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     use Concerns\CanLimitItemsLength;
     use Concerns\CanBeCloned;
 
+
     protected string $view = 'forms::components.builder';
 
     protected string | Closure | null $createItemBetweenButtonLabel = null;
@@ -35,6 +36,10 @@ class Builder extends Field implements Contracts\CanConcealComponents
     protected bool | Closure $hasBlockNumbers = true;
 
     protected bool | Closure $isInset = false;
+
+    protected ?int $grid_column;
+
+    protected ?string $width_column;
 
     protected function setUp(): void
     {
@@ -352,5 +357,30 @@ class Builder extends Field implements Contracts\CanConcealComponents
     public function canConcealComponents(): bool
     {
         return $this->isCollapsible();
+    }
+
+    public function gridColumn(int $grid_column): static
+    {
+        $this->grid_column = $grid_column;
+        return $this;
+    }
+
+    public function widthColumn(string $width_column): static
+    {
+        $this->width_column = $width_column;
+
+        return $this;
+    }
+
+    public function getGridColumn(): ?int
+    {
+        return $this->grid_column ?? null;
+    }
+
+    public function getWidthColumn(): ?string
+    {
+
+        return $this->width_column ?? null;
+
     }
 }

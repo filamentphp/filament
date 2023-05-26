@@ -3,6 +3,8 @@
     'createAfterItem' => null,
     'statePath',
     'trigger',
+    'grid_column'=> null,
+    'width_column'=> null,
 ])
 
 <x-forms::dropdown {{ $attributes->class(['filament-forms-builder-component-block-picker']) }}>

@@ -357,6 +357,8 @@
                 :blocks="$getBlocks()"
                 :state-path="$getStatePath()"
                 class="flex justify-center"
+                :grid_column="$getGridColumn()"
+                :width_column="$getWidthColumn()"
             >
                 <x-slot name="trigger">
                     <x-forms::button size="sm" outlined>
