@@ -1854,7 +1854,48 @@ Builder::make('content')
     ])
     ->collapsed()
 ```
+### Add Multiple Column to Block Picker
+The builder block picker may have multiple columns:
 
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->gridColumn(3)
+```
+
+![](https://github.com/filamentphp/filament/assets/47450090/9db9c7ad-58c1-480e-b551-2e932d36a190)
+
+You may change the width of this columns:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->gridColumn(3)
+    ->widthColumn('3xl')
+```
+You can use any option below:
+```
+'xs' => 'max-w-xs',
+'sm' => 'max-w-sm',
+'md' => 'max-w-md',
+'lg' => 'max-w-lg',
+'xl' => 'max-w-xl',
+'2xl' => 'max-w-2xl',
+'3xl' => 'max-w-3xl',
+'4xl' => 'max-w-4xl',
+'5xl' => 'max-w-5xl',
+'6xl' => 'max-w-6xl',
+'7xl' => 'max-w-7xl',
+default => 'max-w-[14rem]',
+```
 ## Tags input
 
 The tags input component allows you to interact with a list of tags.
