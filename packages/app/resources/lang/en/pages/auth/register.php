@@ -34,8 +34,8 @@ return [
             'validation_attribute' => 'password',
         ],
 
-        'passwordConfirmation' => [
-            'label' => 'Confirm your password',
+        'password_confirmation' => [
+            'label' => 'Confirm password',
         ],
 
     ],

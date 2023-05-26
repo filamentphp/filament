@@ -34,7 +34,7 @@ return [
             'validation_attribute' => 'wachtwoord',
         ],
 
-        'passwordConfirmation' => [
+        'password_confirmation' => [
             'label' => 'Wachtwoord bevestigen',
         ],
 
