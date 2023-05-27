@@ -136,7 +136,7 @@ export default defineConfig({
 })
 ```
 
-And add Tailwind to the `postcss.config.js` file:
+And add Tailwind to the `postcss.config.cjs` file:
 
 ```js
 module.exports = {
