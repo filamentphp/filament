@@ -3,9 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
-use Illuminate\Support\Arr;
 
 trait CanBeHidden
 {
