@@ -10,6 +10,30 @@ To create a new resource with a View page, you can use the `--view` flag:
 php artisan make:filament-resource User --view
 ```
 
+## Using an infolist instead of a disabled form
+
+By default, the View page will display a disabled form with the record's data. If you would prefer to display the record's data in an "infolist", you can use define an `infolist()` method on the resource class:
+
+```php
+use Filament\Infolists;
+use Filament\Infolists\Infolist;
+
+public static function infolist(Infolist $infolist): Infolist
+{
+    return $infolist
+        ->schema([
+            Infolists\Components\TextEntry::make('name'),
+            Infolists\Components\TextEntry::make('email'),
+            Infolists\Components\TextEntry::make('notes')
+                ->columnSpanFull(),
+        ]);
+}
+```
+
+The `schema()` method is used to define the structure of your infolist. It is an array of [entries](../../infolists/entries/getting-started#available-entries) and [layout components](../../infolists/layout/getting-started#available-layout-components), in the order they should appear in your infolist.
+
+Check out the Infolists docs for a [guide](../../infolists/getting-started) on how to build infolists with Filament.
+
 ## Adding a View page to an existing resource
 
 If you want to add a View page to an existing resource, create a new page in your resource's `Pages` directory:
@@ -34,7 +58,7 @@ public static function getPages(): array
 
 ## Viewing records in modals
 
-If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records). If this is the case, you can just [delete the view page](getting-started#deleting-pages).
+If your resource is simple, you may wish to view records in modals rather than on the [View page](viewing-records). If this is the case, you can just [delete the view page](getting-started#deleting-resource-pages).
 
 If your resource doesn't contain a `ViewAction`, you can add one to the `$table->actions()` array:
 
@@ -83,3 +107,30 @@ For further customization opportunities, you can override the static `$view` pro
 ```php
 protected static string $view = 'filament.resources.users.pages.view-user';
 ```
+
+This assumes that you have created a view at `resources/views/filament/resources/users/pages/view-user.blade.php`.
+
+Here's a very simple example of what that view might contain:
+
+```blade
+<x-filament::page>
+    @if ($this->hasInfolist())
+        {{ $this->infolist }}
+    @else
+        {{ $this->form }}
+    @endif
+    
+    @if (count($relationManagers = $this->getRelationManagers()))
+        <x-filament::hr />
+
+        <x-filament::resources.relation-managers
+            :active-manager="$activeRelationManager"
+            :managers="$relationManagers"
+            :owner-record="$record"
+            :page-class="static::class"
+        />
+    @endif
+</x-filament::page>
+```
+
+To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/view-record.blade.php` file in your project.

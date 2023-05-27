@@ -337,3 +337,22 @@ For further customization opportunities, you can override the static `$view` pro
 ```php
 protected static string $view = 'filament.resources.users.pages.create-user';
 ```
+
+This assumes that you have created a view at `resources/views/filament/resources/users/pages/create-user.blade.php`.
+
+Here's a very simple example of what that view might contain:
+
+```blade
+<x-filament::page>
+    <x-filament::form wire:submit.prevent="create">
+        {{ $this->form }}
+
+        <x-filament::form.actions
+            :actions="$this->getCachedFormActions()"
+            :full-width="$this->hasFullWidthFormActions()"
+        />
+    </x-filament::form>
+</x-filament::page>
+```
+
+To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/create-record.blade.php` file in your project.

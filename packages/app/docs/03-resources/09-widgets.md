@@ -59,7 +59,7 @@ class ListCustomers extends ListRecords
 
 If you'd like to customize the number of grid columns used to arrange widgets, check out the [Pages documentation](../pages#customizing-the-widgets-grid).
 
-## Accessing the current record
+## Accessing the current record in the widget
 
 If you're using a widget on an [Edit](editing-records) or [View](viewing-records) page, you may access the current record by defining a `$record` property on the widget class:
 

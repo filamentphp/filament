@@ -4,19 +4,52 @@ title: Navigation
 
 ## Overview
 
-By default, Filament will register navigation items for each of your [resources](resources) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item and its order:
+By default, Filament will register navigation items for each of your [resources](resources) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item.
+
+## Customizing a navigation item's label
+
+By default, the navigation label is generated from the resource or page's name. You may customize this using the `$navigationLabel` property:
+
+```php
+protected static ?string $navigationLabel = 'Custom Navigation Label';
+```
+
+Alternatively, you may override the `getNavigationLabel()` method:
+
+```php
+public static function getNavigationLabel(): ?string
+{
+    return 'Custom Navigation Label';
+}
+```
+
+## Customizing a navigation item's icon
+
+To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set=1#search), you may override the `$navigationIcon` property on the [resource](resources) or [page](pages) class:
 
 ```php
 protected static ?string $navigationIcon = 'heroicon-o-document-text';
+```
 
-protected static ?string $navigationLabel = 'Custom Navigation Label';
+### Switching navigation item icon when it is active
 
+You may assign a navigation [icon](https://blade-ui-kit.com/blade-icons?set=1#search) which will only be used for active items using the `$activeNavigationIcon` property:
+
+```php
+protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+```
+
+## Sorting navigation items
+
+By default, navigation items are sorted alphabetically. You may customize this using the `$navigationSort` property:
+
+```php
 protected static ?int $navigationSort = 3;
 ```
 
-The `$navigationIcon` supports the name of any Blade component, and passes a set of formatting classes to it. By default, the [Blade Heroicons v1](https://github.com/blade-ui-kit/blade-heroicons/tree/1.3.1) package is installed, so you may use the name of any [Heroicons v1](https://v1.heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+Now, navigation items with a lower sort value will appear before those with a higher sort value - the order is ascending.
 
-## Navigation item badges
+## Adding a badge to a navigation item
 
 To add a badge next to the navigation item, you can use the `getNavigationBadge()` method and return the content of the badge:
 
@@ -139,23 +172,6 @@ public function context(Context $context): Context
     return $context
         // ...
         ->sidebarFullyCollapsibleOnDesktop();
-}
-```
-
-## Active icons
-
-You may assign a navigation icon which will be displayed for active items using the `$activeNavigationIcon` property:
-
-```php
-protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
-```
-
-Alternatively, override the `getActiveNavigationIcon()` method:
-
-```php
-public static function getActiveNavigationIcon(): string
-{
-    return 'heroicon-s-document-text';
 }
 ```
 
@@ -330,7 +346,7 @@ public function context(Context $context): Context
 }
 ```
 
-## Breadcrumbs
+## Disabling breadcrumbs
 
 The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.
 

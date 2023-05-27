@@ -38,7 +38,7 @@ public function mount(): void
 }
 ```
 
-## Actions
+## Adding actions to pages
 
 Actions are buttons that can perform tasks on the page, or visit a URL. You can read more about their capabilities [here](../actions).
 
@@ -82,14 +82,14 @@ Action::make('approve')
 
 This method accepts an array of model attributes that you wish to refresh in the form.
 
-## Widgets
+## Adding widgets to pages
 
 Filament allows you to display [widgets](dashboard) inside pages, below the header and above the footer.
 
 To add a widget to a page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods:
 
 ```php
-use App/Filament/Widgets/StatsOverviewWidget;
+use App\Filament\Widgets\StatsOverviewWidget;
 
 protected function getHeaderWidgets(): array
 {
@@ -132,20 +132,106 @@ protected function getHeaderWidgetsColumns(): int | array
 
 This pairs well with [responsive widget widths](dashboard#responsive-widget-widths).
 
+#### Passing data to widgets from the page
 
-## Customization
+You may pass data to widgets from the page using the `getWidgetsData()` method:
 
-Filament will automatically generate a title, navigation label and URL (slug) for your page based on its name. You may override it using static properties of your page class:
+```php
+protected function getWidgetsData(): array
+{
+    return [
+        'stats' => [
+            'total' => 100,
+        ],
+    ];
+}
+```
+
+Now, you can define a corresponding public `$stats` array property on the widget class, which will be automatically filled:
+
+```php
+public $stats = [];
+```
+
+## Customizing the page title
+
+By default, Filament will automatically generate a title for your page based on its name. You may override this by defining a `$title` property on your page class:
 
 ```php
 protected static ?string $title = 'Custom Page Title';
+```
 
+Alternatively, you may return a string from the `getTitle()` method:
+
+```php
+public function getTitle(): string
+{
+    return __('Custom Page Title');
+}
+```
+
+## Customizing the page navigation label
+
+By default, Filament will use the page's [title](#customizing-the-page-title) as its [navigation](navigation) item label. You may override this by defining a `$navigationLabel` property on your page class:
+
+```php
 protected static ?string $navigationLabel = 'Custom Navigation Label';
+```
 
+Alternatively, you may return a string from the `getNavigationLabel()` method:
+
+```php
+public static function getNavigationLabel(): string
+{
+    return __('Custom Navigation Label');
+}
+```
+
+## Customizing the page URL
+
+By default, Filament will automatically generate a URL (slug) for your page based on its name. You may override this by defining a `$slug` property on your page class:
+
+```php
 protected static ?string $slug = 'custom-url-slug';
 ```
 
-You may also specify a custom header and footer view for any page. You may return them from the `getHeader()` and `getFooter()` methods:
+## Customizing the page heading
+
+By default, Filament will use the page's [title](#customizing-the-page-title) as its heading. You may override this by defining a `$heading` property on your page class:
+
+```php
+protected ?string $heading = 'Custom Page Heading';
+```
+
+Alternatively, you may return a string from the `getHeading()` method:
+
+```php
+public function getHeading(): string
+{
+    return __('Custom Page Heading');
+}
+```
+
+### Adding a page subheading
+
+You may also add a subheading to your page by defining a `$subheading` property on your page class:
+
+```php
+protected ?string $subheading = 'Custom Page Subheading';
+```
+
+Alternatively, you may return a string from the `getSubheading()` method:
+
+```php
+public function getSubheading(): ?string
+{
+    return __('Custom Page Subheading');
+}
+```
+
+## Replacing the page header with a custom view
+
+You may replace the default [heading](#customizing-the-page-heading), [subheading](#adding-a-page-subheading) and [actions](#header-actions) with a custom header view for any page. You may return it from the `getHeader()` method:
 
 ```php
 use Illuminate\Contracts\View\View;
@@ -154,9 +240,32 @@ protected function getHeader(): View
 {
     return view('filament.settings.custom-header');
 }
+```
+
+This example assumes you have a Blade view at `resources/views/filament/settings/custom-header.blade.php`.
+
+## Rendering a custom view in the footer of the page
+
+You may also add a footer to any page, below its content. You may return it from the `getFooter()` method:
+
+```php
+use Illuminate\Contracts\View\View;
 
 protected function getFooter(): View
 {
     return view('filament.settings.custom-footer');
+}
+```
+
+This example assumes you have a Blade view at `resources/views/filament/settings/custom-footer.blade.php`.
+
+## Customizing the maximum content width
+
+By default, Filament will restrict the width of the content on the page so it doesn't become too wide on large screens. To change this, you may override the `getContentMaxWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, and `full`. The default is `7xl`:
+
+```php
+public function getContentMaxWidth(): ?string
+{
+    return 'full';
 }
 ```

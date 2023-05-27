@@ -63,7 +63,7 @@ php artisan make:filament-relation-manager CategoryResource posts title
 - `posts` is the name of the relationship you want to manage.
 - `title` is the name of the attribute that will be used to identify posts.
 
-This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](getting-started#forms) and [table](getting-started#table) for your relation manager:
+This will create a `CategoryResource/RelationManagers/PostsRelationManager.php` file. This contains a class where you are able to define a [form](getting-started#resource-forms) and [table](getting-started#resource-tables) for your relation manager:
 
 ```php
 use Filament\Forms;
@@ -136,14 +136,7 @@ You can find out more about soft deleting [here](#deleting-records).
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
-As per the documentation on [listing records](listing-records), you may use all the same utilities for customization on the relation manager:
-
-- [Columns](listing-records#columns)
-- [Filters](listing-records#filters)
-- [Actions](listing-records#actions)
-- [Bulk actions](listing-records#bulk-actions)
-
-Additionally, you may use any other feature of the [table builder](../../tables).
+You may may use any of the features of the [table builder](../../tables) to customize relation managers.
 
 ### Listing with pivot attributes
 
@@ -528,5 +521,95 @@ On the Edit or View page class, override the `hasCombinedRelationManagerTabsWith
 public function hasCombinedRelationManagerTabsWithContent(): bool
 {
     return true;
+}
+```
+
+## Sharing a resource's form and table with a relation manager
+
+You may decide that you want a resource's form and table to be identical to a relation manager's, and subsequently want to reuse the code you previously wrote. This is easy, by calling the `form()` and `table()` methods of the resource from the relation manager:
+
+```php
+use App\Filament\Resources\Blog\PostResource;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+
+public function form(Form $form): Form
+{
+    return PostResource::form($form);
+}
+
+public function table(Table $table): Table
+{
+    return PostResource::table($table);
+}
+```
+
+### Hiding a shared form component on the relation manager
+
+If you're sharing a form component from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a `Select` field for the owner record in the relation manager, since Filament will handle this for you anyway. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
+
+```php
+use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+use Filament\Forms\Components\Select;
+
+Select::make('post_id')
+    ->relationship('post', 'title')
+    ->hiddenOn(CommentsRelationManager::class)
+```
+
+### Hiding a shared table column on the relation manager
+
+If you're sharing a table column from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a column for the owner record in the relation manager, since this is not appropriate when the owner record is already listed above the relation manager. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
+
+```php
+use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('post.title')
+    ->hiddenOn(CommentsRelationManager::class)
+```
+
+### Hiding a shared table filter on the relation manager
+
+If you're sharing a table filter from the resource with the relation manager, you may want to hide it on the relation manager. This is especially useful if you want to hide a filter for the owner record in the relation manager, since this is not appropriate when the table is already filtered by the owner record. To do this, you may use the `hiddenOn()` method, passing the name of the relation manager:
+
+```php
+use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('post')
+    ->relationship('post', 'title')
+    ->hiddenOn(CommentsRelationManager::class)
+```
+
+### Overriding shared configuration on the relation manager
+
+Any configuration that you make inside the resource can be overwritten on the relation manager. For example, if you wanted to disable pagination on the relation manager's inherited table but not the resource itself:
+
+```php
+use App\Filament\Resources\Blog\PostResource;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return PostResource::table($table)
+        ->paginated(false);
+}
+```
+
+It is probably also useful to provide extra configuration on the relation manager if you wanted to add a header action to [create](#creating-related-records), [attach](#attaching-and-detaching-records), or [associate](#associating-and-dissociating-records) records in the relation manager:
+
+```php
+use App\Filament\Resources\Blog\PostResource;
+use Filament\Tables;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return PostResource::table($table)
+        ->headerActions([
+            Tables\Actions\CreateAction::make(),
+            Tables\Actions\AttachAction::make(),
+        ]);
 }
 ```

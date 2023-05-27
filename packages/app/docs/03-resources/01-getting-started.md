@@ -46,7 +46,7 @@ Additionally, your simple resource will have no `getRelations()` method, as [rel
 
 ### Automatically generating forms and tables
 
-If you'd like to save time, Filament can automatically generate the [form](#forms) and [table](#table) for you, based on your model's database columns.
+If you'd like to save time, Filament can automatically generate the [form](#resource-forms) and [table](#resource-tables) for you, based on your model's database columns.
 
 The `doctrine/dbal` package is required to use this functionality:
 
@@ -94,7 +94,7 @@ This is required for features like [global search](global-search) to work.
 
 > You may specify the name of an [Eloquent accessor](https://laravel.com/docs/eloquent-mutators#defining-an-accessor) if just one column is inadequate at identifying a record.
 
-## Forms
+## Resource forms
 
 Resource classes contain a `form()` method that is used to build the forms on the [Create](creating-records) and [Edit](editing-records) pages:
 
@@ -117,7 +117,7 @@ The `schema()` method is used to define the structure of your form. It is an arr
 
 Check out the Forms docs for a [guide](../../forms/getting-started) on how to build forms with Filament.
 
-### Hiding components contextually
+### Hiding components based on the current operation
 
 The `hiddenOn()` method of form components allows you to dynamically hide fields based on the current page or action.
 
@@ -143,7 +143,7 @@ Forms\Components\TextInput::make('password')
     ->visibleOn('create'),
 ```
 
-## Table
+## Resource tables
 
 Resource classes contain a `table()` method that is used to build the table on the [List page](listing-records):
 
@@ -176,7 +176,7 @@ public static function table(Table $table): Table
 }
 ```
 
-Check out the [tables](../../tables/getting-started) docs to find out how to add table [columns](listing-records#columns), [filters](listing-records#filters), [actions](listing-records#actions), [bulk actions](listing-records#bulk-actions) and more.
+Check out the [tables](../../tables/getting-started) docs to find out how to add table columns, filters, actions and more.
 
 ## Authorization
 
@@ -191,7 +191,15 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant.
 - `reorder()` is used to control [reordering a record](listing-records#reordering-records).
 
-## Model labels
+### Ignoring authorization policies
+
+If you'd like to ignore policies for a resource, you may set the `$shouldIgnorePolicies` property to `false`:
+
+```php
+protected static bool $shouldIgnorePolicies = true;
+```
+
+## Customizing the model label
 
 Each resource has a "model label" which is automatically generated from the model name. For example, an `App\Models\Customer` model will have a `customer` label.
 
@@ -210,7 +218,7 @@ public static function getModelLabel(): string
 }
 ```
 
-### Plural model label
+### Customizing the plural model label
 
 Resources also have a "plural model label" which is automatically generated from the model label. For example, a `customer` label will be pluralized into `customers`.
 
@@ -229,7 +237,7 @@ public static function getPluralModelLabel(): string
 }
 ```
 
-## Navigation
+## Resource navigation items
 
 Filament will automatically generate a navigation menu item for your resource using the [plural label](#plural-label).
 
@@ -248,7 +256,7 @@ public static function getNavigationLabel(): string
 }
 ```
 
-### Icons
+### Setting a resource navigation icon
 
 The `$navigationIcon` property supports the name of any Blade component. By default, the [Blade Heroicons v1](https://github.com/blade-ui-kit/blade-heroicons/tree/1.3.1) package is installed, so you may use the name of any [Heroicons v1](https://v1.heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
@@ -265,7 +273,7 @@ public static function getNavigationIcon(): string
 }
 ```
 
-### Sorting navigation items
+### Sorting resource navigation items
 
 The `$navigationSort` property allows you to specify the order in which navigation items are listed:
 
@@ -282,7 +290,7 @@ public static function getNavigationSort(): ?int
 }
 ```
 
-### Grouping navigation items
+### Grouping resource navigation items
 
 You may group navigation items by specifying a `$navigationGroup` property:
 
@@ -299,7 +307,37 @@ public static function getNavigationGroup(): ?string
 }
 ```
 
-## Customizing the Eloquent query
+## Generating URLs to resource pages
+
+Filament provides `getUrl()` static method on resource classes to generate URLs to resources and specific pages within them. Traditionally, you would need to construct the URL by hand or by using Laravel's `route()` helper, but these methods depend on knowledge of the resource's slug or route naming conventions.
+
+The `getUrl()` method, without any arguments, will generate a URL to the resource's [List page](listing-records):
+
+```php
+use App\Filament\Resources\CustomerResource;
+
+CustomerResource::getUrl(); // /admin/customers
+```
+
+You may also generate URLs to specific pages within the resource. The name of each page is the array key in the `getPages()` array of the resource. For example, to generate a URL to the [Create page](creating-records):
+
+```php
+use App\Filament\Resources\CustomerResource;
+
+CustomerResource::getUrl('create'); // /admin/customers/create
+```
+
+Some pages in the `getPages()` method use URL parameters like `record`. To generate a URL to these pages and pass in a record, you should use the second argument:
+
+```php
+use App\Filament\Resources\CustomerResource;
+
+CustomerResource::getUrl('edit', ['record' => $customer]); // /admin/customers/edit/1
+```
+
+In this example, `$customer` can be an Eloquent model object, or an ID.
+
+## Customizing the resource Eloquent query
 
 Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.
 
@@ -329,7 +367,7 @@ public static function getEloquentQuery(): Builder
 
 More information about removing global scopes may be found in the [Laravel documentation](https://laravel.com/docs/eloquent#removing-global-scopes).
 
-## Customizing the URL slug
+## Customizing the resource URL
 
 By default, Filament will generate a URL based on the name of the resource. You can customize this by setting the `$slug` property on the resource:
 
@@ -337,7 +375,7 @@ By default, Filament will generate a URL based on the name of the resource. You 
 protected static ?string $slug = 'pending-orders';
 ```
 
-## Deleting pages
+## Deleting resource pages
 
 If you'd like to delete a page from your resource, you can just delete the page file from the `Pages` directory of your resource, and its entry in the `getPages()` method.
 

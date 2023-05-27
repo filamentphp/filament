@@ -6,7 +6,7 @@ title: Global search
 
 Global search allows you to search across all of your resource records, from anywhere in the app.
 
-## Title
+## Setting global search result titles
 
 To enable global search on your model, you must [set a title attribute](getting-started#record-titles) for your resource:
 
@@ -27,7 +27,7 @@ public static function getGlobalSearchResultTitle(Model $record): string
 }
 ```
 
-## Multi-column search
+## Globally searching across multiple columns
 
 If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot notation" allows you to search inside of relationships:
 
@@ -38,7 +38,7 @@ public static function getGloballySearchableAttributes(): array
 }
 ```
 
-## Details
+## Adding extra details to global search results
 
 Search results can display "details" below their title, which gives the user more information about the record. To enable this feature, you must override the `getGlobalSearchResultDetails()` method:
 
@@ -61,7 +61,7 @@ public static function getGlobalSearchEloquentQuery(): Builder
 }
 ```
 
-## URL
+## Customizing global search result URLs
 
 Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-page) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
 
@@ -72,7 +72,7 @@ public static function getGlobalSearchResultUrl(Model $record): string
 }
 ```
 
-## Actions
+## Adding actions to global search results
 
 Global search supports actions, which are buttons that render below each search result. They can open a URL or emit a Livewire event. 
 
@@ -92,7 +92,7 @@ public static function getGlobalSearchResultActions(Model $record): array
 
 You can learn more about how to style action buttons [here](../../actions/trigger-button).
 
-### Opening URLs from actions
+### Opening URLs from global search actions
 
 You can open a URL, optionally in a new tab, when clicking on an action:
 
@@ -103,7 +103,7 @@ Action::make('view')
     ->url(static::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
 ```
 
-### Emitting Livewire events from actions
+### Emitting Livewire events from global search actions
 
 Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be emitted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
 
@@ -112,6 +112,14 @@ use Filament\GlobalSearch\Actions\Action;
 
 Action::make('quickView')
     ->emit('quickView', [$record->id])
+```
+
+## Limiting the number of global search results
+
+By default, global search will return up to 50 results per resource. You can customize this on the resource label by overriding the `$globalSearchResultsLimit` property:
+
+```php
+protected static int $globalSearchResultsLimit = 20;
 ```
 
 ## Disabling global search

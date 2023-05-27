@@ -86,7 +86,7 @@ When you [send notifications](../notifications/sending-notifications), you can a
 
 These actions use the `Filament\Notifications\Actions\Action` class. They aren't able to open modals, but they can open a URL or emit a Livewire event.
 
-If you're looking to add an action to a notification in your app, [visit this page](../notifications/sending-notifications#actions) in the docs.
+If you're looking to add an action to a notification in your app, [visit this page](../notifications/sending-notifications#adding-actions-to-notifications) in the docs.
 
 ### Global search result actions
 
@@ -94,7 +94,7 @@ In the app framework, there is a [global search](../app/resources/global-search)
 
 These actions use the `Filament\GlobalSearch\Actions\Action` class. They aren't able to open modals, but they can open a URL or emit a Livewire event.
 
-If you're looking to add an action to a global search result in the app framework, [visit this page](../app/resources/global-search#actions) in the docs.
+If you're looking to add an action to a global search result in the app framework, [visit this page](../app/resources/global-search#adding-actions-to-global-search-results) in the docs.
 
 ## Prebuilt actions
 

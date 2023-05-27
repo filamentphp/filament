@@ -2,6 +2,79 @@
 title: Listing records
 ---
 
+## Using tabs to filter the records
+
+You can add tabs above the table, which can be used to filter the records based on some predefined conditions. Each tab can scope the Eloquent query of the table in a different way. To register tabs, add a `getTabs()` method to the List page class, and return an array of `Tab` objects:
+
+```php
+use Filament\Resources\Pages\ListRecords\Tab;
+use Illuminate\Database\Eloquent\Builder;
+
+public function getTabs(): array
+{
+    return [
+        'all' => Tab::make(),
+        'active' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', true)),
+        'inactive' => Tab::make()
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', false)),
+    ];
+}
+```
+
+### Customizing the filter tab labels
+
+The keys of the array will be used as identifiers for the tabs, so they can be persisted in the URL's query string. The label of each tab is also generated from the key, but you can override that by passing a label into the `make()` method of the tab:
+
+```php
+use Filament\Resources\Pages\ListRecords\Tab;
+use Illuminate\Database\Eloquent\Builder;
+
+public function getTabs(): array
+{
+    return [
+        'all' => Tab::make('All customers'),
+        'active' => Tab::make('Active customers')
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', true)),
+        'inactive' => Tab::make('Inactive customers')
+            ->modifyQueryUsing(fn (Builder $query) => $query->where('active', false)),
+    ];
+}
+```
+
+### Adding icons to filter tabs
+
+You can add icons to the tabs by passing an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) into the `icon()` method of the tab:
+
+```php
+use Filament\Resources\Pages\ListRecords\Tab;
+
+Tab::make()
+    ->icon('heroicon-m-user-group')
+```
+
+You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
+
+```php
+Tab::make()
+    ->icon('heroicon-m-user-group')
+    ->icon('heroicon-m-pencil-square')
+    ->iconPosition('after')
+```
+
+### Adding badges to filter tabs
+
+You can add badges to the tabs by passing a string into the `badge()` method of the tab:
+
+```php
+use Filament\Resources\Pages\ListRecords\Tab;
+
+Tab::make()
+    ->badge(Customer::query()->where('active', true)->count())
+```
+
+As in the example above, this could be quite useful for showing the number of records that pass that filter.
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.
@@ -10,24 +83,37 @@ Users may access the List page if the `viewAny()` method of the model policy ret
 
 The `reorder()` method is used to control [reordering a record](#reordering-records).
 
-## Customizing the Eloquent query
+## Customizing the table Eloquent query
 
-Although you can [customize the Eloquent query for the entire resource](getting-started#customizing-the-eloquent-query), you may also make specific modifications for the List page table. To do this, override the `query()` method on the List page class:
+Although you can [customize the Eloquent query for the entire resource](getting-started#customizing-the-resource-eloquent-query), you may also make specific modifications for the List page table. To do this, use the `modifyQueryUsing()` method on the List page class:
 
 ```php
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 public function table(Table $table): Table
 {
     return $table
-        ->query(static::getResource()::getEloquentQuery()->withoutGlobalScopes());
+        ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes());
 }
 ```
 
-## Custom view
+## Custom list page view
 
 For further customization opportunities, you can override the static `$view` property on the page class to a custom view in your app:
 
 ```php
 protected static string $view = 'filament.resources.users.pages.list-users';
 ```
+
+This assumes that you have created a view at `resources/views/filament/resources/users/pages/list-users.blade.php`.
+
+Here's a very simple example of what that view might contain:
+
+```blade
+<x-filament::page>
+    {{ $this->table }}
+</x-filament::page>
+```
+
+To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/list-records.blade.php` file in your project.

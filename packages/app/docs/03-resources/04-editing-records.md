@@ -270,7 +270,7 @@ class EditUser extends EditRecord
 }
 ```
 
-To view the entire actions API, please visit the [pages section](../pages#actions).
+To view the entire actions API, please visit the [pages section](../pages#adding-actions-to-pages).
 
 ## Custom views
 
@@ -279,3 +279,33 @@ For further customization opportunities, you can override the static `$view` pro
 ```php
 protected static string $view = 'filament.resources.users.pages.edit-user';
 ```
+
+This assumes that you have created a view at `resources/views/filament/resources/users/pages/edit-user.blade.php`.
+
+Here's a very simple example of what that view might contain:
+
+```blade
+<x-filament::page>
+    <x-filament::form wire:submit.prevent="save">
+        {{ $this->form }}
+
+        <x-filament::form.actions
+            :actions="$this->getCachedFormActions()"
+            :full-width="$this->hasFullWidthFormActions()"
+        />
+    </x-filament::form>
+    
+    @if (count($relationManagers = $this->getRelationManagers()))
+        <x-filament::hr />
+
+        <x-filament::resources.relation-managers
+            :active-manager="$activeRelationManager"
+            :managers="$relationManagers"
+            :owner-record="$record"
+            :page-class="static::class"
+        />
+    @endif
+</x-filament::page>
+```
+
+To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/edit-record.blade.php` file in your project.

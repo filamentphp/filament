@@ -218,7 +218,7 @@ new Notification()
 
 ![Notification with Markdown body](https://user-images.githubusercontent.com/44533235/180995813-ce93e747-0f66-4fc5-becb-7e535fb80e46.png)
 
-## Adding notification actions
+## Adding actions to notifications
 
 Notifications support [actions](../actions/trigger-button), which are buttons that render below the content of the notification. They can open a URL or emit a Livewire event. Actions can be defined as follows:
 
