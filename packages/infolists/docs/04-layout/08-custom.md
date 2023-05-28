@@ -62,3 +62,4 @@ Inside your view, you may access the Eloquent record using the `$getRecord()` fu
 <div>
     {{ $getRecord()->name }}
 </div>
+```

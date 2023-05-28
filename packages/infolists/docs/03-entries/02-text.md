@@ -79,7 +79,7 @@ TextEntry::make('price')
 
 ## Limiting text length
 
-You may `limit()` the length of the cell's value:
+You may `limit()` the length of the entry's value:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -109,7 +109,7 @@ TextEntry::make('description')
 
 ## Limiting word count
 
-You may limit the number of `words()` displayed in the cell:
+You may limit the number of `words()` displayed in the entry:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -200,7 +200,7 @@ TextEntry::make('description')
 
 ## Custom formatting
 
-You may instead pass a custom formatting callback to `formatStateUsing()`, which accepts the `$state` of the cell, and optionally its `$record`:
+You may instead pass a custom formatting callback to `formatStateUsing()`, which accepts the `$state` of the entry, and optionally its `$record`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -209,9 +209,9 @@ TextEntry::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
 ```
 
-## Adding a placeholder if the cell is empty
+## Adding a placeholder if the entry is empty
 
-Sometimes you may want to display a placeholder if the cell's value is empty:
+Sometimes you may want to display a placeholder if the entry's value is empty:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -300,7 +300,7 @@ TextEntry::make('text')
 
 ## Allowing the text to be copied to the clipboard
 
-You may make the text copyable, such that clicking on the cell copies the text to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
+You may make the text copyable, such that clicking on the entry copies the text to the clipboard, and optionally specify a custom confirmation message and duration in milliseconds. This feature only works when SSL is enabled for the app.
 
 ```php
 use Filament\Infolists\Components\TextEntry;

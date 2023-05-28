@@ -4,7 +4,7 @@ title: Custom entries
 
 ## View entries
 
-You may render a custom view for a cell using the `view()` method:
+You may render a custom view for a entry using the `view()` method:
 
 ```php
 use Filament\Infolists\Components\ViewEntry;
@@ -17,7 +17,7 @@ This assumes that you have a `resources/views/filament/infolists/entries/status-
 
 ## Custom classes
 
-You may create your own custom entry classes and cell views, which you can reuse across your project, and even release as a plugin to the community.
+You may create your own custom entry classes and entry views, which you can reuse across your project, and even release as a plugin to the community.
 
 > If you're just creating a simple custom entry to use once, you could instead use a [view entry](#view-entries) to render any custom Blade file.
 
@@ -42,7 +42,7 @@ It will also create a view file at `resources/views/filament/infolists/entries/s
 
 ## Accessing the state
 
-Inside your view, you may retrieve the state of the cell using the `$getState()` function:
+Inside your view, you may retrieve the state of the entry using the `$getState()` function:
 
 ```blade
 <div>
@@ -58,3 +58,4 @@ Inside your view, you may access the Eloquent record using the `$getRecord()` fu
 <div>
     {{ $getRecord()->name }}
 </div>
+```

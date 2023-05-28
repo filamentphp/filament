@@ -18,7 +18,7 @@ IconEntry::make('is_featured')
     ])
 ```
 
-You may also pass a callback to activate an option, accepting the cell's `$state` and `$record`:
+You may also pass a callback to activate an option, accepting the entry's `$state` and `$record`:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
