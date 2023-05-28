@@ -26,7 +26,7 @@ class NavigationItem
 
     protected string | Closure | null $url = null;
 
-    protected bool $isHidden = null;
+    protected bool $isHidden = false;
 
     protected bool $isVisible = true;
 
