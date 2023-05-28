@@ -2,7 +2,6 @@
 
 namespace Filament\Tables;
 
-use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Testing\TestsActions;

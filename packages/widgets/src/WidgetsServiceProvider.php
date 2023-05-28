@@ -3,7 +3,6 @@
 namespace Filament\Widgets;
 
 use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\AssetManager;
 use Filament\Support\Facades\FilamentAsset;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
