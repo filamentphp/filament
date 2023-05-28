@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Facades;
 
+use Filament\Support\Assets\Asset;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Theme;
 use Illuminate\Support\Facades\Facade;
@@ -14,7 +15,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static array getStyles(array | null $packages = null)
  * @method static Theme | null getTheme(string $id)
  * @method static array getThemes()
- * @method static void register(array $assets, string | null $package = null)
  * @method static void registerScriptData(array $data, string | null $package = null)
  * @method static string renderScripts(array | null $packages = null, bool $withCore = true)
  * @method static string renderStyles(array | null $packages = null)

@@ -51,7 +51,7 @@
             shouldAppendFiles: @js($shouldAppendFiles()),
             shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
             shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
             uploadButtonPosition: @js($getUploadButtonPosition()),
             uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
             uploadUsing: (fileKey, file, success, error, progress) => {

@@ -12,7 +12,7 @@
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
         })"
         x-on:trix-change="state = $event.target.value"
         x-on:trix-attachment-add="

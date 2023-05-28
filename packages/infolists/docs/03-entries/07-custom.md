@@ -2,7 +2,7 @@
 title: Custom entries
 ---
 
-## View entry
+## View entries
 
 You may render a custom view for a cell using the `view()` method:
 
@@ -13,21 +13,13 @@ ViewEntry::make('status')
     ->view('filament.infolists.entries.status-switcher')
 ```
 
-Inside your view, you may retrieve the state of the entry using the `$getState()` method:
-
-```blade
-<div>
-    {{ $getState() }}
-</div>
-```
-
-You can also access the entire Eloquent record with `$getRecord()`.
+This assumes that you have a `resources/views/filament/infolists/entries/status-switcher.blade.php` file.
 
 ## Custom classes
 
 You may create your own custom entry classes and cell views, which you can reuse across your project, and even release as a plugin to the community.
 
-> If you're just creating a simple custom entry to use once, you could instead use a [view entry](#view-entry) to render any custom Blade file.
+> If you're just creating a simple custom entry to use once, you could instead use a [view entry](#view-entries) to render any custom Blade file.
 
 To create a custom entry class and view, you may use the following command:
 
@@ -46,7 +38,11 @@ class StatusSwitcher extends Entry
 }
 ```
 
-Inside your view, you may retrieve the state of the cell using the `$getState()` method:
+It will also create a view file at `resources/views/filament/infolists/entries/status-switcher.blade.php`.
+
+## Accessing the state
+
+Inside your view, you may retrieve the state of the cell using the `$getState()` function:
 
 ```blade
 <div>
@@ -54,4 +50,11 @@ Inside your view, you may retrieve the state of the cell using the `$getState()`
 </div>
 ```
 
-You can also access the entire Eloquent record with `$getRecord()`.
+## Accessing the Eloquent record
+
+Inside your view, you may access the Eloquent record using the `$getRecord()` function:
+
+```blade
+<div>
+    {{ $getRecord()->name }}
+</div>

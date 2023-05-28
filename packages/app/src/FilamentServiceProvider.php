@@ -51,19 +51,17 @@ class FilamentServiceProvider extends PackageServiceProvider
         $this->app->bind(PasswordResetResponseContract::class, PasswordResetResponse::class);
         $this->app->bind(RegistrationResponseContract::class, RegistrationResponse::class);
 
-        $this->app->resolving(AssetManager::class, function () {
-            FilamentAsset::register([
-                Js::make('app', __DIR__ . '/../dist/index.js')->core(),
-                Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
-                Theme::make('app', __DIR__ . '/../dist/theme.css'),
-            ], 'filament/filament');
-        });
-
         app(Router::class)->aliasMiddleware('context', SetUpContext::class);
     }
 
     public function packageBooted(): void
     {
+        FilamentAsset::register([
+            Js::make('app', __DIR__ . '/../dist/index.js')->core(),
+            Js::make('echo', __DIR__ . '/../dist/echo.js')->core(),
+            Theme::make('app', __DIR__ . '/../dist/theme.css'),
+        ], 'filament/filament');
+
         Livewire::addPersistentMiddleware([
             Authenticate::class,
             DisableBladeIconComponents::class,
