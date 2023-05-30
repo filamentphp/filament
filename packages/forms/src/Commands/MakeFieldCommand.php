@@ -12,7 +12,7 @@ class MakeFieldCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a form field class and view';
+    protected $description = 'Create a form field class and view';
 
     protected $signature = 'make:form-field {name?} {--F|force}';
 

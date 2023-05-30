@@ -12,7 +12,7 @@ class MakeSettingsPageCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament settings page class';
+    protected $description = 'Create a Filament settings page class';
 
     protected $signature = 'make:filament-settings-page {name?} {settingsClass?}';
 
