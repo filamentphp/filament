@@ -15,7 +15,7 @@ class MakeUserCommand extends Command
 {
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament user.';
+    protected $description = 'Create a new Filament user';
 
     protected $signature = 'make:filament-user
                             {--name= : The name of the user}

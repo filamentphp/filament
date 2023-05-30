@@ -12,7 +12,7 @@ class MakeColumnCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a table column class and cell view.';
+    protected $description = 'Create a new table column class and cell view';
 
     protected $signature = 'make:table-column {name?} {--F|force}';
 

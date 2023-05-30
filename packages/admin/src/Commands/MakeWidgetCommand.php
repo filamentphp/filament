@@ -12,7 +12,7 @@ class MakeWidgetCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament widget class.';
+    protected $description = 'Create a new Filament widget class';
 
     protected $signature = 'make:filament-widget {name?} {--R|resource=} {--C|chart} {--T|table} {--S|stats-overview} {--F|force}';
 

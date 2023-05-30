@@ -10,7 +10,7 @@ class InstallCommand extends Command
 {
     protected $signature = 'notifications:install';
 
-    protected $description = 'Set up notifications CSS and JS in a fresh Laravel installation.';
+    protected $description = 'Set up notifications CSS and JS in a fresh Laravel installation';
 
     public function __invoke(): int
     {
