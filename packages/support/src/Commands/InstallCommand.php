@@ -18,7 +18,7 @@ class InstallCommand extends Command
 
     public function __invoke(): int
     {
-        if ($this->option('panel')) {
+        if ($this->option('panels')) {
             $this->installAdminPanel();
         }
 
