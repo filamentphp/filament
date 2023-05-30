@@ -20,11 +20,11 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
 {
-    public function panel(Panel $context): Panel
+    public function panel(Panel $panel): Panel
     {
         $configure = require 'configure.php';
 
-        $context
+        $panel
             ->default()
             ->id('admin')
             ->path('admin')
@@ -55,8 +55,8 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
 
-        $configure($context);
+        $configure($panel);
 
-        return $context;
+        return $panel;
     }
 }

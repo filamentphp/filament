@@ -2,6 +2,6 @@
 
 use Filament\Panel;
 
-return function (Panel $context) {
+return function (Panel $panel) {
     //
 };
