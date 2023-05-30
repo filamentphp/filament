@@ -105,11 +105,11 @@ if (file_exists('config/tables.php')) {
 }
 
 if (InstalledVersions::isInstalled('filament/filament')) {
-    require 'create-filament-v3-app-panel-provider.php';
+    require 'create-filament-v3-panel-provider.php';
 
     render(<<<HTML
         <p>
-            Created a panel service provider.
+            Created a panel provider.
         </p>
     HTML);
 }
