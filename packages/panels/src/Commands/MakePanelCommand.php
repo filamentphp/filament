@@ -12,7 +12,7 @@ class MakePanelCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament panel.';
+    protected $description = 'Create a new Filament panel';
 
     protected $signature = 'make:filament-panel {id?} {--F|force}';
 

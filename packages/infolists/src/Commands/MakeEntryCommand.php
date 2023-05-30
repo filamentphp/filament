@@ -12,7 +12,7 @@ class MakeEntryCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates an infolist entry class and view.';
+    protected $description = 'Create a new infolist entry class and view';
 
     protected $signature = 'make:infolist-entry {name?} {--F|force}';
 

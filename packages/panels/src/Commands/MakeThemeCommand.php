@@ -13,7 +13,7 @@ class MakeThemeCommand extends Command
 {
     use CanManipulateFiles;
 
-    protected $description = 'Creates a Filament theme.';
+    protected $description = 'Create a new Filament panel theme';
 
     protected $signature = 'make:filament-theme {panel?} {--F|force}';
 
