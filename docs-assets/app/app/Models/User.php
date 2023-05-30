@@ -2,7 +2,7 @@
 
 namespace App\Models;
 
-use Filament\Context;
+use Filament\Panel;
 use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -45,7 +45,7 @@ class User extends Authenticatable implements FilamentUser
         'email_verified_at' => 'datetime',
     ];
 
-    public function canAccessFilament(Context $context): bool
+    public function canAccessFilament(Panel $context): bool
     {
         return true;
     }

@@ -1,7 +1,7 @@
 <?php
 
-use Filament\Context;
+use Filament\Panel;
 
-return function (Context $context) {
+return function (Panel $context) {
     //
 };

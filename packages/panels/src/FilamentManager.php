@@ -1,0 +1,793 @@
+<?php
+
+namespace Filament;
+
+use Closure;
+use Exception;
+use Filament\Contracts\Plugin;
+use Filament\Events\ServingFilament;
+use Filament\Events\TenantSet;
+use Filament\Exceptions\NoDefaultPanelSetException;
+use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Models\Contracts\HasDefaultTenant;
+use Filament\Models\Contracts\HasName;
+use Filament\Models\Contracts\HasTenants;
+use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
+use Filament\Support\Assets\Theme;
+use Filament\Support\Facades\FilamentAsset;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\CanResetPassword;
+use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Event;
+
+class FilamentManager
+{
+    /**
+     * @var array<string, Panel>
+     */
+    protected array $panels = [];
+
+    protected ?Panel $currentPanel = null;
+
+    protected bool $isServing = false;
+
+    protected ?Model $tenant = null;
+
+    public function auth(): Guard
+    {
+        return $this->getCurrentPanel()->auth();
+    }
+
+    public function bootCurrentPanel(): void
+    {
+        $this->getCurrentPanel()->boot();
+    }
+
+    /**
+     * @return array<NavigationGroup>
+     */
+    public function buildNavigation(): array
+    {
+        return $this->getCurrentPanel()->buildNavigation();
+    }
+
+    public function getAuthGuard(): string
+    {
+        return $this->getCurrentPanel()->getAuthGuard();
+    }
+
+    public function getBrandName(): string
+    {
+        return $this->getCurrentPanel()->getBrandName();
+    }
+
+    /**
+     * @return array{
+     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'info': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
+     * }
+     */
+    public function getColors(): array
+    {
+        return $this->getCurrentPanel()->getColors();
+    }
+
+    public function getCollapsedSidebarWidth(): string
+    {
+        return $this->getCurrentPanel()->getCollapsedSidebarWidth();
+    }
+
+    public function getPanel(?string $id = null): Panel
+    {
+        return $this->panels[$id] ?? $this->getDefaultPanel();
+    }
+
+    public function getCurrentPanel(): ?Panel
+    {
+        return $this->currentPanel ?? null;
+    }
+
+    /**
+     * @return array<string, Panel>
+     */
+    public function getPanels(): array
+    {
+        return $this->panels;
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getDangerColor(): array
+    {
+        return $this->getCurrentPanel()->getDangerColor();
+    }
+
+    public function getDatabaseNotificationsPollingInterval(): ?string
+    {
+        return $this->getCurrentPanel()->getDatabaseNotificationsPollingInterval();
+    }
+
+    public function getDefaultAvatarProvider(): string
+    {
+        return $this->getCurrentPanel()->getDefaultAvatarProvider();
+    }
+
+    /**
+     * @throws NoDefaultPanelSetException
+     */
+    public function getDefaultPanel(): Panel
+    {
+        return Arr::first(
+            $this->panels,
+            fn (Panel $panel): bool => $panel->isDefault(),
+            fn () => throw NoDefaultPanelSetException::make(),
+        );
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getEmailVerificationPromptUrl(array $parameters = []): ?string
+    {
+        return $this->getCurrentPanel()->getEmailVerificationPromptUrl($parameters);
+    }
+
+    public function getEmailVerifiedMiddleware(): string
+    {
+        return $this->getCurrentPanel()->getEmailVerifiedMiddleware();
+    }
+
+    public function getFavicon(): ?string
+    {
+        return $this->getCurrentPanel()->getFavicon();
+    }
+
+    public function getFontFamily(): string
+    {
+        return $this->getCurrentPanel()->getFontFamily();
+    }
+
+    public function getFontProvider(): string
+    {
+        return $this->getCurrentPanel()->getFontProvider();
+    }
+
+    public function getFontUrl(): ?string
+    {
+        return $this->getCurrentPanel()->getFontUrl();
+    }
+
+    public function getFontHtml(): Htmlable
+    {
+        return $this->getCurrentPanel()->getFontHtml();
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getGlobalSearchKeyBindings(): array
+    {
+        return $this->getCurrentPanel()->getGlobalSearchKeyBindings();
+    }
+
+    public function getGlobalSearchProvider(): ?GlobalSearchProvider
+    {
+        return $this->getCurrentPanel()->getGlobalSearchProvider();
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getGrayColor(): array
+    {
+        return $this->getCurrentPanel()->getGrayColor();
+    }
+
+    public function getHomeUrl(): ?string
+    {
+        return $this->getCurrentPanel()->getHomeUrl() ?? $this->getCurrentPanel()->getUrl();
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getInfoColor(): array
+    {
+        return $this->getCurrentPanel()->getInfoColor();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getLoginUrl(array $parameters = []): ?string
+    {
+        return $this->getCurrentPanel()->getLoginUrl($parameters);
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getLogoutUrl(array $parameters = []): string
+    {
+        return $this->getCurrentPanel()->getLogoutUrl($parameters);
+    }
+
+    public function getMaxContentWidth(): ?string
+    {
+        return $this->getCurrentPanel()->getMaxContentWidth();
+    }
+
+    public function getModelResource(string | Model $model): ?string
+    {
+        return $this->getCurrentPanel()->getModelResource($model);
+    }
+
+    public function getNameForDefaultAvatar(Model | Authenticatable $record): string
+    {
+        if ($this->getTenantModel() === $record::class) {
+            return $this->getTenantName($record);
+        }
+
+        return $this->getUserName($record);
+    }
+
+    /**
+     * @return array<NavigationGroup>
+     */
+    public function getNavigation(): array
+    {
+        return $this->getCurrentPanel()->getNavigation();
+    }
+
+    /**
+     * @return array<string | int, NavigationGroup | string>
+     */
+    public function getNavigationGroups(): array
+    {
+        return $this->getCurrentPanel()->getNavigationGroups();
+    }
+
+    /**
+     * @return array<NavigationItem>
+     */
+    public function getNavigationItems(): array
+    {
+        return $this->getCurrentPanel()->getNavigationItems();
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    public function getPages(): array
+    {
+        return $this->getCurrentPanel()->getPages();
+    }
+
+    public function getPlugin(string $id): Plugin
+    {
+        return $this->getCurrentPanel()->getPlugin($id);
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getPrimaryColor(): array
+    {
+        return $this->getCurrentPanel()->getPrimaryColor();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getRegistrationUrl(array $parameters = []): ?string
+    {
+        return $this->getCurrentPanel()->getRegistrationUrl($parameters);
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getRequestPasswordResetUrl(array $parameters = []): ?string
+    {
+        return $this->getCurrentPanel()->getRequestPasswordResetUrl($parameters);
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array $parameters = []): string
+    {
+        return $this->getCurrentPanel()->getResetPasswordUrl($token, $user, $parameters);
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    public function getResources(): array
+    {
+        return $this->getCurrentPanel()->getResources();
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getSecondaryColor(): array
+    {
+        return $this->getCurrentPanel()->getSecondaryColor();
+    }
+
+    public function getSidebarWidth(): string
+    {
+        return $this->getCurrentPanel()->getSidebarWidth();
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getSuccessColor(): array
+    {
+        return $this->getCurrentPanel()->getSuccessColor();
+    }
+
+    public function getTenant(): ?Model
+    {
+        return $this->tenant;
+    }
+
+    public function getTenantAvatarUrl(Model $tenant): string
+    {
+        $avatar = null;
+
+        if ($tenant instanceof HasAvatar) {
+            $avatar = $tenant->getFilamentAvatarUrl();
+        }
+
+        if ($avatar) {
+            return $avatar;
+        }
+
+        return app($this->getDefaultAvatarProvider())->get($tenant);
+    }
+
+    public function getTenantBillingProvider(): ?Billing\Providers\Contracts\Provider
+    {
+        return $this->getCurrentPanel()->getTenantBillingProvider();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getTenantBillingUrl(array $parameters = [], ?Model $tenant = null): ?string
+    {
+        return $this->getCurrentPanel()->getTenantBillingUrl($tenant ?? $this->getTenant(), $parameters);
+    }
+
+    /**
+     * @return array<MenuItem>
+     */
+    public function getTenantMenuItems(): array
+    {
+        return $this->getCurrentPanel()->getTenantMenuItems();
+    }
+
+    public function getTenantModel(): ?string
+    {
+        return $this->getCurrentPanel()->getTenantModel();
+    }
+
+    public function getTenantName(Model $tenant): string
+    {
+        if ($tenant instanceof HasName) {
+            return $tenant->getFilamentName();
+        }
+
+        return $tenant->getAttributeValue('name');
+    }
+
+    public function getTenantOwnershipRelationshipName(): string
+    {
+        return $this->getCurrentPanel()->getTenantOwnershipRelationshipName();
+    }
+
+    public function getTenantRegistrationPage(): ?string
+    {
+        return $this->getCurrentPanel()->getTenantRegistrationPage();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getTenantRegistrationUrl(array $parameters = []): ?string
+    {
+        return $this->getCurrentPanel()->getTenantRegistrationUrl($parameters);
+    }
+
+    public function getTheme(): Theme
+    {
+        return $this->getCurrentPanel()->getTheme();
+    }
+
+    public function getUserAvatarUrl(Model | Authenticatable $user): string
+    {
+        $avatar = null;
+
+        if ($user instanceof HasAvatar) {
+            $avatar = $user->getFilamentAvatarUrl();
+        } else {
+            $avatar = $user->getAttributeValue('avatar_url');
+        }
+
+        if ($avatar) {
+            return $avatar;
+        }
+
+        return app($this->getDefaultAvatarProvider())->get($user);
+    }
+
+    public function getUserDefaultTenant(HasTenants | Model | Authenticatable $user): ?Model
+    {
+        $tenant = null;
+        $panel = $this->getCurrentPanel();
+
+        if ($user instanceof HasDefaultTenant) {
+            $tenant = $user->getDefaultTenant($panel);
+        }
+
+        if (! $tenant) {
+            $tenant = Arr::first($this->getUserTenants($user));
+        }
+
+        return $tenant;
+    }
+
+    /**
+     * @return array<MenuItem>
+     */
+    public function getUserMenuItems(): array
+    {
+        return $this->getCurrentPanel()->getUserMenuItems();
+    }
+
+    public function getUserName(Model | Authenticatable $user): string
+    {
+        if ($user instanceof HasName) {
+            return $user->getFilamentName();
+        }
+
+        return $user->getAttributeValue('name');
+    }
+
+    /**
+     * @return array<Model>
+     */
+    public function getUserTenants(HasTenants | Model | Authenticatable $user): array
+    {
+        $tenants = $user->getTenants($this->getCurrentPanel());
+
+        if ($tenants instanceof Collection) {
+            $tenants = $tenants->all();
+        }
+
+        return $tenants;
+    }
+
+    public function getUrl(?Model $tenant = null): ?string
+    {
+        return $this->getCurrentPanel()->getUrl($tenant);
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
+    {
+        return $this->getCurrentPanel()->getVerifyEmailUrl($user, $parameters);
+    }
+
+    /**
+     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getWarningColor(): array
+    {
+        return $this->getCurrentPanel()->getWarningColor();
+    }
+
+    /**
+     * @return array<class-string>
+     */
+    public function getWidgets(): array
+    {
+        return $this->getCurrentPanel()->getWidgets();
+    }
+
+    public function hasBreadcrumbs(): bool
+    {
+        return $this->getCurrentPanel()->hasBreadcrumbs();
+    }
+
+    public function hasCollapsibleNavigationGroups(): bool
+    {
+        return $this->getCurrentPanel()->hasCollapsibleNavigationGroups();
+    }
+
+    public function hasDarkMode(): bool
+    {
+        return $this->getCurrentPanel()->hasDarkMode();
+    }
+
+    public function hasDarkModeForced(): bool
+    {
+        return $this->getCurrentPanel()->hasDarkModeForced();
+    }
+
+    public function hasDatabaseNotifications(): bool
+    {
+        return $this->getCurrentPanel()->hasDatabaseNotifications();
+    }
+
+    public function hasEmailVerification(): bool
+    {
+        return $this->getCurrentPanel()->hasEmailVerification();
+    }
+
+    public function hasLogin(): bool
+    {
+        return $this->getCurrentPanel()->hasLogin();
+    }
+
+    public function hasNavigation(): bool
+    {
+        return $this->getCurrentPanel()->hasNavigation();
+    }
+
+    public function hasPasswordReset(): bool
+    {
+        return $this->getCurrentPanel()->hasPasswordReset();
+    }
+
+    public function hasRegistration(): bool
+    {
+        return $this->getCurrentPanel()->hasRegistration();
+    }
+
+    public function hasTenancy(): bool
+    {
+        return $this->getCurrentPanel()->hasTenancy();
+    }
+
+    public function hasTenantBilling(): bool
+    {
+        return $this->getCurrentPanel()->hasTenantBilling();
+    }
+
+    public function hasTenantRegistration(): bool
+    {
+        return $this->getCurrentPanel()->hasTenantRegistration();
+    }
+
+    public function hasTopNavigation(): bool
+    {
+        return $this->getCurrentPanel()->hasTopNavigation();
+    }
+
+    public function isServing(): bool
+    {
+        return $this->isServing;
+    }
+
+    public function isSidebarCollapsibleOnDesktop(): bool
+    {
+        return $this->getCurrentPanel()->isSidebarCollapsibleOnDesktop();
+    }
+
+    public function isSidebarFullyCollapsibleOnDesktop(): bool
+    {
+        return $this->getCurrentPanel()->isSidebarFullyCollapsibleOnDesktop();
+    }
+
+    public function mountNavigation(): void
+    {
+        $this->getCurrentPanel()->mountNavigation();
+    }
+
+    public function registerPanel(Panel $panel): void
+    {
+        $this->panels[$panel->getId()] = $panel;
+
+        if ($panel->isDefault()) {
+            $this->setCurrentPanel($panel);
+        }
+    }
+
+    public function renderHook(string $name): Htmlable
+    {
+        return $this->getCurrentPanel()->getRenderHook($name);
+    }
+
+    public function serving(Closure $callback): void
+    {
+        Event::listen(ServingFilament::class, $callback);
+    }
+
+    public function setCurrentPanel(?Panel $panel): void
+    {
+        $this->currentPanel = $panel;
+    }
+
+    public function setServingStatus(bool $condition = true): void
+    {
+        $this->isServing = $condition;
+    }
+
+    public function setTenant(?Model $tenant): void
+    {
+        $this->tenant = $tenant;
+
+        if ($tenant) {
+            event(new TenantSet($tenant, $this->auth()->user()));
+        }
+    }
+
+    /**
+     * @deprecated Use the `navigationGroups()` method on the panel configuration instead.
+     *
+     * @param  array<string | int, NavigationGroup | string>  $groups
+     */
+    public function registerNavigationGroups(array $groups): void
+    {
+        try {
+            $this->getDefaultPanel()->navigationGroups($groups);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `navigationGroups()` method on the panel configuration to register navigation groups.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `navigationItems()` method on the panel configuration instead.
+     *
+     * @param  array<NavigationItem>  $items
+     */
+    public function registerNavigationItems(array $items): void
+    {
+        try {
+            $this->getDefaultPanel()->navigationItems($items);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `navigationItems()` method on the panel configuration to register navigation items.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `pages()` method on the panel configuration instead.
+     *
+     * @param  array<class-string>  $pages
+     */
+    public function registerPages(array $pages): void
+    {
+        try {
+            $this->getDefaultPanel()->pages($pages);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `pages()` method on the panel configuration to register pages.');
+        }
+    }
+
+    public function registerRenderHook(string $name, Closure $callback): void
+    {
+        try {
+            $this->getDefaultPanel()->renderHook($name, $callback);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `renderHook()` method on the panel configuration to register render hooks.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `resources()` method on the panel configuration instead.
+     *
+     * @param  array<class-string>  $resources
+     */
+    public function registerResources(array $resources): void
+    {
+        try {
+            $this->getDefaultPanel()->resources($resources);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `resources()` method on the panel configuration to register resources.');
+        }
+    }
+
+    /**
+     * @deprecated Register scripts using the `FilamentAsset` facade instead.
+     *
+     * @param  array<mixed>  $scripts
+     */
+    public function registerScripts(array $scripts, bool $shouldBeLoadedBeforeCoreScripts = false): void
+    {
+        throw new Exception('Please use the `FilamentAsset` facade to register scripts.');
+    }
+
+    /**
+     * @deprecated Register script data using the `FilamentAsset` facade instead.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    public function registerScriptData(array $data): void
+    {
+        FilamentAsset::registerScriptData($data);
+    }
+
+    /**
+     * @deprecated Register styles using the `FilamentAsset` facade instead.
+     *
+     * @param  array<mixed>  $styles
+     */
+    public function registerStyles(array $styles): void
+    {
+        throw new Exception('Please use the `FilamentAsset` facade to register styles.');
+    }
+
+    /**
+     * @deprecated Use the `theme()` method on the panel configuration instead.
+     */
+    public function registerTheme(string | Htmlable | null $theme): void
+    {
+        try {
+            $this->getDefaultPanel()->theme($theme);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `theme()` method on the panel configuration to register themes.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `viteTheme()` method on the panel configuration instead.
+     *
+     * @param  string | array<string>  $theme
+     */
+    public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
+    {
+        try {
+            $this->getDefaultPanel()->viteTheme($theme, $buildDirectory);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `viteTheme()` method on the panel configuration to register themes.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `userMenuItems()` method on the panel configuration instead.
+     *
+     * @param  array<MenuItem>  $items
+     */
+    public function registerUserMenuItems(array $items): void
+    {
+        try {
+            $this->getDefaultPanel()->userMenuItems($items);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `userMenuItems()` method on the panel configuration to register user menu items.');
+        }
+    }
+
+    /**
+     * @deprecated Use the `widgets()` method on the panel configuration instead.
+     *
+     * @param  array<class-string>  $widgets
+     */
+    public function registerWidgets(array $widgets): void
+    {
+        try {
+            $this->getDefaultPanel()->widgets($widgets);
+        } catch (NoDefaultPanelSetException $exception) {
+            throw new Exception('Please use the `widgets()` method on the panel configuration to register widgets.');
+        }
+    }
+}

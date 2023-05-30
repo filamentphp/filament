@@ -34,7 +34,7 @@ protected static string $settings = FooterSettings::class;
 
 You must define a form schema to interact with your settings class inside the `getFormSchema()` method.
 
-Since the [form builder](/docs/forms) is installed in the app framework by default, you may use any form [fields](/docs/forms/fields) or [layout components](/docs/forms/layout) you like:
+Since the [form builder](/docs/forms) is installed in the panel builder by default, you may use any form [fields](/docs/forms/fields) or [layout components](/docs/forms/layout) you like:
 
 ```php
 use Filament\Forms\Components\Repeater;

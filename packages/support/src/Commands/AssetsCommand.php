@@ -15,6 +15,7 @@ class AssetsCommand extends Command
 
     protected $signature = 'filament:assets';
 
+    /** @var array<string> */
     protected $publishedAssets = [];
 
     public function handle(): int

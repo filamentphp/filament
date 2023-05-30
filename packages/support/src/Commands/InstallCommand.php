@@ -19,7 +19,7 @@ class InstallCommand extends Command
     public function __invoke(): int
     {
         if ($this->option('app')) {
-            $this->installDefaultAppContext();
+            $this->installDefaultAppPanel();
         }
 
         if ($this->option('scaffold')) {
@@ -47,25 +47,25 @@ class InstallCommand extends Command
         return static::SUCCESS;
     }
 
-    protected function installDefaultAppContext(): void
+    protected function installDefaultAppPanel(): void
     {
-        $path = app_path('Providers/Filament/AdminContextProvider.php');
+        $path = app_path('Providers/Filament/AdminPanelProvider.php');
 
         if (! $this->option('force') && $this->checkForCollision([$path])) {
             return;
         }
 
-        $this->copyStubToApp('AdminContextProvider', $path);
+        $this->copyStubToApp('AdminPanelProvider', $path);
 
-        if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminContextProvider::class')) {
+        if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminPanelProvider::class')) {
             file_put_contents(config_path('app.php'), str_replace(
                 'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
-                'App\\Providers\\Filament\\AdminContextProvider::class,' . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+                'App\\Providers\\Filament\\AdminPanelProvider::class,' . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
                 $appConfig,
             ));
         }
 
-        $this->components->info('Successfully created AdminContextProvider.php!');
+        $this->components->info('Successfully created AdminPanelProvider.php!');
     }
 
     protected function installScaffolding(): void

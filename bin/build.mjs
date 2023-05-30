@@ -44,9 +44,9 @@ const defaultOptions = {
 }
 
 const corePackages = [
-    'app',
     'forms',
     'notifications',
+    'panels',
     'support',
     'tables',
 ]
@@ -70,8 +70,8 @@ compile({
 compile({
     ...defaultOptions,
     platform: 'browser',
-    entryPoints: [`./packages/app/resources/js/echo.js`],
-    outfile: `./packages/app/dist/echo.js`,
+    entryPoints: [`./packages/panels/resources/js/echo.js`],
+    outfile: `./packages/panels/dist/echo.js`,
 })
 
 const formComponents = [

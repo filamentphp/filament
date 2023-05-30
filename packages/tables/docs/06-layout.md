@@ -274,7 +274,7 @@ Panel::make([
 
 ### Adding a collapse animation
 
-If you're not using the table builder within the app framework, you may find that there is no animation when collapsing or expanding the content. You can enable this by installing the [Alpine.js Collapse Plugin](https://alpinejs.dev/plugins/collapse):
+If you're not using the table builder within the panel builder, you may find that there is no animation when collapsing or expanding the content. You can enable this by installing the [Alpine.js Collapse Plugin](https://alpinejs.dev/plugins/collapse):
 
 ```bash
 npm install @alpinejs/collapse --save-dev
