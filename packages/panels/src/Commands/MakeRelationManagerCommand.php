@@ -16,7 +16,7 @@ class MakeRelationManagerCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament relation manager class for a resource.';
+    protected $description = 'Create a new Filament relation manager class for a resource';
 
     protected $signature = 'make:filament-relation-manager {resource?} {relationship?} {recordTitleAttribute?} {--attach} {--associate} {--soft-deletes} {--view} {--panel=} {--F|force}';
 
