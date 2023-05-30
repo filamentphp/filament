@@ -18,7 +18,7 @@ class MakeFormCommand extends Command
     use CanReadModelSchemas;
     use CanValidateInput;
 
-    protected $description = 'Creates a Livewire component containing a Filament form.';
+    protected $description = 'Creates a Livewire component containing a Filament form';
 
     protected $signature = 'make:livewire-form {name?} {model?} {--E|edit} {--G|generate} {--F|force}';
 
