@@ -12,14 +12,14 @@ class InstallCommand extends Command
 {
     use CanManipulateFiles;
 
-    protected $signature = 'filament:install {--scaffold} {--actions} {--app} {--forms} {--notifications} {--tables} {--widgets} {--F|force}';
+    protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
 
     protected $description = 'Install Filament.';
 
     public function __invoke(): int
     {
-        if ($this->option('app')) {
-            $this->installDefaultAppPanel();
+        if ($this->option('panel')) {
+            $this->installAdminPanel();
         }
 
         if ($this->option('scaffold')) {
@@ -47,7 +47,7 @@ class InstallCommand extends Command
         return static::SUCCESS;
     }
 
-    protected function installDefaultAppPanel(): void
+    protected function installAdminPanel(): void
     {
         $path = app_path('Providers/Filament/AdminPanelProvider.php');
 
