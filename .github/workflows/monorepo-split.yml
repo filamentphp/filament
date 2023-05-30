@@ -20,7 +20,7 @@ jobs:
         with:
           package_directory: 'packages/admin'
           repository_organization: 'filamentphp'
-          repository_name: 'app'
+          repository_name: 'panels'
           branch: 2.x
           tag: ${{ steps.previous-tag.outputs.tag }}
           user_name: 'Dan Harrin'
