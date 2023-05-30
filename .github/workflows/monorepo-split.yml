@@ -12,10 +12,10 @@ jobs:
       matrix:
         package:
           - actions
-          - app
           - forms
           - infolists
           - notifications
+          - panels
           - spark-billing-provider
           - spatie-laravel-google-fonts-plugin
           - spatie-laravel-media-library-plugin
