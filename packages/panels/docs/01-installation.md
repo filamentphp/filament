@@ -18,7 +18,7 @@ To get started with a panel, you can install it using the commands:
 
 ```bash
 composer require filament/filament:"^3.0"
-php artisan filament:install --app
+php artisan filament:install --panels
 ```
 
 If you don't have one, you may create a new user account using:

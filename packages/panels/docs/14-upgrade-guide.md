@@ -30,14 +30,14 @@ You can now `composer remove filament/upgrade` as you don't need it any more.
 
 ### High impact changes
 
-#### Panel service provider instead of the config file
+#### Panel provider instead of the config file
 
-The Filament v2 config file grew pretty big, and now it is incredibly small. Most of the configuration is now done in a service provider, which providers a cleaner API, more type safety, IDE autocomplete support, and [the ability to create multiple admin panels in your app](configuration#introducing-panels). We call these special configuration service providers **"panel providers"**.
+The Filament v2 config file grew pretty big, and now it is incredibly small. Most of the configuration is now done in a service provider, which providers a cleaner API, more type safety, IDE autocomplete support, and [the ability to create multiple panels in your app](configuration#introducing-panels). We call these special configuration service providers **"panel providers"**.
 
 Before you can create the new panel provider, make sure that you've got Filament v3 installed with Composer. Then, run the following command:
 
 ```bash
-php artisan filament:install --app`
+php artisan filament:install --panels`
 ```
 
 A new `app/Providers/Filament/AdminPanelProvider.php` file will be created, ready for you to transfer over your old configuration from the `config/filament.php` file.
