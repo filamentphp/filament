@@ -4,7 +4,6 @@ namespace Filament\Facades;
 
 use Closure;
 use Filament\Billing\Providers\Contracts\Provider as BillingProvider;
-use Filament\Panel;
 use Filament\Contracts\Plugin;
 use Filament\FilamentManager;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
@@ -12,6 +11,7 @@ use Filament\Models\Contracts\HasTenants;
 use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
+use Filament\Panel;
 use Filament\Support\Assets\Theme;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;

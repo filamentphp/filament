@@ -7,8 +7,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages;
 use Filament\Tests\Models\Post;
+use Filament\Tests\Panels\Fixtures\Resources\PostResource\Pages;
 use Illuminate\Database\Eloquent\Builder;
 
 class PostResource extends Resource

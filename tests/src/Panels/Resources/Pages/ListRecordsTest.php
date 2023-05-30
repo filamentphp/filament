@@ -2,10 +2,10 @@
 
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
-use Filament\Tests\Models\Post;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);

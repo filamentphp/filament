@@ -3,8 +3,8 @@
 namespace Filament\Tests\Panels\Fixtures\Resources;
 
 use Filament\Resources\Resource;
-use Filament\Tests\Panels\Fixtures\Resources\PostCategoryResource\Pages;
 use Filament\Tests\Models\PostCategory;
+use Filament\Tests\Panels\Fixtures\Resources\PostCategoryResource\Pages;
 
 class PostCategoryResource extends Resource
 {

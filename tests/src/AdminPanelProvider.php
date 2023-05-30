@@ -2,12 +2,12 @@
 
 namespace Filament\Tests;
 
-use Filament\Panel;
-use Filament\PanelProvider;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
+use Filament\Panel;
+use Filament\PanelProvider;
 use Filament\Tests\Actions\Fixtures\Pages\Actions;
 use Filament\Tests\Panels\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Fixtures\Resources\PostCategoryResource;

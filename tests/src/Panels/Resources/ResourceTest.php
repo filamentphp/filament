@@ -1,11 +1,11 @@
 <?php
 
+use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostCategoryResource;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\Shop\OrderInvoiceResource;
 use Filament\Tests\Panels\Fixtures\Resources\Shop\OrderResource;
 use Filament\Tests\Panels\Resources\TestCase;
-use Filament\Tests\Models\Post;
 use Illuminate\Database\Eloquent\Builder;
 
 uses(TestCase::class);

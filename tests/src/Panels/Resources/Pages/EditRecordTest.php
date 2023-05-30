@@ -1,9 +1,9 @@
 <?php
 
 use Filament\Actions\DeleteAction;
+use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Resources\TestCase;
-use Filament\Tests\Models\Post;
 use Illuminate\Support\Str;
 use function Pest\Livewire\livewire;
 

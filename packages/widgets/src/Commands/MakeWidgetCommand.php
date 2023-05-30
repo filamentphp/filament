@@ -2,8 +2,8 @@
 
 namespace Filament\Widgets\Commands;
 
-use Filament\Panel;
 use Filament\Facades\Filament;
+use Filament\Panel;
 use Filament\Resources\Resource;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;

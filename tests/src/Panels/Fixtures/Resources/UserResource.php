@@ -7,8 +7,8 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Filament\Tests\Panels\Fixtures\Resources\UserResource\Pages;
 use Filament\Tests\Models\User;
+use Filament\Tests\Panels\Fixtures\Resources\UserResource\Pages;
 
 class UserResource extends Resource
 {

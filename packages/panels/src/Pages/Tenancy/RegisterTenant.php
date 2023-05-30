@@ -3,11 +3,11 @@
 namespace Filament\Pages\Tenancy;
 
 use Filament\Actions\Action;
-use Filament\Panel;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Pages\CardPage;
 use Filament\Pages\Concerns;
+use Filament\Panel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;

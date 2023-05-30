@@ -2,8 +2,8 @@
 
 namespace Filament\Pages;
 
-use Filament\Panel;
 use Filament\Facades\Filament;
+use Filament\Panel;
 use Filament\Support\Facades\FilamentIcon;
 use Illuminate\Support\Facades\Route;
 

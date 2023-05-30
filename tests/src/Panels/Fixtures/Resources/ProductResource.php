@@ -3,8 +3,8 @@
 namespace Filament\Tests\Panels\Fixtures\Resources;
 
 use Filament\Resources\Resource;
-use Filament\Tests\Panels\Fixtures\Resources\ProductResource\Pages;
 use Filament\Tests\Models\Product;
+use Filament\Tests\Panels\Fixtures\Resources\ProductResource\Pages;
 
 class ProductResource extends Resource
 {

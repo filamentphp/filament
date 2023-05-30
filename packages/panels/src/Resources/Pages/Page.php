@@ -2,8 +2,8 @@
 
 namespace Filament\Resources\Pages;
 
-use Filament\Panel;
 use Filament\Pages\Page as BasePage;
+use Filament\Panel;
 use Filament\Resources\Resource;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
