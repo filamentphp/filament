@@ -38,6 +38,12 @@ class Authenticate extends Middleware
                 (config('app.env') !== 'local'),
             403,
         );
+
+        if (! $panel->hasTenancy()) {
+            return;
+        }
+
+        $this->setTenant($request, $panel);
     }
 
     protected function setTenant(Request $request, Panel $panel): void
