@@ -6,6 +6,7 @@ use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Middleware\IdentifyTenant;
 use Filament\Http\Middleware\SetUpPanel;
 use Filament\Http\Responses\Auth\Contracts\EmailVerificationResponse as EmailVerificationResponseContract;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse as LoginResponseContract;
@@ -65,6 +66,7 @@ class FilamentServiceProvider extends PackageServiceProvider
             Authenticate::class,
             DisableBladeIconComponents::class,
             DispatchServingFilamentEvent::class,
+            IdentifyTenant::class,
             SetUpPanel::class,
         ]);
 

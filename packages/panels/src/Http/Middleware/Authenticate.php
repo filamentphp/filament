@@ -40,26 +40,6 @@ class Authenticate extends Middleware
         );
     }
 
-    protected function setTenant(Request $request, Panel $panel): void
-    {
-        if (! $request->route()->hasParameter('tenant')) {
-            return;
-        }
-
-        $tenant = $panel->getTenant($request->route()->parameter('tenant'));
-
-        /** @var Model $user */
-        $user = $panel->auth()->user();
-
-        if ($user instanceof HasTenants && $user->canAccessTenant($tenant)) {
-            Filament::setTenant($tenant);
-
-            return;
-        }
-
-        abort(404);
-    }
-
     protected function redirectTo($request): string
     {
         return Filament::getLoginUrl();
