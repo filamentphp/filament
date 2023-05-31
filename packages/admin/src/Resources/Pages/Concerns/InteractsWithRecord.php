@@ -5,6 +5,7 @@ namespace Filament\Resources\Pages\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
+use Illuminate\Support\HtmlString;
 
 trait InteractsWithRecord
 {
@@ -26,7 +27,7 @@ trait InteractsWithRecord
         return $this->record;
     }
 
-    public function getRecordTitle(): string
+    public function getRecordTitle(): string | HtmlString
     {
         $resource = static::getResource();
 

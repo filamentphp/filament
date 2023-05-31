@@ -13,6 +13,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
@@ -223,7 +224,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return $this->subheading;
     }
 
-    protected function getTitle(): string
+    protected function getTitle(): string | HtmlString
     {
         return static::$title ?? (string) Str::of(class_basename(static::class))
             ->kebab()

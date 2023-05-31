@@ -16,6 +16,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Traits\Macroable;
 
 class Resource
@@ -367,7 +368,7 @@ class Resource
         return static::$recordTitleAttribute;
     }
 
-    public static function getRecordTitle(?Model $record): ?string
+    public static function getRecordTitle(?Model $record): string | HtmlString | null
     {
         return $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();
     }
