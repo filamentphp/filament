@@ -23,14 +23,14 @@ class User extends Authenticatable implements FilamentUser
 {
     // ...
 
-    public function canAccessFilament(Panel $panel): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
     }
 }
 ```
 
-The `canAccessFilament()` method returns `true` or `false` depending on whether the user is allowed to access Filament. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
+The `canAccessPanel()` method returns `true` or `false` depending on whether the user is allowed to access Filament. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
 
 ## Setting up user avatars
 

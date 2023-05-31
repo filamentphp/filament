@@ -23,7 +23,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'remember_token',
     ];
 
-    public function canAccessFilament(Panel $panel): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         return true;
     }
