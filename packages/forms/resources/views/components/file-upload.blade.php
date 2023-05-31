@@ -21,8 +21,8 @@
             acceptedFileTypes: @js($getAcceptedFileTypes()),
             cropperEmptyFillColor: '{{ $getCropperEmptyFillColor() }}',
             cropperMode: {{ $getCropperMode() }},
-            cropperViewportHeight: {{ $getCropperViewportHeight() }},
-            cropperViewportWidth: {{ $getCropperViewportWidth() }},
+            cropperViewportHeight: @js($getCropperViewportHeight()),
+            cropperViewportWidth: @js($getCropperViewportWidth()),
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile(@js($statePath), fileKey)
             },

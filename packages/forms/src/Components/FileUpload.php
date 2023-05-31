@@ -51,9 +51,9 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $isCroppable = false;
 
-    protected int $cropperViewportWidth = 360;
+    protected ?int $cropperViewportWidth = null;
 
-    protected int $cropperViewportHeight = 360;
+    protected ?int $cropperViewportHeight = null;
 
     protected int $cropperMode = 1;
 
@@ -328,7 +328,7 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
-    public function getCropperViewportHeight(): int
+    public function getCropperViewportHeight(): ?int
     {
         if (($targetHeight = (int) $this->getImageResizeTargetHeight()) > 1) {
             return (int) round($targetHeight * $this->getParentTargetSizes($targetHeight), 0);
@@ -343,7 +343,7 @@ class FileUpload extends BaseFileUpload
         return $this->cropperViewportHeight;
     }
 
-    public function getCropperViewportWidth(): int
+    public function getCropperViewportWidth(): ?int
     {
         if (($targetWidth = (int) $this->getImageResizeTargetWidth()) > 1) {
             return (int) round($targetWidth * $this->getParentTargetSizes($targetWidth), 0);
