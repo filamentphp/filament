@@ -4,8 +4,8 @@ namespace Filament\Resources\Pages\Concerns;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Str;
 use Illuminate\Support\HtmlString;
+use Illuminate\Support\Str;
 
 trait InteractsWithRecord
 {
