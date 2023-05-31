@@ -90,22 +90,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getCollapsedSidebarWidth();
     }
 
-    public function getPanel(?string $id = null): Panel
-    {
-        return $this->panels[$id] ?? $this->getDefaultPanel();
-    }
-
     public function getCurrentPanel(): ?Panel
     {
         return $this->currentPanel ?? null;
-    }
-
-    /**
-     * @return array<string, Panel>
-     */
-    public function getPanels(): array
-    {
-        return $this->panels;
     }
 
     /**
@@ -275,6 +262,19 @@ class FilamentManager
     public function getPages(): array
     {
         return $this->getCurrentPanel()->getPages();
+    }
+
+    public function getPanel(?string $id = null): Panel
+    {
+        return $this->panels[$id] ?? $this->getDefaultPanel();
+    }
+
+    /**
+     * @return array<string, Panel>
+     */
+    public function getPanels(): array
+    {
+        return $this->panels;
     }
 
     public function getPlugin(string $id): Plugin
