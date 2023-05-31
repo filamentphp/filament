@@ -25,9 +25,11 @@ interface HasTable extends HasForms
     /**
      * @return array<int | string>
      */
-    public function getAllTableRecordKeys(): array;
+    public function getAllSelectableTableRecordKeys(): array;
 
     public function getAllTableRecordsCount(): int;
+
+    public function getAllSelectableTableRecordsCount(): int;
 
     /**
      * @return array<string, mixed> | null

@@ -4,9 +4,9 @@ title: Getting started
 
 ## Overview
 
-Filament's form package allows you to easily build dynamic forms in your app. You can use it to [add a form to any Livewire component](adding-a-form-to-a-livewire-component). Additionally, it's used within other Filament packages to render forms within [app resources](../app/resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essentially to learning how to use these Filament packages.
+Filament's form package allows you to easily build dynamic forms in your app. You can use it to [add a form to any Livewire component](adding-a-form-to-a-livewire-component). Additionally, it's used within other Filament packages to render forms within [app resources](../panels/resources), [action modals](../actions/modals), [table filters](../tables/filters), and more. Learning how to build forms is essentially to learning how to use these Filament packages.
 
-This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](adding-a-form-to-a-livewire-component) and then come back. If you're adding a form to an [app resource](../app/resources), or another Filament package, you're ready to go!
+This guide will walk you through the basics of building forms with Filament's form package. If you're planning to add a new form to your own Livewire component, you should [do that first](adding-a-form-to-a-livewire-component) and then come back. If you're adding a form to an [app resource](../panels/resources), or another Filament package, you're ready to go!
 
 ## Form schemas
 
@@ -36,7 +36,7 @@ public function form(Form $form): Form
 }
 ```
 
-Forms within the app framework and other packages usually have 2 columns by default. For custom forms, you can use the `columns()` method to achieve the same effect:
+Forms within a panel and other packages usually have 2 columns by default. For custom forms, you can use the `columns()` method to achieve the same effect:
 
 ```php
 $form

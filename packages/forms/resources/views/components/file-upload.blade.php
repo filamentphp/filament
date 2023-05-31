@@ -1,12 +1,13 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
-    :label-sr-only="$isAvatar() || $isLabelHidden()"
+    :label-sr-only="$isLabelHidden()"
 >
     @php
         $imageCropAspectRatio = $getImageCropAspectRatio();
         $imageResizeTargetHeight = $getImageResizeTargetHeight();
         $imageResizeTargetWidth = $getImageResizeTargetWidth();
+        $isAvatar = $isAvatar();
         $statePath = $getStatePath();
         $isDisabled = $isDisabled();
         $isCroppable = $isCroppable();
@@ -35,7 +36,7 @@
             imageResizeTargetHeight: @js($imageResizeTargetHeight),
             imageResizeTargetWidth: @js($imageResizeTargetWidth),
             imageResizeUpscale: @js($getImageResizeUpscale()),
-            isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
+            isAvatar: @js($isAvatar),
             isCroppable: @js($isCroppable),
             isDownloadable: @js($isDownloadable()),
             isOpenable: @js($isOpenable()),
@@ -58,7 +59,7 @@
             shouldAppendFiles: @js($shouldAppendFiles()),
             shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
             shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
             uploadButtonPosition: @js($getUploadButtonPosition()),
             uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
             uploadUsing: (fileKey, file, success, error, progress) => {
@@ -68,7 +69,6 @@
             },
         })"
         wire:ignore
-        style="min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
         {{
             $attributes
                 ->merge([
@@ -77,23 +77,37 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
-                    'filament-forms-file-upload-component',
-                    'w-32 mx-auto' => $isAvatar(),
+                    'filament-forms-file-upload-component flex',
+                    match ($getAlignment()) {
+                        'center' => 'justify-center',
+                        'end' => 'justify-end',
+                        'left' => 'justify-left',
+                        'right' => 'justify-right',
+                        'start', null => 'justify-start',
+                    },
                 ])
         }}
     >
-        <input
-            x-ref="input"
-            {{
-                $getExtraInputAttributeBag()
-                    ->merge([
-                        'disabled' => $isDisabled,
-                        'dusk' => "filament.forms.{$statePath}",
-                        'multiple' => $isMultiple(),
-                        'type' => 'file',
-                    ], escape: false)
-            }}
-        />
+        <div
+            style="min-height: {{ $isAvatar ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
+            @class([
+                'w-32' => $isAvatar,
+                'w-full' => ! $isAvatar,
+            ])
+        >
+            <input
+                x-ref="input"
+                {{
+                    $getExtraInputAttributeBag()
+                        ->merge([
+                            'disabled' => $isDisabled,
+                            'dusk' => "filament.forms.{$statePath}",
+                            'multiple' => $isMultiple(),
+                            'type' => 'file',
+                        ], escape: false)
+                }}
+            />
+        </div>
 
         @if ($isCroppable && (! $isDisabled))
             @php

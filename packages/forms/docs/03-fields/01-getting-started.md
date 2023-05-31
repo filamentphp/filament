@@ -82,7 +82,7 @@ TextInput::make('name')
     ->default('John')
 ```
 
-Note that these defaults are only used when the form is loaded without existing data. Inside that inside [app framework resources](../../app/resources#forms) this only works on Create Pages, as Edit Pages will always fill the data from the model.
+Note that these defaults are only used when the form is loaded without existing data. Inside [panel resources](../../panels/resources#resource-forms) this only works on Create Pages, as Edit Pages will always fill the data from the model.
 
 ## Adding helper text below the field
 

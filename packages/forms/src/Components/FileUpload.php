@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Support\HtmlString;
 
@@ -10,6 +11,7 @@ class FileUpload extends BaseFileUpload
 {
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
+    use HasAlignment;
     use HasExtraAlpineAttributes;
 
     /**

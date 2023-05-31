@@ -408,7 +408,7 @@ Sometimes, you may wish to ignore a given model during unique validation. For ex
 Field::make('email')->unique(ignorable: $ignoredUser)
 ```
 
-If you're using the [app framework](../app), you can easily ignore the current record by using `ignoreRecord` instead:
+If you're using the [panel builder](../panels), you can easily ignore the current record by using `ignoreRecord` instead:
 
 ```php
 Field::make('email')->unique(ignoreRecord: true)
@@ -492,7 +492,7 @@ protected function onValidationError(ValidationException $exception): void
 }
 ```
 
-Alternatively, if you are using the app framework and you want this behaviour on all the pages, add this inside the `boot()` method of your `AppServiceProvider`:
+Alternatively, if you are using the panel builder and want this behaviour on all the pages, add this inside the `boot()` method of your `AppServiceProvider`:
 
 ```php
 use Filament\Notifications\Notification;

@@ -38,7 +38,7 @@
     {{ $attributes->class([
         'filament-section-component',
         match ($aside) {
-            true => 'grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2',
+            true => 'grid grid-cols-1 gap-x-6 gap-y-4 items-start md:grid-cols-3',
             false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20',
         },
     ]) }}
@@ -116,6 +116,7 @@
         @endif
         @class([
             'filament-section-component-content-wrapper',
+            'md:col-span-2' => $aside,
             'border-t border-gray-100 dark:border-white/10' => ! $aside,
             'md:order-first' => $contentBefore,
         ])

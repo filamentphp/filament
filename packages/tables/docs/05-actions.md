@@ -172,6 +172,7 @@ You may conditionally disable bulk actions for a specific record:
 
 ```php
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 public function table(Table $table): Table
 {

@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists\Concerns;
 
-use Exception;
 use Livewire\Component;
 
 trait BelongsToLivewire
@@ -18,10 +17,6 @@ trait BelongsToLivewire
 
     public function getLivewire(): ?Component
     {
-        if (! $this->livewire) {
-            throw new Exception('An infolist tried to access Livewire but was not mounted.]');
-        }
-
         return $this->livewire;
     }
 }

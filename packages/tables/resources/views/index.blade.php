@@ -7,7 +7,6 @@
     $actionsAlignment = $getActionsAlignment();
     $actionsPosition = $getActionsPosition();
     $actionsColumnLabel = $getActionsColumnLabel();
-    $allRecordsCount = $getAllRecordsCount();
     $columns = $getVisibleColumns();
     $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
     $content = $getContent();
@@ -67,7 +66,7 @@
     $isColumnToggleFormVisible = $hasToggleableColumns();
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
-    $allRecordsCount = $isLoaded ? $getAllRecordsCount() : null;
+    $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
     if (count($actions) && (! $isReordering)) $columnsCount++;
     if ($isSelectionEnabled || $isReordering) $columnsCount++;
@@ -181,7 +180,7 @@
         selectAllRecords: async function () {
             this.isLoading = true
 
-            this.selectedRecords = await $wire.getAllTableRecordKeys()
+            this.selectedRecords = await $wire.getAllSelectableTableRecordKeys()
 
             this.isLoading = false
         },
@@ -342,7 +341,7 @@
             />
         @elseif ($isSelectionEnabled && $isLoaded)
             <x-filament-tables::selection-indicator
-                :all-records-count="$allRecordsCount"
+                :all-selectable-records-count="$allSelectableRecordsCount"
                 :colspan="$columnsCount"
                 x-show="selectedRecords.length"
                 class="border-t dark:border-gray-700"

@@ -15,6 +15,9 @@ class AssetsCommand extends Command
 
     protected $signature = 'filament:assets';
 
+    /** @var array<string> */
+    protected $publishedAssets = [];
+
     public function handle(): int
     {
         foreach (FilamentAsset::getAlpineComponents() as $asset) {
@@ -49,6 +52,8 @@ class AssetsCommand extends Command
             $this->copyAsset($asset->getPath(), $asset->getPublicPath());
         }
 
+        $this->components->bulletList($this->publishedAssets);
+
         $this->components->info('Successfully published assets!');
 
         return static::SUCCESS;
@@ -64,5 +69,7 @@ class AssetsCommand extends Command
         );
 
         $filesystem->copy($from, $to);
+
+        $this->publishedAssets[] = $to;
     }
 }

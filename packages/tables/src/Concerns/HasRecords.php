@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Pagination\LengthAwarePaginator;
 use function Livewire\invade;
 
 trait HasRecords
@@ -131,6 +132,15 @@ trait HasRecords
         $pivotKeyName = app($pivotClass)->getKeyName();
 
         return $record->getAttributeValue($pivotKeyName);
+    }
+
+    public function getAllTableRecordsCount(): int
+    {
+        if ($this->records instanceof LengthAwarePaginator) {
+            return $this->records->total();
+        }
+
+        return $this->getFilteredTableQuery()->count();
     }
 
     /**

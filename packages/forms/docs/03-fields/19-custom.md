@@ -9,36 +9,10 @@ Aside from [building custom fields](custom), you may create "view" fields which 
 ```php
 use Filament\Forms\Components\ViewField;
 
-ViewField::make('notifications')->view('filament.forms.components.range-slider')
+ViewField::make('rating')->view('filament.forms.components.range-slider')
 ```
 
-Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
-
-The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js.
-
-Using [Livewire's entangle](https://laravel-livewire.com/docs/alpine-js#sharing-state) allows sharing state with Alpine.js:
-
-```blade
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
-        <!-- Interact with the `state` property in Alpine.js -->
-    </div>
-</x-dynamic-component>
-```
-
-Or, you may bind the value to a Livewire property using [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding):
-
-```blade
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
-    <input wire:model.defer="{{ $getStatePath() }}" />
-</x-dynamic-component>
-```
+This assumes that you have a `resources/views/filament/forms/components/range-slider.blade.php` file.
 
 ## Custom field classes
 
@@ -63,17 +37,77 @@ class RangeSlider extends Field
 }
 ```
 
-Inside your view, you may interact with the state of the form component using Livewire and Alpine.js.
+It will also create a view file at `resources/views/filament/forms/components/range-slider.blade.php`.
 
-The `$getStatePath()` closure may be used by the view to retrieve the Livewire property path of the field. You could use this to [`wire:model`](https://laravel-livewire.com/docs/properties#data-binding) a value, or [`$wire.entangle`](https://laravel-livewire.com/docs/alpine-js) it with Alpine.js:
+## How fields work
+
+Livewire components are PHP classes that have their state stored in the user's browser. When a network request is made, the state is sent to the server, and filled into public properties on the Livewire component class, where it can be accessed in the same way as any other class property in PHP can be.
+
+Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: by a the [`wire:model` attribute](https://laravel-livewire.com/docs/properties#data-binding), or by [entangling](https://laravel-livewire.com/docs/2.x/alpine-js#sharing-state) it with an Alpine.js property:
+
+```blade
+<input wire:model.defer="name" />
+
+<!-- Or -->
+
+<div x-data="{ state: $wire.entangle('name').defer }">
+    <input x-model="state" />
+</div>
+```
+
+When the user types into the input field, the `$name` property is updated in the Livewire component class. When the user submits the form, the `$name` property is sent to the server, where it can be saved.
+
+This is the basis of how fields work in Filament. Each field is assigned to a public property in the Livewire component class, which is where the state of the field is stored. We call the name of this property the "state path" of the field. You can access the state path of a field using the `$getStatePath()` function in the field's view:
+
+```blade
+<input wire:model.defer="{{ $getStatePath() }}" />
+
+<!-- Or -->
+
+<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
+    <input x-model="state" />
+</div>
+```
+
+## Rendering the field wrapper
+
+Filament includes a "field wrapper" component, which is able to render the field's label, validation errors, and any other text surrounding the field. You may render the field wrapper like this in the view:
 
 ```blade
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
 >
-    <div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
-        <!-- Interact with the `state` property in Alpine.js -->
-    </div>
+    <!-- Field -->
 </x-dynamic-component>
+```
+
+It's encouraged to use the field wrapper component whenever appropriate, as it will ensure that the field's design is consistent with the rest of the form.
+
+## Accessing the Eloquent record
+
+Inside your view, you may access the Eloquent record using the `$getRecord()` function:
+
+```blade
+<div>
+    {{ $getRecord()->name }}
+</div>
+```
+
+## Obeying state binding modifiers
+
+When you bind a field to a state path, you may use the `defer` modifier to ensure that the state is only sent to the server when the user submits the form, or whenever the next Livewire request is made. This is the default behaviour.
+
+However, you may use the [`reactive()`](../advanced#the-basics-of-reactivity) on a field to ensure that the state is sent to the server immediately when the user interacts with the field. This allows for lots of advanced use cases as explained in the [advanced](../advanced) section of the documentation.
+
+Filament provides a `$applyStateBindingModifiers()` function that you may use in your view to apply any state binding modifiers to a `wire:model` or `$wire.entangle()` binding:
+
+```blade
+<input {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}" />
+
+<!-- Or -->
+
+<div x-data="{ state: $wire.{{ $applyStateBindingModifiers("entangle('{$getStatePath()}')") }} }">
+    <input x-model="state" />
+</div>
 ```

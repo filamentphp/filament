@@ -341,6 +341,22 @@ Select::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
+If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->default('draft')
+    ->disableOptionWhen(fn (string $value): bool => $value === 'published')
+    ->in(fn (Select $component): array => array_keys($component->getEnabledOptions()))
+```
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:

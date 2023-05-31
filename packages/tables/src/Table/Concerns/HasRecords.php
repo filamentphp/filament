@@ -57,11 +57,6 @@ trait HasRecords
         return $this;
     }
 
-    public function getAllRecordsCount(): int
-    {
-        return $this->getLivewire()->getAllTableRecordsCount();
-    }
-
     public function getRecords(): Collection | Paginator
     {
         return $this->getLivewire()->getTableRecords();

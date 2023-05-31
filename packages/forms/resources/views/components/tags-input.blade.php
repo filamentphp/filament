@@ -14,7 +14,7 @@
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tags-input', 'filament/forms') }}"
         x-data="tagsInputFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
         })"
         {{
             $attributes

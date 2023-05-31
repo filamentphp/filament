@@ -79,7 +79,22 @@ Radio::make('status')
     ->options([
         'draft' => 'Draft',
         'scheduled' => 'Scheduled',
-        'published' => 'Published'
+        'published' => 'Published',
     ])
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
+```
+
+If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
+
+```php
+use Filament\Forms\Components\Radio;
+
+Radio::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'scheduled' => 'Scheduled',
+        'published' => 'Published',
+    ])
+    ->disableOptionWhen(fn (string $value): bool => $value === 'published')
+    ->in(fn (Radio $component): array => array_keys($component->getEnabledOptions()))
 ```

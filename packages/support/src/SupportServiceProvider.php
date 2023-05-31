@@ -59,17 +59,15 @@ class SupportServiceProvider extends PackageServiceProvider
                 return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
             },
         );
-
-        $this->app->resolving(AssetManager::class, function () {
-            FilamentAsset::register([
-                Js::make('support', __DIR__ . '/../dist/index.js'),
-                Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
-            ], 'filament/support');
-        });
     }
 
     public function packageBooted(): void
     {
+        FilamentAsset::register([
+            Js::make('support', __DIR__ . '/../dist/index.js'),
+            Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
+        ], 'filament/support');
+
         Blade::directive('captureSlots', function (string $expression): string {
             return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
         });

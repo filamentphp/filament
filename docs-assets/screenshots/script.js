@@ -64,9 +64,9 @@ function configure(php = null) {
         '../app/app/Providers/Filament/configure.php',
         `<?php
 
-use Filament\\Context;
+use Filament\\Panel;
 
-return function (Context $context) {
+return function (Panel $panel) {
     ${php ?? '//'}
 };
 `,

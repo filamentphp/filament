@@ -58,7 +58,7 @@ Repeater::make('members')
     ->defaultItems(3)
 ```
 
-Note that these default items are only created when the form is loaded without existing data. Inside [app framework resources](../../app/resources#forms) this only works on Create Pages, as Edit Pages will always fill the data from the model.
+Note that these default items are only created when the form is loaded without existing data. Inside [panel resources](../../panels/resources#resource-forms) this only works on Create Pages, as Edit Pages will always fill the data from the model.
 
 ## Adding items
 

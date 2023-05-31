@@ -2,7 +2,7 @@
 title: Installation
 ---
 
-**Using infolists inside the [app framework](../app)**? You can skip this installation. This guide is for people who want to use the package inside their custom TALL-stack app.
+**Using infolists inside a [panel](../panels)**? You can skip this installation. This guide is for people who want to use the package inside their custom TALL-stack app.
 
 ## Requirements
 
@@ -94,7 +94,7 @@ Most Laravel projects use Vite for bundling assets by default. However, your pro
 
 #### Vite
 
-Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
+Create a `postcss.config.cjs` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
 
 ```js
 module.exports = {

@@ -67,7 +67,7 @@
                     isAutofocused: @js($isAutofocused()),
                     locale: @js(app()->getLocale()),
                     shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
-                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
                 })"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{
