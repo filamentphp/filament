@@ -48,6 +48,7 @@ return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->ruleWithConfiguration(
         RenameMethodRector::class,
         [
+            new MethodCallRename('App\\Models\\User', 'canAccessFilament', 'canAccessPanel'),
             new MethodCallRename('Filament\\Pages\\Page', 'getActions', 'getHeaderActions'),
             new MethodCallRename('Filament\\Tables\\Table', 'prependActions', 'actions'),
             new MethodCallRename('Filament\\Tables\\Table', 'pushActions', 'actions'),

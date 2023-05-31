@@ -6,5 +6,5 @@ use Filament\Panel;
 
 interface FilamentUser
 {
-    public function canAccessFilament(Panel $panel): bool;
+    public function canAccessPanel(Panel $panel): bool;
 }
