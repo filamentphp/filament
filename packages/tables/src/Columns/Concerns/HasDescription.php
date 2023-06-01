@@ -3,15 +3,15 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasDescription
 {
-    protected string | HtmlString | Closure | null $descriptionAbove = null;
+    protected string | Htmlable | Closure | null $descriptionAbove = null;
 
-    protected string | HtmlString | Closure | null $descriptionBelow = null;
+    protected string | Htmlable | Closure | null $descriptionBelow = null;
 
-    public function description(string | HtmlString | Closure | null $description, string | Closure | null $position = 'below'): static
+    public function description(string | Htmlable | Closure | null $description, string | Closure | null $position = 'below'): static
     {
         if ($position == 'above') {
             $this->descriptionAbove = $description;
@@ -35,12 +35,12 @@ trait HasDescription
         return $this;
     }
 
-    public function getDescriptionAbove(): string | HtmlString | null
+    public function getDescriptionAbove(): string | Htmlable | null
     {
         return $this->evaluate($this->descriptionAbove);
     }
 
-    public function getDescriptionBelow(): string | HtmlString | null
+    public function getDescriptionBelow(): string | Htmlable | null
     {
         return $this->evaluate($this->descriptionBelow);
     }
