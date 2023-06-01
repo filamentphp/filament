@@ -6,7 +6,6 @@ use Closure;
 use Filament\Infolists\Components\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\HtmlString;
 
 trait HasHint
 {
