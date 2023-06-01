@@ -452,11 +452,11 @@ class FileUpload extends BaseFileUpload
                     'icon' => svg('heroicon-o-magnifying-glass-minus', $size)->toHtml(),
                     'click' => 'cropper.zoom(-0.1)',
                 ],
-                [
-                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.zoom_100.label'),
-                    'icon' => svg('heroicon-o-arrows-pointing-out', $size)->toHtml(),
-                    'click' => 'cropper.zoomTo(1)',
-                ],
+                //                [
+                //                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.zoom_100.label'),
+                //                    'icon' => svg('heroicon-o-arrows-pointing-out', $size)->toHtml(),
+                //                    'click' => 'cropper.zoomTo(1)',
+                //                ],
             ],
             'move' => [
                 [
@@ -479,50 +479,27 @@ class FileUpload extends BaseFileUpload
                     'icon' => svg('heroicon-o-arrow-down-circle', $size)->toHtml(),
                     'click' => 'cropper.move(0, 10)',
                 ],
-                [
-                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.move_top_left.label'),
-                    'icon' => new HtmlString('<svg  class="' . $size . '" width="24" height="24" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4 16.01L4.01 15.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M4 20.01L4.01 19.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M8 20.01L8.01 19.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M12 20.01L12.01 19.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M16 20.01L16.01 19.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M20 20.01L20.01 19.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M20 16.01L20.01 15.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M20 12.01L20.01 11.9989" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M20 8.01L20.01 7.99889" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M20 4.01L20.01 3.99889" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M16 4.01L16.01 3.99889" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M4 12V4H12V12H4Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>'),
-                    'click' => 'cropper.moveTo(0, 0)',
-                ],
             ],
             'rotate_flip' => [
                 [
                     'tooltip' => __('filament-forms::components.file_upload.cropper.actions.rotate_left.label'),
                     'icon' => svg('heroicon-o-arrow-uturn-left', $size)->toHtml(),
-                    'click' => 'cropper.rotate(-45)',
+                    'click' => 'cropper.rotate(-90)',
                 ],
                 [
                     'tooltip' => __('filament-forms::components.file_upload.cropper.actions.rotate_right.label'),
                     'icon' => svg('heroicon-o-arrow-uturn-right', $size)->toHtml(),
-                    'click' => 'cropper.rotate(45)',
-                ],
-                [
-                    'tooltip' => __('filament-forms::components.file_upload.cropper.actions.rotate_180.label'),
-                    'icon' => svg('heroicon-o-arrow-uturn-down', $size)->toHtml(),
-                    'click' => 'cropper.rotate(180)',
+                    'click' => 'cropper.rotate(90)',
                 ],
                 [
                     'tooltip' => __('filament-forms::components.file_upload.cropper.actions.flip_horizontal.label'),
                     'icon' => new HtmlString('<svg class="' . $size . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 3l-5 5l-5-5h10m0 18l-5-5l-5 5h10M4 12H2m8 0H8m8 0h-2m8 0h-2"/></svg>'),
-                    'click' => 'cropper.scaleX(-cropper.getData().scaleX || -1)',
+                    'click' => 'cropper.scaleX(-cropper.getData().scaleY || -1)',
                 ],
                 [
                     'tooltip' => __('filament-forms::components.file_upload.cropper.actions.flip_vertical.label'),
                     'icon' => new HtmlString('<svg class="' . $size . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 7l5 5l-5 5V7m18 0l-5 5l5 5V7m-9 13v2m0-8v2m0-8v2m0-8v2"/></svg>'),
-                    'click' => 'cropper.scaleY(-cropper.getData().scaleY || -1)',
+                    'click' => 'cropper.scaleY(-cropper.getData().scaleX || -1)',
                 ],
             ],
         ];
