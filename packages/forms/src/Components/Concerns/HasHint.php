@@ -4,11 +4,11 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
-use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasHint
 {
-    protected string | HtmlString | Closure | null $hint = null;
+    protected string | Htmlable | Closure | null $hint = null;
 
     protected Action | Closure | null $hintAction = null;
 
@@ -16,7 +16,7 @@ trait HasHint
 
     protected string | Closure | null $hintIcon = null;
 
-    public function hint(string | HtmlString | Closure | null $hint): static
+    public function hint(string | Htmlable | Closure | null $hint): static
     {
         $this->hint = $hint;
 
@@ -44,7 +44,7 @@ trait HasHint
         return $this;
     }
 
-    public function getHint(): string | HtmlString | null
+    public function getHint(): string | Htmlable | null
     {
         return $this->evaluate($this->hint);
     }
