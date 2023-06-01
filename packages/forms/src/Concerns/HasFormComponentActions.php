@@ -219,23 +219,14 @@ trait HasFormComponentActions
     public function getMountedFormComponentActionComponent(?int $actionNestingIndex = null): ?Component
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
-        $componentStatePath = $this->mountedFormComponentActionsComponents[$actionNestingIndex] ?? null;
+        $componentKey = $this->mountedFormComponentActionsComponents[$actionNestingIndex] ?? null;
 
-        if (blank($componentStatePath)) {
+        if (blank($componentKey)) {
             return null;
         }
 
         foreach ($this->getCachedForms() as $form) {
-            $formStatePath = $form->getStatePath();
-
-            if (
-                filled($formStatePath) &&
-                (! str($componentStatePath)->startsWith("{$formStatePath}."))
-            ) {
-                continue;
-            }
-
-            $component = $form->getComponent($componentStatePath);
+            $component = $form->getComponent($componentKey);
 
             if (! $component) {
                 continue;
