@@ -13,7 +13,7 @@ use Filament\Pages\Actions\ViewAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\Support\Htmlable;
 
 /**
  * @property ComponentContainer $form
@@ -302,7 +302,7 @@ class EditRecord extends Page implements HasFormActions
             ->action(fn () => $this->delete());
     }
 
-    protected function getTitle(): string | HtmlString
+    protected function getTitle(): string | Htmlable
     {
         if (filled(static::$title)) {
             return static::$title;
