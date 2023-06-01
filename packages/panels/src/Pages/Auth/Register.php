@@ -146,7 +146,7 @@ class Register extends CardPage
         return 'filament.core.auth.register';
     }
 
-    public function getTitle(): string
+    public function getTitle(): string | Htmlable
     {
         return __('filament::pages/auth/register.title');
     }

@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -217,7 +218,7 @@ class CreateRecord extends Page
             ->color('gray');
     }
 
-    public function getTitle(): string
+    public function getTitle(): string | Htmlable
     {
         if (filled(static::$title)) {
             return static::$title;

@@ -53,7 +53,7 @@ abstract class BasePage extends Component implements HasActions, HasForms, Rende
         return $this->subheading;
     }
 
-    public function getTitle(): string
+    public function getTitle(): string | Htmlable
     {
         return static::$title ?? (string) str(class_basename(static::class))
             ->kebab()

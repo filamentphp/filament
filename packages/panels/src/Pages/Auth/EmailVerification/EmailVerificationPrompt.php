@@ -81,7 +81,7 @@ class EmailVerificationPrompt extends CardPage
         return 'filament.core.auth.email-verification.email-verification-prompt';
     }
 
-    public function getTitle(): string
+    public function getTitle(): string | Htmlable
     {
         return __('filament::pages/auth/email-verification/email-verification-prompt.title');
     }
