@@ -2,10 +2,10 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
-use Illuminate\Contracts\Support\Htmlable;
 
 trait InteractsWithRecord
 {

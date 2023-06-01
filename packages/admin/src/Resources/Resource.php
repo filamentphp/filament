@@ -8,6 +8,7 @@ use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Navigation\NavigationItem;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +17,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
-use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Traits\Macroable;
 
 class Resource

@@ -12,8 +12,8 @@ use Filament\Pages\Actions\RestoreAction;
 use Filament\Pages\Actions\ViewAction;
 use Filament\Pages\Contracts\HasFormActions;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property ComponentContainer $form
