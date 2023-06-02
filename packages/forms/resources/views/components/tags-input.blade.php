@@ -80,7 +80,10 @@
                         x-if="state?.length"
                         x-cloak
                     >
-                        <div class="relative w-full p-2 overflow-hidden flex flex-wrap gap-1 border-t dark:border-gray-600">
+                        <div @class([
+                            'relative w-full p-2 overflow-hidden flex flex-wrap gap-1',
+                            'border-t dark:border-gray-600' => ! $isDisabled,
+                        ])> 
                             <template class="hidden" x-for="tag in state" x-bind:key="tag">
                                 <button
                                     @unless ($isDisabled)
