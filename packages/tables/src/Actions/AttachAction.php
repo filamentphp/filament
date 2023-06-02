@@ -67,7 +67,16 @@ class AttachAction extends Action
                 /** @var BelongsToMany $relationship */
                 $relationship = $this->getRelationship();
 
-                $record = $relationship->getRelated()->query()->where($relationship->getQualifiedRelatedKeyName(), $data['recordId'])->first();
+                $record = $relationship->getRelated()->query()
+                ->when(
+                    is_array($data['recordId']),
+                    fn ($query) => $query->whereIn($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
+                )
+                ->when(
+                    ! is_array($data['recordId']),
+                    fn ($query) => $query->where($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
+                )
+                ->get();
 
                 $relationship->attach(
                     $record,
