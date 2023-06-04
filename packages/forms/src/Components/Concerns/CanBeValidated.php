@@ -7,6 +7,7 @@ use Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
 use Filament\Forms\Components\Field;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
@@ -311,6 +312,16 @@ trait CanBeValidated
         $this->isRequired = $condition;
 
         return $this;
+    }
+
+    public function requiredIf(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldValueComparisonRule('required_if', $statePath, $stateValues, $isStatePathAbsolute);
+    }
+
+    public function requiredUnless(string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        return $this->multiFieldValueComparisonRule('required_unless', $statePath, $stateValues, $isStatePathAbsolute);
     }
 
     public function requiredWith(string | array | Closure $statePaths, bool $isStatePathAbsolute = false): static
@@ -624,6 +635,30 @@ trait CanBeValidated
 
             return "{$rule}:{$statePaths}";
         }, fn (Field $component): bool => (bool) $component->evaluate($statePaths));
+
+        return $this;
+    }
+
+    public function multiFieldValueComparisonRule(string $rule, string | Closure $statePath, mixed $stateValues, bool $isStatePathAbsolute = false): static
+    {
+        $this->rule(static function (Field $component) use ($isStatePathAbsolute, $rule, $statePath, $stateValues): string {
+            $statePath = $component->evaluate($statePath);
+            $stateValues = $component->evaluate($stateValues);
+
+            if (! $isStatePathAbsolute) {
+                $containerStatePath = $component->getContainer()->getStatePath();
+
+                if ($containerStatePath) {
+                    $statePath = "{$containerStatePath}.{$statePath}";
+                }
+            }
+
+            if (is_array($stateValues)) {
+                $stateValues = implode(',', $stateValues);
+            }
+
+            return "{$rule}:{$statePath},{$stateValues}";
+        }, fn (Field $component): bool => (bool) $component->evaluate($statePath));
 
         return $this;
     }
