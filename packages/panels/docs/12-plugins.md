@@ -179,7 +179,7 @@ Now, you can access the plugin configuration using the new static method:
 BlogPlugin::get()->hasAuthorResource()
 ```
 
-## Distributing a complete panel in a plugin
+## Distributing a panel in a plugin
 
 It's very easy to distribute an entire panel in a Laravel package. This way, a user can simply install your plugin and have an entirely new part of their app pre-built.
 
