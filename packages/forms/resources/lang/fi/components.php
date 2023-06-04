@@ -204,6 +204,7 @@ return [
             'ordered_list' => 'Luettelo',
             'redo' => 'Toista',
             'strike' => 'Yliviivaus',
+            'underline' => 'Alleviivaus',
             'undo' => 'Peruuta',
         ],
 
