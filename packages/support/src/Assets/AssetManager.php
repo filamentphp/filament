@@ -35,7 +35,7 @@ class AssetManager
     /**
      * @param  array<Asset>  $assets
      */
-    public function register(array $assets, ?string $package = null): void
+    public function register(array $assets, string $package = 'app'): void
     {
         foreach ($assets as $asset) {
             $asset->package($package);
@@ -70,7 +70,7 @@ class AssetManager
         return $this->getAssets($this->alpineComponents, $packages);
     }
 
-    public function getAlpineComponentSrc(string $id, string $package): string
+    public function getAlpineComponentSrc(string $id, string $package = 'app'): string
     {
         /** @var array<AlpineComponent> $components */
         $components = $this->getAlpineComponents([$package]);

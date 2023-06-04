@@ -111,3 +111,134 @@ Filament provides a `$applyStateBindingModifiers()` function that you may use in
     <input x-model="state" />
 </div>
 ```
+
+## Asynchronously loading Alpine.js components
+
+Sometimes, you may want to load external JavaScript libraries for your Alpine.js-based components. The best way to do this is by storing the compiled JavaScript and Alpine component in a separate file, and letting us load it whenever the component is rendered.
+
+Firstly, you should install [esbuild](https://esbuild.github.io) via NPM, which we will use to create a single JavaScript file containing your external library and Alpine component:
+
+```bash
+npm install esbuild --save-dev
+```
+
+Then, you must create a script to compile your JavaScript and Alpine component. You can put this anywhere, for example `bin/build.mjs`:
+
+```js
+import * as esbuild from 'esbuild'
+
+const isDev = process.argv.includes('--dev')
+
+async function compile(options) {
+    const context = await esbuild.context(options)
+
+    if (isDev) {
+        await context.watch()
+    } else {
+        await context.rebuild()
+        await context.dispose()
+    }
+}
+
+const defaultOptions = {
+    define: {
+        'process.env.NODE_ENV': isDev ? `'development'` : `'production'`,
+    },
+    bundle: true,
+    mainFields: ['module', 'main'],
+    platform: 'neutral',
+    sourcemap: isDev ? 'inline' : false,
+    sourcesContent: isDev,
+    treeShaking: true,
+    target: ['es2020'],
+    minify: !isDev,
+    plugins: [{
+        name: 'watchPlugin',
+        setup: function (build) {
+            build.onStart(() => {
+                console.log(`Build started at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`)
+            })
+
+            build.onEnd((result) => {
+                if (result.errors.length > 0) {
+                    console.log(`Build failed at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`, result.errors)
+                } else {
+                    console.log(`Build finished at ${new Date(Date.now()).toLocaleTimeString()}: ${build.initialOptions.outfile}`)
+                }
+            })
+        }
+    }],
+}
+
+compile({
+    ...defaultOptions,
+    entryPoints: ['./resources/js/components/test-component.js'],
+    outfile: './resources/js/dist/components/test-component.js',
+})
+```
+
+As you can see at the bottom of the script, we are compiling a file called `resources/js/components/test-component.js` into `resources/js/dist/components/test-component.js`. You can change these paths to suit your needs. You can compile as many components as you want.
+
+Now, create a new file called `resources/js/components/test-component.js`:
+
+```js
+// Import any external JavaScript libraries from NPM here.
+
+export default function testComponent({
+    state,
+}) {
+    return {
+        state,
+        
+        // You can define any other Alpine.js properties here.
+
+        init: function () {
+            // Initialise the Alpine component here, if you need to.
+        },
+        
+        // You can define any other Alpine.js functions here.
+    }
+}
+```
+
+Now, you can compile this file into `resources/js/dist/components/test-component.js` by running the following command:
+
+```bash
+node bin/build.mjs
+```
+
+If you want to watch for changes to this file instead of compiling once, try the following command:
+
+```bash
+node bin/build.mjs --dev
+```
+
+Now, you need to tell Filament to publish this compiled JavaScript file into the `/public` directory of the Laravel application, so it is accessible to the browser. You can do this by using the `FilamentAsset` facade in the `boot()` method of a service provider class:
+
+```php
+use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Facades\FilamentAsset;
+
+FilamentAsset::register([
+    AlpineComponent::make('test-component', resource_path('js/dist/components/test-component.js'),
+]);
+```
+
+When you run `php artisan filament:assets`, the compiled file will be copied into the `/public` directory.
+
+Finally, you can load this asynchronous Alpine component in your view using `ax-load` attributes and the `FilamentAsset::getAlpineComponentSrc()` method:
+
+```blade
+<div
+    x-ignore
+    ax-load
+    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('test-component') }}"
+    x-data="testComponent({
+        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+    })"
+>
+    <input x-model="state" />
+</div>
+```
+
+The `ax-load` attributes come from the [Async Alpine](https://async-alpine.dev/docs/strategies) package, and any features of that package can be used here.
