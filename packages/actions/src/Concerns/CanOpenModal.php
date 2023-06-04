@@ -27,6 +27,8 @@ trait CanOpenModal
 
     protected StaticAction | bool | Closure | null $modalCancelAction = null;
 
+    protected string | Closure | null $modalCancelActionLabel = null;
+
     protected StaticAction | bool | Closure | null $modalSubmitAction = null;
 
     protected string | Closure | null $modalSubmitActionLabel = null;
@@ -113,6 +115,13 @@ trait CanOpenModal
     public function modalSubmitActionLabel(string | Closure | null $label = null): static
     {
         $this->modalSubmitActionLabel = $label;
+
+        return $this;
+    }
+
+    public function modalCancelActionLabel(string | Closure | null $label = null): static
+    {
+        $this->modalCancelActionLabel = $label;
 
         return $this;
     }
@@ -279,7 +288,7 @@ trait CanOpenModal
     public function getModalCancelAction(): ?StaticAction
     {
         $action = static::makeModalAction('cancel')
-            ->label(__('filament-actions::modal.actions.cancel.label'))
+            ->label($this->getModalCancelActionLabel())
             ->close()
             ->color('gray');
 
@@ -311,6 +320,11 @@ trait CanOpenModal
     public function getModalSubmitActionLabel(): string
     {
         return $this->evaluate($this->modalSubmitActionLabel) ?? __('filament-actions::modal.actions.submit.label');
+    }
+
+    public function getModalCancelActionLabel(): string
+    {
+        return $this->evaluate($this->modalCancelActionLabel) ?? __('filament-actions::modal.actions.cancel.label');
     }
 
     public function getModalContent(): View | Htmlable | null
