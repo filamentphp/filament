@@ -12,6 +12,26 @@ You may create a `resources/views/vendor/filament/components/brand.blade.php` fi
 <img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">
 ```
 
+## Changing the footer logo
+You may create a `resources/views/vendor/filament/components/footer-logo.blade.php` file to provide a custom footer logo:
+
+```blade
+<img src="{{ asset('/images/footer-logo.svg') }}" alt="Footer Logo" class="h-10">
+```
+
+You may also, completly disable the logo by setting the `should_show_logo` config to `false`.
+```diff
+// config/filament.php
+
+'layout' => [
+    'footer' => [
+-        'should_show_logo' => true,
++        'should_show_logo' => false,
+    ],
+],
+
+```
+
 ## Dark mode
 
 By default, Filament only includes a light theme. However, you may allow the user to switch to dark mode if they wish, using the `dark_mode` setting of the [configuration file](installation#publishing-configuration):
