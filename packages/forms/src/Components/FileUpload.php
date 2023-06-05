@@ -494,12 +494,12 @@ class FileUpload extends BaseFileUpload
                 [
                     'tooltip' => __('filament-forms::components.file_upload.cropper.actions.flip_horizontal.label'),
                     'icon' => new HtmlString('<svg class="' . $size . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 3l-5 5l-5-5h10m0 18l-5-5l-5 5h10M4 12H2m8 0H8m8 0h-2m8 0h-2"/></svg>'),
-                    'click' => 'cropper.scaleX(-cropper.getData().scaleY || -1)',
+                    'click' => 'cropper.scaleX(-cropper.getData().scaleX || -1)',
                 ],
                 [
                     'tooltip' => __('filament-forms::components.file_upload.cropper.actions.flip_vertical.label'),
                     'icon' => new HtmlString('<svg class="' . $size . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 7l5 5l-5 5V7m18 0l-5 5l5 5V7m-9 13v2m0-8v2m0-8v2m0-8v2"/></svg>'),
-                    'click' => 'cropper.scaleY(-cropper.getData().scaleX || -1)',
+                    'click' => 'cropper.scaleY(-cropper.getData().scaleY || -1)',
                 ],
             ],
         ];

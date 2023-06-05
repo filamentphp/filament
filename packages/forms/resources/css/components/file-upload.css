@@ -71,3 +71,11 @@
     -webkit-mask-size: 100%;
     mask-size: 100%;
 }
+
+.filepond--file-action-button.filepond--action-edit-item {
+    @apply bg-black/50;
+}
+
+.cropper-drag-box.cropper-crop.cropper-modal {
+    @apply opacity-100 bg-gray-100/50 dark:bg-gray-900/80;
+}

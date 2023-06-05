@@ -285,8 +285,6 @@ export default function fileUploadFormComponent({
             this.pond.on('processfileabort', handleFileProcessing)
 
             this.pond.on('processfilerevert', handleFileProcessing)
-
-            this.$nextTick(() => this.initCropper())
         },
 
         destroy: function () {
@@ -415,6 +413,10 @@ export default function fileUploadFormComponent({
         },
 
         initCropper: function () {
+            if (disabled) return
+
+            if (!isCroppable) return
+
             this.cropper = new Cropper(this.$refs.cropper, {
                 aspectRatio: cropperViewportWidth / cropperViewportHeight,
                 autoCropArea: 1,
@@ -432,7 +434,6 @@ export default function fileUploadFormComponent({
                 guides: true,
                 highlight: true,
                 responsive: true,
-                preview: [this.$refs.preview],
                 toggleDragModeOnDblclick: true,
                 viewMode: cropperMode,
                 wheelZoomRatio: 0.02,
@@ -442,6 +443,8 @@ export default function fileUploadFormComponent({
         cancelCropper: function () {
             this.editingFile = {}
             this.showCropper = false
+            this.cropper.destroy()
+            this.cropper = null
         },
 
         loadCropper: function (file) {
@@ -452,6 +455,8 @@ export default function fileUploadFormComponent({
             if (!file) return
 
             this.editingFile = file
+
+            this.initCropper();
 
             const reader = new FileReader()
             reader.onload = (event) => {

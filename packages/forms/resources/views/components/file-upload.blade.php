@@ -110,38 +110,36 @@
         </div>
 
         @if ($isCroppable && (! $isDisabled))
-            @php
-                $cropperButtonClasses = 'hover:bg-gray-600 dark:hover:bg-gray-800 hover:text-white focus:bg-gray-500 focus:ring-gray-500/50 flex-1 align-middle text-center font-medium outline-none transition-colors select-none focus:ring-2 border whitespace-no-wrap first-of-type:rounded-s-lg last-of-type:rounded-e-lg no-underline disabled:pointer-events-none disabled:opacity-70 filament-button-size-sm py-[calc(theme(spacing.2)-1px)] px-[calc(theme(spacing.[3.5])-1px)] text-sm shadow border-transparent';
-            @endphp
 
             <div
                 x-show="showCropper"
                 x-cloak
                 x-on:click.stop
                 x-trap.noscroll="showCropper"
-                class="fixed inset-0 h-screen w-screen p-2 sm:p-10 md:p-20 bg-gray-800 bg-opacity-75 z-50 isolate"
+                x-on:keydown.escape.window="cancelCropper"
+                class="fixed inset-0 h-screen w-screen p-2 sm:p-10 md:p-20 z-50 isolate"
             >
+                <div
+                    x-on:click="cancelCropper"
+                    aria-hidden="true"
+                    class="filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50 cursor-pointer"
+                    style="will-change: transform;"
+                ></div>
                 <div class="w-full h-full flex justify-center items-center isolate z-10">
-                    <div class="mx-auto flex flex-col lg:flex-row overflow-hidden bg-white dark:bg-gray-800 dark:ring-gray-50/10 ring-1 ring-gray-900/10 rounded-xl">
+                    <div class="mx-auto h-full w-full flex flex-col lg:flex-row overflow-hidden bg-white dark:bg-gray-800 dark:ring-gray-50/10 ring-1 ring-gray-900/10 rounded-xl">
                         <div class="flex-1 w-full lg:h-full overflow-auto p-4">
                             <div class="h-full w-full">
                                 <img x-ref="cropper" src="" class="h-full w-auto"/>
                             </div>
                         </div>
 
-                        <div class="w-full h-96 lg:h-full lg:max-w-xs overflow-auto bg-white dark:bg-gray-900/30 flex flex-col shadow-top lg:shadow-none z-[1]">
+                        <div class="w-full h-96 lg:h-full lg:max-w-xs overflow-auto bg-gray-50 dark:bg-gray-900/30 flex flex-col shadow-top lg:shadow-none z-[1]">
                             <div class="flex-1 overflow-hidden">
-                                <div class="flex flex-col h-full overflow-y-auto pt-4">
-                                    <div class="flex-1 overflow-auto px-4 pb-4">
-                                        <div class="space-y-3">
-                                            <div class="w-full space-y-2">
-                                                <div
-                                                    x-ref="preview"
-                                                    class="w-[263px] h-[148px] overflow-hidden"
-                                                ></div>
-                                            </div>
+                                <div class="flex flex-col h-full overflow-y-auto">
+                                    <div class="flex-1 overflow-auto">
+                                        <div class="space-y-3 p-4">
 
-                                            <div class="w-full">
+                                            <div class="w-full space-y-2">
                                                 @foreach ([
                                                     [
                                                         'label' => 'X',
@@ -180,18 +178,12 @@
                                                         'onEnter' => 'cropper.rotateTo(+$el.value)',
                                                     ],
                                                 ] as $input)
-                                                    <div
-                                                        class="relative flex items-stretch w-full input-group-sm border border-gray-300 dark:border-gray-600 rounded-md mb-1"
-                                                        wire:key="@js($statePath . $input['name'])"
-                                                    >
-                                                        <label
-                                                            for="@js($statePath . $input['name'])"
-                                                            class="py-1 px-2 text-base font-normal leading-normal text-center bg-white dark:bg-gray-700 group-focus-within:text-primary-500 text-gray-400 rounded-s-md"
-                                                        >
-                                                            {{ $input['label'] }}
-                                                        </label>
-
+                                                    <label class="flex items-center w-full text-sm border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm bg-gray-100 dark:bg-gray-800">
+                                                        <span class="w-20 flex-shrink-0 self-stretch flex items-center justify-center px-2 border-e border-gray-300 dark:border-gray-700">{{ $input['label'] }}</span>
                                                         <input
+                                                            @class([
+                                                                "text-sm block w-full transition duration-75 border-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500"
+                                                            ])
                                                             x-on:keyup.enter.stop.prevent="{{ $input['onEnter'] }}"
                                                             x-on:blur="{{ $input['onEnter'] }}"
                                                             x-ref="{{ $input['name'] }}"
@@ -199,55 +191,62 @@
                                                             placeholder="{{ $input['placeholder'] }}"
                                                             x-on:keydown.enter.prevent
                                                             type="text"
-                                                            class="block appearance-none border-x-1 border-y-0 border-gray-300 dark:border-gray-600 w-full py-1 px-2 bg-white dark:bg-gray-700"
-                                                        >
+                                                        />
+                                                        <span class="w-16 self-stretch flex items-center justify-center px-2 border-s border-gray-300 dark:border-gray-700">{{ $input['unit'] }}</span>
+                                                    </label>
 
-                                                        <span
-                                                            class="py-1 px-2 text-base font-normal leading-normal text-center bg-gray-50 dark:bg-gray-700 group-focus-within:text-primary-500 text-gray-400 rounded-e-md">
-                                                            {{ $input['unit'] }}
-                                                        </span>
-                                                    </div>
                                                 @endforeach
                                             </div>
 
                                             @foreach ($getCropperActions() as $buttonGroups)
-                                                <div class="flex items-stretch space-x-[2px] align-middle w-full">
+                                                <div class="flex items-center w-full isolate rounded-lg shadow">
                                                     @foreach ($buttonGroups as $button)
-                                                        <button
+                                                        <x-filament::button
                                                             type="button"
                                                             x-tooltip.raw="{{ $button['tooltip'] }}"
-                                                            class="{{ $cropperButtonClasses }} bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-white"
                                                             x-on:click.stop.prevent="{{ $button['click'] }}"
+                                                            color="gray"
+                                                            @class([
+                                                                '!rounded-none !shadow-none flex-1 focus:z-10 active:z-10',
+                                                                '!rounded-l-lg' => $loop->first,
+                                                                '!rounded-r-lg' => $loop->last,
+                                                                '-ml-px' => ! $loop->first,
+                                                            ])
                                                         >
                                                             {!! $button['icon'] !!}
-                                                        </button>
+                                                        </x-filament::button>
                                                     @endforeach
                                                 </div>
                                             @endforeach
 
                                             @foreach (collect($getCropperAspectRatios())->chunk(5) as $chunk)
-                                                <div class="flex items-stretch space-x-[2px] align-middle w-full">
+                                                <div class="flex items-center w-full isolate rounded-lg shadow">
                                                     @foreach ($chunk as $label => $ratio)
-                                                        <button
+                                                        <x-filament::button
                                                             type="button"
                                                             x-tooltip.raw="Set aspect ratio: {{ $label }}"
-                                                            class="{{ $cropperButtonClasses }}"
-                                                            x-bind:class="currentRatio === '{{ $label }}' ? 'bg-gray-500 text-white' : 'bg-gray-200 text-gray-800 dark:bg-gray-600 dark:text-white'"
                                                             x-on:click.stop.prevent="currentRatio = '{{ $label }}'; cropper.setAspectRatio({{ $ratio }})"
+                                                            color="gray"
+                                                            x-bind:class="{'!bg-gray-50 dark:!bg-gray-700': currentRatio === '{{ $label }}'}"
+                                                            @class([
+                                                                '!rounded-none !shadow-none flex-1 focus:z-10 active:z-10',
+                                                                '!rounded-l-lg !rounded-r-none' => $loop->first,
+                                                                '!rounded-r-lg !rounded-l-none' => $loop->last,
+                                                                '-ml-px' => ! $loop->first,
+                                                            ])
                                                         >
                                                             {{ $label }}
-                                                        </button>
+                                                        </x-filament::button>
                                                     @endforeach
                                                 </div>
                                             @endforeach
                                         </div>
                                     </div>
 
-                                    <div
-                                        class="flex items-center justify-center gap-3 py-3 px-4 border-t border-gray-300 dark:border-gray-800 dark:bg-black/10">
+                                    <div class="flex items-center gap-3 py-3 px-4 border-t border-gray-200 dark:border-gray-800 bg-gray-200 dark:bg-black/10">
                                         <x-filament::button
                                             size="sm"
-                                            color="secondary"
+                                            color="warning"
                                             x-on:click.stop.prevent="cropper.reset()"
                                         >
                                             {{ __('filament-forms::components.file_upload.cropper.actions.reset.label') }}
@@ -255,7 +254,7 @@
 
                                         <x-filament::button
                                             size="sm"
-                                            color="warning"
+                                            color="gray"
                                             x-on:click.prevent="pond.imageEditEditor.oncancel"
                                         >
                                             {{ __('filament-forms::components.file_upload.cropper.actions.cancel.label') }}
@@ -265,6 +264,7 @@
                                             size="sm"
                                             color="success"
                                             x-on:click.prevent="saveCropper"
+                                            class="ml-auto"
                                         >
                                             {{ __('filament-forms::components.file_upload.cropper.actions.save.label') }}
                                         </x-filament::button>
