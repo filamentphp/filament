@@ -3,17 +3,17 @@
 ])
 
 <div
-    wire:key="{{ $this->id }}.table.reorder.indicator"
+    wire:key="{{  $this->id  }}.table.reorder.indicator"
     x-cloak
-    {{ $attributes->class(['filament-tables-reorder-indicator bg-primary-500/10 px-4 py-2 whitespace-nowrap text-sm']) }}
+    {{  $attributes->class(['filament-tables-reorder-indicator whitespace-nowrap bg-primary-500/10 px-4 py-2 text-sm'])  }}
 >
     <x-filament-support::loading-indicator
         wire:loading.delay
         wire:target="reorderTable"
-        class="w-4 h-4 mr-3 rtl:mr-0 rtl:ml-3 text-primary-500"
+        class="mr-3 h-4 w-4 text-primary-500 rtl:ml-3 rtl:mr-0"
     />
 
     <span>
-        {{ __('tables::table.reorder_indicator') }}
+        {{  __('tables::table.reorder_indicator')  }}
     </span>
 </div>

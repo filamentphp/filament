@@ -17,5 +17,5 @@
     :icon="$icon ?? $action->getIcon()"
     :size="$action->getSize() ?? 'sm'"
 >
-    {{ $slot }}
+    {{  $slot  }}
 </x-dynamic-component>

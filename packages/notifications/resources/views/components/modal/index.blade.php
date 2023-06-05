@@ -15,5 +15,5 @@
     hr-component="notifications::hr"
     subheading-component="notifications::modal.subheading"
 >
-    {{ $slot }}
+    {{  $slot  }}
 </x-filament-support::modal>

@@ -1,7 +1,7 @@
 <div
-    aria-labelledby="{{ $getId() }}"
-    id="{{ $getId() }}"
-    x-ref="step-{{ $getId() }}"
+    aria-labelledby="{{  $getId()  }}"
+    id="{{  $getId()  }}"
+    x-ref="step-{{  $getId()  }}"
     role="tabpanel"
     tabindex="0"
     x-bind:class="{ 'invisible h-0 overflow-y-hidden': step !== @js($getId()) }"
@@ -24,7 +24,7 @@
 
         setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
     "
-    {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-wizard-component-step outline-none']) }}
+    {{  $attributes->merge($getExtraAttributes())->class(['filament-forms-wizard-component-step outline-none'])  }}
 >
-    {{ $getChildComponentContainer() }}
+    {{  $getChildComponentContainer()  }}
 </div>

@@ -1,11 +1,11 @@
 <div
     {{
         $attributes
-            ->merge($getExtraAttributes())
-            ->class([
-                'px-4 py-3 bg-gray-100 rounded-lg',
-                'dark:bg-gray-900' => config('forms.dark_mode'),
-            ])
+                    ->merge($getExtraAttributes())
+                    ->class([
+                        'rounded-lg bg-gray-100 px-4 py-3',
+                        'dark:bg-gray-900' => config('forms.dark_mode'),
+                    ])
     }}
 >
     <x-tables::columns.layout

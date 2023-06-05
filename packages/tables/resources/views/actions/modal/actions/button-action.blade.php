@@ -1,15 +1,15 @@
 @php
     if (! $getAction()) {
-        $wireClickAction = null;
-    } else {
-        $wireClickAction = $getAction();
+            $wireClickAction = null;
+        } else {
+            $wireClickAction = $getAction();
 
-        if ($getActionArguments()) {
-            $wireClickAction .= '(\'';
-            $wireClickAction .= \Illuminate\Support\Str::of(json_encode($getActionArguments()))->replace('"', '\\"');
-            $wireClickAction .= '\')';
+            if ($getActionArguments()) {
+                $wireClickAction .= '(\'';
+                $wireClickAction .= \Illuminate\Support\Str::of(json_encode($getActionArguments()))->replace('"', '\\"');
+                $wireClickAction .= '\')';
+            }
         }
-    }
 @endphp
 
 <x-tables::button
@@ -28,5 +28,5 @@
     :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     class="filament-tables-modal-button-action"
 >
-    {{ $getLabel() }}
+    {{  $getLabel()  }}
 </x-tables::button>

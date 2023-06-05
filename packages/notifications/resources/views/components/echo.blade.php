@@ -19,5 +19,5 @@
             window.dispatchEvent(new CustomEvent('EchoLoaded'))
         }
     "
-    {{ $attributes }}
+    {{  $attributes  }}
 ></div>

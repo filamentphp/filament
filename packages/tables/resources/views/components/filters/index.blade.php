@@ -3,10 +3,10 @@
 ])
 
 <div
-    {{ $attributes->class(['filament-tables-filters-form space-y-6']) }}
+    {{  $attributes->class(['filament-tables-filters-form space-y-6'])  }}
     x-data
 >
-    {{ $form }}
+    {{  $form  }}
 
     <div class="text-end">
         <x-tables::link
@@ -15,7 +15,7 @@
             tag="button"
             size="sm"
         >
-            {{ __('tables::table.filters.buttons.reset.label') }}
+            {{  __('tables::table.filters.buttons.reset.label')  }}
         </x-tables::link>
     </div>
 </div>

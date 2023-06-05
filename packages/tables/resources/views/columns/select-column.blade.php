@@ -1,6 +1,6 @@
 @php
     $isDisabled = $isDisabled();
-    $state = $getState();
+        $state = $getState();
 @endphp
 
 <div
@@ -28,13 +28,15 @@
             state = newState
         })
     "
-    {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-tables-select-column',
-    ]) }}
+    {{
+        $attributes->merge($getExtraAttributes())->class([
+                'filament-tables-select-column',
+            ])
+    }}
 >
     <input
         type="hidden"
-        value="{{ str($state)->replace('"', '\\"') }}"
+        value="{{  str($state)->replace('"', '\\"')  }}"
         x-ref="newState"
     />
 
@@ -53,10 +55,12 @@
             x-bind:disabled="isLoading"
         @endif
         x-tooltip="error"
-        {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
-            'ml-0.5 text-gray-900 inline-block transition duration-75 rounded-lg shadow-sm outline-none focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70',
-            'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
-        ]) }}
+        {{
+            $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
+                        'ml-0.5 inline-block rounded-lg text-gray-900 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                        'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
+                    ])
+        }}
         x-bind:class="{
             'border-gray-300': ! error,
             'dark:border-gray-600': (! error) && @js(config('forms.dark_mode')),
@@ -64,15 +68,15 @@
         }"
     >
         @unless ($isPlaceholderSelectionDisabled())
-            <option value="">{{ $getPlaceholder() }}</option>
+            <option value="">{{  $getPlaceholder()  }}</option>
         @endif
 
         @foreach ($getOptions() as $value => $label)
             <option
-                value="{{ $value }}"
-                {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
+                value="{{  $value  }}"
+                {!!  $isOptionDisabled($value, $label) ? 'disabled' : null  !!}
             >
-                {{ $label }}
+                {{  $label  }}
             </option>
         @endforeach
     </select>

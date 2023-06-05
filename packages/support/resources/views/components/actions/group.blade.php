@@ -12,7 +12,7 @@
     :dark-mode="$darkMode"
     placement="bottom-end"
     teleport
-    {{ $attributes }}
+    {{  $attributes  }}
 >
     <x-slot name="trigger">
         <x-filament-support::icon-button
@@ -23,7 +23,7 @@
             :tooltip="$tooltip"
         >
             <x-slot name="label">
-                {{ $label }}
+                {{  $label  }}
             </x-slot>
         </x-filament-support::icon-button>
     </x-slot>
@@ -31,7 +31,7 @@
     <x-filament-support::dropdown.list>
         @foreach ($actions as $action)
             @if (! $action->isHidden())
-                {{ $action }}
+                {{  $action  }}
             @endif
         @endforeach
     </x-filament-support::dropdown.list>

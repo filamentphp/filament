@@ -3,5 +3,5 @@
     :alignment="config('forms.components.actions.modal.actions.alignment')"
     :dark-mode="config('forms.dark_mode')"
 >
-    {{ $slot }}
+    {{  $slot  }}
 </x-filament-support::modal.actions>

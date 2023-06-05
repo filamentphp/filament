@@ -26,19 +26,19 @@
     <div class="grid flex-1">
         @if ($title = $getTitle())
             <x-notifications::title>
-                {{ \Illuminate\Support\Str::of($title)->markdown()->sanitizeHtml()->toHtmlString() }}
+                {{  \Illuminate\Support\Str::of($title)->markdown()->sanitizeHtml()->toHtmlString()  }}
             </x-notifications::title>
         @endif
 
         @if ($date = $getDate())
             <x-notifications::date>
-                {{ $date }}
+                {{  $date  }}
             </x-notifications::date>
         @endif
 
         @if ($body = $getBody())
             <x-notifications::body>
-                {{ \Illuminate\Support\Str::of($body)->markdown()->sanitizeHtml()->toHtmlString() }}
+                {{  \Illuminate\Support\Str::of($body)->markdown()->sanitizeHtml()->toHtmlString()  }}
             </x-notifications::body>
         @endif
 

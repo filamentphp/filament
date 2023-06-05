@@ -6,7 +6,7 @@
 ])
 
 <x-tables::dropdown
-    {{ $attributes->class(['filament-tables-filters']) }}
+    {{  $attributes->class(['filament-tables-filters'])  }}
     :max-height="$maxHeight"
     placement="bottom-end"
     shift
@@ -17,8 +17,5 @@
         <x-tables::filters.trigger :indicators-count="$indicatorsCount" />
     </x-slot>
 
-    <x-tables::filters
-        class="p-4"
-        :form="$form"
-    />
+    <x-tables::filters class="p-4" :form="$form" />
 </x-tables::dropdown>

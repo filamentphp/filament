@@ -4,5 +4,5 @@
     :icon="$action->getGroupedIcon()"
     class="filament-tables-grouped-action"
 >
-    {{ $getLabel() }}
+    {{  $getLabel()  }}
 </x-tables::actions.action>

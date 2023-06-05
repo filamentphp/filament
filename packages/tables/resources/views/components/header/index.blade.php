@@ -4,18 +4,20 @@
     'heading',
 ])
 
-<div {{ $attributes->class(['filament-tables-header px-4 py-2']) }}>
-    <div class="flex flex-col gap-4 md:justify-between md:items-start md:flex-row md:-mr-2">
+<div {{  $attributes->class(['filament-tables-header px-4 py-2'])  }}>
+    <div
+        class="flex flex-col gap-4 md:-mr-2 md:flex-row md:items-start md:justify-between"
+    >
         <div>
             @if ($heading)
                 <x-tables::header.heading>
-                    {{ $heading }}
+                    {{  $heading  }}
                 </x-tables::header.heading>
             @endif
 
             @if ($description)
                 <x-tables::header.description>
-                    {{ $description }}
+                    {{  $description  }}
                 </x-tables::header.description>
             @endif
         </div>

@@ -1,1 +1,1 @@
-{{ $this->table }}
+{{  $this->table  }}

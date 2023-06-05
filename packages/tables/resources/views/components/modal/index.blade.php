@@ -15,5 +15,5 @@
     hr-component="tables::hr"
     subheading-component="tables::modal.subheading"
 >
-    {{ $slot }}
+    {{  $slot  }}
 </x-filament-support::modal>

@@ -6,12 +6,12 @@
 
 @php
     if ((! $action->getAction()) || $action->getUrl()) {
-        $wireClickAction = null;
-    } elseif ($record = $action->getRecord()) {
-        $wireClickAction = "mountTableAction('{$action->getName()}', '{$this->getTableRecordKey($record)}')";
-    } else {
-        $wireClickAction = "mountTableAction('{$action->getName()}')";
-    }
+            $wireClickAction = null;
+        } elseif ($record = $action->getRecord()) {
+            $wireClickAction = "mountTableAction('{$action->getName()}', '{$this->getTableRecordKey($record)}')";
+        } else {
+            $wireClickAction = "mountTableAction('{$action->getName()}')";
+        }
 @endphp
 
 <x-dynamic-component
@@ -29,5 +29,5 @@
     :size="$action->getSize() ?? 'sm'"
     dusk="filament.tables.action.{{ $action->getName() }}"
 >
-    {{ $slot }}
+    {{  $slot  }}
 </x-dynamic-component>

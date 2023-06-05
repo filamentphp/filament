@@ -1,1 +1,1 @@
-{{ $getChildComponentContainer() }}
+{{  $getChildComponentContainer()  }}

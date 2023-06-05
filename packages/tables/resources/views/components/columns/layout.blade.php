@@ -7,36 +7,36 @@
 
 @php
     $getHiddenClasses = function (\Filament\Tables\Columns\Column | \Filament\Tables\Columns\Layout\Component $layoutComponent): ?string {
-        if ($breakpoint = $layoutComponent->getHiddenFrom()) {
-            return match ($breakpoint) {
-                'sm' => 'sm:hidden',
-                'md' => 'md:hidden',
-                'lg' => 'lg:hidden',
-                'xl' => 'xl:hidden',
-                '2xl' => '2xl:hidden',
-            };
-        }
+            if ($breakpoint = $layoutComponent->getHiddenFrom()) {
+                return match ($breakpoint) {
+                    'sm' => 'sm:hidden',
+                    'md' => 'md:hidden',
+                    'lg' => 'lg:hidden',
+                    'xl' => 'xl:hidden',
+                    '2xl' => '2xl:hidden',
+                };
+            }
 
-        if ($breakpoint = $layoutComponent->getVisibleFrom()) {
-            return match ($breakpoint) {
-                'sm' => 'hidden sm:block',
-                'md' => 'hidden md:block',
-                'lg' => 'hidden lg:block',
-                'xl' => 'hidden xl:block',
-                '2xl' => 'hidden 2xl:block',
-            };
-        }
+            if ($breakpoint = $layoutComponent->getVisibleFrom()) {
+                return match ($breakpoint) {
+                    'sm' => 'hidden sm:block',
+                    'md' => 'hidden md:block',
+                    'lg' => 'hidden lg:block',
+                    'xl' => 'hidden xl:block',
+                    '2xl' => 'hidden 2xl:block',
+                };
+            }
 
-        return null;
-    };
+            return null;
+        };
 @endphp
 
 @foreach ($components as $layoutComponent)
     @php
         $layoutComponent->record($record);
-        $layoutComponent->rowLoop($rowLoop);
+                $layoutComponent->rowLoop($rowLoop);
 
-        $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
+                $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
     @endphp
 
     @if (! $layoutComponent->isHidden())
@@ -59,7 +59,7 @@
                     :record-key="$recordKey"
                 />
             @else
-                {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
+                {{  $layoutComponent->viewData(['recordKey' => $recordKey])  }}
             @endif
         </x-filament-support::grid.column>
     @endif

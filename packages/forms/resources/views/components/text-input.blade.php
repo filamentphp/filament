@@ -1,11 +1,11 @@
 @php
     $datalistOptions = $getDatalistOptions();
 
-    $affixLabelClasses = [
-        'whitespace-nowrap group-focus-within:text-primary-500',
-        'text-gray-400' => ! $errors->has($getStatePath()),
-        'text-danger-400' => $errors->has($getStatePath()),
-    ];
+        $affixLabelClasses = [
+            'whitespace-nowrap group-focus-within:text-primary-500',
+            'text-gray-400' => ! $errors->has($getStatePath()),
+            'text-danger-400' => $errors->has($getStatePath()),
+        ];
 @endphp
 
 <x-dynamic-component
@@ -21,18 +21,20 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-text-input-component flex items-center space-x-2 rtl:space-x-reverse group']) }}>
+    <div
+        {{  $attributes->merge($getExtraAttributes())->class(['filament-forms-text-input-component group flex items-center space-x-2 rtl:space-x-reverse'])  }}
+    >
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
-            {{ $prefixAction }}
+            {{  $prefixAction  }}
         @endif
 
         @if ($icon = $getPrefixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            <x-dynamic-component :component="$icon" class="h-5 w-5" />
         @endif
 
         @if (filled($label = $getPrefixLabel()))
             <span @class($affixLabelClasses)>
-                {{ $label }}
+                {{  $label  }}
             </span>
         @endif
 
@@ -52,16 +54,16 @@
                     {!! $isLazy() ? "x-on:blur=\"\$wire.\$refresh\"" : null !!}
                     {!! $isDebounced() ? "x-on:input.debounce.{$getDebounce()}=\"\$wire.\$refresh\"" : null !!}
                 @endunless
-                dusk="filament.forms.{{ $getStatePath() }}"
-                {!! ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null !!}
-                {!! ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null !!}
-                {!! $isAutofocused() ? 'autofocus' : null !!}
-                {!! $isDisabled() ? 'disabled' : null !!}
-                id="{{ $getId() }}"
-                {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
-                {!! $datalistOptions ? "list=\"{$getId()}-list\"" : null !!}
-                {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
-                {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
+                dusk="filament.forms.{{  $getStatePath()  }}"
+                {!!  ($autocapitalize = $getAutocapitalize()) ? "autocapitalize=\"{$autocapitalize}\"" : null  !!}
+                {!!  ($autocomplete = $getAutocomplete()) ? "autocomplete=\"{$autocomplete}\"" : null  !!}
+                {!!  $isAutofocused() ? 'autofocus' : null  !!}
+                {!!  $isDisabled() ? 'disabled' : null  !!}
+                id="{{  $getId()  }}"
+                {!!  ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null  !!}
+                {!!  $datalistOptions ? "list=\"{$getId()}-list\"" : null  !!}
+                {!!  ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null  !!}
+                {!!  ($interval = $getStep()) ? "step=\"{$interval}\"" : null  !!}
                 @if (! $isConcealed())
                     {!! filled($length = $getMaxLength()) ? "maxlength=\"{$length}\"" : null !!}
                     {!! filled($value = $getMaxValue()) ? "max=\"{$value}\"" : null !!}
@@ -69,11 +71,13 @@
                     {!! filled($value = $getMinValue()) ? "min=\"{$value}\"" : null !!}
                     {!! $isRequired() ? 'required' : null !!}
                 @endif
-                {{ $getExtraAlpineAttributeBag() }}
-                {{ $getExtraInputAttributeBag()->class([
-                    'filament-forms-input block w-full transition duration-75 rounded-lg shadow-sm outline-none focus:ring-1 focus:ring-inset disabled:opacity-70',
-                    'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
-                ]) }}
+                {{  $getExtraAlpineAttributeBag()  }}
+                {{
+                    $getExtraInputAttributeBag()->class([
+                                        'filament-forms-input block w-full rounded-lg shadow-sm outline-none transition duration-75 focus:ring-1 focus:ring-inset disabled:opacity-70',
+                                        'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
+                                    ])
+                }}
                 x-bind:class="{
                     'border-gray-300 focus:border-primary-500 focus:ring-primary-500': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
                     'dark:border-gray-600 dark:focus:border-primary-500': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
@@ -85,23 +89,23 @@
 
         @if (filled($label = $getSuffixLabel()))
             <span @class($affixLabelClasses)>
-                {{ $label }}
+                {{  $label  }}
             </span>
         @endif
 
         @if ($icon = $getSuffixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            <x-dynamic-component :component="$icon" class="h-5 w-5" />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
-            {{ $suffixAction }}
+            {{  $suffixAction  }}
         @endif
     </div>
 
     @if ($datalistOptions)
-        <datalist id="{{ $getId() }}-list">
+        <datalist id="{{  $getId()  }}-list">
             @foreach ($datalistOptions as $option)
-                <option value="{{ $option }}" />
+                <option value="{{  $option  }}" />
             @endforeach
         </datalist>
     @endif

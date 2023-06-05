@@ -16,25 +16,26 @@
 
     @if (count($actions))
         <div
-            {{ $attributes->class([
-                'filament-page-actions',
-                'flex flex-wrap items-center gap-4' => ! $fullWidth,
-                match ($alignment) {
-                    'center' => 'justify-center',
-                    'right' => 'flex-row-reverse space-x-reverse',
-                    default => 'justify-start',
-                } => ! $fullWidth,
-                'grid gap-2 grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,
-            ]) }}
+            {{
+                $attributes->class([
+                    'filament-page-actions',
+                    'flex flex-wrap items-center gap-4' => ! $fullWidth,
+                    match ($alignment) {
+                        'center' => 'justify-center',
+                        'right' => 'flex-row-reverse space-x-reverse',
+                        default => 'justify-start',
+                    } => ! $fullWidth,
+                    'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] gap-2' => $fullWidth,
+                ])
+            }}
         >
             {{ \Filament\Facades\Filament::renderHook('page.actions.start') }}
-            
+
             @foreach ($actions as $action)
                 {{ $action }}
             @endforeach
-            
+
             {{ \Filament\Facades\Filament::renderHook('page.actions.end') }}
-            
         </div>
     @endif
 @endif

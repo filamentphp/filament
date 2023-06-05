@@ -1,9 +1,9 @@
 @php
     $affixLabelClasses = [
-        'whitespace-nowrap group-focus-within:text-primary-500',
-        'text-gray-400' => ! $errors->has($getStatePath()),
-        'text-danger-400' => $errors->has($getStatePath()),
-    ];
+            'whitespace-nowrap group-focus-within:text-primary-500',
+            'text-gray-400' => ! $errors->has($getStatePath()),
+            'text-danger-400' => $errors->has($getStatePath()),
+        ];
 @endphp
 
 <x-dynamic-component
@@ -20,51 +20,55 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-select-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
+    <div
+        {{  $attributes->merge($getExtraAttributes())->class(['filament-forms-select-component group flex items-center space-x-1 rtl:space-x-reverse'])  }}
+    >
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
-            {{ $prefixAction }}
+            {{  $prefixAction  }}
         @endif
 
         @if ($icon = $getPrefixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            <x-dynamic-component :component="$icon" class="h-5 w-5" />
         @endif
 
         @if (filled($label = $getPrefixLabel()))
             <span @class($affixLabelClasses)>
-                {{ $label }}
+                {{  $label  }}
             </span>
         @endif
 
-        <div class="flex-1 min-w-0">
+        <div class="min-w-0 flex-1">
             @unless ($isSearchable() || $isMultiple())
                 <select
-                    {!! $isAutofocused() ? 'autofocus' : null !!}
-                    {!! $isDisabled() ? 'disabled' : null !!}
-                    id="{{ $getId() }}"
-                    {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}"
-                    dusk="filament.forms.{{ $getStatePath() }}"
+                    {!!  $isAutofocused() ? 'autofocus' : null  !!}
+                    {!!  $isDisabled() ? 'disabled' : null  !!}
+                    id="{{  $getId()  }}"
+                    {{  $applyStateBindingModifiers('wire:model')  }}="{{  $getStatePath()  }}"
+                    dusk="filament.forms.{{  $getStatePath()  }}"
                     @if (! $isConcealed())
                         {!! $isRequired() ? 'required' : null !!}
                     @endif
-                    {{ $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
-                        'filament-forms-input text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
-                        'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
-                        'border-gray-300' => ! $errors->has($getStatePath()),
-                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                        'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                        'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
-                    ]) }}
+                    {{
+                        $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
+                                                'filament-forms-input block w-full rounded-lg text-gray-900 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                                                'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
+                                                'border-gray-300' => ! $errors->has($getStatePath()),
+                                                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                                                'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                                                'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
+                                            ])
+                    }}
                 >
                     @unless ($isPlaceholderSelectionDisabled())
-                        <option value="">{{ $getPlaceholder() }}</option>
+                        <option value="">{{  $getPlaceholder()  }}</option>
                     @endif
 
                     @foreach ($getOptions() as $value => $label)
                         <option
-                            value="{{ $value }}"
-                            {!! $isOptionDisabled($value, $label) ? 'disabled' : null !!}
+                            value="{{  $value  }}"
+                            {!!  $isOptionDisabled($value, $label) ? 'disabled' : null  !!}
                         >
-                            {{ $label }}
+                            {{  $label  }}
                         </option>
                     @endforeach
                 </select>
@@ -101,15 +105,15 @@
                         searchingMessage: @js($getSearchingMessage()),
                         searchPrompt: @js($getSearchPrompt()),
                         searchableOptionFields: @js($getSearchableOptionFields()),
-                        state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+                        state: $wire.{{  $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')')  }},
                     })"
                     x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                     wire:ignore
                     {{
                         $attributes
-                            ->merge($getExtraAttributes())
-                            ->merge($getExtraAlpineAttributes())
-                            ->class(['filament-forms-input'])
+                                                    ->merge($getExtraAttributes())
+                                                    ->merge($getExtraAlpineAttributes())
+                                                    ->class(['filament-forms-input'])
                     }}
                     x-bind:class="{
                         'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
@@ -117,10 +121,10 @@
                 >
                     <select
                         x-ref="input"
-                        id="{{ $getId() }}"
-                        {!! $isDisabled() ? 'disabled' : null !!}
-                        {!! $isMultiple() ? 'multiple' : null !!}
-                        {{ $getExtraInputAttributeBag() }}
+                        id="{{  $getId()  }}"
+                        {!!  $isDisabled() ? 'disabled' : null  !!}
+                        {!!  $isMultiple() ? 'multiple' : null  !!}
+                        {{  $getExtraInputAttributeBag()  }}
                     ></select>
                 </div>
             @endif
@@ -128,16 +132,16 @@
 
         @if (filled($label = $getSuffixLabel()))
             <span @class($affixLabelClasses)>
-                {{ $label }}
+                {{  $label  }}
             </span>
         @endif
 
         @if ($icon = $getSuffixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            <x-dynamic-component :component="$icon" class="h-5 w-5" />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))
-            {{ $suffixAction }}
+            {{  $suffixAction  }}
         @endif
     </div>
 </x-dynamic-component>

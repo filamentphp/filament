@@ -5,5 +5,5 @@
     :icon-position="$getIconPosition()"
     class="filament-notifications-button-action"
 >
-    {{ $getLabel() }}
+    {{  $getLabel()  }}
 </x-notifications::actions.action>

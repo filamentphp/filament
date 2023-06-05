@@ -5,5 +5,5 @@
     :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     class="filament-tables-bulk-action"
 >
-    {{ $getLabel() }}
+    {{  $getLabel()  }}
 </x-tables::dropdown.list.item>

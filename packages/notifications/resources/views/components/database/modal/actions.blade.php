@@ -3,7 +3,7 @@
     'unreadNotificationsCount',
 ])
 
-<div {{ $attributes }}>
+<div {{  $attributes  }}>
     @if ($notifications->count())
         <div class="mt-2 text-sm">
             @if ($unreadNotificationsCount)
@@ -16,12 +16,10 @@
                     wire:loading.attr="disabled"
                     wire:loading.class="opacity-70 cursor-wait"
                 >
-                    {{ __('notifications::database.modal.buttons.mark_all_as_read.label') }}
+                    {{  __('notifications::database.modal.buttons.mark_all_as_read.label')  }}
                 </x-notifications::link>
 
-                <span>
-                    &bull;
-                </span>
+                <span>&bull;</span>
             @endif
 
             <x-notifications::link
@@ -34,7 +32,7 @@
                 wire:loading.attr="disabled"
                 wire:loading.class="opacity-70 cursor-wait"
             >
-                {{ __('notifications::database.modal.buttons.clear.label') }}
+                {{  __('notifications::database.modal.buttons.clear.label')  }}
             </x-notifications::link>
         </div>
     @endif

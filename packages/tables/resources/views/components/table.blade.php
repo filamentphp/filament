@@ -3,14 +3,18 @@
     'header' => null,
 ])
 
-<table {{ $attributes->class([
-    'filament-tables-table w-full text-start divide-y table-auto',
-    'dark:divide-gray-700' => config('tables.dark_mode'),
-]) }}>
+<table
+    {{
+        $attributes->class([
+            'filament-tables-table w-full table-auto divide-y text-start',
+            'dark:divide-gray-700' => config('tables.dark_mode'),
+        ])
+    }}
+>
     @if ($header)
         <thead>
             <tr class="bg-gray-500/5">
-                {{ $header }}
+                {{  $header  }}
             </tr>
         </thead>
     @endif
@@ -20,17 +24,17 @@
         wire:end.stop="reorderTable($event.target.sortable.toArray())"
         wire:sortable.options="{ animation: 100 }"
         @class([
-            'divide-y whitespace-nowrap',
-            'dark:divide-gray-700' => config('tables.dark_mode'),
-        ])
+                    'divide-y whitespace-nowrap',
+                    'dark:divide-gray-700' => config('tables.dark_mode'),
+                ])
     >
-        {{ $slot }}
+        {{  $slot  }}
     </tbody>
 
     @if ($footer)
         <tfoot>
             <tr class="bg-gray-50">
-                {{ $footer }}
+                {{  $footer  }}
             </tr>
         </tfoot>
     @endif

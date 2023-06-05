@@ -1,6 +1,6 @@
 @php
     $notifications = $this->getDatabaseNotifications();
-    $unreadNotificationsCount = $this->getUnreadDatabaseNotificationsCount();
+        $unreadNotificationsCount = $this->getUnreadDatabaseNotificationsCount();
 @endphp
 
 <div
@@ -11,7 +11,7 @@
 >
     @if ($databaseNotificationsTrigger = $this->getDatabaseNotificationsTrigger())
         <x-notifications::database.trigger>
-            {{ $databaseNotificationsTrigger->with(['unreadNotificationsCount' => $unreadNotificationsCount]) }}
+            {{  $databaseNotificationsTrigger->with(['unreadNotificationsCount' => $unreadNotificationsCount])  }}
         </x-notifications::database.trigger>
     @endif
 

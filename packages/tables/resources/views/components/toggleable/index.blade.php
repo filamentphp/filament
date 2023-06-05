@@ -5,7 +5,7 @@
 ])
 
 <x-tables::dropdown
-    {{ $attributes->class(['filament-tables-column-toggling']) }}
+    {{  $attributes->class(['filament-tables-column-toggling'])  }}
     :max-height="$maxHeight"
     placement="bottom-end"
     shift
@@ -17,6 +17,6 @@
     </x-slot>
 
     <div class="p-4">
-        {{ $form }}
+        {{  $form  }}
     </div>
 </x-tables::dropdown>

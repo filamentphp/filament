@@ -14,10 +14,7 @@
 @endphp
 
 @if ($tag === 'button')
-    <button
-        type="{{ $type }}"
-        {{ $attributes->class([$buttonClasses]) }}
-    >
+    <button type="{{ $type }}" {{ $attributes->class([$buttonClasses]) }}>
         {{ $slot }}
     </button>
 @elseif ($tag === 'a')
