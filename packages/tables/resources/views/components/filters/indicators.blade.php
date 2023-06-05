@@ -22,7 +22,7 @@
                     >
                         <x-filament::icon
                             name="heroicon-m-x-mark"
-                            alias="filament-tables::filters.buttons.remove"
+                            alias="tables::filters.buttons.remove"
                             size="h-3 w-3"
                         />
 
@@ -43,7 +43,7 @@
                 <div class="w-5 h-5 flex items-center justify-center">
                     <x-filament::icon
                         name="heroicon-m-x-mark"
-                        alias="filament-tables::filters.buttons.remove-all"
+                        alias="tables::filters.buttons.remove-all"
                         size="h-5 w-5"
                         :x-tooltip.raw="__('filament-tables::table.filters.buttons.remove_all.tooltip')"
                         wire:loading.remove.delay=""

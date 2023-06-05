@@ -43,7 +43,7 @@
                     x-transition:enter-end="opacity-100"
                 >
                     <x-filament::icon
-                        alias="app::sidebar.buttons.collapse"
+                        alias="panels::sidebar.buttons.collapse"
                         color="text-primary-500"
                         size="h-6 w-6"
                     >
@@ -87,7 +87,7 @@
             >
                 <x-filament::icon
                     name="heroicon-o-bars-3"
-                    alias="app::sidebar.buttons.toggle"
+                    alias="panels::sidebar.buttons.toggle"
                     size="h-6 w-6"
                 />
             </button>

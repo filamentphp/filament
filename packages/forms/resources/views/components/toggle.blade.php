@@ -75,7 +75,7 @@
                         @if ($hasOffIcon())
                             <x-filament::icon
                                 :name="$getOffIcon()"
-                                alias="filament-forms::components.toggle.off"
+                                alias="forms::components.toggle.off"
                                 :color="match ($offColor) {
                                     'danger' => 'text-danger-600',
                                     'gray' => 'text-gray-600',
@@ -103,7 +103,7 @@
                         @if ($hasOnIcon())
                             <x-filament::icon
                                 :name="$getOnIcon()"
-                                alias="filament-forms::components.toggle.on"
+                                alias="forms::components.toggle.on"
                                 :color="match ($onColor) {
                                     'danger' => 'text-danger-600',
                                     'gray' => 'text-gray-600',

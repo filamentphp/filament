@@ -142,7 +142,7 @@
                             >
                                 <x-filament::icon
                                     name="heroicon-m-check"
-                                    alias="filament-forms::components.wizard.completed-step"
+                                    alias="forms::components.wizard.completed-step"
                                     color="text-white"
                                     size="h-5 w-5"
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
@@ -152,7 +152,7 @@
                                 @if ($icon = $step->getIcon())
                                     <x-filament::icon
                                         :name="$icon"
-                                        alias="filament-forms::components.wizard.current-step"
+                                        alias="forms::components.wizard.current-step"
                                         size="h-5 w-5"
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-cloak="x-cloak"

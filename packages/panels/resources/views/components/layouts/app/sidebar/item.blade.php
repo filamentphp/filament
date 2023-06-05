@@ -38,7 +38,7 @@
     >
         <x-filament::icon
             :name="($active && $activeIcon) ? $activeIcon : $icon"
-            alias="app::sidebar.item"
+            alias="panels::sidebar.item"
             :color="(! $active) ? 'text-gray-600 dark:text-gray-500' : null"
             size="h-6 w-6"
         />

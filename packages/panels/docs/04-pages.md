@@ -164,7 +164,9 @@ protected static ?string $title = 'Custom Page Title';
 Alternatively, you may return a string from the `getTitle()` method:
 
 ```php
-public function getTitle(): string
+use Illuminate\Contracts\Support\Htmlable;
+
+public function getTitle(): string | Htmlable
 {
     return __('Custom Page Title');
 }

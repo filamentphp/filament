@@ -13,6 +13,7 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -169,7 +170,7 @@ class ViewRecord extends Page implements HasInfolists
             ->successRedirectUrl($resource::getUrl('index'));
     }
 
-    public function getTitle(): string
+    public function getTitle(): string | Htmlable
     {
         if (filled(static::$title)) {
             return static::$title;

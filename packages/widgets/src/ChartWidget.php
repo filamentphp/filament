@@ -3,6 +3,7 @@
 namespace Filament\Widgets;
 
 use Filament\Support\RawJs;
+use Illuminate\Contracts\Support\Htmlable;
 
 abstract class ChartWidget extends Widget
 {
@@ -71,12 +72,12 @@ abstract class ChartWidget extends Widget
         return null;
     }
 
-    public function getHeading(): ?string
+    public function getHeading(): string | Htmlable | null
     {
         return static::$heading;
     }
 
-    public function getSubheading(): ?string
+    public function getSubheading(): string | Htmlable | null
     {
         return static::$subheading;
     }

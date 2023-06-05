@@ -7,7 +7,7 @@
 }}>
     <x-filament::icon
         name="heroicon-o-bars-3"
-        alias="filament-tables::reorder.handle"
+        alias="tables::reorder.handle"
         size="h-4 w-4"
         class="block"
     />

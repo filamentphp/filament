@@ -116,7 +116,7 @@ class Login extends CardPage
         return 'filament.core.auth.login';
     }
 
-    public function getTitle(): string
+    public function getTitle(): string | Htmlable
     {
         return __('filament::pages/auth/login.title');
     }

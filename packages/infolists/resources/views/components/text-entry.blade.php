@@ -124,7 +124,7 @@
                             @if ($icon && $iconPosition === 'before')
                                 <x-filament::icon
                                     :name="$icon"
-                                    alias="filament-infolists::entries.text.prefix"
+                                    alias="infolists::entries.text.prefix"
                                     :size="$iconSize"
                                 />
                             @endif
@@ -150,7 +150,7 @@
                             @if ($icon && $iconPosition === 'after')
                                 <x-filament::icon
                                     :name="$icon"
-                                    alias="filament-infolists::entries.text.suffix"
+                                    alias="infolists::entries.text.suffix"
                                     :size="$iconSize"
                                 />
                             @endif

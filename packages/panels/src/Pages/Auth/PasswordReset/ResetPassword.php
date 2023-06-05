@@ -154,7 +154,7 @@ class ResetPassword extends CardPage
         return 'filament.core.auth.password-reset.reset-password';
     }
 
-    public function getTitle(): string
+    public function getTitle(): string | Htmlable
     {
         return __('filament::pages/auth/password-reset/reset-password.title');
     }

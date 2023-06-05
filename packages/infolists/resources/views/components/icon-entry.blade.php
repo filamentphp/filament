@@ -12,7 +12,7 @@
             @if ($icon = $getIcon($state))
                 <x-filament::icon
                     :name="$icon"
-                    alias="filament-infolists::entries.icon"
+                    alias="infolists::entries.icon"
                     :color="match ($color = $getColor($state)) {
                         'danger' => 'text-danger-500',
                         'gray', null => 'text-gray-500',

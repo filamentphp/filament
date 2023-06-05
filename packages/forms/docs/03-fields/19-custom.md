@@ -69,6 +69,8 @@ This is the basis of how fields work in Filament. Each field is assigned to a pu
 </div>
 ```
 
+If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../common/assets#asynchronous-alpinejs-components).
+
 ## Rendering the field wrapper
 
 Filament includes a "field wrapper" component, which is able to render the field's label, validation errors, and any other text surrounding the field. You may render the field wrapper like this in the view:

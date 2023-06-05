@@ -9,6 +9,7 @@ use Filament\Pages\CardPage;
 use Filament\Pages\Concerns;
 use Filament\Panel;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 
@@ -130,7 +131,7 @@ abstract class RegisterTenant extends CardPage
         return Filament::getTenantModel();
     }
 
-    public function getTitle(): string
+    public function getTitle(): string | Htmlable
     {
         return static::getLabel();
     }

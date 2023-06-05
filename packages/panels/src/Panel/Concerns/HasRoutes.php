@@ -6,16 +6,17 @@ use Closure;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Laravel\SerializableClosure\Serializers\Native;
 
 trait HasRoutes
 {
-    protected ?Closure $routes = null;
+    protected Closure | Native | null $routes = null;
 
-    protected ?Closure $authenticatedRoutes = null;
+    protected Closure | Native | null $authenticatedRoutes = null;
 
-    protected ?Closure $tenantRoutes = null;
+    protected Closure | Native | null $tenantRoutes = null;
 
-    protected ?Closure $authenticatedTenantRoutes = null;
+    protected Closure | Native | null $authenticatedTenantRoutes = null;
 
     protected string | Closure | null $homeUrl = null;
 

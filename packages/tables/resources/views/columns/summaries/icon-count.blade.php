@@ -19,7 +19,7 @@
 
                     <x-filament::icon
                         :name="$icon"
-                        alias="filament-tables::columns.summaries.icon-count"
+                        alias="tables::columns.summaries.icon-count"
                         :color="match ($color) {
                             'danger' => 'text-danger-500',
                             'gray', null => 'text-gray-500',

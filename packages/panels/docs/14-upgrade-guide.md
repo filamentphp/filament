@@ -65,7 +65,7 @@ Some classes that are imported in resources and relation managers have moved:
 
 User model (with `FilamentUser` interface):
 
-- `canAccessFilament()` has a new `\Filament\Panel $panel` parameter
+- `canAccessFilament()` has been renamed to `canAccessPanel()` and has a new `\Filament\Panel $panel` parameter
 
 Resource classes:
 

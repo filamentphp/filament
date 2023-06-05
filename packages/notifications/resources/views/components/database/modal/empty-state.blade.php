@@ -2,7 +2,7 @@
     <div class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 dark:bg-gray-700">
         <x-filament::icon
             name="heroicon-o-bell"
-            alias="filament-notifications::database.modal.empty-state"
+            alias="notifications::database.modal.empty-state"
             color="text-primary-500"
             size="h-6 w-6"
         />

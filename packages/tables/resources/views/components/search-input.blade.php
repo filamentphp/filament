@@ -7,7 +7,7 @@
         <span class="filament-tables-search-input-icon-wrapper absolute inset-y-0 start-0 flex items-center justify-center w-9 h-9 pointer-events-none">
             <x-filament::icon
                 name="heroicon-m-magnifying-glass"
-                alias="filament-tables::search-input.prefix"
+                alias="tables::search-input.prefix"
                 color="text-gray-400"
                 size="h-5 w-5"
             />

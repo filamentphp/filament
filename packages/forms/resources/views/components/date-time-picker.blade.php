@@ -124,8 +124,8 @@
                     @if ($icon !== false)
                         <span class="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none">
                             <x-filament::icon
-                                name="heroicon-m-calendar"
-                                alias="filament-forms::components.date-time-picker.suffix"
+                                :name="$icon"
+                                alias="forms::components.date-time-picker.suffix"
                                 color="text-gray-400 dark:text-gray-400"
                                 size="h-5 w-5"
                             />
