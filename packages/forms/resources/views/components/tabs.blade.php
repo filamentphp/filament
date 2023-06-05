@@ -1,4 +1,4 @@
-<div wire:ignore.self
+<div
     x-data="{
 
         tab: null,
@@ -33,6 +33,7 @@
     ]) }}
     {{ $getExtraAlpineAttributeBag() }}
     wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ \Filament\Forms\Components\Tabs::class }}.container"
+    wire:ignore.self
 >
     <input
         type="hidden"
