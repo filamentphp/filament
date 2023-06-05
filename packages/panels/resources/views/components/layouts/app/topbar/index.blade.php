@@ -21,7 +21,7 @@
             >
                 <x-filament::icon
                     name="heroicon-o-bars-3"
-                    alias="app::topbar.buttons.toggle-sidebar"
+                    alias="filament-panels::topbar.buttons.toggle-sidebar"
                     color="text-primary-500"
                     size="h-6 w-6"
                 />

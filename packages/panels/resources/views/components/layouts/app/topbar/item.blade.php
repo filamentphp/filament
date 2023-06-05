@@ -23,7 +23,7 @@
         @if ($icon || $activeIcon)
             <x-filament::icon
                 :name="($active && $activeIcon) ? $activeIcon : $icon"
-                alias="app::topbar.item"
+                alias="filament-panels::topbar.item"
                 :color="(! $active) ? 'text-gray-600 dark:text-gray-500' : null"
                 size="h-5 w-5"
             />

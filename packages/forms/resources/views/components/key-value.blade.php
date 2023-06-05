@@ -49,8 +49,8 @@
                             <th
                                 scope="col"
                                 x-show="rows.length"
-                                    class="{{ ($deleteAction && $reorderAction) ? 'w-16' : 'w-12' }}"
-                                >
+                                class="{{ ($deleteAction && $reorderAction) ? 'w-16' : 'w-12' }}"
+                            >
                                 <span class="sr-only"></span>
                             </th>
                         @endif

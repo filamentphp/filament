@@ -7,7 +7,7 @@
         <span class="absolute inset-y-0 start-0 flex items-center justify-center w-10 h-10 pointer-events-none">
             <x-filament::icon
                 name="heroicon-m-magnifying-glass"
-                alias="app::global-search.input.prefix"
+                alias="filament-panels::global-search.input.prefix"
                 color="text-gray-500 dark:text-gray-400"
                 size="h-5 w-5"
                 wire:loading.remove.delay=""
