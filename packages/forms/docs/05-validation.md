@@ -315,6 +315,22 @@ The field value must not be empty. [See the Laravel documentation.](https://lara
 Field::make('name')->required()
 ```
 
+### Required If
+
+The field value must not be empty _only if_ the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-if)
+
+```php
+Field::make('name')->requiredIf('field', 'value')
+```
+
+### Required Unless
+
+The field value must not be empty _unless_ the other specified field has any of the given values. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-unless)
+
+```php
+Field::make('name')->requiredUnless('field', 'value')
+```
+
 ### Required With
 
 The field value must not be empty _only if_ any of the other specified fields are not empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-with)

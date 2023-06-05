@@ -12,7 +12,7 @@ class MakePageCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament page class and view.';
+    protected $description = 'Create a new Filament page class and view';
 
     protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--F|force}';
 

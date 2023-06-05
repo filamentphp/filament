@@ -10,7 +10,7 @@ class InstallCommand extends Command
 {
     protected $signature = 'tables:install';
 
-    protected $description = 'Set up table builder CSS and JS in a fresh Laravel installation.';
+    protected $description = 'Set up table builder CSS and JS in a fresh Laravel installation';
 
     public function __invoke(): int
     {

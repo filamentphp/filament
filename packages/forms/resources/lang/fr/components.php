@@ -202,6 +202,7 @@ return [
             'ordered_list' => 'Nombres',
             'redo' => 'Refaire',
             'strike' => 'Barré',
+            'underline' => 'Souligné',
             'undo' => 'Annuler',
         ],
 

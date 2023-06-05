@@ -24,7 +24,7 @@ class TagsColumn extends Column
             return [];
         }
 
-        $tags = explode($separator, $tags);
+        $tags = explode($separator, $tags ?? '');
 
         if (count($tags) === 1 && blank($tags[0])) {
             $tags = [];

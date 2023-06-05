@@ -3,20 +3,20 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
-use Illuminate\Support\HtmlString;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasHelperText
 {
-    protected string | HtmlString | Closure | null $helperText = null;
+    protected string | Htmlable | Closure | null $helperText = null;
 
-    public function helperText(string | HtmlString | Closure | null $text): static
+    public function helperText(string | Htmlable | Closure | null $text): static
     {
         $this->helperText = $text;
 
         return $this;
     }
 
-    public function getHelperText(): string | HtmlString | null
+    public function getHelperText(): string | Htmlable | null
     {
         return $this->evaluate($this->helperText);
     }

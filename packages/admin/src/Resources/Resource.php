@@ -8,6 +8,7 @@ use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Navigation\NavigationItem;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -367,7 +368,7 @@ class Resource
         return static::$recordTitleAttribute;
     }
 
-    public static function getRecordTitle(?Model $record): ?string
+    public static function getRecordTitle(?Model $record): string | Htmlable | null
     {
         return $record?->getAttribute(static::getRecordTitleAttribute()) ?? static::getModelLabel();
     }
