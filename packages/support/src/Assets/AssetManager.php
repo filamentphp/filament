@@ -112,6 +112,22 @@ class AssetManager
         return $data;
     }
 
+    public function getScriptSrc(string $id, string $package = 'app'): string
+    {
+        /** @var array<Js> $scripts */
+        $scripts = $this->getScripts([$package]);
+
+        foreach ($scripts as $script) {
+            if ($script->getId() !== $id) {
+                continue;
+            }
+
+            return $script->getSrc();
+        }
+
+        throw new Exception("Script with ID [{$id}] not found for package [{$package}].");
+    }
+
     /**
      * @param  array<string> | null  $packages
      * @return array<Asset>
@@ -159,6 +175,22 @@ class AssetManager
     public function getStyles(?array $packages = null): array
     {
         return $this->getAssets($this->styles, $packages);
+    }
+
+    public function getStyleHref(string $id, string $package = 'app'): string
+    {
+        /** @var array<Css> $styles */
+        $styles = $this->getStyles([$package]);
+
+        foreach ($styles as $style) {
+            if ($style->getId() !== $id) {
+                continue;
+            }
+
+            return $style->getHref();
+        }
+
+        throw new Exception("Stylesheet with ID [{$id}] not found for package [{$package}].");
     }
 
     /**
