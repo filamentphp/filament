@@ -20,28 +20,28 @@
     >
         <div
             @class([
-                        'divide-y overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm',
-                        'dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
-                    ])
+                                    'divide-y overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm',
+                                    'dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
+                                ])
         >
             <table
                 @class([
-                                'w-full table-auto divide-y text-start',
-                                'dark:divide-gray-700' => config('forms.dark_mode'),
-                            ])
+                                                'w-full table-auto divide-y text-start',
+                                                'dark:divide-gray-700' => config('forms.dark_mode'),
+                                            ])
             >
                 <thead>
                     <tr
                         @class([
-                                                'bg-gray-50',
-                                                'dark:bg-gray-800/60' => config('forms.dark_mode'),
-                                            ])
+                                                                        'bg-gray-50',
+                                                                        'dark:bg-gray-800/60' => config('forms.dark_mode'),
+                                                                    ])
                     >
                         <th
                             @class([
-                                                        'whitespace-nowrap px-4 py-2 text-start text-sm font-medium text-gray-600',
-                                                        'dark:text-gray-300' => config('forms.dark_mode'),
-                                                    ])
+                                                                                    'whitespace-nowrap px-4 py-2 text-start text-sm font-medium text-gray-600',
+                                                                                    'dark:text-gray-300' => config('forms.dark_mode'),
+                                                                                ])
                             scope="col"
                         >
                             {{  $getKeyLabel()  }}
@@ -49,9 +49,9 @@
 
                         <th
                             @class([
-                                                        'whitespace-nowrap px-4 py-2 text-start text-sm font-medium text-gray-600',
-                                                        'dark:text-gray-300' => config('forms.dark_mode'),
-                                                    ])
+                                                                                    'whitespace-nowrap px-4 py-2 text-start text-sm font-medium text-gray-600',
+                                                                                    'dark:text-gray-300' => config('forms.dark_mode'),
+                                                                                ])
                             scope="col"
                         >
                             {{  $getValueLabel()  }}
@@ -76,9 +76,9 @@
                     @endif
                     x-ref="tableBody"
                     @class([
-                                            'divide-y whitespace-nowrap',
-                                            'dark:divide-gray-600' => config('forms.dark_mode'),
-                                        ])
+                                                                'divide-y whitespace-nowrap',
+                                                                'dark:divide-gray-600' => config('forms.dark_mode'),
+                                                            ])
                 >
                     <template
                         x-for="(row, index) in rows"
@@ -90,9 +90,9 @@
                                 x-bind:x-sortable-item="row.key"
                             @endif
                             @class([
-                                                            'divide-x rtl:divide-x-reverse',
-                                                            'dark:divide-gray-600' => config('forms.dark_mode'),
-                                                        ])
+                                                                                        'divide-x rtl:divide-x-reverse',
+                                                                                        'dark:divide-gray-600' => config('forms.dark_mode'),
+                                                                                    ])
                         >
                             <td>
                                 <input
@@ -169,9 +169,9 @@
                     x-on:click="addRow"
                     type="button"
                     @class([
-                                            'flex w-full items-center space-x-1 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50 rtl:space-x-reverse',
-                                            'dark:bg-gray-800/60 dark:text-white dark:hover:bg-gray-800/30' => config('forms.dark_mode'),
-                                        ])
+                                                                'flex w-full items-center space-x-1 px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-50 focus:bg-gray-50 rtl:space-x-reverse',
+                                                                'dark:bg-gray-800/60 dark:text-white dark:hover:bg-gray-800/30' => config('forms.dark_mode'),
+                                                            ])
                 >
                     <x-heroicon-s-plus class="h-4 w-4" />
 

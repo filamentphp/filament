@@ -1,9 +1,9 @@
 @php
     $isAside = $isAside();
-        $isCollapsed = $isCollapsed();
-        $isCollapsible = $isCollapsible() && (! $isAside);
-        $isCompact = $isCompact();
-        $isFormBefore = $isFormBefore();
+            $isCollapsed = $isCollapsed();
+            $isCollapsible = $isCollapsible() && (! $isAside);
+            $isCompact = $isCompact();
+            $isFormBefore = $isFormBefore();
 @endphp
 
 <div
@@ -33,28 +33,28 @@
     id="{{  $getId()  }}"
     {{
         $attributes->merge($getExtraAttributes())->class([
-                'filament-forms-section-component',
-                'rounded-xl border border-gray-300 bg-white' => ! $isAside,
-                'grid grid-cols-1' => $isAside,
-                'md:grid-cols-2' => $isAside && ! $isCompact,
-                'md:grid-cols-3' => $isAside && $isCompact,
-                'md:order-last' => $isFormBefore,
-                'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode')  && ! $isAside,
-            ])
+                        'filament-forms-section-component',
+                        'rounded-xl border border-gray-300 bg-white' => ! $isAside,
+                        'grid grid-cols-1' => $isAside,
+                        'md:grid-cols-2' => $isAside && ! $isCompact,
+                        'md:grid-cols-3' => $isAside && $isCompact,
+                        'md:order-last' => $isFormBefore,
+                        'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode')  && ! $isAside,
+                    ])
     }}
     {{  $getExtraAlpineAttributeBag()  }}
 >
     <div
         @class([
-                    'filament-forms-section-header-wrapper flex overflow-hidden rounded-t-xl rtl:space-x-reverse',
-                    'min-h-[40px]' => $isCompact,
-                    'min-h-[56px]' => ! $isCompact,
-                    'pb-4' => $isAside,
-                    'pr-6' => $isAside && ! $isFormBefore,
-                    'pl-6' => $isAside && $isFormBefore,
-                    'items-center bg-gray-100 px-4 py-2' => ! $isAside,
-                    'dark:bg-gray-900' => config('forms.dark_mode') && (! $isAside),
-                ])
+                            'filament-forms-section-header-wrapper flex overflow-hidden rounded-t-xl rtl:space-x-reverse',
+                            'min-h-[40px]' => $isCompact,
+                            'min-h-[56px]' => ! $isCompact,
+                            'pb-4' => $isAside,
+                            'pr-6' => $isAside && ! $isFormBefore,
+                            'pl-6' => $isAside && $isFormBefore,
+                            'items-center bg-gray-100 px-4 py-2' => ! $isAside,
+                            'dark:bg-gray-900' => config('forms.dark_mode') && (! $isAside),
+                        ])
         @if ($isCollapsible)
             x-bind:class="{ 'rounded-b-xl': isCollapsed }"
             x-on:click="isCollapsed = ! isCollapsed"
@@ -62,24 +62,24 @@
     >
         <div
             @class([
-                        'filament-forms-section-header flex-1 space-y-1',
-                        'cursor-pointer' => $isCollapsible,
-                    ])
+                                    'filament-forms-section-header flex-1 space-y-1',
+                                    'cursor-pointer' => $isCollapsible,
+                                ])
         >
             <h3
                 @class([
-                                'pointer-events-none flex flex-row items-center font-bold tracking-tight',
-                                'text-xl' => ! $isCompact || $isAside,
-                            ])
+                                                'pointer-events-none flex flex-row items-center font-bold tracking-tight',
+                                                'text-xl' => ! $isCompact || $isAside,
+                                            ])
             >
                 @if ($icon = $getIcon())
                     <x-dynamic-component
                         :component="$icon"
                         @class([
-                                                    'mr-1',
-                                                    'h-4 w-4' => $isCompact && ! $isAside,
-                                                    'h-6 w-6' => ! $isCompact || $isAside,
-                                                ])
+                                                                            'mr-1',
+                                                                            'h-4 w-4' => $isCompact && ! $isAside,
+                                                                            'h-6 w-6' => ! $isCompact || $isAside,
+                                                                        ])
                     />
                 @endif
 
@@ -89,10 +89,10 @@
             @if ($description = $getDescription())
                 <p
                     @class([
-                                        'text-gray-500',
-                                        'text-sm' => $isCompact && ! $isAside,
-                                        'text-base' => ! $isCompact || $isAside,
-                                    ])
+                                                            'text-gray-500',
+                                                            'text-sm' => $isCompact && ! $isAside,
+                                                            'text-base' => ! $isCompact || $isAside,
+                                                        ])
                 >
                     {{  $description  }}
                 </p>
@@ -107,17 +107,17 @@
                 }"
                 type="button"
                 @class([
-                                    'flex transform items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
-                                    'h-10 w-10' => ! $isCompact,
-                                    '-my-1 h-8 w-8' => $isCompact,
-                                    '-rotate-180' => ! $isCollapsed,
-                                ])
+                                                    'flex transform items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
+                                                    'h-10 w-10' => ! $isCompact,
+                                                    '-my-1 h-8 w-8' => $isCompact,
+                                                    '-rotate-180' => ! $isCollapsed,
+                                                ])
             >
                 <svg
                     @class([
-                                        'h-7 w-7' => ! $isCompact,
-                                        'h-5 w-5' => $isCompact,
-                                    ])
+                                                            'h-7 w-7' => ! $isCompact,
+                                                            'h-5 w-5' => $isCompact,
+                                                        ])
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -141,19 +141,19 @@
         @if ($isCollapsed) x-cloak @endif
         @endif
         @class([
-                    'filament-forms-section-content-wrapper',
-                    'col-span-2' => $isAside && $isCompact,
-                    'md:order-first' => $isFormBefore,
-                ])
+                            'filament-forms-section-content-wrapper',
+                            'col-span-2' => $isAside && $isCompact,
+                            'md:order-first' => $isFormBefore,
+                        ])
     >
         <div
             @class([
-                        'filament-forms-section-content',
-                        'rounded-xl border border-gray-300 bg-white' => $isAside,
-                        'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode') && $isAside,
-                        'p-6' => ! $isCompact || $isAside,
-                        'p-4' => $isCompact && ! $isAside,
-                    ])
+                                    'filament-forms-section-content',
+                                    'rounded-xl border border-gray-300 bg-white' => $isAside,
+                                    'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode') && $isAside,
+                                    'p-6' => ! $isCompact || $isAside,
+                                    'p-4' => $isCompact && ! $isAside,
+                                ])
         >
             {{  $getChildComponentContainer()  }}
         </div>

@@ -29,8 +29,8 @@
     "
     {{
         $attributes->merge($getExtraAttributes())->class([
-                'filament-tables-checkbox-column',
-            ])
+                        'filament-tables-checkbox-column',
+                    ])
     }}
 >
     <input type="hidden" value="{{  $state ? 1 : 0  }}" x-ref="newState" />
@@ -48,11 +48,11 @@
         x-tooltip="error"
         {{
             $attributes
-                            ->merge($getExtraInputAttributeBag()->getAttributes())
-                            ->class([
-                                'ml-4 rounded text-primary-600 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
-                                'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
-                            ])
+                                        ->merge($getExtraInputAttributeBag()->getAttributes())
+                                        ->class([
+                                            'ml-4 rounded text-primary-600 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
+                                            'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
+                                        ])
         }}
         x-bind:class="{
             'opacity-70 pointer-events-none': isLoading,

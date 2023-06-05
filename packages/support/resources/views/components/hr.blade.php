@@ -6,8 +6,8 @@
     aria-hidden="true"
     {{
         $attributes->class([
-            'filament-hr border-t',
-            'dark:border-gray-700' => $darkMode,
-        ])
+                    'filament-hr border-t',
+                    'dark:border-gray-700' => $darkMode,
+                ])
     }}
 ></div>

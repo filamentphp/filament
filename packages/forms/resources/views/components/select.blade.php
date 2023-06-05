@@ -1,9 +1,9 @@
 @php
     $affixLabelClasses = [
-            'whitespace-nowrap group-focus-within:text-primary-500',
-            'text-gray-400' => ! $errors->has($getStatePath()),
-            'text-danger-400' => $errors->has($getStatePath()),
-        ];
+                'whitespace-nowrap group-focus-within:text-primary-500',
+                'text-gray-400' => ! $errors->has($getStatePath()),
+                'text-danger-400' => $errors->has($getStatePath()),
+            ];
 @endphp
 
 <x-dynamic-component
@@ -50,13 +50,13 @@
                     @endif
                     {{
                         $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
-                                                'filament-forms-input block w-full rounded-lg text-gray-900 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
-                                                'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
-                                                'border-gray-300' => ! $errors->has($getStatePath()),
-                                                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                                                'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                                                'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
-                                            ])
+                                                                        'filament-forms-input block w-full rounded-lg text-gray-900 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                                                                        'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
+                                                                        'border-gray-300' => ! $errors->has($getStatePath()),
+                                                                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                                                                        'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                                                                        'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
+                                                                    ])
                     }}
                 >
                     @unless ($isPlaceholderSelectionDisabled())
@@ -111,9 +111,9 @@
                     wire:ignore
                     {{
                         $attributes
-                                                    ->merge($getExtraAttributes())
-                                                    ->merge($getExtraAlpineAttributes())
-                                                    ->class(['filament-forms-input'])
+                                                                            ->merge($getExtraAttributes())
+                                                                            ->merge($getExtraAlpineAttributes())
+                                                                            ->class(['filament-forms-input'])
                     }}
                     x-bind:class="{
                         'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),

@@ -1,6 +1,6 @@
 @php
     $state = $getState();
-        $isCopyable = $isCopyable();
+            $isCopyable = $isCopyable();
 @endphp
 
 <div
@@ -15,10 +15,10 @@
     @endif
     {{
         $attributes
-                    ->merge($getExtraAttributes())
-                    ->class([
-                        'filament-tables-color-column relative ml-4 flex h-6 w-6 rounded-md',
-                        'cursor-pointer' => $isCopyable,
-                    ])
+                            ->merge($getExtraAttributes())
+                            ->class([
+                                'filament-tables-color-column relative ml-4 flex h-6 w-6 rounded-md',
+                                'cursor-pointer' => $isCopyable,
+                            ])
     }}
 ></div>

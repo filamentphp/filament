@@ -44,8 +44,8 @@
             <trix-toolbar
                 id="trix-toolbar-{{  $getId()  }}"
                 @class([
-                                    'hidden' => ! count($getToolbarButtons()),
-                                ])
+                                                    'hidden' => ! count($getToolbarButtons()),
+                                                ])
             >
                 <div
                     class="flex items-stretch justify-between space-x-4 overflow-x-auto overflow-y-hidden rtl:space-x-reverse"
@@ -68,9 +68,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -96,9 +96,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -123,9 +123,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -150,9 +150,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -179,9 +179,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -250,9 +250,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -277,9 +277,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -304,9 +304,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -331,9 +331,9 @@
                                     >
                                         <svg
                                             @class([
-                                                                                        'h-4',
-                                                                                        'dark:fill-current' => config('forms.dark_mode'),
-                                                                                    ])
+                                                                                                                                    'h-4',
+                                                                                                                                    'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                ])
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
@@ -364,9 +364,9 @@
                                 >
                                     <svg
                                         @class([
-                                                                                'h-4',
-                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                            ])
+                                                                                                                        'h-4',
+                                                                                                                        'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                    ])
                                         aria-hidden="true"
                                         focusable="false"
                                         data-prefix="fas"
@@ -399,9 +399,9 @@
                                 >
                                     <svg
                                         @class([
-                                                                                'h-4',
-                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                            ])
+                                                                                                                        'h-4',
+                                                                                                                        'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                    ])
                                         aria-hidden="true"
                                         focusable="false"
                                         data-prefix="fas"
@@ -427,9 +427,9 @@
                                 >
                                     <svg
                                         @class([
-                                                                                'h-4',
-                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                            ])
+                                                                                                                        'h-4',
+                                                                                                                        'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                    ])
                                         aria-hidden="true"
                                         focusable="false"
                                         data-prefix="fas"
@@ -498,9 +498,9 @@
                 dusk="filament.forms.{{  $getStatePath()  }}"
                 {{
                     $getExtraInputAttributeBag()->class([
-                                        'prose block w-full max-w-none break-words rounded-lg bg-white shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
-                                        'dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-500' => config('forms.dark_mode'),
-                                    ])
+                                                            'prose block w-full max-w-none break-words rounded-lg bg-white shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
+                                                            'dark:prose-invert dark:bg-gray-700 dark:focus:border-primary-500' => config('forms.dark_mode'),
+                                                        ])
                 }}
                 x-bind:class="{
                     'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
@@ -513,9 +513,9 @@
             <div
                 x-html="state"
                 @class([
-                                'prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm',
-                                'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
-                            ])
+                                                'prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm',
+                                                'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
+                                            ])
             ></div>
         @endunless
     </div>

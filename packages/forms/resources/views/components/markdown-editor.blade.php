@@ -41,9 +41,9 @@
                                         <md-bold>
                                             <svg
                                                 @class([
-                                                                                                'h-4',
-                                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                                            ])
+                                                                                                                                                'h-4',
+                                                                                                                                                'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                            ])
                                                 aria-hidden="true"
                                                 focusable="false"
                                                 data-prefix="fas"
@@ -68,9 +68,9 @@
                                         <md-italic>
                                             <svg
                                                 @class([
-                                                                                                'h-4',
-                                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                                            ])
+                                                                                                                                                'h-4',
+                                                                                                                                                'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                            ])
                                                 aria-hidden="true"
                                                 focusable="false"
                                                 data-prefix="fas"
@@ -95,9 +95,9 @@
                                         <md-strikethrough>
                                             <svg
                                                 @class([
-                                                                                                'h-4',
-                                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                                            ])
+                                                                                                                                                'h-4',
+                                                                                                                                                'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                            ])
                                                 aria-hidden="true"
                                                 focusable="false"
                                                 data-prefix="fas"
@@ -122,9 +122,9 @@
                                         <md-link class="h-full w-full">
                                             <svg
                                                 @class([
-                                                                                                'h-4',
-                                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                                            ])
+                                                                                                                                                'h-4',
+                                                                                                                                                'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                            ])
                                                 aria-hidden="true"
                                                 focusable="false"
                                                 data-prefix="fas"
@@ -155,9 +155,9 @@
                                         <md-code class="h-full w-full">
                                             <svg
                                                 @class([
-                                                                                                'h-4',
-                                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                                            ])
+                                                                                                                                                'h-4',
+                                                                                                                                                'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                            ])
                                                 aria-hidden="true"
                                                 focusable="false"
                                                 data-prefix="fas"
@@ -184,9 +184,9 @@
                                         >
                                             <svg
                                                 @class([
-                                                                                                'h-4',
-                                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                                            ])
+                                                                                                                                                'h-4',
+                                                                                                                                                'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                            ])
                                                 aria-hidden="true"
                                                 focusable="false"
                                                 data-prefix="fas"
@@ -211,9 +211,9 @@
                                         <md-ordered-list class="h-full w-full">
                                             <svg
                                                 @class([
-                                                                                                'h-4',
-                                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                                            ])
+                                                                                                                                                'h-4',
+                                                                                                                                                'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                            ])
                                                 aria-hidden="true"
                                                 focusable="false"
                                                 data-prefix="fas"
@@ -247,9 +247,9 @@
                                         >
                                             <svg
                                                 @class([
-                                                                                                'h-4',
-                                                                                                'dark:fill-current' => config('forms.dark_mode'),
-                                                                                            ])
+                                                                                                                                                'h-4',
+                                                                                                                                                'dark:fill-current' => config('forms.dark_mode'),
+                                                                                                                                            ])
                                                 aria-hidden="true"
                                                 focusable="false"
                                                 data-prefix="fas"
@@ -291,9 +291,9 @@
                                     x-on:click.prevent="tab = 'preview'"
                                     x-bind:class="{ 'text-gray-400 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== 'preview' }"
                                     @class([
-                                                                            'text-sm hover:underline',
-                                                                            'text-gray-400' . (config('forms.dark_mode') ? 'dark:text-gray-400' : null),
-                                                                        ])
+                                                                                                                'text-sm hover:underline',
+                                                                                                                'text-gray-400' . (config('forms.dark_mode') ? 'dark:text-gray-400' : null),
+                                                                                                            ])
                                 >
                                     {{  __('forms::components.markdown_editor.toolbar_buttons.preview')  }}
                                 </button>
@@ -367,17 +367,17 @@
                     x-html="overlay"
                     style="min-height: 150px"
                     @class([
-                                            'h-full w-full whitespace-pre-wrap break-words rounded-lg border border-transparent bg-white px-3 py-2 font-mono text-sm tracking-normal text-gray-900',
-                                            'dark:border-gray-600 dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
-                                        ])
+                                                                'h-full w-full whitespace-pre-wrap break-words rounded-lg border border-transparent bg-white px-3 py-2 font-mono text-sm tracking-normal text-gray-900',
+                                                                'dark:border-gray-600 dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
+                                                            ])
                 ></div>
             </div>
 
             <div
                 @class([
-                                'prose block h-full min-h-full w-full max-w-none break-words rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-primary-300',
-                                'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
-                            ])
+                                                'prose block h-full min-h-full w-full max-w-none break-words rounded-lg border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-primary-300',
+                                                'dark:prose-invert dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
+                                            ])
                 x-show="tab === 'preview'"
                 x-html="preview"
                 x-cloak

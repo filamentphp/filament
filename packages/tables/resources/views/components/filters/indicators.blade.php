@@ -19,9 +19,9 @@
 
                     <span
                         @class([
-                                                'filament-tables-filter-indicator min-h-6 inline-flex items-center justify-center whitespace-normal rounded-xl bg-gray-500/10 px-2 py-0.5 text-xs font-medium tracking-tight text-gray-700',
-                                                'dark:bg-gray-500/20 dark:text-gray-300' => config('tables.dark_mode'),
-                                            ])
+                                                                        'filament-tables-filter-indicator min-h-6 inline-flex items-center justify-center whitespace-normal rounded-xl bg-gray-500/10 px-2 py-0.5 text-xs font-medium tracking-tight text-gray-700',
+                                                                        'dark:bg-gray-500/20 dark:text-gray-300' => config('tables.dark_mode'),
+                                                                    ])
                     >
                         {{  $indicator  }}
 
@@ -49,9 +49,9 @@
                 wire:click="removeTableFilters"
                 type="button"
                 @class([
-                                    '-mb-1.5 -mr-2 -mt-0.5 rounded-full p-1.5 text-gray-600 hover:bg-gray-500/10 hover:text-gray-700',
-                                    'dark:text-gray-400 dark:hover:bg-gray-500/20 dark:hover:text-gray-300' => config('tables.dark_mode'),
-                                ])
+                                                    '-mb-1.5 -mr-2 -mt-0.5 rounded-full p-1.5 text-gray-600 hover:bg-gray-500/10 hover:text-gray-700',
+                                                    'dark:text-gray-400 dark:hover:bg-gray-500/20 dark:hover:text-gray-300' => config('tables.dark_mode'),
+                                                ])
             >
                 <div class="flex h-5 w-5 items-center justify-center">
                     <x-heroicon-s-x

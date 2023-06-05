@@ -1,69 +1,69 @@
 @php
     use Filament\Tables\Actions\Position as ActionsPosition;
-        use Filament\Tables\Filters\Layout as FiltersLayout;
-        use Filament\Tables\Actions\RecordCheckboxPosition;
+            use Filament\Tables\Filters\Layout as FiltersLayout;
+            use Filament\Tables\Actions\RecordCheckboxPosition;
 
-        $actions = $getActions();
-        $actionsPosition = $getActionsPosition();
-        $actionsColumnLabel = $getActionsColumnLabel();
-        $columns = $getColumns();
-        $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
-        $content = $getContent();
-        $contentGrid = $getContentGrid();
-        $contentFooter = $getContentFooter();
-        $filterIndicators = collect($getFilters())
-            ->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])
-            ->filter(fn (array $indicators): bool => count($indicators))
-            ->all();
-        $hasColumnsLayout = $hasColumnsLayout();
-        $header = $getHeader();
-        $headerActions = $getHeaderActions();
-        $heading = $getHeading();
-        $description = $getDescription();
-        $isReorderable = $isReorderable();
-        $isReordering = $isReordering();
-        $isColumnSearchVisible = $isSearchableByColumn();
-        $isGlobalSearchVisible = $isSearchable();
-        $isSelectionEnabled = $isSelectionEnabled();
-        $recordCheckboxPosition = $getRecordCheckboxPosition();
-        $isStriped = $isStriped();
-        $isLoaded = $isLoaded();
-        $hasFilters = $isFilterable();
-        $filtersLayout = $getFiltersLayout();
-        $hasFiltersPopover = $hasFilters && ($filtersLayout === FiltersLayout::Popover);
-        $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
-        $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
-        $hasFiltersAfterContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
-        $isColumnToggleFormVisible = $hasToggleableColumns();
-        $records = $isLoaded ? $getRecords() : null;
-        $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
-        $columnsCount = count($columns);
-        if (count($actions) && (! $isReordering)) $columnsCount++;
-        if ($isSelectionEnabled || $isReordering) $columnsCount++;
+            $actions = $getActions();
+            $actionsPosition = $getActionsPosition();
+            $actionsColumnLabel = $getActionsColumnLabel();
+            $columns = $getColumns();
+            $collapsibleColumnsLayout = $getCollapsibleColumnsLayout();
+            $content = $getContent();
+            $contentGrid = $getContentGrid();
+            $contentFooter = $getContentFooter();
+            $filterIndicators = collect($getFilters())
+                ->mapWithKeys(fn (\Filament\Tables\Filters\BaseFilter $filter): array => [$filter->getName() => $filter->getIndicators()])
+                ->filter(fn (array $indicators): bool => count($indicators))
+                ->all();
+            $hasColumnsLayout = $hasColumnsLayout();
+            $header = $getHeader();
+            $headerActions = $getHeaderActions();
+            $heading = $getHeading();
+            $description = $getDescription();
+            $isReorderable = $isReorderable();
+            $isReordering = $isReordering();
+            $isColumnSearchVisible = $isSearchableByColumn();
+            $isGlobalSearchVisible = $isSearchable();
+            $isSelectionEnabled = $isSelectionEnabled();
+            $recordCheckboxPosition = $getRecordCheckboxPosition();
+            $isStriped = $isStriped();
+            $isLoaded = $isLoaded();
+            $hasFilters = $isFilterable();
+            $filtersLayout = $getFiltersLayout();
+            $hasFiltersPopover = $hasFilters && ($filtersLayout === FiltersLayout::Popover);
+            $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
+            $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
+            $hasFiltersAfterContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
+            $isColumnToggleFormVisible = $hasToggleableColumns();
+            $records = $isLoaded ? $getRecords() : null;
+            $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
+            $columnsCount = count($columns);
+            if (count($actions) && (! $isReordering)) $columnsCount++;
+            if ($isSelectionEnabled || $isReordering) $columnsCount++;
 
-        $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
-            if ($breakpoint = $column->getHiddenFrom()) {
-                return match ($breakpoint) {
-                    'sm' => 'sm:hidden',
-                    'md' => 'md:hidden',
-                    'lg' => 'lg:hidden',
-                    'xl' => 'xl:hidden',
-                    '2xl' => '2xl:hidden',
-                };
-            }
+            $getHiddenClasses = function (\Filament\Tables\Columns\Column $column): ?string {
+                if ($breakpoint = $column->getHiddenFrom()) {
+                    return match ($breakpoint) {
+                        'sm' => 'sm:hidden',
+                        'md' => 'md:hidden',
+                        'lg' => 'lg:hidden',
+                        'xl' => 'xl:hidden',
+                        '2xl' => '2xl:hidden',
+                    };
+                }
 
-            if ($breakpoint = $column->getVisibleFrom()) {
-                return match ($breakpoint) {
-                    'sm' => 'hidden sm:table-cell',
-                    'md' => 'hidden md:table-cell',
-                    'lg' => 'hidden lg:table-cell',
-                    'xl' => 'hidden xl:table-cell',
-                    '2xl' => 'hidden 2xl:table-cell',
-                };
-            }
+                if ($breakpoint = $column->getVisibleFrom()) {
+                    return match ($breakpoint) {
+                        'sm' => 'hidden sm:table-cell',
+                        'md' => 'hidden md:table-cell',
+                        'lg' => 'hidden lg:table-cell',
+                        'xl' => 'hidden xl:table-cell',
+                        '2xl' => 'hidden 2xl:table-cell',
+                    };
+                }
 
-            return null;
-        };
+                return null;
+            };
 @endphp
 
 <div
@@ -178,9 +178,9 @@
             @elseif ($heading || $headerActions)
                 <div
                     @class([
-                                        'px-2 pt-2',
-                                        'hidden' => ! $heading && $isReordering,
-                                    ])
+                                                            'px-2 pt-2',
+                                                            'hidden' => ! $heading && $isReordering,
+                                                        ])
                 >
                     <x-tables::header
                         :actions="$isReordering ? [] : $headerActions"
@@ -317,12 +317,12 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                            'filament-tables-table-container relative overflow-x-auto',
-                            'dark:border-gray-700' => config('tables.dark_mode'),
-                            'overflow-x-auto' => $content || $hasColumnsLayout,
-                            'rounded-t-xl' => ! $renderHeader,
-                            'border-t' => $renderHeader,
-                        ])
+                                        'filament-tables-table-container relative overflow-x-auto',
+                                        'dark:border-gray-700' => config('tables.dark_mode'),
+                                        'overflow-x-auto' => $content || $hasColumnsLayout,
+                                        'rounded-t-xl' => ! $renderHeader,
+                                        'border-t' => $renderHeader,
+                                    ])
             x-bind:class="{
                 'rounded-t-xl': ! hasHeader,
                 'border-t': hasHeader,
@@ -332,17 +332,17 @@
                 @if (($content || $hasColumnsLayout) && (! $isReordering))
                     @php
                         $sortableColumns = array_filter(
-                                                    $columns,
-                                                    fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
-                                                );
+                                                                            $columns,
+                                                                            fn (\Filament\Tables\Columns\Column $column): bool => $column->isSortable(),
+                                                                        );
                     @endphp
 
                     <div
                         @class([
-                                                'flex items-center gap-4 border-b bg-gray-500/5 px-4',
-                                                'dark:border-gray-700' => config('tables.dark_mode'),
-                                                'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
-                                            ])
+                                                                        'flex items-center gap-4 border-b bg-gray-500/5 px-4',
+                                                                        'dark:border-gray-700' => config('tables.dark_mode'),
+                                                                        'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
+                                                                    ])
                     >
                         @if ($isSelectionEnabled)
                             <x-tables::checkbox
@@ -402,9 +402,9 @@
                                                 center;
                                         "
                                         @class([
-                                                                                    'rounded-lg border-0 border-gray-300 bg-gray-500/5 py-1 pl-2 pr-6 text-xs font-medium focus:border-primary-500 focus:ring-0 focus:ring-primary-500 sm:text-sm',
-                                                                                    'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('tables.dark_mode'),
-                                                                                ])
+                                                                                                                            'rounded-lg border-0 border-gray-300 bg-gray-500/5 py-1 pl-2 pr-6 text-xs font-medium focus:border-primary-500 focus:ring-0 focus:ring-primary-500 sm:text-sm',
+                                                                                                                            'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('tables.dark_mode'),
+                                                                                                                        ])
                                     >
                                         <option value="">-</option>
                                         @foreach ($sortableColumns as $column)
@@ -430,9 +430,9 @@
                                                 center;
                                         "
                                         @class([
-                                                                                    'rounded-lg border-0 border-gray-300 bg-gray-500/5 py-1 pl-2 pr-6 text-xs font-medium focus:border-primary-500 focus:ring-0 focus:ring-primary-500 sm:text-sm',
-                                                                                    'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('tables.dark_mode'),
-                                                                                ])
+                                                                                                                            'rounded-lg border-0 border-gray-300 bg-gray-500/5 py-1 pl-2 pr-6 text-xs font-medium focus:border-primary-500 focus:ring-0 focus:ring-primary-500 sm:text-sm',
+                                                                                                                            'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('tables.dark_mode'),
+                                                                                                                        ])
                                     >
                                         <option value="asc">
                                             {{  __('tables::table.sorting.fields.direction.options.asc')  }}
@@ -469,11 +469,11 @@
                         @foreach ($records as $record)
                             @php
                                 $recordAction = $getRecordAction($record);
-                                                                $recordKey = $getRecordKey($record);
-                                                                $recordUrl = $getRecordUrl($record);
+                                                                                                $recordKey = $getRecordKey($record);
+                                                                                                $recordUrl = $getRecordUrl($record);
 
-                                                                $collapsibleColumnsLayout?->record($record);
-                                                                $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
+                                                                                                $collapsibleColumnsLayout?->record($record);
+                                                                                                $hasCollapsibleColumnsLayout = $collapsibleColumnsLayout && (! $collapsibleColumnsLayout->isHidden());
                             @endphp
 
                             <div
@@ -494,23 +494,23 @@
                                         'bg-gray-50 {{  config('tables.dark_mode') ? 'dark:bg-gray-500/10' : ''  }}': isRecordSelected('{{  $recordKey  }}'),
                                     }"
                                     @class(array_merge(
-                                                                            [
-                                                                                'relative h-full px-4 transition',
-                                                                                'hover:bg-gray-50' => $recordUrl || $recordAction,
-                                                                                'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
-                                                                                'dark:border-gray-600' => (! $contentGrid) && config('tables.dark_mode'),
-                                                                                'group' => $isReordering,
-                                                                                'rounded-xl border border-gray-200 shadow-sm' => $contentGrid,
-                                                                                'dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid && config('tables.dark_mode'),
-                                                                            ],
-                                                                            $getRecordClasses($record),
-                                                                        ))
+                                                                                                                [
+                                                                                                                    'relative h-full px-4 transition',
+                                                                                                                    'hover:bg-gray-50' => $recordUrl || $recordAction,
+                                                                                                                    'dark:hover:bg-gray-500/10' => ($recordUrl || $recordAction) && config('tables.dark_mode'),
+                                                                                                                    'dark:border-gray-600' => (! $contentGrid) && config('tables.dark_mode'),
+                                                                                                                    'group' => $isReordering,
+                                                                                                                    'rounded-xl border border-gray-200 shadow-sm' => $contentGrid,
+                                                                                                                    'dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid && config('tables.dark_mode'),
+                                                                                                                ],
+                                                                                                                $getRecordClasses($record),
+                                                                                                            ))
                                 >
                                     <div
                                         @class([
-                                                                                'items-center gap-4 md:mr-0 md:flex rtl:md:ml-0' => (! $contentGrid),
-                                                                                'mr-6 rtl:ml-6 rtl:mr-0' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
-                                                                            ])
+                                                                                                                        'items-center gap-4 md:mr-0 md:flex rtl:md:ml-0' => (! $contentGrid),
+                                                                                                                        'mr-6 rtl:ml-6 rtl:mr-0' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
+                                                                                                                    ])
                                     >
                                         <x-tables::reorder.handle
                                             :class="\Illuminate\Support\Arr::toCssClasses([
@@ -536,12 +536,12 @@
                                         @if ($hasCollapsibleColumnsLayout)
                                             <div
                                                 @class([
-                                                                                                'absolute right-1 rtl:left-1 rtl:right-auto',
-                                                                                                'top-10' => $isSelectionEnabled,
-                                                                                                'top-1' => ! $isSelectionEnabled,
-                                                                                                'md:relative md:right-0 md:top-0 rtl:md:left-0' => ! $contentGrid,
-                                                                                                'hidden' => $isReordering,
-                                                                                            ])
+                                                                                                                                                'absolute right-1 rtl:left-1 rtl:right-auto',
+                                                                                                                                                'top-10' => $isSelectionEnabled,
+                                                                                                                                                'top-1' => ! $isSelectionEnabled,
+                                                                                                                                                'md:relative md:right-0 md:top-0 rtl:md:left-0' => ! $contentGrid,
+                                                                                                                                                'hidden' => $isReordering,
+                                                                                                                                            ])
                                             >
                                                 <x-tables::icon-button
                                                     icon="heroicon-s-chevron-down"
@@ -569,10 +569,10 @@
                                         @elseif ($recordAction)
                                             @php
                                                 if ($this->getCachedTableAction($recordAction)) {
-                                                                                                    $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
-                                                                                                } else {
-                                                                                                    $recordWireClickAction = "{$recordAction}('{$recordKey}')";
-                                                                                                }
+                                                                                                                                                    $recordWireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                                                                                                                                } else {
+                                                                                                                                                    $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                                                                                                                }
                                             @endphp
 
                                             <button
@@ -624,11 +624,11 @@
                                             x-collapse
                                             x-cloak
                                             @class([
-                                                                                            '-mx-2 pb-2',
-                                                                                            'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
-                                                                                            'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
-                                                                                            'hidden' => $isReordering,
-                                                                                        ])
+                                                                                                                                        '-mx-2 pb-2',
+                                                                                                                                        'md:pl-20 rtl:md:pl-0 rtl:md:pr-20' => (! $contentGrid) && $isSelectionEnabled,
+                                                                                                                                        'md:pl-12 rtl:md:pl-0 rtl:md:pr-12' => (! $contentGrid) && (! $isSelectionEnabled),
+                                                                                                                                        'hidden' => $isReordering,
+                                                                                                                                    ])
                                         >
                                             {{  $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey])  }}
                                         </div>
@@ -792,8 +792,8 @@
                         @foreach ($records as $record)
                             @php
                                 $recordAction = $getRecordAction($record);
-                                                                $recordKey = $getRecordKey($record);
-                                                                $recordUrl = $getRecordUrl($record);
+                                                                                                $recordKey = $getRecordKey($record);
+                                                                                                $recordUrl = $getRecordUrl($record);
                             @endphp
 
                             <x-tables::row
@@ -871,7 +871,7 @@
                                 @foreach ($columns as $column)
                                     @php
                                         $column->record($record);
-                                                                                $column->rowLoop($loop->parent);
+                                                                                                                        $column->rowLoop($loop->parent);
                                     @endphp
 
                                     <x-tables::cell
@@ -960,9 +960,9 @@
                 >
                     <div
                         @class([
-                                                'flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500',
-                                                'dark:bg-gray-700' => config('tables.dark_mode'),
-                                            ])
+                                                                        'flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500',
+                                                                        'dark:bg-gray-700' => config('tables.dark_mode'),
+                                                                    ])
                     >
                         <x-filament-support::loading-indicator
                             class="h-6 w-6"
@@ -993,14 +993,14 @@
         </div>
 
         @if (
-                         $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
-                         ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
-                     )
+                                      $records instanceof \Illuminate\Contracts\Pagination\Paginator &&
+                                      ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total())
+                                  )
             <div
                 @class([
-                                'filament-tables-pagination-container border-t p-2',
-                                'dark:border-gray-700' => config('tables.dark_mode'),
-                            ])
+                                                'filament-tables-pagination-container border-t p-2',
+                                                'dark:border-gray-700' => config('tables.dark_mode'),
+                                            ])
             >
                 <x-tables::pagination
                     :paginator="$records"

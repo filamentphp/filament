@@ -29,9 +29,9 @@
     {!!  $getId() ? "id=\"{$getId()}\"" : null  !!}
     {{
         $attributes->merge($getExtraAttributes())->class([
-                'filament-forms-tabs-component rounded-xl border border-gray-300 bg-white shadow-sm',
-                'dark:border-gray-700 dark:bg-gray-800' => config('forms.dark_mode'),
-            ])
+                        'filament-forms-tabs-component rounded-xl border border-gray-300 bg-white shadow-sm',
+                        'dark:border-gray-700 dark:bg-gray-800' => config('forms.dark_mode'),
+                    ])
     }}
     {{  $getExtraAlpineAttributeBag()  }}
     wire:key="{{  $this->id  }}.{{  $getStatePath()  }}.{{  \Filament\Forms\Components\Tabs::class  }}.container"
@@ -40,10 +40,10 @@
         type="hidden"
         value="{{
             collect($getChildComponentContainer()->getComponents())
-                            ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => ! $tab->isHidden())
-                            ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
-                            ->values()
-                            ->toJson()
+                                        ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => ! $tab->isHidden())
+                                        ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
+                                        ->values()
+                                        ->toJson()
         }}"
         x-ref="tabsData"
     />
@@ -52,26 +52,26 @@
         {!!  $getLabel() ? 'aria-label="' . $getLabel() . '"' : null  !!}
         role="tablist"
         @class([
-                    'filament-forms-tabs-component-header flex overflow-y-auto rounded-t-xl bg-gray-100',
-                    'dark:bg-gray-700' => config('forms.dark_mode'),
-                ])
+                            'filament-forms-tabs-component-header flex overflow-y-auto rounded-t-xl bg-gray-100',
+                            'dark:bg-gray-700' => config('forms.dark_mode'),
+                        ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $tab)
             @php
                 $icon = $tab->getIcon();
-                                $iconPosition = $tab->getIconPosition();
-                                $iconColor = $tab->getIconColor();
+                                                $iconPosition = $tab->getIconPosition();
+                                                $iconColor = $tab->getIconColor();
 
-                                $iconColorClasses = \Illuminate\Support\Arr::toCssClasses(
-                                    match ($iconColor) {
-                                        'danger' => ['text-danger-700', 'dark:text-danger-500' => config('tables.dark_mode')],
-                                        'primary' => ['text-primary-700', 'dark:text-primary-500' => config('tables.dark_mode')],
-                                        'success' => ['text-success-700', 'dark:text-success-500' => config('tables.dark_mode')],
-                                        'warning' => ['text-warning-700', 'dark:text-warning-500' => config('tables.dark_mode')],
-                                        'secondary' => ['text-gray-700', 'dark:text-gray-300' => config('tables.dark_mode')],
-                                        default => [$iconColor],
-                                    },
-                                );
+                                                $iconColorClasses = \Illuminate\Support\Arr::toCssClasses(
+                                                    match ($iconColor) {
+                                                        'danger' => ['text-danger-700', 'dark:text-danger-500' => config('tables.dark_mode')],
+                                                        'primary' => ['text-primary-700', 'dark:text-primary-500' => config('tables.dark_mode')],
+                                                        'success' => ['text-success-700', 'dark:text-success-500' => config('tables.dark_mode')],
+                                                        'warning' => ['text-warning-700', 'dark:text-warning-500' => config('tables.dark_mode')],
+                                                        'secondary' => ['text-gray-700', 'dark:text-gray-300' => config('tables.dark_mode')],
+                                                        default => [$iconColor],
+                                                    },
+                                                );
             @endphp
 
             <button
@@ -91,9 +91,9 @@
                     <x-dynamic-component
                         :component="$icon"
                         @class([
-                                                    'w-4 h-4',
-                                                    $iconColorClasses,
-                                                ])
+                                                                            'w-4 h-4',
+                                                                            $iconColorClasses,
+                                                                        ])
                     />
                 @endif
 
@@ -103,9 +103,9 @@
                     <x-dynamic-component
                         :component="$icon"
                         @class([
-                                                    'w-4 h-4',
-                                                    $iconColorClasses,
-                                                ])
+                                                                            'w-4 h-4',
+                                                                            $iconColorClasses,
+                                                                        ])
                     />
                 @endif
 

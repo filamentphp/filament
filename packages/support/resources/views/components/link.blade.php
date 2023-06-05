@@ -14,38 +14,38 @@
 
 @php
     $linkClasses = [
-            'filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline',
-            'pointer-events-none cursor-not-allowed opacity-70' => $disabled,
-            'text-sm' => $size === 'sm',
-            'text-lg' => $size === 'lg',
-            'text-primary-600 hover:text-primary-500' => $color === 'primary',
-            'text-danger-600 hover:text-danger-500' => $color === 'danger',
-            'text-gray-600 hover:text-gray-500' => $color === 'secondary',
-            'text-success-600 hover:text-success-500' => $color === 'success',
-            'text-warning-600 hover:text-warning-500' => $color === 'warning',
-            'dark:text-primary-500 dark:hover:text-primary-400' => $color === 'primary' && $darkMode,
-            'dark:text-danger-500 dark:hover:text-danger-400' => $color === 'danger' && $darkMode,
-            'dark:text-gray-300 dark:hover:text-gray-200' => $color === 'secondary' && $darkMode,
-            'dark:text-success-500 dark:hover:text-success-400' => $color === 'success' && $darkMode,
-            'dark:text-warning-500 dark:hover:text-warning-400' => $color === 'warning' && $darkMode,
-        ];
+                'filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline',
+                'pointer-events-none cursor-not-allowed opacity-70' => $disabled,
+                'text-sm' => $size === 'sm',
+                'text-lg' => $size === 'lg',
+                'text-primary-600 hover:text-primary-500' => $color === 'primary',
+                'text-danger-600 hover:text-danger-500' => $color === 'danger',
+                'text-gray-600 hover:text-gray-500' => $color === 'secondary',
+                'text-success-600 hover:text-success-500' => $color === 'success',
+                'text-warning-600 hover:text-warning-500' => $color === 'warning',
+                'dark:text-primary-500 dark:hover:text-primary-400' => $color === 'primary' && $darkMode,
+                'dark:text-danger-500 dark:hover:text-danger-400' => $color === 'danger' && $darkMode,
+                'dark:text-gray-300 dark:hover:text-gray-200' => $color === 'secondary' && $darkMode,
+                'dark:text-success-500 dark:hover:text-success-400' => $color === 'success' && $darkMode,
+                'dark:text-warning-500 dark:hover:text-warning-400' => $color === 'warning' && $darkMode,
+            ];
 
-        $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-            'filament-link-icon',
-            'w-4 h-4' => $size === 'sm',
-            'w-5 h-5' => $size === 'md',
-            'w-6 h-6' => $size === 'lg',
-            'mr-1 rtl:ml-1' => $iconPosition === 'before',
-            'ml-1 rtl:mr-1' => $iconPosition === 'after'
-        ]);
+            $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+                'filament-link-icon',
+                'w-4 h-4' => $size === 'sm',
+                'w-5 h-5' => $size === 'md',
+                'w-6 h-6' => $size === 'lg',
+                'mr-1 rtl:ml-1' => $iconPosition === 'before',
+                'ml-1 rtl:mr-1' => $iconPosition === 'after'
+            ]);
 
-        $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+            $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
-        $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
+            $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
-        if ($hasLoadingIndicator) {
-            $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
-        }
+            if ($hasLoadingIndicator) {
+                $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
+            }
 @endphp
 
 @if ($tag === 'a')

@@ -5,9 +5,9 @@
 
 @php
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
-        $isRtl = __('filament::layout.direction') === 'rtl';
-        $previousArrowIcon = $isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left';
-        $nextArrowIcon = $isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right';
+            $isRtl = __('filament::layout.direction') === 'rtl';
+            $previousArrowIcon = $isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left';
+            $nextArrowIcon = $isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right';
 @endphp
 
 <nav
@@ -62,20 +62,20 @@
             @else
                 <div
                     @class([
-                                        'pl-2 text-sm font-medium',
-                                        'dark:text-white' => config('tables.dark_mode'),
-                                    ])
+                                                            'pl-2 text-sm font-medium',
+                                                            'dark:text-white' => config('tables.dark_mode'),
+                                                        ])
                 >
                     {{
                         trans_choice(
-                                                'tables::table.pagination.overview',
-                                                $paginator->total(),
-                                                [
-                                                    'first' => $paginator->firstItem(),
-                                                    'last' => $paginator->lastItem(),
-                                                    'total' => $paginator->total(),
-                                                ],
-                                            )
+                                                                        'tables::table.pagination.overview',
+                                                                        $paginator->total(),
+                                                                        [
+                                                                            'first' => $paginator->firstItem(),
+                                                                            'last' => $paginator->lastItem(),
+                                                                            'total' => $paginator->total(),
+                                                                        ],
+                                                                    )
                     }}
                 </div>
             @endif
@@ -107,15 +107,15 @@
                 @if ($paginator->hasPages())
                     <div
                         @class([
-                                                'rounded-lg border py-3',
-                                                'dark:border-gray-600' => config('tables.dark_mode'),
-                                            ])
+                                                                        'rounded-lg border py-3',
+                                                                        'dark:border-gray-600' => config('tables.dark_mode'),
+                                                                    ])
                     >
                         <ol
                             @class([
-                                                        'flex items-center gap-px divide-x divide-gray-300 text-sm text-gray-500 rtl:divide-x-reverse',
-                                                        'dark:divide-gray-600 dark:text-gray-400' => config('tables.dark_mode'),
-                                                    ])
+                                                                                    'flex items-center gap-px divide-x divide-gray-300 text-sm text-gray-500 rtl:divide-x-reverse',
+                                                                                    'dark:divide-gray-600 dark:text-gray-400' => config('tables.dark_mode'),
+                                                                                ])
                         >
                             @if (! $paginator->onFirstPage())
                                 <x-tables::pagination.item

@@ -23,9 +23,9 @@
         {{ $slot }}@if ($required)<span class="whitespace-nowrap">
                 <sup
                     @class([
-                                        'text-danger-700 font-medium',
-                                        'dark:text-danger-400' => config('forms.dark_mode'),
-                                    ])
+                                                            'text-danger-700 font-medium',
+                                                            'dark:text-danger-400' => config('forms.dark_mode'),
+                                                        ])
                 >
                     *
                 </sup>

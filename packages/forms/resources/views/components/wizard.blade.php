@@ -1,7 +1,7 @@
 @php
     $isRtl = __('filament::layout.direction') === 'rtl';
-        $previousArrowIcon = $isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left';
-        $nextArrowIcon = $isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right';
+            $previousArrowIcon = $isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left';
+            $nextArrowIcon = $isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right';
 @endphp
 
 <div
@@ -91,10 +91,10 @@
         type="hidden"
         value="{{
             collect($getChildComponentContainer()->getComponents())
-                            ->filter(static fn (\Filament\Forms\Components\Wizard\Step $step): bool => ! $step->isHidden())
-                            ->map(static fn (\Filament\Forms\Components\Wizard\Step $step) => $step->getId())
-                            ->values()
-                            ->toJson()
+                                        ->filter(static fn (\Filament\Forms\Components\Wizard\Step $step): bool => ! $step->isHidden())
+                                        ->map(static fn (\Filament\Forms\Components\Wizard\Step $step) => $step->getId())
+                                        ->values()
+                                        ->toJson()
         }}"
         x-ref="stepsData"
     />
@@ -103,9 +103,9 @@
         {!!  $getLabel() ? 'aria-label="' . $getLabel() . '"' : null  !!}
         role="list"
         @class([
-                    'filament-forms-wizard-component-header divide-y divide-gray-300 overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm md:flex md:divide-y-0',
-                    'dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800' => config('forms.dark_mode'),
-                ])
+                            'filament-forms-wizard-component-header divide-y divide-gray-300 overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm md:flex md:divide-y-0',
+                            'dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800' => config('forms.dark_mode'),
+                        ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
             <li
@@ -184,9 +184,9 @@
                             @if (filled($description = $step->getDescription()))
                                 <div
                                     @class([
-                                                                        'filament-forms-wizard-component-header-step-description text-sm font-medium leading-4 text-gray-500',
-                                                                        'dark:text-gray-400' => config('forms.dark_mode'),
-                                                                    ])
+                                                                                                            'filament-forms-wizard-component-header-step-description text-sm font-medium leading-4 text-gray-500',
+                                                                                                            'dark:text-gray-400' => config('forms.dark_mode'),
+                                                                                                        ])
                                 >
                                     {{  $description  }}
                                 </div>
@@ -202,9 +202,9 @@
                     >
                         <svg
                             @class([
-                                                        'h-full w-full text-gray-300 rtl:rotate-180',
-                                                        'dark:text-gray-700' => config('forms.dark_mode'),
-                                                    ])
+                                                                                    'h-full w-full text-gray-300 rtl:rotate-180',
+                                                                                    'dark:text-gray-700' => config('forms.dark_mode'),
+                                                                                ])
                             viewBox="0 0 12 82"
                             fill="none"
                             preserveAspectRatio="none"

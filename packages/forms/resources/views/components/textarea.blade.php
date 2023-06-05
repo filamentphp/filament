@@ -29,15 +29,15 @@
         @endif
         {{
             $attributes
-                            ->merge($getExtraAttributes())
-                            ->merge($getExtraInputAttributeBag()->getAttributes())
-                            ->class([
-                                'filament-forms-textarea-component filament-forms-input block w-full rounded-lg shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
-                                'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
-                                'border-gray-300' => ! $errors->has($getStatePath()),
-                                'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                                'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode')
-                            ])
+                                        ->merge($getExtraAttributes())
+                                        ->merge($getExtraInputAttributeBag()->getAttributes())
+                                        ->class([
+                                            'filament-forms-textarea-component filament-forms-input block w-full rounded-lg shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                                            'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
+                                            'border-gray-300' => ! $errors->has($getStatePath()),
+                                            'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                                            'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode')
+                                        ])
         }}
         @if ($shouldAutosize())
             x-data="textareaFormComponent()"

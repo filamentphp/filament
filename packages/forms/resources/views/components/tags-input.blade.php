@@ -23,13 +23,13 @@
         <div
             x-show="state.length || {{  $isDisabled() ? 'false' : 'true'  }}"
             @class([
-                            'block w-full divide-y overflow-hidden rounded-lg border shadow-sm transition duration-75 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500',
-                            'dark:divide-gray-600' => config('forms.dark_mode'),
-                            'border-gray-300' => ! $errors->has($getStatePath()),
-                            'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                            'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
-                            'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
-                        ])
+                                        'block w-full divide-y overflow-hidden rounded-lg border shadow-sm transition duration-75 focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500',
+                                        'dark:divide-gray-600' => config('forms.dark_mode'),
+                                        'border-gray-300' => ! $errors->has($getStatePath()),
+                                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                                        'border-danger-600 ring-1 ring-inset ring-danger-600' => $errors->has($getStatePath()),
+                                        'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
+                                    ])
         >
             @unless ($isDisabled())
                 <div>
@@ -56,9 +56,9 @@
                         x-model="newTag"
                         {{
                             $getExtraInputAttributeBag()->class([
-                                                        'webkit-calendar-picker-indicator:opacity-0 block w-full border-0',
-                                                        'dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400' => config('forms.dark_mode'),
-                                                    ])
+                                                                                    'webkit-calendar-picker-indicator:opacity-0 block w-full border-0',
+                                                                                    'dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400' => config('forms.dark_mode'),
+                                                                                ])
                         }}
                     />
 
@@ -93,10 +93,10 @@
                             type="button"
                             x-bind:dusk="'filament.forms.{{  $getStatePath()  }}' + '.tag.' + tag + '.delete'"
                             @class([
-                                                            'min-h-6 inline-flex items-center justify-center space-x-1 rounded-xl bg-primary-500/10 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rtl:space-x-reverse',
-                                                            'dark:text-primary-500' => config('forms.dark_mode'),
-                                                            'cursor-default' => $isDisabled(),
-                                                        ])
+                                                                                        'min-h-6 inline-flex items-center justify-center space-x-1 rounded-xl bg-primary-500/10 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rtl:space-x-reverse',
+                                                                                        'dark:text-primary-500' => config('forms.dark_mode'),
+                                                                                        'cursor-default' => $isDisabled(),
+                                                                                    ])
                         >
                             <span class="text-start" x-text="tag"></span>
 

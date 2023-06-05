@@ -13,11 +13,11 @@
 >
     @php
         $imageCropAspectRatio = $getImageCropAspectRatio();
-                $imageResizeTargetHeight = $getImageResizeTargetHeight();
-                $imageResizeTargetWidth = $getImageResizeTargetWidth();
-                $imageResizeMode = $getImageResizeMode();
-                $imageResizeUpscale = $getImageResizeUpscale();
-                $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
+                        $imageResizeTargetHeight = $getImageResizeTargetHeight();
+                        $imageResizeTargetWidth = $getImageResizeTargetWidth();
+                        $imageResizeMode = $getImageResizeMode();
+                        $imageResizeUpscale = $getImageResizeUpscale();
+                        $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
     @endphp
 
     <div
@@ -73,9 +73,9 @@
         "
         {{
             $attributes->merge($getExtraAttributes())->class([
-                        'filament-forms-file-upload-component',
-                        'mx-auto w-32' => $isAvatar(),
-                    ])
+                                    'filament-forms-file-upload-component',
+                                    'mx-auto w-32' => $isAvatar(),
+                                ])
         }}
         {{  $getExtraAlpineAttributeBag()  }}
     >

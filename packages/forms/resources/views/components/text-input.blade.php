@@ -1,11 +1,11 @@
 @php
     $datalistOptions = $getDatalistOptions();
 
-        $affixLabelClasses = [
-            'whitespace-nowrap group-focus-within:text-primary-500',
-            'text-gray-400' => ! $errors->has($getStatePath()),
-            'text-danger-400' => $errors->has($getStatePath()),
-        ];
+            $affixLabelClasses = [
+                'whitespace-nowrap group-focus-within:text-primary-500',
+                'text-gray-400' => ! $errors->has($getStatePath()),
+                'text-danger-400' => $errors->has($getStatePath()),
+            ];
 @endphp
 
 <x-dynamic-component
@@ -74,9 +74,9 @@
                 {{  $getExtraAlpineAttributeBag()  }}
                 {{
                     $getExtraInputAttributeBag()->class([
-                                        'filament-forms-input block w-full rounded-lg shadow-sm outline-none transition duration-75 focus:ring-1 focus:ring-inset disabled:opacity-70',
-                                        'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
-                                    ])
+                                                            'filament-forms-input block w-full rounded-lg shadow-sm outline-none transition duration-75 focus:ring-1 focus:ring-inset disabled:opacity-70',
+                                                            'dark:bg-gray-700 dark:text-white' => config('forms.dark_mode'),
+                                                        ])
                 }}
                 x-bind:class="{
                     'border-gray-300 focus:border-primary-500 focus:ring-primary-500': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),

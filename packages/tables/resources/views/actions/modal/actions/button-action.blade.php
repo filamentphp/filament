@@ -1,15 +1,15 @@
 @php
     if (! $getAction()) {
-            $wireClickAction = null;
-        } else {
-            $wireClickAction = $getAction();
+                $wireClickAction = null;
+            } else {
+                $wireClickAction = $getAction();
 
-            if ($getActionArguments()) {
-                $wireClickAction .= '(\'';
-                $wireClickAction .= \Illuminate\Support\Str::of(json_encode($getActionArguments()))->replace('"', '\\"');
-                $wireClickAction .= '\')';
+                if ($getActionArguments()) {
+                    $wireClickAction .= '(\'';
+                    $wireClickAction .= \Illuminate\Support\Str::of(json_encode($getActionArguments()))->replace('"', '\\"');
+                    $wireClickAction .= '\')';
+                }
             }
-        }
 @endphp
 
 <x-tables::button

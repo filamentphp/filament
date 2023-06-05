@@ -9,24 +9,24 @@
 
 @php
     $action = $column->getAction();
-        $name = $column->getName();
-        $shouldOpenUrlInNewTab = $column->shouldOpenUrlInNewTab();
-        $tooltip = $column->getTooltip();
-        $url = $column->getUrl();
+            $name = $column->getName();
+            $shouldOpenUrlInNewTab = $column->shouldOpenUrlInNewTab();
+            $tooltip = $column->getTooltip();
+            $url = $column->getUrl();
 
-        $columnClasses = \Illuminate\Support\Arr::toCssClasses([
-            'flex w-full',
-            match ($column->getAlignment()) {
-                'center' => 'justify-center text-center',
-                'end' => 'justify-end text-end',
-                'left' => 'justify-start text-left',
-                'right' => 'justify-end text-right',
-                'justify' => 'justify-between text-justify',
-                default => 'justify-start text-start',
-            },
-        ]);
+            $columnClasses = \Illuminate\Support\Arr::toCssClasses([
+                'flex w-full',
+                match ($column->getAlignment()) {
+                    'center' => 'justify-center text-center',
+                    'end' => 'justify-end text-end',
+                    'left' => 'justify-start text-left',
+                    'right' => 'justify-end text-right',
+                    'justify' => 'justify-between text-justify',
+                    default => 'justify-start text-start',
+                },
+            ]);
 
-        $slot = $column->viewData(['recordKey' => $recordKey]);
+            $slot = $column->viewData(['recordKey' => $recordKey]);
 @endphp
 
 <div
@@ -47,16 +47,16 @@
     @elseif (($action || $recordAction) && (! $isClickDisabled))
         @php
             if ($action instanceof \Filament\Tables\Actions\Action) {
-                            $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";
-                        } elseif ($action) {
-                            $wireClickAction = "callTableColumnAction('{$name}', '{$recordKey}')";
-                        } else {
-                            if ($this->getCachedTableAction($recordAction)) {
-                                $wireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
-                            } else {
-                                $wireClickAction = "{$recordAction}('{$recordKey}')";
-                            }
-                        }
+                                        $wireClickAction = "mountTableAction('{$action->getName()}', '{$recordKey}')";
+                                    } elseif ($action) {
+                                        $wireClickAction = "callTableColumnAction('{$name}', '{$recordKey}')";
+                                    } else {
+                                        if ($this->getCachedTableAction($recordAction)) {
+                                            $wireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
+                                        } else {
+                                            $wireClickAction = "{$recordAction}('{$recordKey}')";
+                                        }
+                                    }
         @endphp
 
         <button

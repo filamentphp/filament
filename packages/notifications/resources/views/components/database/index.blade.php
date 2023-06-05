@@ -1,6 +1,6 @@
 @php
     $notifications = $this->getDatabaseNotifications();
-        $unreadNotificationsCount = $this->getUnreadDatabaseNotificationsCount();
+            $unreadNotificationsCount = $this->getUnreadDatabaseNotificationsCount();
 @endphp
 
 <div

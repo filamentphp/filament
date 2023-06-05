@@ -9,16 +9,16 @@
 <div
     {{
         $attributes->class([
-            'filament-tables-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center',
-            'dark:bg-gray-800' => config('tables.dark_mode'),
-        ])
+                    'filament-tables-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center',
+                    'dark:bg-gray-800' => config('tables.dark_mode'),
+                ])
     }}
 >
     <div
         @class([
-                'flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500',
-                'dark:bg-gray-700' => config('tables.dark_mode'),
-            ])
+                        'flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500',
+                        'dark:bg-gray-700' => config('tables.dark_mode'),
+                    ])
     >
         <x-dynamic-component
             :component="$icon"

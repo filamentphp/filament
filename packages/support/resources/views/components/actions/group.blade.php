@@ -12,7 +12,7 @@
     :dark-mode="$darkMode"
     placement="bottom-end"
     teleport
-    {{  $attributes  }}
+    {{   $attributes   }}
 >
     <x-slot name="trigger">
         <x-filament-support::icon-button

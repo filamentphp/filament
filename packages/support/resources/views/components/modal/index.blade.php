@@ -63,9 +63,9 @@
         x-transition.duration.300ms.opacity
         x-cloak
         @class([
-                    'fixed inset-0 z-40 min-h-full overflow-y-auto overflow-x-hidden transition',
-                    'flex items-center' => ! $slideOver,
-                ])
+                            'fixed inset-0 z-40 min-h-full overflow-y-auto overflow-x-hidden transition',
+                            'flex items-center' => ! $slideOver,
+                        ])
     >
         <div
             @if ($closeByClickingAway)
@@ -77,18 +77,18 @@
             @endif
             aria-hidden="true"
             @class([
-                            'filament-modal-close-overlay fixed inset-0 h-full w-full bg-black/50',
-                            'cursor-pointer' => $closeByClickingAway
-                        ])
+                                        'filament-modal-close-overlay fixed inset-0 h-full w-full bg-black/50',
+                                        'cursor-pointer' => $closeByClickingAway
+                                    ])
         ></div>
 
         <div
             x-ref="modalContainer"
             {{
                 $attributes->class([
-                                'pointer-events-none relative w-full cursor-pointer transition',
-                                'my-auto p-4' => ! $slideOver,
-                            ])
+                                                'pointer-events-none relative w-full cursor-pointer transition',
+                                                'my-auto p-4' => ! $slideOver,
+                                            ])
             }}
         >
             <div
@@ -118,25 +118,25 @@
                     x-transition:leave-end="translate-y-8"
                 @endif
                 @class([
-                                    'filament-modal-window pointer-events-auto w-full cursor-default bg-white py-2',
-                                    'dark:bg-gray-800' => $darkMode,
-                                    'relative' => $width !== 'screen',
-                                    'ml-auto mr-0 h-screen overflow-y-auto rtl:ml-0 rtl:mr-auto' => $slideOver,
-                                    'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
-                                    'hidden' => ! $visible,
-                                    'max-w-xs' => $width === 'xs',
-                                    'max-w-sm' => $width === 'sm',
-                                    'max-w-md' => $width === 'md',
-                                    'max-w-lg' => $width === 'lg',
-                                    'max-w-xl' => $width === 'xl',
-                                    'max-w-2xl' => $width === '2xl',
-                                    'max-w-3xl' => $width === '3xl',
-                                    'max-w-4xl' => $width === '4xl',
-                                    'max-w-5xl' => $width === '5xl',
-                                    'max-w-6xl' => $width === '6xl',
-                                    'max-w-7xl' => $width === '7xl',
-                                    'fixed inset-0' => $width === 'screen',
-                                ])
+                                                    'filament-modal-window pointer-events-auto w-full cursor-default bg-white py-2',
+                                                    'dark:bg-gray-800' => $darkMode,
+                                                    'relative' => $width !== 'screen',
+                                                    'ml-auto mr-0 h-screen overflow-y-auto rtl:ml-0 rtl:mr-auto' => $slideOver,
+                                                    'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
+                                                    'hidden' => ! $visible,
+                                                    'max-w-xs' => $width === 'xs',
+                                                    'max-w-sm' => $width === 'sm',
+                                                    'max-w-md' => $width === 'md',
+                                                    'max-w-lg' => $width === 'lg',
+                                                    'max-w-xl' => $width === 'xl',
+                                                    'max-w-2xl' => $width === '2xl',
+                                                    'max-w-3xl' => $width === '3xl',
+                                                    'max-w-4xl' => $width === '4xl',
+                                                    'max-w-5xl' => $width === '5xl',
+                                                    'max-w-6xl' => $width === '6xl',
+                                                    'max-w-7xl' => $width === '7xl',
+                                                    'fixed inset-0' => $width === 'screen',
+                                                ])
             >
                 @if ($closeButton)
                     <button
@@ -163,8 +163,8 @@
 
                 <div
                     @class([
-                                            'flex h-full flex-col' => ($width === 'screen') || $slideOver,
-                                        ])
+                                                                'flex h-full flex-col' => ($width === 'screen') || $slideOver,
+                                                            ])
                 >
                     <div class="space-y-2">
                         @if ($header)
@@ -183,17 +183,17 @@
 
                     <div
                         @class([
-                                                    'filament-modal-content space-y-2 p-2',
-                                                    'flex-1 overflow-y-auto' => ($width === 'screen') || $slideOver,
-                                                ])
+                                                                            'filament-modal-content space-y-2 p-2',
+                                                                            'flex-1 overflow-y-auto' => ($width === 'screen') || $slideOver,
+                                                                        ])
                     >
                         @if ($heading || $subheading)
                             <div
                                 @class([
-                                                                'space-y-2 p-4',
-                                                                'text-center' => ! $slideOver,
-                                                                'dark:text-white' => $darkMode,
-                                                            ])
+                                                                                                'space-y-2 p-4',
+                                                                                                'text-center' => ! $slideOver,
+                                                                                                'dark:text-white' => $darkMode,
+                                                                                            ])
                             >
                                 @if ($heading)
                                     <x-dynamic-component

@@ -16,19 +16,19 @@
         @endif
         type="button"
         @class([
-                    'flex w-full items-center gap-x-1 whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-600',
-                    'dark:text-gray-300' => config('tables.dark_mode'),
-                    'cursor-default' => ! $sortable,
-                    match ($alignment) {
-                        'start' => 'justify-start',
-                        'center' => 'justify-center',
-                        'end' => 'justify-end',
-                        'left' => 'justify-start rtl:flex-row-reverse',
-                        'center' => 'justify-center',
-                        'right' => 'justify-end rtl:flex-row-reverse',
-                        default => null,
-                    },
-                ])
+                            'flex w-full items-center gap-x-1 whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-600',
+                            'dark:text-gray-300' => config('tables.dark_mode'),
+                            'cursor-default' => ! $sortable,
+                            match ($alignment) {
+                                'start' => 'justify-start',
+                                'center' => 'justify-center',
+                                'end' => 'justify-end',
+                                'left' => 'justify-start rtl:flex-row-reverse',
+                                'center' => 'justify-center',
+                                'right' => 'justify-end rtl:flex-row-reverse',
+                                default => null,
+                            },
+                        ])
     >
         @if ($sortable)
             <span class="sr-only">
