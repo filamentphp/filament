@@ -245,6 +245,26 @@ protected function getActions(): array
 }
 ```
 
+### Customizing the group trigger
+
+By default, the group trigger is an icon button.
+
+```php
+use Filament\Pages\Actions;
+
+protected function getActions(): array
+{
+    return [
+        Actions\ActionGroup::make([
+            // ...
+        ])
+            ->button() // Use a button instead of an icon button
+            ->icon('heroicon-s-cog')
+            ->label('Settings'),
+    ];
+}
+```
+
 ## Keybindings
 
 You can attach keyboard shortcuts to actions. These use the same key codes as [Mousetrap](https://craig.is/killing/mice):

@@ -424,6 +424,26 @@ protected function getTableActions(): array
 }
 ```
 
+### Customizing the group trigger
+
+By default, the group trigger is an icon button.
+
+```php
+use Filament\Tables;
+
+protected function getTableActions(): array
+{
+    return [
+        Tables\Actions\ActionGroup::make([
+            // ...
+        ])
+            ->button() // Use a button instead of an icon button
+            ->icon('heroicon-s-cog')
+            ->label('Settings'),
+    ];
+}
+```
+
 ## Position
 
 By default, the row actions in your table are rendered in the final cell. You may change the position by overriding the `getTableActionsPosition()` method:

@@ -134,6 +134,31 @@ public static function table(Table $table): Table
 }
 ```
 
+### Customizing the group trigger
+
+By default, the group trigger is an icon button.
+
+```php
+use Filament\Resources\Table;
+use Filament\Tables;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->actions([
+            Tables\Actions\ActionGroup::make([
+                // ...
+            ])
+                ->button() // Use a button instead of an icon button
+                ->icon('heroicon-s-cog')
+                ->label('Settings'),
+        ]);
+}
+```
+
 ## Bulk actions
 
 [Bulk actions](../../tables/actions#bulk-actions) are buttons that are rendered in a dropdown in the header of the table. They appear when you select records using the checkboxes at the start of each table row. They allow the user to perform a task on multiple records at once in the table. To learn how to build bulk actions, see the [full actions documentation](../../tables/actions#bulk-actions).
