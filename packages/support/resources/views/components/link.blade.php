@@ -15,7 +15,7 @@
 @php
     $linkClasses = [
         'filament-link inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline',
-        'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
+        'pointer-events-none cursor-not-allowed opacity-70' => $disabled,
         'text-sm' => $size === 'sm',
         'text-lg' => $size === 'lg',
         'text-primary-600 hover:text-primary-500' => $color === 'primary',
@@ -36,7 +36,7 @@
         'w-5 h-5' => $size === 'md',
         'w-6 h-6' => $size === 'lg',
         'mr-1 rtl:ml-1' => $iconPosition === 'before',
-        'ml-1 rtl:mr-1' => $iconPosition === 'after'
+        'ml-1 rtl:mr-1' => $iconPosition === 'after',
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
@@ -62,7 +62,7 @@
         {{ $attributes->class($linkClasses) }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-dynamic-component :component="$icon" :class="$iconClasses"/>
+            <x-dynamic-component :component="$icon" :class="$iconClasses" />
         @endif
 
         {{ $slot }}
