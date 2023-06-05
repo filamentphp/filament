@@ -456,7 +456,7 @@ export default function fileUploadFormComponent({
 
             this.editingFile = file
 
-            this.initCropper();
+            this.initCropper()
 
             const reader = new FileReader()
             reader.onload = (event) => {
