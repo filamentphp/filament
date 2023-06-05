@@ -87,7 +87,7 @@
             >
                 <x-filament::icon
                     name="heroicon-m-sun"
-                    alias="filament-panels::theme.light"
+                    alias="panels::theme.light"
                     size="h-5 w-5"
                 />
             </button>
@@ -102,7 +102,7 @@
             >
                 <x-filament::icon
                     name="heroicon-m-moon"
-                    alias="filament-panels::theme.dark"
+                    alias="panels::theme.dark"
                     size="h-5 w-5"
                 />
             </button>
@@ -117,7 +117,7 @@
             >
                 <x-filament::icon
                     name="heroicon-m-computer-desktop"
-                    alias="filament-panels::theme.system"
+                    alias="panels::theme.system"
                     size="h-5 w-5"
                 />
             </button>

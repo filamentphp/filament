@@ -33,8 +33,8 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Icon;
 
 FilamentIcon::register([
-    'filament-panels::global-search.input.prefix' => Icon::make('fas-magnifying-glass'),
-    'filament-panels::sidebar.group.collapse' => Icon::make('fas-chevron-up'),
+    'panels::global-search.input.prefix' => Icon::make('fas-magnifying-glass'),
+    'panels::sidebar.group.collapse' => Icon::make('fas-chevron-up'),
 ]);
 ```
 
@@ -80,7 +80,7 @@ use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Icons\Icon;
 
 FilamentIcon::register([
-    'filament-panels::global-search.input.prefix' => Icon::make()
+    'panels::global-search.input.prefix' => Icon::make()
         ->size('h-6 w-6')
         ->color('text-gray-600 dark:text-gray-500')
         ->class('global-search-input-icon'),
@@ -94,7 +94,7 @@ If you have built a Filament plugin, your users may want to be able to customize
 ```blade
 <x-filament::icon
     name="heroicon-m-magnifying-glass"
-    alias="filament-panels::global-search.input.prefix"
+    alias="panels::global-search.input.prefix"
     color="text-gray-500 dark:text-gray-400"
     size="h-5 w-5"
     wire:target="search"

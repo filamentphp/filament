@@ -27,7 +27,7 @@ class Dashboard extends Page
     public static function getNavigationIcon(): string
     {
         return static::$navigationIcon ??
-            FilamentIcon::resolve('filament-panels::pages.dashboard.navigation')?->name ??
+            FilamentIcon::resolve('panels::pages.dashboard.navigation')?->name ??
             'heroicon-o-home';
     }
 

@@ -78,7 +78,7 @@
                 @if ($hasOffIcon())
                     <x-filament::icon
                         :name="$getOffIcon()"
-                        alias="filament-tables::columns.toggle.off"
+                        alias="tables::columns.toggle.off"
                         :color="match ($offColor) {
                             'danger' => 'text-danger-600',
                             'gray' => 'text-gray-600',
@@ -106,7 +106,7 @@
                 @if ($hasOnIcon())
                     <x-filament::icon
                         :name="$getOnIcon()"
-                        alias="filament-tables::columns.toggle.on"
+                        alias="tables::columns.toggle.on"
                         :color="match ($onColor) {
                             'danger' => 'text-danger-600',
                             'gray' => 'text-gray-600',

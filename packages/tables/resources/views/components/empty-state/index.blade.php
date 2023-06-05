@@ -9,7 +9,7 @@
     <div class="filament-tables-empty-state-icon-wrapper flex items-center justify-center w-16 h-16 text-primary-500 rounded-full bg-primary-50 dark:bg-gray-700">
         <x-filament::icon
             :name="$icon"
-            alias="filament-tables::empty-state"
+            alias="tables::empty-state"
             size="h-6 w-6"
             wire:loading.remove.delay=""
             :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
