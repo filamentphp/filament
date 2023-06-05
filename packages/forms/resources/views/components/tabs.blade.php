@@ -1,4 +1,4 @@
-<div
+<div wire:ignore.self
     x-data="{
 
         tab: null,
