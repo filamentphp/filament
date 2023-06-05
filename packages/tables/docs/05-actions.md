@@ -439,6 +439,9 @@ protected function getTableActions(): array
         ])
             ->button() // Use a button instead of an icon button
             ->icon('heroicon-s-cog')
+            ->iconPosition('before')
+            ->outlined()
+            ->color('primary')
             ->label('Settings'),
     ];
 }

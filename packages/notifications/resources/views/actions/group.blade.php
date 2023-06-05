@@ -4,6 +4,8 @@
     :dark-mode="config('notifications.dark_mode')"
     :color="$getColor()"
     :icon="$getIcon()"
+    :iconPosition="$getIconPosition()"
+    :outlined="$isOutlined()"
     :label="$getLabel()"
     :size="$getSize()"
     :tooltip="$getTooltip()"

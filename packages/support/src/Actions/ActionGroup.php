@@ -3,6 +3,7 @@
 namespace Filament\Support\Actions;
 
 use Filament\Support\Actions\Concerns\CanBeHidden;
+use Filament\Support\Actions\Concerns\CanBeOutlined;
 use Filament\Support\Actions\Concerns\HasColor;
 use Filament\Support\Actions\Concerns\HasIcon;
 use Filament\Support\Actions\Concerns\HasLabel;
@@ -15,6 +16,7 @@ class ActionGroup extends ViewComponent
     use CanBeHidden {
         isHidden as baseIsHidden;
     }
+    use CanBeOutlined;
     use HasColor;
     use HasIcon;
     use HasLabel;

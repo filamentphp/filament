@@ -4,7 +4,9 @@
     'color' => null,
     'darkMode' => false,
     'icon' => 'heroicon-o-dots-vertical',
+    'iconPosition' => null,
     'label' => __('filament-support::actions/group.trigger.label'),
+    'outlined' => null,
     'size' => null,
     'tooltip' => null,
 ])
