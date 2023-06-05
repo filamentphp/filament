@@ -7,7 +7,7 @@
         "build:components": "node bin/build",
         "build:admin": "mix --production",
         "build": "npm-run-all build:*",
-        "prettier": "npx prettier --write '**/*.{css,js,yml}' '!**/dist' '!**/vendor'"
+        "prettier": "npx prettier --write ."
     },
     "devDependencies": {
         "@alpinejs/collapse": "^3.10.3",
@@ -45,6 +45,7 @@
         "npm-run-all": "^4.1.5",
         "postcss": "^8.4.4",
         "prettier": "^2.7.1",
+        "prettier-plugin-blade": "^1.5.0",
         "prettier-plugin-tailwindcss": "^0.3.0",
         "pusher-js": "^7.4.0",
         "sortablejs": "^1.15.0",
