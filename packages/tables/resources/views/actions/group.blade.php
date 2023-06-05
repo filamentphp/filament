@@ -1,5 +1,6 @@
 <x-filament-support::actions.group
     :actions="$getActions()"
+    :button="$isButton()"
     :dark-mode="config('tables.dark_mode')"
     :color="$getColor()"
     :icon="$getIcon()"

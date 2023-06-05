@@ -25,6 +25,8 @@ class ActionGroup extends ViewComponent
 
     protected string $viewIdentifier = 'group';
 
+    protected bool $isButton = false;
+
     public function __construct(
         protected array $actions,
     ) {
@@ -70,5 +72,17 @@ class ActionGroup extends ViewComponent
         }
 
         return true;
+    }
+
+    public function isButton(): bool
+    {
+        return $this->isButton;
+    }
+
+    public function button(bool $condition = true): static
+    {
+        $this->isButton = $condition;
+
+        return $this;
     }
 }

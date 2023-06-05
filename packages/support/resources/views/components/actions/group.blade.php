@@ -1,5 +1,6 @@
 @props([
     'actions',
+    'button' => false,
     'color' => null,
     'darkMode' => false,
     'icon' => 'heroicon-o-dots-vertical',
@@ -15,17 +16,29 @@
     {{ $attributes }}
 >
     <x-slot name="trigger">
-        <x-filament-support::icon-button
-            :color="$color"
-            :dark-mode="$darkMode"
-            :icon="$icon"
-            :size="$size"
-            :tooltip="$tooltip"
-        >
-            <x-slot name="label">
+        @if($button)
+            <x-filament-support::button
+                :color="$color"
+                :dark-mode="$darkMode"
+                :icon="$icon"
+                :size="$size"
+                :tooltip="$tooltip"
+            >
                 {{ $label }}
-            </x-slot>
-        </x-filament-support::icon-button>
+            </x-filament-support::button>
+        @else
+            <x-filament-support::icon-button
+                :color="$color"
+                :dark-mode="$darkMode"
+                :icon="$icon"
+                :size="$size"
+                :tooltip="$tooltip"
+            >
+                <x-slot name="label">
+                    {{ $label }}
+                </x-slot>
+            </x-filament-support::icon-button>
+        @endif
     </x-slot>
 
     <x-filament-support::dropdown.list>
