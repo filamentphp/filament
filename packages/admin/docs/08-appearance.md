@@ -19,7 +19,7 @@ You may create a `resources/views/vendor/filament/components/footer-logo.blade.p
 <img src="{{ asset('/images/footer-logo.svg') }}" alt="Footer Logo" class="h-10">
 ```
 
-You may also, completly disable the logo by setting the `should_show_logo` config to `false`.
+You may also, completely disable the logo by setting the `should_show_logo` config to `false`.
 ```diff
 // config/filament.php
 
