@@ -19,7 +19,9 @@
 @endphp
 
 @if ($hasPageSummary)
-    <x-filament-tables::row class="filament-tables-summary-header-row bg-gray-500/5">
+    <x-filament-tables::row
+        class="filament-tables-summary-header-row bg-gray-500/5"
+    >
         @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
             <td></td>
         @endif
@@ -29,7 +31,9 @@
         @endif
 
         @if ($extraHeadingColumn)
-            <td class="px-4 py-2 whitespace-nowrap text-base font-medium text-gray-600 dark:text-gray-300">
+            <td
+                class="whitespace-nowrap px-4 py-2 text-base font-medium text-gray-600 dark:text-gray-300"
+            >
                 {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}
             </td>
         @endif
@@ -40,20 +44,24 @@
                     $hasColumnHeaderLabel = (! $placeholderColumns) || $column->hasSummary();
                 @endphp
 
-                <td {{ $column->getExtraHeaderAttributeBag()->class([
-                    'px-4 py-2 font-medium text-sm text-gray-600 dark:text-gray-300',
-                    'whitespace-nowrap' => ! $column->isHeaderWrapped(),
-                    'whitespace-normal' => $column->isHeaderWrapped(),
-                    match ($column->getAlignment()) {
-                        'start' => 'text-start',
-                        'center' => 'text-center',
-                        'end' => 'text-end',
-                        'left' => 'text-left',
-                        'right' => 'text-right',
-                        'justify' => 'text-justify',
-                        default => null,
-                    } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
-                ]) }}>
+                <td
+                    {{
+                        $column->getExtraHeaderAttributeBag()->class([
+                            'px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300',
+                            'whitespace-nowrap' => ! $column->isHeaderWrapped(),
+                            'whitespace-normal' => $column->isHeaderWrapped(),
+                            match ($column->getAlignment()) {
+                                'start' => 'text-start',
+                                'center' => 'text-center',
+                                'end' => 'text-end',
+                                'left' => 'text-left',
+                                'right' => 'text-right',
+                                'justify' => 'text-justify',
+                                default => null,
+                            } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
+                        ])
+                    }}
+                >
                     @if ($loop->first && (! $extraHeadingColumn))
                         <span class="text-base">
                             {{ __('filament-tables::table.summary.heading', ['label' => $pluralModelLabel]) }}

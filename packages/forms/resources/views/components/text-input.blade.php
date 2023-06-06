@@ -10,10 +10,7 @@
     $suffixLabel = $getSuffixLabel();
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
@@ -68,7 +65,7 @@
                         $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $statePath : null,
                     ], escape: false)
                     ->class([
-                        'filament-forms-input block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white',
+                        'filament-forms-input block w-full shadow-sm outline-none transition duration-75 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',
                         'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
                         'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
                     ])

@@ -10,10 +10,7 @@
     $suffixLabel = $getSuffixLabel();
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
@@ -50,7 +47,7 @@
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                         ->class([
-                            'block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white',
+                            'block w-full shadow-sm outline-none transition duration-75 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',
                             'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
                             'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
                         ])
@@ -77,9 +74,21 @@
                         ->class(['filament-forms-date-time-picker-component relative'])
                 }}
             >
-                <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
-                <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
-                <input x-ref="disabledDates" type="hidden" value="{{ json_encode($getDisabledDates()) }}" />
+                <input
+                    x-ref="maxDate"
+                    type="hidden"
+                    value="{{ $getMaxDate() }}"
+                />
+                <input
+                    x-ref="minDate"
+                    type="hidden"
+                    value="{{ $getMinDate() }}"
+                />
+                <input
+                    x-ref="disabledDates"
+                    type="hidden"
+                    value="{{ json_encode($getDisabledDates()) }}"
+                />
 
                 <button
                     x-ref="button"
@@ -97,17 +106,19 @@
                     type="button"
                     tabindex="-1"
                     @disabled($isDisabled)
-                    {{ $getExtraTriggerAttributeBag()->class([
-                        'bg-white relative w-full border py-2 text-start cursor-default shadow-sm outline-none sm:text-sm dark:bg-gray-700',
-                        'focus-within:ring-1 focus-within:ring-inset' => ! $isDisabled,
-                        'border-gray-300 focus-within:border-primary-500 focus-within:ring-primary-500 dark:border-gray-600 dark:focus-within:border-primary-500' => ! $errors->has($statePath),
-                        'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
-                        'opacity-70 dark:text-gray-300' => $isDisabled,
-                        'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
-                        'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
-                        'px-3' => $icon === false,
-                        'ps-3 pe-10' => $icon !== false,
-                    ]) }}
+                    {{
+                        $getExtraTriggerAttributeBag()->class([
+                            'relative w-full cursor-default border bg-white py-2 text-start shadow-sm outline-none dark:bg-gray-700 sm:text-sm',
+                            'focus-within:ring-1 focus-within:ring-inset' => ! $isDisabled,
+                            'border-gray-300 focus-within:border-primary-500 focus-within:ring-primary-500 dark:border-gray-600 dark:focus-within:border-primary-500' => ! $errors->has($statePath),
+                            'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
+                            'opacity-70 dark:text-gray-300' => $isDisabled,
+                            'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
+                            'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
+                            'px-3' => $icon === false,
+                            'pe-10 ps-3' => $icon !== false,
+                        ])
+                    }}
                 >
                     <input
                         readonly
@@ -116,13 +127,15 @@
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
-                            'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 outline-none focus:outline-none focus:placeholder-gray-500 focus:ring-0 dark:bg-gray-700 dark:placeholder-gray-400',
+                            'h-full w-full border-0 bg-transparent p-0 placeholder-gray-400 outline-none focus:placeholder-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-700 dark:placeholder-gray-400',
                             'cursor-default' => $isDisabled,
                         ])
                     />
 
                     @if ($icon !== false)
-                        <span class="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none">
+                        <span
+                            class="pointer-events-none absolute inset-y-0 end-0 flex items-center pe-2"
+                        >
                             <x-filament::icon
                                 :name="$icon"
                                 alias="forms::components.date-time-picker.suffix"
@@ -140,20 +153,25 @@
                     wire:ignore
                     wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
-                        'absolute hidden z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md dark:bg-gray-700 dark:border-gray-600',
-                        'p-4 min-w-[16rem] w-fit' => $hasDate(),
+                        'absolute z-10 my-1 hidden rounded-lg border border-gray-300 bg-white shadow-md dark:border-gray-600 dark:bg-gray-700',
+                        'w-fit min-w-[16rem] p-4' => $hasDate(),
                     ])
                 >
                     <div class="space-y-3">
                         @if ($hasDate())
-                            <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
+                            <div
+                                class="flex items-center justify-between space-x-1 rtl:space-x-reverse"
+                            >
                                 <select
                                     x-model="focusedMonth"
-                                    class="grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
+                                    class="grow cursor-pointer border-0 px-1 py-0 text-lg font-medium text-gray-800 outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
                                     dusk="filament.forms.{{ $statePath }}.focusedMonth"
                                 >
                                     <template x-for="(month, index) in months">
-                                        <option x-bind:value="index" x-text="month"></option>
+                                        <option
+                                            x-bind:value="index"
+                                            x-text="month"
+                                        ></option>
                                     </template>
                                 </select>
 
@@ -161,26 +179,37 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="focusedYear"
-                                    class="w-20 p-0 text-lg text-end border-0 outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
+                                    class="w-20 border-0 p-0 text-end text-lg outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
                                     dusk="filament.forms.{{ $statePath }}.focusedYear"
                                 />
                             </div>
 
                             <div class="grid grid-cols-7 gap-1">
-                                <template x-for="(day, index) in dayLabels" x-bind:key="index">
+                                <template
+                                    x-for="(day, index) in dayLabels"
+                                    x-bind:key="index"
+                                >
                                     <div
                                         x-text="day"
-                                        class="text-xs font-medium text-center text-gray-800 dark:text-gray-200"
+                                        class="text-center text-xs font-medium text-gray-800 dark:text-gray-200"
                                     ></div>
                                 </template>
                             </div>
 
                             <div role="grid" class="grid grid-cols-7 gap-1">
-                                <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
-                                    <div class="text-sm text-center border border-transparent"></div>
+                                <template
+                                    x-for="day in emptyDaysInFocusedMonth"
+                                    x-bind:key="day"
+                                >
+                                    <div
+                                        class="border border-transparent text-center text-sm"
+                                    ></div>
                                 </template>
 
-                                <template x-for="day in daysInFocusedMonth" x-bind:key="day">
+                                <template
+                                    x-for="day in daysInFocusedMonth"
+                                    x-bind:key="day"
+                                >
                                     <div
                                         x-text="day"
                                         x-on:click="dayIsDisabled(day) || selectDate(day)"
@@ -197,14 +226,16 @@
                                             'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                         }"
                                         x-bind:dusk="'filament.forms.{{ $statePath }}' + '.focusedDate.' + day"
-                                        class="text-sm leading-loose text-center transition duration-100 ease-in-out rounded-full"
+                                        class="rounded-full text-center text-sm leading-loose transition duration-100 ease-in-out"
                                     ></div>
                                 </template>
                             </div>
                         @endif
 
                         @if ($hasTime())
-                            <div class="flex items-center justify-center bg-gray-50 py-2 rounded-lg rtl:flex-row-reverse dark:bg-gray-800">
+                            <div
+                                class="flex items-center justify-center rounded-lg bg-gray-50 py-2 rtl:flex-row-reverse dark:bg-gray-800"
+                            >
                                 <input
                                     max="23"
                                     min="0"
@@ -212,11 +243,15 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="hour"
-                                    class="w-16 p-0 pe-1 text-xl bg-gray-50 text-center text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
+                                    class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
                                     dusk="filament.forms.{{ $statePath }}.hour"
                                 />
 
-                                <span class="text-xl font-medium bg-gray-50 text-gray-700 dark:text-gray-200 dark:bg-gray-800">:</span>
+                                <span
+                                    class="bg-gray-50 text-xl font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                >
+                                    :
+                                </span>
 
                                 <input
                                     max="59"
@@ -225,12 +260,16 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="minute"
-                                    class="w-16 p-0 pe-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
+                                    class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
                                     dusk="filament.forms.{{ $statePath }}.minute"
                                 />
 
                                 @if ($hasSeconds())
-                                    <span class="text-xl font-medium text-gray-700 bg-gray-50 dark:text-gray-200 dark:bg-gray-800">:</span>
+                                    <span
+                                        class="bg-gray-50 text-xl font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                    >
+                                        :
+                                    </span>
 
                                     <input
                                         max="59"
@@ -240,7 +279,7 @@
                                         inputmode="numeric"
                                         x-model.debounce="second"
                                         dusk="filament.forms.{{ $statePath }}.second"
-                                        class="w-16 p-0 pe-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0 dark:text-gray-200 dark:bg-gray-800"
+                                        class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
                                     />
                                 @endif
                             </div>

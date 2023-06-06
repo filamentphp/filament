@@ -1,7 +1,4 @@
-<x-dynamic-component
-    :component="$getEntryWrapperView()"
-    :entry="$entry"
->
+<x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
         $isCircular = $isCircular();
         $isSquare = $isSquare();
@@ -9,16 +6,20 @@
         $width = $getWidth() ?? ($isCircular || $isSquare ? $height : null);
     @endphp
 
-    <div {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
-        'filament-infolists-image-entry flex',
-        match ($getAlignment()) {
-            'center' => 'justify-center',
-            'end' => 'justify-end',
-            'left' => 'justify-left',
-            'right' => 'justify-right',
-            'start', null => 'justify-start',
-        },
-    ]) }}>
+    <div
+        {{
+            $attributes->merge($getExtraAttributes(), escape: false)->class([
+                'filament-infolists-image-entry flex',
+                match ($getAlignment()) {
+                    'center' => 'justify-center',
+                    'end' => 'justify-end',
+                    'left' => 'justify-left',
+                    'right' => 'justify-right',
+                    'start', null => 'justify-start',
+                },
+            ])
+        }}
+    >
         <div
             style="
                 @if ($height) height: {{ $height }}; @endif
@@ -37,10 +38,12 @@
                         @if ($height) height: {{ $height }}; @endif
                         @if ($width) width: {{ $width }}; @endif
                     "
-                    {{ $getExtraImgAttributeBag()->class([
-                        'object-cover object-center' => $isCircular || $isSquare,
-                    ]) }}
-                >
+                    {{
+                        $getExtraImgAttributeBag()->class([
+                            'object-cover object-center' => $isCircular || $isSquare,
+                        ])
+                    }}
+                />
             @endif
         </div>
     </div>

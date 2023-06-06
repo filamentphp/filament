@@ -1,7 +1,9 @@
-<x-filament::page @class([
-    'filament-resources-list-records-page',
-    'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
-])>
+<x-filament::page
+    @class([
+        'filament-resources-list-records-page',
+        'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
+    ])
+>
     @if (count($tabs = $this->getTabs()))
         <div class="flex justify-center">
             <x-filament::tabs>

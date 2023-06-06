@@ -1,7 +1,4 @@
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $addAction = $getAction('add');
         $deleteAction = $getAction('delete');
@@ -27,19 +24,23 @@
                 ->class(['filament-forms-key-value-component'])
         }}
     >
-        <div class="border border-gray-300 divide-y shadow-sm bg-white rounded-xl overflow-hidden dark:bg-gray-700 dark:border-gray-600 dark:divide-gray-600">
-            <table class="w-full text-start divide-y table-auto dark:divide-gray-700">
+        <div
+            class="divide-y overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm dark:divide-gray-600 dark:border-gray-600 dark:bg-gray-700"
+        >
+            <table
+                class="w-full table-auto divide-y text-start dark:divide-gray-700"
+            >
                 <thead>
                     <tr class="bg-gray-50 dark:bg-gray-800/60">
                         <th
-                            class="px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600 dark:text-gray-300"
+                            class="whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300"
                             scope="col"
                         >
                             {{ $getKeyLabel() }}
                         </th>
 
                         <th
-                            class="px-4 py-2 whitespace-nowrap font-medium text-sm text-gray-600 dark:text-gray-300"
+                            class="whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300"
                             scope="col"
                         >
                             {{ $getValueLabel() }}
@@ -65,7 +66,11 @@
                     x-ref="tableBody"
                     class="divide-y whitespace-nowrap dark:divide-gray-600"
                 >
-                    <template x-for="(row, index) in rows" x-bind:key="index" x-ref="rowTemplate">
+                    <template
+                        x-for="(row, index) in rows"
+                        x-bind:key="index"
+                        x-ref="rowTemplate"
+                    >
                         <tr
                             @if ($reorderAction)
                                 x-bind:x-sortable-item="row.key"
@@ -81,8 +86,8 @@
                                     @if ((! $canEditKeys()) || $isDisabled)
                                         disabled
                                     @endif
-                                    class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
-                                >
+                                    class="w-full border-0 bg-transparent px-4 py-3 font-mono text-sm focus:ring-0"
+                                />
                             </td>
 
                             <td class="whitespace-nowrap">
@@ -94,13 +99,15 @@
                                     @if ((! $canEditValues()) || $isDisabled)
                                         disabled
                                     @endif
-                                    class="w-full px-4 py-3 font-mono text-sm bg-transparent border-0 focus:ring-0"
-                                >
+                                    class="w-full border-0 bg-transparent px-4 py-3 font-mono text-sm focus:ring-0"
+                                />
                             </td>
 
                             @if (($deleteAction || $reorderAction) && (! $isDisabled))
                                 <td class="whitespace-nowrap">
-                                    <div class="flex items-center justify-center px-2">
+                                    <div
+                                        class="flex items-center justify-center px-2"
+                                    >
                                         @if ($reorderAction)
                                             <div x-sortable-handle>
                                                 {{ $reorderAction }}

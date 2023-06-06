@@ -1,7 +1,4 @@
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $id = $getId();
         $statePath = $getStatePath();
@@ -40,7 +37,9 @@
             <textarea x-ref="editor" class="hidden"></textarea>
         </div>
     @else
-        <div class="prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm dark:prose-invert dark:border-gray-600 dark:bg-gray-700">
+        <div
+            class="prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm dark:prose-invert dark:border-gray-600 dark:bg-gray-700"
+        >
             {!! str($getState())->markdown()->sanitizeHtml() !!}
         </div>
     @endunless

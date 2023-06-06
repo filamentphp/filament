@@ -4,7 +4,7 @@
             $user = filament()->auth()->user();
         @endphp
 
-        <div class="h-12 flex items-center space-x-4 rtl:space-x-reverse">
+        <div class="flex h-12 items-center space-x-4 rtl:space-x-reverse">
             <x-filament::avatar.user :user="$user" />
 
             <div>
@@ -12,7 +12,11 @@
                     {{ __('filament::widgets/account-widget.welcome', ['user' => filament()->getUserName($user)]) }}
                 </h2>
 
-                <form action="{{ filament()->getLogoutUrl() }}" method="post" class="text-sm">
+                <form
+                    action="{{ filament()->getLogoutUrl() }}"
+                    method="post"
+                    class="text-sm"
+                >
                     @csrf
 
                     <button

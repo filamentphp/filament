@@ -5,5 +5,5 @@
     icon-size="lg"
     color="gray"
     :indicator="$unreadNotificationsCount"
-    class="ms-4 -me-1"
+    class="-me-1 ms-4"
 />

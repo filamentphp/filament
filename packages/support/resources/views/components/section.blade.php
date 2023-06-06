@@ -35,13 +35,15 @@
             setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
         "
     @endif
-    {{ $attributes->class([
-        'filament-section-component',
-        match ($aside) {
-            true => 'grid grid-cols-1 gap-x-6 gap-y-4 items-start md:grid-cols-3',
-            false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20',
-        },
-    ]) }}
+    {{
+        $attributes->class([
+            'filament-section-component',
+            match ($aside) {
+                true => 'grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
+                false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20',
+            },
+        ])
+    }}
 >
     <div
         @if ($collapsible)
@@ -57,7 +59,9 @@
         ])
     >
         <div class="filament-section-component-header grid flex-1 gap-y-1">
-            <div class="filament-section-component-header-heading-wrapper flex items-center gap-x-2">
+            <div
+                class="filament-section-component-header-heading-wrapper flex items-center gap-x-2"
+            >
                 @if ($icon)
                     <x-filament::icon
                         :name="$icon"
@@ -82,13 +86,17 @@
                     />
                 @endif
 
-                <h3 class="filament-section-component-header-heading text-base font-semibold leading-6">
+                <h3
+                    class="filament-section-component-header-heading text-base font-semibold leading-6"
+                >
                     {{ $heading }}
                 </h3>
             </div>
 
             @if ($description?->isNotEmpty())
-                <p class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-400">
+                <p
+                    class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-400"
+                >
                     {{ $description }}
                 </p>
             @endif
@@ -121,14 +129,16 @@
             'md:order-first' => $contentBefore,
         ])
     >
-        <div @class([
-            'filament-section-component-content',
-            'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20' => $aside,
-            match ($compact) {
-                true => 'p-4',
-                false => 'p-6',
-            },
-        ])>
+        <div
+            @class([
+                'filament-section-component-content',
+                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20' => $aside,
+                match ($compact) {
+                    true => 'p-4',
+                    false => 'p-6',
+                },
+            ])
+        >
             {{ $slot }}
         </div>
     </div>

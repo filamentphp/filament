@@ -51,7 +51,9 @@
 
     <div class="space-y-2">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon)
-            <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
+            <div
+                class="flex items-center justify-between space-x-2 rtl:space-x-reverse"
+            >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-infolists::entry-wrapper.label
                         :prefix="$labelPrefix"
@@ -66,7 +68,11 @@
                 @endif
 
                 @if ($hint || $hintIcon || count($hintActions))
-                    <x-filament-infolists::entry-wrapper.hint :actions="$hintActions" :color="$hintColor" :icon="$hintIcon">
+                    <x-filament-infolists::entry-wrapper.hint
+                        :actions="$hintActions"
+                        :color="$hintColor"
+                        :icon="$hintIcon"
+                    >
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
                     </x-filament-infolists::entry-wrapper.hint>
                 @endif

@@ -18,8 +18,5 @@
         {{ $triggerAction->indicator($indicatorsCount) }}
     </x-slot>
 
-    <x-filament-tables::filters
-        class="p-4"
-        :form="$form"
-    />
+    <x-filament-tables::filters class="p-4" :form="$form" />
 </x-filament::dropdown>

@@ -49,7 +49,9 @@
 
     <div class="space-y-2">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || count($hintActions))
-            <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
+            <div
+                class="flex items-center justify-between space-x-2 rtl:space-x-reverse"
+            >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
@@ -69,7 +71,11 @@
                 @endif
 
                 @if ($hint || $hintIcon || count($hintActions))
-                    <x-filament-forms::field-wrapper.hint :actions="$hintActions" :color="$hintColor" :icon="$hintIcon">
+                    <x-filament-forms::field-wrapper.hint
+                        :actions="$hintActions"
+                        :color="$hintColor"
+                        :icon="$hintIcon"
+                    >
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
                     </x-filament-forms::field-wrapper.hint>
                 @endif

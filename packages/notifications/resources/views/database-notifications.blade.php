@@ -21,6 +21,8 @@
     />
 
     @if ($broadcastChannel = $this->getBroadcastChannel())
-        <x-filament-notifications::database.echo :channel="$broadcastChannel" />
+        <x-filament-notifications::database.echo
+            :channel="$broadcastChannel"
+        />
     @endif
 </div>

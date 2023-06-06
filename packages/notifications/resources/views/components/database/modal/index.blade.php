@@ -21,20 +21,22 @@
             />
         </x-slot>
 
-        <div class="mt-[calc(-1rem-1px)] -mx-6 border-b divide-y dark:border-gray-700">
+        <div
+            class="-mx-6 mt-[calc(-1rem-1px)] divide-y border-b dark:border-gray-700"
+        >
             @foreach ($notifications as $notification)
-                <div @class([
-                    'bg-primary-50 dark:bg-gray-700' => $notification->unread(),
-                ])>
+                <div
+                    @class([
+                        'bg-primary-50 dark:bg-gray-700' => $notification->unread(),
+                    ])
+                >
                     {{ $this->getNotification($notification)->inline() }}
                 </div>
             @endforeach
         </div>
 
-        @if (
-            $notifications instanceof \Illuminate\Contracts\Pagination\Paginator &&
-            $notifications->hasPages()
-        )
+        @if ($notifications instanceof \Illuminate\Contracts\Pagination\Paginator &&
+             $notifications->hasPages())
             <x-slot name="footer">
                 @php
                     $isRtl = __('filament::layout.direction') === 'rtl';

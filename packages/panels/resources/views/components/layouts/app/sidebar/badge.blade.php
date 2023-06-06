@@ -9,17 +9,17 @@
         x-show="$store.sidebar.isOpen"
     @endif
     @class([
-        'inline-flex items-center justify-center ms-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal',
+        'min-h-4 ms-auto inline-flex items-center justify-center whitespace-normal rounded-xl px-2 py-0.5 text-xs font-medium tracking-tight',
         match ($active) {
-            true => 'text-white bg-gray-900/10',
+            true => 'bg-gray-900/10 text-white',
             false => match ($badgeColor) {
-                'danger' => 'text-danger-700 bg-danger-500/10 dark:text-danger-500',
-                'gray' => 'text-gray-700 bg-gray-500/10 dark:text-gray-500',
-                'info' => 'text-info-700 bg-info-500/10 dark:text-info-500',
-                'primary', null => 'text-primary-700 bg-primary-500/10 dark:text-primary-500',
-                'secondary' => 'text-secondary-700 bg-secondary-500/10 dark:text-secondary-500',
-                'success' => 'text-success-700 bg-success-500/10 dark:text-success-500',
-                'warning' => 'text-warning-700 bg-warning-500/10 dark:text-warning-500',
+                'danger' => 'bg-danger-500/10 text-danger-700 dark:text-danger-500',
+                'gray' => 'bg-gray-500/10 text-gray-700 dark:text-gray-500',
+                'info' => 'bg-info-500/10 text-info-700 dark:text-info-500',
+                'primary', null => 'bg-primary-500/10 text-primary-700 dark:text-primary-500',
+                'secondary' => 'bg-secondary-500/10 text-secondary-700 dark:text-secondary-500',
+                'success' => 'bg-success-500/10 text-success-700 dark:text-success-500',
+                'warning' => 'bg-warning-500/10 text-warning-700 dark:text-warning-500',
                 default => $badgeColor,
             },
         },

@@ -75,7 +75,9 @@
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
-                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament::modal.actions
+                            :full-width="$action->isModalCentered()"
+                        >
                             @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
@@ -168,7 +170,9 @@
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
-                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament::modal.actions
+                            :full-width="$action->isModalCentered()"
+                        >
                             @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
@@ -261,7 +265,9 @@
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
-                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament::modal.actions
+                            :full-width="$action->isModalCentered()"
+                        >
                             @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
@@ -348,7 +354,9 @@
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
-                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament::modal.actions
+                            :full-width="$action->isModalCentered()"
+                        >
                             @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach
@@ -428,7 +436,9 @@
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
-                        <x-filament::modal.actions :full-width="$action->isModalCentered()">
+                        <x-filament::modal.actions
+                            :full-width="$action->isModalCentered()"
+                        >
                             @foreach ($modalActions as $modalAction)
                                 {{ $modalAction }}
                             @endforeach

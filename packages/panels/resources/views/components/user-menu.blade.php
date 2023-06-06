@@ -14,7 +14,10 @@
 
 <x-filament::dropdown placement="bottom-end" class="filament-user-menu">
     <x-slot name="trigger" class="ms-4">
-        <button class="block" aria-label="{{ __('filament::layout.buttons.user_menu.label') }}">
+        <button
+            class="block"
+            aria-label="{{ __('filament::layout.buttons.user_menu.label') }}"
+        >
             <x-filament::avatar.user :user="$user" />
         </button>
     </x-slot>
@@ -75,7 +78,7 @@
                     return window.matchMedia('(prefers-color-scheme: dark)').matches
                 },
             }"
-            class="filament-theme-switcher flex items-center border-b border-gray-950/5 divide-x divide-gray-950/5 dark:border-gray-700 dark:divide-gray-700"
+            class="filament-theme-switcher flex items-center divide-x divide-gray-950/5 border-b border-gray-950/5 dark:divide-gray-700 dark:border-gray-700"
         >
             <button
                 type="button"
@@ -83,7 +86,7 @@
                 x-tooltip="'{{ __('filament::layout.buttons.light_theme.label') }}'"
                 x-on:click="theme = 'light'"
                 x-bind:class="theme === 'light' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
-                class="flex-1 flex items-center justify-center p-2 hover:bg-gray-500/10 focus:bg-gray-500/10"
+                class="flex flex-1 items-center justify-center p-2 hover:bg-gray-500/10 focus:bg-gray-500/10"
             >
                 <x-filament::icon
                     name="heroicon-m-sun"
@@ -98,7 +101,7 @@
                 x-tooltip="'{{ __('filament::layout.buttons.dark_theme.label') }}'"
                 x-on:click="theme = 'dark'"
                 x-bind:class="theme === 'dark' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
-                class="flex-1 flex items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
+                class="flex flex-1 items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
             >
                 <x-filament::icon
                     name="heroicon-m-moon"
@@ -113,7 +116,7 @@
                 x-tooltip="'{{ __('filament::layout.buttons.system_theme.label') }}'"
                 x-on:click="theme = 'system'"
                 x-bind:class="theme === 'system' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
-                class="flex-1 flex items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
+                class="flex flex-1 items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
             >
                 <x-filament::icon
                     name="heroicon-m-computer-desktop"

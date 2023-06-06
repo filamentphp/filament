@@ -15,7 +15,9 @@
     <div @class([
         'space-y-2',
     ])>
-        <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium">
+        <div
+            class="flex items-center space-x-2 text-sm font-medium rtl:space-x-reverse"
+        >
             @if ($icon = $getIcon())
                 <x-filament::icon
                     :name="$icon"
@@ -33,19 +35,21 @@
         </div>
 
         @if ($description = $getDescription())
-            <div @class([
-                'flex items-center space-x-1 rtl:space-x-reverse text-sm font-medium',
-                match ($descriptionColor = $getDescriptionColor()) {
-                    'danger' => 'text-danger-600',
-                    'gray', null => 'text-gray-600',
-                    'info' => 'text-info-600',
-                    'primary' => 'text-primary-600',
-                    'secondary' => 'text-secondary-600',
-                    'success' => 'text-success-600',
-                    'warning' => 'text-warning-600',
-                    default => $descriptionColor,
-                },
-            ])>
+            <div
+                @class([
+                    'flex items-center space-x-1 text-sm font-medium rtl:space-x-reverse',
+                    match ($descriptionColor = $getDescriptionColor()) {
+                        'danger' => 'text-danger-600',
+                        'gray', null => 'text-gray-600',
+                        'info' => 'text-info-600',
+                        'primary' => 'text-primary-600',
+                        'secondary' => 'text-secondary-600',
+                        'success' => 'text-success-600',
+                        'warning' => 'text-warning-600',
+                        default => $descriptionColor,
+                    },
+                ])
+            >
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
                         :name="$descriptionIcon"
@@ -81,12 +85,9 @@
                 chart.destroy()
                 initChart()
             "
-            class="absolute bottom-0 inset-x-0 rounded-b-xl overflow-hidden"
+            class="absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
         >
-            <canvas
-                x-ref="canvas"
-                class="h-6"
-            ></canvas>
+            <canvas x-ref="canvas" class="h-6"></canvas>
 
             @php
                 $chartColor = $getChartColor();
@@ -126,4 +127,3 @@
         </div>
     @endif
 </{!! $tag !!}>
-

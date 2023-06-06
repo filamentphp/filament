@@ -24,7 +24,7 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
-            class="flex items-center justify-between w-full"
+            class="flex w-full items-center justify-between"
         >
             <div class="flex items-center gap-4">
                 @if ($icon)
@@ -37,7 +37,9 @@
                     />
                 @endif
 
-                <p class="flex-1 font-bold uppercase text-xs tracking-wider text-primary-600 dark:text-primary-500">
+                <p
+                    class="flex-1 text-xs font-bold uppercase tracking-wider text-primary-600 dark:text-primary-500"
+                >
                     {{ $label }}
                 </p>
             </div>
@@ -63,7 +65,7 @@
         @endif
         x-collapse.duration.200ms
         @class([
-            'text-sm space-y-1 -mx-3',
+            '-mx-3 space-y-1 text-sm',
             'mt-2' => $label,
         ])
     >

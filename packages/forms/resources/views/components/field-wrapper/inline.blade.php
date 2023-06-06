@@ -47,9 +47,11 @@
         </label>
     @endif
 
-    <div class="grid gap-2 sm:grid-cols-3 sm:gap-4 sm:items-start">
+    <div class="grid gap-2 sm:grid-cols-3 sm:items-start sm:gap-4">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || count($hintActions))
-            <div class="flex items-center justify-between gap-2 sm:gap-1 sm:items-start sm:flex-col sm:pt-2">
+            <div
+                class="flex items-center justify-between gap-2 sm:flex-col sm:items-start sm:gap-1 sm:pt-2"
+            >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
@@ -69,14 +71,18 @@
                 @endif
 
                 @if ($hint || $hintIcon || count($hintActions))
-                    <x-filament-forms::field-wrapper.hint :actions="$hintActions" :color="$hintColor" :icon="$hintIcon">
+                    <x-filament-forms::field-wrapper.hint
+                        :actions="$hintActions"
+                        :color="$hintColor"
+                        :icon="$hintIcon"
+                    >
                         {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
                     </x-filament-forms::field-wrapper.hint>
                 @endif
             </div>
         @endif
 
-        <div class="space-y-2 sm:space-y-1 sm:col-span-2">
+        <div class="space-y-2 sm:col-span-2 sm:space-y-1">
             {{ $slot }}
 
             @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))

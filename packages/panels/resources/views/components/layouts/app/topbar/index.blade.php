@@ -3,9 +3,13 @@
     'navigation',
 ])
 
-<header {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 border-b bg-white dark:bg-gray-800 dark:border-gray-700']) }}>
-    <div class="flex items-center justify-between h-16 -mt-px px-2 sm:px-4 md:px-6 lg:px-8">
-        <div class="flex items-center flex-1">
+<header
+    {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 border-b bg-white dark:border-gray-700 dark:bg-gray-800']) }}
+>
+    <div
+        class="-mt-px flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
+    >
+        <div class="flex flex-1 items-center">
             {{ filament()->renderHook('topbar.start') }}
 
             <button
@@ -14,7 +18,7 @@
                 x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
                 x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 @class([
-                    'filament-sidebar-open-button shrink-0 flex items-center justify-center w-10 h-10 rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
+                    'filament-sidebar-open-button flex h-10 w-10 shrink-0 items-center justify-center rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
                     'lg:me-4' => filament()->isSidebarFullyCollapsibleOnDesktop(),
                     'lg:hidden' => ! (filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
@@ -28,12 +32,9 @@
             </button>
 
             @if (filament()->hasTopNavigation())
-                <div class="hidden me-12 lg:flex">
+                <div class="me-12 hidden lg:flex">
                     @if ($homeUrl = filament()->getHomeUrl())
-                        <a
-                            href="{{ $homeUrl }}"
-                            data-turbo="false"
-                        >
+                        <a href="{{ $homeUrl }}" data-turbo="false">
                             <x-filament::logo />
                         </a>
                     @else
@@ -42,7 +43,7 @@
                 </div>
 
                 @if (filament()->hasNavigation())
-                    <ul class="hidden items-center flex-wrap gap-3 lg:flex">
+                    <ul class="hidden flex-wrap items-center gap-3 lg:flex">
                         @foreach ($navigation as $group)
                             @if ($groupLabel = $group->getLabel())
                                 <x-filament::dropdown placement="bottom-start">
@@ -87,7 +88,9 @@
                     </ul>
                 @endif
             @elseif (count($breadcrumbs))
-                <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
+                <x-filament::layouts.app.topbar.breadcrumbs
+                    :breadcrumbs="$breadcrumbs"
+                />
             @endif
         </div>
 
@@ -107,8 +110,12 @@
     </div>
 
     @if (filament()->hasTopNavigation() && count($breadcrumbs))
-        <div class="hidden border-t items-center h-12 px-8 lg:flex dark:border-gray-700">
-            <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
+        <div
+            class="hidden h-12 items-center border-t px-8 dark:border-gray-700 lg:flex"
+        >
+            <x-filament::layouts.app.topbar.breadcrumbs
+                :breadcrumbs="$breadcrumbs"
+            />
         </div>
     @endif
 </header>

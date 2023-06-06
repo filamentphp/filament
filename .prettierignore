@@ -1,4 +1,6 @@
 *.md
 **/dist
+docs-assets
+tests/src/Upgrade/Fixture
 **/vendor
 composer.lock

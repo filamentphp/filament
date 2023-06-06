@@ -42,11 +42,11 @@
 >
     <div
         @class([
-            'flex gap-3 w-full',
+            'flex w-full gap-3',
             ...match ($isInline) {
-                true => ['py-2 ps-6 pe-2'],
+                true => ['py-2 pe-2 ps-6'],
                 false => [
-                    'p-4 rounded-xl',
+                    'rounded-xl p-4',
                     match ($color) {
                         'danger' => 'bg-danger-500/10 dark:bg-danger-500/20',
                         'gray' => 'bg-gray-500/10 dark:bg-gray-500/20',
