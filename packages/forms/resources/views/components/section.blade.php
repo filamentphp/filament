@@ -105,7 +105,7 @@
             <button
                 x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{
-                    '-rotate-180': !isCollapsed,
+                    '-rotate-180': ! isCollapsed,
                 }"
                 type="button"
                 @class([
