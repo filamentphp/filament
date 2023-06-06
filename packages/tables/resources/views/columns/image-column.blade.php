@@ -1,9 +1,11 @@
 <div
     {{
-        $attributes->merge($getExtraAttributes(), escape: false)->class([
-            'filament-tables-image-column',
-            'px-4 py-3' => ! $isInline(),
-        ])
+        $attributes
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+                'filament-tables-image-column',
+                'px-4 py-3' => ! $isInline(),
+            ])
     }}
 >
     @php

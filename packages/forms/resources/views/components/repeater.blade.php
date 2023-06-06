@@ -147,7 +147,7 @@
                                             <li
                                                 x-on:click.stop="isCollapsed = ! isCollapsed"
                                             >
-                                                <div x-show="!isCollapsed">
+                                                <div x-show="! isCollapsed">
                                                     {{ $getAction('collapse') }}
                                                 </div>
 
@@ -164,7 +164,7 @@
                             @endif
 
                             <div
-                                x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed, 'p-6': !isCollapsed}"
+                                x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed, 'p-6': ! isCollapsed}"
                             >
                                 {{ $item }}
                             </div>

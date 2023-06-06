@@ -233,7 +233,7 @@
 
         <span
             @if ($hasFileUploadLoadingIndicator)
-                x-show="!isUploadingFile"
+                x-show="! isUploadingFile"
             @endif
             class="{{ $labelClasses }}"
         >

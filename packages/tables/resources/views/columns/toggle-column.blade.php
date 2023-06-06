@@ -13,9 +13,9 @@
         }"
         wire:ignore
         {{
-            $attributes->merge($getExtraAttributes(), escape: false)->class([
-                'filament-tables-toggle-column',
-            ])
+            $attributes
+                ->merge($getExtraAttributes(), escape: false)
+                ->class(['filament-tables-toggle-column'])
         }}
     >
         @php

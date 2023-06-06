@@ -21,7 +21,11 @@
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <div
-            {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-color-picker-component group flex items-center space-x-1 rtl:space-x-reverse']) }}
+            {{
+                $attributes
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->class(['filament-forms-color-picker-component group flex items-center space-x-1 rtl:space-x-reverse'])
+            }}
         >
             <div
                 x-ignore

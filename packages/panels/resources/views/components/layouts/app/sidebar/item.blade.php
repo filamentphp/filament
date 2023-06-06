@@ -9,7 +9,10 @@
 ])
 
 <li
-    @class(['filament-sidebar-item overflow-hidden', 'filament-sidebar-item-active' => $active])
+    @class([
+        'filament-sidebar-item overflow-hidden',
+        'filament-sidebar-item-active' => $active,
+    ])
 >
     <a
         href="{{ $url }}"

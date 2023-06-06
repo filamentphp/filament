@@ -9,53 +9,51 @@
 
     <div
         x-data="{
+            areAllCheckboxesChecked: false,
 
-        areAllCheckboxesChecked: false,
+            checkboxListOptions: Array.from($root.querySelectorAll('.filament-forms-checkbox-list-component-option-label')),
 
-        checkboxListOptions: Array.from($root.querySelectorAll('.filament-forms-checkbox-list-component-option-label')),
+            search: '',
 
-        search: '',
+            visibleCheckboxListOptions: [],
 
-        visibleCheckboxListOptions: [],
-
-        init: function () {
-            this.updateVisibleCheckboxListOptions()
-            this.checkIfAllCheckboxesAreChecked()
-
-            Livewire.hook('message.processed', () => {
-                this.checkIfAllCheckboxesAreChecked()
-            })
-
-            $watch('search', () => {
+            init: function () {
                 this.updateVisibleCheckboxListOptions()
                 this.checkIfAllCheckboxesAreChecked()
-            })
-        },
 
-        checkIfAllCheckboxesAreChecked: function () {
-            this.areAllCheckboxesChecked = this.visibleCheckboxListOptions.length === this.visibleCheckboxListOptions.filter((checkboxLabel) => checkboxLabel.querySelector('input[type=checkbox]:checked')).length
-        },
+                Livewire.hook('message.processed', () => {
+                    this.checkIfAllCheckboxesAreChecked()
+                })
 
-        toggleAllCheckboxes: function () {
-            state = ! this.areAllCheckboxesChecked
+                $watch('search', () => {
+                    this.updateVisibleCheckboxListOptions()
+                    this.checkIfAllCheckboxesAreChecked()
+                })
+            },
 
-            this.visibleCheckboxListOptions.forEach((checkboxLabel) => {
-                checkbox = checkboxLabel.querySelector('input[type=checkbox]')
+            checkIfAllCheckboxesAreChecked: function () {
+                this.areAllCheckboxesChecked = this.visibleCheckboxListOptions.length === this.visibleCheckboxListOptions.filter((checkboxLabel) => checkboxLabel.querySelector('input[type=checkbox]:checked')).length
+            },
 
-                checkbox.checked = state
-                checkbox.dispatchEvent(new Event('change'))
-            })
+            toggleAllCheckboxes: function () {
+                state = ! this.areAllCheckboxesChecked
 
-            this.areAllCheckboxesChecked = state
-        },
+                this.visibleCheckboxListOptions.forEach((checkboxLabel) => {
+                    checkbox = checkboxLabel.querySelector('input[type=checkbox]')
 
-        updateVisibleCheckboxListOptions: function () {
-            this.visibleCheckboxListOptions = this.checkboxListOptions.filter((checkboxListItem) => {
-                return checkboxListItem.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(this.search.toLowerCase())
-            })
-        }
+                    checkbox.checked = state
+                    checkbox.dispatchEvent(new Event('change'))
+                })
 
-    }"
+                this.areAllCheckboxesChecked = state
+            },
+
+            updateVisibleCheckboxListOptions: function () {
+                this.visibleCheckboxListOptions = this.checkboxListOptions.filter((checkboxListItem) => {
+                    return checkboxListItem.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(this.search.toLowerCase())
+                })
+            }
+        }"
     >
         @if (! $isDisabled)
             @if ($isSearchable)

@@ -47,7 +47,7 @@
 >
     <div
         @if ($collapsible)
-            x-on:click="isCollapsed = !isCollapsed"
+            x-on:click="isCollapsed = ! isCollapsed"
         @endif
         @class([
             'filament-section-component-header-wrapper flex items-center overflow-hidden',
@@ -107,8 +107,8 @@
                 color="gray"
                 icon="heroicon-m-chevron-down"
                 icon-alias="support::section.buttons.collapse"
-                x-on:click.stop="isCollapsed = !isCollapsed"
-                x-bind:class="{ 'rotate-180': !isCollapsed }"
+                x-on:click.stop="isCollapsed = ! isCollapsed"
+                x-bind:class="{ 'rotate-180': ! isCollapsed }"
                 class="-my-2.5 -me-2.5"
             />
         @endif
@@ -116,7 +116,7 @@
 
     <div
         @if ($collapsible)
-            x-bind:aria-expanded="(!isCollapsed).toString()"
+            x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($collapsed)
                 x-cloak
             @endif

@@ -46,7 +46,7 @@
                 "
                 x-tooltip.html="tooltip"
                 x-bind:class="{
-                    'justify-center': !$store.sidebar.isOpen,
+                    'justify-center': ! $store.sidebar.isOpen,
                 }"
             @endif
         >

@@ -68,9 +68,11 @@
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
+
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
     }
+
     if ($isSelectionEnabled || $isReordering) {
         $columnsCount++;
     }
@@ -463,6 +465,7 @@
                                         class="rounded-lg border-0 border-gray-300 bg-gray-500/5 py-1 pe-6 ps-2 text-xs font-medium focus:border-primary-500 focus:ring-0 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 sm:text-sm"
                                     >
                                         <option value="">-</option>
+
                                         @foreach ($sortableColumns as $column)
                                             <option
                                                 value="{{ $column->getName() }}"
@@ -489,6 +492,7 @@
                                         <option value="asc">
                                             {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
                                         </option>
+
                                         <option value="desc">
                                             {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
                                         </option>
@@ -652,11 +656,11 @@
                                                 :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                 x-model="selectedRecords"
                                                 :value="$recordKey"
-                                                :class="\Illuminate\Support\Arr::toCssClasses([
+                                                @class([
                                                     'filament-tables-record-checkbox absolute top-3 end-3',
                                                     'md:relative md:top-0 md:end-0' => ! $contentGrid,
                                                     'hidden' => $isReordering,
-                                                ])"
+                                                ])
                                             />
                                         @endif
 
