@@ -26,6 +26,7 @@
 
     }"
     x-cloak
+    wire:ignore.self
     {{
         $attributes
             ->merge([
