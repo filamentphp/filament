@@ -91,6 +91,10 @@ class Resource
 
     public static function getNavigationItems(): array
     {
+        if (! static::canViewAny()) {
+            return [];
+        }
+
         $routeBaseName = static::getRouteBaseName();
 
         return [
