@@ -10,7 +10,7 @@
         init: function () {
             this.$watch('step', () => this.updateQueryString())
 
-            this.step = this.getSteps()[{{ $getStartStep() }} - 1]
+            this.step = this.getSteps().at({{ $getStartStep() - 1 }})
         },
 
         nextStep: function () {

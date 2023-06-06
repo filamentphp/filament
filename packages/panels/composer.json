@@ -28,7 +28,6 @@
         "illuminate/support": "^9.0|^10.0",
         "illuminate/view": "^9.0|^10.0",
         "livewire/livewire": "^2.10.7",
-        "ryangjchandler/blade-capture-directive": "^0.2|^0.3",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {
