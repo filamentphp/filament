@@ -19,9 +19,7 @@
                     {{ __('filament-notifications::database.modal.buttons.mark_all_as_read.label') }}
                 </x-filament::link>
 
-                <span>
-                    &bull;
-                </span>
+                <span>&bull;</span>
             @endif
 
             <x-filament::link
