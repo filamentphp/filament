@@ -35,6 +35,7 @@
     }}
     {{ $getExtraAlpineAttributeBag() }}
     wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ \Filament\Forms\Components\Tabs::class }}.container"
+    wire:ignore.self
 >
     <input
         type="hidden"
