@@ -17,8 +17,5 @@
         <x-tables::filters.trigger :indicators-count="$indicatorsCount" />
     </x-slot>
 
-    <x-tables::filters
-        class="p-4"
-        :form="$form"
-    />
+    <x-tables::filters class="p-4" :form="$form" />
 </x-tables::dropdown>
