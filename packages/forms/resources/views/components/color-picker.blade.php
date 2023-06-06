@@ -21,7 +21,11 @@
     :state-path="$getStatePath()"
 >
     <div
-        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-color-picker-component group flex items-center space-x-1 rtl:space-x-reverse']) }}
+        {{
+            $attributes
+                ->merge($getExtraAttributes())
+                ->class(['filament-forms-color-picker-component group flex items-center space-x-1 rtl:space-x-reverse'])
+        }}
     >
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
             {{ $prefixAction }}

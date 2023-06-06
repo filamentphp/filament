@@ -22,7 +22,11 @@
     :state-path="$getStatePath()"
 >
     <div
-        {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-text-input-component group flex items-center space-x-2 rtl:space-x-reverse']) }}
+        {{
+            $attributes
+                ->merge($getExtraAttributes())
+                ->class(['filament-forms-text-input-component group flex items-center space-x-2 rtl:space-x-reverse'])
+        }}
     >
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
             {{ $prefixAction }}

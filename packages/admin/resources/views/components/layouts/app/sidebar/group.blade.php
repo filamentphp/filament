@@ -44,9 +44,9 @@
             @if ($collapsible)
                 <x-heroicon-o-chevron-down
                     :class="\Illuminate\Support\Arr::toCssClasses([
-                    'w-3 h-3 text-gray-600 transition',
-                    'dark:text-gray-300' => config('filament.dark_mode'),
-                ])"
+                        'w-3 h-3 text-gray-600 transition',
+                        'dark:text-gray-300' => config('filament.dark_mode'),
+                    ])"
                     x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'"
                     x-cloak
                 />

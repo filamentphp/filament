@@ -19,18 +19,20 @@
 
 <div
     {{
-        $attributes->merge($getExtraAttributes())->class([
-            'filament-tables-badge-column flex',
-            'px-4 py-3' => ! $isInline(),
-            match ($getAlignment()) {
-                'start' => 'justify-start',
-                'center' => 'justify-center',
-                'end' => 'justify-end',
-                'left' => 'justify-start rtl:flex-row-reverse',
-                'right' => 'justify-end rtl:flex-row-reverse',
-                default => null,
-            },
-        ])
+        $attributes
+            ->merge($getExtraAttributes())
+            ->class([
+                'filament-tables-badge-column flex',
+                'px-4 py-3' => ! $isInline(),
+                match ($getAlignment()) {
+                    'start' => 'justify-start',
+                    'center' => 'justify-center',
+                    'end' => 'justify-end',
+                    'left' => 'justify-start rtl:flex-row-reverse',
+                    'right' => 'justify-end rtl:flex-row-reverse',
+                    default => null,
+                },
+            ])
     }}
 >
     @if (filled($state))

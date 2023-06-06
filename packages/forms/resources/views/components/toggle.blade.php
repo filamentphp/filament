@@ -45,9 +45,11 @@
             dusk="filament.forms.{{ $getStatePath() }}"
             type="button"
             {{
-                $attributes->merge($getExtraAttributes())->class([
-                    'filament-forms-toggle-component relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70',
-                ])
+                $attributes
+                    ->merge($getExtraAttributes())
+                    ->class([
+                        'filament-forms-toggle-component relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70',
+                    ])
             }}
             {{ $getExtraAlpineAttributeBag() }}
         >

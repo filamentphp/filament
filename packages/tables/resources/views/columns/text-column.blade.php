@@ -13,46 +13,48 @@
 
 <div
     {{
-        $attributes->merge($getExtraAttributes())->class([
-            'filament-tables-text-column',
-            'px-4 py-3' => ! $isInline(),
-            'text-primary-600 transition hover:text-primary-500 hover:underline focus:text-primary-500 focus:underline' => $getAction() || $getUrl(),
-            match ($getColor()) {
-                'danger' => 'text-danger-600',
-                'primary' => 'text-primary-600',
-                'secondary' => 'text-gray-500',
-                'success' => 'text-success-600',
-                'warning' => 'text-warning-600',
-                default => null,
-            } => ! ($getAction() || $getUrl()),
-            match ($getColor()) {
-                'secondary' => 'dark:text-gray-400',
-                default => null,
-            } => (! ($getAction() || $getUrl())) && config('tables.dark_mode'),
-            match ($getSize()) {
-                'sm' => 'text-sm',
-                'lg' => 'text-lg',
-                default => null,
-            },
-            match ($getWeight()) {
-                'thin' => 'font-thin',
-                'extralight' => 'font-extralight',
-                'light' => 'font-light',
-                'medium' => 'font-medium',
-                'semibold' => 'font-semibold',
-                'bold' => 'font-bold',
-                'extrabold' => 'font-extrabold',
-                'black' => 'font-black',
-                default => null,
-            },
-            match ($getFontFamily()) {
-                'sans' => 'font-sans',
-                'serif' => 'font-serif',
-                'mono' => 'font-mono',
-                default => null,
-            },
-            'whitespace-normal' => $canWrap(),
-        ])
+        $attributes
+            ->merge($getExtraAttributes())
+            ->class([
+                'filament-tables-text-column',
+                'px-4 py-3' => ! $isInline(),
+                'text-primary-600 transition hover:text-primary-500 hover:underline focus:text-primary-500 focus:underline' => $getAction() || $getUrl(),
+                match ($getColor()) {
+                    'danger' => 'text-danger-600',
+                    'primary' => 'text-primary-600',
+                    'secondary' => 'text-gray-500',
+                    'success' => 'text-success-600',
+                    'warning' => 'text-warning-600',
+                    default => null,
+                } => ! ($getAction() || $getUrl()),
+                match ($getColor()) {
+                    'secondary' => 'dark:text-gray-400',
+                    default => null,
+                } => (! ($getAction() || $getUrl())) && config('tables.dark_mode'),
+                match ($getSize()) {
+                    'sm' => 'text-sm',
+                    'lg' => 'text-lg',
+                    default => null,
+                },
+                match ($getWeight()) {
+                    'thin' => 'font-thin',
+                    'extralight' => 'font-extralight',
+                    'light' => 'font-light',
+                    'medium' => 'font-medium',
+                    'semibold' => 'font-semibold',
+                    'bold' => 'font-bold',
+                    'extrabold' => 'font-extrabold',
+                    'black' => 'font-black',
+                    default => null,
+                },
+                match ($getFontFamily()) {
+                    'sans' => 'font-sans',
+                    'serif' => 'font-serif',
+                    'mono' => 'font-mono',
+                    default => null,
+                },
+                'whitespace-normal' => $canWrap(),
+            ])
     }}
 >
     @if (filled($descriptionAbove))

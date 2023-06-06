@@ -72,10 +72,12 @@
             min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }};
         "
         {{
-            $attributes->merge($getExtraAttributes())->class([
-                'filament-forms-file-upload-component',
-                'mx-auto w-32' => $isAvatar(),
-            ])
+            $attributes
+                ->merge($getExtraAttributes())
+                ->class([
+                    'filament-forms-file-upload-component',
+                    'mx-auto w-32' => $isAvatar(),
+                ])
         }}
         {{ $getExtraAlpineAttributeBag() }}
     >

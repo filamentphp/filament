@@ -28,9 +28,11 @@
         })
     "
     {{
-        $attributes->merge($getExtraAttributes())->class([
-            'filament-tables-checkbox-column',
-        ])
+        $attributes
+            ->merge($getExtraAttributes())
+            ->class([
+                'filament-tables-checkbox-column',
+            ])
     }}
 >
     <input type="hidden" value="{{ $state ? 1 : 0 }}" x-ref="newState" />

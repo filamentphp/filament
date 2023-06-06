@@ -135,18 +135,12 @@
 
                 <span
                     x-show="! isUploadingFile"
-                    @class([
-                        'sr-only' => $labelSrOnly,
-                    ])
+                    @class(['sr-only' => $labelSrOnly])
                 >
                     {{ $slot }}
                 </span>
             @else
-                <span
-                    @class([
-                        'sr-only' => $labelSrOnly,
-                    ])
-                >
+                <span @class(['sr-only' => $labelSrOnly])>
                     {{ $slot }}
                 </span>
             @endif

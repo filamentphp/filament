@@ -8,7 +8,11 @@
 ])
 
 <th
-    {{ $attributes->merge($extraAttributes)->class(['filament-tables-header-cell p-0']) }}
+    {{
+        $attributes
+            ->merge($extraAttributes)
+            ->class(['filament-tables-header-cell p-0'])
+    }}
 >
     <button
         @if ($sortable)

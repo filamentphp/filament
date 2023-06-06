@@ -32,15 +32,17 @@
     @endif
     id="{{ $getId() }}"
     {{
-        $attributes->merge($getExtraAttributes())->class([
-            'filament-forms-section-component',
-            'rounded-xl border border-gray-300 bg-white' => ! $isAside,
-            'grid grid-cols-1' => $isAside,
-            'md:grid-cols-2' => $isAside && ! $isCompact,
-            'md:grid-cols-3' => $isAside && $isCompact,
-            'md:order-last' => $isFormBefore,
-            'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode') && ! $isAside,
-        ])
+        $attributes
+            ->merge($getExtraAttributes())
+            ->class([
+                'filament-forms-section-component',
+                'rounded-xl border border-gray-300 bg-white' => ! $isAside,
+                'grid grid-cols-1' => $isAside,
+                'md:grid-cols-2' => $isAside && ! $isCompact,
+                'md:grid-cols-3' => $isAside && $isCompact,
+                'md:order-last' => $isFormBefore,
+                'dark:border-gray-600 dark:bg-gray-800' => config('forms.dark_mode') && ! $isAside,
+            ])
     }}
     {{ $getExtraAlpineAttributeBag() }}
 >

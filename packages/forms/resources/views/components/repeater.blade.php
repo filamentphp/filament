@@ -47,11 +47,13 @@
 
     <div
         {{
-            $attributes->merge($getExtraAttributes())->class([
-                'filament-forms-repeater-component space-y-6 rounded-xl',
-                'bg-gray-50 p-6' => $isInset(),
-                'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
-            ])
+            $attributes
+                ->merge($getExtraAttributes())
+                ->class([
+                    'filament-forms-repeater-component space-y-6 rounded-xl',
+                    'bg-gray-50 p-6' => $isInset(),
+                    'dark:bg-gray-500/10' => $isInset() && config('forms.dark_mode'),
+                ])
         }}
     >
         @if (count($containers))

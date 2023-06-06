@@ -38,9 +38,11 @@
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
+
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
     }
+
     if ($isSelectionEnabled || $isReordering) {
         $columnsCount++;
     }
@@ -411,6 +413,7 @@
                                         ])
                                     >
                                         <option value="">-</option>
+
                                         @foreach ($sortableColumns as $column)
                                             <option
                                                 value="{{ $column->getName() }}"
@@ -441,6 +444,7 @@
                                         <option value="asc">
                                             {{ __('tables::table.sorting.fields.direction.options.asc') }}
                                         </option>
+
                                         <option value="desc">
                                             {{ __('tables::table.sorting.fields.direction.options.desc') }}
                                         </option>
@@ -518,10 +522,10 @@
                                     >
                                         <x-tables::reorder.handle
                                             :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'absolute top-3 right-3 rtl:right-auto rtl:left-3',
-                                            'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
-                                            'hidden' => ! $isReordering,
-                                        ])"
+                                                'absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                                'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                'hidden' => ! $isReordering,
+                                            ])"
                                         />
 
                                         @if ($isSelectionEnabled)
@@ -819,8 +823,8 @@
                             >
                                 <x-tables::reorder.cell
                                     :class="\Illuminate\Support\Arr::toCssClasses([
-                                    'hidden' => ! $isReordering,
-                                ])"
+                                        'hidden' => ! $isReordering,
+                                    ])"
                                 >
                                     @if ($isReordering)
                                         <x-tables::reorder.handle />
@@ -844,8 +848,8 @@
                                     @if ($isRecordSelectable($record))
                                         <x-tables::checkbox.cell
                                             :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
+                                                'hidden' => $isReordering,
+                                            ])"
                                         >
                                             <x-tables::checkbox
                                                 x-model="selectedRecords"
@@ -913,8 +917,8 @@
                                     @if ($isRecordSelectable($record))
                                         <x-tables::checkbox.cell
                                             :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
+                                                'hidden' => $isReordering,
+                                            ])"
                                         >
                                             <x-tables::checkbox
                                                 x-model="selectedRecords"

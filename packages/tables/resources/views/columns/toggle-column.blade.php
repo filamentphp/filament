@@ -12,9 +12,9 @@
             isLoading: false,
         }"
         {{
-            $attributes->merge($getExtraAttributes())->class([
-                'filament-tables-toggle-column',
-            ])
+            $attributes
+                ->merge($getExtraAttributes())
+                ->class(['filament-tables-toggle-column'])
         }}
         wire:ignore
     >

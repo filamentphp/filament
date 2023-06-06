@@ -34,9 +34,9 @@
         })
     "
     {{
-        $attributes->merge($getExtraAttributes())->class([
-            'filament-tables-text-input-column',
-        ])
+        $attributes
+            ->merge($getExtraAttributes())
+            ->class(['filament-tables-text-input-column'])
     }}
 >
     <input
@@ -62,11 +62,14 @@
         :readonly="isLoading"
         x-tooltip="error"
         {{
-            $attributes->merge($getExtraInputAttributes())->merge($getExtraAttributes())->class([
-                'ml-0.5 inline-block rounded-lg text-gray-900 shadow-sm outline-none transition duration-75 read-only:opacity-50 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
-                $alignClass,
-                'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
-            ])
+            $attributes
+                ->merge($getExtraInputAttributes())
+                ->merge($getExtraAttributes())
+                ->class([
+                    'ml-0.5 inline-block rounded-lg text-gray-900 shadow-sm outline-none transition duration-75 read-only:opacity-50 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                    $alignClass,
+                    'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
+                ])
         }}
         x-bind:class="{
             'border-gray-300': ! error,
