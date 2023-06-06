@@ -558,7 +558,7 @@ var require_dayjs_min = __commonJS((exports, module) => {
         }, d2 = n3.meridiem || function(t4, e4, n4) {
           var r4 = t4 < 12 ? "AM" : "PM";
           return n4 ? r4.toLowerCase() : r4;
-        }, $2 = {YY: String(this.$y).slice(-2), YYYY: this.$y, M: a3 + 1, MM: O.s(a3 + 1, 2, "0"), MMM: h2(n3.monthsShort, a3, f2, 3), MMMM: h2(f2, a3), D: this.$D, DD: O.s(this.$D, 2, "0"), d: String(this.$W), dd: h2(n3.weekdaysMin, this.$W, o3, 2), ddd: h2(n3.weekdaysShort, this.$W, o3, 3), dddd: o3[this.$W], H: String(s3), HH: O.s(s3, 2, "0"), h: c3(1), hh: c3(2), a: d2(s3, u2, true), A: d2(s3, u2, false), m: String(u2), mm: O.s(u2, 2, "0"), s: String(this.$s), ss: O.s(this.$s, 2, "0"), SSS: O.s(this.$ms, 3, "0"), Z: i2};
+        }, $2 = {YY: String(this.$y).slice(-2), YYYY: O.s(this.$y, 4, "0"), M: a3 + 1, MM: O.s(a3 + 1, 2, "0"), MMM: h2(n3.monthsShort, a3, f2, 3), MMMM: h2(f2, a3), D: this.$D, DD: O.s(this.$D, 2, "0"), d: String(this.$W), dd: h2(n3.weekdaysMin, this.$W, o3, 2), ddd: h2(n3.weekdaysShort, this.$W, o3, 3), dddd: o3[this.$W], H: String(s3), HH: O.s(s3, 2, "0"), h: c3(1), hh: c3(2), a: d2(s3, u2, true), A: d2(s3, u2, false), m: String(u2), mm: O.s(u2, 2, "0"), s: String(this.$s), ss: O.s(this.$s, 2, "0"), SSS: O.s(this.$ms, 3, "0"), Z: i2};
         return r3.replace(y, function(t4, e4) {
           return e4 || $2[t4] || i2.replace(":", "");
         });
@@ -12702,7 +12702,7 @@ var Dayjs = /* @__PURE__ */ function() {
     };
     var matches2 = {
       YY: String(this.$y).slice(-2),
-      YYYY: this.$y,
+      YYYY: Utils.s(this.$y, 4, "0"),
       M: $M + 1,
       MM: Utils.s($M + 1, 2, "0"),
       MMM: getShort(locale.monthsShort, $M, months, 3),
@@ -28575,10 +28575,11 @@ var Masked = class {
     this.resolve(value);
   }
   resolve(value) {
-    this.reset();
-    this.append(value, {
+    let flags = arguments.length > 1 && arguments[1] !== void 0 ? arguments[1] : {
       input: true
-    }, "");
+    };
+    this.reset();
+    this.append(value, flags, "");
     this.doCommit();
     return this.value;
   }
