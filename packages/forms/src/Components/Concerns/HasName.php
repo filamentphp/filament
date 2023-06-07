@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Str;
 
 trait HasName
 {
