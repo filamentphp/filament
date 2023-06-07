@@ -51,11 +51,11 @@ class MakeThemeCommand extends Command
             return static::INVALID;
         }
 
-        $classPathPrefix = (string) Str::of($panel->getPageDirectory())
+        $classPathPrefix = (string) str($panel->getPageDirectory())
             ->afterLast('Filament/')
             ->beforeLast('Pages');
 
-        $viewPathPrefix = Str::of($classPathPrefix)
+        $viewPathPrefix = str($classPathPrefix)
             ->explode('/')
             ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('/');

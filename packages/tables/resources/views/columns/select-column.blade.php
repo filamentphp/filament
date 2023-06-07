@@ -36,7 +36,7 @@
 >
     <input
         type="hidden"
-        value="{{ \Illuminate\Support\Str::of($state)->replace('"', '\\"') }}"
+        value="{{ str($state)->replace('"', '\\"') }}"
         x-ref="newState"
     />
 
