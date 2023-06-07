@@ -294,7 +294,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 #### Relation manager
 
-"Relation managers" in Filament allow admins to list, create, associate, edit, dissociate and delete related records without leaving the resource's Edit page.
+"Relation managers" in Filament allow admins to list, create, edit, and delete related records without leaving the resource's Edit page.
 
 The related records are listed in a table, which has buttons to open a modal for each action.
 
