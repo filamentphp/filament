@@ -24,7 +24,8 @@
                 @class([
                     'text-danger-700 font-medium whitespace-nowrap',
                     'dark:text-danger-400' => config('forms.dark_mode'),
-                ])>
+                ])
+            >
                 *
             </sup>
         @endif
