@@ -20,7 +20,7 @@ class MakeResourceCommand extends Command
     use CanReadModelSchemas;
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament resource class and default page classes.';
+    protected $description = 'Create a new Filament resource class and default page classes';
 
     protected $signature = 'make:filament-resource {name?} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--F|force}';
 

@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
@@ -26,7 +27,7 @@ trait InteractsWithRecord
         return $this->record;
     }
 
-    public function getRecordTitle(): string
+    public function getRecordTitle(): string | Htmlable
     {
         $resource = static::getResource();
 

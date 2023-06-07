@@ -16,7 +16,7 @@ class CheckTranslationsCommand extends Command
                             {locales* : The locales to check.}
                             {--source=vendor : The directory containing the translations to check - either \'vendor\' or \'app\'.}';
 
-    protected $description = 'Checks for missing and removed translations.';
+    protected $description = 'Check for missing and removed translations';
 
     public function handle()
     {

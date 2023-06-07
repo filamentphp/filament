@@ -1386,6 +1386,7 @@ RichEditor::make('content')
         'orderedList',
         'redo',
         'strike',
+        'underline',
         'undo',
     ])
 RichEditor::make('content')

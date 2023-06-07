@@ -223,7 +223,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
         return $this->subheading;
     }
 
-    protected function getTitle(): string
+    protected function getTitle(): string | Htmlable
     {
         return static::$title ?? (string) Str::of(class_basename(static::class))
             ->kebab()

@@ -27,22 +27,25 @@
     }"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
-    {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-forms-tabs-component rounded-xl shadow-sm border border-gray-300 bg-white',
-        'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
-    ]) }}
+    {{
+        $attributes->merge($getExtraAttributes())->class([
+            'filament-forms-tabs-component rounded-xl border border-gray-300 bg-white shadow-sm',
+            'dark:border-gray-700 dark:bg-gray-800' => config('forms.dark_mode'),
+        ])
+    }}
     {{ $getExtraAlpineAttributeBag() }}
     wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ \Filament\Forms\Components\Tabs::class }}.container"
+    wire:ignore.self
 >
     <input
         type="hidden"
-        value='{{
+        value="{{
             collect($getChildComponentContainer()->getComponents())
                 ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => ! $tab->isHidden())
                 ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
                 ->values()
                 ->toJson()
-        }}'
+        }}"
         x-ref="tabsData"
     />
 
@@ -50,7 +53,7 @@
         {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
         role="tablist"
         @class([
-            'filament-forms-tabs-component-header rounded-t-xl flex overflow-y-auto bg-gray-100',
+            'filament-forms-tabs-component-header flex overflow-y-auto rounded-t-xl bg-gray-100',
             'dark:bg-gray-700' => config('forms.dark_mode'),
         ])
     >
@@ -79,7 +82,7 @@
                 x-on:click="tab = '{{ $tab->getId() }}'"
                 role="tab"
                 x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
-                class="filament-forms-tabs-component-button flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
+                class="filament-forms-tabs-component-button flex shrink-0 items-center gap-2 p-3 text-sm font-medium"
                 x-bind:class="{
                     'text-gray-500 hover:text-gray-800 focus:text-primary-600 @if (config('forms.dark_mode')) dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-primary-600 @endif': tab !== '{{ $tab->getId() }}',
                     'filament-forms-tabs-component-button-active bg-white text-primary-600 @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}',
@@ -109,7 +112,7 @@
 
                 @if ($badge = $tab->getBadge())
                     <span
-                        class="inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal"
+                        class="min-h-4 ml-auto inline-flex items-center justify-center whitespace-normal rounded-xl px-2 py-0.5 text-xs font-medium tracking-tight rtl:ml-0 rtl:mr-auto"
                         x-bind:class="{
                             'bg-gray-200 @if (config('forms.dark_mode')) dark:bg-gray-600 @endif': tab !== '{{ $tab->getId() }}',
                             'bg-primary-500/10 font-medium': tab === '{{ $tab->getId() }}',

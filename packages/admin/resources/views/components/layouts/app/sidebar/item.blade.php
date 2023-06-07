@@ -10,12 +10,12 @@
     'url',
 ])
 
-<li @class([
+<li
+    @class([
         'filament-sidebar-item overflow-hidden',
         'filament-sidebar-item-active' => $active,
-        'hidden' => ! $visible,
-        'hidden'=> $hidden,
-    ])>
+    ])
+>
     <a
         href="{{ $url }}"
         {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : '' !!}
@@ -38,7 +38,7 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'flex items-center justify-center gap-3 px-3 py-2 rounded-lg font-medium transition',
+            'flex items-center justify-center gap-3 rounded-lg px-3 py-2 font-medium transition',
             'hover:bg-gray-500/5 focus:bg-gray-500/5' => ! $active,
             'dark:text-gray-300 dark:hover:bg-gray-700' => (! $active) && config('filament.dark_mode'),
             'bg-primary-500 text-white' => $active,
@@ -49,7 +49,8 @@
             class="h-5 w-5 shrink-0"
         />
 
-        <div class="flex flex-1"
+        <div
+            class="flex flex-1"
             @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
                 x-show="$store.sidebar.isOpen"
             @endif

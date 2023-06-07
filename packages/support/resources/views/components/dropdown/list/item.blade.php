@@ -28,7 +28,7 @@
         'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
     ]);
 
-    $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-start';
+    $labelClasses = 'filament-dropdown-list-item-label w-full truncate text-start';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item-icon mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0',
@@ -102,7 +102,9 @@
         @endif
     </a>
 @elseif ($tag === 'form')
-    <form {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}>
+    <form
+        {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}
+    >
         @csrf
 
         <button
@@ -110,7 +112,10 @@
             {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
         >
             @if ($icon)
-                <x-dynamic-component :component="$icon" :class="$iconClasses" />
+                <x-dynamic-component
+                    :component="$icon"
+                    :class="$iconClasses"
+                />
             @endif
 
             <span class="{{ $labelClasses }}">

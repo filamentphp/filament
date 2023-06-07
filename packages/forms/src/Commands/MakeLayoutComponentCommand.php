@@ -12,7 +12,7 @@ class MakeLayoutComponentCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a form layout component class and view.';
+    protected $description = 'Create a new form layout component class and view';
 
     protected $signature = 'make:form-layout {name?} {--F|force}';
 

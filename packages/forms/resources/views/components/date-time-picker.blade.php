@@ -34,7 +34,11 @@
     >
         <input x-ref="maxDate" type="hidden" value="{{ $getMaxDate() }}" />
         <input x-ref="minDate" type="hidden" value="{{ $getMinDate() }}" />
-        <input x-ref="disabledDates" type="hidden" value="{{ json_encode($getDisabledDates()) }}" />
+        <input
+            x-ref="disabledDates"
+            type="hidden"
+            value="{{ json_encode($getDisabledDates()) }}"
+        />
 
         <button
             x-ref="button"
@@ -52,19 +56,21 @@
             type="button"
             tabindex="-1"
             @if ($isDisabled()) disabled @endif
-            {{ $getExtraTriggerAttributeBag()->class([
-                'bg-white relative w-full border py-2 text-start cursor-default rounded-lg shadow-sm outline-none',
-                'focus-within:ring-1 focus-within:border-primary-500 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
-                'dark:bg-gray-700' => config('forms.dark_mode'),
-                'border-gray-300' => ! $errors->has($getStatePath()),
-                'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                'border-danger-600' => $errors->has($getStatePath()),
-                'dark:border-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
-                'opacity-70' => $isDisabled(),
-                'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
-                'px-3' => $icon === false,
-                'pl-3 pr-10 rtl:pl-10 rtl:pr-3' => $icon !== false,
-            ]) }}
+            {{
+                $getExtraTriggerAttributeBag()->class([
+                    'relative w-full cursor-default rounded-lg border bg-white py-2 text-start shadow-sm outline-none',
+                    'focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-inset focus-within:ring-primary-500' => ! $isDisabled(),
+                    'dark:bg-gray-700' => config('forms.dark_mode'),
+                    'border-gray-300' => ! $errors->has($getStatePath()),
+                    'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                    'border-danger-600' => $errors->has($getStatePath()),
+                    'dark:border-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
+                    'opacity-70' => $isDisabled(),
+                    'dark:text-gray-300' => $isDisabled() && config('forms.dark_mode'),
+                    'px-3' => $icon === false,
+                    'pl-3 pr-10 rtl:pl-10 rtl:pr-3' => $icon !== false,
+                ])
+            }}
         >
             <input
                 readonly
@@ -73,14 +79,16 @@
                 x-model="displayText"
                 {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
                 @class([
-                    'w-full h-full p-0 placeholder-gray-400 bg-transparent border-0 outline-none focus:outline-none focus:placeholder-gray-500 focus:ring-0',
+                    'h-full w-full border-0 bg-transparent p-0 placeholder-gray-400 outline-none focus:placeholder-gray-500 focus:outline-none focus:ring-0',
                     'dark:bg-gray-700 dark:placeholder-gray-400' => config('forms.dark_mode'),
                     'cursor-default' => $isDisabled(),
                 ])
             />
 
             @if ($icon !== false)
-                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2">
+                <span
+                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 rtl:left-0 rtl:right-auto rtl:pl-2"
+                >
                     <x-dynamic-component
                         :component="$icon ?? 'heroicon-o-calendar'"
                         @class([
@@ -99,24 +107,29 @@
             wire:ignore.self
             wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.panel"
             @class([
-                'absolute hidden z-10 my-1 bg-white border border-gray-300 rounded-lg shadow-md',
-                'dark:bg-gray-700 dark:border-gray-600' => config('forms.dark_mode'),
-                'p-4 min-w-[16rem] w-fit' => $hasDate(),
+                'absolute z-10 my-1 hidden rounded-lg border border-gray-300 bg-white shadow-md',
+                'dark:border-gray-600 dark:bg-gray-700' => config('forms.dark_mode'),
+                'w-fit min-w-[16rem] p-4' => $hasDate(),
             ])
         >
             <div class="space-y-3">
                 @if ($hasDate())
-                    <div class="flex items-center justify-between space-x-1 rtl:space-x-reverse">
+                    <div
+                        class="flex items-center justify-between space-x-1 rtl:space-x-reverse"
+                    >
                         <select
                             x-model="focusedMonth"
                             @class([
-                                'grow px-1 py-0 text-lg font-medium text-gray-800 border-0 cursor-pointer outline-none focus:ring-0',
+                                'grow cursor-pointer border-0 px-1 py-0 text-lg font-medium text-gray-800 outline-none focus:ring-0',
                                 'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.focusedMonth"
                         >
                             <template x-for="(month, index) in months">
-                                <option x-bind:value="index" x-text="month"></option>
+                                <option
+                                    x-bind:value="index"
+                                    x-text="month"
+                                ></option>
                             </template>
                         </select>
 
@@ -125,7 +138,7 @@
                             inputmode="numeric"
                             x-model.debounce="focusedYear"
                             @class([
-                                'w-20 p-0 text-lg text-end border-0 outline-none focus:ring-0',
+                                'w-20 border-0 p-0 text-end text-lg outline-none focus:ring-0',
                                 'dark:bg-gray-700 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.focusedYear"
@@ -133,11 +146,14 @@
                     </div>
 
                     <div class="grid grid-cols-7 gap-1">
-                        <template x-for="(day, index) in dayLabels" :key="index">
+                        <template
+                            x-for="(day, index) in dayLabels"
+                            :key="index"
+                        >
                             <div
                                 x-text="day"
                                 @class([
-                                    'text-xs font-medium text-center text-gray-800',
+                                    'text-center text-xs font-medium text-gray-800',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
                                 ])
                             ></div>
@@ -145,11 +161,19 @@
                     </div>
 
                     <div role="grid" class="grid grid-cols-7 gap-1">
-                        <template x-for="day in emptyDaysInFocusedMonth" x-bind:key="day">
-                            <div class="text-sm text-center border border-transparent"></div>
+                        <template
+                            x-for="day in emptyDaysInFocusedMonth"
+                            x-bind:key="day"
+                        >
+                            <div
+                                class="border border-transparent text-center text-sm"
+                            ></div>
                         </template>
 
-                        <template x-for="day in daysInFocusedMonth" x-bind:key="day">
+                        <template
+                            x-for="day in daysInFocusedMonth"
+                            x-bind:key="day"
+                        >
                             <div
                                 x-text="day"
                                 x-on:click="dayIsDisabled(day) || selectDate(day)"
@@ -166,7 +190,7 @@
                                     'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                 }"
                                 x-bind:dusk="'filament.forms.{{ $getStatePath() }}' + '.focusedDate.' + day"
-                                class="text-sm leading-loose text-center transition duration-100 ease-in-out rounded-full"
+                                class="rounded-full text-center text-sm leading-loose transition duration-100 ease-in-out"
                             ></div>
                         </template>
                     </div>
@@ -175,7 +199,7 @@
                 @if ($hasTime())
                     <div
                         @class([
-                            'flex items-center justify-center bg-gray-50 py-2 rounded-lg rtl:flex-row-reverse',
+                            'flex items-center justify-center rounded-lg bg-gray-50 py-2 rtl:flex-row-reverse',
                             'dark:bg-gray-800' => config('forms.dark_mode'),
                         ])
                     >
@@ -187,18 +211,20 @@
                             inputmode="numeric"
                             x-model.debounce="hour"
                             @class([
-                                'w-16 p-0 pr-1 text-xl bg-gray-50 text-center text-gray-700 border-0 outline-none focus:ring-0',
-                                'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
+                                'w-16 border-0 bg-gray-50 p-0 pr-1 text-center text-xl text-gray-700 outline-none focus:ring-0',
+                                'dark:bg-gray-800 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.hour"
                         />
 
                         <span
                             @class([
-                                'text-xl font-medium bg-gray-50 text-gray-700',
-                                'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
+                                'bg-gray-50 text-xl font-medium text-gray-700',
+                                'dark:bg-gray-800 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
-                        >:</span>
+                        >
+                            :
+                        </span>
 
                         <input
                             max="59"
@@ -208,8 +234,8 @@
                             inputmode="numeric"
                             x-model.debounce="minute"
                             @class([
-                                'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0',
-                                'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
+                                'w-16 border-0 bg-gray-50 p-0 pr-1 text-center text-xl text-gray-700 outline-none focus:ring-0',
+                                'dark:bg-gray-800 dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                             dusk="filament.forms.{{ $getStatePath() }}.minute"
                         />
@@ -217,10 +243,12 @@
                         @if ($hasSeconds())
                             <span
                                 @class([
-                                    'text-xl font-medium text-gray-700 bg-gray-50',
-                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
+                                    'bg-gray-50 text-xl font-medium text-gray-700',
+                                    'dark:bg-gray-800 dark:text-gray-200' => config('forms.dark_mode'),
                                 ])
-                            >:</span>
+                            >
+                                :
+                            </span>
 
                             <input
                                 max="59"
@@ -231,8 +259,8 @@
                                 x-model.debounce="second"
                                 dusk="filament.forms.{{ $getStatePath() }}.second"
                                 @class([
-                                    'w-16 p-0 pr-1 text-xl text-center bg-gray-50 text-gray-700 border-0 outline-none focus:ring-0',
-                                    'dark:text-gray-200 dark:bg-gray-800' => config('forms.dark_mode'),
+                                    'w-16 border-0 bg-gray-50 p-0 pr-1 text-center text-xl text-gray-700 outline-none focus:ring-0',
+                                    'dark:bg-gray-800 dark:text-gray-200' => config('forms.dark_mode'),
                                 ])
                             />
                         @endif
