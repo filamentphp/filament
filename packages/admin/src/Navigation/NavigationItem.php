@@ -3,9 +3,12 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Filament\Support\Concerns\EvaluatesClosures;
 
 class NavigationItem
 {
+    use EvaluatesClosures;
+
     protected ?string $group = null;
 
     protected ?Closure $isActiveWhen = null;
@@ -143,7 +146,7 @@ class NavigationItem
 
     public function getVisible(): bool
     {
-        return ! $this->isHidden();
+        return ! $this->getHidden();
     }
 
     public function getHidden(): bool

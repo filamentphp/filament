@@ -4,8 +4,6 @@
     'badge' => null,
     'badgeColor' => null,
     'icon',
-    'visible' => null,
-    'hidden' => null,
     'shouldOpenUrlInNewTab' => false,
     'url',
 ])
