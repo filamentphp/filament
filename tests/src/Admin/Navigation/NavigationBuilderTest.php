@@ -138,16 +138,16 @@ it('can register navigation groups with hidden items', function () {
                     fn ($item) => $item
                         ->getLabel()->toBe('Dashboard')
                         ->getIcon()->toBe('heroicon-o-home')
-                        ->getVisible()->toBeNull(),
+                        ->getVisible()->toBeTrue(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Users')
                         ->getIcon()->toBe('heroicon-o-user')
-                        ->getHidden()->toBeNull(),
+                        ->getHidden()->toBeFalse(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Settings')
                         ->getIcon()->toBe('heroicon-o-cog')
-                        ->getVisible()->toBeNull()
-                        ->getHidden()->toBeNull(),
+                        ->getVisible()->toBeTrue()
+                        ->getHidden()->toBeFalse(),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
         );
