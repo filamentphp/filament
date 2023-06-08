@@ -64,7 +64,7 @@
     >
         @foreach ($items as $item)
             @if ($item instanceof \Filament\Navigation\NavigationItem)
-                @if ($item->getVisible() || ! $item->getHidden())
+                @if ($item->getVisible())
                     <x-filament::layouts.app.sidebar.item
                         :active="$item->isActive()"
                         :icon="$item->getIcon()"
