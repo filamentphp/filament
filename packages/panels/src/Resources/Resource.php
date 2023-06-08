@@ -562,7 +562,7 @@ abstract class Resource
                 function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $search, $whereClause): Builder {
                     $searchColumn = match ($databaseConnection->getDriverName()) {
                         'pgsql' => "{$searchAttribute}::text",
-                        default => "json_extract({$searchAttribute}, '$')",
+                        default => $searchAttribute,
                     };
 
                     return $query->{"{$whereClause}Raw"}(
