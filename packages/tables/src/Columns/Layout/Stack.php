@@ -3,8 +3,8 @@
 namespace Filament\Tables\Columns\Layout;
 
 use Closure;
+use Filament\Support\Concerns\HasAlignment;
 use Filament\Tables\Columns\Column;
-use Filament\Tables\Columns\Concerns\HasAlignment;
 use Filament\Tables\Columns\Concerns\HasSpace;
 
 class Stack extends Component

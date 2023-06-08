@@ -12,10 +12,7 @@
     $hasSuffix = $suffixLabel || $suffixIcon;
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
@@ -47,7 +44,11 @@
                 @endphp
 
                 @if ($canSelectPlaceholder())
-                    <option value="">@if (! $isDisabled) {{ $getPlaceholder() }} @endif</option>
+                    <option value="">
+                        @if (! $isDisabled)
+                            {{ $getPlaceholder() }}
+                        @endif
+                    </option>
                 @endif
 
                 @foreach ($getOptions() as $value => $label)
@@ -101,7 +102,7 @@
                     searchingMessage: @js($getSearchingMessage()),
                     searchPrompt: @js($getSearchPrompt()),
                     searchableOptionFields: @js($getSearchableOptionFields()),
-                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }},
+                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
                     statePath: @js($statePath),
                 })"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"

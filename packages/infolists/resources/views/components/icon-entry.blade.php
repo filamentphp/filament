@@ -1,18 +1,18 @@
-<x-dynamic-component
-    :component="$getEntryWrapperView()"
-    :entry="$entry"
->
-    <div {{ $attributes
-        ->merge($getExtraAttributes(), escape: false)
-        ->class([
-            'filament-infolists-icon-entry flex flex-wrap gap-1',
-        ])
-    }}>
+<x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
+    <div
+        {{
+            $attributes
+                ->merge($getExtraAttributes(), escape: false)
+                ->class([
+                    'filament-infolists-icon-entry flex flex-wrap gap-1',
+                ])
+        }}
+    >
         @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)
             @if ($icon = $getIcon($state))
                 <x-filament::icon
                     :name="$icon"
-                    alias="filament-infolists::entries.icon"
+                    alias="infolists::entries.icon"
                     :color="match ($color = $getColor($state)) {
                         'danger' => 'text-danger-500',
                         'gray', null => 'text-gray-500',

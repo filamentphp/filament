@@ -27,7 +27,7 @@ trait BelongsToContainer
         return $this->getContainer()->getInfolist();
     }
 
-    public function getLivewire(): Component
+    public function getLivewire(): ?Component
     {
         return $this->getContainer()->getLivewire();
     }

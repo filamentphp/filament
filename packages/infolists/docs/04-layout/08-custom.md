@@ -12,13 +12,7 @@ use Filament\Infolists\Components\View;
 View::make('filament.infolists.components.box')
 ```
 
-Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` closure:
-
-```blade
-<div>
-    {{ $getChildComponentContainer() }}
-</div>
-```
+This assumes that you have a `resources/views/filament/infolists/components/box.blade.php` file.
 
 ## Custom layout classes
 
@@ -48,10 +42,24 @@ class Box extends Component
 }
 ```
 
-Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` closure:
+It will also create a view file at `resources/views/filament/infolists/components/box.blade.php`.
+
+## Rendering the component's schema
+
+Inside your view, you may render the component's `schema()` using the `$getChildComponentContainer()` function:
 
 ```blade
 <div>
     {{ $getChildComponentContainer() }}
+</div>
+```
+
+## Accessing the Eloquent record
+
+Inside your view, you may access the Eloquent record using the `$getRecord()` function:
+
+```blade
+<div>
+    {{ $getRecord()->name }}
 </div>
 ```

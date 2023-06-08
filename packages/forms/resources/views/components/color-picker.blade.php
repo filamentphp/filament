@@ -8,10 +8,7 @@
     $suffixLabel = $getSuffixLabel();
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
         :prefix="$prefixLabel"
@@ -23,7 +20,13 @@
         class="filament-forms-text-input-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        <div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
+        <div
+            {{
+                $attributes
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->class(['filament-forms-color-picker-component group flex items-center space-x-1 rtl:space-x-reverse'])
+            }}
+        >
             <div
                 x-ignore
                 ax-load
@@ -31,7 +34,7 @@
                 x-data="colorPickerFormComponent({
                     isAutofocused: @js($isAutofocused()),
                     isDisabled: @js($isDisabled),
-                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $statePath . '\')') }}
+                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }}
                 })"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
@@ -53,7 +56,7 @@
                                 'type' => 'text',
                             ], escape: false)
                             ->class([
-                                'filament-forms-input text-gray-900 block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white',
+                                'filament-forms-input block w-full text-gray-900 shadow-sm outline-none transition duration-75 focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',
                                 'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500' => ! $errors->has($statePath),
                                 'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                 'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
@@ -64,11 +67,11 @@
 
                 <span
                     x-cloak
-                    class="absolute inset-y-0 end-0 flex items-center pe-2 pointer-events-none"
+                    class="pointer-events-none absolute inset-y-0 end-0 flex items-center pe-2"
                 >
                     <span
                         x-bind:style="{ 'background-color': state, ...(state ? { 'background-image': 'none' } : {}) }"
-                        class="filament-forms-color-picker-component-preview relative overflow-hidden rounded-md w-7 h-7"
+                        class="filament-forms-color-picker-component-preview relative h-7 w-7 overflow-hidden rounded-md"
                     ></span>
                 </span>
 
@@ -79,8 +82,8 @@
                     wire:ignore.self
                     wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
-                        'hidden absolute z-10 shadow-lg',
-                        'opacity-70 pointer-events-none' => $isDisabled,
+                        'absolute z-10 hidden shadow-lg',
+                        'pointer-events-none opacity-70' => $isDisabled,
                     ])
                 >
                     @php
@@ -95,7 +98,6 @@
                     <{{ $tag }} color="{{ $getState() }}" />
                 </div>
             </div>
-
         </div>
     </x-filament-forms::affixes>
 </x-dynamic-component>

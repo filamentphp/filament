@@ -35,7 +35,7 @@ class AssetManager
     /**
      * @param  array<Asset>  $assets
      */
-    public function register(array $assets, ?string $package = null): void
+    public function register(array $assets, string $package = 'app'): void
     {
         foreach ($assets as $asset) {
             $asset->package($package);
@@ -70,7 +70,7 @@ class AssetManager
         return $this->getAssets($this->alpineComponents, $packages);
     }
 
-    public function getAlpineComponentSrc(string $id, string $package): string
+    public function getAlpineComponentSrc(string $id, string $package = 'app'): string
     {
         /** @var array<AlpineComponent> $components */
         $components = $this->getAlpineComponents([$package]);
@@ -110,6 +110,22 @@ class AssetManager
         }
 
         return $data;
+    }
+
+    public function getScriptSrc(string $id, string $package = 'app'): string
+    {
+        /** @var array<Js> $scripts */
+        $scripts = $this->getScripts([$package]);
+
+        foreach ($scripts as $script) {
+            if ($script->getId() !== $id) {
+                continue;
+            }
+
+            return $script->getSrc();
+        }
+
+        throw new Exception("Script with ID [{$id}] not found for package [{$package}].");
     }
 
     /**
@@ -159,6 +175,22 @@ class AssetManager
     public function getStyles(?array $packages = null): array
     {
         return $this->getAssets($this->styles, $packages);
+    }
+
+    public function getStyleHref(string $id, string $package = 'app'): string
+    {
+        /** @var array<Css> $styles */
+        $styles = $this->getStyles([$package]);
+
+        foreach ($styles as $style) {
+            if ($style->getId() !== $id) {
+                continue;
+            }
+
+            return $style->getHref();
+        }
+
+        throw new Exception("Stylesheet with ID [{$id}] not found for package [{$package}].");
     }
 
     /**

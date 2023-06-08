@@ -158,7 +158,7 @@ When this function is run, the state of the `title` field will be updated, and t
 
 ### Injecting the current form operation
 
-If you're writing a form for an app framework resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$operation` parameter:
+If you're writing a form for a panel resource or relation manager, and you wish to check if a form is `create`, `edit` or `view`, use the `$operation` parameter:
 
 ```php
 function (string $operation) {
@@ -166,7 +166,7 @@ function (string $operation) {
 }
 ```
 
-> Outside of the app framework, you can set a form's operation by using the `operation()` method on the form definition.
+> Outside of the panel, you can set a form's operation by using the `operation()` method on the form definition.
 
 ### Injecting multiple utilities
 
@@ -269,7 +269,7 @@ TextInput::make('password_confirmation')
     ->dehydrated(false)
 ```
 
-If your form auto-saves data to the database, like in a [resource](../app/resources) or [table action](../tables/actions), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
+If your form auto-saves data to the database, like in a [resource](../panels/resources) or [table action](../tables/actions), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
 
 ## Reactive forms cookbook
 
@@ -373,7 +373,7 @@ Select::make('sub_category')
             'android_mobile' => 'Android development',
         ],
         'design' => [
-            'app_design' => 'App design',
+            'app_design' => 'Panel design',
             'marketing_website_design' => 'Marketing website design',
         ],
         default => [],

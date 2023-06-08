@@ -22,11 +22,17 @@ class StatsOverviewWidget extends Widget
 
     protected function getColumns(): int
     {
-        return match ($count = count($this->getCachedCards())) {
-            5, 6, 9, 11 => 3,
-            7, 8, 10, 12 => 4,
-            default => $count,
-        };
+        $count = count($this->getCachedCards());
+
+        if ($count < 3) {
+            return 3;
+        }
+
+        if (($count % 3) !== 1) {
+            return 3;
+        }
+
+        return 4;
     }
 
     /**

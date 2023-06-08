@@ -1,7 +1,4 @@
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $gridDirection = $getGridDirection();
         $isBulkToggleable = $isBulkToggleable();
@@ -10,61 +7,61 @@
         $statePath = $getStatePath();
     @endphp
 
-    <div x-data="{
+    <div
+        x-data="{
+            areAllCheckboxesChecked: false,
 
-        areAllCheckboxesChecked: false,
+            checkboxListOptions: Array.from($root.querySelectorAll('.filament-forms-checkbox-list-component-option-label')),
 
-        checkboxListOptions: Array.from($root.querySelectorAll('.filament-forms-checkbox-list-component-option-label')),
+            search: '',
 
-        search: '',
+            visibleCheckboxListOptions: [],
 
-        visibleCheckboxListOptions: [],
-
-        init: function () {
-            this.updateVisibleCheckboxListOptions()
-            this.checkIfAllCheckboxesAreChecked()
-
-            Livewire.hook('message.processed', () => {
-                this.checkIfAllCheckboxesAreChecked()
-            })
-
-            $watch('search', () => {
+            init: function () {
                 this.updateVisibleCheckboxListOptions()
                 this.checkIfAllCheckboxesAreChecked()
-            })
-        },
 
-        checkIfAllCheckboxesAreChecked: function () {
-            this.areAllCheckboxesChecked = this.visibleCheckboxListOptions.length === this.visibleCheckboxListOptions.filter((checkboxLabel) => checkboxLabel.querySelector('input[type=checkbox]:checked')).length
-        },
+                Livewire.hook('message.processed', () => {
+                    this.checkIfAllCheckboxesAreChecked()
+                })
 
-        toggleAllCheckboxes: function () {
-            state = ! this.areAllCheckboxesChecked
+                $watch('search', () => {
+                    this.updateVisibleCheckboxListOptions()
+                    this.checkIfAllCheckboxesAreChecked()
+                })
+            },
 
-            this.visibleCheckboxListOptions.forEach((checkboxLabel) => {
-                checkbox = checkboxLabel.querySelector('input[type=checkbox]')
+            checkIfAllCheckboxesAreChecked: function () {
+                this.areAllCheckboxesChecked = this.visibleCheckboxListOptions.length === this.visibleCheckboxListOptions.filter((checkboxLabel) => checkboxLabel.querySelector('input[type=checkbox]:checked')).length
+            },
 
-                checkbox.checked = state
-                checkbox.dispatchEvent(new Event('change'))
-            })
+            toggleAllCheckboxes: function () {
+                state = ! this.areAllCheckboxesChecked
 
-            this.areAllCheckboxesChecked = state
-        },
+                this.visibleCheckboxListOptions.forEach((checkboxLabel) => {
+                    checkbox = checkboxLabel.querySelector('input[type=checkbox]')
 
-        updateVisibleCheckboxListOptions: function () {
-            this.visibleCheckboxListOptions = this.checkboxListOptions.filter((checkboxListItem) => {
-                return checkboxListItem.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(this.search.toLowerCase())
-            })
-        }
+                    checkbox.checked = state
+                    checkbox.dispatchEvent(new Event('change'))
+                })
 
-    }">
+                this.areAllCheckboxesChecked = state
+            },
+
+            updateVisibleCheckboxListOptions: function () {
+                this.visibleCheckboxListOptions = this.checkboxListOptions.filter((checkboxListItem) => {
+                    return checkboxListItem.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(this.search.toLowerCase())
+                })
+            }
+        }"
+    >
         @if (! $isDisabled)
             @if ($isSearchable)
                 <input
                     x-model.debounce.{{ $getSearchDebounce() }}="search"
                     type="search"
                     placeholder="{{ $getSearchPrompt() }}"
-                    class="mb-2 block h-7 px-2 text-sm w-full rounded-lg border-gray-300 shadow-sm text-gray-700 transition duration-75 outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:text-gray-200 dark:bg-gray-700 dark:focus:border-primary-500 dark:border-gray-600"
+                    class="mb-2 block h-7 w-full rounded-lg border-gray-300 px-2 text-sm text-gray-700 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-primary-500"
                 />
             @endif
 
@@ -108,7 +105,9 @@
             ]))"
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
-                <div wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}">
+                <div
+                    wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}"
+                >
                     <label
                         class="filament-forms-checkbox-list-component-option-label flex items-center space-x-3 rtl:space-x-reverse"
                         @if ($isSearchable)
@@ -130,20 +129,24 @@
                                         $applyStateBindingModifiers('wire:model') => $statePath,
                                     ], escape: false)
                                     ->class([
-                                        'text-primary-600 transition duration-75 rounded shadow-sm focus:ring-2 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
+                                        'rounded text-primary-600 shadow-sm transition duration-75 focus:ring-2 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
                                         'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500' => ! $errors->has($statePath),
                                         'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                     ])
                             }}
                         />
 
-                        <span class="filament-forms-checkbox-list-component-option-label-text text-sm text-gray-700 dark:text-gray-200">
+                        <span
+                            class="filament-forms-checkbox-list-component-option-label-text text-sm text-gray-700 dark:text-gray-200"
+                        >
                             {{ $optionLabel }}
                         </span>
                     </label>
                 </div>
             @empty
-                <div wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.empty"></div>
+                <div
+                    wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.empty"
+                ></div>
             @endforelse
         </x-filament::grid>
 

@@ -2,6 +2,7 @@
 
 namespace Filament\Infolists\Components\Actions\Concerns;
 
+use Exception;
 use Filament\Infolists\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Livewire\Component as LivewireComponent;
@@ -24,7 +25,13 @@ trait BelongsToInfolist
 
     public function getLivewire(): LivewireComponent
     {
-        return $this->getInfolistComponent()->getInfolist()->getLivewire();
+        $livewire = $this->getInfolistComponent()->getInfolist()->getLivewire();
+
+        if (! $livewire) {
+            throw new Exception('An infolist tried to mount an action but was not mounted to Livewire.');
+        }
+
+        return $livewire;
     }
 
     public function getRecord(): ?Model

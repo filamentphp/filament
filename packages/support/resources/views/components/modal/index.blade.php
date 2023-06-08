@@ -76,19 +76,21 @@
             @endif
             aria-hidden="true"
             @class([
-                'filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50',
+                'filament-modal-close-overlay fixed inset-0 h-full w-full bg-black/50',
                 'cursor-pointer' => $closeByClickingAway,
             ])
-            style="will-change: transform;"
+            style="will-change: transform"
         ></div>
 
         <div
             x-ref="modalContainer"
             x-cloak
-            {{ $attributes->class([
-                'relative w-full pointer-events-none transition',
-                'my-auto p-4' => ! $slideOver,
-            ]) }}
+            {{
+                $attributes->class([
+                    'pointer-events-none relative w-full transition',
+                    'my-auto p-4' => ! $slideOver,
+                ])
+            }}
         >
             <div
                 x-data="{ isShown: false }"
@@ -117,10 +119,10 @@
                     x-transition:leave-end="translate-y-8"
                 @endif
                 @class([
-                    'filament-modal-window w-full py-2 bg-white cursor-default pointer-events-auto dark:bg-gray-800',
+                    'filament-modal-window pointer-events-auto w-full cursor-default bg-white py-2 dark:bg-gray-800',
                     'relative' => $width !== 'screen',
-                    'h-screen overflow-y-auto ms-auto' => $slideOver,
-                    'rounded-xl mx-auto' => ! ($slideOver || ($width === 'screen')),
+                    'ms-auto h-screen overflow-y-auto' => $slideOver,
+                    'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
                     'max-w-sm' => $width === 'sm',
@@ -140,7 +142,7 @@
                     <button
                         tabindex="-1"
                         type="button"
-                        class="absolute top-2 end-2"
+                        class="absolute end-2 top-2"
                         @if (filled($id))
                             x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                         @else
@@ -166,7 +168,7 @@
 
                 <div
                     @class([
-                        'flex flex-col h-full' => ($width === 'screen') || $slideOver,
+                        'flex h-full flex-col' => ($width === 'screen') || $slideOver,
                     ])
                 >
                     <div class="space-y-2">
@@ -177,7 +179,10 @@
                         @endif
 
                         @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                            <x-dynamic-component :component="$hrComponent" class="px-2" />
+                            <x-dynamic-component
+                                :component="$hrComponent"
+                                class="px-2"
+                            />
                         @endif
                     </div>
 
@@ -188,10 +193,12 @@
                         ])
                     >
                         @if ($heading || $subheading)
-                            <div @class([
-                                'p-4 space-y-2 dark:text-white',
-                                'text-center' => ! $slideOver,
-                            ])>
+                            <div
+                                @class([
+                                    'space-y-2 p-4 dark:text-white',
+                                    'text-center' => ! $slideOver,
+                                ])
+                            >
                                 @if ($heading)
                                     <x-dynamic-component
                                         :component="$headingComponent"
@@ -202,7 +209,9 @@
                                 @endif
 
                                 @if ($subheading)
-                                    <x-dynamic-component :component="$subheadingComponent">
+                                    <x-dynamic-component
+                                        :component="$subheadingComponent"
+                                    >
                                         {{ $subheading }}
                                     </x-dynamic-component>
                                 @endif
@@ -210,7 +219,7 @@
                         @endif
 
                         @if ($slot->isNotEmpty())
-                            <div class="px-4 py-2 space-y-4">
+                            <div class="space-y-4 px-4 py-2">
                                 {{ $slot }}
                             </div>
                         @endif
@@ -220,7 +229,10 @@
 
                     <div class="space-y-2">
                         @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
-                            <x-dynamic-component :component="$hrComponent" class="px-2" />
+                            <x-dynamic-component
+                                :component="$hrComponent"
+                                class="px-2"
+                            />
                         @endif
 
                         @if ($footer)

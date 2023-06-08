@@ -13,7 +13,7 @@
     :lg="$columns['lg'] ?? ($columns ? (is_array($columns) ? null : $columns) : 2)"
     :xl="$columns['xl'] ?? null"
     :two-xl="$columns['2xl'] ?? null"
-    class="filament-widgets-container gap-4 lg:gap-8 mb-6"
+    class="filament-widgets-container mb-6 gap-4 lg:gap-8"
 >
     @foreach ($widgets as $widget)
         @if ($widget::canView())

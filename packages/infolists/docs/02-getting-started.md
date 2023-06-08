@@ -4,9 +4,9 @@ title: Getting started
 
 ## Overview
 
-Filament's infolist package allows you to [render a read-only list of data about a particular entity](adding-an infolist-to-a-livewire-component). It's also used within other Filament packages, such as the [app framework](../app) for displaying [app resources](../app/resources) and [relation managers](../app/resources/relation-managers), as well as for [action modals](../actions). Learning the features of the infolist builder will be incredibly time-saving when both building your own custom Livewire applications and using Filament's other packages.
+Filament's infolist package allows you to [render a read-only list of data about a particular entity](adding-an infolist-to-a-livewire-component). It's also used within other Filament packages, such as the [panel builder](../panels) for displaying [app resources](../panels/resources) and [relation managers](../panels/resources/relation-managers), as well as for [action modals](../actions). Learning the features of the infolist builder will be incredibly time-saving when both building your own custom Livewire applications and using Filament's other packages.
 
-This guide will walk you through the basics of building infolists with Filament's infolist package. If you're planning to add a new infolist to your own Livewire component, you should [do that first](adding-an-infolist-to-a-livewire-component) and then come back. If you're adding an infolist to an [app resource](../app/resources), or another Filament package, you're ready to go!
+This guide will walk you through the basics of building infolists with Filament's infolist package. If you're planning to add a new infolist to your own Livewire component, you should [do that first](adding-an-infolist-to-a-livewire-component) and then come back. If you're adding an infolist to an [app resource](../panels/resources), or another Filament package, you're ready to go!
 
 ## Defining entries
 
@@ -25,7 +25,7 @@ $infolist
 
 Each entry is a piece of information that should be displayed in the infolist. The `TextEntry` is used for displaying text, but there are [other entry types available](entries/getting-started#available-entries).
 
-Infolists within the app framework and other packages usually have 2 columns by default. For custom infolists, you can use the `columns()` method to achieve the same effect:
+Infolists within the panel builder and other packages usually have 2 columns by default. For custom infolists, you can use the `columns()` method to achieve the same effect:
 
 ```php
 $infolist

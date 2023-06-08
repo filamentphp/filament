@@ -1,3 +1,5 @@
-<td {{ $attributes->class(['filament-tables-checkbox-cell w-4 px-4 whitespace-nowrap']) }}>
+<td
+    {{ $attributes->class(['filament-tables-checkbox-cell w-4 whitespace-nowrap px-4']) }}
+>
     {{ $slot }}
 </td>

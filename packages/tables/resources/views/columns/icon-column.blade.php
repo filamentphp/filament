@@ -1,16 +1,19 @@
-<div {{ $attributes
-    ->merge($getExtraAttributes(), escape: false)
-    ->class([
-        'filament-tables-icon-column flex flex-wrap gap-1',
-        'flex-col' => $isListWithLineBreaks(),
-        'px-4 py-3' => ! $isInline(),
-    ])
-}}>
+<div
+    {{
+        $attributes
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+                'filament-tables-icon-column flex flex-wrap gap-1',
+                'flex-col' => $isListWithLineBreaks(),
+                'px-4 py-3' => ! $isInline(),
+            ])
+    }}
+>
     @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)
         @if ($icon = $getIcon($state))
             <x-filament::icon
                 :name="$icon"
-                alias="filament-tables::columns.icon"
+                alias="tables::columns.icon"
                 :color="match ($color = $getColor($state)) {
                     'danger' => 'text-danger-500',
                     'gray', null => 'text-gray-500',

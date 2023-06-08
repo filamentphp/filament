@@ -738,7 +738,7 @@
             "version": "3.x-dev",
             "dist": {
                 "type": "path",
-                "url": "../../packages/app",
+                "url": "../../packages/panels",
                 "reference": "3105961c5c5ccc8dcc4d87d3c2f707c1433a8693"
             },
             "require": {

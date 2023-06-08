@@ -1,4 +1,6 @@
-<div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-tables-range-summary text-sm px-4 py-3']) }}>
+<div
+    {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-tables-range-summary px-4 py-3 text-sm']) }}
+>
     @php
         $state = $formatState($getState());
         $from = $state[0] ?? null;
@@ -6,9 +8,7 @@
     @endphp
 
     @if (filled($label = $getLabel()))
-        <span class="text-gray-500 dark:text-gray-400">
-            {{ $label }}:
-        </span>
+        <span class="text-gray-500 dark:text-gray-400">{{ $label }}:</span>
     @endif
 
     <span>
@@ -16,9 +16,7 @@
     </span>
 
     @if (filled($from) && filled($to))
-        <span class="text-gray-500 dark:text-gray-400">
-            -
-        </span>
+        <span class="text-gray-500 dark:text-gray-400">-</span>
     @endif
 
     <span>

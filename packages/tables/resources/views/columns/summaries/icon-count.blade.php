@@ -1,8 +1,8 @@
-<div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-tables-icon-count-summary text-sm space-y-1 px-4 py-3']) }}>
+<div
+    {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-tables-icon-count-summary space-y-1 px-4 py-3 text-sm']) }}
+>
     @if (filled($label = $getLabel()))
-        <p class="text-gray-500 dark:text-gray-400">
-            {{ $label }}:
-        </p>
+        <p class="text-gray-500 dark:text-gray-400">{{ $label }}:</p>
     @endif
 
     @foreach ($getState() as $color => $icons)
@@ -19,7 +19,7 @@
 
                     <x-filament::icon
                         :name="$icon"
-                        alias="filament-tables::columns.summaries.icon-count"
+                        alias="tables::columns.summaries.icon-count"
                         :color="match ($color) {
                             'danger' => 'text-danger-500',
                             'gray', null => 'text-gray-500',

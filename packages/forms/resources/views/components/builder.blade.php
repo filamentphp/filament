@@ -1,7 +1,4 @@
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
         $containers = $getChildComponentContainers();
 
@@ -22,11 +19,15 @@
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
             <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
-                <span x-on:click="$dispatch('builder-collapse', '{{ $statePath }}')">
+                <span
+                    x-on:click="$dispatch('builder-collapse', '{{ $statePath }}')"
+                >
                     {{ $getAction('collapseAll') }}
                 </span>
 
-                <span x-on:click="$dispatch('builder-expand', '{{ $statePath }}')">
+                <span
+                    x-on:click="$dispatch('builder-expand', '{{ $statePath }}')"
+                >
                     {{ $getAction('expandAll') }}
                 </span>
             </div>
@@ -93,7 +94,7 @@
                             <header
                                 @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
                                 @class([
-                                    'flex items-center h-10 overflow-hidden border-b bg-gray-50 rounded-t-xl dark:bg-gray-800 dark:border-gray-700',
+                                    'flex h-10 items-center overflow-hidden rounded-t-xl border-b bg-gray-50 dark:border-gray-700 dark:bg-gray-800',
                                     'cursor-pointer' => $isCollapsible,
                                 ])
                             >
@@ -104,7 +105,9 @@
                                 @endif
 
                                 @if ($hasBlockLabels)
-                                    <p class="flex-none px-4 text-xs font-medium text-gray-600 truncate dark:text-gray-400">
+                                    <p
+                                        class="flex-none truncate px-4 text-xs font-medium text-gray-600 dark:text-gray-400"
+                                    >
                                         @php
                                             $block = $item->getParentComponent();
 
@@ -118,43 +121,57 @@
                                         @endphp
 
                                         @if ($hasBlockNumbers)
-                                            <small class="font-mono">{{ $loop->iteration }}</small>
+                                            <small class="font-mono">
+                                                {{ $loop->iteration }}
+                                            </small>
                                         @endif
                                     </p>
                                 @endif
 
                                 <div class="flex-1"></div>
 
-                                <ul class="flex divide-x rtl:divide-x-reverse dark:divide-gray-700">
+                                <ul
+                                    class="flex divide-x rtl:divide-x-reverse dark:divide-gray-700"
+                                >
                                     @if ($isReorderableWithButtons)
                                         @if (! $loop->first)
-                                            <li class="flex items-center justify-center">
+                                            <li
+                                                class="flex items-center justify-center"
+                                            >
                                                 {{ $moveUpAction(['item' => $uuid]) }}
                                             </li>
                                         @endif
 
                                         @if (! $loop->last)
-                                            <li class="flex items-center justify-center">
+                                            <li
+                                                class="flex items-center justify-center"
+                                            >
                                                 {{ $moveDownAction(['item' => $uuid]) }}
                                             </li>
                                         @endif
                                     @endif
 
                                     @if ($cloneAction)
-                                        <li class="flex items-center justify-center">
+                                        <li
+                                            class="flex items-center justify-center"
+                                        >
                                             {{ $cloneAction(['item' => $uuid]) }}
                                         </li>
                                     @endif
 
                                     @if ($deleteAction)
-                                        <li class="flex items-center justify-center">
+                                        <li
+                                            class="flex items-center justify-center"
+                                        >
                                             {{ $deleteAction(['item' => $uuid]) }}
                                         </li>
                                     @endif
 
                                     @if ($isCollapsible)
-                                        <li x-on:click.stop="isCollapsed = ! isCollapsed">
-                                            <div x-show="!isCollapsed">
+                                        <li
+                                            x-on:click.stop="isCollapsed = ! isCollapsed"
+                                        >
+                                            <div x-show="! isCollapsed">
                                                 {{ $getAction('collapse') }}
                                             </div>
 
@@ -167,11 +184,17 @@
                             </header>
                         @endif
 
-                        <div x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed, 'p-6': !isCollapsed}">
+                        <div
+                            x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed, 'p-6': ! isCollapsed}"
+                        >
                             {{ $item }}
                         </div>
 
-                        <div class="p-2 text-xs text-center text-gray-400" x-show="isCollapsed" x-cloak>
+                        <div
+                            class="p-2 text-center text-xs text-gray-400"
+                            x-show="isCollapsed"
+                            x-cloak
+                        >
                             {{ __('filament-forms::components.builder.collapsed') }}
                         </div>
 
@@ -179,7 +202,7 @@
                             <div
                                 x-show="isAddButtonVisible"
                                 x-transition
-                                class="absolute inset-x-0 bottom-0 flex items-center justify-center h-12 -mb-12"
+                                class="absolute inset-x-0 bottom-0 -mb-12 flex h-12 items-center justify-center"
                             >
                                 <x-filament-forms::builder.block-picker
                                     :action="$addBetweenAction"

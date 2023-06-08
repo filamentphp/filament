@@ -31,24 +31,29 @@
     $copyMessageDuration = $getCopyMessageDuration();
 @endphp
 
-<div {{ $attributes
-    ->merge($getExtraAttributes(), escape: false)
-    ->class([
-        'filament-tables-text-column',
-        'px-4 py-3' => ! $isInline(),
-        'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $isClickable && (! $isBadge),
-    ])
-}}>
+<div
+    {{
+        $attributes
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+                'filament-tables-text-column',
+                'px-4 py-3' => ! $isInline(),
+                'text-primary-600 transition hover:text-primary-500 hover:underline focus:text-primary-500 focus:underline' => $isClickable && (! $isBadge),
+            ])
+    }}
+>
     @if (filled($descriptionAbove))
         <div class="text-sm text-gray-500 dark:text-gray-400">
             {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : str($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
         </div>
     @endif
 
-    <{{ $isListWithLineBreaks ? 'ul' : 'div' }} @class([
-        'list-disc list-inside' => $isBulleted(),
-        'flex flex-wrap gap-1' => $isBadge,
-    ])>
+    <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
+        @class([
+            'list-inside list-disc' => $isBulleted(),
+            'flex flex-wrap gap-1' => $isBadge,
+        ])
+    >
         @foreach ($arrayState as $state)
             @php
                 $formattedState = $formatState($state);
@@ -57,59 +62,61 @@
 
             @if (filled($formattedState))
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
-                    <div @class([
-                        'inline-flex items-center space-x-1 rtl:space-x-reverse',
-                        'filament-tables-text-column-badge justify-center min-h-6 px-2 py-0.5 rounded-xl whitespace-nowrap' => $isBadge,
-                        'whitespace-normal' => $canWrap,
-                        ($isBadge ? match ($color = $getColor($state)) {
-                            'danger' => 'filament-tables-text-column-badge-color-danger text-danger-700 bg-danger-500/10 dark:text-danger-500',
-                            'gray', null => 'filament-tables-text-column-badge-color-gray text-gray-700 bg-gray-500/10 dark:text-gray-300 dark:bg-gray-500/20',
-                            'info' => 'filament-tables-text-column-badge-color-info text-info-700 bg-info-500/10 dark:text-info-500',
-                            'primary' => 'filament-tables-text-column-badge-color-primary text-primary-700 bg-primary-500/10 dark:text-primary-500',
-                            'secondary' => 'filament-tables-text-column-badge-color-secondary text-secondary-700 bg-secondary-500/10 dark:text-secondary-500',
-                            'success' => 'filament-tables-text-column-badge-color-success text-success-700 bg-success-500/10 dark:text-success-500',
-                            'warning' => 'filament-tables-text-column-badge-color-warning text-warning-700 bg-warning-500/10 dark:text-warning-500',
-                            default => $color,
-                        } : null),
-                        ((! ($isBadge || $isClickable)) ? match ($color = $getColor($state)) {
-                            'danger' => 'text-danger-600',
-                            'gray' => 'text-gray-600 dark:text-gray-400',
-                            'info' => 'text-info-600',
-                            'primary' => 'text-primary-600',
-                            'secondary' => 'text-secondary-600',
-                            'success' => 'text-success-600',
-                            'warning' => 'text-warning-600',
-                            default => $color,
-                        } : null),
-                        match ($size = ($isBadge ? 'xs' : $getSize($state))) {
-                            'xs' => 'text-xs',
-                            'sm', null => 'text-sm',
-                            'base', 'md' => 'text-base',
-                            'lg' => 'text-lg',
-                            default => $size,
-                        },
-                        match ($weight = ($isBadge ? 'medium' : $getWeight($state))) {
-                            'thin' => 'font-thin',
-                            'extralight' => 'font-extralight',
-                            'light' => 'font-light',
-                            'medium' => 'font-medium',
-                            'semibold' => 'font-semibold',
-                            'bold' => 'font-bold',
-                            'extrabold' => 'font-extrabold',
-                            'black' => 'font-black',
-                            default => $weight,
-                        },
-                        match ($getFontFamily($state)) {
-                            'sans' => 'font-sans',
-                            'serif' => 'font-serif',
-                            'mono' => 'font-mono',
-                            default => null,
-                        },
-                    ])>
+                    <div
+                        @class([
+                            'inline-flex items-center space-x-1 rtl:space-x-reverse',
+                            'filament-tables-text-column-badge min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
+                            'whitespace-normal' => $canWrap,
+                            ($isBadge ? match ($color = $getColor($state)) {
+                                'danger' => 'filament-tables-text-column-badge-color-danger bg-danger-500/10 text-danger-700 dark:text-danger-500',
+                                'gray', null => 'filament-tables-text-column-badge-color-gray bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
+                                'info' => 'filament-tables-text-column-badge-color-info bg-info-500/10 text-info-700 dark:text-info-500',
+                                'primary' => 'filament-tables-text-column-badge-color-primary bg-primary-500/10 text-primary-700 dark:text-primary-500',
+                                'secondary' => 'filament-tables-text-column-badge-color-secondary bg-secondary-500/10 text-secondary-700 dark:text-secondary-500',
+                                'success' => 'filament-tables-text-column-badge-color-success bg-success-500/10 text-success-700 dark:text-success-500',
+                                'warning' => 'filament-tables-text-column-badge-color-warning bg-warning-500/10 text-warning-700 dark:text-warning-500',
+                                default => $color,
+                            } : null),
+                            ((! ($isBadge || $isClickable)) ? match ($color = $getColor($state)) {
+                                'danger' => 'text-danger-600',
+                                'gray' => 'text-gray-600 dark:text-gray-400',
+                                'info' => 'text-info-600',
+                                'primary' => 'text-primary-600',
+                                'secondary' => 'text-secondary-600',
+                                'success' => 'text-success-600',
+                                'warning' => 'text-warning-600',
+                                default => $color,
+                            } : null),
+                            match ($size = ($isBadge ? 'xs' : $getSize($state))) {
+                                'xs' => 'text-xs',
+                                'sm', null => 'text-sm',
+                                'base', 'md' => 'text-base',
+                                'lg' => 'text-lg',
+                                default => $size,
+                            },
+                            match ($weight = ($isBadge ? 'medium' : $getWeight($state))) {
+                                'thin' => 'font-thin',
+                                'extralight' => 'font-extralight',
+                                'light' => 'font-light',
+                                'medium' => 'font-medium',
+                                'semibold' => 'font-semibold',
+                                'bold' => 'font-bold',
+                                'extrabold' => 'font-extrabold',
+                                'black' => 'font-black',
+                                default => $weight,
+                            },
+                            match ($getFontFamily($state)) {
+                                'sans' => 'font-sans',
+                                'serif' => 'font-serif',
+                                'mono' => 'font-mono',
+                                default => null,
+                            },
+                        ])
+                    >
                         @if ($icon && $iconPosition === 'before')
                             <x-filament::icon
                                 :name="$icon"
-                                alias="filament-tables::columns.text.prefix"
+                                alias="tables::columns.text.prefix"
                                 :size="$iconSize"
                             />
                         @endif
@@ -131,7 +138,7 @@
                         @if ($icon && $iconPosition === 'after')
                             <x-filament::icon
                                 :name="$icon"
-                                alias="filament-tables::columns.text.suffix"
+                                alias="tables::columns.text.suffix"
                                 :size="$iconSize"
                             />
                         @endif
@@ -141,10 +148,12 @@
         @endforeach
 
         @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
-            <{{ $isListWithLineBreaks ? 'li' : 'div' }} @class([
-                'text-sm' => ! $isBadge,
-                'text-xs' => $isBadge,
-            ])>
+            <{{ $isListWithLineBreaks ? 'li' : 'div' }}
+                @class([
+                    'text-sm' => ! $isBadge,
+                    'text-xs' => $isBadge,
+                ])
+            >
                 {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
             </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
         @endif

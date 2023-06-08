@@ -1,4 +1,0 @@
----
-title: Plugin development
----
-

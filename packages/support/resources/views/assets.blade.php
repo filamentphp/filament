@@ -1,6 +1,6 @@
 @if (isset($data))
     <script>
-        window.filamentData = @js($data);
+        window.filamentData = @js($data)
     </script>
 @endif
 

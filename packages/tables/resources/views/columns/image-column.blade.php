@@ -1,7 +1,13 @@
-<div {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
-    'filament-tables-image-column',
-    'px-4 py-3' => ! $isInline(),
-]) }}>
+<div
+    {{
+        $attributes
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+                'filament-tables-image-column',
+                'px-4 py-3' => ! $isInline(),
+            ])
+    }}
+>
     @php
         $isCircular = $isCircular();
         $isSquare = $isSquare();
@@ -26,10 +32,12 @@
                     @if ($height) height: {{ $height }}; @endif
                     @if ($width) width: {{ $width }}; @endif
                 "
-                {{ $getExtraImgAttributeBag()->class([
-                    'object-cover object-center' => $isCircular || $isSquare,
-                ]) }}
-            >
-       @endif
+                {{
+                    $getExtraImgAttributeBag()->class([
+                        'object-cover object-center' => $isCircular || $isSquare,
+                    ])
+                }}
+            />
+        @endif
     </div>
 </div>

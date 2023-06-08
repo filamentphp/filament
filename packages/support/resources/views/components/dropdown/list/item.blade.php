@@ -54,14 +54,15 @@
             x-data="{}"
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        {{ $attributes
-            ->merge([
-                'disabled' => $disabled,
-                'type' => 'button',
-                'wire:loading.attr' => 'disabled',
-                'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
-            ], escape: false)
-            ->class([$buttonClasses])
+        {{
+            $attributes
+                ->merge([
+                    'disabled' => $disabled,
+                    'type' => 'button',
+                    'wire:loading.attr' => 'disabled',
+                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+                ], escape: false)
+                ->class([$buttonClasses])
         }}
     >
         @if ($icon)
@@ -135,7 +136,9 @@
         @endif
     </a>
 @elseif ($tag === 'form')
-    <form {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}>
+    <form
+        {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}
+    >
         @csrf
 
         <button

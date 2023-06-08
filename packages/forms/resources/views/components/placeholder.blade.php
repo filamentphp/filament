@@ -10,7 +10,9 @@
     :hint-icon="$getHintIcon()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-placeholder-component sm:text-sm']) }}>
+    <div
+        {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-placeholder-component sm:text-sm']) }}
+    >
         {{ $getContent() }}
     </div>
 </x-dynamic-component>

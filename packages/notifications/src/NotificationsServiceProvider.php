@@ -5,7 +5,6 @@ namespace Filament\Notifications;
 use Filament\Notifications\Http\Livewire\DatabaseNotifications;
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
-use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Component;
@@ -25,17 +24,12 @@ class NotificationsServiceProvider extends PackageServiceProvider
             ->hasViews();
     }
 
-    public function packageRegistered(): void
-    {
-        $this->app->resolving(AssetManager::class, function () {
-            FilamentAsset::register([
-                Js::make('notifications', __DIR__ . '/../dist/index.js'),
-            ], 'filament/notifications');
-        });
-    }
-
     public function packageBooted(): void
     {
+        FilamentAsset::register([
+            Js::make('notifications', __DIR__ . '/../dist/index.js'),
+        ], 'filament/notifications');
+
         Livewire::component('database-notifications', DatabaseNotifications::class);
 
         Livewire::component('notifications', Notifications::class);

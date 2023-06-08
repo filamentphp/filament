@@ -52,7 +52,7 @@ public function table(Table $table): Table
 
 You may use simple pagination by overriding `paginateTableQuery()` method.
 
-First, locate your Livewire component. If you're using a resource from the app framework and you want to add simple pagination to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
+First, locate your Livewire component. If you're using a resource from the panel builder and you want to add simple pagination to the List page, you'll want to open the `Pages/List.php` file in the resource, not the resource class itself.
 
 ```php
 use Illuminate\Contracts\Pagination\Paginator;

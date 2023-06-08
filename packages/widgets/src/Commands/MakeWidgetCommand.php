@@ -2,8 +2,8 @@
 
 namespace Filament\Widgets\Commands;
 
-use Filament\Context;
 use Filament\Facades\Filament;
+use Filament\Panel;
 use Filament\Resources\Resource;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
@@ -15,9 +15,9 @@ class MakeWidgetCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a Filament widget class.';
+    protected $description = 'Create a new Filament widget class';
 
-    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--C|chart} {--T|table} {--S|stats-overview} {--context=} {--F|force}';
+    protected $signature = 'make:filament-widget {name?} {--R|resource=} {--C|chart} {--T|table} {--S|stats-overview} {--panel=} {--F|force}';
 
     public function handle(): int
     {
@@ -54,25 +54,25 @@ class MakeWidgetCommand extends Command
             }
         }
 
-        $context = null;
+        $panel = null;
 
-        if (class_exists(Context::class)) {
-            $context = $this->option('context');
+        if (class_exists(Panel::class)) {
+            $panel = $this->option('panel');
 
-            if ($context) {
-                $context = Filament::getContext($context);
+            if ($panel) {
+                $panel = Filament::getPanel($panel);
             }
 
-            if (! $context) {
-                $contexts = Filament::getContexts();
+            if (! $panel) {
+                $panels = Filament::getPanels();
 
-                /** @var ?Context $context */
-                $context = $contexts[$this->choice(
+                /** @var ?Panel $panel */
+                $panel = $panels[$this->choice(
                     'Where would you like to create this widget?',
                     array_unique([
                         ...array_map(
-                            fn (Context $context): string => $context->getWidgetNamespace() ?? 'App\\Filament\\Widgets',
-                            $contexts,
+                            fn (Panel $panel): string => $panel->getWidgetNamespace() ?? 'App\\Filament\\Widgets',
+                            $panels,
                         ),
                         '' => 'App\\Http\\Livewire' . ($widgetNamespace ? '\\' . $widgetNamespace : ''),
                     ]),
@@ -80,13 +80,13 @@ class MakeWidgetCommand extends Command
             }
         }
 
-        $path = $context ? ($context->getWidgetDirectory() ?? app_path('Filament/Widgets/')) : app_path('Http/Livewire/');
-        $namespace = $context ? ($context->getWidgetNamespace() ?? 'App\\Filament\\Widgets') : 'App\\Http\\Livewire';
-        $resourcePath = $context ? ($context->getResourceDirectory() ?? app_path('Filament/Resources/')) : null;
-        $resourceNamespace = $context ? ($context->getResourceNamespace() ?? 'App\\Filament\\Resources') : null;
+        $path = $panel ? ($panel->getWidgetDirectory() ?? app_path('Filament/Widgets/')) : app_path('Http/Livewire/');
+        $namespace = $panel ? ($panel->getWidgetNamespace() ?? 'App\\Filament\\Widgets') : 'App\\Http\\Livewire';
+        $resourcePath = $panel ? ($panel->getResourceDirectory() ?? app_path('Filament/Resources/')) : null;
+        $resourceNamespace = $panel ? ($panel->getResourceNamespace() ?? 'App\\Filament\\Resources') : null;
 
         $view = str($widget)->prepend(
-            (string) str($resource === null ? ($context ? "{$namespace}\\" : 'livewire\\') : "{$resourceNamespace}\\{$resource}\\widgets\\")
+            (string) str($resource === null ? ($panel ? "{$namespace}\\" : 'livewire\\') : "{$resourceNamespace}\\{$resource}\\widgets\\")
                 ->replaceFirst('App\\', '')
         )
             ->replace('\\', '/')

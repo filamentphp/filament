@@ -18,7 +18,7 @@ class MakeTableCommand extends Command
     use CanReadModelSchemas;
     use CanValidateInput;
 
-    protected $description = 'Creates a Livewire component containing a Filament table.';
+    protected $description = 'Create a new Livewire component containing a Filament table';
 
     protected $signature = 'make:livewire-table {name?} {model?} {--G|generate} {--F|force}';
 

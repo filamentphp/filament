@@ -4,14 +4,16 @@
     $copyMessageDuration = $getCopyMessageDuration();
 @endphp
 
-<div {{
-    $attributes
-        ->merge($getExtraAttributes(), escape: false)
-        ->class([
-            'filament-tables-color-column flex flex-wrap gap-1',
-            'px-4 py-3' => ! $isInline(),
-        ])
-}}>
+<div
+    {{
+        $attributes
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+                'filament-tables-color-column flex flex-wrap gap-1',
+                'px-4 py-3' => ! $isInline(),
+            ])
+    }}
+>
     @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)
         <div
             @if ($state)
@@ -27,7 +29,6 @@
                 'relative flex h-6 w-6 rounded-md',
                 'cursor-pointer' => $isCopyable,
             ])
-        >
-        </div>
+        ></div>
     @endforeach
 </div>

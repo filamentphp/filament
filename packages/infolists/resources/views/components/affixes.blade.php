@@ -15,21 +15,23 @@
     );
 @endphp
 
-<div {{ $attributes->class(['filament-infolists-affix-container flex rtl:space-x-reverse group']) }}>
+<div
+    {{ $attributes->class(['filament-infolists-affix-container group flex rtl:space-x-reverse']) }}
+>
     @if (count($prefixActions))
-        <div class="self-stretch flex gap-1 items-center pe-2">
+        <div class="flex items-center gap-1 self-stretch pe-2">
             @foreach ($prefixActions as $prefixAction)
                 {{ $prefixAction }}
             @endforeach
         </div>
     @endif
 
-    <div class="flex-1 min-w-0">
+    <div class="min-w-0 flex-1">
         {{ $slot }}
     </div>
 
     @if (count($suffixActions))
-        <div class="self-stretch flex gap-1 items-center ps-2">
+        <div class="flex items-center gap-1 self-stretch ps-2">
             @foreach ($suffixActions as $suffixAction)
                 {{ $suffixAction }}
             @endforeach

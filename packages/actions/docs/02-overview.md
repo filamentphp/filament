@@ -50,11 +50,11 @@ The concept of "actions" is used throughout Filament in many contexts. Some cont
 
 ### Custom Livewire component actions
 
-You can add an action to any Livewire component in your app, or even a page in the [app framework](../app/pages).
+You can add an action to any Livewire component in your app, or even a page in a [panel](../panels/pages).
 
 These actions use the `Filament\Actions\Action` class. They can open a modal if you choose, or even just a URL.
 
-If you're looking to add an action to a Livewire component, [visit this page](adding-an-action-to-a-livewire-component) in the docs. If you want to add an action to the header of a page in the app framework, [visit this page](../app/pages#header-actions) instead.
+If you're looking to add an action to a Livewire component, [visit this page](adding-an-action-to-a-livewire-component) in the docs. If you want to add an action to the header of a page in a panel, [visit this page](../panels/pages#header-actions) instead.
 
 ### Table actions
 
@@ -86,15 +86,15 @@ When you [send notifications](../notifications/sending-notifications), you can a
 
 These actions use the `Filament\Notifications\Actions\Action` class. They aren't able to open modals, but they can open a URL or emit a Livewire event.
 
-If you're looking to add an action to a notification in your app, [visit this page](../notifications/sending-notifications#actions) in the docs.
+If you're looking to add an action to a notification in your app, [visit this page](../notifications/sending-notifications#adding-actions-to-notifications) in the docs.
 
 ### Global search result actions
 
-In the app framework, there is a [global search](../app/resources/global-search) input that allows you to search all resources in your app from one place. When you click on a search result, it leads you to the resource page for that record. However, you may add additional actions below each global search result. For example, you may want both "Edit" and "View" options for a client search result, so the user can quickly edit their profile as well as view it in read-only mode.
+In the panel builder, there is a [global search](../panels/resources/global-search) input that allows you to search all resources in your app from one place. When you click on a search result, it leads you to the resource page for that record. However, you may add additional actions below each global search result. For example, you may want both "Edit" and "View" options for a client search result, so the user can quickly edit their profile as well as view it in read-only mode.
 
 These actions use the `Filament\GlobalSearch\Actions\Action` class. They aren't able to open modals, but they can open a URL or emit a Livewire event.
 
-If you're looking to add an action to a global search result in the app framework, [visit this page](../app/resources/global-search#actions) in the docs.
+If you're looking to add an action to a global search result in a panel, [visit this page](../panels/resources/global-search#adding-actions-to-global-search-results) in the docs.
 
 ## Prebuilt actions
 

@@ -2,8 +2,8 @@
 
 namespace Filament\Tests\Models;
 
-use Filament\Context;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Filament\Tests\Database\Factories\UserFactory;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -23,7 +23,7 @@ class User extends Authenticatable implements FilamentUser, MustVerifyEmail
         'remember_token',
     ];
 
-    public function canAccessFilament(Context $context): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         return true;
     }

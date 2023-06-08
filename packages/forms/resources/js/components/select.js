@@ -134,7 +134,7 @@ export default function selectFormComponent({
 
             if (!isMultiple) {
                 window.addEventListener(
-                    'filament-forms::select/refreshSelectedOptionLabel',
+                    'filament-forms::select.refreshSelectedOptionLabel',
                     async (event) => {
                         if (event.detail.livewireId !== livewireId) {
                             return

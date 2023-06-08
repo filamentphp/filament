@@ -12,7 +12,7 @@ class MakeLayoutComponentCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a infolist layout component class and view.';
+    protected $description = 'Create a new infolist layout component class and view';
 
     protected $signature = 'make:infolist-layout {name?} {--F|force}';
 

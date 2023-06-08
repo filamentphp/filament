@@ -41,8 +41,8 @@ class SimpleMethodChangesRector extends AbstractRector
                 'classIdentifier' => 'implements',
                 'changes' => [
                     'canAccessFilament' => function (ClassMethod $node) {
-                        $param = new Param(new Variable('context'));
-                        $param->type = new Name('\\Filament\\Context');
+                        $param = new Param(new Variable('panel'));
+                        $param->type = new Name('\\Filament\\Panel');
 
                         $node->params = [$param];
                     },
@@ -83,7 +83,7 @@ class SimpleMethodChangesRector extends AbstractRector
                         $node->flags |= Class_::MODIFIER_PUBLIC;
                     },
                     'getRouteName' => function (ClassMethod $node) {
-                        $param = new Param(new Variable('context'));
+                        $param = new Param(new Variable('panel'));
                         $param->default = new ConstFetch(new Name('null'));
                         $param->type = new Identifier('?string');
 
@@ -242,7 +242,7 @@ class SimpleMethodChangesRector extends AbstractRector
                         );
                     },
                     'getRouteBaseName' => function (ClassMethod $node) {
-                        $param = new Param(new Variable('context'));
+                        $param = new Param(new Variable('panel'));
                         $param->default = new ConstFetch(new Name('null'));
                         $param->type = new Identifier('?string');
 

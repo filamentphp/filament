@@ -18,10 +18,14 @@
     use Filament\Tables\Actions\RecordCheckboxPosition;
 @endphp
 
-<x-filament-tables::row {{ $attributes->class([
-    'filament-tables-summary-row',
-    'bg-gray-500/5' => $strong,
-]) }}>
+<x-filament-tables::row
+    {{
+    $attributes->class([
+        'filament-tables-summary-row',
+        'bg-gray-500/5' => $strong,
+    ])
+}}
+>
     @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
         <td></td>
     @endif
@@ -31,7 +35,7 @@
     @endif
 
     @if ($extraHeadingColumn || $groupsOnly)
-        <td class="align-top px-4 py-3 font-medium text-sm">
+        <td class="px-4 py-3 align-top text-sm font-medium">
             {{ $heading }}
         </td>
     @else
@@ -59,7 +63,7 @@
                     colspan="{{ $headingColumnSpan }}"
                 @endif
                 @class([
-                    "-space-y-3 align-top",
+                    '-space-y-3 align-top',
                     match ($column->getAlignment()) {
                         'start' => 'text-start',
                         'center' => 'text-center',
@@ -72,7 +76,7 @@
                 ])
             >
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
-                    <div class="px-4 py-3 font-medium text-sm">
+                    <div class="px-4 py-3 text-sm font-medium">
                         {{ $heading }}
                     </div>
                 @elseif ((! $placeholderColumns) || $column->hasSummary())

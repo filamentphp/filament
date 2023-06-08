@@ -36,7 +36,7 @@ SpatieMediaLibraryFileUpload::make('avatar')
 
 The media library file upload supports all the customization options of the [original file upload component](/docs/forms/fields/file-upload).
 
-> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](/docs/forms/getting-started#field-relationships) section**. If you're using the [app framework](../app), you can skip this step.
+> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](/docs/forms/getting-started#field-relationships) section**. If you're using a [panel](../panels), you can skip this step.
 
 ### Passing a collection
 

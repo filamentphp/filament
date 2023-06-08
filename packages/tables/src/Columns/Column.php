@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Tables\Columns\Concerns\BelongsToLayout;
 use Illuminate\Database\Eloquent\Model;
@@ -25,17 +26,17 @@ class Column extends ViewComponent
     use Concerns\CanOpenUrl;
     use Concerns\CanSpanColumns;
     use Concerns\CanWrapHeader;
-    use Concerns\HasAlignment;
     use Concerns\HasExtraCellAttributes;
     use Concerns\HasExtraHeaderAttributes;
     use Concerns\HasLabel;
-    use Concerns\HasRowLoopObject;
     use Concerns\HasName;
     use Concerns\HasRecord;
+    use Concerns\HasRowLoopObject;
     use Concerns\HasState;
     use Concerns\HasTooltip;
     use Concerns\InteractsWithTableQuery;
     use Conditionable;
+    use HasAlignment;
     use HasExtraAttributes;
 
     protected string $evaluationIdentifier = 'column';

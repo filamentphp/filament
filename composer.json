@@ -41,12 +41,12 @@
     },
     "autoload": {
         "files": [
-            "packages/app/src/helpers.php",
+            "packages/panels/src/helpers.php",
             "packages/support/src/helpers.php"
         ],
         "psr-4": {
             "Filament\\": [
-                "packages/app/src",
+                "packages/panels/src",
                 "packages/spatie-laravel-media-library-plugin/src",
                 "packages/spatie-laravel-settings-plugin/src",
                 "packages/spatie-laravel-tags-plugin/src",

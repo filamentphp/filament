@@ -12,14 +12,14 @@
     :icon-color="$getIconColor()"
     :icon-size="$getIconSize()"
     {{
-        $attributes
-            ->merge([
-                'id' => $getId(),
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-            ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['filament-infolists-section-component'])
-    }}
+    $attributes
+        ->merge([
+            'id' => $getId(),
+        ], escape: false)
+        ->merge($getExtraAttributes(), escape: false)
+        ->merge($getExtraAlpineAttributes(), escape: false)
+        ->class(['filament-infolists-section-component'])
+}}
 >
     <x-slot name="heading">
         {{ $getHeading() }}
