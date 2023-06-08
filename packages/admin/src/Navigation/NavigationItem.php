@@ -10,6 +10,8 @@ class NavigationItem
 
     protected ?Closure $isActiveWhen = null;
 
+    protected ?string $color = null;
+
     protected string $icon;
 
     protected ?string $activeIcon = null;
@@ -49,6 +51,13 @@ class NavigationItem
     public function group(?string $group): static
     {
         $this->group = $group;
+
+        return $this;
+    }
+
+    public function color(?string $color): static
+    {
+        $this->color = $color;
 
         return $this;
     }
@@ -118,6 +127,11 @@ class NavigationItem
         return $this->group;
     }
 
+    public function getColor(): ?string
+    {
+        return $this->color;
+    }
+    
     public function getIcon(): string
     {
         return $this->icon;

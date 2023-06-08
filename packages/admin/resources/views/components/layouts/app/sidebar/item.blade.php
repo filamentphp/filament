@@ -1,4 +1,5 @@
 @props([
+    'color' => 'secondary',
     'active' => false,
     'activeIcon',
     'badge' => null,
@@ -7,6 +8,17 @@
     'shouldOpenUrlInNewTab' => false,
     'url',
 ])
+
+@php
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'h-5 w-5 shrink-0',
+        'text-primary-500' => $color === 'primary',
+        'text-danger-500' => $color === 'danger',
+        'text-gray-500' => $color === 'secondary',
+        'text-success-500' => $color === 'success',
+        'text-warning-500' => $color === 'warning',
+    ]);
+@endphp
 
 <li @class(['filament-sidebar-item overflow-hidden', 'filament-sidebar-item-active' => $active])>
     <a
@@ -39,7 +51,7 @@
     >
         <x-dynamic-component
             :component="($active && $activeIcon) ? $activeIcon : $icon"
-            class="h-5 w-5 shrink-0"
+            :class="$iconClasses"
         />
 
         <div class="flex flex-1"
