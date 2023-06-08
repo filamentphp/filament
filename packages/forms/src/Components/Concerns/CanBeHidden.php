@@ -34,7 +34,7 @@ trait CanBeHidden
         return $this;
     }
 
-    public function autoHideIfChildrenHidden(bool|Closure $condition = true): static
+    public function hideIfChildrenHidden(bool|Closure $condition = true): static
     {
         $this->hidden(static function ($component): bool {
             $shouldBeHidden = true;
