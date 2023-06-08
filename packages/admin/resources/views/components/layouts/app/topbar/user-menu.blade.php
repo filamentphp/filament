@@ -116,6 +116,7 @@
             :action="$logoutItem?->getUrl() ?? route('filament.auth.logout')"
             method="post"
             tag="form"
+            dusk="filament-logout-button"
         >
             {{ $logoutItem?->getLabel() ?? __('filament::layout.buttons.logout.label') }}
         </x-filament::dropdown.list.item>

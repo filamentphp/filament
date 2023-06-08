@@ -23,6 +23,7 @@
                     rel="prev"
                     :icon="$previousArrowIcon"
                     :label="__('tables::table.pagination.buttons.previous.label')"
+                    dusk="filament-tables-previous-page-button"
                 />
             @endif
         </div>
@@ -40,6 +41,7 @@
                     rel="next"
                     :icon="$nextArrowIcon"
                     :label="__('tables::table.pagination.buttons.next.label')"
+                    dusk="filament-tables-next-page-button"
                 />
             @endif
         </div>
@@ -61,6 +63,7 @@
                 @endif
             @else
                 <div
+                    dusk="filament-tables-pagination-overview"
                     @class([
                         'pl-2 text-sm font-medium',
                         'dark:text-white' => config('tables.dark_mode'),

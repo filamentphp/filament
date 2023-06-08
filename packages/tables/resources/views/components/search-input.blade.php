@@ -15,6 +15,7 @@
             placeholder="{{ __('tables::table.fields.search_query.placeholder') }}"
             type="search"
             autocomplete="off"
+            dusk="filament-tables-search-input"
             @class([
                 'block h-9 w-full max-w-xs rounded-lg border-gray-300 pl-9 placeholder-gray-400 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500',
                 'dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400' => config('tables.dark_mode'),
