@@ -109,7 +109,7 @@ trait HasFilters
             });
         }
 
-        $this->updatedTableFilters();
+        $this->resetTableFiltersForm();
     }
 
     public function resetTableFiltersForm(): void
