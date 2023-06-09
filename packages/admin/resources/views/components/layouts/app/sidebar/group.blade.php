@@ -56,7 +56,7 @@
         @foreach ($items as $item)
             @if ($item instanceof \Filament\Navigation\NavigationItem)
                 <x-filament::layouts.app.sidebar.item
-                    :color="$item->getColor()"
+                    :iconColor="$item->getIconColor()"
                     :active="$item->isActive()"
                     :icon="$item->getIcon()"
                     :active-icon="$item->getActiveIcon()"

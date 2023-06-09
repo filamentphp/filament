@@ -10,7 +10,7 @@ class NavigationItem
 
     protected ?Closure $isActiveWhen = null;
 
-    protected ?string $color = null;
+    protected ?string $iconColor = null;
 
     protected string $icon;
 
@@ -55,9 +55,9 @@ class NavigationItem
         return $this;
     }
 
-    public function color(?string $color): static
+    public function iconColor(?string $iconColor): static
     {
-        $this->color = $color;
+        $this->iconColor = $iconColor;
 
         return $this;
     }
@@ -127,9 +127,9 @@ class NavigationItem
         return $this->group;
     }
 
-    public function getColor(): ?string
+    public function getIconColor(): ?string
     {
-        return $this->color;
+        return $this->iconColor;
     }
     
     public function getIcon(): string
