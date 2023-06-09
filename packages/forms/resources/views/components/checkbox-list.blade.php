@@ -126,7 +126,7 @@
                     wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}"
                 >
                     <label
-                        class="filament-forms-checkbox-list-component-option-label flex items-start space-x-3 rtl:space-x-reverse"
+                        class="filament-forms-checkbox-list-component-option-label flex items-center space-x-3 rtl:space-x-reverse"
                         @if ($isSearchable())
                             x-show="$el.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(search.toLowerCase())"
                         @endif
@@ -143,7 +143,7 @@
                             {{
                                 $getExtraAttributeBag()
                                     ->class([
-                                        'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 mt-1',
+                                        'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
                                         'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
                                         'border-gray-300' => ! $errors->has($getStatePath()),
                                         'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
