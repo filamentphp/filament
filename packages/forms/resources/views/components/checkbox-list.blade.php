@@ -126,7 +126,7 @@
                     wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}"
                 >
                     <label
-                        class="filament-forms-checkbox-list-component-option-label flex items-center space-x-3 rtl:space-x-reverse"
+                        class="filament-forms-checkbox-list-component-option-label flex items-start space-x-3 rtl:space-x-reverse"
                         @if ($isSearchable())
                             x-show="$el.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(search.toLowerCase())"
                         @endif
@@ -143,7 +143,7 @@
                             {{
                                 $getExtraAttributeBag()
                                     ->class([
-                                        'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
+                                        'text-primary-600 transition duration-75 rounded shadow-sm focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 mt-1',
                                         'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
                                         'border-gray-300' => ! $errors->has($getStatePath()),
                                         'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
@@ -156,14 +156,27 @@
                             }}
                         />
 
-                        <span
+                        <div class="flex items-start flex-col">
+                            <div
                             @class([
                                 'filament-forms-checkbox-list-component-option-label-text text-sm font-medium text-gray-700',
                                 'dark:text-gray-200' => config('forms.dark_mode'),
                             ])
                         >
                             {{ $optionLabel }}
-                        </span>
+                        </div>
+
+                            @if ($hasDescription($optionValue))
+                            <p
+                                @class([
+                                    'text-gray-500 text-sm',
+                                    'dark:text-gray-400' => config('forms.dark_mode'),
+                                ])
+                            >
+                                {{ $getDescription($optionValue) }}
+                            </p>
+                        @endif
+                        </div>                        
                     </label>
                 </div>
             @empty

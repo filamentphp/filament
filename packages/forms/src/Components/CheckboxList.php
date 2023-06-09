@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,8 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
     protected string | Closure | null $relationship = null;
+
+    protected array | Arrayable | Closure $descriptions = [];
 
     protected bool | Closure $isBulkToggleable = false;
 
@@ -167,5 +170,33 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     public function isBulkToggleable(): bool
     {
         return (bool) $this->evaluate($this->isBulkToggleable);
+    }
+
+    public function descriptions(array | Arrayable | Closure $descriptions): static
+    {
+        $this->descriptions = $descriptions;
+
+        return $this;
+    }
+
+    public function hasDescription($value): bool
+    {
+        return array_key_exists($value, $this->getDescriptions());
+    }
+
+    public function getDescription($value): ?string
+    {
+        return $this->getDescriptions()[$value] ?? null;
+    }
+
+    public function getDescriptions(): array
+    {
+        $descriptions = $this->evaluate($this->descriptions);
+
+        if ($descriptions instanceof Arrayable) {
+            $descriptions = $descriptions->toArray();
+        }
+
+        return $descriptions;
     }
 }
