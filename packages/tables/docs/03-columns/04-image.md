@@ -77,23 +77,36 @@ ImageColumn::make('logo')
     ->extraImgAttributes(['title' => 'Company logo']),
 ```
 
-## Stacking images
+## Multiple images
 
-You may show a relationship of images as a stack using `stacked()`.  The name of the relationship comes first, followed by a period, followed by the name of the column to display:
+You may display multiple images from an array:
 
 ```php
-ImageColumn::make('users.avatar')
+ImageColumn::make('images')
     ->circular()
-    ->stacked()
 ```
 
-### Using a separator
-
-Instead of using a relationship, you may use a separated string by passing the separator into `separator()`:
+Be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
 ```php
-ImageColumn::make('product_images')
-    ->separator(',')
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model
+{
+    protected $casts = [
+        'images' => 'array',
+    ];
+
+    // ...
+}
+```
+
+## Stacking images
+
+You may display multiple images as a stack of overlapping images by using `stacked()`:
+
+```php
+ImageColumn::make('images')
     ->circular()
     ->stacked()
 ```
@@ -103,7 +116,7 @@ ImageColumn::make('product_images')
 You may set a limit to the number of images you want to display by passing `limit()`:
 
 ```php
-ImageColumn::make('orderItems.image')
+ImageColumn::make('images')
     ->circular()
     ->stacked()
     ->limit(3)
@@ -114,7 +127,7 @@ ImageColumn::make('orderItems.image')
 When you set a limit you may also display the count of remaining images by passing `showRemaining()`. 
 
 ```php
-ImageColumn::make('orderItems.image')
+ImageColumn::make('images')
     ->circular()
     ->stacked()
     ->limit(3)
