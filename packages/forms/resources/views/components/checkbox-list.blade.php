@@ -156,27 +156,27 @@
                             }}
                         />
 
-                        <div class="flex items-start flex-col">
+                        <div class="flex flex-col items-start">
                             <div
-                            @class([
-                                'filament-forms-checkbox-list-component-option-label-text text-sm font-medium text-gray-700',
-                                'dark:text-gray-200' => config('forms.dark_mode'),
-                            ])
-                        >
-                            {{ $optionLabel }}
-                        </div>
-
-                            @if ($hasDescription($optionValue))
-                            <p
                                 @class([
-                                    'text-gray-500 text-sm',
-                                    'dark:text-gray-400' => config('forms.dark_mode'),
+                                    'filament-forms-checkbox-list-component-option-label-text text-sm font-medium text-gray-700',
+                                    'dark:text-gray-200' => config('forms.dark_mode'),
                                 ])
                             >
-                                {{ $getDescription($optionValue) }}
-                            </p>
-                        @endif
-                        </div>                        
+                                {{ $optionLabel }}
+                            </div>
+
+                            @if ($hasDescription($optionValue))
+                                <p
+                                    @class([
+                                        'text-sm text-gray-500',
+                                        'dark:text-gray-400' => config('forms.dark_mode'),
+                                    ])
+                                >
+                                    {{ $getDescription($optionValue) }}
+                                </p>
+                            @endif
+                        </div>
                     </label>
                 </div>
             @empty
