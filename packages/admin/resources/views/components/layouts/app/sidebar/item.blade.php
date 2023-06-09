@@ -1,5 +1,5 @@
 @props([
-    'iconColor' => 'secondary',
+    'iconColor' => null,
     'active' => false,
     'activeIcon',
     'badge' => null,
