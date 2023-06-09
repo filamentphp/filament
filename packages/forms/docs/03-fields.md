@@ -990,6 +990,24 @@ CheckboxList::make('participants')
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
 
+You can provide descriptions to each option using the `descriptions()` method:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('payment_methods')
+    ->options([
+        'cash' => 'Cash',
+        'online' => 'Online banking',
+        'credit' => 'Credit/debit card'
+    ])
+    ->descriptions([
+        'cash' => 'Payment by cash.',
+        'online' => 'Payment by online banking.',
+        'credit' => 'Pay by credit/debit card.'
+    ])
+```
+
 ## Radio
 
 The radio input provides a radio button group for selecting a single value from a list of predefined options:
