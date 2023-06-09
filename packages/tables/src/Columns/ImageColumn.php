@@ -12,7 +12,10 @@ use Throwable;
 
 class ImageColumn extends Column
 {
-    protected string $view = 'tables::columns.image-column';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-tables::columns.image-column';
 
     protected string | Closure | null $disk = null;
 
@@ -26,11 +29,14 @@ class ImageColumn extends Column
 
     protected int | string | Closure | null $width = null;
 
+    /**
+     * @var array<array<mixed> | Closure>
+     */
     protected array $extraImgAttributes = [];
 
-    protected bool | Closure $isStacked = false;
+    protected string | Closure | null $defaultImageUrl = null;
 
-    protected string | Closure | null $separator = null;
+    protected bool | Closure $isStacked = false;
 
     protected int | Closure | null $overlap = null;
 
@@ -43,13 +49,6 @@ class ImageColumn extends Column
     protected bool | Closure $shouldShowRemainingAfterStack = false;
 
     protected string | Closure | null $remainingTextSize = null;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->disk(config('tables.default_filesystem_disk'));
-    }
 
     public function disk(string | Closure | null $disk): static
     {
@@ -116,7 +115,7 @@ class ImageColumn extends Column
 
     public function getDiskName(): string
     {
-        return $this->evaluate($this->disk) ?? config('tables.default_filesystem_disk');
+        return $this->evaluate($this->disk) ?? config('filament.default_filesystem_disk');
     }
 
     public function getHeight(): ?string
@@ -134,9 +133,57 @@ class ImageColumn extends Column
         return $height;
     }
 
-    public function getImagePath(): ?string
+    public function defaultImageUrl(string | Closure | null $url): static
     {
-        return $this->getPath();
+        $this->defaultImageUrl = $url;
+
+        return $this;
+    }
+
+    public function getImagePath(string | null $image = null): ?string
+    {
+        $state = $image ?? $this->getState();
+
+        if (! $state && count($this->getImages())) {
+            return null;
+        }
+
+        if (! $state) {
+            return $this->getDefaultImageUrl();
+        }
+
+        if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
+            return $state;
+        }
+
+        /** @var FilesystemAdapter $storage */
+        $storage = $this->getDisk();
+
+        try {
+            if (! $storage->exists($state)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
+            return null;
+        }
+
+        if ($this->getVisibility() === 'private') {
+            try {
+                return $storage->temporaryUrl(
+                    $state,
+                    now()->addMinutes(5),
+                );
+            } catch (Throwable $exception) {
+                // This driver does not support creating temporary URLs.
+            }
+        }
+
+        return $storage->url($state);
+    }
+
+    public function getDefaultImageUrl(): ?string
+    {
+        return $this->evaluate($this->defaultImageUrl);
     }
 
     public function getVisibility(): string
@@ -161,7 +208,7 @@ class ImageColumn extends Column
 
     public function isCircular(): bool
     {
-        return $this->evaluate($this->isCircular);
+        return (bool) $this->evaluate($this->isCircular);
     }
 
     /**
@@ -174,9 +221,12 @@ class ImageColumn extends Column
 
     public function isSquare(): bool
     {
-        return $this->evaluate($this->isSquare);
+        return (bool) $this->evaluate($this->isSquare);
     }
 
+    /**
+     * @param  array<mixed> | Closure  $attributes
+     */
     public function extraImgAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
@@ -188,6 +238,9 @@ class ImageColumn extends Column
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getExtraImgAttributes(): array
     {
         $temporaryAttributeBag = new ComponentAttributeBag();
@@ -216,45 +269,12 @@ class ImageColumn extends Column
         return (bool) $this->evaluate($this->isStacked);
     }
 
-    public function getImagesWithPath(): array
-    {
-        return collect($this->getImages())
-            ->filter(fn ($image) => $this->getPath($image) !== null)
-            ->take($this->getLimit())
-            ->toArray();
-    }
-
     public function getImages(): array
     {        
-        $images = $this->getState();
-
-        if (is_array($images)) {
-            return $images;
-        }
-
-        if (! ($separator = $this->getSeparator())) {
-            return [];
-        }
-
-        $images = explode($separator, $images);
-
-        if (count($images) === 1 && blank($images[0])) {
-            $images = [];
-        }
-
-        return $images;
-    }
-
-    public function separator(string | Closure | null $separator = ','): static
-    {
-        $this->separator = $separator;
-
-        return $this;
-    }
-
-    public function getSeparator(): ?string
-    {
-        return $this->evaluate($this->separator);
+        return collect($this->getState())
+            ->filter(fn ($image) => $this->getImagePath($image) !== null)
+            ->take($this->getLimit())
+            ->toArray();
     }
 
     public function overlap(int | Closure | null $overlap): static
@@ -329,42 +349,5 @@ class ImageColumn extends Column
     public function getRemainingTextSize(): ?string
     {
         return $this->evaluate($this->remainingTextSize);
-    }
-
-    protected function getPath(string | null $image = null): ?string
-    {
-        $state = $image ?? $this->getState();
-        
-        if (! $state) {
-            return null;
-        }
-
-        if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
-            return $state;
-        }
-
-        /** @var FilesystemAdapter $storage */
-        $storage = $this->getDisk();
-
-        try {
-            if (! $storage->exists($state)) {
-                return null;
-            }
-        } catch (UnableToCheckFileExistence $exception) {
-            return null;
-        }
-
-        if ($this->getVisibility() === 'private') {
-            try {
-                return $storage->temporaryUrl(
-                    $state,
-                    now()->addMinutes(5),
-                );
-            } catch (Throwable $exception) {
-                // This driver does not support creating temporary URLs.
-            }
-        }
-
-        return $storage->url($state);
     }
 }
