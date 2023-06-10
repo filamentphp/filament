@@ -185,7 +185,7 @@ trait InteractsWithInfolists
         $this->resetErrorBag();
 
         $this->dispatch('open-modal', [
-            'id' => "{$this->id}-infolist-action",
+            'id' => "{$this->getId()}-infolist-action",
         ]);
 
         return null;
@@ -282,7 +282,7 @@ trait InteractsWithInfolists
             $this->mountedInfolistActionsInfolist = null;
 
             $this->dispatch('close-modal', [
-                'id' => "{$this->id}-infolist-action",
+                'id' => "{$this->getId()}-infolist-action",
             ]);
 
             return;
@@ -296,7 +296,7 @@ trait InteractsWithInfolists
         $this->resetErrorBag();
 
         $this->dispatch('open-modal', [
-            'id' => "{$this->id}-infolist-action",
+            'id' => "{$this->getId()}-infolist-action",
         ]);
     }
 

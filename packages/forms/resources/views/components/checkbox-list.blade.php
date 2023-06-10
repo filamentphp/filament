@@ -69,12 +69,12 @@
                 <div
                     x-cloak
                     class="mb-2"
-                    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
+                    wire:key="{{ $this->getId() }}.{{ $getStatePath() }}.{{ $field::class }}.actions"
                 >
                     <span
                         x-show="! areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
+                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.select_all"
                     >
                         {{ $getAction('selectAll') }}
                     </span>
@@ -82,7 +82,7 @@
                     <span
                         x-show="areAllCheckboxesChecked"
                         x-on:click="toggleAllCheckboxes()"
-                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.actions.deselect_all"
+                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.actions.deselect_all"
                     >
                         {{ $getAction('deselectAll') }}
                     </span>
@@ -106,7 +106,7 @@
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div
-                    wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}"
+                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}"
                 >
                     <label
                         class="filament-forms-checkbox-list-component-option-label flex items-center space-x-3 rtl:space-x-reverse"
@@ -145,7 +145,7 @@
                 </div>
             @empty
                 <div
-                    wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.empty"
+                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.empty"
                 ></div>
             @endforelse
         </x-filament::grid>

@@ -49,7 +49,6 @@
             }
         </style>
 
-        @livewireStyles
         @filamentStyles
         {{ filament()->getTheme()->getHtml() }}
         {{ filament()->getFontHtml() }}
@@ -96,11 +95,10 @@
 
         {{ $slot }}
 
-        @livewire('filament.core.notifications')
+        @livewire(Filament\Http\Livewire\Notifications::class)
 
         {{ filament()->renderHook('scripts.start') }}
 
-        @livewireScripts
         @filamentScripts(withCore: true)
 
         @if (config('filament.broadcasting.echo'))

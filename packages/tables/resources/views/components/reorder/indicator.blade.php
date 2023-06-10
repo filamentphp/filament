@@ -7,7 +7,7 @@
     {{
         $attributes
             ->merge([
-                'wire:key' => "{$this->id}.table.reorder.indicator",
+                'wire:key' => "{$this->getId()}.table.reorder.indicator",
             ], escape: false)
             ->class(['filament-tables-reorder-indicator whitespace-nowrap bg-primary-500/10 px-4 py-2 text-sm'])
     }}

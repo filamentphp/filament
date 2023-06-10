@@ -5,16 +5,16 @@
         @endphp
 
         <x-filament::modal
-            :id="$this->id . '-action'"
-            :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
+            :id="$this->getId() . '-action'"
+            :wire:key="$action ? $this->getId() . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedActions.length) open()"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedActions.length) open()"
             x-on:modal-closed.stop="
                 const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
 
@@ -100,16 +100,16 @@
         @endphp
 
         <x-filament::modal
-            :id="$this->id . '-infolist-action'"
-            :wire:key="$action ? $this->id . '.infolist.actions.' . $action->getName() . '.modal' : null"
+            :id="$this->getId() . '-infolist-action'"
+            :wire:key="$action ? $this->getId() . '.infolist.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedInfolistActions.length) open()"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedInfolistActions.length) open()"
             x-on:modal-closed.stop="
                 const mountedInfolistActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedInfolistActionShouldOpenModal()) }}
 
@@ -195,16 +195,16 @@
         @endphp
 
         <x-filament::modal
-            :id="$this->id . '-table-action'"
-            :wire:key="$action ? $this->id . '.table.actions.' . $action->getName() . '.modal' : null"
+            :id="$this->getId() . '-table-action'"
+            :wire:key="$action ? $this->getId() . '.table.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedTableActions.length) open()"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableActions.length) open()"
             x-on:modal-closed.stop="
                 const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
 
@@ -284,16 +284,16 @@
         @endphp
 
         <x-filament::modal
-            :id="$this->id . '-table-bulk-action'"
-            :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
+            :id="$this->getId() . '-table-bulk-action'"
+            :wire:key="$action ? $this->getId() . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
-            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedTableBulkAction) open()"
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
+            x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
                 const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
 
@@ -379,8 +379,8 @@
 
     <form wire:submit.prevent="callMountedFormComponentAction">
         <x-filament::modal
-            :id="$this->id . '-form-component-action'"
-            :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
+            :id="$this->getId() . '-form-component-action'"
+            :wire:key="$action ? $this->getId() . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
             :visible="filled($action)"
             :width="$action?->getModalWidth()"
             :slide-over="$action?->isModalSlideOver()"

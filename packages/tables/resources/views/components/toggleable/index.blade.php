@@ -10,7 +10,7 @@
     placement="bottom-start"
     shift
     :width="$width"
-    wire:key="{{ $this->id }}.table.toggle"
+    wire:key="{{ $this->getId() }}.table.toggle"
 >
     <x-slot name="trigger">
         <x-filament-tables::toggleable.trigger />

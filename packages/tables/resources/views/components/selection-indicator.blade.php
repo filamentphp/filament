@@ -9,7 +9,7 @@
     {{
         $attributes
             ->merge([
-                'wire:key' => "{$this->id}.table.selection.indicator",
+                'wire:key' => "{$this->getId()}.table.selection.indicator",
             ], escape: false)
             ->class(['filament-tables-selection-indicator whitespace-nowrap bg-primary-500/10 px-4 py-2 text-sm'])
     }}
@@ -25,7 +25,7 @@
     ></span>
 
     <span
-        id="{{ $this->id }}.table.selection.indicator.record-count.{{ $allSelectableRecordsCount }}"
+        id="{{ $this->getId() }}.table.selection.indicator.record-count.{{ $allSelectableRecordsCount }}"
         x-show="{{ $allSelectableRecordsCount }} !== selectedRecords.length"
     >
         <button

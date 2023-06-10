@@ -155,7 +155,7 @@ trait InteractsWithActions
         $this->resetErrorBag();
 
         $this->dispatch('open-modal', [
-            'id' => "{$this->id}-action",
+            'id' => "{$this->getId()}-action",
         ]);
 
         return null;
@@ -351,7 +351,7 @@ trait InteractsWithActions
 
         if (! count($this->mountedActions)) {
             $this->dispatch('close-modal', [
-                'id' => "{$this->id}-action",
+                'id' => "{$this->getId()}-action",
             ]);
 
             if ($action?->shouldClearRecordAfter()) {
@@ -369,7 +369,7 @@ trait InteractsWithActions
         $this->resetErrorBag();
 
         $this->dispatch('open-modal', [
-            'id' => "{$this->id}-action",
+            'id' => "{$this->getId()}-action",
         ]);
     }
 }

@@ -8,7 +8,7 @@
         $attributes
             ->merge([
                 'dusk' => 'filament.notifications.notification',
-                'wire:key' => "{$this->id}.notifications.{$notification->getId()}",
+                'wire:key' => "{$this->getId()}.notifications.{$notification->getId()}",
             ], escape: false)
             ->class(['filament-notifications-notification pointer-events-auto invisible'])
     }}

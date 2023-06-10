@@ -12,7 +12,7 @@
     placement="bottom-start"
     shift
     :width="$width"
-    wire:key="{{ $this->id }}.table.filters"
+    wire:key="{{ $this->getId() }}.table.filters"
 >
     <x-slot name="trigger" class="flex items-center justify-center">
         {{ $triggerAction->indicator($indicatorsCount) }}

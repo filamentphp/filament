@@ -158,7 +158,6 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
         <title>{{ config('app.name') }}</title>
 
         <style>[x-cloak] { display: none !important; }</style>
-        @livewireStyles
         @filamentStyles
         @vite('resources/css/app.css')
     </head>
@@ -168,7 +167,6 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
         @livewire('notifications')
 
-        @livewireScripts
         @filamentScripts
         @vite('resources/js/app.js')
         <script src="//unpkg.com/alpinejs" defer></script>

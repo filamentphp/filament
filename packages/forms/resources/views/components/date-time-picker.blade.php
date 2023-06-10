@@ -123,7 +123,7 @@
                     <input
                         readonly
                         placeholder="{{ $getPlaceholder() }}"
-                        wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.display-text"
+                        wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.display-text"
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
@@ -151,7 +151,7 @@
                     x-cloak
                     x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                     wire:ignore
-                    wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
+                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
                         'absolute z-10 my-1 hidden rounded-lg border border-gray-300 bg-white shadow-md dark:border-gray-600 dark:bg-gray-700',
                         'w-fit min-w-[16rem] p-4' => $hasDate(),

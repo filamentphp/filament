@@ -120,7 +120,7 @@
         shouldCheckUniqueSelection: true,
 
         init: function () {
-            $wire.on('deselectAllTableRecords', () => this.deselectAllRecords())
+            $el.addEventListener('deselectAllTableRecords', () => this.deselectAllRecords())
 
             $watch('selectedRecords', () => {
                 if (! this.shouldCheckUniqueSelection) {
@@ -615,7 +615,7 @@
                                     x-on:expand-all-table-rows.window="isCollapsed = false"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
                                 @endif
-                                wire:key="{{ $this->id }}.table.records.{{ $recordKey }}"
+                                wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                 @if ($isReordering)
                                     x-sortable-item="{{ $recordKey }}"
                                     x-sortable-handle
@@ -1053,7 +1053,7 @@
                                 <x-filament-tables::row
                                     :record-action="$recordAction"
                                     :record-url="$recordUrl"
-                                    :wire:key="$this->id . '.table.records.' . $recordKey"
+                                    :wire:key="$this->getId() . '.table.records.' . $recordKey"
                                     :x-sortable-item="$isReordering ? $recordKey : null"
                                     :x-sortable-handle="$isReordering"
                                     :striped="$isStriped"
@@ -1128,7 +1128,7 @@
                                         @endphp
 
                                         <x-filament-tables::cell
-                                            wire:key="{{ $this->id }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
+                                            wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
                                             wire:loading.remove.delay=""
                                             wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                             class="filament-table-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
@@ -1194,7 +1194,7 @@
                                         :colspan="$columnsCount"
                                         wire:loading.class.remove.delay="hidden"
                                         class="hidden"
-                                        :wire:key="$this->id . '.table.records.' . $recordKey . '.loading-cell'"
+                                        :wire:key="$this->getId() . '.table.records.' . $recordKey . '.loading-cell'"
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                     />
                                 </x-filament-tables::row>

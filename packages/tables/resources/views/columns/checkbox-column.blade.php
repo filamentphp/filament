@@ -10,7 +10,7 @@
     }"
     x-init="
         Livewire.hook('message.processed', (component) => {
-            if (component.component.id !== @js($this->id)) {
+            if (component.component.id !== @js($this->getId())) {
                 return
             }
 

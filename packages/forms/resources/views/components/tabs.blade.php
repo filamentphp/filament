@@ -31,7 +31,7 @@
         $attributes
             ->merge([
                 'id' => $getId(),
-                'wire:key' => "{$this->id}.{$getStatePath()}." . \Filament\Forms\Components\Tabs::class . '.container',
+                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \Filament\Forms\Components\Tabs::class . '.container',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)

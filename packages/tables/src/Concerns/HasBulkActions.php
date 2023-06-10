@@ -89,7 +89,7 @@ trait HasBulkActions
         $action->resetFormData();
 
         $this->dispatch('close-modal', [
-            'id' => "{$this->id}-table-bulk-action",
+            'id' => "{$this->getId()}-table-bulk-action",
         ]);
 
         return $result;
@@ -148,7 +148,7 @@ trait HasBulkActions
         $this->resetErrorBag();
 
         $this->dispatch('open-modal', [
-            'id' => "{$this->id}-table-bulk-action",
+            'id' => "{$this->getId()}-table-bulk-action",
         ]);
 
         return null;

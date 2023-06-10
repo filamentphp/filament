@@ -80,7 +80,7 @@
                     x-ref="panel"
                     x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                     wire:ignore.self
-                    wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
+                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
                         'absolute z-10 hidden shadow-lg',
                         'pointer-events-none opacity-70' => $isDisabled,

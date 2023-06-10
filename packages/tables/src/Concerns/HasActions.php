@@ -160,7 +160,7 @@ trait HasActions
         $this->resetErrorBag();
 
         $this->dispatch('open-modal', [
-            'id' => "{$this->id}-table-action",
+            'id' => "{$this->getId()}-table-action",
         ]);
 
         return null;
@@ -261,7 +261,7 @@ trait HasActions
 
         if (! count($this->mountedTableActions)) {
             $this->dispatch('close-modal', [
-                'id' => "{$this->id}-table-action",
+                'id' => "{$this->getId()}-table-action",
             ]);
 
             $action?->record(null);
@@ -278,7 +278,7 @@ trait HasActions
         $this->resetErrorBag();
 
         $this->dispatch('open-modal', [
-            'id' => "{$this->id}-table-action",
+            'id' => "{$this->getId()}-table-action",
         ]);
     }
 

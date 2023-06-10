@@ -130,7 +130,7 @@
                                             :label="$page"
                                             :aria-label="trans_choice('filament-tables::table.pagination.buttons.go_to_page.label', $page, ['page' => $page])"
                                             :active="$page === $paginator->currentPage()"
-                                            :wire:key="$this->id . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
+                                            :wire:key="$this->getId() . '.table.pagination.' . $paginator->getPageName() . '.' . $page"
                                         />
                                     @endforeach
                                 @endif

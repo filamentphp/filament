@@ -67,7 +67,7 @@
                 class="absolute end-0 top-0 flex w-full items-center justify-end p-2"
             >
                 @if (filament()->hasDatabaseNotifications())
-                    @livewire('filament.core.database-notifications')
+                    @livewire(Filament\Http\Livewire\DatabaseNotifications::class)
                 @endif
 
                 <x-filament::user-menu />

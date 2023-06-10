@@ -10,12 +10,12 @@ export default function chart({ cachedData, options, type }) {
         init: function () {
             let chart = this.initChart()
 
-            this.$wire.on('updateChartData', async ({ data }) => {
+            this.$el.addEventListener('updateChartData', async ({ data }) => {
                 chart.data = this.applyColorToData(data)
                 chart.update('resize')
             })
 
-            this.$wire.on('filterChartData', async ({ data }) => {
+            this.$el.addEventListener('filterChartData', async ({ data }) => {
                 chart.destroy()
                 chart = this.initChart(data)
             })

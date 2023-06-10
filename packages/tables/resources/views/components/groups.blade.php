@@ -27,7 +27,7 @@
         {{ $attributes->class(['sm:hidden']) }}
         placement="bottom-start"
         shift
-        wire:key="{{ $this->id }}.table.grouping"
+        wire:key="{{ $this->getId() }}.table.grouping"
     >
         <x-slot name="trigger">
             <x-filament::icon-button
