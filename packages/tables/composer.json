@@ -20,7 +20,7 @@
         "illuminate/support": "^9.0|^10.0",
         "illuminate/view": "^9.0|^10.0",
         "kirschbaum-development/eloquent-power-joins": "^2.6",
-        "livewire/livewire": "^2.10.7",
+        "syntheticjs/support": "*",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {
