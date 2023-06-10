@@ -184,7 +184,7 @@ trait InteractsWithInfolists
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
+        $this->dispatch('open-modal', [
             'id' => "{$this->id}-infolist-action",
         ]);
 
@@ -281,7 +281,7 @@ trait InteractsWithInfolists
             $this->mountedInfolistActionsComponent = null;
             $this->mountedInfolistActionsInfolist = null;
 
-            $this->dispatchBrowserEvent('close-modal', [
+            $this->dispatch('close-modal', [
                 'id' => "{$this->id}-infolist-action",
             ]);
 
@@ -295,7 +295,7 @@ trait InteractsWithInfolists
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
+        $this->dispatch('open-modal', [
             'id' => "{$this->id}-infolist-action",
         ]);
     }

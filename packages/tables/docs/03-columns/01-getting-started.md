@@ -232,7 +232,7 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->action(function (Post $record): void {
-        $this->dispatchBrowserEvent('open-post-edit-modal', [
+        $this->dispatch('open-post-edit-modal', [
             'post' => $record->getKey(),
         ]);
     })
@@ -251,7 +251,7 @@ TextColumn::make('title')
         Action::make('select')
             ->requiresConfirmation()
             ->action(function (Post $record): void {
-                $this->dispatchBrowserEvent('select-post', [
+                $this->dispatch('select-post', [
                     'post' => $record->getKey(),
                 ]);
             }),

@@ -88,7 +88,7 @@ trait HasBulkActions
         $action->resetArguments();
         $action->resetFormData();
 
-        $this->dispatchBrowserEvent('close-modal', [
+        $this->dispatch('close-modal', [
             'id' => "{$this->id}-table-bulk-action",
         ]);
 
@@ -147,7 +147,7 @@ trait HasBulkActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
+        $this->dispatch('open-modal', [
             'id' => "{$this->id}-table-bulk-action",
         ]);
 

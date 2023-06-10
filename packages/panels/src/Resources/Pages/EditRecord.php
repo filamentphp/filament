@@ -182,7 +182,7 @@ class EditRecord extends Page
 
     public function openDeleteModal(): void
     {
-        $this->dispatchBrowserEvent('open-modal', [
+        $this->dispatch('open-modal', [
             'id' => 'delete',
         ]);
     }

@@ -172,7 +172,7 @@ trait InteractsWithForms
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
-            $this->dispatchBrowserEvent('expand-concealing-component');
+            $this->dispatch('expand-concealing-component');
 
             throw $exception;
         }
@@ -197,7 +197,7 @@ trait InteractsWithForms
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
-            $this->dispatchBrowserEvent('expand-concealing-component');
+            $this->dispatch('expand-concealing-component');
 
             throw $exception;
         }

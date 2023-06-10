@@ -151,11 +151,11 @@ trait HasFormComponentActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
+        $this->dispatch('open-modal', [
             'id' => "{$this->id}-form-component-action",
         ]);
 
-        $this->dispatchBrowserEvent('opened-form-component-action-modal', [
+        $this->dispatch('opened-form-component-action-modal', [
             'id' => $this->id,
         ]);
 
@@ -271,11 +271,11 @@ trait HasFormComponentActions
         }
 
         if (! count($this->mountedFormComponentActions)) {
-            $this->dispatchBrowserEvent('close-modal', [
+            $this->dispatch('close-modal', [
                 'id' => "{$this->id}-form-component-action",
             ]);
 
-            $this->dispatchBrowserEvent('closed-form-component-action-modal', [
+            $this->dispatch('closed-form-component-action-modal', [
                 'id' => $this->id,
             ]);
 
@@ -284,11 +284,11 @@ trait HasFormComponentActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
+        $this->dispatch('open-modal', [
             'id' => "{$this->id}-form-component-action",
         ]);
 
-        $this->dispatchBrowserEvent('opened-form-component-action-modal', [
+        $this->dispatch('opened-form-component-action-modal', [
             'id' => $this->id,
         ]);
     }

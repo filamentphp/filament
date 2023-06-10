@@ -154,7 +154,7 @@ trait InteractsWithActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
+        $this->dispatch('open-modal', [
             'id' => "{$this->id}-action",
         ]);
 
@@ -350,7 +350,7 @@ trait InteractsWithActions
         }
 
         if (! count($this->mountedActions)) {
-            $this->dispatchBrowserEvent('close-modal', [
+            $this->dispatch('close-modal', [
                 'id' => "{$this->id}-action",
             ]);
 
@@ -368,7 +368,7 @@ trait InteractsWithActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
+        $this->dispatch('open-modal', [
             'id' => "{$this->id}-action",
         ]);
     }
