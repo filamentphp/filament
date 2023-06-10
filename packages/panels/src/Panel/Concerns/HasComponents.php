@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Component;
 use Livewire\Livewire;
+use Livewire\Mechanisms\ComponentRegistry;
 use ReflectionClass;
 
 trait HasComponents
@@ -320,8 +321,8 @@ trait HasComponents
             }
         }
 
-        foreach ($this->livewireComponents as $alias => $component) {
-            Livewire::component($alias, $component);
+        foreach ($this->livewireComponents as $componentName => $componentClass) {
+            Livewire::component($componentName, $componentClass);
         }
 
         $this->livewireComponents = [];
@@ -329,6 +330,8 @@ trait HasComponents
 
     protected function queueLivewireComponentForRegistration(string $component): void
     {
-        $this->livewireComponents[$component::getName()] = $component;
+        $componentName = app(ComponentRegistry::class)->getName($component);
+
+        $this->livewireComponents[$componentName] = $component;
     }
 }

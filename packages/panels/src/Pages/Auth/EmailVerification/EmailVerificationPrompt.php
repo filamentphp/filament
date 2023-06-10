@@ -76,10 +76,11 @@ class EmailVerificationPrompt extends CardPage
             });
     }
 
-    public static function getName(): string
-    {
-        return 'filament.core.auth.email-verification.email-verification-prompt';
-    }
+    // @todo Do I need to override the component name here?
+//    public static function getName(): string
+//    {
+//        return 'filament.core.auth.email-verification.email-verification-prompt';
+//    }
 
     public function getTitle(): string | Htmlable
     {

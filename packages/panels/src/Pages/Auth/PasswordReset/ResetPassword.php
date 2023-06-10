@@ -149,10 +149,11 @@ class ResetPassword extends CardPage
         return parent::propertyIsPublicAndNotDefinedOnBaseClass($propertyName);
     }
 
-    public static function getName(): string
-    {
-        return 'filament.core.auth.password-reset.reset-password';
-    }
+    // @todo Do I need to override the component name here?
+//    public static function getName(): string
+//    {
+//        return 'filament.core.auth.password-reset.reset-password';
+//    }
 
     public function getTitle(): string | Htmlable
     {

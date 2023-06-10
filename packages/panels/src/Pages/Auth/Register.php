@@ -141,10 +141,11 @@ class Register extends CardPage
         return $this->userModel = $provider->getModel();
     }
 
-    public static function getName(): string
-    {
-        return 'filament.core.auth.register';
-    }
+    // @todo Do I need to override the component name here?
+//    public static function getName(): string
+//    {
+//        return 'filament.core.auth.register';
+//    }
 
     public function getTitle(): string | Htmlable
     {

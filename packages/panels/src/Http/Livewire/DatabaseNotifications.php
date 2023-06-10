@@ -25,8 +25,9 @@ class DatabaseNotifications extends BaseComponent
         return view('filament::components.layouts.app.topbar.database-notifications-trigger');
     }
 
-    public static function getName(): string
-    {
-        return 'filament.core.database-notifications';
-    }
+    // @todo Do I need to override the component name here?
+//    public static function getName(): string
+//    {
+//        return 'filament.core.database-notifications';
+//    }
 }

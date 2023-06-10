@@ -17,7 +17,7 @@
 >
     @foreach ($widgets as $widget)
         @if ($widget::canView())
-            @livewire($widget::getName(), $data, key($widget))
+            @livewire($widget, $data, key($widget))
         @endif
     @endforeach
 </x-filament::grid>

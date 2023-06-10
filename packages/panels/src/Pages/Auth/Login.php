@@ -111,10 +111,11 @@ class Login extends CardPage
             ->url(filament()->getRegistrationUrl());
     }
 
-    public static function getName(): string
-    {
-        return 'filament.core.auth.login';
-    }
+    // @todo Do I need to override the component name here?
+//    public static function getName(): string
+//    {
+//        return 'filament.core.auth.login';
+//    }
 
     public function getTitle(): string | Htmlable
     {

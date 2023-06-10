@@ -122,10 +122,11 @@ class RequestPasswordReset extends CardPage
             ->url(filament()->getLoginUrl());
     }
 
-    public static function getName(): string
-    {
-        return 'filament.core.auth.password-reset.request-password-reset';
-    }
+    // @todo Do I need to override the component name here?
+//    public static function getName(): string
+//    {
+//        return 'filament.core.auth.password-reset.request-password-reset';
+//    }
 
     public function getTitle(): string | Htmlable
     {

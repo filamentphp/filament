@@ -14,8 +14,9 @@ class Notifications extends BaseComponent
         return Filament::auth()->user();
     }
 
-    public static function getName(): string
-    {
-        return 'filament.core.notifications';
-    }
+    // @todo Do I need to override the component name here?
+//    public static function getName(): string
+//    {
+//        return 'filament.core.notifications';
+//    }
 }
