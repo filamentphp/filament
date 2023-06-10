@@ -52,9 +52,11 @@
         'w-6 h-6' => $size === 'lg',
     ]);
 
-    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses(array_merge([
-        'filament-icon-button-indicator absolute rounded-full text-xs inline-block w-4 h-4 -top-0.5 -right-0.5'
-        ], $solid ? [
+    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses(array_merge(
+        [
+            'filament-icon-button-indicator absolute rounded-full text-xs inline-block w-4 h-4 -top-0.5 -right-0.5',
+        ],
+        $solid ? [
             'text-white',
             'bg-danger-600' => $color === 'danger',
             'bg-gray-500' => $color === 'secondary',
@@ -68,7 +70,7 @@
             'bg-gray-600/10' => $color === 'gray',
             'bg-primary-500/10' => $color === 'primary',
             'bg-success-500/10' => $color === 'success',
-            'bg-warning-500/10' => $color === 'warning'
+            'bg-warning-500/10' => $color === 'warning',
         ]
     ));
 
