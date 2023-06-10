@@ -17,8 +17,6 @@ use Livewire\WithPagination;
 
 class DatabaseNotifications extends Component
 {
-    use WithPagination;
-
     /**
      * @var array<string, string>
      */
@@ -156,9 +154,7 @@ class DatabaseNotifications extends Component
         static::$pollingInterval = $interval;
     }
 
-    /**
-     * @return array<mixed>
-     */
+    // @todo Replace this method for LW3 to ensure pagination query string is not used.
     public function queryStringWithPagination(): array
     {
         return [];

@@ -162,12 +162,13 @@ trait InteractsWithForms
      * @param  array<string, array<mixed>> | null  $rules
      * @param  array<string, string>  $messages
      * @param  array<string, string>  $attributes
+     * @param  array<string, string>  $dataOverrides
      * @return array<string, mixed>
      */
-    public function validate($rules = null, $messages = [], $attributes = []): array
+    public function validate($rules = null, $messages = [], $attributes = [], $dataOverrides = []): array
     {
         try {
-            return parent::validate($rules, $messages, $attributes);
+            return parent::validate($rules, $messages, $attributes, $dataOverrides);
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
@@ -186,12 +187,13 @@ trait InteractsWithForms
      * @param  array<string, array<mixed>>  $rules
      * @param  array<string, string>  $messages
      * @param  array<string, string>  $attributes
+     * @param  array<string, string>  $dataOverrides
      * @return array<string, mixed>
      */
-    public function validateOnly($field, $rules = null, $messages = [], $attributes = [])
+    public function validateOnly($field, $rules = null, $messages = [], $attributes = [], $dataOverrides = [])
     {
         try {
-            return parent::validateOnly($field, $rules, $messages, $attributes);
+            return parent::validateOnly($field, $rules, $messages, $attributes, $dataOverrides);
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
@@ -396,7 +398,7 @@ trait InteractsWithForms
     /**
      * @return array<string, array<mixed>>
      */
-    protected function getRules(): array
+    public function getRules(): array
     {
         $rules = parent::getRules();
 
