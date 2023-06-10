@@ -8,12 +8,12 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Testing\Assert;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportUnitTesting\Tests\Testable;
 
 /**
  * @method HasForms instance()
  *
- * @mixin TestableLivewire
+ * @mixin Testable
  */
 class TestsForms
 {

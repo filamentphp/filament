@@ -6,7 +6,7 @@ use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Filesystem\Filesystem;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportUnitTesting\Tests\Testable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -44,7 +44,7 @@ class FormsServiceProvider extends PackageServiceProvider
             }
         }
 
-        TestableLivewire::mixin(new TestsForms());
+        Testable::mixin(new TestsForms());
     }
 
     /**

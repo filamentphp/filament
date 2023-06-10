@@ -4,12 +4,12 @@ namespace Filament\Testing;
 
 use Closure;
 use Filament\Pages\Page;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportUnitTesting\Tests\Testable;
 
 /**
  * @method Page instance()
  *
- * @mixin TestableLivewire
+ * @mixin Testable
  */
 class TestsPages
 {

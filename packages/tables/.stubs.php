@@ -1,10 +1,10 @@
 <?php
 
-namespace Livewire\Testing {
+namespace Livewire\Features\SupportUnitTesting\Tests {
 
     use Illuminate\Support\Collection;
 
-    class TestableLivewire {
+    class Testable {
         public function mountTableAction(string $name, $record = null): static {}
 
         public function setTableActionData(array $data): static {}

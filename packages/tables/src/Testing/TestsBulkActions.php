@@ -3,20 +3,19 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Actions\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\Assert;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportUnitTesting\Tests\Testable;
 
 /**
  * @method HasTable instance()
  *
- * @mixin TestableLivewire
- * @mixin BaseTestsActions
+ * @mixin Testable
+ * @mixin Testable
  */
 class TestsBulkActions
 {

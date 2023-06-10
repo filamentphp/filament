@@ -1,8 +1,8 @@
 <?php
 
-namespace Livewire\Testing {
+namespace Livewire\Features\SupportUnitTesting\Tests {
 
-    class TestableLivewire {
+    class Testable {
         public function mountAction(string $name, array $arguments = []): static {}
 
         public function setActionData(array $data): static {}

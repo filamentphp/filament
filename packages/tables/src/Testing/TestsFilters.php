@@ -10,12 +10,12 @@ use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportUnitTesting\Tests\Testable;
 
 /**
  * @method HasTable instance()
  *
- * @mixin TestableLivewire
+ * @mixin Testable
  */
 class TestsFilters
 {

@@ -2,9 +2,9 @@
 
 use Closure;
 
-namespace Livewire\Testing {
+namespace Livewire\Features\SupportUnitTesting\Tests {
 
-    class TestableLivewire {
+    class Testable {
         public function fillForm(array $state = [], string $formName = 'form'): static {}
 
         public function assertFormSet(array $state, string $formName = 'form'): static {}

@@ -8,9 +8,9 @@ use Filament\Notifications\Testing\TestsNotifications;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Component;
+use Livewire\Features\SupportUnitTesting\Tests\Testable;
 use Livewire\Livewire;
 use Livewire\Response;
-use Livewire\Testing\TestableLivewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -50,6 +50,6 @@ class NotificationsServiceProvider extends PackageServiceProvider
             return $response;
         });
 
-        TestableLivewire::mixin(new TestsNotifications());
+        Testable::mixin(new TestsNotifications());
     }
 }

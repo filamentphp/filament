@@ -6,12 +6,12 @@ use Closure;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Testing\Assert;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportUnitTesting\Tests\Testable;
 
 /**
  * @method HasTable instance()
  *
- * @mixin TestableLivewire
+ * @mixin Testable
  */
 class TestsSummaries
 {

@@ -11,7 +11,7 @@ use Filament\Tables\Testing\TestsFilters;
 use Filament\Tables\Testing\TestsRecords;
 use Filament\Tables\Testing\TestsSummaries;
 use Illuminate\Filesystem\Filesystem;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportUnitTesting\Tests\Testable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -40,12 +40,12 @@ class TablesServiceProvider extends PackageServiceProvider
             }
         }
 
-        TestableLivewire::mixin(new TestsActions());
-        TestableLivewire::mixin(new TestsBulkActions());
-        TestableLivewire::mixin(new TestsColumns());
-        TestableLivewire::mixin(new TestsFilters());
-        TestableLivewire::mixin(new TestsRecords());
-        TestableLivewire::mixin(new TestsSummaries());
+        Testable::mixin(new TestsActions());
+        Testable::mixin(new TestsBulkActions());
+        Testable::mixin(new TestsColumns());
+        Testable::mixin(new TestsFilters());
+        Testable::mixin(new TestsRecords());
+        Testable::mixin(new TestsSummaries());
     }
 
     /**
