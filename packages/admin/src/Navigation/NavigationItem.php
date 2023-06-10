@@ -125,6 +125,7 @@ class NavigationItem
     {
         return $this->group;
     }
+
     public function getIcon(): string
     {
         return $this->icon;
