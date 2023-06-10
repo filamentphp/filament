@@ -16,7 +16,7 @@
 
 @php
     $buttonClasses = array_merge([
-        'filament-icon-button relative flex items-center justify-center rounded-full outline-none hover:bg-gray-500/5 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70',
+        "filament-icon-button filament-icon-button-size-{$size} relative flex items-center justify-center rounded-full outline-none hover:bg-gray-500/5 disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-70",
         'text-primary-500 focus:bg-primary-500/10' => $color === 'primary',
         'text-danger-500 focus:bg-danger-500/10' => $color === 'danger',
         'text-gray-500 focus:bg-gray-500/10' => $color === 'secondary',
