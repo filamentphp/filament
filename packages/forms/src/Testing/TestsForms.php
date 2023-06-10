@@ -8,7 +8,7 @@ use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Testing\Assert;
-use Livewire\Features\SupportUnitTesting\Tests\Testable;
+use Livewire\Features\SupportUnitTesting\Testable;
 
 /**
  * @method HasForms instance()

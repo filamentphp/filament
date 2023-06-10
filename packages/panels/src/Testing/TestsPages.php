@@ -4,7 +4,7 @@ namespace Filament\Testing;
 
 use Closure;
 use Filament\Pages\Page;
-use Livewire\Features\SupportUnitTesting\Tests\Testable;
+use Livewire\Features\SupportUnitTesting\Testable;
 
 /**
  * @method Page instance()

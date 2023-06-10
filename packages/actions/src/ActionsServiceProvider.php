@@ -3,7 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Actions\Testing\TestsActions;
-use Livewire\Features\SupportUnitTesting\Tests\Testable;
+use Livewire\Features\SupportUnitTesting\Testable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 

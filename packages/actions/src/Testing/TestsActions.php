@@ -11,7 +11,7 @@ use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
-use Livewire\Features\SupportUnitTesting\Tests\Testable;
+use Livewire\Features\SupportUnitTesting\Testable;
 
 /**
  * @method HasActions instance()

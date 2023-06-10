@@ -9,7 +9,7 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
-use Livewire\Features\SupportUnitTesting\Tests\Testable;
+use Livewire\Features\SupportUnitTesting\Testable;
 
 /**
  * @method HasTable instance()
