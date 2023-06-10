@@ -10,7 +10,7 @@ use Filament\Support\SupportServiceProvider;
 use Filament\Tables\TablesServiceProvider;
 use Filament\Tests\AdminPanelProvider;
 use Filament\Widgets\WidgetsServiceProvider;
-use Livewire\LivewireServiceProvider;
+use Livewire\ServiceProvider as LivewireServiceProvider;
 use Orchestra\Testbench\Concerns\CreatesApplication;
 use Orchestra\Testbench\Foundation\Application;
 

@@ -16,7 +16,7 @@ use Filament\Tables\TablesServiceProvider;
 use Filament\Tests\Models\User;
 use Filament\Widgets\WidgetsServiceProvider;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Livewire\LivewireServiceProvider;
+use Livewire\ServiceProvider as LivewireServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 use RyanChandler\BladeCaptureDirective\BladeCaptureDirectiveServiceProvider;
 
