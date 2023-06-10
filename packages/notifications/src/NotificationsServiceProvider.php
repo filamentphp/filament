@@ -34,21 +34,22 @@ class NotificationsServiceProvider extends PackageServiceProvider
 
         Livewire::component('notifications', Notifications::class);
 
-        Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {
-            if (! Livewire::isLivewireRequest()) {
-                return $response;
-            }
-
-            if ($component->redirectTo !== null) {
-                return $response;
-            }
-
-            if (count(session()->get('filament.notifications') ?? []) > 0) {
-                $component->emit('notificationsSent');
-            }
-
-            return $response;
-        });
+        // @todo Listen for notifications
+//        Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {
+//            if (! Livewire::isLivewireRequest()) {
+//                return $response;
+//            }
+//
+//            if ($component->redirectTo !== null) {
+//                return $response;
+//            }
+//
+//            if (count(session()->get('filament.notifications') ?? []) > 0) {
+//                $component->emit('notificationsSent');
+//            }
+//
+//            return $response;
+//        });
 
         Testable::mixin(new TestsNotifications());
     }
