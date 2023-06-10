@@ -164,7 +164,7 @@ trait HasFilters
         return $name::getDefaultName();
     }
 
-    protected function getTableFiltersFormColumns(): int|array
+    protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTableFiltersLayout()) {
             Layout::AboveContent, Layout::BelowContent => [
