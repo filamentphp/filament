@@ -105,11 +105,12 @@ trait HasFilters
             $field->state(match (true) {
                 is_array($state) => [],
                 $state === true => false,
+                $state === false => false,
                 default => null,
             });
         }
 
-        $this->resetTableFiltersForm();
+        $this->updatedTableFilters();
     }
 
     public function resetTableFiltersForm(): void
@@ -163,7 +164,7 @@ trait HasFilters
         return $name::getDefaultName();
     }
 
-    protected function getTableFiltersFormColumns(): int | array
+    protected function getTableFiltersFormColumns(): int|array
     {
         return match ($this->getTableFiltersLayout()) {
             Layout::AboveContent, Layout::BelowContent => [
