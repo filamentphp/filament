@@ -12,9 +12,9 @@ class NavigationItem
 
     protected string $icon;
 
-    protected ?string $iconColor = null;
-
     protected ?string $activeIcon = null;
+
+    protected ?string $iconColor = null;
 
     protected string $label;
 
@@ -61,16 +61,17 @@ class NavigationItem
 
         return $this;
     }
-    public function iconColor(?string $iconColor): static
-    {
-        $this->iconColor = $iconColor;
-
-        return $this;
-    }
 
     public function activeIcon(string $activeIcon): static
     {
         $this->activeIcon = $activeIcon;
+
+        return $this;
+    }
+
+    public function iconColor(?string $iconColor): static
+    {
+        $this->iconColor = $iconColor;
 
         return $this;
     }
@@ -131,14 +132,14 @@ class NavigationItem
         return $this->icon;
     }
 
-    public function getIconColor(): ?string
-    {
-        return $this->iconColor;
-    }
-
     public function getActiveIcon(): ?string
     {
         return $this->activeIcon;
+    }
+
+    public function getIconColor(): ?string
+    {
+        return $this->iconColor;
     }
 
     public function getLabel(): string

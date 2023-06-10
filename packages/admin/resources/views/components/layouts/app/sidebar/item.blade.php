@@ -1,10 +1,10 @@
 @props([
-    'iconColor' => null,
     'active' => false,
     'activeIcon',
     'badge' => null,
     'badgeColor' => null,
     'icon',
+    'iconColor' => null,
     'shouldOpenUrlInNewTab' => false,
     'url',
 ])
