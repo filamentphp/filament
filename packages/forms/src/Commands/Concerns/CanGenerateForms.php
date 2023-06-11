@@ -103,9 +103,9 @@ trait CanGenerateForms
                     $componentData['default'] = [$column->getDefault()];
                 }
             } elseif (in_array($componentData['type'], [
-                    Forms\Components\TextInput::class,
-                    Forms\Components\Textarea::class,
-                ]) && ($length = $column->getLength())) {
+                Forms\Components\TextInput::class,
+                Forms\Components\Textarea::class,
+            ]) && ($length = $column->getLength())) {
                 $componentData['maxLength'] = [$length];
 
                 if (filled($column->getDefault())) {

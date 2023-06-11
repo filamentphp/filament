@@ -78,8 +78,8 @@ trait CanGenerateTables
                 };
 
                 if (in_array($column->getType()::class, [
-                        Types\StringType::class,
-                    ]) && ($columnData['type'] === Tables\Columns\TextColumn::class)) {
+                    Types\StringType::class,
+                ]) && ($columnData['type'] === Tables\Columns\TextColumn::class)) {
                     $columnData['searchable'] = [];
                 }
 
