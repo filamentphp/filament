@@ -47,11 +47,11 @@
             :component="($active && $activeIcon) ? $activeIcon : $icon"
             @class([
                 'h-5 w-5 shrink-0',
-                'text-primary-500' => $color === 'primary',
-                'text-danger-500' => $color === 'danger',
-                'text-gray-500' => $color === 'secondary',
-                'text-success-500' => $color === 'success',
-                'text-warning-500' => $color === 'warning',
+                'text-primary-500' => $iconColor === 'primary',
+                'text-danger-500' => $iconColor === 'danger',
+                'text-gray-500' => $iconColor === 'secondary',
+                'text-success-500' => $iconColor === 'success',
+                'text-warning-500' => $iconColor === 'warning',
             ])
         />
 
