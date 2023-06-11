@@ -110,15 +110,13 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
     protected function configureAssociateAction(Tables\Actions\AssociateAction $action): void
     {
         $action
-            ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canAssociate())
-            ->recordTitleAttribute(static::getRecordTitleAttribute());
+            ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canAssociate());
     }
 
     protected function configureAttachAction(Tables\Actions\AttachAction $action): void
     {
         $action
-            ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canAttach())
-            ->recordTitleAttribute(static::getRecordTitleAttribute());
+            ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canAttach());
     }
 
     protected function configureCreateAction(Tables\Actions\CreateAction $action): void

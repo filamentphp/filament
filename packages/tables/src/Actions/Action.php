@@ -75,6 +75,11 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
         return $this->getCustomRecordTitle($record) ?? $this->getTable()->getRecordTitle($record);
     }
 
+    public function getRecordTitleAttribute(): ?string
+    {
+        return $this->getCustomRecordTitleAttribute() ?? $this->getTable()->getRecordTitleAttribute();
+    }
+
     public function getModelLabel(): string
     {
         return $this->getCustomModelLabel() ?? $this->getTable()->getModelLabel();

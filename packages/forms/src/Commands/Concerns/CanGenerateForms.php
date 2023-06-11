@@ -148,6 +148,7 @@ trait CanGenerateForms
                 $output .= collect($parameters)
                     ->map(function (mixed $parameterValue, int | string $parameterName): string {
                         $parameterValue = match (true) {
+                            /** @phpstan-ignore-next-line */
                             is_bool($parameterValue) => $parameterValue ? 'true' : 'false',
                             is_null($parameterValue) => 'null',
                             is_numeric($parameterValue) => $parameterValue,

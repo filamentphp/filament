@@ -26,8 +26,6 @@ class AttachAction extends Action
 
     protected bool | Closure $isRecordSelectPreloaded = false;
 
-    protected string | Closure | null $recordTitleAttribute = null;
-
     /**
      * @var array<string> | Closure | null
      */
@@ -113,13 +111,6 @@ class AttachAction extends Action
         return $this;
     }
 
-    public function recordTitleAttribute(string | Closure | null $attribute): static
-    {
-        $this->recordTitleAttribute = $attribute;
-
-        return $this;
-    }
-
     public function attachAnother(bool | Closure $condition = true): static
     {
         $this->canAttachAnother = $condition;
@@ -152,17 +143,6 @@ class AttachAction extends Action
     public function isRecordSelectPreloaded(): bool
     {
         return (bool) $this->evaluate($this->isRecordSelectPreloaded);
-    }
-
-    public function getRecordTitleAttribute(): string
-    {
-        $attribute = $this->evaluate($this->recordTitleAttribute);
-
-        if (blank($attribute)) {
-            throw new Exception('Attach table action must have a `recordTitleAttribute()` defined, which is used to identify records to attach.');
-        }
-
-        return $attribute;
     }
 
     /**
