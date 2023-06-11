@@ -15,6 +15,8 @@ class NavigationItem
 
     protected ?string $activeIcon = null;
 
+    protected ?string $iconColor = null;
+
     protected string $label;
 
     protected ?string $badge = null;
@@ -82,6 +84,13 @@ class NavigationItem
     public function activeIcon(string $activeIcon): static
     {
         $this->activeIcon = $activeIcon;
+
+        return $this;
+    }
+
+    public function iconColor(?string $iconColor): static
+    {
+        $this->iconColor = $iconColor;
 
         return $this;
     }
@@ -159,6 +168,11 @@ class NavigationItem
     public function getActiveIcon(): ?string
     {
         return $this->activeIcon;
+    }
+
+    public function getIconColor(): ?string
+    {
+        return $this->iconColor;
     }
 
     public function getLabel(): string
