@@ -108,7 +108,11 @@ trait CanGenerateTables
                     Types\IntegerType::class,
                     Types\SmallIntType::class,
                 ])) {
-                    $columnData['numeric'] = [];
+                    $columnData[in_array($columnName, [
+                        'cost',
+                        'money',
+                        'price',
+                    ]) ? 'money' : 'numeric'] = [];
                     $columnData['sortable'] = [];
                 }
             }

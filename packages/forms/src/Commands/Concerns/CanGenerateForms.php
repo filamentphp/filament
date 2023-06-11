@@ -102,6 +102,14 @@ trait CanGenerateForms
                 if (filled($column->getDefault())) {
                     $componentData['default'] = [$column->getDefault()];
                 }
+
+                if (in_array($columnName, [
+                    'cost',
+                    'money',
+                    'price',
+                ])) {
+                    $componentData['prefix'] = ['$'];
+                }
             } elseif (in_array($componentData['type'], [
                     Forms\Components\TextInput::class,
                     Forms\Components\Textarea::class,
