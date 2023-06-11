@@ -7,8 +7,6 @@ use Filament\Support\Concerns\EvaluatesClosures;
 
 class NavigationItem
 {
-    use EvaluatesClosures;
-
     protected ?string $group = null;
 
     protected ?Closure $isActiveWhen = null;
@@ -151,11 +149,11 @@ class NavigationItem
 
     public function isHidden(): bool
     {
-        if ($this->evaluate($this->isHidden)) {
+        if ($this->isHidden) {
             return true;
         }
 
-        return ! $this->evaluate($this->isVisible);
+        return ! $this->isVisible;
     }
 
     public function getActiveIcon(): ?string

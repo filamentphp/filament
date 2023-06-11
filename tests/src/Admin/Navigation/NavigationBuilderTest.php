@@ -111,10 +111,10 @@ it('can register navigation groups with hidden items', function () {
         return $navigation
             ->items([
                 NavigationItem::make('Products')
-                    ->visible(fn (): bool => false)
+                    ->visible(false)
                     ->label('Products'),
                 NavigationItem::make('Orders')
-                    ->hidden(true)
+                    ->hidden(fn (): bool => true)
                     ->label('Orders'),
                 ...Dashboard::getNavigationItems(),
                 ...UserResource::getNavigationItems(),
@@ -131,23 +131,23 @@ it('can register navigation groups with hidden items', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Products')
-                        ->getVisible()->toBe(false),
+                        ->isVisible()->toBeFalse(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Orders')
-                        ->getHidden()->toBe(true),
+                        ->isHidden()->toBeTrue(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Dashboard')
                         ->getIcon()->toBe('heroicon-o-home')
-                        ->getVisible()->toBeTrue(),
+                        ->isVisible()->toBeTrue(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Users')
                         ->getIcon()->toBe('heroicon-o-user')
-                        ->getHidden()->toBeFalse(),
+                        ->isHidden()->toBeFalse(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Settings')
                         ->getIcon()->toBe('heroicon-o-cog')
-                        ->getVisible()->toBeTrue()
-                        ->getHidden()->toBeFalse(),
+                        ->isVisible()->toBeTrue()
+                        ->isHidden()->toBeFalse(),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
         );
