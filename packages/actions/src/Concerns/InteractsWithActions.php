@@ -63,6 +63,8 @@ trait InteractsWithActions
 
         $result = null;
 
+        $originallyMountedActions = $this->mountedActions;
+
         try {
             if ($this->mountedActionHasForm()) {
                 $action->callBeforeFormValidated();
@@ -86,6 +88,14 @@ trait InteractsWithActions
 
         $action->resetArguments();
         $action->resetFormData();
+
+        // If the action was replaced while it was being called,
+        // we don't want to unmount it.
+        if ($originallyMountedActions !== $this->mountedActions) {
+            $action->clearRecordAfter();
+
+            return null;
+        }
 
         if (filled($this->redirectTo)) {
             return $result;
@@ -121,10 +131,7 @@ trait InteractsWithActions
 
         $action->arguments($arguments);
 
-        $this->cacheForm(
-            'mountedActionForm',
-            fn () => $this->getMountedActionForm(),
-        );
+        $this->cacheMountedActionForm();
 
         try {
             $hasForm = $this->mountedActionHasForm();
@@ -154,11 +161,18 @@ trait InteractsWithActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-action",
-        ]);
+        $this->openActionModal();
 
         return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function replaceMountedAction(string $name, array $arguments = []): void
+    {
+        $this->resetMountedActionProperties();
+        $this->mountAction($name, $arguments);
     }
 
     public function mountedActionShouldOpenModal(): bool
@@ -320,25 +334,36 @@ trait InteractsWithActions
         return $action;
     }
 
+    protected function popMountedAction(): ?string
+    {
+        try {
+            return array_pop($this->mountedActions);
+        } finally {
+            array_pop($this->mountedActionsArguments);
+            array_pop($this->mountedActionsData);
+        }
+    }
+
+    protected function resetMountedActionProperties(): void
+    {
+        $this->mountedActions = [];
+        $this->mountedActionsArguments = [];
+        $this->mountedActionsData = [];
+    }
+
     public function unmountAction(bool $shouldCloseParentActions = true): void
     {
         $action = $this->getMountedAction();
 
         if (! ($shouldCloseParentActions && $action)) {
-            array_pop($this->mountedActions);
-            array_pop($this->mountedActionsArguments);
-            array_pop($this->mountedActionsData);
+            $this->popMountedAction();
         } elseif ($action->shouldCloseAllParentActions()) {
-            $this->mountedActions = [];
-            $this->mountedActionsArguments = [];
-            $this->mountedActionsData = [];
+            $this->resetMountedActionProperties();
         } else {
             $parentActionToCloseTo = $action->getParentActionToCloseTo();
 
             while (true) {
-                $recentlyClosedParentAction = array_pop($this->mountedActions);
-                array_pop($this->mountedActionsArguments);
-                array_pop($this->mountedActionsData);
+                $recentlyClosedParentAction = $this->popMountedAction();
 
                 if (
                     blank($parentActionToCloseTo) ||
@@ -350,24 +375,37 @@ trait InteractsWithActions
         }
 
         if (! count($this->mountedActions)) {
-            $this->dispatchBrowserEvent('close-modal', [
-                'id' => "{$this->id}-action",
-            ]);
+            $this->closeActionModal();
 
-            if ($action?->shouldClearRecordAfter()) {
-                $action->record(null);
-            }
+            $action?->clearRecordAfter();
 
             return;
         }
 
+        $this->cacheMountedActionForm();
+
+        $this->resetErrorBag();
+
+        $this->openActionModal();
+    }
+
+    protected function cacheMountedActionForm(): void
+    {
         $this->cacheForm(
             'mountedActionForm',
             fn () => $this->getMountedActionForm(),
         );
+    }
 
-        $this->resetErrorBag();
+    protected function closeActionModal(): void
+    {
+        $this->dispatchBrowserEvent('close-modal', [
+            'id' => "{$this->id}-action",
+        ]);
+    }
 
+    protected function openActionModal(): void
+    {
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-action",
         ]);

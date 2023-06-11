@@ -74,4 +74,13 @@ class Action extends MountableAction implements Contracts\Groupable, Contracts\H
     {
         return ! $this->getRecord()?->exists;
     }
+
+    public function clearRecordAfter(): void
+    {
+        if (! $this->shouldClearRecordAfter()) {
+            return;
+        }
+
+        $this->record(null);
+    }
 }

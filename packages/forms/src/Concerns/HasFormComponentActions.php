@@ -118,10 +118,7 @@ trait HasFormComponentActions
 
         $action->arguments($arguments);
 
-        $this->cacheForm(
-            'mountedFormComponentActionForm' . array_key_last($this->mountedFormComponentActions),
-            fn () => $this->getMountedFormComponentActionForm(),
-        );
+        $this->cacheMountedFormComponentActionForm();
 
         try {
             $hasForm = $this->mountedFormComponentActionHasForm();
@@ -151,15 +148,17 @@ trait HasFormComponentActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-form-component-action",
-        ]);
-
-        $this->dispatchBrowserEvent('opened-form-component-action-modal', [
-            'id' => $this->id,
-        ]);
+        $this->openFormComponentActionModal();
 
         return null;
+    }
+
+    protected function cacheMountedFormComponentActionForm(): void
+    {
+        $this->cacheForm(
+            'mountedFormComponentActionForm' . array_key_last($this->mountedFormComponentActions),
+            fn () => $this->getMountedFormComponentActionForm(),
+        );
     }
 
     public function mountedFormComponentActionShouldOpenModal(): bool
@@ -238,28 +237,38 @@ trait HasFormComponentActions
         return null;
     }
 
+    protected function resetMountedFormComponentActionProperties(): void
+    {
+        $this->mountedFormComponentActions = [];
+        $this->mountedFormComponentActionsArguments = [];
+        $this->mountedFormComponentActionsComponents = [];
+        $this->mountedFormComponentActionsData = [];
+    }
+
+    protected function popMountedFormComponentAction(): ?string
+    {
+        try {
+            return array_pop($this->mountedFormComponentActions);
+        } finally {
+            array_pop($this->mountedFormComponentActionsArguments);
+            array_pop($this->mountedFormComponentActionsComponents);
+            array_pop($this->mountedFormComponentActionsData);
+        }
+    }
+
     public function unmountFormComponentAction(bool $shouldCloseParentActions = true): void
     {
         $action = $this->getMountedFormComponentAction();
 
         if (! ($shouldCloseParentActions && $action)) {
-            array_pop($this->mountedFormComponentActions);
-            array_pop($this->mountedFormComponentActionsArguments);
-            array_pop($this->mountedFormComponentActionsComponents);
-            array_pop($this->mountedFormComponentActionsData);
+            $this->popMountedFormComponentAction();
         } elseif ($action->shouldCloseAllParentActions()) {
-            $this->mountedFormComponentActions = [];
-            $this->mountedFormComponentActionsArguments = [];
-            $this->mountedFormComponentActionsComponents = [];
-            $this->mountedFormComponentActionsData = [];
+            $this->resetMountedFormComponentActionProperties();
         } else {
             $parentActionToCloseTo = $action->getParentActionToCloseTo();
 
             while (true) {
-                $recentlyClosedParentAction = array_pop($this->mountedFormComponentActions);
-                array_pop($this->mountedFormComponentActionsArguments);
-                array_pop($this->mountedFormComponentActionsComponents);
-                array_pop($this->mountedFormComponentActionsData);
+                $recentlyClosedParentAction = $this->popMountedFormComponentAction();
 
                 if (
                     blank($parentActionToCloseTo) ||
@@ -271,19 +280,29 @@ trait HasFormComponentActions
         }
 
         if (! count($this->mountedFormComponentActions)) {
-            $this->dispatchBrowserEvent('close-modal', [
-                'id' => "{$this->id}-form-component-action",
-            ]);
-
-            $this->dispatchBrowserEvent('closed-form-component-action-modal', [
-                'id' => $this->id,
-            ]);
+            $this->closeFormComponentActionModal();
 
             return;
         }
 
         $this->resetErrorBag();
 
+        $this->openFormComponentActionModal();
+    }
+
+    protected function closeFormComponentActionModal(): void
+    {
+        $this->dispatchBrowserEvent('close-modal', [
+            'id' => "{$this->id}-form-component-action",
+        ]);
+
+        $this->dispatchBrowserEvent('closed-form-component-action-modal', [
+            'id' => $this->id,
+        ]);
+    }
+
+    protected function openFormComponentActionModal(): void
+    {
         $this->dispatchBrowserEvent('open-modal', [
             'id' => "{$this->id}-form-component-action",
         ]);
