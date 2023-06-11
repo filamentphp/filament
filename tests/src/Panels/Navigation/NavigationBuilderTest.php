@@ -107,7 +107,7 @@ it('can register navigation groups individually', function () {
 });
 
 it('can register navigation groups with hidden items', function () {
-    Filament::navigation(function (NavigationBuilder $navigation): NavigationBuilder {
+    Filament::getCurrentPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
         return $navigation
             ->items([
                 NavigationItem::make('Products')
@@ -145,7 +145,7 @@ it('can register navigation groups with hidden items', function () {
                         ->isHidden()->toBeFalse(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Settings')
-                        ->getIcon()->toBe('heroicon-o-cog')
+                        ->getIcon()->toBe('heroicon-o-cog-6-tooth')
                         ->isVisible()->toBeTrue()
                         ->isHidden()->toBeFalse(),
                 )
