@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
 
@@ -34,17 +35,16 @@ trait CanBeHidden
         return $this;
     }
 
-    public function hideIfChildrenHidden(): static
+    public function hiddenWhenAllChildComponentsHidden(): static
     {
         $this->hidden(static function ($component): bool {
-            $shouldBeHidden = true;
-            foreach ($component->getChildComponents() as $child) {
-                if (!$child->isHidden) {
-                    $shouldBeHidden = false;
+            foreach ($component->getChildComponentContainers() as $childComponentContainer) {
+                foreach ($childComponentContainer->getComponents(withHidden: false) as $childComponent) {
+                    return false;
                 }
             }
 
-            return $shouldBeHidden;
+            return true;
         });
 
         return $this;
