@@ -131,6 +131,13 @@ class Table
         return $this;
     }
 
+    public function prependFilters(array $filters): static
+    {
+        $this->filters = array_merge($filters, $this->filters);
+
+        return $this;
+    }
+
     public function prependHeaderActions(array $actions): static
     {
         $this->headerActions = array_merge($actions, $this->headerActions);
@@ -148,6 +155,13 @@ class Table
     public function appendBulkActions(array $actions): static
     {
         $this->bulkActions = array_merge($this->bulkActions, $actions);
+
+        return $this;
+    }
+
+    public function appendFilters(array $filters): static
+    {
+        $this->filters = array_merge($this->filters, $filters);
 
         return $this;
     }
