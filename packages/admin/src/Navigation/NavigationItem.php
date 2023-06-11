@@ -3,7 +3,6 @@
 namespace Filament\Navigation;
 
 use Closure;
-use Filament\Support\Concerns\EvaluatesClosures;
 
 class NavigationItem
 {
