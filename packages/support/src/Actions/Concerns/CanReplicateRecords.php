@@ -16,7 +16,7 @@ trait CanReplicateRecords
 
     protected array | Closure | null $excludedAttributes = null;
 
-    protected ?Closure $mutateReplicaDataUsing = null;
+    protected ?Closure $mutateRecordDataUsing = null;
 
     public static function getDefaultName(): ?string
     {
@@ -46,8 +46,8 @@ trait CanReplicateRecords
 
             $data = $record->attributesToArray();
 
-            if ($this->mutateReplicaDataUsing) {
-                $data = $this->evaluate($this->mutateReplicaDataUsing, ['data' => $data]);
+            if ($this->mutateRecordDataUsing) {
+                $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
             }
 
             $form->fill($data);
@@ -112,9 +112,9 @@ trait CanReplicateRecords
         return $this->evaluate($this->excludedAttributes);
     }
 
-    public function mutateReplicaDataUsing(?Closure $callback): static
+    public function mutateRecordDataUsing(?Closure $callback): static
     {
-        $this->mutateReplicaDataUsing = $callback;
+        $this->mutateRecordDataUsing = $callback;
 
         return $this;
     }
