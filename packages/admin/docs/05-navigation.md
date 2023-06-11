@@ -179,6 +179,7 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
     return $builder->items([
         NavigationItem::make('Dashboard')
             ->icon('heroicon-o-home')
+            ->iconColor('success')
             ->activeIcon('heroicon-s-home')
             ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
             ->url(route('filament.pages.dashboard')),
