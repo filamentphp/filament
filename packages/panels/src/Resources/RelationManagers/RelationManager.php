@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Prop;
 use Livewire\Component;
 
 class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
@@ -25,8 +26,10 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
         makeTable as makeBaseTable;
     }
 
+    #[Prop]
     public Model $ownerRecord;
 
+    #[Prop]
     public ?string $pageClass = null;
 
     protected static string $relationship;
