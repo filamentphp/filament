@@ -45,14 +45,14 @@
     >
         <x-dynamic-component
             :component="($active && $activeIcon) ? $activeIcon : $icon"
-            @class([
+            :class="\Illuminate\Support\Arr::toCssClasses([
                 'h-5 w-5 shrink-0',
                 'text-primary-500' => (! $active) && ($iconColor === 'primary'),
                 'text-danger-500' => (! $active) && ($iconColor === 'danger'),
                 'text-gray-500' => (! $active) && ($iconColor === 'secondary'),
                 'text-success-500' => (! $active) && ($iconColor === 'success'),
                 'text-warning-500' => (! $active) && ($iconColor === 'warning'),
-            ])
+            ])"
         />
 
         <div
