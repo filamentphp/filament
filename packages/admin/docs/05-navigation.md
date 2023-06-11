@@ -130,20 +130,17 @@ Filament::serving(function () {
 });
 ```
 
-You can also set the visibility of the navigation item by using `visible` or `hidden` methods
+## Conditionally hiding navigation items
+
+You can also conditionally hide a navigation item by using the `visible()` or `hidden()` methods, passing in a condition to check:
 
 ```php
-use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
 
-Filament::serving(function () {
-    Filament::registerNavigationItems([
-        NavigationItem::make('Analytics')
-            ->visible(fn (): bool => false)
-            // or
-            ->hidden(fn (): bool => true),
-    ]);
-});
+NavigationItem::make('Analytics')
+    ->visible(auth()->user()->can('view-analytics'))
+    // or
+    ->hidden(! auth()->user()->can('view-analytics')),
 ```
 
 ## Disabling resource or page navigation items
