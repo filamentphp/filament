@@ -4,8 +4,8 @@ namespace Filament\Resources\Pages;
 
 class ManageRecords extends ListRecords
 {
-    public function getBreadcrumb(): ?string
+    public function getBreadcrumbs(): array
     {
-        return static::$breadcrumb;
+        return [];
     }
 }
