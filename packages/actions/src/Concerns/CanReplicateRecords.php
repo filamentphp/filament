@@ -18,6 +18,8 @@ trait CanReplicateRecords
 
     protected ?Model $replica = null;
 
+    protected ?Closure $mutateRecordDataUsing = null;
+
     public static function getDefaultName(): ?string
     {
         return 'replicate';
@@ -35,7 +37,15 @@ trait CanReplicateRecords
 
         $this->successNotificationTitle(__('filament-actions::replicate.single.messages.replicated'));
 
-        $this->fillForm(fn (Model $record): array => $record->attributesToArray());
+        $this->fillForm(function (Model $record): array {
+            $data = $record->attributesToArray();
+
+            if ($this->mutateRecordDataUsing) {
+                $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
+            }
+
+            return $data;
+        });
 
         $this->action(function () {
             $result = $this->process(function (Model $record) {
@@ -57,6 +67,13 @@ trait CanReplicateRecords
     public function beforeReplicaSaved(Closure $callback): static
     {
         $this->beforeReplicaSaved = $callback;
+
+        return $this;
+    }
+
+    public function mutateRecordDataUsing(?Closure $callback): static
+    {
+        $this->mutateRecordDataUsing = $callback;
 
         return $this;
     }
