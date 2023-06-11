@@ -20,7 +20,10 @@
         ])
     >
         {{-- Deliberately poor formatting to ensure that the asterisk sticks to the final word in the label. --}}
-        {{ $slot }}@if ($required && $isMarkedAsRequired && ! $isDisabled)<sup class="text-danger-700 dark:text-danger-400 font-medium whitespace-nowrap">*</sup>@endif
+        {{ $slot }}@if ($required && $isMarkedAsRequired && ! $isDisabled)<sup class="text-danger-700 dark:text-danger-400 whitespace-nowrap font-medium">
+                *
+            </sup>
+        @endif
     </span>
 
     {{ $suffix }}
