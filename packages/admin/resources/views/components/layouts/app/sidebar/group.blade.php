@@ -68,6 +68,7 @@
                     <x-filament::layouts.app.sidebar.item
                         :active="$item->isActive()"
                         :icon="$item->getIcon()"
+                        :iconColor="$item->getIconColor()"
                         :active-icon="$item->getActiveIcon()"
                         :url="$item->getUrl()"
                         :badge="$item->getBadge()"
