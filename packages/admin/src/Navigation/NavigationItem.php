@@ -144,12 +144,12 @@ class NavigationItem
         return $this->icon;
     }
 
-    public function getVisible(): bool
+    public function isVisible(): bool
     {
-        return ! $this->getHidden();
+        return ! $this->isHidden();
     }
 
-    public function getHidden(): bool
+    public function isHidden(): bool
     {
         if ($this->evaluate($this->isHidden)) {
             return true;
