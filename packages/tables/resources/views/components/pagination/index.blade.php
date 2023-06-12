@@ -15,7 +15,7 @@
     aria-label="{{ __('tables::table.pagination.label') }}"
     class="filament-tables-pagination flex items-center justify-between"
 >
-    <div class="flex justify-between items-center flex-1 lg:hidden">
+    <div class="flex flex-1 items-center justify-between lg:hidden">
         <div class="w-10">
             @if ($paginator->hasPages() && (! $paginator->onFirstPage()))
                 <x-tables::icon-button
@@ -28,7 +28,9 @@
         </div>
 
         @if (count($recordsPerPageSelectOptions) > 1)
-            <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+            <x-tables::pagination.records-per-page-selector
+                :options="$recordsPerPageSelectOptions"
+            />
         @endif
 
         <div class="w-10">
@@ -43,7 +45,7 @@
         </div>
     </div>
 
-    <div class="hidden flex-1 items-center lg:grid grid-cols-3">
+    <div class="hidden flex-1 grid-cols-3 items-center lg:grid">
         <div class="flex items-center">
             @if ($isSimple)
                 @if (! $paginator->onFirstPage())
@@ -58,26 +60,32 @@
                     </x-tables::button>
                 @endif
             @else
-                <div @class([
-                    'pl-2 text-sm font-medium',
-                    'dark:text-white' => config('tables.dark_mode'),
-                ])>
-                    {{ trans_choice(
-                        'tables::table.pagination.overview',
-                        $paginator->total(),
-                        [
-                            'first' => $paginator->firstItem(),
-                            'last' => $paginator->lastItem(),
-                            'total' => $paginator->total(),
-                        ],
-                    ) }}
+                <div
+                    @class([
+                        'pl-2 text-sm font-medium',
+                        'dark:text-white' => config('tables.dark_mode'),
+                    ])
+                >
+                    {{
+                        trans_choice(
+                            'tables::table.pagination.overview',
+                            $paginator->total(),
+                            [
+                                'first' => $paginator->firstItem(),
+                                'last' => $paginator->lastItem(),
+                                'total' => $paginator->total(),
+                            ],
+                        )
+                    }}
                 </div>
             @endif
         </div>
 
         <div class="flex items-center justify-center">
             @if (count($recordsPerPageSelectOptions) > 1)
-                <x-tables::pagination.records-per-page-selector :options="$recordsPerPageSelectOptions" />
+                <x-tables::pagination.records-per-page-selector
+                    :options="$recordsPerPageSelectOptions"
+                />
             @endif
         </div>
 
@@ -97,14 +105,18 @@
                 @endif
             @else
                 @if ($paginator->hasPages())
-                    <div @class([
-                        'py-3 border rounded-lg',
-                        'dark:border-gray-600' => config('tables.dark_mode'),
-                    ])>
-                        <ol @class([
-                            'flex gap-px items-center text-sm text-gray-500 divide-x rtl:divide-x-reverse divide-gray-300',
-                            'dark:text-gray-400 dark:divide-gray-600' => config('tables.dark_mode'),
-                        ])>
+                    <div
+                        @class([
+                            'rounded-lg border py-3',
+                            'dark:border-gray-600' => config('tables.dark_mode'),
+                        ])
+                    >
+                        <ol
+                            @class([
+                                'flex items-center gap-px divide-x divide-gray-300 text-sm text-gray-500 rtl:divide-x-reverse',
+                                'dark:divide-gray-600 dark:text-gray-400' => config('tables.dark_mode'),
+                            ])
+                        >
                             @if (! $paginator->onFirstPage())
                                 <x-tables::pagination.item
                                     :wire:click="'previousPage(\'' . $paginator->getPageName() . '\')'"
@@ -116,7 +128,10 @@
 
                             @foreach ($paginator->render()->offsetGet('elements') as $element)
                                 @if (is_string($element))
-                                    <x-tables::pagination.item :label="$element" disabled />
+                                    <x-tables::pagination.item
+                                        :label="$element"
+                                        disabled
+                                    />
                                 @endif
 
                                 @if (is_array($element))

@@ -365,7 +365,7 @@ protected function getTableRecordClassesUsing(): ?Closure
 These classes are not automatically compiled by Tailwind CSS. If you want to apply Tailwind CSS classes that are not already used in Blade files, you should update your `content` configuration in `tailwind.config.js` to also scan for classes in your desired PHP files:
 
 ```js
-module.exports = {
+export default {
     content: ['./app/Filament/**/*.php'],
 }
 ```
@@ -373,7 +373,7 @@ module.exports = {
 Alternatively, you may add the classes to your [safelist](https://tailwindcss.com/docs/content-configuration#safelisting-classes):
 
 ```js
-module.exports = {
+export default {
     safelist: [
         'border-green-600',
         'border-l-2',

@@ -27,15 +27,15 @@
             state = newState
         })
     "
-    {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-tables-checkbox-column',
-    ]) }}
+    {{
+        $attributes
+            ->merge($getExtraAttributes())
+            ->class([
+                'filament-tables-checkbox-column',
+            ])
+    }}
 >
-    <input
-        type="hidden"
-        value="{{ $state ? 1 : 0 }}"
-        x-ref="newState"
-    />
+    <input type="hidden" value="{{ $state ? 1 : 0 }}" x-ref="newState" />
 
     <input
         x-model="state"
@@ -52,7 +52,7 @@
             $attributes
                 ->merge($getExtraInputAttributeBag()->getAttributes())
                 ->class([
-                    'ml-4 text-primary-600 transition duration-75 rounded shadow-sm outline-none focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
+                    'ml-4 rounded text-primary-600 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70',
                     'dark:bg-gray-700 dark:checked:bg-primary-500' => config('forms.dark_mode'),
                 ])
         }}

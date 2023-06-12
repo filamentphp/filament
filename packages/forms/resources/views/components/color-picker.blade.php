@@ -20,13 +20,19 @@
     :required="$isRequired()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-color-picker-component flex items-center space-x-1 rtl:space-x-reverse group']) }}>
+    <div
+        {{
+            $attributes
+                ->merge($getExtraAttributes())
+                ->class(['filament-forms-color-picker-component group flex items-center space-x-1 rtl:space-x-reverse'])
+        }}
+    >
         @if (($prefixAction = $getPrefixAction()) && (! $prefixAction->isHidden()))
             {{ $prefixAction }}
         @endif
 
         @if ($icon = $getPrefixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            <x-dynamic-component :component="$icon" class="h-5 w-5" />
         @endif
 
         @if (filled($label = $getPrefixLabel()))
@@ -58,23 +64,25 @@
                 @if (! $isConcealed())
                     {!! $isRequired() ? 'required' : null !!}
                 @endif
-                {{ $getExtraInputAttributeBag()->class([
-                    'filament-forms-input text-gray-900 block w-full transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
-                    'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
-                    'border-gray-300' => ! $errors->has($getStatePath()),
-                    'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
-                    'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
-                    'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
-                ]) }}
+                {{
+                    $getExtraInputAttributeBag()->class([
+                        'filament-forms-input block w-full rounded-lg text-gray-900 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70',
+                        'dark:bg-gray-700 dark:text-white dark:focus:border-primary-500' => config('forms.dark_mode'),
+                        'border-gray-300' => ! $errors->has($getStatePath()),
+                        'dark:border-gray-600' => (! $errors->has($getStatePath())) && config('forms.dark_mode'),
+                        'border-danger-600 ring-danger-600' => $errors->has($getStatePath()),
+                        'dark:border-danger-400 dark:ring-danger-400' => $errors->has($getStatePath()) && config('forms.dark_mode'),
+                    ])
+                }}
             />
 
             <span
                 x-cloak
-                class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none rtl:right-auto rtl:left-0 rtl:pl-2"
+                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2 rtl:left-0 rtl:right-auto rtl:pl-2"
             >
                 <span
                     x-bind:style="{ 'background-color': state }"
-                    class="filament-forms-color-picker-component-preview relative overflow-hidden rounded-md w-7 h-7"
+                    class="filament-forms-color-picker-component-preview relative h-7 w-7 overflow-hidden rounded-md"
                 ></span>
             </span>
 
@@ -85,8 +93,8 @@
                 wire:ignore.self
                 wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.panel"
                 @class([
-                    'hidden absolute z-10 shadow-lg',
-                    'opacity-70 pointer-events-none' => $isDisabled(),
+                    'absolute z-10 hidden shadow-lg',
+                    'pointer-events-none opacity-70' => $isDisabled(),
                 ])
             >
                 @php
@@ -109,7 +117,7 @@
         @endif
 
         @if ($icon = $getSuffixIcon())
-            <x-dynamic-component :component="$icon" class="w-5 h-5" />
+            <x-dynamic-component :component="$icon" class="h-5 w-5" />
         @endif
 
         @if (($suffixAction = $getSuffixAction()) && (! $suffixAction->isHidden()))

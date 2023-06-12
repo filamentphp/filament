@@ -495,7 +495,7 @@ protected bool $allowsDuplicates = true;
 
 ## Associating and dissociating records
 
-Filament is able to associate and dissociate records for `HasMany`, `HasManyThrough` and `MorphMany` relationships.
+Filament is able to associate and dissociate records for `HasMany` and `MorphMany` relationships.
 
 When generating your relation manager, you may pass the `--associate` flag to also add `AssociateAction`, `DissociateAction` and `DissociateBulkAction` to the table:
 

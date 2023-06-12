@@ -53,7 +53,9 @@
 
             @if (count($action->getModalActions()))
                 <x-slot name="footer">
-                    <x-forms::modal.actions :full-width="$action->isModalCentered()">
+                    <x-forms::modal.actions
+                        :full-width="$action->isModalCentered()"
+                    >
                         @foreach ($action->getModalActions() as $modalAction)
                             {{ $modalAction }}
                         @endforeach

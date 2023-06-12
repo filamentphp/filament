@@ -133,15 +133,14 @@
                     {{ __('filament-support::components/button.messages.uploading_file') }}
                 </span>
 
-                <span x-show="! isUploadingFile" @class([
-                    'sr-only' => $labelSrOnly,
-                ])>
+                <span
+                    x-show="! isUploadingFile"
+                    @class(['sr-only' => $labelSrOnly])
+                >
                     {{ $slot }}
                 </span>
             @else
-                <span @class([
-                    'sr-only' => $labelSrOnly,
-                ])>
+                <span @class(['sr-only' => $labelSrOnly])>
                     {{ $slot }}
                 </span>
             @endif
