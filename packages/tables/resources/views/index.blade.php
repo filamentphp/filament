@@ -820,7 +820,7 @@
                                     ],
                                     $getRecordClasses($record),
                                 ))"
-                                dusk="filament-table-row-{{ $loop->index }}"
+                                dusk="filament.tables.records.{{ $recordKey }}"
                             >
                                 <x-tables::reorder.cell
                                     :class="\Illuminate\Support\Arr::toCssClasses([
@@ -889,7 +889,7 @@
                                         wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                         class="filament-table-cell-{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                         :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())"
-                                        dusk="filament-table-row-{{ $loop->parent->index }}-cell-{{ $loop->index }}"
+                                        dusk="filament.tables.records.{{ $recordKey }}.columns.{{ \Illuminate\Support\Str::of($column->getName())->camel()->kebab() }}"
                                     >
                                         <x-tables::columns.column
                                             :column="$column"

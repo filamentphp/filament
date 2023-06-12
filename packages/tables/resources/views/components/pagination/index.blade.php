@@ -63,7 +63,7 @@
                 @endif
             @else
                 <div
-                    dusk="filament-tables-pagination-overview"
+                    dusk="filament.tables.pagination.overview"
                     @class([
                         'pl-2 text-sm font-medium',
                         'dark:text-white' => config('tables.dark_mode'),
