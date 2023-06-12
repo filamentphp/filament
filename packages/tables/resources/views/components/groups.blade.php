@@ -26,9 +26,11 @@
     "
 >
     <x-filament::dropdown
-        {{ $attributes->class([
-            'sm:hidden' => ! $dropdownOnDesktop,
-        ]) }}
+        {{
+    $attributes->class([
+        'sm:hidden' => ! $dropdownOnDesktop,
+    ])
+}}
         placement="bottom-start"
         shift
         wire:key="{{ $this->id }}.table.grouping"
