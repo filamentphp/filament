@@ -28706,11 +28706,11 @@ var Masked = class {
         break;
       details.aggregate(d);
     }
-    if (checkTail != null) {
-      details.tailShift += this.appendTail(checkTail).tailShift;
-    }
     if ((this.eager === true || this.eager === "append") && flags !== null && flags !== void 0 && flags.input && str) {
       details.aggregate(this._appendEager());
+    }
+    if (checkTail != null) {
+      details.tailShift += this.appendTail(checkTail).tailShift;
     }
     return details;
   }
