@@ -41,14 +41,6 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     protected ?string $heading = null;
 
-    protected ?string $iconHeading = null;
-
-    protected ?bool $iconHeadingHide = false;
-
-    protected ?string $iconHeadingColor = null;
-    
-    protected ?string $iconHeadingPosition = null;
-
     protected ?string $subheading = null;
 
     protected static string $view;
@@ -224,26 +216,6 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected function getHeading(): string | Htmlable
     {
         return $this->heading ?? $this->getTitle();
-    }
-
-    protected function getIconHeading(): string
-    {
-        return $this->iconHeading ?? 'heroicon-o-collection';
-    }
-
-    protected function getIconHeadingHide(): bool
-    {
-        return $this->iconHeadingHide;
-    }
-    
-    protected function getIconHeadingColor(): string
-    {
-        return $this->iconHeadingColor ?? 'primary';
-    }
-
-    protected function getIconHeadingPosition(): string
-    {
-        return $this->iconHeadingPosition ?? 'left';
     }
 
     protected function getSubheading(): string | Htmlable | null

@@ -8,13 +8,7 @@
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
-            <x-filament::header 
-                :actions="$this->getCachedActions()"
-                :icon="$this->getIconHeading()" 
-                :iconHide="$this->getIconHeadingHide()" 
-                :iconColor="$this->getIconHeadingColor()" 
-                :iconPosition="$this->getIconHeadingPosition()"
-                >
+            <x-filament::header :actions="$this->getCachedActions()">
                 <x-slot name="heading">
                     {{ $heading }}
                 </x-slot>
