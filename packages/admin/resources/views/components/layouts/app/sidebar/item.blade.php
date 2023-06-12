@@ -18,7 +18,7 @@
         href="{{ $url }}"
         {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : '' !!}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
-        dusk="filament-sidebar-item-{{ \Illuminate\Support\Str::slug($slot) }}"
+        dusk="filament.admin.sidebar.item.{{ \Illuminate\Support\Str::slug($slot) }}"
         @if (config('filament.layout.sidebar.is_collapsible_on_desktop'))
             x-data="{ tooltip: {} }"
             x-init="

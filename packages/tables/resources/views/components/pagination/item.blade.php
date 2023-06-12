@@ -10,7 +10,7 @@
     <button
         @if ($disabled || $separator) disabled @endif
         type="button"
-        @if (!$disabled && !$separator) dusk="filament-tables-pagination-item-{{ $label ?? $attributes->get('rel') }}" @endif
+        @if (!$disabled && !$separator) dusk="filament.tables.pagination.item.{{ $label ?? $attributes->get('rel') }}" @endif
         {{
             $attributes->class([
                 'filament-tables-pagination-item relative -my-3 flex h-8 min-w-[2rem] items-center justify-center rounded-md px-1.5 font-medium outline-none',

@@ -18,7 +18,7 @@
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"
         @endif
-        dusk="filament-tables-header-cell-button-{{ $name }}"
+        dusk="filament.tables.header.cell.button.{{ $name }}"
         type="button"
         @class([
             'flex w-full items-center gap-x-1 whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-600',

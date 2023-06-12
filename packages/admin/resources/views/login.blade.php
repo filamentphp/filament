@@ -5,7 +5,7 @@
         type="submit"
         form="authenticate"
         class="w-full"
-        dusk="filament-login-button"
+        dusk="filament.admin.login.button"
     >
         {{ __('filament::login.buttons.submit.label') }}
     </x-filament::button>
