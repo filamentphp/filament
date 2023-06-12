@@ -71,7 +71,7 @@ Typically, registering CSS files is used to register custom stylesheets for your
 Tailwind builds are unique to every application - they contain a minimal set of utility classes, only the ones that you are actually using in your application. This means that if you are a plugin developer, you probably should not be building your Tailwind CSS files into your plugin. Instead, you should provide the raw CSS files, and instruct the user that they should build the Tailwind CSS file themselves. To do this, they probably just need to add your vendor directory into the `content` array of their `tailwind.config.js` file:
 
 ```js
-module.exports = {
+export default {
     content: [
         './resources/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
@@ -201,7 +201,7 @@ Firstly, you should install [esbuild](https://esbuild.github.io) via NPM, which 
 npm install esbuild --save-dev
 ```
 
-Then, you must create a script to compile your JavaScript and Alpine component. You can put this anywhere, for example `bin/build.mjs`:
+Then, you must create a script to compile your JavaScript and Alpine component. You can put this anywhere, for example `bin/build.js`:
 
 ```js
 import * as esbuild from 'esbuild'
@@ -283,13 +283,13 @@ export default function testComponent({
 Now, you can compile this file into `resources/js/dist/components/test-component.js` by running the following command:
 
 ```bash
-node bin/build.mjs
+node bin/build.js
 ```
 
 If you want to watch for changes to this file instead of compiling once, try the following command:
 
 ```bash
-node bin/build.mjs --dev
+node bin/build.js --dev
 ```
 
 Now, you need to tell Filament to publish this compiled JavaScript file into the `/public` directory of the Laravel application, so it is accessible to the browser. To do this, you can use the `FilamentAsset::register()` method in the `boot()` method of a service provider, passing in an `AlpineComponent` object:

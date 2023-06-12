@@ -49,9 +49,11 @@ npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss --sav
 Create a new `tailwind.config.js` file. Ensure that you add Filament's `content` path, custom `colors`, and the `plugins` you installed:
 
 ```js
-const colors = require('tailwindcss/colors')
+import colors from 'tailwindcss/colors'
+import forms from '@tailwindcss/forms'
+import typography from '@tailwindcss/typography'
 
-module.exports = {
+export default {
     content: [
         './resources/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
@@ -70,8 +72,8 @@ module.exports = {
         },
     },
     plugins: [
-        require('@tailwindcss/forms'),
-        require('@tailwindcss/typography'),
+        forms,
+        typography,
     ],
 }
 ```
@@ -90,14 +92,10 @@ In `resources/css/app.css`, import Tailwind CSS, and the Filament forms CSS, whi
 @tailwind utilities;
 ```
 
-Most Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
-
-#### Vite
-
-Create a `postcss.config.cjs` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
+Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
 
 ```js
-module.exports = {
+export default {
     plugins: {
         tailwindcss: {},
         autoprefixer: {},
@@ -122,21 +120,6 @@ export default defineConfig({
         }),
     ],
 })
-```
-
-Compile your new CSS and JS assets using `npm run dev`.
-
-#### Laravel Mix
-
-In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
-
-```js
-const mix = require('laravel-mix')
-
-mix.js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css', [
-        require('tailwindcss'),
-    ])
 ```
 
 Compile your new CSS and JS assets using `npm run dev`.

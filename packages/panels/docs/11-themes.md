@@ -110,9 +110,9 @@ To finish installing Tailwind, you must create a new `tailwind.config.js` file i
 In `tailwind.config.js`, require Filament's "preset", which gives you a working Tailwind configuration that you can override however you wish:
 
 ```js
-const preset = require('./vendor/filament/filament/tailwind.config.preset')
+import preset from './vendor/filament/filament/tailwind.config.preset'
 
-module.exports = {
+export default {
     presets: [preset],
 }
 ```
@@ -136,25 +136,15 @@ export default defineConfig({
 })
 ```
 
-And add Tailwind to the `postcss.config.cjs` file:
+And add Tailwind to the `postcss.config.js` file:
 
 ```js
-module.exports = {
+export default {
     plugins: {
         tailwindcss: {},
         autoprefixer: {},
     },
 }
-```
-
-Or if you're using Laravel Mix instead of Vite, in your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
-
-```js
-const mix = require('laravel-mix')
-
-mix.postCss('resources/css/filament.css', 'public/css', [
-    require('tailwindcss'),
-])
 ```
 
 In `/resources/css/filament.css`, import Filament's base theme CSS:
@@ -172,8 +162,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->viteTheme('resources/css/filament.css') // Using Vite
-        ->theme(mix('css/filament.css')); // Using Laravel Mix
+        ->viteTheme('resources/css/filament.css')
 }
 ```
 
