@@ -162,12 +162,57 @@ Action::make('advance')
     ->modalContent(view('filament.pages.actions.advance'))
 ```
 
+### Passing data to the custom modal content
+
+You can pass data to the view by returning it from a function. For example, if the `$record` of an action is set, you can pass that through to the view:
+
+```php
+use Illuminate\Contracts\View\View;
+
+Action::make('advance')
+    ->action(fn (Contract $record) => $record->advance())
+    ->modalContent(fn (Contract $record): View => view(
+        'filament.pages.actions.advance',
+        ['record' => $record],
+    ))
+```
+
+### Adding custom modal content below the form
+
 By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalFooter()` if you wish:
 
 ```php
 Action::make('advance')
     ->action(fn () => $this->record->advance())
     ->modalFooter(view('filament.pages.actions.advance'))
+```
+
+### Adding an action to custom modal content
+
+You can add an action button to your custom modal content, which is useful if you want to add a button that performs an action other than the main action. You can do this by registering an action with the `registerModalActions()` method, and then passing it to the view:
+
+```php
+use Illuminate\Contracts\View\View;
+
+Action::make('advance')
+    ->registerModalActions([
+        Action::make('report')
+            ->requiresConfirmation()
+            ->action(fn () => $this->record->report()),
+    ])
+    ->action(fn () => $this->record->advance())
+    ->modalContent(fn (Action $action): View => view(
+        'filament.pages.actions.advance',
+        ['reportAction' => $action->getModalAction('report')],
+    ))
+```
+
+Now, in the view file, you can render the action button using the name that it was passed into the view as:
+
+```blade
+<div>
+    {{ $reportAction }}
+</div>
 ```
 
 ## Using a slide-over instead of a modal
@@ -276,7 +321,7 @@ Modal::closedByClickingAway(false);
 
 By default, there are two actions in the footer of a modal. The first is a button to submit, which executes the `action()`. The second button closes the modal and cancels the action.
 
-### Modifying a default modal action button
+### Modifying a default modal footer action button
 
 To modify the action instance that is used to render one of the default action buttons, you may pass a closure to the `modalSubmitAction()` and `modalCancelAction()` methods:
 
@@ -290,7 +335,7 @@ Action::make('help')
 
 The [methods available to customize trigger buttons](trigger-button) will work to modify on the `$action` instance inside the closure.
 
-### Removing a default modal action button
+### Removing a default modal footer action button
 
 To remove a default action, you may pass `false` to either `modalSubmitAction()` or `modalCancelAction()`:
 
@@ -300,25 +345,25 @@ Action::make('help')
     ->modalSubmitAction(false)
 ```
 
-### Adding an extra modal action button
+### Adding an extra modal action button to the footer
 
-You may pass an array of extra actions to be rendered, between the default actions, in the footer of the modal using the `extraModalActions()` method:
+You may pass an array of extra actions to be rendered, between the default actions, in the footer of the modal using the `extraModalFooterActions()` method:
 
 ```php
 Action::make('create')
-    ->extraModalActions(fn (Action $action): array => [
-        $action->makeExtraModalAction('createAnother', ['another' => true]),
+    ->extraModalFooterActions(fn (Action $action): array => [
+        $action->makeModalSubmitAction('createAnother', arguments: ['another' => true]),
     ])
 ```
 
-`$action->makeExtraModalAction()` returns an action instance that can be customized using the [methods available to customize trigger buttons](trigger-button).
+`$action->makeModalSubmitAction()` returns an action instance that can be customized using the [methods available to customize trigger buttons](trigger-button).
 
-The second parameter of `makeExtraModalAction()` allows you to pass an array of arguments that will be accessible inside the action's `action()` closure as `$arguments`. These could be useful as flags to indicate that the action should behave differently based on the user's decision:
+The second parameter of `makeModalSubmitAction()` allows you to pass an array of arguments that will be accessible inside the action's `action()` closure as `$arguments`. These could be useful as flags to indicate that the action should behave differently based on the user's decision:
 
 ```php
 Action::make('create')
-    ->extraModalActions(fn (Action $action): array => [
-        $action->makeExtraModalAction('createAnother', ['another' => true]),
+    ->extraModalFooterActions(fn (Action $action): array => [
+        $action->makeModalSubmitAction('createAnother', arguments: ['another' => true]),
     ])
     ->action(function (array $data, array $arguments): void {
         // Create

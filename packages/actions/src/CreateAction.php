@@ -28,9 +28,9 @@ class CreateAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
-        $this->extraModalActions(function (): array {
+        $this->extraModalFooterActions(function (): array {
             return $this->canCreateAnother() ? [
-                $this->makeExtraModalAction('createAnother', ['another' => true])
+                $this->makeModalSubmitAction('createAnother', arguments: ['another' => true])
                     ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
             ] : [];
         });

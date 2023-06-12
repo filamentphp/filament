@@ -47,9 +47,9 @@ class AttachAction extends Action
 
         $this->modalWidth('lg');
 
-        $this->extraModalActions(function (): array {
+        $this->extraModalFooterActions(function (): array {
             return $this->canAttachAnother() ? [
-                $this->makeExtraModalAction('attachAnother', ['another' => true])
+                $this->makeModalSubmitAction('attachAnother', ['another' => true])
                     ->label(__('filament-actions::attach.single.modal.actions.attach_another.label')),
             ] : [];
         });

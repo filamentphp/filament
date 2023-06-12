@@ -255,8 +255,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
-            ->extraModalActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
-                $action->makeExtraModalAction('createAnother', ['another' => true])
+            ->extraModalFooterActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
+                $action->makeModalSubmitAction('createAnother', arguments: ['another' => true])
                     ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
             ] : []);
 
