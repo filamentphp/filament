@@ -128,6 +128,7 @@ trait HasFilters
             ->iconButton()
             ->icon('heroicon-m-funnel')
             ->color('gray')
+            ->livewireClickHandlerEnabled(false)
             ->table($this);
 
         if ($this->modifyFiltersTriggerActionUsing) {

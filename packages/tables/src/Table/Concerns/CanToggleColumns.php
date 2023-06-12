@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Forms\Form;
+use Filament\Tables\Actions\Action;
 
 trait CanToggleColumns
 {
@@ -15,6 +16,15 @@ trait CanToggleColumns
     protected string | Closure | null $columnToggleFormMaxHeight = null;
 
     protected string | Closure | null $columnToggleFormWidth = null;
+
+    protected ?Closure $modifyToggleColumnsTriggerActionUsing = null;
+
+    public function toggleColumnsTriggerAction(?Closure $callback): static
+    {
+        $this->modifyToggleColumnsTriggerActionUsing = $callback;
+
+        return $this;
+    }
 
     /**
      * @param  int | array<string, int | null> | Closure  $columns
@@ -38,6 +48,29 @@ trait CanToggleColumns
         $this->columnToggleFormWidth = $width;
 
         return $this;
+    }
+
+    public function getToggleColumnsTriggerAction(): Action
+    {
+        $action = Action::make('toggleColumns')
+            ->label(__('filament-tables::table.buttons.toggle_columns.label'))
+            ->iconButton()
+            ->icon('heroicon-m-view-columns')
+            ->color('gray')
+            ->livewireClickHandlerEnabled(false)
+            ->table($this);
+
+        if ($this->modifyToggleColumnsTriggerActionUsing) {
+            $action = $this->evaluate($this->modifyToggleColumnsTriggerActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        if ($action->getView() === Action::BUTTON_VIEW) {
+            $action->defaultSize('sm');
+        }
+
+        return $action;
     }
 
     public function getColumnToggleForm(): Form

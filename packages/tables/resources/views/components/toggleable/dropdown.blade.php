@@ -1,6 +1,7 @@
 @props([
     'form',
     'maxHeight' => null,
+    'triggerAction',
     'width' => null,
 ])
 
@@ -13,7 +14,7 @@
     wire:key="{{ $this->id }}.table.toggle"
 >
     <x-slot name="trigger">
-        <x-filament-tables::toggleable.trigger />
+        {{ $triggerAction }}
     </x-slot>
 
     <div class="p-4">

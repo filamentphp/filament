@@ -224,3 +224,42 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+## Customizing the groups dropdown trigger action
+
+To customize the groups dropdown trigger button, you may use the `groupRecordsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            // ...
+        ])
+        ->groupRecordsTriggerAction(
+            fn (Action $action) => $action
+                ->button()
+                ->label('Group records'),
+        );
+}
+```
+
+## Enabling the groups dropdown on desktop
+
+By default, the groups dropdown will only be shown on mobile devices. On desktop devices, the group select input is in the header of the time. You can enable the dropdown on desktop devices too by using the `groupsInDropdownOnDesktop()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            // ...
+        ])
+        ->groupsInDropdownOnDesktop();
+}
+```

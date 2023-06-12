@@ -294,13 +294,15 @@
             >
                 <div class="flex shrink-0 items-center sm:gap-3">
                     @if ($isReorderable)
-                        <x-filament-tables::reorder.trigger
-                            :enabled="$isReordering"
-                        />
+                        {{ $getReorderRecordsTriggerAction($isReordering) }}
                     @endif
 
                     @if (count($groups))
-                        <x-filament-tables::groups :groups="$groups" />
+                        <x-filament-tables::groups
+                            :dropdown-on-desktop="$areGroupsInDropdownOnDesktop()"
+                            :groups="$groups"
+                            :trigger-action="$getGroupRecordsTriggerAction()"
+                        />
                     @endif
 
                     @if ((! $isReordering) && count($bulkActions))
@@ -338,9 +340,10 @@
                                 @endif
 
                                 @if ($isColumnToggleFormVisible)
-                                    <x-filament-tables::toggleable
+                                    <x-filament-tables::toggleable.dropdown
                                         :form="$getColumnToggleForm()"
                                         :max-height="$getColumnToggleFormMaxHeight()"
+                                        :trigger-action="$getToggleColumnsTriggerAction()"
                                         :width="$getColumnToggleFormWidth()"
                                         class="shrink-0"
                                     />
