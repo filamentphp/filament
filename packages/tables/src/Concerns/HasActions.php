@@ -127,10 +127,7 @@ trait HasActions
             return null;
         }
 
-        $this->cacheForm(
-            'mountedTableActionForm',
-            fn () => $this->getMountedTableActionForm(),
-        );
+        $this->cacheMountedTableActionForm();
 
         try {
             $hasForm = $this->mountedTableActionHasForm();
@@ -160,7 +157,7 @@ trait HasActions
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', id: "{$this->getId()}-table-action");
+        $this->openTableActionModal();
 
         return null;
     }
@@ -232,22 +229,34 @@ trait HasActions
         return $this->cachedMountedTableActionRecord = $this->getTableRecord($recordKey);
     }
 
+    protected function popMountedTableAction(): ?string
+    {
+        try {
+            return array_pop($this->mountedTableActions);
+        } finally {
+            array_pop($this->mountedTableActionsData);
+        }
+    }
+
+    protected function resetMountedTableActionProperties(): void
+    {
+        $this->mountedTableActions = [];
+        $this->mountedTableActionsData = [];
+    }
+
     public function unmountTableAction(bool $shouldCloseParentActions = true): void
     {
         $action = $this->getMountedTableAction();
 
         if (! ($shouldCloseParentActions && $action)) {
-            array_pop($this->mountedTableActions);
-            array_pop($this->mountedTableActionsData);
+            $this->popMountedTableAction();
         } elseif ($action->shouldCloseAllParentActions()) {
-            $this->mountedTableActions = [];
-            $this->mountedTableActionsData = [];
+            $this->resetMountedTableActionProperties();
         } else {
             $parentActionToCloseTo = $action->getParentActionToCloseTo();
 
             while (true) {
-                $recentlyClosedParentAction = array_pop($this->mountedTableActions);
-                array_pop($this->mountedTableActionsData);
+                $recentlyClosedParentAction = $this->popMountedTableAction();
 
                 if (
                     blank($parentActionToCloseTo) ||
@@ -259,7 +268,7 @@ trait HasActions
         }
 
         if (! count($this->mountedTableActions)) {
-            $this->dispatch('close-modal', id: "{$this->getId()}-table-action");
+            $this->closeTableActionModal();
 
             $action?->record(null);
             $this->mountedTableActionRecord(null);
@@ -267,13 +276,28 @@ trait HasActions
             return;
         }
 
+        $this->cacheMountedTableActionForm();
+
+        $this->resetErrorBag();
+
+        $this->openTableActionModal();
+    }
+
+    protected function cacheMountedTableActionForm(): void
+    {
         $this->cacheForm(
             'mountedTableActionForm',
             fn () => $this->getMountedTableActionForm(),
         );
+    }
 
-        $this->resetErrorBag();
+    protected function closeTableActionModal(): void
+    {
+        $this->dispatch('close-modal', id: "{$this->getId()}-table-action");
+    }
 
+    protected function openTableActionModal(): void
+    {
         $this->dispatch('open-modal', id: "{$this->getId()}-table-action");
     }
 

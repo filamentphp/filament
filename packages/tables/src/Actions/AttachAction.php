@@ -3,7 +3,6 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Exception;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -25,8 +24,6 @@ class AttachAction extends Action
     protected bool | Closure $canAttachAnother = true;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
-
-    protected string | Closure | null $recordTitleAttribute = null;
 
     /**
      * @var array<string> | Closure | null
@@ -50,9 +47,9 @@ class AttachAction extends Action
 
         $this->modalWidth('lg');
 
-        $this->extraModalActions(function (): array {
+        $this->extraModalFooterActions(function (): array {
             return $this->canAttachAnother() ? [
-                $this->makeExtraModalAction('attachAnother', ['another' => true])
+                $this->makeModalSubmitAction('attachAnother', ['another' => true])
                     ->label(__('filament-actions::attach.single.modal.actions.attach_another.label')),
             ] : [];
         });
@@ -113,13 +110,6 @@ class AttachAction extends Action
         return $this;
     }
 
-    public function recordTitleAttribute(string | Closure | null $attribute): static
-    {
-        $this->recordTitleAttribute = $attribute;
-
-        return $this;
-    }
-
     public function attachAnother(bool | Closure $condition = true): static
     {
         $this->canAttachAnother = $condition;
@@ -152,17 +142,6 @@ class AttachAction extends Action
     public function isRecordSelectPreloaded(): bool
     {
         return (bool) $this->evaluate($this->isRecordSelectPreloaded);
-    }
-
-    public function getRecordTitleAttribute(): string
-    {
-        $attribute = $this->evaluate($this->recordTitleAttribute);
-
-        if (blank($attribute)) {
-            throw new Exception('Attach table action must have a `recordTitleAttribute()` defined, which is used to identify records to attach.');
-        }
-
-        return $attribute;
     }
 
     /**

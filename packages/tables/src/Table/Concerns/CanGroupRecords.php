@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Grouping\Group;
 
 trait CanGroupRecords
@@ -15,6 +16,24 @@ trait CanGroupRecords
     protected array $groups = [];
 
     protected bool | Closure $isGroupsOnly = false;
+
+    protected bool | Closure $areGroupsInDropdownOnDesktop = false;
+
+    protected ?Closure $modifyGroupRecordsTriggerActionUsing = null;
+
+    public function groupRecordsTriggerAction(?Closure $callback): static
+    {
+        $this->modifyGroupRecordsTriggerActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function groupsInDropdownOnDesktop(bool | Closure $condition = true): static
+    {
+        $this->areGroupsInDropdownOnDesktop = $condition;
+
+        return $this;
+    }
 
     public function defaultGroup(string | Group | null $group): static
     {
@@ -46,6 +65,29 @@ trait CanGroupRecords
         return $this;
     }
 
+    public function getGroupRecordsTriggerAction(): Action
+    {
+        $action = Action::make('groupRecords')
+            ->label(__('filament-tables::table.buttons.group.label'))
+            ->iconButton()
+            ->icon('heroicon-m-rectangle-stack')
+            ->color('gray')
+            ->livewireClickHandlerEnabled(false)
+            ->table($this);
+
+        if ($this->modifyGroupRecordsTriggerActionUsing) {
+            $action = $this->evaluate($this->modifyGroupRecordsTriggerActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        if ($action->getView() === Action::BUTTON_VIEW) {
+            $action->defaultSize('sm');
+        }
+
+        return $action;
+    }
+
     public function isDefaultGroupSelectable(): bool
     {
         $defaultGroup = $this->getDefaultGroup();
@@ -55,6 +97,11 @@ trait CanGroupRecords
         }
 
         return $this->getGroup($defaultGroup->getId()) !== null;
+    }
+
+    public function areGroupsInDropdownOnDesktop(): bool
+    {
+        return (bool) $this->evaluate($this->areGroupsInDropdownOnDesktop);
     }
 
     public function getDefaultGroup(): ?Group

@@ -30,6 +30,10 @@ trait HasRecordAction
             ],
         );
 
+        if (! $action) {
+            return null;
+        }
+
         if (! class_exists($action)) {
             return $action;
         }

@@ -313,6 +313,8 @@ TextColumn::make('id')
     ->toggleable()
 ```
 
+#### Making toggleable columns hidden by default
+
 By default, toggleable columns are visible. To make them hidden instead:
 
 ```php
@@ -320,6 +322,28 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('id')
     ->toggleable(isToggledHiddenByDefault: true)
+```
+
+#### Customizing the toggle columns dropdown trigger action
+
+To customize the toggle dropdown trigger button, you may use the `toggleColumnsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->toggleColumnsTriggerAction(
+            fn (Action $action) => $action
+                ->button()
+                ->label('Toggle columns'),
+        );
+}
 ```
 
 ## Calculated state

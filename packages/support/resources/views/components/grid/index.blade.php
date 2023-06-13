@@ -11,12 +11,21 @@
 
 <div
     style="
-        @if ($default) --cols-default: repeat({{ $default }}, minmax(0, 1fr)); @endif
-        @if ($sm) --cols-sm: repeat({{ $sm }}, minmax(0, 1fr)); @endif
-        @if ($md) --cols-md: repeat({{ $md }}, minmax(0, 1fr)); @endif
-        @if ($lg) --cols-lg: repeat({{ $lg }}, minmax(0, 1fr)); @endif
-        @if ($xl) --cols-xl: repeat({{ $xl }}, minmax(0, 1fr)); @endif
-        @if ($twoXl) --cols-2xl: repeat({{ $twoXl }}, minmax(0, 1fr)); @endif
+        @if ($direction === 'row')
+            @if ($default) --cols-default: repeat({{ $default }}, minmax(0, 1fr)); @endif
+            @if ($sm) --cols-sm: repeat({{ $sm }}, minmax(0, 1fr)); @endif
+            @if ($md) --cols-md: repeat({{ $md }}, minmax(0, 1fr)); @endif
+            @if ($lg) --cols-lg: repeat({{ $lg }}, minmax(0, 1fr)); @endif
+            @if ($xl) --cols-xl: repeat({{ $xl }}, minmax(0, 1fr)); @endif
+            @if ($twoXl) --cols-2xl: repeat({{ $twoXl }}, minmax(0, 1fr)); @endif
+        @elseif ($direction === 'column')
+            @if ($default) --cols-default: {{ $default }}; @endif
+            @if ($sm) --cols-sm: {{ $sm }}; @endif
+            @if ($md) --cols-md: {{ $md }}; @endif
+            @if ($lg) --cols-lg: {{ $lg }}; @endif
+            @if ($xl) --cols-xl: {{ $xl }}; @endif
+            @if ($twoXl) --cols-2xl: {{ $twoXl }}; @endif
+        @endif
     "
     {{
         $attributes->class([

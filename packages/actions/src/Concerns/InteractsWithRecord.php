@@ -20,6 +20,8 @@ trait InteractsWithRecord
 
     protected string | Closure | null $recordTitle = null;
 
+    protected string | Closure | null $recordTitleAttribute = null;
+
     public function record(Model | Closure | null $record): static
     {
         $this->record = $record;
@@ -55,6 +57,13 @@ trait InteractsWithRecord
         return $this;
     }
 
+    public function recordTitleAttribute(string | Closure | null $attribute): static
+    {
+        $this->recordTitleAttribute = $attribute;
+
+        return $this;
+    }
+
     public function getRecord(): ?Model
     {
         return $this->evaluate($this->record);
@@ -69,7 +78,7 @@ trait InteractsWithRecord
     {
         $record ??= $this->getRecord();
 
-        return $this->evaluate(
+        $title = $this->evaluate(
             $this->recordTitle,
             namedInjections: [
                 'record' => $record,
@@ -79,6 +88,19 @@ trait InteractsWithRecord
                 $record::class => $record,
             ],
         );
+
+        if (filled($title)) {
+            return $title;
+        }
+
+        $titleAttribute = $this->getCustomRecordTitleAttribute();
+
+        return $record->getAttributeValue($titleAttribute);
+    }
+
+    public function getCustomRecordTitleAttribute(): ?string
+    {
+        return $this->evaluate($this->recordTitleAttribute);
     }
 
     public function getModel(): ?string

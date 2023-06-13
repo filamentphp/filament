@@ -129,6 +129,28 @@ public function table(Table $table): Table
 }
 ```
 
+### Customizing the reordering trigger action
+
+To customize the reordering trigger button, you may use the `reorderRecordsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->reorderRecordsTriggerAction(
+            fn (Action $action, bool $isReordering) => $action
+                ->button()
+                ->label($isReordering ? 'Disable reordering' : 'Enable reordering'),
+        );
+}
+```
+
 ## Polling table content
 
 You may poll table content so that it refreshes at a set interval, using the `$form->poll()` method:

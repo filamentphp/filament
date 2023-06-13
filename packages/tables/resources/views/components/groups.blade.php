@@ -1,5 +1,7 @@
 @props([
+    'dropdownOnDesktop' => false,
     'groups',
+    'triggerAction',
 ])
 
 <div
@@ -24,18 +26,17 @@
     "
 >
     <x-filament::dropdown
-        {{ $attributes->class(['sm:hidden']) }}
+        {{
+    $attributes->class([
+        'sm:hidden' => ! $dropdownOnDesktop,
+    ])
+}}
         placement="bottom-start"
         shift
         wire:key="{{ $this->getId() }}.table.grouping"
     >
         <x-slot name="trigger">
-            <x-filament::icon-button
-                icon="heroicon-m-rectangle-stack"
-                icon-alias="tables::grouping.trigger"
-                color="gray"
-                :label="__('filament-tables::table.buttons.group.label')"
-            />
+            {{ $triggerAction }}
         </x-slot>
 
         <div class="flex flex-col gap-4 px-4 pb-4 pt-3">
@@ -79,46 +80,48 @@
         </div>
     </x-filament::dropdown>
 
-    <div class="hidden items-center gap-1 sm:flex">
-        <label>
-            <span class="sr-only">
-                {{ __('filament-tables::table.grouping.fields.group.label') }}
-            </span>
+    @if (! $dropdownOnDesktop)
+        <div class="hidden items-center gap-1 sm:flex">
+            <label>
+                <span class="sr-only">
+                    {{ __('filament-tables::table.grouping.fields.group.label') }}
+                </span>
 
-            <x-filament::input.select
-                x-model="group"
-                x-on:change="resetCollapsedGroups()"
-                size="sm"
-                class="text-sm"
-            >
-                <option value="">
-                    {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
-                </option>
-                @foreach ($groups as $group)
-                    <option value="{{ $group->getId() }}">
-                        {{ $group->getLabel() }}
+                <x-filament::input.select
+                    x-model="group"
+                    x-on:change="resetCollapsedGroups()"
+                    size="sm"
+                    class="text-sm"
+                >
+                    <option value="">
+                        {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
                     </option>
-                @endforeach
-            </x-filament::input.select>
-        </label>
+                    @foreach ($groups as $group)
+                        <option value="{{ $group->getId() }}">
+                            {{ $group->getLabel() }}
+                        </option>
+                    @endforeach
+                </x-filament::input.select>
+            </label>
 
-        <label x-show="group" x-cloak>
-            <span class="sr-only">
-                {{ __('filament-tables::table.grouping.fields.direction.label') }}
-            </span>
+            <label x-show="group" x-cloak>
+                <span class="sr-only">
+                    {{ __('filament-tables::table.grouping.fields.direction.label') }}
+                </span>
 
-            <x-filament::input.select
-                x-model="direction"
-                size="sm"
-                class="text-sm"
-            >
-                <option value="asc">
-                    {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                </option>
-                <option value="desc">
-                    {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                </option>
-            </x-filament::input.select>
-        </label>
-    </div>
+                <x-filament::input.select
+                    x-model="direction"
+                    size="sm"
+                    class="text-sm"
+                >
+                    <option value="asc">
+                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                    </option>
+                    <option value="desc">
+                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                    </option>
+                </x-filament::input.select>
+            </label>
+        </div>
+    @endif
 </div>

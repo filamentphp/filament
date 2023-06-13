@@ -199,6 +199,31 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Conditionally hiding navigation items
+
+You can also conditionally hide a navigation item by using the `visible()` or `hidden()` methods, passing in a condition to check:
+
+```php
+use Filament\Navigation\NavigationItem;
+
+NavigationItem::make('Analytics')
+    ->visible(auth()->user()->can('view-analytics'))
+    // or
+    ->hidden(! auth()->user()->can('view-analytics')),
+```
+
+## Changing the color of a navigation item icon
+
+By default, navigation item icons are gray. You may change this by calling `iconColor()` on the `NavigationItem` object. The color may be `danger`, `info`, `primary`, `secondary`, `success` or `warning`:
+
+```php
+use Filament\Navigation\NavigationItem;
+
+NavigationItem::make('Analytics')
+    ->icon('heroicon-o-presentation-chart-line')
+    ->iconColor('primary')
+```
+
 ## Disabling resource or page navigation items
 
 To prevent resources or pages from showing up in navigation, you may use:

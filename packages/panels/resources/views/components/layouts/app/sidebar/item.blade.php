@@ -4,6 +4,7 @@
     'badge' => null,
     'badgeColor' => null,
     'icon',
+    'iconColor' => null,
     'shouldOpenUrlInNewTab' => false,
     'url',
 ])
@@ -44,7 +45,15 @@
         <x-filament::icon
             :name="($active && $activeIcon) ? $activeIcon : $icon"
             alias="panels::sidebar.item"
-            :color="(! $active) ? 'text-gray-600 dark:text-gray-500' : null"
+            :color="(! $active) ? match ($iconColor) {
+                'primary' => 'text-primary-600 dark:text-primary-500',
+                'danger' => 'text-danger-600 dark:text-danger-500',
+                'info' => 'text-info-600 dark:text-info-500',
+                'secondary' => 'text-secondary-600 dark:text-secondary-500',
+                'success' => 'text-success-600 dark:text-success-500',
+                'warning' => 'text-warning-600 dark:text-warning-500',
+                default => 'text-gray-600 dark:text-gray-500',
+            } : null"
             size="h-6 w-6"
         />
 

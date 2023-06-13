@@ -89,7 +89,7 @@ trait HasBulkActions
         $action->resetArguments();
         $action->resetFormData();
 
-        $this->dispatch('close-modal', id: "{$this->getId()}-table-bulk-action");
+        $this->closeTableBulkActionModal();
 
         return $result;
     }
@@ -112,10 +112,7 @@ trait HasBulkActions
             return null;
         }
 
-        $this->cacheForm(
-            'mountedTableBulkActionForm',
-            fn () => $this->getMountedTableBulkActionForm(),
-        );
+        $this->cacheMountedTableBulkActionForm();
 
         try {
             $hasForm = $this->mountedTableBulkActionHasForm();
@@ -134,8 +131,7 @@ trait HasBulkActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->mountedTableBulkAction = null;
-            $this->selectedTableRecords = [];
+            $this->resetMountedTableBulkActionProperties();
 
             return null;
         }
@@ -146,9 +142,23 @@ trait HasBulkActions
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', id: "{$this->getId()}-table-bulk-action");
+        $this->openTableBulkActionModal();
 
         return null;
+    }
+
+    protected function cacheMountedTableBulkActionForm(): void
+    {
+        $this->cacheForm(
+            'mountedTableBulkActionForm',
+            fn () => $this->getMountedTableBulkActionForm(),
+        );
+    }
+
+    protected function resetMountedTableBulkActionProperties(): void
+    {
+        $this->mountedTableBulkAction = null;
+        $this->selectedTableRecords = [];
     }
 
     public function mountedTableBulkActionShouldOpenModal(): bool
@@ -269,6 +279,16 @@ trait HasBulkActions
         return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords(
             $table->selectPivotDataInQuery($relationship)->get(),
         );
+    }
+
+    protected function closeTableBulkActionModal(): void
+    {
+        $this->dispatch('close-modal', id: "{$this->getId()}-table-bulk-action");
+    }
+
+    protected function openTableBulkActionModal(): void
+    {
+        $this->dispatch('open-modal', id: "{$this->getId()}-table-bulk-action");
     }
 
     /**

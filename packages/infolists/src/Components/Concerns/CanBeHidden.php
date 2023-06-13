@@ -3,6 +3,7 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
+use Filament\Infolists\Components\Component;
 
 trait CanBeHidden
 {
@@ -13,6 +14,21 @@ trait CanBeHidden
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = $condition;
+
+        return $this;
+    }
+
+    public function hiddenWhenAllChildComponentsHidden(): static
+    {
+        $this->hidden(static function (Component $component): bool {
+            foreach ($component->getChildComponentContainers() as $childComponentContainer) {
+                foreach ($childComponentContainer->getComponents(withHidden: false) as $childComponent) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
 
         return $this;
     }
