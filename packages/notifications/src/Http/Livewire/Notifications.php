@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\On;
 use Livewire\Component;
 
 class Notifications extends Component
@@ -15,15 +16,6 @@ class Notifications extends Component
     public bool $isFilamentNotificationsComponent = true;
 
     public Collection $notifications;
-
-    /**
-     * @var array<string, string>
-     */
-    protected $listeners = [
-        'notificationSent' => 'pushNotificationFromEvent',
-        'notificationsSent' => 'pullNotificationsFromSession',
-        'notificationClosed' => 'removeNotification',
-    ];
 
     public static string $horizontalAlignment = 'right';
 
@@ -35,6 +27,7 @@ class Notifications extends Component
         $this->pullNotificationsFromSession();
     }
 
+    #[On('notificationsSent')]
     public function pullNotificationsFromSession(): void
     {
         foreach (session()->pull('filament.notifications') ?? [] as $notification) {
@@ -47,6 +40,7 @@ class Notifications extends Component
     /**
      * @param  array<string, mixed>  $notification
      */
+    #[On('notificationSent')]
     public function pushNotificationFromEvent(array $notification): void
     {
         $notification = Notification::fromArray($notification);
@@ -54,6 +48,7 @@ class Notifications extends Component
         $this->pushNotification($notification);
     }
 
+    #[On('notificationClosed')]
     public function removeNotification(string $id): void
     {
         if (! $this->notifications->has($id)) {
