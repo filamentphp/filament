@@ -119,6 +119,16 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('description')->html()
 ```
 
+## Preserving new lines
+
+If you'd like to preserve new lines in your column's value, you may use the `nl2br()` method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')->nl2br()
+```
+
 ## Enum formatting
 
 You may also transform a set of known cell values using the `enum()` method:

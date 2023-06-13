@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Illuminate\Support\HtmlString;
 use stdClass;
 
 class TextColumn extends Column
@@ -39,6 +40,19 @@ class TextColumn extends Column
     public function canWrap(): bool
     {
         return $this->evaluate($this->canWrap);
+    }
+
+    public function nl2br(): static
+    {
+        $this->formatStateUsing(static function ($state): ?HtmlString {
+            if (blank($state)) {
+                return null;
+            }
+
+            return new HtmlString(nl2br(e($state)));
+        });
+
+        return $this;
     }
 
     protected function mutateArrayState(array $state): string
