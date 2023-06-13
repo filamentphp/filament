@@ -192,6 +192,14 @@
     display: none;
 }
 
+.EasyMDEContainer .CodeMirror-scroll {
+    @apply h-auto;
+}
+
+.EasyMDEContainer .editor-statusbar {
+    @apply hidden;
+}
+
 .dark .EasyMDEContainer .editor-toolbar button::before {
     filter: invert(1);
 }

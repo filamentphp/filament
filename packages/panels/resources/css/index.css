@@ -20,4 +20,9 @@
         padding-left: 2.5rem;
         padding-right: 0.75rem;
     }
+
+    /** Fix extra gap below form elements from default browser stylesheet. */
+    form {
+        margin-block-end: auto;
+    }
 }
