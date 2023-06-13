@@ -168,6 +168,7 @@ trait InteractsWithActions
 
         $this->resetErrorBag();
 
+        $this->openActionModal();
 
         return null;
     }
