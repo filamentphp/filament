@@ -65,7 +65,7 @@ trait InteractsWithPageTable
         }
 
         /** @var HasTable $tableComponent */
-        $page = app('livewire')->new($this->getPage());
+        $page = app('livewire')->new($this->getTablePage());
         trigger('mount', $page, [], null, null);
 
         $page->paginators = $this->paginators;
