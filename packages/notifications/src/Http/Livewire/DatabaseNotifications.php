@@ -155,9 +155,9 @@ class DatabaseNotifications extends Component
     }
 
     // @todo Replace this method for LW3 to ensure pagination query string is not used.
-    public function queryStringWithPagination(): array
+    public function queryStringWithPagination(): void
     {
-        return [];
+        return;
     }
 
     public function render(): View

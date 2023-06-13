@@ -81,7 +81,7 @@ FileUpload::make('attachment')
 You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the closure based on the `$file` that was uploaded:
 
 ```php
-use Livewire\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 FileUpload::make('attachment')
     ->getUploadedFileNameForStorageUsing(

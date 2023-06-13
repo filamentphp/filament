@@ -10,6 +10,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportUnitTesting\Testable;
+use function Livewire\store;
 
 /**
  * @method HasTable instance()
@@ -40,21 +41,19 @@ class TestsBulkActions
 
             $this->call('mountTableBulkAction', $name, $records);
 
-            if (filled($this->instance()->redirectTo)) {
+            if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
             if ($this->instance()->mountedTableBulkAction === null) {
-                $this->assertNotDispatchedBrowserEvent('open-modal');
+                $this->assertNotDispatched('open-modal');
 
                 return $this;
             }
 
             $this->assertSet('mountedTableBulkAction', $name);
 
-            $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => "{$this->instance()->id}-table-bulk-action",
-            ]);
+            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-table-bulk-action");
 
             return $this;
         };
@@ -113,14 +112,12 @@ class TestsBulkActions
 
             $this->call('callMountedTableBulkAction', $arguments);
 
-            if (filled($this->instance()->redirectTo)) {
+            if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
             if ($this->get('mountedTableBulkAction') !== $action->getName()) {
-                $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => "{$this->instance()->id}-table-bulk-action",
-                ]);
+                $this->assertDispatched('close-modal', id: "{$this->instance()->getId()}-table-bulk-action");
             }
 
             return $this;

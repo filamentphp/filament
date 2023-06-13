@@ -1,10 +1,8 @@
 import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import AlpineLazyLoadAssets from 'alpine-lazy-load-assets'
-import Focus from '@alpinejs/focus'
 import Sortable from './sortable'
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.plugin(Focus)
     window.Alpine.plugin(Sortable)
     window.Alpine.plugin(AlpineFloatingUI)
     window.Alpine.plugin(AlpineLazyLoadAssets)

@@ -46,11 +46,11 @@ Livewire components are PHP classes that have their state stored in the user's b
 Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: by a the [`wire:model` attribute](https://laravel-livewire.com/docs/properties#data-binding), or by [entangling](https://laravel-livewire.com/docs/2.x/alpine-js#sharing-state) it with an Alpine.js property:
 
 ```blade
-<input wire:model.defer="name" />
+<input wire:model="name" />
 
 <!-- Or -->
 
-<div x-data="{ state: $wire.entangle('name').defer }">
+<div x-data="{ state: $wire.entangle('name') }">
     <input x-model="state" />
 </div>
 ```
@@ -60,11 +60,11 @@ When the user types into the input field, the `$name` property is updated in the
 This is the basis of how fields work in Filament. Each field is assigned to a public property in the Livewire component class, which is where the state of the field is stored. We call the name of this property the "state path" of the field. You can access the state path of a field using the `$getStatePath()` function in the field's view:
 
 ```blade
-<input wire:model.defer="{{ $getStatePath() }}" />
+<input wire:model="{{ $getStatePath() }}" />
 
 <!-- Or -->
 
-<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}').defer }">
+<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
     <input x-model="state" />
 </div>
 ```

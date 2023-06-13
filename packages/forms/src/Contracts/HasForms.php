@@ -4,7 +4,7 @@ namespace Filament\Forms\Contracts;
 
 use Filament\Forms\Form;
 use Filament\Support\Contracts\TranslatableContentDriver;
-use Livewire\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 interface HasForms
 {
@@ -55,8 +55,7 @@ interface HasForms
      * @param  array<string, array<mixed>> | null  $rules
      * @param  array<string, string>  $messages
      * @param  array<string, string>  $attributes
-     * @param  array<string, string>  $dataOverrides
      * @return array<string, mixed>
      */
-    public function validate($rules = null, $messages = [], $attributes = [], $dataOverrides = []);
+    public function validate($rules = null, $messages = [], $attributes = []);
 }

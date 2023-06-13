@@ -34,7 +34,7 @@
 
                         <select
                             class="block h-10 rounded-lg border-gray-300 text-gray-900 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-primary-500"
-                            wire:model="filter"
+                            wire:model.live="filter"
                             wire:loading.class="animate-pulse"
                         >
                             @foreach ($filters as $value => $label)

@@ -25,7 +25,7 @@
 
         <input
             x-data="{}"
-            wire:model.debounce.500ms="search"
+            wire:model.live.debounce.500ms="search"
             @if ($keyBindings = filament()->getGlobalSearchKeyBindings())
                 x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="$el.focus()"
             @endif

@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
+use Livewire\Features\SupportLockedProperties\Locked;
 
 /**
  * @property Form $form
@@ -33,24 +34,26 @@ class ResetPassword extends CardPage
      */
     protected static string $view = 'filament::pages.auth.password-reset.reset-password';
 
+    #[Locked]
     public ?string $email = null;
 
     public ?string $password = '';
 
     public ?string $passwordConfirmation = '';
 
+    #[Locked]
     public ?string $token = null;
 
-    public function mount(): void
+    public function mount(?string $email = null, ?string $token = null): void
     {
         if (Filament::auth()->check()) {
             redirect()->intended(Filament::getUrl());
         }
 
-        $this->token = request()->query('token');
+        $this->token = $token ?? request()->query('token');
 
         $this->form->fill([
-            'email' => request()->query('email'),
+            'email' => $email ?? request()->query('email'),
         ]);
     }
 
@@ -132,21 +135,6 @@ class ResetPassword extends CardPage
         return Action::make('resetPassword')
             ->label(__('filament::pages/auth/password-reset/reset-password.buttons.reset.label'))
             ->submit('resetPassword');
-    }
-
-    /**
-     * @param  string  $propertyName
-     */
-    public function propertyIsPublicAndNotDefinedOnBaseClass($propertyName): bool
-    {
-        if ((! app()->runningUnitTests()) && in_array($propertyName, [
-            'email',
-            'token',
-        ])) {
-            return false;
-        }
-
-        return parent::propertyIsPublicAndNotDefinedOnBaseClass($propertyName);
     }
 
     // @todo Do I need to override the component name here?

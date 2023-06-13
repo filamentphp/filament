@@ -108,7 +108,7 @@
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 wire:ignore
                 x-bind:class="{
-                    'choices--error': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'choices--error': (@js($statePath) in $wire.__instance.snapshot.memo.errors),
                 }"
                 {{
                     $attributes

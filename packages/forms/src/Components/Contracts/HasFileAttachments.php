@@ -2,7 +2,7 @@
 
 namespace Filament\Forms\Components\Contracts;
 
-use Livewire\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 interface HasFileAttachments
 {

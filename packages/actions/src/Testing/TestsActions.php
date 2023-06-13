@@ -12,6 +12,7 @@ use Filament\Actions\StaticAction;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Features\SupportUnitTesting\Testable;
+use function Livewire\store;
 
 /**
  * @method HasActions instance()
@@ -38,21 +39,19 @@ class TestsActions
                 );
             }
 
-            if (filled($this->instance()->redirectTo)) {
+            if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
             if (! count($this->instance()->mountedActions)) {
-                $this->assertNotDispatchedBrowserEvent('open-modal');
+                $this->assertNotDispatched('open-modal');
 
                 return $this;
             }
 
             $this->assertSet('mountedActions', $name);
 
-            $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => "{$this->instance()->id}-action",
-            ]);
+            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-action");
 
             return $this;
         };
@@ -111,14 +110,12 @@ class TestsActions
 
             $this->call('callMountedAction', $arguments);
 
-            if (filled($this->instance()->redirectTo)) {
+            if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
             if (! count($this->instance()->mountedActions)) {
-                $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => "{$this->instance()->id}-action",
-                ]);
+                $this->assertDispatched('close-modal', id: "{$this->instance()->getId()}-action");
             }
 
             return $this;

@@ -180,13 +180,6 @@ class EditRecord extends Page
         return $data;
     }
 
-    public function openDeleteModal(): void
-    {
-        $this->dispatch('open-modal', [
-            'id' => 'delete',
-        ]);
-    }
-
     protected function configureAction(Action $action): void
     {
         $action

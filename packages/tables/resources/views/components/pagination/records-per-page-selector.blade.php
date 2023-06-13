@@ -8,7 +8,7 @@
     <label>
         <select
             class="h-8 rounded-lg border-gray-300 pe-8 text-sm leading-none shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500"
-            wire:model="tableRecordsPerPage"
+            wire:model.live="tableRecordsPerPage"
         >
             @foreach ($options as $option)
                 <option value="{{ $option }}">

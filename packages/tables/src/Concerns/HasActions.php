@@ -8,6 +8,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
+use function Livewire\store;
 
 /**
  * @property Form $mountedTableActionForm
@@ -83,7 +84,7 @@ trait HasActions
         $action->resetArguments();
         $action->resetFormData();
 
-        if (filled($this->redirectTo)) {
+        if (store($this)->has('redirect')) {
             return $result;
         }
 
@@ -159,9 +160,7 @@ trait HasActions
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', [
-            'id' => "{$this->getId()}-table-action",
-        ]);
+        $this->dispatch('open-modal', id: "{$this->getId()}-table-action");
 
         return null;
     }
@@ -260,9 +259,7 @@ trait HasActions
         }
 
         if (! count($this->mountedTableActions)) {
-            $this->dispatch('close-modal', [
-                'id' => "{$this->getId()}-table-action",
-            ]);
+            $this->dispatch('close-modal', id: "{$this->getId()}-table-action");
 
             $action?->record(null);
             $this->mountedTableActionRecord(null);
@@ -277,9 +274,7 @@ trait HasActions
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', [
-            'id' => "{$this->getId()}-table-action",
-        ]);
+        $this->dispatch('open-modal', id: "{$this->getId()}-table-action");
     }
 
     /**

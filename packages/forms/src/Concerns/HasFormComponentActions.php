@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Support\Arr;
+use function Livewire\store;
 
 /**
  * @property ComponentContainer $mountedFormComponentActionForm
@@ -83,7 +84,7 @@ trait HasFormComponentActions
         $action->resetArguments();
         $action->resetFormData();
 
-        if (filled($this->redirectTo)) {
+        if (store($this)->has('redirect')) {
             return $result;
         }
 
@@ -151,13 +152,9 @@ trait HasFormComponentActions
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', [
-            'id' => "{$this->getId()}-form-component-action",
-        ]);
+        $this->dispatch('open-modal', id: "{$this->getId()}-form-component-action");
 
-        $this->dispatch('opened-form-component-action-modal', [
-            'id' => $this->getId(),
-        ]);
+        $this->dispatch('opened-form-component-action-modal', id: $this->getId());
 
         return null;
     }
@@ -271,25 +268,17 @@ trait HasFormComponentActions
         }
 
         if (! count($this->mountedFormComponentActions)) {
-            $this->dispatch('close-modal', [
-                'id' => "{$this->getId()}-form-component-action",
-            ]);
+            $this->dispatch('close-modal', id: "{$this->getId()}-form-component-action");
 
-            $this->dispatch('closed-form-component-action-modal', [
-                'id' => $this->getId(),
-            ]);
+            $this->dispatch('closed-form-component-action-modal', id: $this->getId());
 
             return;
         }
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', [
-            'id' => "{$this->getId()}-form-component-action",
-        ]);
+        $this->dispatch('open-modal', id: "{$this->getId()}-form-component-action");
 
-        $this->dispatch('opened-form-component-action-modal', [
-            'id' => $this->getId(),
-        ]);
+        $this->dispatch('opened-form-component-action-modal', id: $this->getId());
     }
 }

@@ -9,7 +9,6 @@
     },
     "require": {
         "php": "^8.1",
-        "blade-ui-kit/blade-heroicons": "^2.0",
         "filament/actions": "self.version",
         "filament/forms": "self.version",
         "filament/support": "self.version",
@@ -20,7 +19,6 @@
         "illuminate/support": "^9.0|^10.0",
         "illuminate/view": "^9.0|^10.0",
         "kirschbaum-development/eloquent-power-joins": "^2.6",
-        "syntheticjs/support": "*",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

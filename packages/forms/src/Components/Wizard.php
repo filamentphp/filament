@@ -78,9 +78,7 @@ class Wizard extends Component
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
-                    $livewire->dispatch('next-wizard-step', [
-                        'statePath' => $statePath,
-                    ]);
+                    $livewire->dispatch('next-wizard-step', statePath: $statePath);
                 },
             ],
         ]);

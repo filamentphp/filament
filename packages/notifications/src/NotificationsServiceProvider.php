@@ -10,9 +10,10 @@ use Filament\Support\Facades\FilamentAsset;
 use Livewire\Component;
 use Livewire\Features\SupportUnitTesting\Testable;
 use Livewire\Livewire;
-use Livewire\Response;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use function Livewire\on;
+use function Livewire\store;
 
 class NotificationsServiceProvider extends PackageServiceProvider
 {
@@ -34,22 +35,21 @@ class NotificationsServiceProvider extends PackageServiceProvider
 
         Livewire::component('notifications', Notifications::class);
 
-        // @todo Listen for notifications
-//        Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {
-//            if (! Livewire::isLivewireRequest()) {
-//                return $response;
-//            }
-//
-//            if ($component->redirectTo !== null) {
-//                return $response;
-//            }
-//
-//            if (count(session()->get('filament.notifications') ?? []) > 0) {
-//                $component->emit('notificationsSent');
-//            }
-//
-//            return $response;
-//        });
+        on('dehydrate', function (Component $component) {
+            if (! Livewire::isLivewireRequest()) {
+                return;
+            }
+
+            if (store($component)->has('redirect')) {
+                return;
+            }
+
+            if (count(session()->get('filament.notifications') ?? []) <= 0) {
+                return;
+            }
+
+            $component->dispatch('notificationsSent');
+        });
 
         Testable::mixin(new TestsNotifications());
     }

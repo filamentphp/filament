@@ -9,9 +9,7 @@
     },
     "require": {
         "php": "^8.1",
-        "blade-ui-kit/blade-heroicons": "^2.0",
         "filament/support": "self.version",
-        "syntheticjs/support": "*",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

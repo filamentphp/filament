@@ -389,10 +389,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
                 /** @var LivewireComponent $livewire */
                 $livewire = $component->getLivewire();
-                $livewire->dispatch('filament-forms::select.refreshSelectedOptionLabel', [
-                    'livewireId' => $livewire->id,
-                    'statePath' => $statePath,
-                ]);
+                $livewire->dispatch('filament-forms::select.refreshSelectedOptionLabel', livewireId: $livewire->getId(), statePath: $statePath);
             })
             ->icon('heroicon-m-pencil-square')
             ->iconButton()

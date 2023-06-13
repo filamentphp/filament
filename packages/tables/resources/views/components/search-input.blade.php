@@ -16,7 +16,7 @@
         </span>
 
         <input
-            wire:model.debounce.500ms="{{ $wireModel }}"
+            wire:model.live.debounce.500ms="{{ $wireModel }}"
             placeholder="{{ __('filament-tables::table.fields.search.placeholder') }}"
             type="text"
             autocomplete="off"

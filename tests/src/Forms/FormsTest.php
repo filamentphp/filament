@@ -118,6 +118,12 @@ class TestComponentWithForm extends Livewire
 
 class TestComponentWithMultipleForms extends Livewire
 {
+    public function mount(): void
+    {
+        $this->fooForm->fill();
+        $this->barForm->fill();
+    }
+
     protected function getForms(): array
     {
         return [

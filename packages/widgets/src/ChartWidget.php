@@ -102,9 +102,7 @@ abstract class ChartWidget extends Widget
         if ($newDataChecksum !== $this->dataChecksum) {
             $this->dataChecksum = $newDataChecksum;
 
-            $this->emitSelf('updateChartData', [
-                'data' => $this->getCachedData(),
-            ]);
+            $this->dispatch('updateChartData', data: $this->getCachedData());
         }
     }
 
@@ -115,9 +113,7 @@ abstract class ChartWidget extends Widget
         if ($newDataChecksum !== $this->dataChecksum) {
             $this->dataChecksum = $newDataChecksum;
 
-            $this->emitSelf('filterChartData', [
-                'data' => $this->getCachedData(),
-            ]);
+            $this->dispatch('filterChartData', data: $this->getCachedData());
         }
     }
 }

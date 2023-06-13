@@ -11,6 +11,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
+use function Livewire\store;
 
 /**
  * @property Forms\Form $mountedActionForm
@@ -79,6 +80,8 @@ trait InteractsWithActions
             ]);
 
             $result = $action->callAfter() ?? $result;
+
+            $this->afterActionCalled();
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
@@ -87,7 +90,7 @@ trait InteractsWithActions
         $action->resetArguments();
         $action->resetFormData();
 
-        if (filled($this->redirectTo)) {
+        if (store($this)->has('redirect')) {
             return $result;
         }
 
@@ -95,6 +98,8 @@ trait InteractsWithActions
 
         return $result;
     }
+
+    protected function afterActionCalled(): void {}
 
     /**
      * @param  array<string, mixed>  $arguments
@@ -154,9 +159,7 @@ trait InteractsWithActions
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', [
-            'id' => "{$this->getId()}-action",
-        ]);
+        $this->dispatch('open-modal', id: "{$this->getId()}-action");
 
         return null;
     }
@@ -350,9 +353,7 @@ trait InteractsWithActions
         }
 
         if (! count($this->mountedActions)) {
-            $this->dispatch('close-modal', [
-                'id' => "{$this->getId()}-action",
-            ]);
+            $this->dispatch('close-modal', id: "{$this->getId()}-action");
 
             if ($action?->shouldClearRecordAfter()) {
                 $action->record(null);
@@ -368,8 +369,6 @@ trait InteractsWithActions
 
         $this->resetErrorBag();
 
-        $this->dispatch('open-modal', [
-            'id' => "{$this->getId()}-action",
-        ]);
+        $this->dispatch('open-modal', id: "{$this->getId()}-action");
     }
 }

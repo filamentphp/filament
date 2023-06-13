@@ -24,7 +24,7 @@ it('can call an action with data', function () {
             'payload' => $payload = Str::random(),
         ])
         ->assertHasNoTableActionErrors()
-        ->assertEmitted('data-called', [
+        ->assertDispatched('data-called', data: [
             'payload' => $payload,
         ]);
 });
@@ -35,7 +35,7 @@ it('can validate an action\'s data', function () {
             'payload' => null,
         ])
         ->assertHasTableActionErrors(['payload' => ['required']])
-        ->assertNotEmitted('data-called');
+        ->assertNotDispatched('data-called');
 });
 
 it('can set default action data when mounted', function () {
@@ -51,7 +51,7 @@ it('can call an action with arguments', function () {
         ->callTableAction('arguments', arguments: [
             'payload' => $payload = Str::random(),
         ])
-        ->assertEmitted('arguments-called', [
+        ->assertDispatched('arguments-called', arguments: [
             'payload' => $payload,
         ]);
 });
@@ -59,7 +59,7 @@ it('can call an action with arguments', function () {
 it('can call an action and halt', function () {
     livewire(PostsTable::class)
         ->callTableAction('halt')
-        ->assertEmitted('halt-called')
+        ->assertDispatched('halt-called')
         ->assertTableActionHalted('halt');
 });
 

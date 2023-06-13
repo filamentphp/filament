@@ -13,9 +13,16 @@ trait HasStateBindingModifiers
 
     protected string | int | null $debounce = null;
 
+    public function live(): static
+    {
+        $this->stateBindingModifiers(['live']);
+
+        return $this;
+    }
+
     public function reactive(): static
     {
-        $this->stateBindingModifiers([]);
+        $this->live();
 
         return $this;
     }
@@ -71,7 +78,7 @@ trait HasStateBindingModifiers
         }
 
         if ($debounce = $this->getDebounce()) {
-            return ['debounce', $debounce];
+            return ['live', 'debounce', $debounce];
         }
 
         if ($this instanceof Component) {
@@ -82,12 +89,12 @@ trait HasStateBindingModifiers
             return $this->getParentComponent()->getStateBindingModifiers();
         }
 
-        return ['defer'];
+        return [];
     }
 
-    public function isReactive(): bool
+    public function isLive(): bool
     {
-        return empty($this->getStateBindingModifiers());
+        return in_array('live', $this->getStateBindingModifiers());
     }
 
     public function isLazy(): bool

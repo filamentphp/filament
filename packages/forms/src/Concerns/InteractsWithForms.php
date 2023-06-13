@@ -10,7 +10,7 @@ use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use Livewire\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 trait InteractsWithForms
@@ -162,13 +162,12 @@ trait InteractsWithForms
      * @param  array<string, array<mixed>> | null  $rules
      * @param  array<string, string>  $messages
      * @param  array<string, string>  $attributes
-     * @param  array<string, string>  $dataOverrides
      * @return array<string, mixed>
      */
-    public function validate($rules = null, $messages = [], $attributes = [], $dataOverrides = []): array
+    public function validate($rules = null, $messages = [], $attributes = []): array
     {
         try {
-            return parent::validate($rules, $messages, $attributes, $dataOverrides);
+            return parent::validate($rules, $messages, $attributes);
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
@@ -227,17 +226,10 @@ trait InteractsWithForms
         return null;
     }
 
-    /**
-     * @param  string  $name
-     * @param  mixed  $value
-     * @param  Closure  $callback
-     */
-    protected function callBeforeAndAfterSyncHooks($name, $value, $callback): void
+    public function updatedInteractsWithForms(string $statePath): void
     {
-        parent::callBeforeAndAfterSyncHooks($name, $value, $callback);
-
         foreach ($this->getCachedForms() as $form) {
-            $form->callAfterStateUpdated($name);
+            $form->callAfterStateUpdated($statePath);
         }
     }
 

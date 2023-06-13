@@ -431,8 +431,8 @@
                         @if (count($sortableColumns))
                             <div
                                 x-data="{
-                                    column: $wire.entangle('tableSortColumn'),
-                                    direction: $wire.entangle('tableSortDirection'),
+                                    column: $wire.entangle('tableSortColumn').live,
+                                    direction: $wire.entangle('tableSortDirection').live,
                                 }"
                                 x-init="
                                     $watch('column', function (newColumn, oldColumn) {
