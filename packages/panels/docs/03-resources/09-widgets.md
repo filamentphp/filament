@@ -65,6 +65,60 @@ If you're using a widget on an [Edit](editing-records) or [View](viewing-records
 
 ```php
 use Illuminate\Database\Eloquent\Model;
+use Livewire\Attributes\Prop;
 
+#[Prop]
 public ?Model $record = null;
+```
+
+## Accessing page table data in the widget
+
+If you're using a widget on a [List](listing-records) page, you may access the table data by first adding the `ExposesTableToWidgets` trait to the page class:
+
+```php
+use Filament\Pages\Concerns\ExposesTableToWidgets;
+use Filament\Resources\Pages\ListRecords;
+
+class ListProducts extends ListRecords
+{
+    use ExposesTableToWidgets;
+    
+    // ...
+}
+```
+
+Now, on the widget class, you must add the `InteractsWithPageTable` trait, and return the name of the page class from the `getPage()` method:
+
+```php
+use App\Filament\Resources\ProductResource\Pages\ListProducts;
+use Filament\Widgets\Concerns\InteractsWithPageTable;
+use Filament\Widgets\Widget;
+
+class ProductStats extends Widget
+{
+    use InteractsWithPageTable;
+
+    protected function getPage(): string
+    {
+        return ListProducts::class;
+    }
+
+    // ...
+}
+```
+
+In the widget class, you can now access the Eloquent query builder instance for the table data using the `$this->getPageTableQuery()` method:
+
+```php
+use Filament\Widgets\StatsOverviewWidget\Card;
+
+Card::make('Total Products', $this->getPageTableQuery()->count()),
+```
+
+Alternatively, you can access a collection of the records on the current page using the `$this->getPageTableRecords()` method:
+
+```php
+use Filament\Widgets\StatsOverviewWidget\Card;
+
+Card::make('Total Products', $this->getPageTableRecords()->count()),
 ```
