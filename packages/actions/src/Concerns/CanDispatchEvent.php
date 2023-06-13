@@ -4,7 +4,7 @@ namespace Filament\Actions\Concerns;
 
 use Closure;
 
-trait CanEmitEvent
+trait CanDispatchEvent
 {
     protected string | Closure | null $event = null;
 
@@ -13,38 +13,83 @@ trait CanEmitEvent
      */
     protected array | Closure $eventData = [];
 
-    protected string | bool $emitDirection = false;
+    protected string | bool $dispatchDirection = false;
 
-    protected ?string $emitToComponent = null;
+    protected ?string $dispatchToComponent = null;
 
     /**
+     * @param  array<int, mixed> | Closure  $data
+     */
+    public function dispatch(
+        string | Closure | null $event,
+        array | Closure $data = [],
+    ): static {
+        $this->event = $event;
+        $this->eventData = $data;
+        $this->dispatchDirection = false;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<int, mixed> | Closure  $data
+     */
+    public function dispatchSelf(
+        string | Closure | null $event,
+        array | Closure $data = [],
+    ): static {
+        $this->dispatch($event, $data);
+        $this->dispatchDirection = 'self';
+
+        return $this;
+    }
+
+    /**
+     * @param  array<int, mixed> | Closure  $data
+     */
+    public function dispatchTo(
+        string $component,
+        string | Closure | null $event,
+        array | Closure $data = [],
+    ): static {
+        $this->dispatch($event, $data);
+        $this->dispatchDirection = 'to';
+        $this->dispatchToComponent = $component;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `dispatch()` instead.
+     *
      * @param  array<int, mixed> | Closure  $data
      */
     public function emit(
         string | Closure | null $event,
         array | Closure $data = [],
     ): static {
-        $this->event = $event;
-        $this->eventData = $data;
-        $this->emitDirection = false;
+        $this->dispatch($event, $data);
 
         return $this;
     }
 
     /**
+     * @deprecated Use `dispatchSelf()` instead.
+     *
      * @param  array<int, mixed> | Closure  $data
      */
     public function emitSelf(
         string | Closure | null $event,
         array | Closure $data = [],
     ): static {
-        $this->emit($event, $data);
-        $this->emitDirection = 'self';
+        $this->dispatchSelf($event, $data);
 
         return $this;
     }
 
     /**
+     * @deprecated Use `dispatchTo()` instead.
+     *
      * @param  array<int, mixed> | Closure  $data
      */
     public function emitTo(
@@ -52,22 +97,7 @@ trait CanEmitEvent
         string | Closure | null $event,
         array | Closure $data = [],
     ): static {
-        $this->emit($event, $data);
-        $this->emitDirection = 'to';
-        $this->emitToComponent = $component;
-
-        return $this;
-    }
-
-    /**
-     * @param  array<int, mixed> | Closure  $data
-     */
-    public function emitUp(
-        string | Closure | null $event,
-        array | Closure $data = [],
-    ): static {
-        $this->emit($event, $data);
-        $this->emitDirection = 'up';
+        $this->dispatchTo($component, $event, $data);
 
         return $this;
     }
@@ -95,13 +125,13 @@ trait CanEmitEvent
         return $this->evaluate($this->eventData);
     }
 
-    public function getEmitDirection(): string | bool
+    public function getDispatchDirection(): string | bool
     {
-        return $this->emitDirection;
+        return $this->dispatchDirection;
     }
 
-    public function getEmitToComponent(): ?string
+    public function getDispatchToComponent(): ?string
     {
-        return $this->emitToComponent;
+        return $this->dispatchToComponent;
     }
 }

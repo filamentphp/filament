@@ -114,7 +114,7 @@ DatabaseNotifications::databaseNotificationsPollingInterval(null);
 
 Alternatively, the package has a native integration with [Laravel Echo](https://laravel.com/docs/broadcasting#client-side-installation). Make sure Echo is installed, as well as a [server-side websockets integration](https://laravel.com/docs/broadcasting#server-side-installation) like Pusher.
 
-Once websockets are set up, after sending a database notification you may emit a `DatabaseNotificationsSent` event, which will immediately fetch new notifications for that user:
+Once websockets are set up, after sending a database notification you may dispatch a `DatabaseNotificationsSent` event, which will immediately fetch new notifications for that user:
 
 ```php
 use Filament\Notifications\Events\DatabaseNotificationsSent;

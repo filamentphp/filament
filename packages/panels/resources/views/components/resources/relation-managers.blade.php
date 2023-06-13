@@ -61,14 +61,14 @@
         >
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
                 @foreach ($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManager)
-                    @livewire($manager, ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($groupedManager))
+                    @livewire($manager, ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($groupedManager))
                 @endforeach
             @else
                 @php
                     $manager = $managers[$activeManager];
                 @endphp
 
-                @livewire($manager, ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($manager))
+                @livewire($manager, ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($manager))
             @endif
         </div>
     @elseif ($content)

@@ -17,7 +17,7 @@
 >
     @foreach ($widgets as $widget)
         @if ($widget::canView())
-            @livewire($widget, $data, key($widget))
+            @livewire($widget, array_merge(['lazy' => true], $data), key($widget))
         @endif
     @endforeach
 </x-filament::grid>

@@ -17,7 +17,7 @@ class StaticAction extends ViewComponent
     use Concerns\CanBeOutlined;
     use Concerns\CanCallParentAction;
     use Concerns\CanClose;
-    use Concerns\CanEmitEvent;
+    use Concerns\CanDispatchEvent;
     use Concerns\CanOpenUrl;
     use Concerns\CanSubmitForm;
     use Concerns\HasAction;
@@ -108,17 +108,16 @@ class StaticAction extends ViewComponent
             $arguments = collect([$event])
                 ->merge($this->getEventData())
                 ->when(
-                    $this->getEmitToComponent(),
+                    $this->getDispatchToComponent(),
                     fn (Collection $collection, string $component) => $collection->prepend($component),
                 )
                 ->map(fn (mixed $value): string => Js::from($value)->toHtml())
                 ->implode(', ');
 
-            return match ($this->getEmitDirection()) {
-                'self' => "\$emitSelf($arguments)",
-                'to' => "\$emitTo($arguments)",
-                'up' => "\$emitUp($arguments)",
-                default => "\$emit($arguments)"
+            return match ($this->getDispatchDirection()) {
+                'self' => "\$dispatchSelf($arguments)",
+                'to' => "\$dispatchTo($arguments)",
+                default => "\$dispatch($arguments)"
             };
         }
 

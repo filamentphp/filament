@@ -94,7 +94,7 @@ protected function getCards(): array
             ->color('success')
             ->extraAttributes([
                 'class' => 'cursor-pointer',
-                'wire:click' => '$emitUp("setStatusFilter", "processed")',
+                'wire:click' => '$dispatch("setStatusFilter", "processed")',
             ]),
         // ...
     ];

@@ -35,6 +35,9 @@ trait InteractsWithForms
 
     protected bool $hasFormsModalRendered = false;
 
+    /**
+     * @var array<string, mixed>
+     */
     protected array $oldFormState = [];
 
     public function dispatchFormEvent(mixed ...$args): void

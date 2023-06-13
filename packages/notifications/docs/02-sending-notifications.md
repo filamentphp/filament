@@ -220,7 +220,7 @@ new Notification()
 
 ## Adding actions to notifications
 
-Notifications support [actions](../actions/trigger-button), which are buttons that render below the content of the notification. They can open a URL or emit a Livewire event. Actions can be defined as follows:
+Notifications support [actions](../actions/trigger-button), which are buttons that render below the content of the notification. They can open a URL or dispatch a Livewire event. Actions can be defined as follows:
 
 ```php
 use Filament\Notifications\Actions\Action;
@@ -299,9 +299,9 @@ new Notification()
     .send()
 ```
 
-### Emitting Livewire events from notification actions
+### Dispatching Livewire events from notification actions
 
-Sometimes you want to execute additional code when a notification action is clicked. This can be achieved by setting a Livewire event which should be emitted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
+Sometimes you want to execute additional code when a notification action is clicked. This can be achieved by setting a Livewire event which should be dispatchted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
 
 ```php
 use Filament\Notifications\Actions\Action;
@@ -317,25 +317,21 @@ Notification::make()
             ->url(route('posts.show', $post), shouldOpenInNewTab: true),
         Action::make('undo')
             ->color('gray')
-            ->emit('undoEditingPost', [$post->id]),
+            ->dispatch('undoEditingPost', [$post->id]),
     ])
     ->send();
 ```
 
-You can also `emitSelf`, `emitUp` and `emitTo`:
+You can also `dispatchSelf` and `dispatchTo`:
 
 ```php
 Action::make('undo')
     ->color('secondary')
-    ->emitSelf('undoEditingPost', [$post->id])
+    ->dispatchSelf('undoEditingPost', [$post->id])
 
 Action::make('undo')
     ->color('secondary')
-    ->emitUp('undoEditingPost', [$post->id])
-
-Action::make('undo')
-    ->color('secondary')
-    ->emitTo('another_component', 'undoEditingPost', [$post->id])
+    ->dispatchTo('another_component', 'undoEditingPost', [$post->id])
 ```
 
 Or with JavaScript:
@@ -352,30 +348,26 @@ new Notification()
             .openUrlInNewTab(),
         new NotificationAction('undo')
             .color('gray')
-            .emit('undoEditingPost'),
+            .dispatch('undoEditingPost'),
     ])
     .send()
 ```
 
-Similarly, `emitSelf`, `emitUp` and `emitTo` are also available:
+Similarly, `dispatchSelf` and `dispatchTo` are also available:
 
 ```js
 new NotificationAction('undo')
     .color('secondary')
-    .emitSelf('undoEditingPost')
+    .dispatchSelf('undoEditingPost')
 
 new NotificationAction('undo')
     .color('secondary')
-    .emitUp('undoEditingPost')
-
-new NotificationAction('undo')
-    .color('secondary')
-    .emitTo('another_component', 'undoEditingPost')
+    .dispatchTo('another_component', 'undoEditingPost')
 ```
 
 ### Closing notifications from actions
 
-After opening a URL or emitting an event from your action, you may want to close the notification right away:
+After opening a URL or dispatching an event from your action, you may want to close the notification right away:
 
 ```php
 use Filament\Notifications\Actions\Action;
@@ -391,7 +383,7 @@ Notification::make()
             ->url(route('posts.show', $post), shouldOpenInNewTab: true),
         Action::make('undo')
             ->color('gray')
-            ->emit('undoEditingPost', [$post->id])
+            ->dispatch('undoEditingPost', [$post->id])
             ->close(),
     ])
     ->send();
@@ -411,7 +403,7 @@ new Notification()
             .openUrlInNewTab(),
         new NotificationAction('undo')
             .color('gray')
-            .emit('undoEditingPost')
+            .dispatch('undoEditingPost')
             .close(),
     ])
     .send()
