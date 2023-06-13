@@ -1,7 +1,7 @@
 @props([
     'actions' => null,
     'ariaLabelledby' => null,
-    'closeButton' => true,
+    'closeButton' => \Filament\Support\View\Components\Modal::$isCloseButtonDisplayed,
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
     'closeEventName' => 'close-modal',
     'displayClasses' => 'inline-block',

@@ -50,6 +50,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalHidden = false;
 
+    protected bool | Closure | null $isModalCloseButtonDisplayed = null;
+
     protected bool | Closure | null $isModalClosedByClickingAway = null;
 
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
@@ -62,6 +64,13 @@ trait CanOpenModal
     public function centerModal(bool | Closure | null $condition = true): static
     {
         $this->isModalCentered = $condition;
+
+        return $this;
+    }
+
+    public function displayModalCloseButton(bool | Closure | null $condition = true): static
+    {
+        $this->isModalCloseButtonDisplayed = $condition;
 
         return $this;
     }
@@ -434,6 +443,11 @@ trait CanOpenModal
     public function isModalHidden(): bool
     {
         return $this->evaluate($this->isModalHidden);
+    }
+
+    public function isModalCloseButtonDisplayed(): bool
+    {
+        return $this->evaluate($this->isModalCloseButtonDisplayed) ?? Modal::$isCloseButtonDisplayed;
     }
 
     public function isModalClosedByClickingAway(): bool

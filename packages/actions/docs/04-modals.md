@@ -373,3 +373,26 @@ Action::make('create')
         }
     })
 ```
+
+## Hiding the modal close button
+
+By default, modals have a close button in the top right corner. If you wish to hide the close button, you can use the `displayModalCloseButton(false)` method:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->displayModalCloseButton(false)
+```
+
+If you'd like to hide the close button for all modals in the application, you can do so by calling `Modal::closeButtonDisplayed()` inside a service provider or middleware:
+
+```php
+use Filament\Support\View\Components\Modal;
+
+Modal::closedButtonDisplayed(false);
+```
