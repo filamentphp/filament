@@ -5,7 +5,7 @@
         </x-slot>
     @endif
 
-    <form wire:submit.prevent="request" class="grid gap-y-8">
+    <form wire:submit="request" class="grid gap-y-8">
         {{ $this->form }}
 
         {{ $this->requestAction }}

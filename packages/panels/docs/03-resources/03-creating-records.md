@@ -229,7 +229,7 @@ protected function getSteps(): array
             ->schema([
                 TextInput::make('name')
                     ->required()
-                    ->reactive()
+                    ->live()
                     ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state))),
                 TextInput::make('slug')
                     ->disabled()
@@ -291,7 +291,7 @@ class CategoryResource extends Resource
     {
         return TextInput::make('name')
             ->required()
-            ->reactive()
+            ->live()
             ->afterStateUpdated(fn ($state, callable $set) => $set('slug', Str::slug($state)));
     }
     
@@ -344,7 +344,7 @@ Here's a very simple example of what that view might contain:
 
 ```blade
 <x-filament::page>
-    <x-filament::form wire:submit.prevent="create">
+    <x-filament::form wire:submit="create">
         {{ $this->form }}
 
         <x-filament::form.actions

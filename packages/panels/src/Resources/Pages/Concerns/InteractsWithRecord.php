@@ -5,9 +5,11 @@ namespace Filament\Resources\Pages\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportLockedProperties\Locked;
 
 trait InteractsWithRecord
 {
+    #[Locked]
     public Model | int | string | null $record;
 
     protected function resolveRecord(int | string $key): Model

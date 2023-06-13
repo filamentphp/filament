@@ -137,7 +137,7 @@
     </a>
 @elseif ($tag === 'form')
     <form
-        {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}
+        {{ $attributes->only(['action', 'class', 'method', 'wire:submit']) }}
     >
         @csrf
 
@@ -149,7 +149,7 @@
             type="submit"
             {{
                 $attributes
-                    ->except(['action', 'class', 'method', 'wire:submit.prevent'])
+                    ->except(['action', 'class', 'method', 'wire:submit'])
                     ->class([$buttonClasses])
             }}
         >

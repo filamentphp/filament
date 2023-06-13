@@ -42,6 +42,8 @@ interface HasForms
      */
     public function getFormUploadedFiles(string $statePath): ?array;
 
+    public function getOldFormState(string $statePath): mixed;
+
     public function isCachingForms(): bool;
 
     public function removeFormUploadedFile(string $statePath, string $fileKey): void;

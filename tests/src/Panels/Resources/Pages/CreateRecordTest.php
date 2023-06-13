@@ -8,9 +8,8 @@ use function Pest\Livewire\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
-    // @todo: add assertSuccessful() to Livewire
-    // $this->get(PostResource::getUrl('create'))
-    //     ->assertSuccessful();
+    $this->get(PostResource::getUrl('create'))
+        ->assertSuccessful();
 });
 
 it('can create', function () {

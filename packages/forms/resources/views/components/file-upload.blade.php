@@ -55,6 +55,7 @@
             uploadButtonPosition: @js($getUploadButtonPosition()),
             uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
             uploadUsing: (fileKey, file, success, error, progress) => {
+                // @todo: $wire.upload() / @this.upload() does not exist yet
                 $wire.upload(`{{ $statePath }}.${fileKey}`, file, () => {
                     success(fileKey)
                 }, error, progress)
@@ -85,6 +86,7 @@
                 min-height: {{ $isAvatar ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }};
             "
             @class([
+                'h-full',
                 'w-32' => $isAvatar,
                 'w-full' => ! $isAvatar,
             ])

@@ -141,7 +141,7 @@ Compile your new CSS and JS assets using `npm run dev`.
 
 ### Configuring layout
 
-Finally, create a new `resources/views/layouts/app.blade.php` layout file for Livewire components:
+Finally, create a new `resources/views/components/layouts/app.blade.php` layout file for Livewire components:
 
 ```blade
 <!DOCTYPE html>

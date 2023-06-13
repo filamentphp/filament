@@ -328,7 +328,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function editOptionForm(array | Closure | null $schema): static
     {
         $this->editOptionActionForm = $schema;
-        $this->reactive();
+        $this->live();
 
         return $this;
     }

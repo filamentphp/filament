@@ -31,8 +31,7 @@ class TestsRecords
             );
 
             if ($inOrder) {
-                // @todo: Add to Livewire
-                // $this->assertSeeHtmlInOrder($html);
+                $this->assertSeeHtmlInOrder($html);
             } else {
                 $this->assertSeeHtml($html);
             }

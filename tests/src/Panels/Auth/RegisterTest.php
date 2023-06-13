@@ -12,9 +12,8 @@ use function Pest\Livewire\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
-    // @todo: add assertSuccessful() to Livewire
-//    $this->get(Filament::getRegistrationUrl())
-//        ->assertSuccessful();
+    $this->get(Filament::getRegistrationUrl())
+        ->assertSuccessful();
 });
 
 it('can register', function () {

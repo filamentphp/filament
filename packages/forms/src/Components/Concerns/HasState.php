@@ -10,6 +10,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use function Livewire\store;
 
 trait HasState
 {
@@ -284,7 +285,7 @@ trait HasState
             return null;
         }
 
-        $state = request('serverMemo.data.' . $this->getStatePath());
+        $state = $this->getLivewire()->getOldFormState($this->getStatePath());
 
         if (blank($state)) {
             return null;

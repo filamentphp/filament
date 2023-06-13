@@ -41,12 +41,6 @@ class GlobalSearch extends Component
         return false;
     }
 
-    // @todo Do I need to override the component name here?
-//    public static function getName(): string
-//    {
-//        return 'filament.core.global-search';
-//    }
-
     public function render(): View
     {
         return view('filament::components.global-search.index', [

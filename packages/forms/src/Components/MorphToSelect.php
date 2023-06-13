@@ -67,7 +67,7 @@ class MorphToSelect extends Component
                     $types,
                 ))
                 ->required($isRequired)
-                ->reactive()
+                ->live()
                 ->afterStateUpdated(fn (Set $set) => $set($keyColumn, null)),
             Select::make($keyColumn)
                 ->label($selectedType?->getLabel())

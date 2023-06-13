@@ -150,7 +150,7 @@ In this example, some fields are `required()`, and some have a `maxLength()`. We
 
 Since all Filament forms are built on top of Livewire, form schemas are completely dynamic. There are so many possibilities, but here are a couple of examples of how you can use this to your advantage:
 
-Fields can hide or show based on other field's values. In our form, we can hide the `published_at` timestamp field until the `status` field is set to `published`. This is done by passing a closure to the `hidden()` method, which allows you to dynamically hide or show a field while the form is being used. Closures have access to many useful arguments like `$get`, and you can find a [full list here](advanced#form-component-utility-injection). The field that you depend on (the `status` in this case) needs to be set to `reactive()`, which tells the form to reload the schema each time it gets changed.
+Fields can hide or show based on other field's values. In our form, we can hide the `published_at` timestamp field until the `status` field is set to `published`. This is done by passing a closure to the `hidden()` method, which allows you to dynamically hide or show a field while the form is being used. Closures have access to many useful arguments like `$get`, and you can find a [full list here](advanced#form-component-utility-injection). The field that you depend on (the `status` in this case) needs to be set to `live()`, which tells the form to reload the schema each time it gets changed.
 
 ```php
 use Filament\Forms\Components\DateTimePicker;
@@ -165,7 +165,7 @@ use Filament\Forms\Get;
             'published' => 'Published',
         ])
         ->required()
-        ->reactive(),
+        ->live(),
     DateTimePicker::make('published_at')
         ->hidden(fn (Get $get) => $get('status') !== 'published'),
 ]
@@ -173,7 +173,7 @@ use Filament\Forms\Get;
 
 It's not just `hidden()` - all Filament form methods support closures like this. You can use them to change the label, placeholder, or even the options of a field, based on another. You can even use them to add new fields to the form, or remove them. This is a powerful tool that allows you to create complex forms with minimal effort.
 
-Fields can also write data to other fields. For example, we can set the title to automatically generate a slug when the title is changed. This is done by passing a closure to the `afterStateUpdated()` method, which gets run each time the title is changed. This closure has access to the title (`$state`) and a function (`$set`) to set the slug field's state. You can find a [full list of closure arguments here](advanced#form-component-utility-injection). The field that you  depend on (the `title` in this case) needs to be set to `reactive()`, which tells the form to reload and set the slug each time it gets changed.
+Fields can also write data to other fields. For example, we can set the title to automatically generate a slug when the title is changed. This is done by passing a closure to the `afterStateUpdated()` method, which gets run each time the title is changed. This closure has access to the title (`$state`) and a function (`$set`) to set the slug field's state. You can find a [full list of closure arguments here](advanced#form-component-utility-injection). The field that you  depend on (the `title` in this case) needs to be set to `live()`, which tells the form to reload and set the slug each time it gets changed.
 
 ```php
 use Filament\Forms\Components\TextInput;
@@ -184,7 +184,7 @@ use Illuminate\Support\Str;
     TextInput::make('title')
         ->required()
         ->maxLength(255)
-        ->reactive()
+        ->live()
         ->afterStateUpdated(function (Set $set, $state) {
             $set('slug', Str::slug($state));
         })

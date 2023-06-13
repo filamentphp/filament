@@ -134,7 +134,9 @@ class Notification {
     }
 
     send() {
-        Livewire.emit('notificationSent', this)
+        window.dispatchEvent(new CustomEvent('notificationSent', { detail: {
+            notification: this,
+        } }))
 
         return this
     }

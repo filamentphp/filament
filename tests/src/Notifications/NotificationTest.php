@@ -14,9 +14,8 @@ use function Pest\Livewire\livewire;
 uses(TestCase::class);
 
 it('can render', function () {
-    // @todo: add assertSuccessful() to Livewire
-    // livewire(Notifications::class)
-    //     ->assertSuccessful();
+    livewire(Notifications::class)
+        ->assertSeeHtml('notifications');
 });
 
 it('can send notifications', function () {

@@ -13,7 +13,6 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Livewire\Component;
-use Livewire\WithPagination;
 
 class DatabaseNotifications extends Component
 {
@@ -157,7 +156,7 @@ class DatabaseNotifications extends Component
     // @todo Replace this method for LW3 to ensure pagination query string is not used.
     public function queryStringWithPagination(): void
     {
-        return;
+
     }
 
     public function render(): View

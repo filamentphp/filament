@@ -11,15 +11,13 @@ use function Pest\Livewire\livewire;
 uses(TestCase::class);
 
 it('can render posts page', function () {
-    // @todo: add assertSuccessful() to Livewire
-//    $this->get(PostResource::getUrl('index'))
-//        ->assertSuccessful();
+    $this->get(PostResource::getUrl('index'))
+        ->assertSuccessful();
 });
 
 it('can render users page', function () {
-    // @todo: add assertSuccessful() to Livewire
-//    $this->get(UserResource::getUrl('index'))
-//        ->assertSuccessful();
+    $this->get(UserResource::getUrl('index'))
+        ->assertSuccessful();
 });
 
 it('can list posts', function () {

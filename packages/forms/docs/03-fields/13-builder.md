@@ -108,7 +108,7 @@ Builder\Block::make('heading')
     })
 ```
 
-Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
+Any fields that you use from `$state` should be `live()` or `lazy()` if you wish to see the item label update live as you use the form.
 
 ### Numbering builder items
 

@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Prop;
 use Livewire\Component;
+use Livewire\Features\SupportLockedProperties\Locked;
 
 class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
@@ -26,10 +27,10 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
         makeTable as makeBaseTable;
     }
 
-    #[Prop]
+    #[Locked, Prop]
     public Model $ownerRecord;
 
-    #[Prop]
+    #[Locked, Prop]
     public ?string $pageClass = null;
 
     protected static string $relationship;

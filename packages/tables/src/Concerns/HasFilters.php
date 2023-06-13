@@ -28,7 +28,7 @@ trait HasFilters
             ->schema($this->getTableFiltersFormSchema())
             ->columns($this->getTable()->getFiltersFormColumns())
             ->statePath('tableFilters')
-            ->reactive();
+            ->live();
     }
 
     public function updatedTableFilters(): void

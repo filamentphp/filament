@@ -17,9 +17,8 @@ it('can render page', function () {
 
     $this->actingAs($userToVerify);
 
-    // @todo: add assertSuccessful() to Livewire
-    // $this->get(Filament::getEmailVerificationPromptUrl())
-    //     ->assertSuccessful();
+    $this->get(Filament::getEmailVerificationPromptUrl())
+        ->assertSuccessful();
 });
 
 it('can resend notification', function () {

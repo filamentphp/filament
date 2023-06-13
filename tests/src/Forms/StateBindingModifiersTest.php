@@ -12,16 +12,16 @@ test('component state binding is deferred by default', function () {
     $component = (new Component())->container(ComponentContainer::make(Livewire::make()));
 
     expect($component)
-        ->getStateBindingModifiers()->toBe(['defer']);
+        ->getStateBindingModifiers()->toBe([]);
 });
 
-test('component state binding can be reactive', function () {
+test('component state binding can be live', function () {
     $component = (new Component())
         ->container(ComponentContainer::make(Livewire::make()))
-        ->reactive();
+        ->live();
 
     expect($component)
-        ->getStateBindingModifiers()->toBe([]);
+        ->getStateBindingModifiers()->toBe(['live']);
 });
 
 test('component state binding can be lazy', function () {
@@ -39,7 +39,7 @@ test('component state binding can be debounced', function () {
         ->debounce('750ms');
 
     expect($component)
-        ->getStateBindingModifiers()->toBe(['debounce', '750ms']);
+        ->getStateBindingModifiers()->toBe(['live', 'debounce', '750ms']);
 });
 
 test('components inherit their state binding modifiers', function () {

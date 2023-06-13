@@ -13,10 +13,9 @@ use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
-it('can be mounted', function () {
-    // @todo: add assertSuccessful() to Livewire
-    // livewire(GlobalSearch::class)
-    //     ->assertSuccessful();
+it('can render', function () {
+    livewire(GlobalSearch::class)
+        ->assertSeeHtml('search');
 });
 
 it('can retrieve search results', function () {

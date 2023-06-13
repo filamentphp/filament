@@ -1,5 +1,5 @@
 @if ($this instanceof \Filament\Actions\Contracts\HasActions && (! $this->hasActionsModalRendered))
-    <form wire:submit.prevent="callMountedAction">
+    <form wire:submit="callMountedAction">
         @php
             $action = $this->getMountedAction();
         @endphp
@@ -88,7 +88,7 @@
 @endif
 
 @if ($this instanceof \Filament\Infolists\Contracts\HasInfolists && (! $this->hasInfolistsModalRendered))
-    <form wire:submit.prevent="callMountedInfolistAction">
+    <form wire:submit="callMountedInfolistAction">
         @php
             $action = $this->getMountedInfolistAction();
         @endphp
@@ -177,7 +177,7 @@
 @endif
 
 @if ($this instanceof \Filament\Tables\Contracts\HasTable && (! $this->hasTableModalRendered))
-    <form wire:submit.prevent="callMountedTableAction">
+    <form wire:submit="callMountedTableAction">
         @php
             $action = $this->getMountedTableAction();
         @endphp
@@ -260,7 +260,7 @@
         </x-filament::modal>
     </form>
 
-    <form wire:submit.prevent="callMountedTableBulkAction">
+    <form wire:submit="callMountedTableBulkAction">
         @php
             $action = $this->getMountedTableBulkAction();
         @endphp
@@ -353,7 +353,7 @@
         $action = $this->getMountedFormComponentAction();
     @endphp
 
-    <form wire:submit.prevent="callMountedFormComponentAction">
+    <form wire:submit="callMountedFormComponentAction">
         <x-filament::modal
             :id="$this->getId() . '-form-component-action'"
             :wire:key="$action ? $this->getId() . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"

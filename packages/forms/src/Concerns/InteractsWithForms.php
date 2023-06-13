@@ -35,6 +35,8 @@ trait InteractsWithForms
 
     protected bool $hasFormsModalRendered = false;
 
+    protected array $oldFormState = [];
+
     public function dispatchFormEvent(mixed ...$args): void
     {
         foreach ($this->getCachedForms() as $form) {
@@ -224,6 +226,16 @@ trait InteractsWithForms
     public function getActiveFormLocale(): ?string
     {
         return null;
+    }
+
+    public function updatingInteractsWithForms(string $statePath): void
+    {
+        $this->oldFormState[$statePath] = data_get($this, $statePath);
+    }
+
+    public function getOldFormState(string $statePath): mixed
+    {
+        return $this->oldFormState[$statePath] ?? null;
     }
 
     public function updatedInteractsWithForms(string $statePath): void

@@ -4,7 +4,7 @@
         'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
     ])
 >
-    <x-filament::form wire:submit.prevent="create">
+    <x-filament::form wire:submit="create">
         {{ $this->form }}
 
         <x-filament::form.actions

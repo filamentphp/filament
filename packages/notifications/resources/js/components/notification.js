@@ -60,9 +60,10 @@ export default (Alpine) => {
         configureAnimations: function () {
             let animation
 
+            // @todo: This hook was in Livewire 2 but I can't find it in Livewire v3 yet.
             Livewire.hook('message.received', (_, component) => {
                 if (
-                    !component.serverMemo.data.isFilamentNotificationsComponent
+                    !component.snapshot.isFilamentNotificationsComponent
                 ) {
                     return
                 }
@@ -88,9 +89,10 @@ export default (Alpine) => {
                     .forEach((animation) => animation.finish())
             })
 
+            // @todo: This hook was in Livewire 2 but I can't find it in Livewire v3 yet.
             Livewire.hook('message.processed', (_, component) => {
                 if (
-                    !component.serverMemo.data.isFilamentNotificationsComponent
+                    !component.snapshot.isFilamentNotificationsComponent
                 ) {
                     return
                 }
@@ -107,17 +109,23 @@ export default (Alpine) => {
             this.isShown = false
 
             setTimeout(
-                () => Livewire.emit('notificationClosed', notification.id),
+                () => window.dispatchEvent(new CustomEvent('notificationClosed', { detail: {
+                    id: notification.id,
+                }})),
                 this.getTransitionDuration(),
             )
         },
 
         markAsRead: function () {
-            Livewire.emit('markedNotificationAsRead', notification.id)
+            window.dispatchEvent(new CustomEvent('markedNotificationAsRead', { detail: {
+                id: notification.id,
+            }}))
         },
 
         markAsUnread: function () {
-            Livewire.emit('markedNotificationAsUnread', notification.id)
+            window.dispatchEvent(new CustomEvent('markedNotificationAsUnread', { detail: {
+                id: notification.id,
+            }}))
         },
 
         getTransitionDuration: function () {

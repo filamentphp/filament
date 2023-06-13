@@ -16,11 +16,10 @@ it('can render page', function () {
     $userToResetPassword = User::factory()->make();
     $token = Password::createToken($userToResetPassword);
 
-    // @todo: add assertSuccessful() to Livewire
-//    $this->get(Filament::getResetPasswordUrl(
-//        $token,
-//        $userToResetPassword,
-//    ))->assertSuccessful();
+    $this->get(Filament::getResetPasswordUrl(
+        $token,
+        $userToResetPassword,
+    ))->assertSuccessful();
 });
 
 it('can reset password', function () {
