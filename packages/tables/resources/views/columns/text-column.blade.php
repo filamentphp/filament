@@ -57,7 +57,7 @@
         @foreach ($arrayState as $state)
             @php
                 $formattedState = $formatState($state);
-                $color = $getColor($state) ?? ($isBadge ? 'gray' : null);
+                $color = $getColor($state) ?? 'gray';
                 $icon = $getIcon($state);
             @endphp
 
@@ -74,9 +74,8 @@
                                 default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
                             } => $isBadge,
                             match ($color) {
-                                null => null,
-                                'gray' => 'text-gray-600 dark:text-gray-400',
-                                default => 'text-custom-600',
+                                'gray' => null,
+                                default => 'text-custom-600 dark:text-custom-400',
                             } => ! ($isBadge || $isClickable),
                             match ($size = ($isBadge ? 'xs' : $getSize($state))) {
                                 'xs' => 'text-xs',
@@ -103,18 +102,16 @@
                                 default => null,
                             },
                         ])
-                        @if ($color)
-                            @style([
-                                \Filament\Support\get_color_css_variables(
-                                    $color,
-                                    shades: match (true) {
-                                        $isBadge => [500, 700],
-                                        ! ($isBadge || $isClickable) => [600],
-                                        default => [],
-                                    },
-                                ) => $color !== 'gray',
-                            ])
-                        @endif
+                        @style([
+                            \Filament\Support\get_color_css_variables(
+                                $color,
+                                shades: match (true) {
+                                    $isBadge => [500, 700],
+                                    ! ($isBadge || $isClickable) => [400, 600],
+                                    default => [],
+                                },
+                            ) => $color !== 'gray',
+                        ])
                     >
                         @if ($icon && $iconPosition === 'before')
                             <x-filament::icon
