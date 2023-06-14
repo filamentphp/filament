@@ -3,7 +3,7 @@
     "type": "module",
     "scripts": {
         "dev:js": "node bin/build.js --dev",
-        "dev:css": "npx tailwindcss -c ./packages/panels/tailwind.config.js -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --minify",
+        "dev:css": "npx tailwindcss -c ./packages/panels/tailwind.config.js -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --watch",
         "dev": "npm-run-all --parallel dev:*",
         "build:js": "node bin/build.js",
         "build:css": "npx tailwindcss -c ./packages/panels/tailwind.config.js -i ./packages/panels/resources/css/theme.css -o ./packages/panels/dist/theme.css --minify",
