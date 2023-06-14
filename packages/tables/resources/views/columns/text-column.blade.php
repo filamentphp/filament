@@ -57,7 +57,7 @@
         @foreach ($arrayState as $state)
             @php
                 $formattedState = $formatState($state);
-                $color = $getColor($state) ?? 'gray';
+                $color = $getColor($state) ?? ($isBadge ? 'gray' : null);
                 $icon = $getIcon($state);
             @endphp
 
@@ -68,12 +68,13 @@
                             'inline-flex items-center space-x-1 rtl:space-x-reverse',
                             'filament-tables-text-column-badge min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
                             'whitespace-normal' => $canWrap,
-                            $isBadge && is_string($color) ? "filament-tables-text-column-badge-color-{$color}" : null,
+                            "filament-tables-text-column-badge-color-{$color}" => $isBadge && is_string($color),
                             match ($color) {
                                 'gray' => 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
                                 default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
                             } => $isBadge,
                             match ($color) {
+                                null => null,
                                 'gray' => 'text-gray-600 dark:text-gray-400',
                                 default => 'text-custom-600',
                             } => ! ($isBadge || $isClickable),
@@ -102,16 +103,18 @@
                                 default => null,
                             },
                         ])
-                        @style([
-                            \Filament\Support\get_color_css_variables(
-                                $color,
-                                shades: match (true) {
-                                    $isBadge => [500, 700],
-                                    ! ($isBadge || $isClickable) => [600],
-                                    default => [],
-                                },
-                            ) => $color !== 'gray',
-                        ])
+                        @if ($color)
+                            @style([
+                                \Filament\Support\get_color_css_variables(
+                                    $color,
+                                    shades: match (true) {
+                                        $isBadge => [500, 700],
+                                        ! ($isBadge || $isClickable) => [600],
+                                        default => [],
+                                    },
+                                ) => $color !== 'gray',
+                            ])
+                        @endif
                     >
                         @if ($icon && $iconPosition === 'before')
                             <x-filament::icon
