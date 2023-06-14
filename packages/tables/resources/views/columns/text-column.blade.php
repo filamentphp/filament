@@ -108,6 +108,7 @@
                                 shades: match (true) {
                                     $isBadge => [500, 700],
                                     ! ($isBadge || $isClickable) => [600],
+                                    default => [],
                                 },
                             ) => $color !== 'gray',
                         ])
