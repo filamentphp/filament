@@ -74,8 +74,8 @@
                                 default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
                             } => $isBadge,
                             match ($color) {
-                                'gray' => 'text-gray-600 dark:text-gray-400',
-                                default => 'text-custom-600',
+                                'gray' => null,
+                                default => 'text-custom-600 dark:text-custom-400',
                             } => ! ($isBadge || $isClickable),
                             match ($size = ($isBadge ? 'xs' : $getSize($state))) {
                                 'xs' => 'text-xs',
@@ -107,7 +107,7 @@
                                 $color,
                                 shades: match (true) {
                                     $isBadge => [500, 700],
-                                    ! ($isBadge || $isClickable) => [600],
+                                    ! ($isBadge || $isClickable) => [400, 600],
                                     default => [],
                                 },
                             ) => $color !== 'gray',
