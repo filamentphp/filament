@@ -201,9 +201,9 @@ class AssetManager
     {
         $variables = [];
 
-        foreach (FilamentColor::getColors() as $colorName => $colorShades) {
-            foreach ($colorShades as $shade => $color) {
-                $variables["{$colorName}-{$shade}"] = $color;
+        foreach (FilamentColor::getColors() as $name => $shades) {
+            foreach ($shades as $shade => $color) {
+                $variables["{$name}-{$shade}"] = $color;
             }
         }
 

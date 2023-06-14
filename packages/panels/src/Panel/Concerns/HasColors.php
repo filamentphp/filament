@@ -14,8 +14,8 @@ trait HasColors
      */
     public function colors(array $colors): static
     {
-        foreach ($colors as $colorName => $color) {
-            $this->colors[$colorName] = $color;
+        foreach ($colors as $name => $color) {
+            $this->colors[$name] = $color;
         }
 
         return $this;

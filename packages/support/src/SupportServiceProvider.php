@@ -42,30 +42,22 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $this->app->scoped(
             AssetManager::class,
-            function () {
-                return new AssetManager();
-            },
+            fn () => new AssetManager(),
         );
 
         $this->app->scoped(
             ColorManager::class,
-            function () {
-                return new ColorManager();
-            },
+            fn () => new ColorManager(),
         );
 
         $this->app->scoped(
             IconManager::class,
-            function () {
-                return new IconManager();
-            },
+            fn () => new IconManager(),
         );
 
         $this->app->scoped(
             SanitizerInterface::class,
-            function () {
-                return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
-            },
+            fn () => Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php'),
         );
     }
 

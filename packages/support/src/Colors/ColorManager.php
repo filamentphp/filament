@@ -14,8 +14,8 @@ class ColorManager
      */
     public function register(array $colors): static
     {
-        foreach ($colors as $colorName => $color) {
-            $this->colors[$colorName] = $this->processColor($color);
+        foreach ($colors as $name => $color) {
+            $this->colors[$name] = $this->processColor($color);
         }
 
         return $this;
