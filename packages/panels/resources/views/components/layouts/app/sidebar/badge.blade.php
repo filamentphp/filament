@@ -18,7 +18,7 @@
                 },
             ])
             ->style([
-                \Filament\Support\get_color_css_variables($badgeColor, shades: [500, 700]) => $active,
+                \Filament\Support\get_color_css_variables($badgeColor, shades: [500, 700]) => ! $active,
             ])
     }}
 >
