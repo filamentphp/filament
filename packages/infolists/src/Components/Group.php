@@ -22,9 +22,9 @@ class Group extends Component
     }
 
     /**
-     * @param  array<Component>  $schema
+     * @param  array<Component> | Closure  $schema
      */
-    public static function make(array $schema = []): static
+    public static function make(array | Closure $schema = []): static
     {
         $static = app(static::class, ['schema' => $schema]);
         $static->configure();
