@@ -138,6 +138,13 @@
 
         @stack('scripts')
 
+        <script defer>
+            document.addEventListener('DOMContentLoaded', function () {
+                let sidebar_item = document.querySelector('.filament-sidebar-item-active');
+                sidebar_item.scrollIntoView({ behavior: "auto", block: "center", inline: "center" });
+            });
+        </script>
+        
         {{ \Filament\Facades\Filament::renderHook('scripts.end') }}
 
         {{ \Filament\Facades\Filament::renderHook('body.end') }}
