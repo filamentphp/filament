@@ -10,7 +10,7 @@ class Icon
 
     public ?string $size = null;
 
-    public string | array | null $color = null;
+    public ?string $color = null;
 
     /**
      * @var array<string | int, bool | string>
@@ -34,7 +34,7 @@ class Icon
         return $this;
     }
 
-    public function color(string | array | null $color): static
+    public function color(?string $color): static
     {
         $this->color = $color;
 
