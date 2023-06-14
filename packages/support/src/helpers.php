@@ -66,8 +66,8 @@ if (! function_exists('Filament\Support\get_color_css_variables')) {
         }
 
         if (is_array($color)) {
-            foreach ($color as $shade => $shadeColor) {
-                $variables[] = "--c-{$shade}: {$shadeColor}";
+            foreach ($shades as $shade) {
+                $variables[] = "--c-{$shade}:{$color[$shade]}";
             }
         }
 
