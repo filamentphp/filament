@@ -121,6 +121,7 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
+        style="{{ $cssVariables }}"
         {{
             $attributes
                 ->merge([
