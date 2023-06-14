@@ -105,6 +105,7 @@ trait HasFilters
             $field->state(match (true) {
                 is_array($state) => [],
                 $state === true => false,
+                $state === false => false,
                 default => null,
             });
         }
