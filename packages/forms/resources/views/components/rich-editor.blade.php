@@ -116,10 +116,7 @@
                                         tabindex="-1"
                                     >
                                         <svg
-                                            @class([
-                                                'h-4',
-                                                'dark:fill-current' => config('forms.dark_mode'),
-                                            ])
+                                            class="h-4 dark:fill-current"
                                             aria-hidden="true"
                                             focusable="false"
                                             data-prefix="fas"
