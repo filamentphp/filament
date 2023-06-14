@@ -27,17 +27,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<NavigationGroup> buildNavigation()
  * @method static string getAuthGuard()
  * @method static string getBrandName()
- * @method static array{
- *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
- *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
- *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
- *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
- *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
- *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
- * } getColors()
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
- * @method static array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} getDangerColor()
  * @method static string | null getDatabaseNotificationsPollingInterval()
  * @method static string getDefaultAvatarProvider()
  * @method static Panel getDefaultPanel()
@@ -50,9 +41,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getFontUrl()
  * @method static array<string> getGlobalSearchKeyBindings()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
- * @method static array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} getGrayColor()
  * @method static string | null getHomeUrl()
- * @method static array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} getInfoColor()
  * @method static string | null getLoginUrl(array<mixed> $parameters = [])
  * @method static string getLogoutUrl(array<mixed> $parameters = [])
  * @method static string | null getMaxContentWidth()
@@ -65,14 +54,11 @@ use Illuminate\Support\Facades\Facade;
  * @method static Panel getPanel(?string $id = null)
  * @method static array<string, Panel> getPanels()
  * @method static Plugin getPlugin(string $id)
- * @method static array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} getPrimaryColor()
  * @method static string | null getRegistrationUrl(array<mixed> $parameters = [])
  * @method static string | null getRequestPasswordResetUrl(array<mixed> $parameters = [])
  * @method static string getResetPasswordUrl(string $token, CanResetPassword | Model | Authenticatable $user, array<mixed> $parameters = [])
  * @method static array<class-string> getResources()
- * @method static array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} getSecondaryColor()
  * @method static string getSidebarWidth()
- * @method static array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} getSuccessColor()
  * @method static Model | null getTenant()
  * @method static string | null getTenantAvatarUrl(Model $tenant)
  * @method static BillingProvider | null getTenantBillingProvider()
@@ -91,7 +77,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<Model> getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static string | null getUrl(Model | null $tenant = null)
  * @method static string getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array<mixed> $parameters = [])
- * @method static array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} getWarningColor()
  * @method static array<class-string> getWidgets()
  * @method static bool hasBreadcrumbs()
  * @method static bool hasCollapsibleNavigationGroups()

@@ -350,7 +350,7 @@ class TestsBulkActions
 
     public function assertTableBulkActionHasColor(): Closure
     {
-        return function (string $name, string $color, $record = null): static {
+        return function (string $name, string | array $color, $record = null): static {
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
@@ -371,7 +371,7 @@ class TestsBulkActions
 
     public function assertTableBulkActionDoesNotHaveColor(): Closure
     {
-        return function (string $name, string $color, $record = null): static {
+        return function (string $name, string | array $color, $record = null): static {
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */

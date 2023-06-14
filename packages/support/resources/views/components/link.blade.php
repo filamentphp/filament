@@ -22,14 +22,8 @@
         'pe-4' => $indicator,
         'pointer-events-none opacity-70' => $disabled,
         match ($color) {
-            'danger' => 'text-danger-600 hover:text-danger-500 dark:text-danger-500 dark:hover:text-danger-400',
             'gray' => 'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200',
-            'info' => 'text-info-600 hover:text-info-500 dark:text-info-500 dark:hover:text-info-400',
-            'primary' => 'text-primary-600 hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400',
-            'secondary' => 'text-secondary-600 hover:text-secondary-500 dark:text-secondary-500 dark:hover:text-secondary-400',
-            'success' => 'text-success-600 hover:text-success-500 dark:text-success-500 dark:hover:text-success-400',
-            'warning' => 'text-warning-600 hover:text-warning-500 dark:text-warning-500 dark:hover:text-warning-400',
-            default => $color,
+            default => 'text-custom-600 hover:text-custom-500 dark:text-custom-500 dark:hover:text-custom-400',
         },
         match ($size) {
             'sm' => 'text-sm',
@@ -37,6 +31,8 @@
             'lg' => 'text-base',
         },
     ];
+
+    $cssVariables = Filament\Support\get_color_css_variables($color, shades: [400, 500, 600], except: ['gray']);
 
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
@@ -85,6 +81,7 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
+        style="{{ $cssVariables }}"
         {{ $attributes->class($linkClasses) }}
     >
         @if ($icon && $iconPosition === 'before')

@@ -69,22 +69,6 @@ class FilamentManager
         return $this->getCurrentPanel()->getBrandName();
     }
 
-    /**
-     * @return array{
-     *     'danger': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'gray': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'info': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'primary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'secondary': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'success': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     *     'warning': array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null,
-     * }
-     */
-    public function getColors(): array
-    {
-        return $this->getCurrentPanel()->getColors();
-    }
-
     public function getCollapsedSidebarWidth(): string
     {
         return $this->getCurrentPanel()->getCollapsedSidebarWidth();
@@ -93,14 +77,6 @@ class FilamentManager
     public function getCurrentPanel(): ?Panel
     {
         return $this->currentPanel ?? null;
-    }
-
-    /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getDangerColor(): array
-    {
-        return $this->getCurrentPanel()->getDangerColor();
     }
 
     public function getDatabaseNotificationsPollingInterval(): ?string
@@ -176,25 +152,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getGlobalSearchProvider();
     }
 
-    /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getGrayColor(): array
-    {
-        return $this->getCurrentPanel()->getGrayColor();
-    }
-
     public function getHomeUrl(): ?string
     {
         return $this->getCurrentPanel()->getHomeUrl() ?? $this->getCurrentPanel()->getUrl();
-    }
-
-    /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getInfoColor(): array
-    {
-        return $this->getCurrentPanel()->getInfoColor();
     }
 
     /**
@@ -283,14 +243,6 @@ class FilamentManager
     }
 
     /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getPrimaryColor(): array
-    {
-        return $this->getCurrentPanel()->getPrimaryColor();
-    }
-
-    /**
      * @param  array<mixed>  $parameters
      */
     public function getRegistrationUrl(array $parameters = []): ?string
@@ -322,25 +274,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getResources();
     }
 
-    /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getSecondaryColor(): array
-    {
-        return $this->getCurrentPanel()->getSecondaryColor();
-    }
-
     public function getSidebarWidth(): string
     {
         return $this->getCurrentPanel()->getSidebarWidth();
-    }
-
-    /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getSuccessColor(): array
-    {
-        return $this->getCurrentPanel()->getSuccessColor();
     }
 
     public function getTenant(): ?Model
@@ -496,14 +432,6 @@ class FilamentManager
     public function getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = []): string
     {
         return $this->getCurrentPanel()->getVerifyEmailUrl($user, $parameters);
-    }
-
-    /**
-     * @return array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
-     */
-    public function getWarningColor(): array
-    {
-        return $this->getCurrentPanel()->getWarningColor();
     }
 
     /**

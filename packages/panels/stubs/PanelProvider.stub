@@ -8,7 +8,7 @@ use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Color;
+use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -25,7 +25,9 @@ class {{ class }} extends PanelProvider
         return $panel
             ->id('{{ id }}')
             ->path('{{ id }}')
-            ->primaryColor(Color::Amber)
+            ->colors([
+                'primary' => Color::Amber,
+            ])
             ->discoverResources(in: app_path('Filament/{{ directory }}/Resources'), for: 'App\\Filament\\{{ directory }}\\Resources')
             ->discoverPages(in: app_path('Filament/{{ directory }}/Pages'), for: 'App\\Filament\\{{ directory }}\\Pages')
             ->pages([

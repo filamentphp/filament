@@ -8,7 +8,7 @@ In the [configuration](configuration), you can easily change the colors that are
 
 ```php
 use Filament\Panel;
-use Filament\Support\Color;
+use Filament\Support\Colors\Color;
 
 public function panel(Panel $panel): Panel
 {
@@ -24,7 +24,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-The `Filament\Support\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
+The `Filament\Support\Colors\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
 
 Alternatively, you may pass your own palette in as an array of RGB values:
 
@@ -49,7 +49,7 @@ $panel->primaryColor([
 If you want us to attempt to generate a palette for you based on a singular hex or RGB value, you can pass that in:
 
 ```php
-use Filament\Support\Color;
+use Filament\Support\Colors\Color;
 
 $panel->primaryColor('#6366f1')
 

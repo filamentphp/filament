@@ -3,6 +3,7 @@
 namespace Filament\Support\Assets;
 
 use Exception;
+use Filament\Support\Facades\FilamentColor;
 use Illuminate\Support\Arr;
 
 class AssetManager
@@ -198,8 +199,17 @@ class AssetManager
      */
     public function renderStyles(?array $packages = null): string
     {
+        $variables = [];
+
+        foreach (FilamentColor::getColors() as $colorName => $colorShades) {
+            foreach ($colorShades as $shade => $color) {
+                $variables["{$colorName}-{$shade}"] = $color;
+            }
+        }
+
         return view('filament::assets', [
             'assets' => $this->getStyles($packages),
+            'cssVariables' => $variables,
         ])->render();
     }
 

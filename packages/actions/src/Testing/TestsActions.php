@@ -366,7 +366,7 @@ class TestsActions
 
     public function assertActionHasColor(): Closure
     {
-        return function (string | array $name, string $color, $record = null): static {
+        return function (string | array $name, string | array $color, $record = null): static {
             /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
@@ -390,7 +390,7 @@ class TestsActions
 
     public function assertActionDoesNotHaveColor(): Closure
     {
-        return function (string | array $name, string $color, $record = null): static {
+        return function (string | array $name, string | array $color, $record = null): static {
             /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
