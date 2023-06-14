@@ -4,13 +4,13 @@ namespace Filament\Support\View\Components;
 
 class Modal
 {
-    public static bool $isCloseButtonDisplayed = true;
+    public static bool $hasCloseButton = true;
 
     public static bool $isClosedByClickingAway = true;
 
-    public static function closeButtonDisplayed(bool $condition = true): void
+    public static function closeButton(bool $condition = true): void
     {
-        static::$isCloseButtonDisplayed = $condition;
+        static::$hasCloseButton = $condition;
     }
 
     public static function closedByClickingAway(bool $condition = true): void
