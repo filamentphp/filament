@@ -17,7 +17,7 @@
 @php
     $iconSize ??= $size;
 
-    $linkClasses = [
+    $linkClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-link relative inline-flex items-center justify-center gap-0.5 font-medium outline-none hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70',
         'pe-4' => $indicator,
         'pointer-events-none opacity-70' => $disabled,
@@ -30,9 +30,11 @@
             'md' => 'text-sm',
             'lg' => 'text-base',
         },
-    ];
+    ]);
 
-    $cssVariables = \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600], except: ['gray']);
+    $linkStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+    ]);
 
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
@@ -47,19 +49,9 @@
         'ms-1' => $iconPosition === 'after',
     ]);
 
-    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-link-indicator absolute -top-1 -end-1 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
-        match ($indicatorColor) {
-            'danger' => 'bg-danger-600',
-            'gray' => 'bg-gray-600',
-            'info' => 'bg-info-600',
-            'primary' => 'bg-primary-600',
-            'secondary' => 'bg-secondary-600',
-            'success' => 'bg-success-600',
-            'warning' => 'bg-warning-600',
-            default => $indicatorColor,
-        },
-    ]);
+    $indicatorClasses = 'filament-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+
+    $indicatorStyles = \Filament\Support\get_color_css_variables($color, shades: [600]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -81,8 +73,11 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        style="{{ $cssVariables }}"
-        {{ $attributes->class($linkClasses) }}
+        {{
+            $attributes
+                ->class([$linkClasses])
+                ->style([$linkStyles])
+        }}
     >
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
@@ -105,7 +100,10 @@
         @endif
 
         @if ($indicator)
-            <span class="{{ $indicatorClasses }}">
+            <span
+                class="{{ $indicatorClasses }}"
+                style="{{ $indicatorStyles }}"
+            >
                 {{ $indicator }}
             </span>
         @endif
@@ -121,14 +119,14 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        style="{{ $cssVariables }}"
         {{
             $attributes
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
                 ], escape: false)
-                ->class($linkClasses)
+                ->class([$linkClasses])
+                ->style([$linkStyles])
         }}
     >
         @if ($iconPosition === 'before')
@@ -176,7 +174,10 @@
         @endif
 
         @if ($indicator)
-            <span class="{{ $indicatorClasses }}">
+            <span
+                class="{{ $indicatorClasses }}"
+                style="{{ $indicatorStyles }}"
+            >
                 {{ $indicator }}
             </span>
         @endif

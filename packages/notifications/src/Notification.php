@@ -7,6 +7,7 @@ use Filament\Notifications\Actions\ActionGroup;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
 use Filament\Notifications\Http\Livewire\Notifications;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
@@ -23,11 +24,11 @@ class Notification extends ViewComponent implements Arrayable
     use Concerns\CanBeInline;
     use Concerns\HasActions;
     use Concerns\HasBody;
-    use Concerns\HasColor;
     use Concerns\HasDate;
     use Concerns\HasDuration;
     use Concerns\HasId;
     use Concerns\HasTitle;
+    use HasColor;
     use HasIcon;
 
     /**

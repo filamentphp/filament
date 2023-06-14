@@ -19,8 +19,8 @@
         }}
     >
         @php
-            $offColor = $getOffColor();
-            $onColor = $getOnColor();
+            $offColor = $getOffColor() ?? 'gray';
+            $onColor = $getOnColor() ?? 'primary';
         @endphp
 
         <button
@@ -46,31 +46,27 @@
             "
             x-tooltip="error"
             x-bind:class="
-                (state ? '{{
-                    match ($getOnColor()) {
-                        'danger' => 'bg-danger-600',
-                        'gray' => 'bg-gray-600',
-                        'info' => 'bg-info-600',
-                        'primary', null => 'bg-primary-600',
-                        'secondary' => 'bg-secondary-600',
-                        'success' => 'bg-success-600',
-                        'warning' => 'bg-warning-600',
-                        default => $onColor,
-                    }
-                }}' : '{{
-                    match ($getOffColor()) {
-                        'danger' => 'bg-danger-600',
-                        'gray' => 'bg-gray-600',
-                        'info' => 'bg-info-600',
-                        'primary' => 'bg-primary-600',
-                        'secondary' => 'bg-secondary-600',
-                        'success' => 'bg-success-600',
-                        'warning' => 'bg-warning-600',
-                        null => 'bg-gray-200 dark:bg-gray-700',
-                        default => $offColor,
-                    }
-                }}') +
+                (
+                    state
+                        ? '{{
+                            match ($onColor) {
+                                'gray' => 'bg-gray-200 dark:bg-gray-700',
+                                default => 'bg-custom-600',
+                            }
+                        }}'
+                        : '{{
+                            match ($offColor) {
+                                'gray' => 'bg-gray-200 dark:bg-gray-700',
+                                default => 'bg-custom-600',
+                            }
+                        }}'
+                ) +
                 (isLoading ? ' opacity-70 pointer-events-none' : '')
+            "
+            x-bind:style="
+                state
+                    ? '{{ \Filament\Support\get_color_css_variables($onColor, shades: [600]) }}'
+                    : '{{ \Filament\Support\get_color_css_variables($offColor, shades: [600]) }}'
             "
             @disabled($isDisabled())
             type="button"
@@ -87,16 +83,9 @@
                     <x-filament::icon
                         :name="$getOffIcon()"
                         alias="tables::columns.toggle.off"
-                        :color="match ($offColor) {
-                            'danger' => 'text-danger-600',
-                            'gray' => 'text-gray-600',
-                            'info' => 'text-info-600',
-                            'primary' => 'text-primary-600',
-                            'secondary' => 'text-secondary-600',
-                            'success' => 'text-success-600',
-                            'warning' => 'text-warning-600',
-                            null => 'text-gray-400 dark:text-gray-700',
-                            default => $offColor,
+                        :color="match ($onColor) {
+                            'gray' => 'text-gray-400 dark:text-gray-700',
+                            default => 'text-custom-600',
                         }"
                         size="h-3 w-3"
                     />
@@ -116,14 +105,8 @@
                         :name="$getOnIcon()"
                         alias="tables::columns.toggle.on"
                         :color="match ($onColor) {
-                            'danger' => 'text-danger-600',
-                            'gray' => 'text-gray-600',
-                            'info' => 'text-info-600',
-                            'primary', null => 'text-primary-600',
-                            'secondary' => 'text-secondary-600',
-                            'success' => 'text-success-600',
-                            'warning' => 'text-warning-600',
-                            default => $onColor,
+                            'gray' => 'text-gray-400 dark:text-gray-700',
+                            default => 'text-custom-600',
                         }"
                         size="h-3 w-3"
                         x-cloak="x-cloak"

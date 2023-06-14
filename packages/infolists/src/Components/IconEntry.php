@@ -21,11 +21,17 @@ class IconEntry extends Entry
 
     protected bool | Closure $isBoolean = false;
 
-    protected string | Closure | null $falseColor = null;
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $falseColor = null;
 
     protected string | Closure | null $falseIcon = null;
 
-    protected string | Closure | null $trueColor = null;
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $trueColor = null;
 
     protected string | Closure | null $trueIcon = null;
 
@@ -36,6 +42,9 @@ class IconEntry extends Entry
         return $this;
     }
 
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
     public function false(string | Closure | null $icon = null, string | Closure | null $color = null): static
     {
         $this->falseIcon($icon);
@@ -44,6 +53,9 @@ class IconEntry extends Entry
         return $this;
     }
 
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
     public function falseColor(string | Closure | null $color): static
     {
         $this->boolean();
@@ -60,6 +72,9 @@ class IconEntry extends Entry
         return $this;
     }
 
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
     public function true(string | Closure | null $icon = null, string | Closure | null $color = null): static
     {
         $this->trueIcon($icon);
@@ -68,6 +83,9 @@ class IconEntry extends Entry
         return $this;
     }
 
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
     public function trueColor(string | Closure | null $color): static
     {
         $this->boolean();
@@ -101,7 +119,10 @@ class IconEntry extends Entry
         return $state ? $this->getTrueIcon() : $this->getFalseIcon();
     }
 
-    public function getColor(mixed $state): ?string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getColor(mixed $state): string | array | null
     {
         if (filled($color = $this->getBaseColor($state))) {
             return $color;
@@ -118,7 +139,10 @@ class IconEntry extends Entry
         return $state ? $this->getTrueColor() : $this->getFalseColor();
     }
 
-    public function getFalseColor(): string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getFalseColor(): string | array
     {
         return $this->evaluate($this->falseColor) ?? 'danger';
     }
@@ -128,7 +152,10 @@ class IconEntry extends Entry
         return $this->evaluate($this->falseIcon) ?? 'heroicon-o-x-circle';
     }
 
-    public function getTrueColor(): string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}
+     */
+    public function getTrueColor(): string | array
     {
         return $this->evaluate($this->trueColor) ?? 'success';
     }

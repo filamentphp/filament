@@ -57,36 +57,36 @@
         @foreach ($arrayState as $state)
             @php
                 $formattedState = $formatState($state);
+                $color = $getColor($state) ?? 'gray';
                 $icon = $getIcon($state);
             @endphp
 
             @if (filled($formattedState))
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                     <div
+                        style="{{
+                            \Filament\Support\get_color_css_variables(
+                                $color,
+                                shades: match (true) {
+                                    $isBadge => [500, 700],
+                                    ! ($isBadge || $isClickable) => [600],
+                                },
+                                except: ['gray'],
+                            )
+                        }}"
                         @class([
                             'inline-flex items-center space-x-1 rtl:space-x-reverse',
                             'filament-tables-text-column-badge min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
                             'whitespace-normal' => $canWrap,
-                            ($isBadge ? match ($color = $getColor($state)) {
-                                'danger' => 'filament-tables-text-column-badge-color-danger bg-danger-500/10 text-danger-700 dark:text-danger-500',
-                                'gray', null => 'filament-tables-text-column-badge-color-gray bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
-                                'info' => 'filament-tables-text-column-badge-color-info bg-info-500/10 text-info-700 dark:text-info-500',
-                                'primary' => 'filament-tables-text-column-badge-color-primary bg-primary-500/10 text-primary-700 dark:text-primary-500',
-                                'secondary' => 'filament-tables-text-column-badge-color-secondary bg-secondary-500/10 text-secondary-700 dark:text-secondary-500',
-                                'success' => 'filament-tables-text-column-badge-color-success bg-success-500/10 text-success-700 dark:text-success-500',
-                                'warning' => 'filament-tables-text-column-badge-color-warning bg-warning-500/10 text-warning-700 dark:text-warning-500',
-                                default => $color,
-                            } : null),
-                            ((! ($isBadge || $isClickable)) ? match ($color = $getColor($state)) {
-                                'danger' => 'text-danger-600',
+                            $isBadge && is_string($color) ? "filament-tables-text-column-badge-color-{$color}" : null,
+                            match ($color) {
+                                'gray' => 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
+                                default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
+                            } => $isBadge,
+                            match ($color) {
                                 'gray' => 'text-gray-600 dark:text-gray-400',
-                                'info' => 'text-info-600',
-                                'primary' => 'text-primary-600',
-                                'secondary' => 'text-secondary-600',
-                                'success' => 'text-success-600',
-                                'warning' => 'text-warning-600',
-                                default => $color,
-                            } : null),
+                                default => 'text-custom-600',
+                            } => ! ($isBadge || $isClickable),
                             match ($size = ($isBadge ? 'xs' : $getSize($state))) {
                                 'xs' => 'text-xs',
                                 'sm', null => 'text-sm',

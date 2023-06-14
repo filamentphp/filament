@@ -360,9 +360,11 @@ class TestsBulkActions
 
             $livewireClass = $this->instance()::class;
 
+            $colorName = is_string($color) ? $color : 'custom';
+
             Assert::assertTrue(
                 $action->getColor() === $color,
-                "Failed asserting that a table bulk action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
+                "Failed asserting that a table bulk action with name [{$name}] has [{$colorName}] color on the [{$livewireClass}] component for record [{$record}]."
             );
 
             return $this;
@@ -381,9 +383,11 @@ class TestsBulkActions
 
             $livewireClass = $this->instance()::class;
 
+            $colorName = is_string($color) ? $color : 'custom';
+
             Assert::assertFalse(
                 $action->getColor() === $color,
-                "Failed asserting that a table bulk action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
+                "Failed asserting that a table bulk action with name [{$name}] does not have [{$colorName}] color on the [{$livewireClass}] component for record [{$record}]."
             );
 
             return $this;

@@ -7,7 +7,7 @@
     'description' => null,
     'heading',
     'icon' => null,
-    'iconColor' => null,
+    'iconColor' => 'gray',
     'iconSize' => 'md',
 ])
 
@@ -66,16 +66,7 @@
                     <x-filament::icon
                         :name="$icon"
                         alias="support::section.icon"
-                        :color="match ($iconColor) {
-                            'danger' => 'text-danger-400',
-                            'gray', null => 'text-gray-400',
-                            'info' => 'text-info-400',
-                            'primary' => 'text-primary-400',
-                            'secondary' => 'text-secondary-400',
-                            'success' => 'text-success-400',
-                            'warning' => 'text-warning-400',
-                            default => $iconColor,
-                        }"
+                        color="text-custom-400"
                         :size="match ($iconSize) {
                             'sm' => 'h-4 w-4',
                             'md' => 'h-5 w-5',
@@ -83,6 +74,7 @@
                             default => $iconSize,
                         }"
                         class="filament-section-component-header-icon"
+                        :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400])"
                     />
                 @endif
 

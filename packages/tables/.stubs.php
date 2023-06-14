@@ -73,9 +73,9 @@ namespace Livewire\Testing {
 
         public function assertTableActionDoesNotHaveLabel(string $name, string $label): static {}
 
-        public function assertTableActionHasColor(string $name, string $color): static {}
+        public function assertTableActionHasColor(string $name, string | array $color): static {}
 
-        public function assertTableActionDoesNotHaveColor(string $name, string $color): static {}
+        public function assertTableActionDoesNotHaveColor(string $name, string | array $color): static {}
 
         public function assertTableBulkActionHasIcon(string $name, string $icon): static {}
 
@@ -85,9 +85,9 @@ namespace Livewire\Testing {
 
         public function assertTableBulkActionDoesNotHaveLabel(string $name, string $label): static {}
 
-        public function assertTableBulkActionHasColor(string $name, string $color): static {}
+        public function assertTableBulkActionHasColor(string $name, string | array $color): static {}
 
-        public function assertTableBulkActionDoesNotHaveColor(string $name, string $color): static {}
+        public function assertTableBulkActionDoesNotHaveColor(string $name, string | array $color): static {}
 
         public function assertTableActionHasUrl(string $name, string $url): static {}
 

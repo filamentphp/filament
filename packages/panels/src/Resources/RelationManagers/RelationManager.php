@@ -35,7 +35,10 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
 
     protected static ?string $icon = null;
 
-    protected static ?string $iconColor = null;
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    protected static string | array | null $iconColor = null;
 
     protected static ?string $iconPosition = 'before';
 
@@ -323,7 +326,10 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
         return static::$icon;
     }
 
-    public static function getIconColor(Model $ownerRecord, string $pageClass): ?string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public static function getIconColor(Model $ownerRecord, string $pageClass): string | array | null
     {
         return static::$iconColor;
     }

@@ -1,5 +1,5 @@
 @props([
-    'color' => 'primary',
+    'color' => 'gray',
     'detail' => null,
     'disabled' => false,
     'icon' => null,
@@ -12,17 +12,14 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors outline-none disabled:pointer-events-none disabled:opacity-70',
+        is_string($color) ? "filament-dropdown-list-item-color-{$color}" : null,
         match ($color) {
-            'danger' => 'filament-dropdown-list-item-color-danger text-danger-600 hover:bg-danger-500/10 focus:bg-danger-500/10 dark:text-danger-400',
             'gray' => 'filament-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
-            'info' => 'filament-dropdown-list-item-color-info text-info-600 hover:bg-info-500/10 focus:bg-info-500/10 dark:text-info-400',
-            'primary' => 'filament-dropdown-list-item-color-primary text-primary-600 hover:bg-primary-500/10 focus:bg-primary-500/10 dark:text-primary-400',
-            'secondary' => 'filament-dropdown-list-item-color-secondary text-secondary-600 hover:bg-secondary-500/10 focus:bg-secondary-500/10 dark:text-secondary-400',
-            'success' => 'filament-dropdown-list-item-color-success text-success-600 hover:bg-success-500/10 focus:bg-success-500/10 dark:text-success-400',
-            'warning' => 'filament-dropdown-list-item-color-warning text-warning-600 hover:bg-warning-500/10 focus:bg-warning-500/10 dark:text-warning-400',
-            default => $color,
+            default => 'filament-dropdown-list-item-color-custom text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 dark:text-custom-400',
         },
     ]);
+
+    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600], except: ['gray']);
 
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
@@ -63,6 +60,7 @@
                     'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 ], escape: false)
                 ->class([$buttonClasses])
+                ->style([$buttonStyles])
         }}
     >
         @if ($icon)
@@ -107,7 +105,11 @@
             x-data="{}"
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
-        {{ $attributes->class([$buttonClasses]) }}
+        {{
+            $attributes
+                ->class([$buttonClasses])
+                ->style([$buttonStyles])
+        }}
     >
         @if ($icon)
             <x-filament::icon
@@ -151,6 +153,7 @@
                 $attributes
                     ->except(['action', 'class', 'method', 'wire:submit.prevent'])
                     ->class([$buttonClasses])
+                    ->style([$buttonStyles])
             }}
         >
             @if ($icon)

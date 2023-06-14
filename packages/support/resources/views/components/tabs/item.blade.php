@@ -3,23 +3,20 @@
     'alpineActive' => null,
     'badge' => null,
     'icon' => null,
-    'iconColor' => null,
+    'iconColor' => 'gray',
     'iconPosition' => 'before',
     'tag' => 'button',
     'type' => 'button',
 ])
 
 @php
-    $iconColorClasses = $active ? null : match ($iconColor) {
-        'danger' => 'text-danger-600 dark:text-danger-400',
-        'gray' => 'text-gray-600 dark:text-gray-400',
-        'info' => 'text-info-600 dark:text-info-400',
-        'primary' => 'text-primary-600 dark:text-primary-400',
-        'secondary' => 'text-secondary-600 dark:text-secondary-400',
-        'success' => 'text-success-600 dark:text-success-400',
-        'warning' => 'text-warning-600 dark:text-warning-400',
-        default => $iconColor,
-    };
+    $iconColorClasses = \Illuminate\Support\Arr::toCssClasses([
+        'text-custom-600 dark:text-custom-400' => $active,
+    ]);
+
+    $iconStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables($iconColor, shades: [400, 600]) => $iconColorClasses,
+    ]);
 @endphp
 
 <{{ $tag }}
@@ -51,6 +48,7 @@
             :color="$iconColorClasses"
             alias="support::tabs.item"
             size="h-5 w-5"
+            :style="$iconStyles"
             x-bind:class="{
                 '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
             }"
@@ -67,6 +65,7 @@
             :color="$iconColorClasses"
             alias="support::tabs.item"
             size="h-5 w-5"
+            :style="$iconStyles"
             x-bind:class="{
                 '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
             }"

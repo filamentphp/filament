@@ -8,7 +8,10 @@ trait HasIndicator
 {
     protected string | Closure | null $indicator = null;
 
-    protected string | Closure | null $indicatorColor = null;
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $indicatorColor = null;
 
     public function indicator(string | Closure | null $indicator): static
     {
@@ -17,7 +20,10 @@ trait HasIndicator
         return $this;
     }
 
-    public function indicatorColor(string | Closure | null $color): static
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
+    public function indicatorColor(string | array | Closure | null $color): static
     {
         $this->indicatorColor = $color;
 
@@ -29,7 +35,10 @@ trait HasIndicator
         return $this->evaluate($this->indicator);
     }
 
-    public function getIndicatorColor(): ?string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getIndicatorColor(): string | array | null
     {
         return $this->evaluate($this->indicatorColor);
     }

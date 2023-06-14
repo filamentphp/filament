@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
@@ -22,7 +23,6 @@ class StaticAction extends ViewComponent
     use Concerns\CanSubmitForm;
     use Concerns\HasAction;
     use Concerns\HasArguments;
-    use Concerns\HasColor;
     use Concerns\HasGroupedIcon;
     use Concerns\HasIcon;
     use Concerns\HasIndicator;
@@ -32,6 +32,7 @@ class StaticAction extends ViewComponent
     use Concerns\HasSize;
     use Concerns\HasTooltip;
     use Conditionable;
+    use HasColor;
     use HasExtraAttributes;
 
     public const BUTTON_VIEW = 'filament-actions::button-action';

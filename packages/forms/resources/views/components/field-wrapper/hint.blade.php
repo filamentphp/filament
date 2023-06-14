@@ -5,8 +5,15 @@
 ])
 
 <div
-    style="{{ \Filament\Support\get_color_css_variables($color, shades: [300, 500]) }}"
-    {{ $attributes->class(['filament-forms-field-wrapper-hint flex items-center space-x-2 text-custom-500 rtl:space-x-reverse dark:text-custom-300']) }}
+    {{
+        $attributes
+            ->class([
+                'filament-forms-field-wrapper-hint flex items-center space-x-2 text-custom-500 rtl:space-x-reverse dark:text-custom-300',
+            ])
+            ->style([
+                \Filament\Support\get_color_css_variables($color, shades: [300, 500]),
+            ])
+    }}
 >
     @if ($slot->isNotEmpty())
         <span class="text-xs leading-tight">
