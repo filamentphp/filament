@@ -77,7 +77,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<Model> getUserTenants(HasTenants | Model | Authenticatable $user)
  * @method static string | null getUrl(Model | null $tenant = null)
  * @method static string getVerifyEmailUrl(MustVerifyEmail | Model | Authenticatable $user, array $parameters = [])
- * @method static array<class-string> getWidgets()
+ * @method static array getWidgets()
  * @method static bool hasBreadcrumbs()
  * @method static bool hasCollapsibleNavigationGroups()
  * @method static bool hasDarkMode()
