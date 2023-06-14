@@ -294,29 +294,6 @@ Action::make('updateAuthor')
     ->centerModal()
 ```
 
-## Closing the modal by clicking away
-
-By default, when you click away from a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByClickingAway(false)` method:
-
-```php
-Action::make('updateAuthor')
-    ->form([
-        // ...
-    ])
-    ->action(function (array $data): void {
-        // ...
-    })
-    ->closeModalByClickingAway(false)
-```
-
-If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
-
-```php
-use Filament\Support\View\Components\Modal;
-
-Modal::closedByClickingAway(false);
-```
-
 ## Customizing the action buttons in the footer of the modal
 
 By default, there are two actions in the footer of a modal. The first is a button to submit, which executes the `action()`. The second button closes the modal and cancels the action.
@@ -372,4 +349,50 @@ Action::make('create')
             // Reset the form and don't close the modal
         }
     })
+```
+
+## Closing the modal by clicking away
+
+By default, when you click away from a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByClickingAway(false)` method:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->closeModalByClickingAway(false)
+```
+
+If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
+
+```php
+use Filament\Support\View\Components\Modal;
+
+Modal::closedByClickingAway(false);
+```
+
+## Hiding the modal close button
+
+By default, modals have a close button in the top right corner. If you wish to hide the close button, you can use the `modalCloseButton(false)` method:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->modalCloseButton(false)
+```
+
+If you'd like to hide the close button for all modals in the application, you can do so by calling `Modal::closeButton(false)` inside a service provider or middleware:
+
+```php
+use Filament\Support\View\Components\Modal;
+
+Modal::closeButton(false);
 ```
