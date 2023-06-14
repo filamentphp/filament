@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Support;
+namespace Filament\Support\Colors;
 
 use Spatie\Color\Hex;
 use Spatie\Color\Rgb;

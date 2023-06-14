@@ -19,29 +19,9 @@
 @php
     $iconSize ??= $size;
 
-    $buttonClasses = [
-        'filament-icon-button relative flex items-center justify-center outline-none transition disabled:pointer-events-none disabled:opacity-70',
-        'rounded-full hover:bg-gray-500/5 dark:hover:bg-gray-300/5' => ! $inline,
-        match ($color) {
-            'danger' => 'text-danger-500',
-            'gray' => 'text-gray-500',
-            'info' => 'text-info-500',
-            'primary' => 'text-primary-500',
-            'secondary' => 'text-secondary-500 dark:text-gray-400',
-            'success' => 'text-success-500',
-            'warning' => 'text-warning-500',
-            default => $color,
-        },
-        match ($color) {
-            'danger' => 'focus:bg-danger-500/10',
-            'gray' => 'focus:bg-gray-500/10',
-            'info' => 'focus:bg-info-500/10',
-            'primary' => 'focus:bg-primary-500/10',
-            'secondary' => 'focus:bg-secondary-500/10',
-            'success' => 'focus:bg-success-500/10',
-            'warning' => 'focus:bg-warning-500/10',
-            default => $color,
-        } => ! $inline,
+    $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
+        'filament-icon-button relative flex items-center justify-center text-custom-500 outline-none transition disabled:pointer-events-none disabled:opacity-70',
+        'rounded-full hover:bg-gray-500/5 focus:bg-custom-500/10 dark:hover:bg-gray-300/5' => ! $inline,
         match ($size) {
             'sm' => 'h-8 w-8',
             'sm md:md' => 'h-8 w-8 md:h-10 md:w-10',
@@ -49,7 +29,9 @@
             'lg' => 'h-12 w-12',
             default => $size,
         },
-    ];
+    ]);
+
+    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [500]);
 
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
@@ -61,19 +43,9 @@
 
     $iconClasses = 'filament-icon-button-icon';
 
-    $indicatorClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-icon-button-indicator absolute -top-0.5 -end-0.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-[0.5rem] font-medium text-white',
-        match ($indicatorColor) {
-            'danger' => 'bg-danger-600',
-            'gray' => 'bg-gray-600',
-            'info' => 'bg-info-600',
-            'primary' => 'bg-primary-600',
-            'secondary' => 'bg-secondary-600',
-            'success' => 'bg-success-600',
-            'warning' => 'bg-warning-600',
-            default => $indicatorColor,
-        },
-    ]);
+    $indicatorClasses = 'filament-icon-button-indicator absolute -end-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+
+    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [600]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -102,7 +74,8 @@
                     'title' => $label,
                     'type' => $type,
                 ], escape: false)
-                ->class($buttonClasses)
+                ->class([$buttonClasses])
+                ->style([$buttonStyles])
         }}
     >
         @if ($label)
@@ -130,7 +103,10 @@
         @endif
 
         @if ($indicator)
-            <span class="{{ $indicatorClasses }}">
+            <span
+                class="{{ $indicatorClasses }}"
+                styles="{{ $indicatorStyles }}"
+            >
                 {{ $indicator }}
             </span>
         @endif
@@ -151,7 +127,8 @@
                 ->merge([
                     'title' => $label,
                 ], escape: false)
-                ->class($buttonClasses)
+                ->class([$buttonClasses])
+                ->style([$buttonStyles])
         }}
     >
         @if ($label)
@@ -168,7 +145,10 @@
         />
 
         @if ($indicator)
-            <span class="{{ $indicatorClasses }}">
+            <span
+                class="{{ $indicatorClasses }}"
+                styles="{{ $indicatorStyles }}"
+            >
                 {{ $indicator }}
             </span>
         @endif

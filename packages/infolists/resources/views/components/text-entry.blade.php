@@ -60,6 +60,7 @@
             @foreach ($arrayState as $state)
                 @php
                     $formattedState = $formatState($state);
+                    $color = $getColor($state) ?? 'gray';
                     $icon = $getIcon($state);
                 @endphp
 
@@ -71,26 +72,14 @@
                                 'min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
                                 'prose max-w-none dark:prose-invert' => $isProse,
                                 'whitespace-normal' => $canWrap,
-                                ($isBadge ? match ($color = $getColor($state)) {
-                                    'danger' => 'bg-danger-500/10 text-danger-700 dark:text-danger-500',
-                                    'gray', null => 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
-                                    'info' => 'bg-info-500/10 text-info-700 dark:text-info-500',
-                                    'primary' => 'bg-primary-500/10 text-primary-700 dark:text-primary-500',
-                                    'secondary' => 'bg-secondary-500/10 text-secondary-700 dark:text-secondary-500',
-                                    'success' => 'bg-success-500/10 text-success-700 dark:text-success-500',
-                                    'warning' => 'bg-warning-500/10 text-warning-700 dark:text-warning-500',
-                                    default => $color,
-                                } : null),
-                                ((! ($isBadge || $url)) ? match ($color = $getColor($state)) {
-                                    'danger' => 'text-danger-600',
-                                    'gray' => 'text-gray-600 dark:text-gray-400',
-                                    'info' => 'text-info-600',
-                                    'primary' => 'text-primary-600',
-                                    'secondary' => 'text-secondary-600',
-                                    'success' => 'text-success-600',
-                                    'warning' => 'text-warning-600',
-                                    default => $color,
-                                } : null),
+                                match ($color) {
+                                    'gray' => 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
+                                    default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
+                                } => $isBadge,
+                                match ($color) {
+                                    'gray' => null,
+                                    default => 'text-custom-600',
+                                } => ! ($isBadge || $url),
                                 ($isProse ? match ($size = $getSize($state)) {
                                     'sm' => 'prose-sm',
                                     'base', 'md', null => 'prose-base',
@@ -120,6 +109,15 @@
                                     'mono' => 'font-mono',
                                     default => null,
                                 },
+                            ])
+                            @style([
+                                \Filament\Support\get_color_css_variables(
+                                    $color,
+                                    shades: match (true) {
+                                        $isBadge => [500, 700],
+                                        ! ($isBadge || $url) => [600],
+                                    },
+                                ) => $color !== 'gray',
                             ])
                         >
                             @if ($icon && $iconPosition === 'before')

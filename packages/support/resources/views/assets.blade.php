@@ -7,3 +7,9 @@
 @foreach ($assets as $asset)
     {{ $asset->getHtml() }}
 @endforeach
+
+<style>
+    :root {
+        @foreach ($cssVariables ?? [] as $cssVariableName => $cssVariableValue) --{{ $cssVariableName }}:{{ $cssVariableValue }}; @endforeach
+    }
+</style>

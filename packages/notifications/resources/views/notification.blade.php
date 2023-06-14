@@ -1,5 +1,5 @@
 @php
-    $color = $getColor();
+    $color = $getColor() ?? 'gray';
     $isInline = $isInline();
 @endphp
 
@@ -27,17 +27,14 @@
             false => [
                 'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-800',
                 match ($color) {
-                    'danger' => 'ring-danger-500/50',
-                    'gray' => 'ring-gray-500/50',
-                    'info' => 'ring-info-500/50',
-                    'primary' => 'ring-primary-500/50',
-                    'secondary' => 'ring-secondary-500/50',
-                    'success' => 'ring-success-500/50',
-                    'warning' => 'ring-warning-500/50',
-                    default => 'ring-gray-950/5 dark:ring-white/20',
+                    'gray' => 'ring-gray-950/5 dark:ring-white/20',
+                    default => 'ring-custom-500/50',
                 },
             ],
         },
+    ])
+    @style([
+        \Filament\Support\get_color_css_variables($color, shades: [500]) => ! ($isInline || $color === 'gray'),
     ])
 >
     <div
@@ -48,17 +45,14 @@
                 false => [
                     'rounded-xl p-4',
                     match ($color) {
-                        'danger' => 'bg-danger-500/10 dark:bg-danger-500/20',
-                        'gray' => 'bg-gray-500/10 dark:bg-gray-500/20',
-                        'info' => 'bg-info-500/10 dark:bg-info-500/20',
-                        'primary' => 'bg-primary-500/10 dark:bg-primary-500/20',
-                        'secondary' => 'bg-secondary-500/10 dark:bg-secondary-500/20',
-                        'success' => 'bg-success-500/10 dark:bg-success-500/20',
-                        'warning' => 'bg-warning-500/10 dark:bg-warning-500/20',
-                        default => null,
+                        'gray' => null,
+                        default => 'bg-custom-500/10 dark:bg-custom-500/20',
                     },
                 ],
             },
+        ])
+        @style([
+            \Filament\Support\get_color_css_variables($color, shades: [500]) => ! ($isInline || $color === 'gray'),
         ])
     >
         @if ($icon = $getIcon())

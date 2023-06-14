@@ -36,19 +36,8 @@
 
         @if ($description = $getDescription())
             <div
-                @class([
-                    'flex items-center space-x-1 text-sm font-medium rtl:space-x-reverse',
-                    match ($descriptionColor = $getDescriptionColor()) {
-                        'danger' => 'text-danger-600',
-                        'gray', null => 'text-gray-600',
-                        'info' => 'text-info-600',
-                        'primary' => 'text-primary-600',
-                        'secondary' => 'text-secondary-600',
-                        'success' => 'text-success-600',
-                        'warning' => 'text-warning-600',
-                        default => $descriptionColor,
-                    },
-                ])
+                class="flex items-center space-x-1 text-sm font-medium text-custom-600 rtl:space-x-reverse"
+                style="{{ \Filament\Support\get_color_css_variables($getDescriptionColor(), shades: [600]) }}"
             >
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
@@ -86,44 +75,16 @@
                 initChart()
             "
             class="absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
+            style="{{ \Filament\Support\get_color_css_variables($getChartColor() ?? 'gray', shades: [50, 400, 700]) }}"
         >
             <canvas x-ref="canvas" class="h-6"></canvas>
 
-            @php
-                $chartColor = $getChartColor();
-            @endphp
-
             <span
                 x-ref="backgroundColorElement"
-                @class([
-                    match ($chartColor) {
-                        'danger' => 'text-danger-50 dark:text-danger-700',
-                        'gray', null => 'text-gray-50 dark:text-gray-700',
-                        'info' => 'text-info-50 dark:text-info-700',
-                        'primary' => 'text-primary-50 dark:text-primary-700',
-                        'secondary' => 'text-secondary-50 dark:text-secondary-700',
-                        'success' => 'text-success-50 dark:text-success-700',
-                        'warning' => 'text-warning-50 dark:text-warning-700',
-                        default => $chartColor,
-                    },
-                ])
+                class="text-custom-50 dark:text-custom-700"
             ></span>
 
-            <span
-                x-ref="borderColorElement"
-                @class([
-                    match ($chartColor) {
-                        'danger' => 'text-danger-400',
-                        'gray', null => 'text-gray-400',
-                        'info' => 'text-info-400',
-                        'primary' => 'text-primary-400',
-                        'secondary' => 'text-secondary-400',
-                        'success' => 'text-success-400',
-                        'warning' => 'text-warning-400',
-                        default => $chartColor,
-                    },
-                ])
-            ></span>
+            <span x-ref="borderColorElement" class="text-custom-400"></span>
         </div>
     @endif
 </{!! $tag !!}>

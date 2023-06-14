@@ -5,6 +5,7 @@ namespace Filament\Support;
 use Composer\InstalledVersions;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
+use Filament\Support\Colors\ColorManager;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
@@ -41,23 +42,22 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $this->app->scoped(
             AssetManager::class,
-            function () {
-                return new AssetManager();
-            },
+            fn () => new AssetManager(),
+        );
+
+        $this->app->scoped(
+            ColorManager::class,
+            fn () => new ColorManager(),
         );
 
         $this->app->scoped(
             IconManager::class,
-            function () {
-                return new IconManager();
-            },
+            fn () => new IconManager(),
         );
 
         $this->app->scoped(
             SanitizerInterface::class,
-            function () {
-                return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
-            },
+            fn () => Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php'),
         );
     }
 

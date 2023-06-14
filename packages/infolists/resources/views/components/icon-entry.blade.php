@@ -13,16 +13,7 @@
                 <x-filament::icon
                     :name="$icon"
                     alias="infolists::entries.icon"
-                    :color="match ($color = $getColor($state)) {
-                        'danger' => 'text-danger-500',
-                        'gray', null => 'text-gray-500',
-                        'info' => 'text-info-500',
-                        'primary' => 'text-primary-500',
-                        'secondary' => 'text-secondary-500',
-                        'success' => 'text-success-500',
-                        'warning' => 'text-warning-500',
-                        default => $color,
-                    }"
+                    color="text-custom-500"
                     :size="match ($size = ($getSize($state) ?? 'lg')) {
                         'xs' => 'h-3 w-3 filament-infolists-icon-entry-icon-size-xs',
                         'sm' => 'h-4 w-4 filament-infolists-icon-entry-icon-size-sm',
@@ -31,6 +22,7 @@
                         'xl' => 'h-7 w-7 filament-infolists-icon-entry-icon-size-xl',
                         default => $size,
                     }"
+                    :style="\Filament\Support\get_color_css_variables($getColor($state), shades: [500])"
                 />
             @endif
         @endforeach
