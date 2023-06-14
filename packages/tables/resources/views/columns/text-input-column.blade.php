@@ -8,10 +8,15 @@
         error: undefined,
         state: @js($state),
         isLoading: false,
+        isEditing: false,
     }"
     x-init="
         Livewire.hook('message.processed', (component) => {
             if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            if (isEditing) {
                 return
             }
 
@@ -42,6 +47,8 @@
 
     <input
         x-model="state"
+        x-on:focus="isEditing = true"
+        x-on:blur="isEditing = false"
         x-on:change{{ $type === 'number' ? '.debounce.1s' : null }}="
             isLoading = true
             response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
