@@ -32,7 +32,7 @@
         },
     ];
 
-    $cssVariables = Filament\Support\get_color_css_variables($color, shades: [400, 500, 600], except: ['gray']);
+    $cssVariables = \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600], except: ['gray']);
 
     $iconSize = match ($iconSize) {
         'sm' => 'h-4 w-4',
