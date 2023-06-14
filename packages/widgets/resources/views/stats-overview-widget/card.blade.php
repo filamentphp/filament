@@ -36,8 +36,8 @@
 
         @if ($description = $getDescription())
             <div
-                style="{{ \Filament\Support\get_color_css_variables($getDescriptionColor(), shades: [600]) }}"
                 class="flex items-center space-x-1 text-sm font-medium text-custom-600 rtl:space-x-reverse"
+                style="{{ \Filament\Support\get_color_css_variables($getDescriptionColor(), shades: [600]) }}"
             >
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
@@ -74,8 +74,8 @@
                 chart.destroy()
                 initChart()
             "
-            style="{{ \Filament\Support\get_color_css_variables($getChartColor() ?? 'gray', shades: [50, 400, 700]) }}"
             class="absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
+            style="{{ \Filament\Support\get_color_css_variables($getChartColor() ?? 'gray', shades: [50, 400, 700]) }}"
         >
             <canvas x-ref="canvas" class="h-6"></canvas>
 
