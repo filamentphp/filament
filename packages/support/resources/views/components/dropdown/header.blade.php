@@ -16,7 +16,7 @@
                 },
             ])
             ->style([
-                \Filament\Support\get_color_css_variables($color, shades: [400, 600], except: ['gray']),
+                \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => $color !== 'gray',
             ])
     }}
 >

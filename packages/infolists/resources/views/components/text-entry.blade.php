@@ -67,16 +67,6 @@
                 @if (filled($formattedState))
                     <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                         <div
-                            style="{{
-                                \Filament\Support\get_color_css_variables(
-                                    $color,
-                                    shades: match (true) {
-                                        $isBadge => [500, 700],
-                                        ! ($isBadge || $url) => [600],
-                                    },
-                                    except: ['gray']
-                                )
-                            }}"
                             @class([
                                 'inline-flex items-center space-x-1 rtl:space-x-reverse',
                                 'min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
@@ -119,6 +109,15 @@
                                     'mono' => 'font-mono',
                                     default => null,
                                 },
+                            ])
+                            @style([
+                                \Filament\Support\get_color_css_variables(
+                                    $color,
+                                    shades: match (true) {
+                                        $isBadge => [500, 700],
+                                        ! ($isBadge || $url) => [600],
+                                    },
+                                ) => $color !== 'gray',
                             ])
                         >
                             @if ($icon && $iconPosition === 'before')
