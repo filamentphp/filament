@@ -22,7 +22,7 @@
                         alias="tables::columns.summaries.icon-count"
                         color="text-custom-500"
                         size="h-4 w-4"
-                        style="{{ \Filament\Support\get_color_css_variables($color ?? 'gray', shades: [500]) }}"
+                        :style="\Filament\Support\get_color_css_variables(json_decode($color) ?? 'gray', shades: [500])"
                     />
                 </div>
             @endif

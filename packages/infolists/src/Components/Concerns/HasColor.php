@@ -28,8 +28,6 @@ trait HasColor
      */
     public function colors(array | Closure $colors): static
     {
-        // TODO: array as key not supported
-
         $this->color(function (Component $component, $state) use ($colors) {
             $colors = $component->evaluate($colors);
 
