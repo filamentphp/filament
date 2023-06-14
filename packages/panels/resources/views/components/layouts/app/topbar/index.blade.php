@@ -96,11 +96,11 @@
 
         <div class="flex items-center">
             @if (filament()->getGlobalSearchProvider() !== null)
-                @livewire(Filament\Http\Livewire\GlobalSearch::class)
+                @livewire(Filament\Http\Livewire\GlobalSearch::class, ['lazy' => true])
             @endif
 
             @if (filament()->hasDatabaseNotifications())
-                @livewire(Filament\Http\Livewire\DatabaseNotifications::class)
+                @livewire(Filament\Http\Livewire\DatabaseNotifications::class, ['lazy' => true])
             @endif
 
             <x-filament::user-menu />
