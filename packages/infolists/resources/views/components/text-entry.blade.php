@@ -60,7 +60,7 @@
             @foreach ($arrayState as $state)
                 @php
                     $formattedState = $formatState($state);
-                    $color = $getColor($state) ?? ($isBadge ? 'gray' : null);
+                    $color = $getColor($state) ?? 'gray';
                     $icon = $getIcon($state);
                 @endphp
 
@@ -77,8 +77,7 @@
                                     default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
                                 } => $isBadge,
                                 match ($color) {
-                                    null => null,
-                                    'gray' => 'text-gray-600 dark:text-gray-400',
+                                    'gray' => null,
                                     default => 'text-custom-600',
                                 } => ! ($isBadge || $url),
                                 ($isProse ? match ($size = $getSize($state)) {
@@ -111,17 +110,15 @@
                                     default => null,
                                 },
                             ])
-                            @if ($color)
-                                @style([
-                                    \Filament\Support\get_color_css_variables(
-                                        $color,
-                                        shades: match (true) {
-                                            $isBadge => [500, 700],
-                                            ! ($isBadge || $url) => [600],
-                                        },
-                                    ) => $color !== 'gray',
-                                ])
-                            @endif
+                            @style([
+                                \Filament\Support\get_color_css_variables(
+                                    $color,
+                                    shades: match (true) {
+                                        $isBadge => [500, 700],
+                                        ! ($isBadge || $url) => [600],
+                                    },
+                                ) => $color !== 'gray',
+                            ])
                         >
                             @if ($icon && $iconPosition === 'before')
                                 <x-filament::icon
