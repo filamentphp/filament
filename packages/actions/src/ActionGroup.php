@@ -6,6 +6,7 @@ use Filament\Actions\Contracts\HasLivewire;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\HasIcon;
 use Livewire\Component;
 
 class ActionGroup extends ViewComponent implements HasLivewire
@@ -18,15 +19,15 @@ class ActionGroup extends ViewComponent implements HasLivewire
     use Concerns\CanBeOutlined;
     use Concerns\HasDropdown;
     use Concerns\HasGroupedIcon;
-    use Concerns\HasIcon {
-        getIcon as getBaseIcon;
-    }
     use Concerns\HasIndicator;
     use Concerns\HasLabel;
     use Concerns\HasSize;
     use Concerns\HasTooltip;
     use HasColor;
     use HasExtraAttributes;
+    use HasIcon {
+        getIcon as getBaseIcon;
+    }
 
     /**
      * @var array<StaticAction | ActionGroup>

@@ -5,6 +5,7 @@ namespace Filament\Actions;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Filament\Support\Concerns\HasIcon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Traits\Conditionable;
@@ -24,7 +25,6 @@ class StaticAction extends ViewComponent
     use Concerns\HasAction;
     use Concerns\HasArguments;
     use Concerns\HasGroupedIcon;
-    use Concerns\HasIcon;
     use Concerns\HasIndicator;
     use Concerns\HasKeyBindings;
     use Concerns\HasLabel;
@@ -33,6 +33,7 @@ class StaticAction extends ViewComponent
     use Concerns\HasTooltip;
     use Conditionable;
     use HasColor;
+    use HasIcon;
     use HasExtraAttributes;
 
     public const BUTTON_VIEW = 'filament-actions::button-action';
