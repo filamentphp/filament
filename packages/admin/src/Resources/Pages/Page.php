@@ -2,7 +2,10 @@
 
 namespace Filament\Resources\Pages;
 
+use Filament\Facades\Filament;
 use Filament\Pages\Page as BasePage;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
 
 class Page extends BasePage
 {
@@ -35,9 +38,14 @@ class Page extends BasePage
         );
     }
 
-    public static function authorizeResourceAccess(): void
+    public static function authorizeResourceAccess(string $action = 'viewAny', Model $record = null): void
     {
-        abort_unless(static::getResource()::canViewAny(), 403);
+        $model = static::getResource()::getModel();
+        $policy = Gate::getPolicyFor($model);
+
+        if (static::getResource()::shouldAuthorizeWithGate() || ($policy !== null && method_exists($policy, $action))) {
+            Gate::forUser(Filament::auth()->user())->authorize($action, $record ?? $model);
+        }
     }
 
     public function getModel(): string

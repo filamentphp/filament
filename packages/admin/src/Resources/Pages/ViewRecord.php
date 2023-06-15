@@ -45,7 +45,7 @@ class ViewRecord extends Page
 
         $this->record = $this->resolveRecord($record);
 
-        abort_unless(static::getResource()::canView($this->getRecord()), 403);
+        static::authorizeResourceAccess('view', $this->getRecord());
 
         $this->fillForm();
     }

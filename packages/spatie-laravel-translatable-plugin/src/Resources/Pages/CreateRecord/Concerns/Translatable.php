@@ -14,7 +14,7 @@ trait Translatable
     {
         static::authorizeResourceAccess();
 
-        abort_unless(static::getResource()::canCreate(), 403);
+        static::authorizeResourceAccess('create');
 
         $this->setActiveFormLocale();
 
