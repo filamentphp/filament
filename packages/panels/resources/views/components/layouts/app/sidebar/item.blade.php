@@ -11,7 +11,7 @@
 
 <li
     @class([
-        'filament-sidebar-item overflow-hidden',
+        'filament-sidebar-item',
         'filament-sidebar-item-active' => $active,
     ])
 >
@@ -37,32 +37,29 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'flex items-center justify-center gap-3 rounded-lg px-3 py-2 font-medium transition',
-            'hover:bg-gray-500/5 focus:bg-gray-500/5 dark:text-gray-300 dark:hover:bg-gray-700' => ! $active,
-            'bg-primary-500 text-white' => $active,
+            'relative -mx-3 flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 font-medium text-gray-700 outline-none transition hover:bg-gray-950/5 focus:bg-gray-950/5 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'rounded-full bg-gray-950/5 text-gray-950 dark:bg-white/5 dark:text-white' => $active,
         ])
     >
         <x-filament::icon
             :name="($active && $activeIcon) ? $activeIcon : $icon"
             alias="panels::sidebar.item"
-            :color="$active ? null : 'text-custom-600 dark:text-custom-500'"
+            color="text-custom-500 dark:text-custom-400"
             size="h-6 w-6"
-            @style([
-                \Filament\Support\get_color_css_variables($iconColor, shades: [500, 600]) => ! $active,
-            ])
+            :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 500])"
         />
 
-        <div
+        <span
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
                 x-transition:enter="lg:transition delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
-            class="flex flex-1"
+            class="flex-1 text-sm"
         >
             {{ $slot }}
-        </div>
+        </span>
 
         @if (filled($badge))
             <x-filament::layouts.app.sidebar.badge
