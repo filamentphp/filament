@@ -7,10 +7,10 @@
 ])
 
 <li
-    x-data="{ label: {{ \Illuminate\Support\Js::from((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }} }"
-    class="filament-sidebar-group grid gap-y-3"
-    @if (filled($parentGroup))
-        x-bind:class="{{ filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : 'true' }} ? 'ms-11 pe-3 pt-3' : 'hidden'"
+    x-data="{ label: @js((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }"
+    class="filament-sidebar-group grid gap-y-1"
+    @if (filled($parentGroup) && filament()->isSideBarCollapsibleOnDesktop())
+        x-bind:class="{ 'hidden': ! $store.sidebar.isOpen }"
     @endif
 >
     @if ($label)
@@ -25,7 +25,7 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                'flex items-center gap-x-3',
+                '-mx-3 flex items-center gap-x-3 px-3 py-2',
                 'cursor-pointer' => $collapsible,
             ])
         >
@@ -58,14 +58,20 @@
     @endif
 
     <ul
-        x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : 'true' }})"
+        x-show="! ($store.sidebar.groupIsCollapsed(label) && ($store.sidebar.isOpen || @js(! filament()->isSidebarCollapsibleOnDesktop())))"
         @if (filament()->isSidebarCollapsibleOnDesktop())
             x-transition:enter="lg:transition delay-100"
             x-transition:enter-start="opacity-0"
             x-transition:enter-end="opacity-100"
         @endif
         x-collapse.duration.200ms
-        class="-mx-3 grid gap-y-1"
+        @class([
+            'grid gap-y-1',
+            'ms-6' => (! filament()->isSideBarCollapsibleOnDesktop()) && $label,
+        ])
+        @if (filament()->isSideBarCollapsibleOnDesktop() && $label)
+            x-bind:class="{ 'ms-6': $store.sidebar.isOpen }"
+        @endif
     >
         @foreach ($items as $item)
             @if ($item instanceof \Filament\Navigation\NavigationItem)
