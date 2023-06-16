@@ -4,7 +4,7 @@ namespace Filament\Panel\Concerns;
 
 trait HasSidebar
 {
-    protected string $sidebarWidth = '18rem';
+    protected string $sidebarWidth = '20rem';
 
     protected string $collapsedSidebarWidth = '5.4rem';
 
