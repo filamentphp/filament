@@ -49,17 +49,17 @@
             :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 500])"
         />
 
-        <div
+        <span
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
                 x-transition:enter="lg:transition delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
-            class="flex flex-1"
+            class="flex-1 text-sm"
         >
             {{ $slot }}
-        </div>
+        </span>
 
         @if (filled($badge))
             <x-filament::layouts.app.sidebar.badge

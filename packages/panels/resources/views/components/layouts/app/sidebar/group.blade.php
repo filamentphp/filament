@@ -1,22 +1,22 @@
 @props([
-    'parentGroup' => null,
     'collapsible' => true,
     'icon' => null,
     'items' => [],
     'label' => null,
+    'parentGroup' => null,
 ])
 
 <li
     x-data="{ label: {{ \Illuminate\Support\Js::from((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }} }"
-    class="filament-sidebar-group"
+    class="filament-sidebar-group grid gap-y-3"
     @if (filled($parentGroup))
         x-bind:class="{{ filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : 'true' }} ? 'ms-11 pe-3 pt-3' : 'hidden'"
     @endif
 >
     @if ($label)
-        <button
+        <div
             @if ($collapsible)
-                x-on:click.prevent="$store.sidebar.toggleCollapsedGroup(label)"
+                x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
@@ -24,36 +24,37 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
-            class="flex w-full items-center justify-between"
+            @class([
+                'flex items-center gap-x-3',
+                'cursor-pointer' => $collapsible,
+            ])
         >
-            <div class="flex items-center gap-4">
-                @if ($icon)
-                    <x-filament::icon
-                        :name="$icon"
-                        alias="panels::sidebar.group"
-                        color="text-gray-600 dark:text-gray-300"
-                        size="h-3 w-3"
-                        class="ms-1 shrink-0"
-                    />
-                @endif
-
-                <p
-                    class="flex-1 text-xs font-bold uppercase tracking-wider text-primary-600 dark:text-primary-500"
-                >
-                    {{ $label }}
-                </p>
-            </div>
-
-            @if ($collapsible)
+            @if ($icon)
                 <x-filament::icon
-                    name="heroicon-m-chevron-up"
-                    alias="panels::sidebar.group.collapse"
-                    size="h-5 w-5"
-                    class="text-gray-600 transition dark:text-gray-300"
-                    x-bind:class="! $store.sidebar.groupIsCollapsed(label) || 'rotate-180'"
+                    :name="$icon"
+                    alias="panels::sidebar.group"
+                    color="text-gray-500 dark:text-gray-400"
+                    size="h-6 w-6"
                 />
             @endif
-        </button>
+
+            <span
+                class="flex-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+            >
+                {{ $label }}
+            </span>
+
+            @if ($collapsible)
+                <x-filament::icon-button
+                    color="gray"
+                    icon="heroicon-m-chevron-down"
+                    icon-alias="panels::sidebar.group.collapse"
+                    x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
+                    x-bind:class="{ 'rotate-180': ! $store.sidebar.groupIsCollapsed(label) }"
+                    class="-my-2.5 -me-2.5"
+                />
+            @endif
+        </div>
     @endif
 
     <ul
@@ -64,10 +65,7 @@
             x-transition:enter-end="opacity-100"
         @endif
         x-collapse.duration.200ms
-        @class([
-            '-mx-3 space-y-1 text-sm',
-            'mt-2' => $label,
-        ])
+        class="-mx-3 grid gap-y-1"
     >
         @foreach ($items as $item)
             @if ($item instanceof \Filament\Navigation\NavigationItem)
