@@ -451,6 +451,8 @@ class Resource
     {
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
+        
+        $databaseCollation = $databaseConnection->getConfig('collation');
 
         $searchOperator = match ($databaseConnection->getDriverName()) {
             'pgsql' => 'ilike',
@@ -471,7 +473,7 @@ class Resource
                     };
 
                     return $query->{"{$whereClause}Raw"}(
-                        "lower({$searchColumn}) {$searchOperator} ?",
+                        "lower({$searchColumn}) COLLATE {$databaseCollation} {$searchOperator} ?",
                         "%{$searchQuery}%",
                     );
                 },
