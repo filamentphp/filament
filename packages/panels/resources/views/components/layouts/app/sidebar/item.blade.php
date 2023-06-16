@@ -37,18 +37,16 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'relative flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 font-medium outline-none transition hover:bg-gray-950/5 focus:bg-gray-950/5 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5',
-            'rounded-full bg-gray-950/5 dark:bg-white/5' => $active,
+            'relative flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 font-medium text-gray-700 outline-none transition hover:bg-gray-950/5 focus:bg-gray-950/5 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'rounded-full bg-gray-950/5 text-gray-950 dark:bg-white/5 dark:text-white' => $active,
         ])
     >
         <x-filament::icon
             :name="($active && $activeIcon) ? $activeIcon : $icon"
             alias="panels::sidebar.item"
-            :color="$active ? null : 'text-custom-500 dark:text-custom-400'"
+            color="text-custom-500 dark:text-custom-400"
             size="h-6 w-6"
-            @style([
-                \Filament\Support\get_color_css_variables($iconColor, shades: [400, 500]) => ! $active,
-            ])
+            :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 500])"
         />
 
         <div
