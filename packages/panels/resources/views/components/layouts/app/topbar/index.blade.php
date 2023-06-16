@@ -4,10 +4,10 @@
 ])
 
 <header
-    {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 border-b bg-white dark:border-gray-700 dark:bg-gray-800']) }}
+    {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_1px_0_0_theme(colors.white_/_20%)]']) }}
 >
     <div
-        class="-mt-px flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
+        class="flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
     >
         <div class="flex flex-1 items-center">
             {{ filament()->renderHook('topbar.start') }}
