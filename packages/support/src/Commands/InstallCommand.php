@@ -12,7 +12,7 @@ class InstallCommand extends Command
 {
     use CanManipulateFiles;
 
-    protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
+    protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--infolists} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
 
     protected $description = 'Install Filament.';
 
@@ -80,6 +80,7 @@ class InstallCommand extends Command
         if (
             (! $this->option('actions')) &&
             (! $this->option('forms')) &&
+            (! $this->option('infolists')) &&
             (! $this->option('tables'))
         ) {
             $css = $filesystem->get(resource_path('css/app.css'));
