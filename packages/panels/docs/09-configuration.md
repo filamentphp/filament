@@ -120,6 +120,11 @@ The available hooks are as follows:
 - `resource.pages.list-records.table.end` - after the resource table
 - `resource.relation-manager.start` - before the relation manager table
 - `resource.relation-manager.end` - after the relation manager table
+- `table.header-toolbar.actions.start` - before a table's header toolbar actions
+- `table.header-toolbar.actions.end` - after a table's header toolbar actions
+- `table.header-toolbar` - between a table's header toolbar actions and filters
+- `table.header-toolbar.filters.start` - before a table's header toolbar filters
+- `table.header-toolbar.filters.end` - after a table's header toolbar filters
 - `tenant-menu.start` - before tenant menu
 - `tenant-menu.end` - after tenant menu
 - `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)

@@ -57,6 +57,7 @@
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
     $isLoaded = $isLoaded();
+    $isPanel = function_exists('filament');
     $hasFilters = $isFilterable();
     $filtersLayout = $getFiltersLayout();
     $hasFiltersDropdown = $hasFilters && ($filtersLayout === FiltersLayout::Dropdown);
@@ -293,6 +294,10 @@
                 }"
             >
                 <div class="flex shrink-0 items-center sm:gap-3">
+                    @if ($isPanel)
+                        {{ filament()->renderHook('tables.header-toolbar.actions.start') }}
+                    @endif
+       
                     @if ($isReorderable)
                         {{ $getReorderRecordsTriggerAction($isReordering) }}
                     @endif
@@ -312,12 +317,24 @@
                             x-cloak="x-cloak"
                         />
                     @endif
+
+                    @if ($isPanel)
+                        {{ filament()->renderHook('tables.header-toolbar.actions.end') }}
+                    @endif
                 </div>
+
+                @if ($isPanel)
+                    {{ filament()->renderHook('tables.header-toolbar') }}
+                @endif
 
                 @if ($isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)
                     <div
                         class="flex flex-1 items-center justify-end gap-3 md:max-w-md"
                     >
+                        @if ($isPanel)
+                            {{ filament()->renderHook('tables.header-toolbar.filters.start') }}
+                        @endif
+
                         @if ($isGlobalSearchVisible)
                             <div
                                 class="filament-tables-search-container flex flex-1 items-center justify-end"
@@ -349,6 +366,10 @@
                                     />
                                 @endif
                             </div>
+                        @endif
+
+                        @if ($isPanel)
+                            {{ filament()->renderHook('tables.header-toolbar.filters.end') }}
                         @endif
                     </div>
                 @endif
