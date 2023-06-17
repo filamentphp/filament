@@ -8,7 +8,7 @@
 <x-filament::dropdown
     {{ $attributes->class(['filament-tables-column-toggling']) }}
     :max-height="$maxHeight"
-    placement="bottom-start"
+    placement="bottom-end"
     shift
     :width="$width"
     wire:key="{{ $this->id }}.table.toggle"
