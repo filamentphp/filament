@@ -8,7 +8,7 @@
         style="background-color: {{ $state }}"
         @if ($isCopyable)
             x-on:click="
-                window.navigator.clipboard.writeText(@js($state))
+                window.navigator.clipboard.writeText(@js($getCopyText() ?? $state))
                 $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
             "
         @endif
