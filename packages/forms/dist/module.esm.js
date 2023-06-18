@@ -28253,6 +28253,7 @@ var select_default = (Alpine) => {
             withInitialOptions: !hasDynamicOptions
           });
           this.select.clearStore();
+          this.refreshPlaceholder();
           this.setChoices(choices);
           if (![null, void 0, ""].includes(this.state)) {
             this.select.setChoiceByValue(this.formatState(this.state));
