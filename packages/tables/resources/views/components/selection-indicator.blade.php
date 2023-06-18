@@ -31,6 +31,7 @@
         <button
             x-on:click="selectAllRecords"
             class="text-sm font-medium text-primary-600"
+            type="button"
         >
             {{ trans_choice('filament-tables::table.selection_indicator.buttons.select_all.label', $allSelectableRecordsCount) }}.
         </button>
@@ -40,6 +41,7 @@
         <button
             x-on:click="deselectAllRecords"
             class="text-sm font-medium text-primary-600"
+            type="button"
         >
             {{ __('filament-tables::table.selection_indicator.buttons.deselect_all.label') }}.
         </button>
