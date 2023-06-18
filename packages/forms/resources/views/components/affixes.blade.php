@@ -58,7 +58,7 @@
     @if (filled($prefix))
         <span
             @class([
-                'filament-input-affix-label text-sm -me-px',
+                'filament-input-affix-label -me-px text-sm',
                 $baseAffixClasses,
                 'rounded-s-lg' => ! $prefixIcon,
             ])
@@ -80,7 +80,7 @@
     @if (filled($suffix))
         <span
             @class([
-                'filament-input-affix-label text-sm -ms-px',
+                'filament-input-affix-label -ms-px text-sm',
                 $baseAffixClasses,
                 'rounded-e-lg' => ! $suffixIcon,
             ])
