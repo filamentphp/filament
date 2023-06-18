@@ -12,7 +12,7 @@ trait CanBeCopied
 
     protected int | Closure | null $copyMessageDuration = null;
 
-    protected string | Closure | null $copyText = null;
+    protected string | Closure | null $copyableState = null;
 
     public function copyable(bool | Closure $condition = true): static
     {
@@ -35,9 +35,9 @@ trait CanBeCopied
         return $this;
     }
 
-    public function copyText(string | Closure | null $text): static
+    public function copyableState(string | Closure | null $state): static
     {
-        $this->copyText = $text;
+        $this->copyableState = $state;
 
         return $this;
     }
@@ -52,9 +52,9 @@ trait CanBeCopied
         return $this->evaluate($this->copyMessageDuration) ?? 2000;
     }
 
-    public function getCopyText(): ?string
+    public function getCopyableState(): ?string
     {
-        return $this->evaluate($this->copyText);
+        return $this->evaluate($this->copyableState) ?? $this->getState();
     }
 
     public function isCopyable(): bool
