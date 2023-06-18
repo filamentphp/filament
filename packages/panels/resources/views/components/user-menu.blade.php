@@ -24,14 +24,25 @@
 
     {{ filament()->renderHook('user-menu.account.before') }}
 
-    <x-filament::dropdown.header
-        :color="$accountItem?->getColor() ?? 'gray'"
-        :icon="$accountItem?->getIcon() ?? 'heroicon-m-user-circle'"
-        :href="$accountItemUrl"
-        :tag="filled($accountItemUrl) ? 'a' : 'div'"
-    >
-        {{ $accountItem?->getLabel() ?? filament()->getUserName($user) }}
-    </x-filament::dropdown.header>
+    @if (filled($accountItemUrl))
+        <x-filament::dropdown.list>
+            <x-filament::dropdown.list.item
+                :color="$accountItem->getColor() ?? 'gray'"
+                :icon="$accountItem->getIcon() ?? 'heroicon-m-user-circle'"
+                :href="$accountItemUrl"
+                tag="a"
+            >
+                {{ $accountItem->getLabel() ?? filament()->getUserName($user) }}
+            </x-filament::dropdown.list.item>
+        </x-filament::dropdown.list>
+    @else
+        <x-filament::dropdown.header
+            :color="$accountItem?->getColor() ?? 'gray'"
+            :icon="$accountItem?->getIcon() ?? 'heroicon-m-user-circle'"
+        >
+            {{ $accountItem?->getLabel() ?? filament()->getUserName($user) }}
+        </x-filament::dropdown.header>
+    @endif
 
     {{ filament()->renderHook('user-menu.account.after') }}
 
