@@ -14,6 +14,8 @@ class NavigationItem
 
     protected ?string $activeIcon = null;
 
+    protected ?string $iconColor = null;
+
     protected string $label;
 
     protected ?string $badge = null;
@@ -25,6 +27,10 @@ class NavigationItem
     protected ?int $sort = null;
 
     protected string | Closure | null $url = null;
+
+    protected bool $isHidden = false;
+
+    protected bool $isVisible = true;
 
     final public function __construct(?string $label = null)
     {
@@ -60,9 +66,30 @@ class NavigationItem
         return $this;
     }
 
+    public function visible(bool | Closure $condition = true): static
+    {
+        $this->isVisible = value($condition);
+
+        return $this;
+    }
+
+    public function hidden(bool | Closure $condition = true): static
+    {
+        $this->isHidden = value($condition);
+
+        return $this;
+    }
+
     public function activeIcon(string $activeIcon): static
     {
         $this->activeIcon = $activeIcon;
+
+        return $this;
+    }
+
+    public function iconColor(?string $iconColor): static
+    {
+        $this->iconColor = $iconColor;
 
         return $this;
     }
@@ -123,9 +150,28 @@ class NavigationItem
         return $this->icon;
     }
 
+    public function isVisible(): bool
+    {
+        return ! $this->isHidden();
+    }
+
+    public function isHidden(): bool
+    {
+        if ($this->isHidden) {
+            return true;
+        }
+
+        return ! $this->isVisible;
+    }
+
     public function getActiveIcon(): ?string
     {
         return $this->activeIcon;
+    }
+
+    public function getIconColor(): ?string
+    {
+        return $this->iconColor;
     }
 
     public function getLabel(): string

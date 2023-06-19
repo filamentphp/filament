@@ -64,17 +64,20 @@
     >
         @foreach ($items as $item)
             @if ($item instanceof \Filament\Navigation\NavigationItem)
-                <x-filament::layouts.app.sidebar.item
-                    :active="$item->isActive()"
-                    :icon="$item->getIcon()"
-                    :active-icon="$item->getActiveIcon()"
-                    :url="$item->getUrl()"
-                    :badge="$item->getBadge()"
-                    :badgeColor="$item->getBadgeColor()"
-                    :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
-                >
-                    {{ $item->getLabel() }}
-                </x-filament::layouts.app.sidebar.item>
+                @if ($item->isVisible())
+                    <x-filament::layouts.app.sidebar.item
+                        :active="$item->isActive()"
+                        :icon="$item->getIcon()"
+                        :iconColor="$item->getIconColor()"
+                        :active-icon="$item->getActiveIcon()"
+                        :url="$item->getUrl()"
+                        :badge="$item->getBadge()"
+                        :badgeColor="$item->getBadgeColor()"
+                        :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
+                    >
+                        {{ $item->getLabel() }}
+                    </x-filament::layouts.app.sidebar.item>
+                @endif
             @elseif ($item instanceof \Filament\Navigation\NavigationGroup)
                 <x-filament::layouts.app.sidebar.group
                     :label="$item->getLabel()"
