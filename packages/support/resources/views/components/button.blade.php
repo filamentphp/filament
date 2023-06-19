@@ -23,11 +23,11 @@
             'filament-button relative grid-flow-col items-center justify-center rounded-lg border font-medium outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
             is_string($color) ? "filament-button-color-{$color}" : null,
             match ($size) {
-                'xs' => 'filament-button-size-xs gap-1.5 px-[calc(theme(spacing.3)-1px)] py-[calc(theme(spacing.2)-1px)] text-xs',
-                'sm' => 'filament-button-size-sm gap-1.5 px-[calc(theme(spacing.[3.5])-1px)] py-[calc(theme(spacing.2)-1px)] text-sm',
-                'md' => 'filament-button-size-md gap-2 px-[calc(theme(spacing.4)-1px)] py-[calc(theme(spacing[2.5])-1px)] text-sm',
-                'lg' => 'filament-button-size-lg gap-2 px-[calc(theme(spacing.5)-1px)] py-[calc(theme(spacing.3)-1px)] text-sm',
-                'xl' => 'filament-button-size-xl gap-2 px-[calc(theme(spacing.6)-1px)] py-[calc(theme(spacing.3)-1px)] text-base',
+                'xs' => 'filament-button-size-xs gap-1.5 px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing.[1.5])-1px)] text-xs',
+                'sm' => 'filament-button-size-sm gap-1.5 px-[calc(theme(spacing.3)-1px)] py-[calc(theme(spacing[1.5])-1px)] text-sm',
+                'md' => 'filament-button-size-md gap-2 px-[calc(theme(spacing.3)-1px)] py-[calc(theme(spacing.2)-1px)] text-sm',
+                'lg' => 'filament-button-size-lg gap-2 px-[calc(theme(spacing[3.5])-1px)] py-[calc(theme(spacing[2.5])-1px)] text-sm',
+                'xl' => 'filament-button-size-xl gap-2 px-[calc(theme(spacing.4)-1px)] py-[calc(theme(spacing.3)-1px)] text-sm',
             },
             'hidden' => $labeledFrom,
             match ($labeledFrom) {
@@ -78,28 +78,7 @@
         default => $iconSize,
     };
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-icon',
-        match ($iconPosition) {
-            'before' => match ($size) {
-                'xs' => '-ms-0.5',
-                'sm' => '-ms-0.5',
-                'md' => '-ms-1',
-                'lg' => '-ms-1',
-                'xl' => '-ms-1',
-                default => null,
-            },
-            'after' => match ($size) {
-                'xs' => '-me-0.5',
-                'sm' => '-me-0.5',
-                'md' => '-me-1',
-                'lg' => '-me-1',
-                'xl' => '-me-1',
-                default => null,
-            },
-            default => null,
-        } => ! $labelSrOnly,
-    ]);
+    $iconClasses = 'filament-button-icon';
 
     $indicatorClasses = 'filament-button-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
 
