@@ -41,6 +41,6 @@
             </button>
         </span>
     </div>
-    
+
     {{ $slot }}
 </div>
