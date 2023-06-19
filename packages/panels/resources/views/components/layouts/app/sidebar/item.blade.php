@@ -51,16 +51,22 @@
                 size="h-6 w-6"
                 :style="\Filament\Support\get_color_css_variables(($active ? 'primary' : 'gray'), shades: [400, 600])"
             />
-        @else ($hasGroupedBorder)
-            <div class="filament-sidebar-item-grouped-border relative h-6 w-6 flex items-center justify-center">
-                <div class="rounded-full bg-gray-300 w-1.5 h-1.5"></div>
+        @else($hasGroupedBorder)
+            <div
+                class="filament-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
+            >
+                <div class="h-1.5 w-1.5 rounded-full bg-gray-300"></div>
 
                 @if (! $first)
-                    <div class="absolute w-px -top-1/2 bottom-1/2 bg-gray-300"></div>
+                    <div
+                        class="absolute -top-1/2 bottom-1/2 w-px bg-gray-300"
+                    ></div>
                 @endif
 
                 @if (! $last)
-                    <div class="absolute w-px -bottom-1/2 top-1/2 bg-gray-300"></div>
+                    <div
+                        class="absolute -bottom-1/2 top-1/2 w-px bg-gray-300"
+                    ></div>
                 @endif
             </div>
         @endif
