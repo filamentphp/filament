@@ -327,7 +327,7 @@
                         @endif
 
                         @if ($hasFiltersDropdown || $isColumnToggleFormVisible)
-                            <div class="flex items-center">
+                            <div class="flex items-center gap-x-1">
                                 @if ($hasFiltersDropdown)
                                     <x-filament-tables::filters.dropdown
                                         :form="$getFiltersForm()"
