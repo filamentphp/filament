@@ -56,7 +56,7 @@ Markdown text will automatically be rendered if passed to the title.
 
 ## Setting an icon
 
-Optionally, a notification can have an icon that's displayed in front of its content. You may also set a color for the icon, which defaults to the `gray` color specified in your `tailwind.config.js` file. The icon can be the name of any Blade component. By default, the [Blade Heroicons v1](https://github.com/blade-ui-kit/blade-heroicons/tree/1.3.1) package is installed, so you may use the name of any [Heroicons v1](https://v1.heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+Optionally, a notification can have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) that's displayed in front of its content. You may also set a color for the icon, which is gray by default:
 
 ```php
 use Filament\Notifications\Notification;

@@ -46,39 +46,20 @@ First, use NPM to install Tailwind CSS and its `forms` and `typography` plugins:
 npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss --save-dev
 ```
 
-Create a new `tailwind.config.js` file. Ensure that you add Filament's `content` path, custom `colors`, and the `plugins` you installed:
+Create a new `tailwind.config.js` file. Ensure that you add Filament's `preset` which configures colors and the plugins you installed:
 
 ```js
-import colors from 'tailwindcss/colors'
-import forms from '@tailwindcss/forms'
-import typography from '@tailwindcss/typography'
+import preset from './vendor/filament/support/tailwind.config.preset'
 
 export default {
+    presets: [preset],
     content: [
-        './resources/**/*.blade.php',
+        './app/Filament/**/*.php',
+        './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-    ],
-    darkMode: 'class',
-    theme: {
-        extend: {
-            colors: {
-                danger: colors.red,
-                info: colors.blue,
-                primary: colors.amber,
-                secondary: colors.gray,
-                success: colors.green,
-                warning: colors.amber,
-            },
-        },
-    },
-    plugins: [
-        forms,
-        typography,
     ],
 }
 ```
-
-Of course, you may specify your own custom `danger`, `gray`, `info`, `primary`, `secondary`, `success` and `warning` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 950 variants specified - a single hex code or RGB value won't work here.
 
 ### Configuring styles
 

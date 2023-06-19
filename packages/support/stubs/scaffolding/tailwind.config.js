@@ -1,21 +1,10 @@
-import colors from 'tailwindcss/colors'
-import forms from '@tailwindcss/forms'
-import typography from '@tailwindcss/typography'
+import preset from './vendor/filament/support/tailwind.config.preset'
 
 export default {
-    content: ['./resources/**/*.blade.php', './vendor/filament/**/*.blade.php'],
-    darkMode: 'class',
-    theme: {
-        extend: {
-            colors: {
-                danger: colors.red,
-                info: colors.blue,
-                primary: colors.amber,
-                secondary: colors.gray,
-                success: colors.green,
-                warning: colors.amber,
-            },
-        },
-    },
-    plugins: [forms, typography],
+    presets: [preset],
+    content: [
+        './app/Filament/**/*.php',
+        './resources/views/filament/**/*.blade.php',
+        './vendor/filament/**/*.blade.php',
+    ],
 }

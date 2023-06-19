@@ -14,13 +14,15 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->dangerColor(Color::Rose)
-        ->grayColor(Color::Gray)
-        ->infoColor(Color::Blue)
-        ->primaryColor(Color::Indigo)
-        ->secondaryColor(Color::Sky)
-        ->successColor(Color::Emerald)
-        ->warningColor(Color::Orange);
+        ->colors([
+            'danger' => Color::Rose,
+            'gray' => Color::Gray,
+            'info' => Color::Blue,
+            'primary' => Color::Indigo,
+            'secondary' => Color::Sky,
+            'success' => Color::Emerald,
+            'warning' => Color::Orange,
+        ]);
 }
 ```
 
@@ -29,19 +31,22 @@ The `Filament\Support\Colors\Color` class contains color options for all [Tailwi
 Alternatively, you may pass your own palette in as an array of RGB values:
 
 ```php
-$panel->primaryColor([
-    50 => '238, 242, 255',
-    100 => '224, 231, 255',
-    200 => '199, 210, 254',
-    300 => '165, 180, 252',
-    400 => '129, 140, 248',
-    500 => '99, 102, 241',
-    600 => '79, 70, 229',
-    700 => '67, 56, 202',
-    800 => '55, 48, 163',
-    900 => '49, 46, 129',
-    950 => '30, 27, 75',
-])
+$panel
+    ->colors([
+        'primary' => [
+            50 => '238, 242, 255',
+            100 => '224, 231, 255',
+            200 => '199, 210, 254',
+            300 => '165, 180, 252',
+            400 => '129, 140, 248',
+            500 => '99, 102, 241',
+            600 => '79, 70, 229',
+            700 => '67, 56, 202',
+            800 => '55, 48, 163',
+            900 => '49, 46, 129',
+            950 => '30, 27, 75',
+        ],
+    ])
 ```
 
 ### Generating a color palette
@@ -49,11 +54,15 @@ $panel->primaryColor([
 If you want us to attempt to generate a palette for you based on a singular hex or RGB value, you can pass that in:
 
 ```php
-use Filament\Support\Colors\Color;
-
-$panel->primaryColor('#6366f1')
-
-$panel->primaryColor('rgb(99, 102, 241)')
+$panel
+    ->colors([
+        'primary' => '#6366f1',
+    ])
+    
+$panel
+    ->colors([
+        'primary' => 'rgb(99, 102, 241)',
+    ])
 ```
 
 ## Changing the font
@@ -99,61 +108,23 @@ $panel->font(
 
 Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
 
-Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin, [Autoprefixer](https://github.com/postcss/autoprefixer), and [Tippy.js](https://atomiks.github.io/tippyjs). You may install these through NPM:
+Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin, [Autoprefixer](https://github.com/postcss/autoprefixer), and [Tippy.js](https://atomiks.github.io/tippyjs).
+
+To create a custom theme for a panel, you can use the `php artisan make:filament-theme` command:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer tippy.js --save-dev
+php artisan make:filament-theme
 ```
 
-To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
+If you have more than one panel, you can specify the panel you want to create a theme for:
 
-In `tailwind.config.js`, require Filament's "preset", which gives you a working Tailwind configuration that you can override however you wish:
-
-```js
-import preset from './vendor/filament/filament/tailwind.config.preset'
-
-export default {
-    presets: [preset],
-}
+```bash
+php artisan make:filament-theme admin
 ```
 
-If you use Vite to compile assets, in your `vite.config.js` file, register the `filament.css` theme file:
+The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also compile the theme for you into the `/public` directory of your app.
 
-```js
-import { defineConfig } from 'vite'
-import laravel from 'laravel-vite-plugin'
-
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                // ...
-                'resources/css/filament.css',
-            ],
-            // ...
-        }),
-    ],
-})
-```
-
-And add Tailwind to the `postcss.config.js` file:
-
-```js
-export default {
-    plugins: {
-        tailwindcss: {},
-        autoprefixer: {},
-    },
-}
-```
-
-In `/resources/css/filament.css`, import Filament's base theme CSS:
-
-```css
-@import '../../vendor/filament/filament/resources/css/index.css';
-```
-
-Now, you may register the theme file in Filament's [configuration](configuration):
+Now, you may register the theme file in Filament's [configuration](configuration). Make sure to check the output of the command for the correct path to the theme file, which is based on the panel name:
 
 ```php
 use Filament\Panel;
@@ -162,8 +133,28 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->viteTheme('resources/css/filament.css')
+        ->theme(asset('css/filament/admin/theme.css'))
 }
+```
+
+### Compiling a custom theme
+
+To compile a custom theme that you have set up with the `make:filament-theme` command, you can use the `php artisan filament:theme` command:
+
+```bash
+php artisan filament:theme
+```
+
+If you have more than one panel, you can specify the panel you want to compile a theme for:
+
+```bash
+php artisan filament:theme admin
+```
+
+If you want to watch your codebase for changes and recompile the theme automatically, you can use the `--watch` option:
+
+```bash
+php artisan filament:theme --watch
 ```
 
 ## Non-sticky topbar
