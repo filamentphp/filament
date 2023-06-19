@@ -609,8 +609,7 @@ abstract class Resource
 
     public static function getNavigationIcon(): ?string
     {
-        return static::$navigationIcon ??
-            (filament()->hasTopNavigation() ? null : 'heroicon-o-rectangle-stack');
+        return static::$navigationIcon;
     }
 
     public static function navigationIcon(?string $icon): void
@@ -618,7 +617,7 @@ abstract class Resource
         static::$navigationIcon = $icon;
     }
 
-    public static function getActiveNavigationIcon(): string
+    public static function getActiveNavigationIcon(): ?string
     {
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }

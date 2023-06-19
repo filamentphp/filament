@@ -139,13 +139,14 @@
         </script>
 
         @if (filament()->hasNavigation())
-            <ul class="grid gap-y-3 px-6">
+            <ul class="grid gap-y-3 px-6 -mx-3">
                 @foreach ($navigation as $group)
                     <x-filament::layouts.app.sidebar.group
                         :label="$group->getLabel()"
                         :icon="$group->getIcon()"
                         :collapsible="$group->isCollapsible()"
                         :items="$group->getItems()"
+                        :has-item-icons="$group->hasItemIcons()"
                     />
                 @endforeach
             </ul>

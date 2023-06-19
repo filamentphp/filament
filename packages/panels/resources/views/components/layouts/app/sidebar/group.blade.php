@@ -1,17 +1,16 @@
 @props([
     'collapsible' => true,
+    'hasItemIcons' => false,
     'icon' => null,
     'items' => [],
     'label' => null,
-    'parentGroup' => null,
 ])
 
 <li
-    x-data="{ label: @js((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }"
-    class="filament-sidebar-group grid gap-y-1"
-    @if (filled($parentGroup) && filament()->isSideBarCollapsibleOnDesktop())
-        x-bind:class="{ 'hidden': ! $store.sidebar.isOpen }"
-    @endif
+    x-data="{ label: @js($label) }"
+    @class([
+        'filament-sidebar-group grid gap-y-1',
+    ])
 >
     @if ($label)
         <div
@@ -25,7 +24,7 @@
                 x-transition:enter-end="opacity-100"
             @endif
             @class([
-                '-mx-3 flex items-center gap-x-3 px-3 py-2',
+                'flex items-center gap-x-3 px-3 py-2',
                 'cursor-pointer' => $collapsible,
             ])
         >
@@ -33,7 +32,7 @@
                 <x-filament::icon
                     :name="$icon"
                     alias="panels::sidebar.group"
-                    color="text-gray-500 dark:text-gray-400"
+                    color="text-gray-600 dark:text-gray-400"
                     size="h-6 w-6"
                 />
             @endif
@@ -67,36 +66,24 @@
         x-collapse.duration.200ms
         @class([
             'grid gap-y-1',
-            'ms-6' => (! filament()->isSideBarCollapsibleOnDesktop()) && $label,
         ])
-        @if (filament()->isSideBarCollapsibleOnDesktop() && $label)
-            x-bind:class="{ 'ms-6': $store.sidebar.isOpen }"
-        @endif
     >
         @foreach ($items as $item)
-            @if ($item instanceof \Filament\Navigation\NavigationItem)
-                @if ($item->isVisible())
-                    <x-filament::layouts.app.sidebar.item
-                        :active="$item->isActive()"
-                        :icon="$item->getIcon()"
-                        :iconColor="$item->getIconColor()"
-                        :active-icon="$item->getActiveIcon()"
-                        :url="$item->getUrl()"
-                        :badge="$item->getBadge()"
-                        :badgeColor="$item->getBadgeColor()"
-                        :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
-                    >
-                        {{ $item->getLabel() }}
-                    </x-filament::layouts.app.sidebar.item>
-                @endif
-            @elseif ($item instanceof \Filament\Navigation\NavigationGroup)
-                <x-filament::layouts.app.sidebar.group
-                    :label="$item->getLabel()"
+            @if ($item->isVisible())
+                <x-filament::layouts.app.sidebar.item
+                    :active="$item->isActive()"
+                    :has-grouped-border="! $hasItemIcons"
                     :icon="$item->getIcon()"
-                    :collapsible="$item->isCollapsible()"
-                    :items="$item->getItems()"
-                    :parentGroup="(filled($parentGroup) ? ('$parentGroup' . '.') : null) . $label"
-                />
+                    :first="$loop->first"
+                    :last="$loop->last"
+                    :active-icon="$item->getActiveIcon()"
+                    :url="$item->getUrl()"
+                    :badge="$item->getBadge()"
+                    :badge-color="$item->getBadgeColor()"
+                    :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                >
+                    {{ $item->getLabel() }}
+                </x-filament::layouts.app.sidebar.item>
             @endif
         @endforeach
     </ul>

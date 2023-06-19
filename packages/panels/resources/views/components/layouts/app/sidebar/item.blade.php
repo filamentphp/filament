@@ -3,8 +3,10 @@
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
-    'icon',
-    'iconColor' => 'gray',
+    'hasGroupedBorder' => false,
+    'last' => false,
+    'first' => false,
+    'icon' => null,
     'shouldOpenUrlInNewTab' => false,
     'url',
 ])
@@ -37,17 +39,31 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'relative -mx-3 flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 font-medium text-gray-700 outline-none transition hover:bg-gray-950/5 focus:bg-gray-950/5 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5',
-            'rounded-full bg-gray-950/5 text-gray-950 dark:bg-white/5 dark:text-white' => $active,
+            'relative flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 font-medium text-gray-700 outline-none transition hover:bg-gray-950/5 focus:bg-gray-950/5 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'rounded-full bg-gray-950/5 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
         ])
     >
-        <x-filament::icon
-            :name="($active && $activeIcon) ? $activeIcon : $icon"
-            alias="panels::sidebar.item"
-            color="text-custom-500 dark:text-custom-400"
-            size="h-6 w-6"
-            :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 500])"
-        />
+        @if ($icon)
+            <x-filament::icon
+                :name="($active && $activeIcon) ? $activeIcon : $icon"
+                alias="panels::sidebar.item"
+                color="text-custom-600 dark:text-custom-400"
+                size="h-6 w-6"
+                :style="\Filament\Support\get_color_css_variables(($active ? 'primary' : 'gray'), shades: [400, 600])"
+            />
+        @else ($hasGroupedBorder)
+            <div class="filament-sidebar-item-grouped-border relative h-6 w-6 flex items-center justify-center">
+                <div class="rounded-full bg-gray-300 w-1.5 h-1.5"></div>
+
+                @if (! $first)
+                    <div class="absolute w-px -top-1/2 bottom-1/2 bg-gray-300"></div>
+                @endif
+
+                @if (! $last)
+                    <div class="absolute w-px -bottom-1/2 top-1/2 bg-gray-300"></div>
+                @endif
+            </div>
+        @endif
 
         <span
             @if (filament()->isSidebarCollapsibleOnDesktop())

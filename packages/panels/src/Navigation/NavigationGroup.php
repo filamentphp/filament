@@ -2,6 +2,7 @@
 
 namespace Filament\Navigation;
 
+use Exception;
 use Illuminate\Contracts\Support\Arrayable;
 
 class NavigationGroup
@@ -13,7 +14,7 @@ class NavigationGroup
     protected ?string $icon = null;
 
     /**
-     * @var array<NavigationItem | NavigationGroup> | Arrayable
+     * @var array<NavigationItem> | Arrayable
      */
     protected array | Arrayable $items = [];
 
@@ -53,10 +54,18 @@ class NavigationGroup
     }
 
     /**
-     * @param  array<NavigationItem | NavigationGroup> | Arrayable  $items
+     * @param  array<NavigationItem> | Arrayable  $items
      */
     public function items(array | Arrayable $items): static
     {
+        foreach ($items as $item) {
+            if ($item instanceof NavigationItem) {
+                continue;
+            }
+
+            throw new Exception("Navigation group [{$this->getLabel()}] has a nested group, which is not supported.");
+        }
+
         $this->items = $items;
 
         return $this;
@@ -71,11 +80,15 @@ class NavigationGroup
 
     public function getIcon(): ?string
     {
+        if (filled($this->icon) && $this->hasItemIcons()) {
+            throw new Exception("Navigation group [{$this->getLabel()}] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.");
+        }
+
         return $this->icon;
     }
 
     /**
-     * @return array<NavigationItem | NavigationGroup> | Arrayable
+     * @return array<NavigationItem> | Arrayable
      */
     public function getItems(): array | Arrayable
     {
@@ -108,5 +121,31 @@ class NavigationGroup
         }
 
         return false;
+    }
+
+    public function hasItemIcons(): bool
+    {
+        $hasIconCount = 0;
+        $hasNoIconCount = 0;
+
+        foreach ($this->getItems() as $item) {
+            if (! $item instanceof NavigationItem) {
+                continue;
+            }
+
+            if (blank($item->getIcon())) {
+                $hasNoIconCount++;
+
+                continue;
+            }
+
+            $hasIconCount++;
+        }
+
+        if (($hasIconCount > 0) && ($hasNoIconCount > 0)) {
+            throw new Exception("Navigation group [{$this->getLabel()}] has items with and without icons. All items must have icons or none of them can have icons. This is to ensure a proper user experience.");
+        }
+
+        return $hasIconCount > 0;
     }
 }
