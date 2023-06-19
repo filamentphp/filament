@@ -20,14 +20,14 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            'filament-button relative grid-flow-col items-center justify-center rounded-lg border font-medium outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
+            "filament-button filament-button-size-{$size} relative grid-flow-col items-center justify-center rounded-lg border font-medium outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
             is_string($color) ? "filament-button-color-{$color}" : null,
             match ($size) {
-                'xs' => 'filament-button-size-xs gap-1.5 px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing.[1.5])-1px)] text-xs',
-                'sm' => 'filament-button-size-sm gap-1.5 px-[calc(theme(spacing.3)-1px)] py-[calc(theme(spacing[1.5])-1px)] text-sm',
-                'md' => 'filament-button-size-md gap-2 px-[calc(theme(spacing.3)-1px)] py-[calc(theme(spacing.2)-1px)] text-sm',
-                'lg' => 'filament-button-size-lg gap-2 px-[calc(theme(spacing[3.5])-1px)] py-[calc(theme(spacing[2.5])-1px)] text-sm',
-                'xl' => 'filament-button-size-xl gap-2 px-[calc(theme(spacing.4)-1px)] py-[calc(theme(spacing.3)-1px)] text-sm',
+                'xs' => 'gap-1 px-[calc(theme(spacing.2)-1px)] py-[calc(theme(spacing.[1.5])-1px)] text-xs',
+                'sm' => 'gap-1 px-[calc(theme(spacing[2.5])-1px)] py-[calc(theme(spacing[1.5])-1px)] text-sm',
+                'md' => 'gap-1.5 px-[calc(theme(spacing.3)-1px)] py-[calc(theme(spacing.2)-1px)] text-sm',
+                'lg' => 'gap-1.5 px-[calc(theme(spacing[3.5])-1px)] py-[calc(theme(spacing[2.5])-1px)] text-sm',
+                'xl' => 'gap-1.5 px-[calc(theme(spacing.4)-1px)] py-[calc(theme(spacing.3)-1px)] text-sm',
             },
             'hidden' => $labeledFrom,
             match ($labeledFrom) {
@@ -67,7 +67,6 @@
 
     $iconSize ??= match ($size) {
         'xs', 'sm' => 'sm',
-        'md', 'lg', 'xl' => 'md',
         default => 'md',
     };
 
