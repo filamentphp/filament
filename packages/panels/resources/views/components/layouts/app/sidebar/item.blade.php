@@ -53,15 +53,19 @@
             />
         @else ($hasGroupedBorder)
             <div class="filament-sidebar-item-grouped-border relative h-6 w-6 flex items-center justify-center">
-                <div class="rounded-full bg-gray-300 w-1.5 h-1.5"></div>
-
                 @if (! $first)
-                    <div class="absolute w-px -top-1/2 bottom-1/2 bg-gray-300"></div>
+                    <div class="absolute w-px -top-1/2 bottom-1/2 bg-gray-300 dark:bg-gray-600"></div>
                 @endif
 
                 @if (! $last)
-                    <div class="absolute w-px -bottom-1/2 top-1/2 bg-gray-300"></div>
+                    <div class="absolute w-px -bottom-1/2 top-1/2 bg-gray-300 dark:bg-gray-600"></div>
                 @endif
+
+                <div @class([
+                    'relative rounded-full w-1.5 h-1.5',
+                    'bg-gray-400' => ! $active,
+                    'bg-primary-600 dark:bg-primary-400' => $active,
+                ])></div>
             </div>
         @endif
 

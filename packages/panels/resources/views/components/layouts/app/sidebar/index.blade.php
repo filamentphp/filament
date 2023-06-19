@@ -16,13 +16,13 @@
         x-bind:class="$store.sidebar.isOpen ? 'filament-sidebar-open translate-x-0' : '-translate-x-full rtl:translate-x-full'"
     @endif
     @class([
-        'filament-sidebar fixed inset-y-0 start-0 z-20 flex h-screen w-[--sidebar-width] flex-col bg-white transition-all dark:bg-gray-800 lg:z-0',
+        'filament-sidebar fixed inset-y-0 start-0 z-20 flex h-screen w-[--sidebar-width] flex-col bg-white lg:bg-transparent transition-all dark:bg-gray-800 lg:z-0',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
 >
     <header
-        class="filament-sidebar-header relative flex h-[4rem] shrink-0 items-center justify-center shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:shadow-[0_1px_0_0_theme(colors.white_/_20%)]"
+        class="filament-sidebar-header bg-white relative flex h-[4rem] shrink-0 items-center justify-center shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:shadow-[0_1px_0_0_theme(colors.white_/_20%)]"
     >
         <div
             @class([
@@ -107,7 +107,7 @@
     </header>
 
     <nav
-        class="filament-sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-6 shadow-[1px_0_0_0_theme(colors.gray.950_/_5%)] dark:shadow-[1px_0_0_0_theme(colors.white_/_20%)]"
+        class="filament-sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-6 shadow-[1px_0_0_0_theme(colors.gray.950_/_5%)] lg:shadow-none dark:shadow-[1px_0_0_0_theme(colors.white_/_20%)]"
     >
         {{ filament()->renderHook('sidebar.start') }}
 
