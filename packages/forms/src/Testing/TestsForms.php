@@ -7,6 +7,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Field;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Contracts\HasForms;
+use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
 use Livewire\Testing\TestableLivewire;
 
@@ -30,8 +31,8 @@ class TestsForms
 
             $formStatePath = $form->getStatePath();
 
-            foreach ($state as $key => $value) {
-                $this->set((filled($formStatePath) ? "{$formStatePath}.{$key}" : $key), $value);
+            foreach (Arr::dot($state, prepend: filled($formStatePath) ? "{$formStatePath}." : '') as $key => $value) {
+                $this->set($key, $value);
             }
 
             return $this;
@@ -51,8 +52,8 @@ class TestsForms
 
             $formStatePath = $form->getStatePath();
 
-            foreach ($state as $key => $value) {
-                $this->assertSet((filled($formStatePath) ? "{$formStatePath}.{$key}" : $key), $value);
+            foreach (Arr::dot($state, prepend: filled($formStatePath) ? "{$formStatePath}." : '') as $key => $value) {
+                $this->assertSet($key, $value);
             }
 
             return $this;

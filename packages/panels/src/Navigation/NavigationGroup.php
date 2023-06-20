@@ -142,8 +142,8 @@ class NavigationGroup
             $hasIconCount++;
         }
 
-        if (($hasIconCount > 0) && ($hasNoIconCount > 0)) {
-            throw new Exception("Navigation group [{$this->getLabel()}] has items with and without icons. All items must have icons or none of them can have icons. This is to ensure a proper user experience.");
+        if (($hasIconCount > 0) && ($hasNoIconCount > 0) && filled($label = $this->getLabel())) {
+            throw new Exception("Navigation group [{$label}] has items with and without icons. All items must have icons or none of them can have icons. This is to ensure a proper user experience.");
         }
 
         return $hasIconCount > 0;

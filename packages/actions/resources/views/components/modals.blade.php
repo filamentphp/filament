@@ -72,7 +72,7 @@
                     {{ $this->getMountedActionForm() }}
                 @endif
 
-                {{ $action->getModalFooter() }}
+                {{ $action->getModalContentFooter() }}
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
@@ -168,7 +168,7 @@
                     {{ $this->getMountedInfolistActionForm() }}
                 @endif
 
-                {{ $action->getModalFooter() }}
+                {{ $action->getModalContentFooter() }}
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
@@ -264,7 +264,7 @@
                     {{ $this->getMountedTableActionForm() }}
                 @endif
 
-                {{ $action->getModalFooter() }}
+                {{ $action->getModalContentFooter() }}
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
@@ -354,7 +354,7 @@
                     {{ $this->getMountedTableBulkActionForm() }}
                 @endif
 
-                {{ $action->getModalFooter() }}
+                {{ $action->getModalContentFooter() }}
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">
@@ -437,7 +437,7 @@
                     {{ $this->getMountedFormComponentActionForm() }}
                 @endif
 
-                {{ $action->getModalFooter() }}
+                {{ $action->getModalContentFooter() }}
 
                 @if (count($modalActions = $action->getVisibleModalActions()))
                     <x-slot name="footer">

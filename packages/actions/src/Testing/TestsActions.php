@@ -61,7 +61,7 @@ class TestsActions
     public function setActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::prependKeysWith($data, 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -72,8 +72,8 @@ class TestsActions
     public function assertActionDataSet(): Closure
     {
         return function (array $data): static {
-            foreach ($data as $key => $value) {
-                $this->assertSet('mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.' . $key, $value);
+            foreach (Arr::dot($data, prepend: 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.') as $key => $value) {
+                $this->assertSet($key, $value);
             }
 
             return $this;
