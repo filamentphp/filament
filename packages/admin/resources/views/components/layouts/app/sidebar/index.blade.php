@@ -52,7 +52,7 @@
                     x-transition:enter-end="opacity-100"
                 >
                     <svg
-                        class="h-6 w-6"
+                        class="h-6 w-6 rtl:scale-x-[-1]"
                         width="24"
                         height="24"
                         viewBox="0 0 24 24"
