@@ -71,44 +71,42 @@
                 x-ignore
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
-                x-data="
-                    selectFormComponent({
-                        canSelectPlaceholder: @js($canSelectPlaceholder()),
-                        isHtmlAllowed: @js($isHtmlAllowed()),
-                        getOptionLabelUsing: async () => {
-                            return await $wire.getFormSelectOptionLabel(@js($statePath))
-                        },
-                        getOptionLabelsUsing: async () => {
-                            return await $wire.getFormSelectOptionLabels(@js($statePath))
-                        },
-                        getOptionsUsing: async () => {
-                            return await $wire.getFormSelectOptions(@js($statePath))
-                        },
-                        getSearchResultsUsing: async (search) => {
-                            return await $wire.getFormSelectSearchResults(@js($statePath), search)
-                        },
-                        isAutofocused: @js($isAutofocused()),
-                        isDisabled: @js($isDisabled),
-                        isMultiple: @js($isMultiple()),
-                        livewireId: @js($this->id),
-                        hasDynamicOptions: @js($hasDynamicOptions()),
-                        hasDynamicSearchResults: @js($hasDynamicSearchResults()),
-                        loadingMessage: @js($getLoadingMessage()),
-                        maxItems: @js($getMaxItems()),
-                        maxItemsMessage: @js($getMaxItemsMessage()),
-                        noSearchResultsMessage: @js($getNoSearchResultsMessage()),
-                        options: @js($getOptionsForJs()),
-                        optionsLimit: @js($getOptionsLimit()),
-                        placeholder: @js($getPlaceholder()),
-                        position: @js($getPosition()),
-                        searchDebounce: @js($getSearchDebounce()),
-                        searchingMessage: @js($getSearchingMessage()),
-                        searchPrompt: @js($getSearchPrompt()),
-                        searchableOptionFields: @js($getSearchableOptionFields()),
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-                        statePath: @js($statePath),
-                    })
-                "
+                x-data="selectFormComponent({
+                            canSelectPlaceholder: @js($canSelectPlaceholder()),
+                            isHtmlAllowed: @js($isHtmlAllowed()),
+                            getOptionLabelUsing: async () => {
+                                return await $wire.getFormSelectOptionLabel(@js($statePath))
+                            },
+                            getOptionLabelsUsing: async () => {
+                                return await $wire.getFormSelectOptionLabels(@js($statePath))
+                            },
+                            getOptionsUsing: async () => {
+                                return await $wire.getFormSelectOptions(@js($statePath))
+                            },
+                            getSearchResultsUsing: async (search) => {
+                                return await $wire.getFormSelectSearchResults(@js($statePath), search)
+                            },
+                            isAutofocused: @js($isAutofocused()),
+                            isDisabled: @js($isDisabled),
+                            isMultiple: @js($isMultiple()),
+                            livewireId: @js($this->id),
+                            hasDynamicOptions: @js($hasDynamicOptions()),
+                            hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                            loadingMessage: @js($getLoadingMessage()),
+                            maxItems: @js($getMaxItems()),
+                            maxItemsMessage: @js($getMaxItemsMessage()),
+                            noSearchResultsMessage: @js($getNoSearchResultsMessage()),
+                            options: @js($getOptionsForJs()),
+                            optionsLimit: @js($getOptionsLimit()),
+                            placeholder: @js($getPlaceholder()),
+                            position: @js($getPosition()),
+                            searchDebounce: @js($getSearchDebounce()),
+                            searchingMessage: @js($getSearchingMessage()),
+                            searchPrompt: @js($getSearchPrompt()),
+                            searchableOptionFields: @js($getSearchableOptionFields()),
+                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                            statePath: @js($statePath),
+                        })"
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 wire:ignore
                 x-bind:class="{

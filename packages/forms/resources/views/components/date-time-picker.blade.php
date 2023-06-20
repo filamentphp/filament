@@ -60,17 +60,15 @@
                 x-ignore
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
-                x-data="
-                    dateTimePickerFormComponent({
-                        displayFormat:
-                            '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
-                        firstDayOfWeek: {{ $getFirstDayOfWeek() }},
-                        isAutofocused: @js($isAutofocused()),
-                        locale: @js(app()->getLocale()),
-                        shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-                    })
-                "
+                x-data="dateTimePickerFormComponent({
+                            displayFormat:
+                                '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
+                            firstDayOfWeek: {{ $getFirstDayOfWeek() }},
+                            isAutofocused: @js($isAutofocused()),
+                            locale: @js(app()->getLocale()),
+                            shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
+                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                        })"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{
                     $attributes

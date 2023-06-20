@@ -27,12 +27,10 @@
                 x-ignore
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('text-input', 'filament/forms') }}"
-                x-data="
-                    textInputFormComponent({
-                        getMaskOptionsUsing: (IMask) => {{ $getJsonMaskConfiguration() }},
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", lazilyEntangledModifiers: ['defer']) }},
-                    })
-                "
+                x-data="textInputFormComponent({
+                            getMaskOptionsUsing: (IMask) => {{ $getJsonMaskConfiguration() }},
+                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", lazilyEntangledModifiers: ['defer']) }},
+                        })"
                 wire:ignore
                 @if ($isDebounced()) x-on:input.debounce.{{ $getDebounce() }}="$wire.$refresh" @endif
                 @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
