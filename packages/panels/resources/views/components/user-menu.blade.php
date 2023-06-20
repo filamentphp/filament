@@ -54,29 +54,49 @@
                 init: function () {
                     this.theme = localStorage.getItem('theme') || 'system'
 
-                    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (event) => {
-                        if (this.theme !== 'system') {
-                            return
-                        }
+                    window
+                        .matchMedia('(prefers-color-scheme: dark)')
+                        .addEventListener('change', (event) => {
+                            if (this.theme !== 'system') {
+                                return
+                            }
 
-                        if (event.matches && (! document.documentElement.classList.contains('dark'))) {
-                            document.documentElement.classList.add('dark')
-                        } else if ((! event.matches) && document.documentElement.classList.contains('dark')) {
-                            document.documentElement.classList.remove('dark')
-                        }
-                    })
+                            if (
+                                event.matches &&
+                                ! document.documentElement.classList.contains('dark')
+                            ) {
+                                document.documentElement.classList.add('dark')
+                            } else if (
+                                ! event.matches &&
+                                document.documentElement.classList.contains('dark')
+                            ) {
+                                document.documentElement.classList.remove('dark')
+                            }
+                        })
 
                     $watch('theme', () => {
                         localStorage.setItem('theme', this.theme)
 
-                        if (this.theme === 'dark' && (! document.documentElement.classList.contains('dark'))) {
+                        if (
+                            this.theme === 'dark' &&
+                            ! document.documentElement.classList.contains('dark')
+                        ) {
                             document.documentElement.classList.add('dark')
-                        } else if (this.theme === 'light' && document.documentElement.classList.contains('dark')) {
+                        } else if (
+                            this.theme === 'light' &&
+                            document.documentElement.classList.contains('dark')
+                        ) {
                             document.documentElement.classList.remove('dark')
                         } else if (this.theme === 'system') {
-                            if (this.isSystemDark() && (! document.documentElement.classList.contains('dark'))) {
+                            if (
+                                this.isSystemDark() &&
+                                ! document.documentElement.classList.contains('dark')
+                            ) {
                                 document.documentElement.classList.add('dark')
-                            } else if ((! this.isSystemDark()) && document.documentElement.classList.contains('dark')) {
+                            } else if (
+                                ! this.isSystemDark() &&
+                                document.documentElement.classList.contains('dark')
+                            ) {
                                 document.documentElement.classList.remove('dark')
                             }
                         }

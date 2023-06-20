@@ -26,8 +26,10 @@
             <input
                 x-data="{}"
                 x-bind:class="{
-                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500':
+                        ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400':
+                        @js($statePath) in $wire.__instance.serverMemo.errors,
                 }"
                 {{
                     $getExtraInputAttributeBag()
@@ -58,14 +60,17 @@
                 x-ignore
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('date-time-picker', 'filament/forms') }}"
-                x-data="dateTimePickerFormComponent({
-                    displayFormat: '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
-                    firstDayOfWeek: {{ $getFirstDayOfWeek() }},
-                    isAutofocused: @js($isAutofocused()),
-                    locale: @js(app()->getLocale()),
-                    shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
-                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-                })"
+                x-data="
+                    dateTimePickerFormComponent({
+                        displayFormat:
+                            '{{ convert_date_format($getDisplayFormat())->to('day.js') }}',
+                        firstDayOfWeek: {{ $getFirstDayOfWeek() }},
+                        isAutofocused: @js($isAutofocused()),
+                        locale: @js(app()->getLocale()),
+                        shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
+                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    })
+                "
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{
                     $attributes
@@ -93,7 +98,11 @@
                 <button
                     x-ref="button"
                     x-on:click="togglePanelVisibility()"
-                    x-on:keydown.enter.stop.prevent="if (! $el.disabled) { isOpen() ? selectDate() : togglePanelVisibility() }"
+                    x-on:keydown.enter.stop.prevent="
+                        if (! $el.disabled) {
+                            isOpen() ? selectDate() : togglePanelVisibility()
+                        }
+                    "
                     x-on:keydown.arrow-left.stop.prevent="if (! $el.disabled) focusPreviousDay()"
                     x-on:keydown.arrow-right.stop.prevent="if (! $el.disabled) focusNextDay()"
                     x-on:keydown.arrow-up.stop.prevent="if (! $el.disabled) focusPreviousWeek()"
@@ -167,7 +176,9 @@
                                     class="grow cursor-pointer border-0 px-1 py-0 text-lg font-medium text-gray-800 outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
                                     dusk="filament.forms.{{ $statePath }}.focusedMonth"
                                 >
-                                    <template x-for="(month, index) in months">
+                                    <template
+                                        x-for="(month, index) in months"
+                                    >
                                         <option
                                             x-bind:value="index"
                                             x-text="month"
@@ -219,8 +230,13 @@
                                         x-bind:class="{
                                             'text-gray-700 dark:text-gray-300': ! dayIsSelected(day),
                                             'cursor-pointer': ! dayIsDisabled(day),
-                                            'bg-primary-50 dark:bg-primary-100 dark:text-gray-600': dayIsToday(day) && ! dayIsSelected(day) && focusedDate.date() !== day && ! dayIsDisabled(day),
-                                            'bg-primary-200 dark:text-gray-600': focusedDate.date() === day && ! dayIsSelected(day),
+                                            'bg-primary-50 dark:bg-primary-100 dark:text-gray-600':
+                                                dayIsToday(day) &&
+                                                ! dayIsSelected(day) &&
+                                                focusedDate.date() !== day &&
+                                                ! dayIsDisabled(day),
+                                            'bg-primary-200 dark:text-gray-600':
+                                                focusedDate.date() === day && ! dayIsSelected(day),
                                             'bg-primary-500 text-white': dayIsSelected(day),
                                             'pointer-events-none': dayIsDisabled(day),
                                             'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),

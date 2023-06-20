@@ -7,7 +7,9 @@
 
     @capture($content)
         <button
-            x-data="{ state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }} }"
+            x-data="{
+                state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+            }"
             x-bind:aria-checked="state?.toString()"
             x-on:click="state = ! state"
             x-bind:class="
@@ -66,10 +68,12 @@
                         <x-filament::icon
                             :name="$getOffIcon()"
                             alias="forms::components.toggle.off"
-                            :color="match ($offColor) {
-                                'gray' => 'text-gray-400 dark:text-gray-700',
-                                default => 'text-custom-600',
-                            }"
+                            :color="
+                                match ($offColor) {
+                                    'gray' => 'text-gray-400 dark:text-gray-700',
+                                    default => 'text-custom-600',
+                                }
+                            "
                             size="h-3 w-3"
                         />
                     @endif
@@ -87,10 +91,12 @@
                         <x-filament::icon
                             :name="$getOnIcon()"
                             alias="forms::components.toggle.on"
-                            :color="match ($onColor) {
-                                'gray' => 'text-gray-400 dark:text-gray-700',
-                                default => 'text-custom-600',
-                            }"
+                            :color="
+                                match ($onColor) {
+                                    'gray' => 'text-gray-400 dark:text-gray-700',
+                                    default => 'text-custom-600',
+                                }
+                            "
                             size="h-3 w-3"
                             x-cloak="x-cloak"
                         />

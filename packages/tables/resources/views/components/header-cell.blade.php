@@ -44,10 +44,12 @@
                 :alias="$activelySorted && $sortDirection === 'asc' ? 'filament-tables::header-cell.sort-asc' : 'filament-tables::header-cell.sort-desc'"
                 color="dark:text-gray-300"
                 size="h-5 w-5"
-                :class="[
-                    'filament-tables-header-cell-sort-icon',
-                    'opacity-25' => ! $activelySorted,
-                ]"
+                :class="
+                    [
+                        'filament-tables-header-cell-sort-icon',
+                        'opacity-25' => ! $activelySorted,
+                    ]
+                "
             />
 
             <span class="sr-only">
