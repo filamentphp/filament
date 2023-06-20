@@ -22,6 +22,8 @@ class NavigationItem
 
     protected ?string $badgeColor = null;
 
+    protected ?Closure $badgeCallback = null;
+
     protected bool $shouldOpenUrlInNewTab = false;
 
     protected ?int $sort = null;
@@ -48,6 +50,13 @@ class NavigationItem
     {
         $this->badge = $badge;
         $this->badgeColor = $color;
+
+        return $this;
+    }
+
+    public function badgeCallback(Closure $callback): static
+    {
+        $this->badgeCallback = $callback;
 
         return $this;
     }
@@ -132,7 +141,16 @@ class NavigationItem
 
     public function getBadge(): ?string
     {
-        return $this->badge;
+        $callback = $this->badgeCallback;
+
+        if ($callback === null)
+        {
+            return $this->badge;
+        }
+        else
+        {
+            return app()->call($callback);
+        }
     }
 
     public function getBadgeColor(): ?string
