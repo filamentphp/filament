@@ -31,13 +31,11 @@
                 x-ignore
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
-                x-data="
-                    colorPickerFormComponent({
-                        isAutofocused: @js($isAutofocused()),
-                        isDisabled: @js($isDisabled),
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-                    })
-                "
+                x-data="colorPickerFormComponent({
+                            isAutofocused: @js($isAutofocused()),
+                            isDisabled: @js($isDisabled),
+                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                        })"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
             >
