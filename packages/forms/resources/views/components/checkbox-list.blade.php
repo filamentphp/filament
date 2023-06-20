@@ -11,7 +11,11 @@
         x-data="{
             areAllCheckboxesChecked: false,
 
-            checkboxListOptions: Array.from($root.querySelectorAll('.filament-forms-checkbox-list-component-option-label')),
+            checkboxListOptions: Array.from(
+                $root.querySelectorAll(
+                    '.filament-forms-checkbox-list-component-option-label',
+                ),
+            ),
 
             search: '',
 
@@ -32,7 +36,11 @@
             },
 
             checkIfAllCheckboxesAreChecked: function () {
-                this.areAllCheckboxesChecked = this.visibleCheckboxListOptions.length === this.visibleCheckboxListOptions.filter((checkboxLabel) => checkboxLabel.querySelector('input[type=checkbox]:checked')).length
+                this.areAllCheckboxesChecked =
+                    this.visibleCheckboxListOptions.length ===
+                    this.visibleCheckboxListOptions.filter((checkboxLabel) =>
+                        checkboxLabel.querySelector('input[type=checkbox]:checked'),
+                    ).length
             },
 
             toggleAllCheckboxes: function () {
@@ -49,10 +57,17 @@
             },
 
             updateVisibleCheckboxListOptions: function () {
-                this.visibleCheckboxListOptions = this.checkboxListOptions.filter((checkboxListItem) => {
-                    return checkboxListItem.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(this.search.toLowerCase())
-                })
-            }
+                this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
+                    (checkboxListItem) => {
+                        return checkboxListItem
+                            .querySelector(
+                                '.filament-forms-checkbox-list-component-option-label-text',
+                            )
+                            .innerText.toLowerCase()
+                            .includes(this.search.toLowerCase())
+                    },
+                )
+            },
         }"
     >
         @if (! $isDisabled)
@@ -99,10 +114,12 @@
             :two-xl="$getColumns('2xl')"
             :direction="$gridDirection ?? 'column'"
             :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
-            :attributes="\Filament\Support\prepare_inherited_attributes($attributes->class([
-                'filament-forms-checkbox-list-component gap-1',
-                'space-y-2' => $gridDirection !== 'row',
-            ]))"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes($attributes->class([
+                    'filament-forms-checkbox-list-component gap-1',
+                    'space-y-2' => $gridDirection !== 'row',
+                ]))
+            "
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div
@@ -111,7 +128,11 @@
                     <label
                         class="filament-forms-checkbox-list-component-option-label flex items-center space-x-3 rtl:space-x-reverse"
                         @if ($isSearchable)
-                            x-show="$el.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(search.toLowerCase())"
+                            x-show="
+                                $el.querySelector('.filament-forms-checkbox-list-component-option-label-text')
+                                    .innerText.toLowerCase()
+                                    .includes(search.toLowerCase())
+                            "
                         @endif
                     >
                         <input

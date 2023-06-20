@@ -113,14 +113,16 @@
         :tag="$tag"
         :tooltip="$tooltip"
         :type="$type"
-        :class="match ($labeledFrom) {
-            'sm' => 'sm:hidden',
-            'md' => 'md:hidden',
-            'lg' => 'lg:hidden',
-            'xl' => 'xl:hidden',
-            '2xl' => '2xl:hidden',
-            default => 'hidden',
-        }"
+        :class="
+            match ($labeledFrom) {
+                'sm' => 'sm:hidden',
+                'md' => 'md:hidden',
+                'lg' => 'lg:hidden',
+                'xl' => 'xl:hidden',
+                '2xl' => '2xl:hidden',
+                default => 'hidden',
+            }
+        "
         :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
     />
 @endif

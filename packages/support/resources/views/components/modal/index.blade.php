@@ -22,7 +22,6 @@
 
 <div
     x-data="{
-
         isOpen: false,
 
         livewire: null,
@@ -30,15 +29,18 @@
         close: function () {
             this.isOpen = false
 
-            this.$refs.modalContainer.dispatchEvent(new CustomEvent('modal-closed', { id: '{{ $id }}' }))
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-closed', { id: '{{ $id }}' }),
+            )
         },
 
         open: function () {
             this.isOpen = true
 
-            this.$refs.modalContainer.dispatchEvent(new CustomEvent('modal-opened', { id: '{{ $id }}' }))
+            this.$refs.modalContainer.dispatchEvent(
+                new CustomEvent('modal-opened', { id: '{{ $id }}' }),
+            )
         },
-
     }"
     x-trap.noscroll="isOpen"
     @if ($id)
@@ -94,10 +96,12 @@
         >
             <div
                 x-data="{ isShown: false }"
-                x-init="$nextTick(() => {
-                    isShown = isOpen
-                    $watch('isOpen', () => isShown = isOpen)
-                })"
+                x-init="
+                    $nextTick(() => {
+                        isShown = isOpen
+                        $watch('isOpen', () => (isShown = isOpen))
+                    })
+                "
                 x-show="isShown"
                 x-cloak
                 @if (filled($id))

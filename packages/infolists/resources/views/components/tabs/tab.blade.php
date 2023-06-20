@@ -3,7 +3,10 @@
 @endphp
 
 <div
-    x-bind:class="{ 'invisible h-0 p-0 overflow-y-hidden': tab !== '{{ $id }}', 'p-6': tab === '{{ $id }}' }"
+    x-bind:class="{
+        'invisible h-0 p-0 overflow-y-hidden': tab !== '{{ $id }}',
+        'p-6': tab === '{{ $id }}',
+    }"
     {{
         $attributes
             ->merge([
