@@ -8,23 +8,31 @@
         x-ignore
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
-        x-data="richEditorFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-        })"
+        x-data="
+            richEditorFormComponent({
+                state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+            })
+        "
         x-on:trix-change="state = $event.target.value"
         x-on:trix-attachment-add="
             if (! $event.attachment.file) return
 
             let attachment = $event.attachment
 
-            $wire.upload(`componentFileAttachments.{{ $statePath }}`, attachment.file, () => {
-                $wire.getFormComponentFileAttachmentUrl('{{ $statePath }}').then((url) => {
-                    attachment.setAttributes({
-                        url: url,
-                        href: url,
-                    })
-                })
-            })
+            $wire.upload(
+                `componentFileAttachments.{{ $statePath }}`,
+                attachment.file,
+                () => {
+                    $wire
+                        .getFormComponentFileAttachmentUrl('{{ $statePath }}')
+                        .then((url) => {
+                            attachment.setAttributes({
+                                url: url,
+                                href: url,
+                            })
+                        })
+                },
+            )
         "
         x-on:trix-file-accept="
             if ({{ $hasToolbarButton('attachFiles') ? 'true' : 'false' }}) return
@@ -462,8 +470,10 @@
                 dusk="filament.forms.{{ $statePath }}"
                 {{ $getExtraInputAttributeBag()->class(['prose block w-full max-w-none break-words rounded-lg bg-white shadow-sm outline-none transition duration-75 dark:prose-invert focus:ring-1 focus:ring-inset dark:bg-gray-700']) }}
                 x-bind:class="{
-                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500':
+                        ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400':
+                        @js($statePath) in $wire.__instance.serverMemo.errors,
                 }"
             ></trix-editor>
         @else

@@ -42,7 +42,7 @@
             @if (filled($statePath))
                 x-bind:class="{
                     'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'text-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
                 }"
             @endif
         >
@@ -65,7 +65,7 @@
             @if (filled($statePath))
                 x-bind:class="{
                     'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'text-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
                 }"
             @endif
         >
@@ -87,7 +87,7 @@
             @if (filled($statePath))
                 x-bind:class="{
                     'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'text-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
                 }"
             @endif
         >
@@ -104,7 +104,7 @@
             @if (filled($statePath))
                 x-bind:class="{
                     'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'text-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
+                    'text-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
                 }"
             @endif
         >

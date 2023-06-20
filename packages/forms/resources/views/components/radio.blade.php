@@ -16,10 +16,12 @@
             :two-xl="$getColumns('2xl')"
             :is-grid="! $isInline"
             direction="column"
-            :attributes="\Filament\Support\prepare_inherited_attributes($attributes->merge($getExtraAttributes(), escape: false)->class([
-                'filament-forms-radio-component flex flex-wrap gap-3',
-                'flex-col' => ! $isInline,
-            ]))"
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes($attributes->merge($getExtraAttributes(), escape: false)->class([
+                    'filament-forms-radio-component flex flex-wrap gap-3',
+                    'flex-col' => ! $isInline,
+                ]))
+            "
         >
             @foreach ($getOptions() as $value => $label)
                 @php
