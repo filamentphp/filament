@@ -138,6 +138,8 @@
                                 @endif
                                 @class([
                                     'inline-block',
+                                    '[&>*:first-child]:mt-0 [&>*:last-child]:mb-0' => $isProse,
+                                    'pt-2' => $isProse && (! $isLabelHidden()),
                                     'cursor-pointer' => $isCopyable,
                                 ])
                             >

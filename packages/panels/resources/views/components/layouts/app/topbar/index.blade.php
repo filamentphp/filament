@@ -47,7 +47,7 @@
                 </div>
 
                 @if (filament()->hasNavigation())
-                    <ul class="hidden flex-wrap items-center gap-3 lg:flex">
+                    <ul class="hidden flex-wrap items-center gap-x-1 lg:flex">
                         @foreach ($navigation as $group)
                             @if ($groupLabel = $group->getLabel())
                                 <x-filament::dropdown placement="bottom-start">
