@@ -99,14 +99,14 @@ class MakeThemeCommand extends Command
         if (! file_exists($postcssConfigPath)) {
             $this->copyStubToApp('ThemePostcssConfig', $postcssConfigPath);
 
-            $this->components->info("Successfully created postcss.config.js!");
+            $this->components->info('Successfully created postcss.config.js!');
         }
 
         $this->components->warn('Action is required to complete the theme setup:');
         $this->components->bulletList([
             "First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/{$panelId}/theme.css`.",
             "Next, register the theme in the {$panelId} panel provider using `->viteTheme('resources/css/filament/{$panelId}/theme.css')`",
-            "Finally, run `npm run build` to compile the theme.",
+            'Finally, run `npm run build` to compile the theme.',
         ]);
 
         return static::SUCCESS;
