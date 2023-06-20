@@ -32,15 +32,7 @@
                 return
             }
 
-            setTimeout(
-                () =>
-                    $el.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start',
-                        inline: 'start',
-                    }),
-                200,
-            )
+            setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
         "
     @endif
     {{
@@ -75,14 +67,12 @@
                         :name="$icon"
                         alias="support::section.icon"
                         color="text-custom-400"
-                        :size="
-                            match ($iconSize) {
-                                'sm' => 'h-4 w-4',
-                                'md' => 'h-5 w-5',
-                                'lg' => 'h-6 w-6',
-                                default => $iconSize,
-                            }
-                        "
+                        :size="match ($iconSize) {
+                            'sm' => 'h-4 w-4',
+                            'md' => 'h-5 w-5',
+                            'lg' => 'h-6 w-6',
+                            default => $iconSize,
+                        }"
                         class="filament-section-component-header-icon"
                         :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400])"
                     />

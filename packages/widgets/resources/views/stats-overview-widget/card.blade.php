@@ -65,12 +65,10 @@
             x-ignore
             ax-load
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/card/chart', 'filament/widgets') }}"
-            x-data="
-                statsOverviewCardChart({
-                    labels: @js(array_keys($chart)),
-                    values: @js(array_values($chart)),
-                })
-            "
+            x-data="statsOverviewCardChart({
+                labels: @js(array_keys($chart)),
+                values: @js(array_values($chart)),
+            })"
             wire:ignore
             x-on:theme-changed.window="
                 chart.destroy()

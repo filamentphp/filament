@@ -46,20 +46,22 @@
             "
             x-tooltip="error"
             x-bind:class="
-                (state
-                    ? '{{
-                        match ($onColor) {
-                            'gray' => 'bg-gray-200 dark:bg-gray-700',
-                            default => 'bg-custom-600',
-                        }
-                    }}'
-                    : '{{
-                        match ($offColor) {
-                            'gray' => 'bg-gray-200 dark:bg-gray-700',
-                            default => 'bg-custom-600',
-                        }
-                    }}') +
-                    (isLoading ? ' opacity-70 pointer-events-none' : '')
+                (
+                    state
+                        ? '{{
+                            match ($onColor) {
+                                'gray' => 'bg-gray-200 dark:bg-gray-700',
+                                default => 'bg-custom-600',
+                            }
+                        }}'
+                        : '{{
+                            match ($offColor) {
+                                'gray' => 'bg-gray-200 dark:bg-gray-700',
+                                default => 'bg-custom-600',
+                            }
+                        }}'
+                ) +
+                (isLoading ? ' opacity-70 pointer-events-none' : '')
             "
             x-bind:style="
                 state
@@ -81,12 +83,10 @@
                     <x-filament::icon
                         :name="$getOffIcon()"
                         alias="tables::columns.toggle.off"
-                        :color="
-                            match ($onColor) {
-                                'gray' => 'text-gray-400 dark:text-gray-700',
-                                default => 'text-custom-600',
-                            }
-                        "
+                        :color="match ($onColor) {
+                            'gray' => 'text-gray-400 dark:text-gray-700',
+                            default => 'text-custom-600',
+                        }"
                         size="h-3 w-3"
                     />
                 @endif
@@ -104,12 +104,10 @@
                     <x-filament::icon
                         :name="$getOnIcon()"
                         alias="tables::columns.toggle.on"
-                        :color="
-                            match ($onColor) {
-                                'gray' => 'text-gray-400 dark:text-gray-700',
-                                default => 'text-custom-600',
-                            }
-                        "
+                        :color="match ($onColor) {
+                            'gray' => 'text-gray-400 dark:text-gray-700',
+                            default => 'text-custom-600',
+                        }"
                         size="h-3 w-3"
                         x-cloak="x-cloak"
                     />

@@ -21,11 +21,7 @@
 
     <span
         class="dark:text-white"
-        x-text="
-            window.pluralize(@js(__('filament-tables::table.selection_indicator.selected_count')), selectedRecords.length, {
-                count: selectedRecords.length,
-            })
-        "
+        x-text="window.pluralize(@js(__('filament-tables::table.selection_indicator.selected_count')), selectedRecords.length, { count: selectedRecords.length })"
     ></span>
 
     <span

@@ -108,6 +108,7 @@
 
 <div
     x-data="{
+
         collapsedGroups: [],
 
         hasHeader: true,
@@ -153,9 +154,7 @@
         getRecordsOnPage: function () {
             let keys = []
 
-            for (checkbox of $el.getElementsByClassName(
-                'filament-tables-record-checkbox',
-            )) {
+            for (checkbox of $el.getElementsByClassName('filament-tables-record-checkbox')) {
                 keys.push(checkbox.value)
             }
 
@@ -201,7 +200,7 @@
         },
 
         areRecordsSelected: function (keys) {
-            return keys.every((key) => this.isRecordSelected(key))
+            return keys.every(key => this.isRecordSelected(key))
         },
 
         toggleCollapseGroup: function (group) {
@@ -221,6 +220,7 @@
         resetCollapsedGroups: function () {
             this.collapsedGroups = []
         },
+
     }"
     class="filament-tables-component"
     @if (! $isLoaded)
@@ -230,7 +230,7 @@
     <x-filament-tables::container>
         <div
             class="filament-tables-header-container"
-            x-show="hasHeader = @js($renderHeader = ($header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($bulkActions)))"
+            x-show="hasHeader = (@js($renderHeader = ($header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($bulkActions))))"
             @if (! $renderHeader) x-cloak @endif
         >
             @if ($header)
@@ -624,9 +624,7 @@
                                     x-sortable-handle
                                 @endif
                                 x-bind:class="{
-                                    'hidden':
-                                        {{ $group?->isCollapsible() ? 'true' : 'false' }} &&
-                                        isGroupCollapsed('{{ $recordGroupTitle }}'),
+                                    'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
                                 }"
                             >
                                 <div

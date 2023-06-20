@@ -80,15 +80,7 @@
                                     return
                                 }
 
-                                setTimeout(
-                                    () =>
-                                        $el.scrollIntoView({
-                                            behavior: 'smooth',
-                                            block: 'start',
-                                            inline: 'start',
-                                        }),
-                                    200,
-                                )
+                                setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
                             "
                             class="filament-forms-repeater-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
                         >
@@ -172,10 +164,7 @@
                             @endif
 
                             <div
-                                x-bind:class="{
-                                    'invisible h-0 !m-0 overflow-y-hidden': isCollapsed,
-                                    'p-6': ! isCollapsed,
-                                }"
+                                x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed, 'p-6': ! isCollapsed}"
                             >
                                 {{ $item }}
                             </div>

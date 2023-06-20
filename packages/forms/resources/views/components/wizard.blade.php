@@ -4,6 +4,7 @@
 
 <div
     x-data="{
+
         step: null,
 
         init: function () {
@@ -43,11 +44,7 @@
         },
 
         autofocusFields: function () {
-            $nextTick(() =>
-                this.$refs[`step-${this.step}`]
-                    .querySelector('[autofocus]')
-                    ?.focus(),
-            )
+            $nextTick(() => this.$refs[`step-${this.step}`].querySelector('[autofocus]')?.focus())
         },
 
         getStepIndex: function (step) {
@@ -63,11 +60,11 @@
         },
 
         isLastStep: function () {
-            return this.getStepIndex(this.step) + 1 >= this.getSteps().length
+            return (this.getStepIndex(this.step) + 1) >= this.getSteps().length
         },
 
-        isStepAccessible: function (step, index) {
-            return @js($isSkippable()) || this.getStepIndex(step) > index
+        isStepAccessible: function(step, index) {
+            return @js($isSkippable()) || (this.getStepIndex(step) > index)
         },
 
         updateQueryString: function () {
@@ -80,6 +77,7 @@
 
             history.pushState(null, document.title, url.toString())
         },
+
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
     x-cloak
@@ -127,8 +125,7 @@
                     <div
                         x-bind:class="{
                             'bg-primary-600': getStepIndex(step) === {{ $loop->index }},
-                            'bg-transparent group-hover:bg-gray-200 dark:group-hover:bg-gray-600':
-                                getStepIndex(step) > {{ $loop->index }},
+                            'bg-transparent group-hover:bg-gray-200 dark:group-hover:bg-gray-600': getStepIndex(step) > {{ $loop->index }},
                         }"
                         class="absolute start-0 top-0 h-full w-1 md:bottom-0 md:top-auto md:h-1 md:w-full"
                         aria-hidden="true"
@@ -143,8 +140,7 @@
                                     'bg-primary-600': getStepIndex(step) > {{ $loop->index }},
                                     'border-2': getStepIndex(step) <= {{ $loop->index }},
                                     'border-primary-500': getStepIndex(step) === {{ $loop->index }},
-                                    'border-gray-300 dark:border-gray-500':
-                                        getStepIndex(step) < {{ $loop->index }},
+                                    'border-gray-300 dark:border-gray-500': getStepIndex(step) < {{ $loop->index }},
                                 }"
                                 class="filament-forms-wizard-component-header-step-icon flex h-10 w-10 items-center justify-center rounded-full"
                             >
@@ -173,8 +169,7 @@
                                     <span
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-bind:class="{
-                                            'text-gray-500 dark:text-gray-400':
-                                                getStepIndex(step) !== {{ $loop->index }},
+                                            'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-500': getStepIndex(step) === {{ $loop->index }},
                                         }"
                                     >
@@ -233,11 +228,7 @@
 
     <div class="flex items-center justify-between">
         <div>
-            <div
-                x-on:click="previousStep"
-                x-show="! isFirstStep()"
-                x-cloak
-            >
+            <div x-on:click="previousStep" x-show="! isFirstStep()" x-cloak>
                 {{ $getAction('previous') }}
             </div>
 
@@ -248,13 +239,7 @@
 
         <div>
             <div
-                x-on:click="
-                    $wire.dispatchFormEvent(
-                        'wizard::nextStep',
-                        '{{ $statePath }}',
-                        getStepIndex(step),
-                    )
-                "
+                x-on:click="$wire.dispatchFormEvent('wizard::nextStep', '{{ $statePath }}', getStepIndex(step))"
                 x-show="! isLastStep()"
                 x-cloak
             >

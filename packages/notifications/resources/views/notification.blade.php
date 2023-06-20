@@ -5,10 +5,9 @@
 
 <x-filament-notifications::notification
     :notification="$notification"
-    :x-transition:enter-start="
-        \Illuminate\Support\Arr::toCssClasses([
-            'opacity-0',
-            ($this instanceof \Filament\Notifications\Http\Livewire\Notifications)
+    :x-transition:enter-start="\Illuminate\Support\Arr::toCssClasses([
+        'opacity-0',
+        ($this instanceof \Filament\Notifications\Http\Livewire\Notifications)
             ? match (static::$horizontalAlignment) {
                 'left' => '-translate-x-12',
                 'right' => 'translate-x-12',
@@ -19,8 +18,7 @@
                 },
             }
             : null,
-        ])
-    "
+    ])"
     x-transition:leave-end="scale-95 opacity-0"
     @class([
         'w-full transition duration-300',

@@ -27,12 +27,10 @@
                 x-ignore
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('text-input', 'filament/forms') }}"
-                x-data="
-                    textInputFormComponent({
-                        getMaskOptionsUsing: (IMask) => {{ $getJsonMaskConfiguration() }},
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", lazilyEntangledModifiers: ['defer']) }},
-                    })
-                "
+                x-data="textInputFormComponent({
+                    getMaskOptionsUsing: (IMask) => ({{ $getJsonMaskConfiguration() }}),
+                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", lazilyEntangledModifiers: ['defer']) }},
+                })"
                 wire:ignore
                 @if ($isDebounced()) x-on:input.debounce.{{ $getDebounce() }}="$wire.$refresh" @endif
                 @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
@@ -40,10 +38,8 @@
                 x-data="{}"
             @endif
             x-bind:class="{
-                'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500':
-                    ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400':
-                    @js($statePath) in $wire.__instance.serverMemo.errors,
+                'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
+                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
             }"
             {{
                 $getExtraInputAttributeBag()

@@ -13,11 +13,9 @@
         x-ignore
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('key-value', 'filament/forms') }}"
-        x-data="
-            keyValueFormComponent({
-                state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-            })
-        "
+        x-data="keyValueFormComponent({
+            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+        })"
         wire:ignore
         {{
             $attributes
@@ -117,9 +115,7 @@
                                         @endif
 
                                         @if ($deleteAction)
-                                            <div
-                                                x-on:click="deleteRow(index)"
-                                            >
+                                            <div x-on:click="deleteRow(index)">
                                                 {{ $deleteAction }}
                                             </div>
                                         @endif

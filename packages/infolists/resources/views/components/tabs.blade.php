@@ -1,14 +1,15 @@
 <div
     x-data="{
+
         tab: null,
 
         init: function () {
             this.$watch('tab', () => this.updateQueryString())
 
             this.tab = @js(collect($getChildComponentContainer()->getComponents())
-                        ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
-                        ->get($getActiveTab() - 1)
-                        ->getId())
+                ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
+                ->get($getActiveTab() - 1)
+                ->getId())
         },
 
         updateQueryString: function () {
@@ -21,6 +22,7 @@
 
             history.pushState(null, document.title, url.toString())
         },
+
     }"
     x-cloak
     {{
