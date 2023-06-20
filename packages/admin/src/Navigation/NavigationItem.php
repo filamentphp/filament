@@ -6,27 +6,25 @@ use Closure;
 
 class NavigationItem
 {
-    protected ?string $group = null;
+    protected string | Closure | null $group = null;
 
     protected ?Closure $isActiveWhen = null;
 
-    protected string $icon;
+    protected string | Closure $icon;
 
-    protected ?string $activeIcon = null;
+    protected string | Closure | null $activeIcon = null;
 
-    protected ?string $iconColor = null;
+    protected string | Closure | null $iconColor = null;
 
-    protected string $label;
+    protected string | Closure $label;
 
-    protected ?string $badge = null;
+    protected string | Closure | null $badge = null;
 
-    protected ?string $badgeColor = null;
-
-    protected ?Closure $badgeCallback = null;
+    protected string | Closure | null $badgeColor = null;
 
     protected bool $shouldOpenUrlInNewTab = false;
 
-    protected ?int $sort = null;
+    protected int | Closure | null $sort = null;
 
     protected string | Closure | null $url = null;
 
@@ -46,7 +44,7 @@ class NavigationItem
         return app(static::class, ['label' => $label]);
     }
 
-    public function badge(?string $badge, ?string $color = null): static
+    public function badge(string | Closure | null $badge, string | Closure | null $color = null): static
     {
         $this->badge = $badge;
         $this->badgeColor = $color;
@@ -54,21 +52,14 @@ class NavigationItem
         return $this;
     }
 
-    public function badgeCallback(Closure $callback): static
-    {
-        $this->badgeCallback = $callback;
-
-        return $this;
-    }
-
-    public function group(?string $group): static
+    public function group(string | Closure | null $group): static
     {
         $this->group = $group;
 
         return $this;
     }
 
-    public function icon(string $icon): static
+    public function icon(string | Closure $icon): static
     {
         $this->icon = $icon;
 
@@ -89,14 +80,14 @@ class NavigationItem
         return $this;
     }
 
-    public function activeIcon(string $activeIcon): static
+    public function activeIcon(string | Closure $activeIcon): static
     {
         $this->activeIcon = $activeIcon;
 
         return $this;
     }
 
-    public function iconColor(?string $iconColor): static
+    public function iconColor(string | Closure | null $iconColor): static
     {
         $this->iconColor = $iconColor;
 
@@ -110,21 +101,21 @@ class NavigationItem
         return $this;
     }
 
-    public function label(string $label): static
+    public function label(string | Closure $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function openUrlInNewTab(bool $condition = true): static
+    public function openUrlInNewTab(bool | Closure  $condition = true): static
     {
-        $this->shouldOpenUrlInNewTab = $condition;
+        $this->shouldOpenUrlInNewTab = value($condition);
 
         return $this;
     }
 
-    public function sort(?int $sort): static
+    public function sort(int | Closure | null $sort): static
     {
         $this->sort = $sort;
 
@@ -141,31 +132,22 @@ class NavigationItem
 
     public function getBadge(): ?string
     {
-        $callback = $this->badgeCallback;
-
-        if ($callback === null)
-        {
-            return $this->badge;
-        }
-        else
-        {
-            return app()->call($callback);
-        }
+        return $this->badge instanceof Closure ? app()->call($this->badge) : $this->badge;
     }
 
     public function getBadgeColor(): ?string
     {
-        return $this->badgeColor;
+        return $this->badgeColor instanceof Closure ? app()->call($this->badgeColor) : $this->badgeColor;
     }
 
     public function getGroup(): ?string
     {
-        return $this->group;
+        return $this->group instanceof Closure ? app()->call($this->group) : $this->group;
     }
 
     public function getIcon(): string
     {
-        return $this->icon;
+        return $this->icon instanceof Closure ? app()->call($this->icon) : $this->icon;
     }
 
     public function isVisible(): bool
@@ -184,22 +166,24 @@ class NavigationItem
 
     public function getActiveIcon(): ?string
     {
-        return $this->activeIcon;
+        return $this->activeIcon instanceof Closure ? app()->call($this->activeIcon) : $this->activeIcon;
     }
 
     public function getIconColor(): ?string
     {
-        return $this->iconColor;
+        return $this->iconColor instanceof Closure ? app()->call($this->iconColor) : $this->iconColor;
     }
 
     public function getLabel(): string
     {
-        return $this->label;
+        return $this->label instanceof Closure ? app()->call($this->label) : $this->label;
     }
 
     public function getSort(): int
     {
-        return $this->sort ?? -1;
+        if (!$this->sort) return -1;
+
+        return $this->sort instanceof Closure ? app()->call($this->sort) : $this->sort;
     }
 
     public function getUrl(): ?string
