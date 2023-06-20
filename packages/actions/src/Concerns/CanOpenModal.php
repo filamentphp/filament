@@ -40,7 +40,7 @@ trait CanOpenModal
 
     protected View | Htmlable | Closure | null $modalContent = null;
 
-    protected View | Htmlable | Closure | null $modalFooter = null;
+    protected View | Htmlable | Closure | null $modalContentFooter = null;
 
     protected string | Htmlable | Closure | null $modalHeading = null;
 
@@ -194,9 +194,17 @@ trait CanOpenModal
         return $this;
     }
 
+    /**
+     * @deprecated Use `modalContentFooter()` instead.
+     */
     public function modalFooter(View | Htmlable | Closure | null $footer = null): static
     {
-        $this->modalFooter = $footer;
+        return $this->modalContentFooter($footer);
+    }
+
+    public function modalContentFooter(View | Htmlable | Closure | null $footer = null): static
+    {
+        $this->modalContentFooter = $footer;
 
         return $this;
     }
@@ -410,9 +418,9 @@ trait CanOpenModal
         return $this->evaluate($this->modalContent);
     }
 
-    public function getModalFooter(): View | Htmlable | null
+    public function getModalContentFooter(): View | Htmlable | null
     {
-        return $this->evaluate($this->modalFooter);
+        return $this->evaluate($this->modalContentFooter);
     }
 
     public function getModalHeading(): string | Htmlable
