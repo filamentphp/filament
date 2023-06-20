@@ -12,11 +12,9 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="
-            richEditorFormComponent({
-                state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-            })
-        "
+        x-data="richEditorFormComponent({
+                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+                })"
         x-on:trix-change="state = $event.target.value"
         x-on:trix-attachment-add="
             if (! $event.attachment.file) return

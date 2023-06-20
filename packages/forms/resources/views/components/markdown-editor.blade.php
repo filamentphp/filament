@@ -12,12 +12,10 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="
-            markdownEditorFormComponent({
-                state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-                tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
-            })
-        "
+        x-data="markdownEditorFormComponent({
+                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+                    tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
+                })"
         wire:ignore
         {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-markdown-editor-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
