@@ -29,7 +29,7 @@ class SpatieTagsColumn extends TagsColumn
         }
 
         $type = $this->getType();
-        $tags = $record->tagsWithType($type);
+        $tags = $type ? $record->tagsWithType($type) : $record->tags();
 
         return $tags->pluck('name')->toArray();
     }
