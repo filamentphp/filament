@@ -19,6 +19,18 @@ class MakeThemeCommand extends Command
 
     public function handle(): int
     {
+        exec('npm -v', $npmVersion, $npmVersionExistCode);
+
+        if ($npmVersionExistCode !== 0) {
+            $this->error('Node.js is not installed. Please install before continuing.');
+
+            return static::FAILURE;
+        }
+
+        $this->info("Using Node.js v{$npmVersion[0]}");
+
+        exec('npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer tippy.js --save-dev');
+
         $panel = $this->argument('panel');
 
         if ($panel) {
@@ -68,11 +80,34 @@ class MakeThemeCommand extends Command
             'viewPathPrefix' => $viewPathPrefix,
         ]);
 
-        $this->call('filament:compile-theme', ['panel' => $panelId]);
-
         $this->components->info("Successfully created resources/css/filament/{$panelId}/theme.css and resources/css/filament/{$panelId}/tailwind.config.js!");
 
-        $this->components->info("Make sure to register the theme in the {$panelId} panel provider using `theme(asset('css/filament/{$panelId}/theme.css'))`");
+        if (! file_exists(base_path('vite.config.js'))) {
+            $this->components->warn('Action is required to complete the theme setup:');
+            $this->components->bulletList([
+                "It looks like you don't have Vite installed. Please use your asset bundling system of choice to compile `resources/css/filament/{$panelId}/theme.css` into `public/css/filament/{$panelId}/theme.css`.",
+                "If you're not currently using a bundler, we recommend using Vite. Alternatively, you can use the Tailwind CLI with the following command:",
+                "npx tailwindcss --input ./resources/css/filament/{$panelId}/theme.css --output ./public/css/filament/{$panelId}/theme.css --config ./resources/css/filament/{$panelId}/tailwind.config.js --minify",
+                "Make sure to register the theme in the {$panelId} panel provider using `->theme(asset('css/filament/{$panelId}/theme.css'))`",
+            ]);
+
+            return static::SUCCESS;
+        }
+
+        $postcssConfigPath = base_path('postcss.config.js');
+
+        if (! file_exists($postcssConfigPath)) {
+            $this->copyStubToApp('ThemePostcssConfig', $postcssConfigPath);
+
+            $this->components->info('Successfully created postcss.config.js!');
+        }
+
+        $this->components->warn('Action is required to complete the theme setup:');
+        $this->components->bulletList([
+            "First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/{$panelId}/theme.css`.",
+            "Next, register the theme in the {$panelId} panel provider using `->viteTheme('resources/css/filament/{$panelId}/theme.css')`",
+            'Finally, run `npm run build` to compile the theme.',
+        ]);
 
         return static::SUCCESS;
     }
