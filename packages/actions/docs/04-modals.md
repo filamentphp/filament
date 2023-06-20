@@ -152,6 +152,28 @@ Action::make('delete')
 
 <AutoScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
 
+## Adding an icon inside the modal
+
+You may add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) inside the modal using the `modalIcon()` method:
+
+```php
+Action::make('delete')
+    ->action(fn () => $this->record->delete())
+    ->requiresConfirmation()
+    ->modalIcon('heroicon-o-trash')
+```
+
+By default, the icon will inherit the color of the action button. You may customize the color of the icon using the `modalIconColor()` method:
+
+```php
+Action::make('delete')
+    ->action(fn () => $this->record->delete())
+    ->requiresConfirmation()
+    ->color('danger')
+    ->modalIcon('heroicon-o-trash')
+    ->modalIconColor('warning')
+```
+
 ## Custom modal content
 
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
