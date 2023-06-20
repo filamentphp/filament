@@ -54,6 +54,13 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalClosedByClickingAway = null;
 
+    protected string | Closure | null $modalIcon = null;
+
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $modalIconColor = null;
+
     public function closeModalByClickingAway(bool | Closure | null $condition = true): static
     {
         $this->isModalClosedByClickingAway = $condition;
@@ -71,6 +78,23 @@ trait CanOpenModal
     public function modalCloseButton(bool | Closure | null $condition = true): static
     {
         $this->hasModalCloseButton = $condition;
+
+        return $this;
+    }
+
+    public function modalIcon(string | Closure | null $icon = null): static
+    {
+        $this->modalIcon = $icon;
+
+        return $this;
+    }
+
+    /**
+     * @param string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null $color
+     */
+    public function modalIconColor(string | array | Closure | null $color = null): static
+    {
+        $this->modalIconColor = $color;
 
         return $this;
     }
@@ -488,5 +512,18 @@ trait CanOpenModal
     {
         return StaticAction::make($name)
             ->button();
+    }
+
+    public function getModalIcon(): ?string
+    {
+        return $this->evaluate($this->modalIcon);
+    }
+
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getModalIconColor(): string | array | null
+    {
+        return $this->evaluate($this->modalIconColor) ?? $this->getColor();
     }
 }
