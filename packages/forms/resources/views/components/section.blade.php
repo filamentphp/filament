@@ -27,7 +27,15 @@
                 return
             }
 
-            setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
+            setTimeout(
+                () =>
+                    $el.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'start',
+                    }),
+                200,
+            )
         "
     @endif
     id="{{ $getId() }}"

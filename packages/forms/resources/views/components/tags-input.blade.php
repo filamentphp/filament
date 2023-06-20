@@ -13,9 +13,11 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="tagsInputFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-        })"
+        x-data="
+            tagsInputFormComponent({
+                state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+            })
+        "
         id="{{ $getId() }}"
         {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-tags-input-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
@@ -44,15 +46,17 @@
                         x-on:keydown.enter.stop.prevent="createTag()"
                         x-on:keydown.,.stop.prevent="createTag()"
                         x-on:blur="createTag()"
-                        x-on:paste="$nextTick(() => {
-                            if (newTag.includes(',')) {
-                                newTag.split(',').forEach((tag) => {
-                                    newTag = tag
+                        x-on:paste="
+                            $nextTick(() => {
+                                if (newTag.includes(',')) {
+                                    newTag.split(',').forEach((tag) => {
+                                        newTag = tag
 
-                                    createTag()
-                                })
-                            }
-                        })"
+                                        createTag()
+                                    })
+                                }
+                            })
+                        "
                         x-model="newTag"
                         {{
                             $getExtraInputAttributeBag()->class([

@@ -7,10 +7,16 @@
 ])
 
 <li
-    x-data="{ label: {{ \Illuminate\Support\Js::from((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }} }"
+    x-data="{
+        label: {{ \Illuminate\Support\Js::from((filled($parentGroup) ? "{$parentGroup}." : null) . $label) }},
+    }"
     class="filament-sidebar-group"
     @if (filled($parentGroup))
-        x-bind:class="{{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }} ? 'ml-11 pr-3 pt-3' : 'hidden'"
+        x-bind:class="
+            {{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }}
+                ? 'ml-11 pr-3 pt-3'
+                : 'hidden'
+        "
     @endif
 >
     @if ($label)
@@ -43,10 +49,12 @@
 
             @if ($collapsible)
                 <x-heroicon-o-chevron-down
-                    :class="\Illuminate\Support\Arr::toCssClasses([
-                        'w-3 h-3 text-gray-600 transition',
-                        'dark:text-gray-300' => config('filament.dark_mode'),
-                    ])"
+                    :class="
+                        \Illuminate\Support\Arr::toCssClasses([
+                            'w-3 h-3 text-gray-600 transition',
+                            'dark:text-gray-300' => config('filament.dark_mode'),
+                        ])
+                    "
                     x-bind:class="$store.sidebar.groupIsCollapsed(label) || '-rotate-180'"
                     x-cloak
                 />
@@ -55,7 +63,12 @@
     @endif
 
     <ul
-        x-show="! ($store.sidebar.groupIsCollapsed(label) && {{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }})"
+        x-show="
+            ! (
+                $store.sidebar.groupIsCollapsed(label) &&
+                {{ config('filament.layout.sidebar.is_collapsible_on_desktop') ? '$store.sidebar.isOpen' : 'true' }}
+            )
+        "
         x-collapse.duration.200ms
         @class([
             '-mx-3 space-y-1 text-sm',

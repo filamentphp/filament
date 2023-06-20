@@ -16,7 +16,11 @@
 
     <span
         @class(['dark:text-white' => config('tables.dark_mode')])
-        x-text="window.pluralize(@js(__('tables::table.selection_indicator.selected_count')), selectedRecords.length, { count: selectedRecords.length })"
+        x-text="
+            window.pluralize(@js(__('tables::table.selection_indicator.selected_count')), selectedRecords.length, {
+                count: selectedRecords.length,
+            })
+        "
     ></span>
 
     <span

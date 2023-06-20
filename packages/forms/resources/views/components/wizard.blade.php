@@ -6,7 +6,6 @@
 
 <div
     x-data="{
-
         step: null,
 
         init: function () {
@@ -46,7 +45,11 @@
         },
 
         autofocusFields: function () {
-            $nextTick(() => this.$refs[`step-${this.step}`].querySelector('[autofocus]')?.focus())
+            $nextTick(() =>
+                this.$refs[`step-${this.step}`]
+                    .querySelector('[autofocus]')
+                    ?.focus(),
+            )
         },
 
         getStepIndex: function (step) {
@@ -62,11 +65,11 @@
         },
 
         isLastStep: function () {
-            return (this.getStepIndex(this.step) + 1) >= this.getSteps().length
+            return this.getStepIndex(this.step) + 1 >= this.getSteps().length
         },
 
-        isStepAccessible: function(step, index) {
-            return @js($isSkippable()) || (this.getStepIndex(step) > index)
+        isStepAccessible: function (step, index) {
+            return @js($isSkippable()) || this.getStepIndex(step) > index
         },
 
         updateQueryString: function () {
@@ -79,7 +82,6 @@
 
             history.pushState(null, document.title, url.toString())
         },
-
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
@@ -116,7 +118,10 @@
                     x-on:click="if (isStepAccessible(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
                     x-bind:class="{
-                        'cursor-not-allowed pointer-events-none': ! isStepAccessible(step, {{ $loop->index }}),
+                        'cursor-not-allowed pointer-events-none': ! isStepAccessible(
+                            step,
+                            {{ $loop->index }},
+                        ),
                     }"
                     role="step"
                     class="flex h-full w-full items-center text-start"

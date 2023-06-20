@@ -12,23 +12,31 @@
     :state-path="$getStatePath()"
 >
     <div
-        x-data="richEditorFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-        })"
+        x-data="
+            richEditorFormComponent({
+                state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+            })
+        "
         x-on:trix-change="state = $event.target.value"
         x-on:trix-attachment-add="
             if (! $event.attachment.file) return
 
             let attachment = $event.attachment
 
-            $wire.upload(`componentFileAttachments.{{ $getStatePath() }}`, attachment.file, () => {
-                $wire.getComponentFileAttachmentUrl('{{ $getStatePath() }}').then((url) => {
-                    attachment.setAttributes({
-                        url: url,
-                        href: url,
-                    })
-                })
-            })
+            $wire.upload(
+                `componentFileAttachments.{{ $getStatePath() }}`,
+                attachment.file,
+                () => {
+                    $wire
+                        .getComponentFileAttachmentUrl('{{ $getStatePath() }}')
+                        .then((url) => {
+                            attachment.setAttributes({
+                                url: url,
+                                href: url,
+                            })
+                        })
+                },
+            )
         "
         x-on:trix-file-accept="
             if ({{ $hasToolbarButton('attachFiles') ? 'true' : 'false' }}) return
@@ -504,9 +512,12 @@
                 }}
                 x-bind:class="{
                     'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                    'dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
-                    'border-danger-600 ring-danger-600': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                    'dark:border-danger-400 dark:ring-danger-400': (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
+                    'dark:border-gray-600':
+                        ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
+                    'border-danger-600 ring-danger-600':
+                        @js($getStatePath()) in $wire.__instance.serverMemo.errors,
+                    'dark:border-danger-400 dark:ring-danger-400':
+                        @js($getStatePath()) in $wire.__instance.serverMemo.errors && @js(config('forms.dark_mode')),
                 }"
             ></trix-editor>
         @else

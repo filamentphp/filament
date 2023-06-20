@@ -14,7 +14,11 @@
         <button
             x-cloak
             x-data="{}"
-            x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
+            x-bind:aria-label="
+                $store.sidebar.isOpen
+                    ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}'
+                    : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'
+            "
             x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
             @class([
                 'filament-sidebar-open-button flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
