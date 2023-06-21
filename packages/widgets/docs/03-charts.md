@@ -201,12 +201,12 @@ protected function getOptions(): RawJs
 }
 ```
 
-## Adding a subheading
+## Adding a description
 
-You may add a subheading, below the heading of the chart, using the `getSubheading()` method:
+You may add a description, below the heading of the chart, using the `getDescription()` method:
 
 ```php
-public function getSubheading(): ?string
+public function getDescription(): ?string
 {
     return 'The number of blog posts published per month.';
 }
