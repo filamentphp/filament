@@ -66,7 +66,7 @@
             } => ! $aside,
         ])
     >
-        <div class="filament-section-component-header grid flex-1 gap-y-1">
+        <div class="filament-section-component-header flex-1">
             <div
                 class="filament-section-component-header-heading-wrapper flex items-center gap-x-2"
             >
@@ -97,7 +97,7 @@
 
             @if ($description?->isNotEmpty())
                 <p
-                    class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-400"
+                    class="filament-section-component-header-description mt-1 text-sm text-gray-500 dark:text-gray-400"
                 >
                     {{ $description }}
                 </p>
