@@ -11,19 +11,19 @@
 >
     @if ($notifications->count())
         <x-slot name="header">
-            <x-filament-notifications::database.modal.heading
-                :unread-notifications-count="$unreadNotificationsCount"
-            />
+            <div>
+                <x-filament-notifications::database.modal.heading
+                    :unread-notifications-count="$unreadNotificationsCount"
+                />
 
-            <x-filament-notifications::database.modal.actions
-                :notifications="$notifications"
-                :unread-notifications-count="$unreadNotificationsCount"
-            />
+                <x-filament-notifications::database.modal.actions
+                    :notifications="$notifications"
+                    :unread-notifications-count="$unreadNotificationsCount"
+                />
+            </div>
         </x-slot>
 
-        <div
-            class="-mx-6 mt-[calc(-1rem-1px)] divide-y border-b dark:border-gray-700"
-        >
+        <div class="-mx-6 divide-y border-b dark:border-gray-700">
             @foreach ($notifications as $notification)
                 <div
                     @class([

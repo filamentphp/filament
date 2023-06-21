@@ -1,5 +1,5 @@
 @props([
-    'alignment' => null,
+    'alignment' => 'start',
     'ariaLabelledby' => null,
     'closeButton' => \Filament\Support\View\Components\Modal::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
@@ -8,6 +8,7 @@
     'footer' => null,
     'footerActions' => [],
     'footerActionsAlignment' => 'start',
+    'header' => null,
     'heading' => null,
     'hrComponent' => 'filament::hr',
     'icon' => null,
@@ -149,7 +150,7 @@
                         'relative flex h-full flex-col' => ($width === 'screen') || $slideOver,
                     ])
                 >
-                    @if ($heading)
+                    @if ($heading || $header)
                         <div
                             @class([
                                 'filament-modal-header flex px-6 pt-6',
@@ -160,52 +161,54 @@
                                 },
                             ])
                         >
-                            @if ($icon)
-                                <div
-                                    @class([
-                                        'mb-5 flex items-center justify-center' => $alignment === 'center',
-                                    ])
-                                >
+                            @if ($header)
+                                {{ $header }}
+                            @else
+                                @if ($icon)
                                     <div
                                         @class([
-                                            'rounded-full bg-custom-100 dark:bg-custom-500/20',
-                                            match ($alignment) {
-                                                'left', 'start' => 'p-2',
-                                                'center' => 'p-3',
-                                            },
+                                            'mb-5 flex items-center justify-center' => $alignment === 'center',
                                         ])
-                                        style="{{ \Filament\Support\get_color_css_variables($iconColor, shades: [100, 500]) }}"
                                     >
-                                        <x-filament::icon
-                                            alias="filament::modal"
-                                            color="text-custom-600 dark:text-custom-400"
-                                            :name="$icon"
-                                            size="h-6 w-6"
-                                            :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 600])"
-                                        />
+                                        <div
+                                            @class([
+                                                'rounded-full bg-custom-100 dark:bg-custom-500/20',
+                                                match ($alignment) {
+                                                    'left', 'start' => 'p-2',
+                                                    'center' => 'p-3',
+                                                },
+                                            ])
+                                            style="{{ \Filament\Support\get_color_css_variables($iconColor, shades: [100, 500]) }}"
+                                        >
+                                            <x-filament::icon
+                                                alias="filament::modal"
+                                                color="text-custom-600 dark:text-custom-400"
+                                                :name="$icon"
+                                                size="h-6 w-6"
+                                                :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 600])"
+                                            />
+                                        </div>
                                     </div>
+                                @endif
+
+                                <div
+                                    @class([
+                                        'text-center' => $alignment === 'center',
+                                    ])
+                                >
+                                    <x-filament::modal.heading>
+                                        {{ $heading }}
+                                    </x-filament::modal.heading>
+
+                                    @if ($description)
+                                        <p
+                                            class="filament-modal-description mt-2 text-sm text-gray-500 dark:text-gray-400"
+                                        >
+                                            {{ $description }}
+                                        </p>
+                                    @endif
                                 </div>
                             @endif
-
-                            <div
-                                @class([
-                                    'text-center' => $alignment === 'center',
-                                ])
-                            >
-                                <h2
-                                    class="filament-modal-heading text-base font-semibold leading-6"
-                                >
-                                    {{ $heading }}
-                                </h2>
-
-                                @if ($description)
-                                    <p
-                                        class="filament-modal-description mt-2 text-sm text-gray-500 dark:text-gray-400"
-                                    >
-                                        {{ $description }}
-                                    </p>
-                                @endif
-                            </div>
                         </div>
                     @endif
 
