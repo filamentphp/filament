@@ -51,7 +51,7 @@
                 : [
                     'shadow',
                     match ($color) {
-                        'gray' => 'ring-gray-950/5 ring-1 bg-white text-gray-700 hover:bg-gray-50 hover:ring-gray-950/10 focus:bg-gray-50 focus:ring-2 focus:ring-gray-950/10 dark:ring-white/20 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700 dark:hover:ring-white/30 dark:focus:ring-white/30',
+                        'gray' => 'ring-gray-950/10 ring-1 bg-white text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-2 dark:ring-white/20 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700 dark:hover:ring-white/30 dark:focus:ring-white/30',
                         default => 'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 focus:ring-custom-500/50',
                     },
                 ]

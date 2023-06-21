@@ -16,19 +16,23 @@ trait CanOpenModal
      */
     protected array | Closure $extraModalFooterActions = [];
 
+    protected bool | Closure | null $isModalFooterSticky = null;
+
     /**
      * @var array<StaticAction>
      */
     protected array $modalActions = [];
 
-    protected bool | Closure | null $isModalCentered = null;
-
     protected bool | Closure $isModalSlideOver = false;
+
+    protected string | Closure | null $modalAlignment = null;
 
     /**
      * @var array<StaticAction> | Closure | null
      */
     protected array | Closure | null $modalFooterActions = null;
+
+    protected string | Closure | null $modalFooterActionsAlignment = null;
 
     protected StaticAction | bool | Closure | null $modalCancelAction = null;
 
@@ -68,9 +72,21 @@ trait CanOpenModal
         return $this;
     }
 
+    /**
+     * @deprecated Use `modalAlignment('center')` instead.
+     */
     public function centerModal(bool | Closure | null $condition = true): static
     {
-        $this->isModalCentered = $condition;
+        if ($this->evaluate($condition)) {
+            $this->modalAlignment('center');
+        }
+
+        return $this;
+    }
+
+    public function modalAlignment(string | Closure | null $alignment = null): static
+    {
+        $this->modalAlignment = $alignment;
 
         return $this;
     }
@@ -134,6 +150,13 @@ trait CanOpenModal
         foreach ($actions as $action) {
             $this->modalFooterActions[$action->getName()] = $action;
         }
+
+        return $this;
+    }
+
+    public function modalFooterActionsAlignment(string | Closure | null $alignment = null): static
+    {
+        $this->modalFooterActionsAlignment = $alignment;
 
         return $this;
     }
@@ -304,11 +327,16 @@ trait CanOpenModal
             $actions['cancel'] = $cancelAction;
         }
 
-        if ($this->isModalCentered()) {
+        if ($this->getModalFooterActionsAlignment() === 'center') {
             $actions = array_reverse($actions);
         }
 
         return $this->modalFooterActions = $actions;
+    }
+
+    public function getModalFooterActionsAlignment(): ?string
+    {
+        return $this->evaluate($this->modalFooterActionsAlignment);
     }
 
     /**
@@ -366,7 +394,7 @@ trait CanOpenModal
     /**
      * @return array<StaticAction>
      */
-    public function getVisibleModalActions(): array
+    public function getVisibleModalFooterActions(): array
     {
         return array_filter(
             $this->getModalFooterActions(),
@@ -427,6 +455,11 @@ trait CanOpenModal
         return $this->extraModalFooterActions = $actions;
     }
 
+    public function getModalAlignment(): string
+    {
+        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), ['xs', 'sm']) ? 'center' : 'start');
+    }
+
     public function getModalSubmitActionLabel(): string
     {
         return $this->evaluate($this->modalSubmitActionLabel) ?? __('filament-actions::modal.actions.submit.label');
@@ -462,9 +495,9 @@ trait CanOpenModal
         return $this->evaluate($this->modalWidth) ?? '4xl';
     }
 
-    public function isModalCentered(): bool
+    public function isModalFooterSticky(): bool
     {
-        return $this->evaluate($this->isModalCentered) ?? in_array($this->getModalWidth(), ['xs', 'sm']);
+        return $this->evaluate($this->isModalFooterSticky) ?? $this->isModalSlideOver();
     }
 
     public function isModalSlideOver(): bool
@@ -524,6 +557,13 @@ trait CanOpenModal
      */
     public function getModalIconColor(): string | array | null
     {
-        return $this->evaluate($this->modalIconColor) ?? $this->getColor();
+        return $this->evaluate($this->modalIconColor) ?? $this->getColor() ?? 'primary';
+    }
+
+    public function stickyModalFooter(bool | Closure $condition = true): static
+    {
+        $this->isModalFooterSticky = $condition;
+
+        return $this;
     }
 }

@@ -5,16 +5,23 @@
         @endphp
 
         <x-filament::modal
-            :id="$this->id . '-action'"
-            :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
-            :visible="filled($action)"
-            :width="$action?->getModalWidth()"
-            :slide-over="$action?->isModalSlideOver()"
+            :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
+            :footer-actions="$action?->getVisibleModalFooterActions()"
+            :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
+            :heading="$action?->getModalHeading()"
+            :icon="$action?->getModalIcon()"
+            :icon-color="$action?->getModalIconColor()"
+            :id="$this->id . '-action'"
+            :slide-over="$action?->isModalSlideOver()"
+            :sticky-footer="$action?->isModalFooterSticky()"
+            :subheading="$action?->getModalSubheading()"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            :wire:key="$action ? $this->id . '.actions.' . $action->getName() . '.modal' : null"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedActions.length) open()"
             x-on:modal-closed.stop="
                 const mountedActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedActionShouldOpenModal()) }}
@@ -34,36 +41,9 @@
                     livewire.call('unmountAction', false)
                 }
             "
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
         >
             @if ($action)
-                @if ($action->isModalCentered())
-                    @if ($heading = $action->getModalHeading())
-                        <x-slot name="heading">
-                            {{ $heading }}
-                        </x-slot>
-                    @endif
-
-                    @if ($subheading = $action->getModalSubheading())
-                        <x-slot name="subheading">
-                            {{ $subheading }}
-                        </x-slot>
-                    @endif
-                @else
-                    <x-slot name="header">
-                        @if ($heading = $action->getModalHeading())
-                            <x-filament::modal.heading>
-                                {{ $heading }}
-                            </x-filament::modal.heading>
-                        @endif
-
-                        @if ($subheading = $action->getModalSubheading())
-                            <x-filament::modal.subheading>
-                                {{ $subheading }}
-                            </x-filament::modal.subheading>
-                        @endif
-                    </x-slot>
-                @endif
-
                 {{ $action->getModalContent() }}
 
                 @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
@@ -73,18 +53,6 @@
                 @endif
 
                 {{ $action->getModalContentFooter() }}
-
-                @if (count($modalActions = $action->getVisibleModalActions()))
-                    <x-slot name="footer">
-                        <x-filament::modal.actions
-                            :full-width="$action->isModalCentered()"
-                        >
-                            @foreach ($modalActions as $modalAction)
-                                {{ $modalAction }}
-                            @endforeach
-                        </x-filament::modal.actions>
-                    </x-slot>
-                @endif
             @endif
         </x-filament::modal>
     </form>
@@ -101,16 +69,23 @@
         @endphp
 
         <x-filament::modal
-            :id="$this->id . '-infolist-action'"
-            :wire:key="$action ? $this->id . '.infolist.actions.' . $action->getName() . '.modal' : null"
-            :visible="filled($action)"
-            :width="$action?->getModalWidth()"
-            :slide-over="$action?->isModalSlideOver()"
+            :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
+            :footer-actions="$action?->getVisibleModalFooterActions()"
+            :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
+            :heading="$action?->getModalHeading()"
+            :icon="$action?->getModalIcon()"
+            :icon-color="$action?->getModalIconColor()"
+            :id="$this->id . '-infolist-action'"
+            :slide-over="$action?->isModalSlideOver()"
+            :sticky-footer="$action?->isModalFooterSticky()"
+            :subheading="$action?->getModalSubheading()"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            :wire:key="$action ? $this->id . '.infolist.actions.' . $action->getName() . '.modal' : null"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedInfolistActions.length) open()"
             x-on:modal-closed.stop="
                 const mountedInfolistActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedInfolistActionShouldOpenModal()) }}
@@ -130,36 +105,9 @@
                     livewire.call('unmountInfolistAction', false)
                 }
             "
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
         >
             @if ($action)
-                @if ($action->isModalCentered())
-                    @if ($heading = $action->getModalHeading())
-                        <x-slot name="heading">
-                            {{ $heading }}
-                        </x-slot>
-                    @endif
-
-                    @if ($subheading = $action->getModalSubheading())
-                        <x-slot name="subheading">
-                            {{ $subheading }}
-                        </x-slot>
-                    @endif
-                @else
-                    <x-slot name="header">
-                        @if ($heading = $action->getModalHeading())
-                            <x-filament::modal.heading>
-                                {{ $heading }}
-                            </x-filament::modal.heading>
-                        @endif
-
-                        @if ($subheading = $action->getModalSubheading())
-                            <x-filament::modal.subheading>
-                                {{ $subheading }}
-                            </x-filament::modal.subheading>
-                        @endif
-                    </x-slot>
-                @endif
-
                 {{ $action->getModalContent() }}
 
                 @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
@@ -169,18 +117,6 @@
                 @endif
 
                 {{ $action->getModalContentFooter() }}
-
-                @if (count($modalActions = $action->getVisibleModalActions()))
-                    <x-slot name="footer">
-                        <x-filament::modal.actions
-                            :full-width="$action->isModalCentered()"
-                        >
-                            @foreach ($modalActions as $modalAction)
-                                {{ $modalAction }}
-                            @endforeach
-                        </x-filament::modal.actions>
-                    </x-slot>
-                @endif
             @endif
         </x-filament::modal>
     </form>
@@ -197,16 +133,23 @@
         @endphp
 
         <x-filament::modal
-            :id="$this->id . '-table-action'"
-            :wire:key="$action ? $this->id . '.table.actions.' . $action->getName() . '.modal' : null"
-            :visible="filled($action)"
-            :width="$action?->getModalWidth()"
-            :slide-over="$action?->isModalSlideOver()"
+            :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
+            :footer-actions="$action?->getVisibleModalFooterActions()"
+            :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
+            :heading="$action?->getModalHeading()"
+            :icon="$action?->getModalIcon()"
+            :icon-color="$action?->getModalIconColor()"
+            :id="$this->id . '-table-action'"
+            :slide-over="$action?->isModalSlideOver()"
+            :sticky-footer="$action?->isModalFooterSticky()"
+            :subheading="$action?->getModalSubheading()"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            :wire:key="$action ? $this->id . '.table.actions.' . $action->getName() . '.modal' : null"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedTableActions.length) open()"
             x-on:modal-closed.stop="
                 const mountedTableActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableActionShouldOpenModal()) }}
@@ -226,36 +169,9 @@
                     livewire.call('unmountTableAction', false)
                 }
             "
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
         >
             @if ($action)
-                @if ($action->isModalCentered())
-                    @if ($heading = $action->getModalHeading())
-                        <x-slot name="heading">
-                            {{ $heading }}
-                        </x-slot>
-                    @endif
-
-                    @if ($subheading = $action->getModalSubheading())
-                        <x-slot name="subheading">
-                            {{ $subheading }}
-                        </x-slot>
-                    @endif
-                @else
-                    <x-slot name="header">
-                        @if ($heading = $action->getModalHeading())
-                            <x-filament::modal.heading>
-                                {{ $heading }}
-                            </x-filament::modal.heading>
-                        @endif
-
-                        @if ($subheading = $action->getModalSubheading())
-                            <x-filament::modal.subheading>
-                                {{ $subheading }}
-                            </x-filament::modal.subheading>
-                        @endif
-                    </x-slot>
-                @endif
-
                 {{ $action->getModalContent() }}
 
                 @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
@@ -265,18 +181,6 @@
                 @endif
 
                 {{ $action->getModalContentFooter() }}
-
-                @if (count($modalActions = $action->getVisibleModalActions()))
-                    <x-slot name="footer">
-                        <x-filament::modal.actions
-                            :full-width="$action->isModalCentered()"
-                        >
-                            @foreach ($modalActions as $modalAction)
-                                {{ $modalAction }}
-                            @endforeach
-                        </x-filament::modal.actions>
-                    </x-slot>
-                @endif
             @endif
         </x-filament::modal>
     </form>
@@ -287,16 +191,23 @@
         @endphp
 
         <x-filament::modal
-            :id="$this->id . '-table-bulk-action'"
-            :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
-            :visible="filled($action)"
-            :width="$action?->getModalWidth()"
-            :slide-over="$action?->isModalSlideOver()"
+            :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
+            :footer-actions="$action?->getVisibleModalFooterActions()"
+            :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
+            :heading="$action?->getModalHeading()"
+            :icon="$action?->getModalIcon()"
+            :icon-color="$action?->getModalIconColor()"
+            :id="$this->id . '-table-bulk-action'"
+            :slide-over="$action?->isModalSlideOver()"
+            :sticky-footer="$action?->isModalFooterSticky()"
+            :subheading="$action?->getModalSubheading()"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            :wire:key="$action ? $this->id . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             x-init="livewire = $wire.__instance"
-            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->id }}') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
                 const mountedTableBulkActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedTableBulkActionShouldOpenModal()) }}
@@ -316,36 +227,9 @@
                     livewire.set('mountedTableBulkAction', null)
                 }
             "
+            x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->id }}') close()"
         >
             @if ($action)
-                @if ($action->isModalCentered())
-                    @if ($heading = $action->getModalHeading())
-                        <x-slot name="heading">
-                            {{ $heading }}
-                        </x-slot>
-                    @endif
-
-                    @if ($subheading = $action->getModalSubheading())
-                        <x-slot name="subheading">
-                            {{ $subheading }}
-                        </x-slot>
-                    @endif
-                @else
-                    <x-slot name="header">
-                        @if ($heading = $action->getModalHeading())
-                            <x-filament::modal.heading>
-                                {{ $heading }}
-                            </x-filament::modal.heading>
-                        @endif
-
-                        @if ($subheading = $action->getModalSubheading())
-                            <x-filament::modal.subheading>
-                                {{ $subheading }}
-                            </x-filament::modal.subheading>
-                        @endif
-                    </x-slot>
-                @endif
-
                 {{ $action->getModalContent() }}
 
                 @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
@@ -355,18 +239,6 @@
                 @endif
 
                 {{ $action->getModalContentFooter() }}
-
-                @if (count($modalActions = $action->getVisibleModalActions()))
-                    <x-slot name="footer">
-                        <x-filament::modal.actions
-                            :full-width="$action->isModalCentered()"
-                        >
-                            @foreach ($modalActions as $modalAction)
-                                {{ $modalAction }}
-                            @endforeach
-                        </x-filament::modal.actions>
-                    </x-slot>
-                @endif
             @endif
         </x-filament::modal>
     </form>
@@ -383,14 +255,22 @@
 
     <form wire:submit.prevent="callMountedFormComponentAction">
         <x-filament::modal
-            :id="$this->id . '-form-component-action'"
-            :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
-            :visible="filled($action)"
-            :width="$action?->getModalWidth()"
-            :slide-over="$action?->isModalSlideOver()"
+            :alignment="$action?->getModalAlignment()"
             :close-button="$action?->hasModalCloseButton()"
             :close-by-clicking-away="$action?->isModalClosedByClickingAway()"
             display-classes="block"
+            :footer-actions="$action?->getVisibleModalFooterActions()"
+            :footer-actions-alignment="$action?->getModalFooterActionsAlignment()"
+            :heading="$action?->getModalHeading()"
+            :icon="$action?->getModalIcon()"
+            :icon-color="$action?->getModalIconColor()"
+            :id="$this->id . '-form-component-action'"
+            :slide-over="$action?->isModalSlideOver()"
+            :sticky-footer="$action?->isModalFooterSticky()"
+            :subheading="$action?->getModalSubheading()"
+            :visible="filled($action)"
+            :width="$action?->getModalWidth()"
+            :wire:key="$action ? $this->id . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
             x-init="livewire = $wire.__instance"
             x-on:modal-closed.stop="
                 const mountedFormComponentActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedFormComponentActionShouldOpenModal()) }}
@@ -401,34 +281,6 @@
             "
         >
             @if ($action)
-                @if ($action->isModalCentered())
-                    @if ($heading = $action->getModalHeading())
-                        <x-slot name="heading">
-                            {{ $heading }}
-                        </x-slot>
-                    @endif
-
-                    @if ($subheading = $action->getModalSubheading())
-                        <x-slot name="subheading">
-                            {{ $subheading }}
-                        </x-slot>
-                    @endif
-                @else
-                    <x-slot name="header">
-                        @if ($heading = $action->getModalHeading())
-                            <x-filament::modal.heading>
-                                {{ $heading }}
-                            </x-filament::modal.heading>
-                        @endif
-
-                        @if ($subheading = $action->getModalSubheading())
-                            <x-filament::modal.subheading>
-                                {{ $subheading }}
-                            </x-filament::modal.subheading>
-                        @endif
-                    </x-slot>
-                @endif
-
                 {{ $action->getModalContent() }}
 
                 @if (count(($infolist = $action->getInfolist())?->getComponents() ?? []))
@@ -438,18 +290,6 @@
                 @endif
 
                 {{ $action->getModalContentFooter() }}
-
-                @if (count($modalActions = $action->getVisibleModalActions()))
-                    <x-slot name="footer">
-                        <x-filament::modal.actions
-                            :full-width="$action->isModalCentered()"
-                        >
-                            @foreach ($modalActions as $modalAction)
-                                {{ $modalAction }}
-                            @endforeach
-                        </x-filament::modal.actions>
-                    </x-slot>
-                @endif
             @endif
         </x-filament::modal>
     </form>

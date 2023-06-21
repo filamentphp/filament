@@ -35,6 +35,8 @@ class DissociateBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-x-mark');
+
         $this->action(function (): void {
             $this->process(function (Collection $records, Table $table): void {
                 $records->each(function (Model $record) use ($table): void {

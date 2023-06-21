@@ -32,6 +32,8 @@ class DeleteAction extends Action
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-trash');
+
         $this->hidden(static function (Model $record): bool {
             if (! method_exists($record, 'trashed')) {
                 return false;

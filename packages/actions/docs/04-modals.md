@@ -174,6 +174,21 @@ Action::make('delete')
     ->modalIconColor('warning')
 ```
 
+## Customizing the alignment of modal content
+
+By default, modal content will be aligned to the start, or centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to change the alignment of content in a modal, you can use the `modalAlignment()` method and pass it `start` or `center`:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->modalAlignment('center')
+```
+
 ## Custom modal content
 
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
@@ -201,12 +216,12 @@ Action::make('advance')
 
 ### Adding custom modal content below the form
 
-By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalFooter()` if you wish:
+By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalContentFooter()` if you wish:
 
 ```php
 Action::make('advance')
     ->action(fn () => $this->record->advance())
-    ->modalFooter(view('filament.pages.actions.advance'))
+    ->modalContentFooter(view('filament.pages.actions.advance'))
 ```
 
 ### Adding an action to custom modal content
@@ -237,6 +252,7 @@ Now, in the view file, you can render the action button using the name that it w
 </div>
 ```
 
+
 ## Using a slide-over instead of a modal
 
 You can open a "slide-over" dialog instead of a modal by using the `slideOver()` method:
@@ -255,6 +271,21 @@ Action::make('updateAuthor')
 <AutoScreenshot name="actions/modal/slide-over" alt="Slide over with form" version="3.x" />
 
 Instead of opening in the center of the screen, the modal content will now slide in from the right and consume the entire height of the browser.
+
+## Making the modal footer sticky
+
+The footer of a modal is rendered inline after the content by default. Slide-overs, however, have a sticky footer that always shows when scrolling the content. You may enable this for a modal too using `stickyModalFooter()`:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->stickyModalFooter()
+```
 
 ## Changing the modal width
 
@@ -294,27 +325,12 @@ use Filament\Forms\Form;
 Action::make('create')
     ->mountUsing(function (Form $form) {
         $form->fill();
-        
+
         // ...
     })
 ```
 
 Please note that the `mountUsing()` method, by default, is used by Filament to initialize the [form](#modal-forms). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillForm()` on the action itself](#filling-the-form-with-existing-data).
-
-## Centering modal content
-
-By default, the modal's content will be centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to center the content of a larger modal, you can use the `centerModal()` method:
-
-```php
-Action::make('updateAuthor')
-    ->form([
-        // ...
-    ])
-    ->action(function (array $data): void {
-        // ...
-    })
-    ->centerModal()
-```
 
 ## Customizing the action buttons in the footer of the modal
 
@@ -366,7 +382,7 @@ Action::make('create')
     ])
     ->action(function (array $data, array $arguments): void {
         // Create
-    
+
         if ($arguments['another'] ?? false) {
             // Reset the form and don't close the modal
         }
