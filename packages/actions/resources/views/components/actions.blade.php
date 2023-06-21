@@ -19,7 +19,7 @@
             {{
                 $attributes->class([
                     'filament-actions-actions',
-                    'flex flex-wrap items-center gap-4' => ! $fullWidth,
+                    'flex flex-wrap items-center gap-3' => ! $fullWidth,
                     match ($alignment) {
                         'center' => 'justify-center',
                         'right' => 'flex-row-reverse space-x-reverse',
