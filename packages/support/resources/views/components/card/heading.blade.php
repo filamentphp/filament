@@ -1,5 +1,5 @@
-<h2
-    {{ $attributes->class(['filament-card-heading text-xl font-medium tracking-tight']) }}
+<h3
+    {{ $attributes->class(['filament-card-heading text-base font-semibold leading-6']) }}
 >
     {{ $slot }}
-</h2>
+</h3>

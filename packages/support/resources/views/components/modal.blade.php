@@ -193,7 +193,7 @@
                                 ])
                             >
                                 <h2
-                                    class="filament-modal-heading text-base font-semibold"
+                                    class="filament-modal-heading text-base font-semibold leading-6"
                                 >
                                     {{ $heading }}
                                 </h2>
