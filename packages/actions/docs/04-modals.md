@@ -137,16 +137,16 @@ Action::make('approvePost')
     })
 ```
 
-## Customizing the modal's heading, subheading, and submit action label
+## Customizing the modal's heading, description, and submit action label
 
-You may customize the heading, subheading and label of the submit button in the modal:
+You may customize the heading, description and label of the submit button in the modal:
 
 ```php
 Action::make('delete')
     ->action(fn () => $this->record->delete())
     ->requiresConfirmation()
     ->modalHeading('Delete post')
-    ->modalSubheading('Are you sure you\'d like to delete this post? This cannot be undone.')
+    ->modalDescription('Are you sure you\'d like to delete this post? This cannot be undone.')
     ->modalSubmitActionLabel('Yes, delete it')
 ```
 

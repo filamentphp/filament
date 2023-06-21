@@ -48,7 +48,7 @@ trait CanOpenModal
 
     protected string | Htmlable | Closure | null $modalHeading = null;
 
-    protected string | Htmlable | Closure | null $modalSubheading = null;
+    protected string | Htmlable | Closure | null $modalDescription = null;
 
     protected string | Closure | null $modalWidth = null;
 
@@ -263,9 +263,19 @@ trait CanOpenModal
         return $this;
     }
 
+    public function modalDescription(string | Htmlable | Closure | null $description = null): static
+    {
+        $this->modalDescription = $description;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `modalDescription()` instead.
+     */
     public function modalSubheading(string | Htmlable | Closure | null $subheading = null): static
     {
-        $this->modalSubheading = $subheading;
+        $this->modalDescription($subheading);
 
         return $this;
     }
@@ -485,9 +495,9 @@ trait CanOpenModal
         return $this->evaluate($this->modalHeading) ?? $this->getLabel();
     }
 
-    public function getModalSubheading(): string | Htmlable | null
+    public function getModalDescription(): string | Htmlable | null
     {
-        return $this->evaluate($this->modalSubheading);
+        return $this->evaluate($this->modalDescription);
     }
 
     public function getModalWidth(): string

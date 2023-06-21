@@ -16,7 +16,7 @@
     'openEventName' => 'open-modal',
     'slideOver' => false,
     'stickyFooter' => false,
-    'subheading' => null,
+    'description' => null,
     'trigger' => null,
     'visible' => true,
     'width' => 'sm',
@@ -198,11 +198,11 @@
                                     {{ $heading }}
                                 </h2>
 
-                                @if ($subheading)
+                                @if ($description)
                                     <p
-                                        class="filament-modal-subheading mt-2 text-sm text-gray-500 dark:text-gray-400"
+                                        class="filament-modal-description mt-2 text-sm text-gray-500 dark:text-gray-400"
                                     >
-                                        {{ $subheading }}
+                                        {{ $description }}
                                     </p>
                                 @endif
                             </div>

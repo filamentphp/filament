@@ -169,7 +169,7 @@ trait HasFormComponentActions
             return false;
         }
 
-        return $action->getModalSubheading() ||
+        return $action->getModalDescription() ||
             $action->getModalContent() ||
             $action->getModalContentFooter() ||
             $action->getInfolist() ||

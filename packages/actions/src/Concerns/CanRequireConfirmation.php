@@ -12,7 +12,7 @@ trait CanRequireConfirmation
         $this->modalAlignment(fn (MountableAction $action): ?string => $action->evaluate($condition) ? 'center' : null);
         $this->modalFooterActionsAlignment(fn (MountableAction $action): ?string => $action->evaluate($condition) ? 'center' : null);
         $this->modalIcon(fn (MountableAction $action): ?string => $action->evaluate($condition) ? 'heroicon-o-exclamation-triangle' : null);
-        $this->modalSubheading(fn (MountableAction $action): ?string => $action->evaluate($condition) ? __('filament-actions::modal.confirmation') : null);
+        $this->modalDescription(fn (MountableAction $action): ?string => $action->evaluate($condition) ? __('filament-actions::modal.confirmation') : null);
         $this->modalSubmitActionLabel(fn (MountableAction $action): ?string => $action->evaluate($condition) ? __('filament-actions::modal.actions.confirm.label') : null);
         $this->modalWidth(fn (MountableAction $action): ?string => $action->evaluate($condition) ? 'md' : null);
 
