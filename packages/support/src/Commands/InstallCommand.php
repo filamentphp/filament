@@ -160,12 +160,12 @@ class InstallCommand extends Command
 
         $command = '@php artisan filament:upgrade';
 
-        if (in_array($command, $configuration['scripts']['post-update-cmd'] ?? [])) {
+        if (in_array($command, $configuration['scripts']['post-autoload-dump'] ?? [])) {
             return;
         }
 
-        $configuration['scripts']['post-update-cmd'] ??= [];
-        $configuration['scripts']['post-update-cmd'][] = $command;
+        $configuration['scripts']['post-autoload-dump'] ??= [];
+        $configuration['scripts']['post-autoload-dump'][] = $command;
 
         file_put_contents(
             $path,

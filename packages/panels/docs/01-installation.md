@@ -74,10 +74,10 @@ composer update
 php artisan filament:upgrade
 ```
 
-We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-autoload-dump` to run it automatically:
 
 ```json
-"post-update-cmd": [
+"post-autoload-dump": [
     // ...
     "@php artisan filament:upgrade"
 ],
