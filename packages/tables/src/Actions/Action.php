@@ -14,8 +14,8 @@ use Illuminate\Database\Eloquent\Model;
 class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
     use Concerns\BelongsToTable;
-    use InteractsWithRecord;
     use HasMountableArguments;
+    use InteractsWithRecord;
 
     public function getLivewireCallMountedActionName(): string
     {
