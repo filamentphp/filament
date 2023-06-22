@@ -34,8 +34,8 @@
         x-ref="panel"
         x-float{{ $placement ? ".placement.{$placement}" : '' }}.flip{{ $shift ? '.shift' : '' }}{{ $teleport ? '.teleport' : '' }}{{ $offset ? '.offset' : '' }}="{ offset: {{ $offset }} }"
         x-cloak
-        x-transition:enter-start="opacity-0 scale-95"
-        x-transition:leave-end="opacity-0 scale-95"
+        x-transition:enter-start="scale-95 opacity-0"
+        x-transition:leave-end="scale-95 opacity-0"
         @if ($attributes->has('wire:key'))
             wire:ignore.self
             wire:key="{{ $attributes->get('wire:key') }}.panel"

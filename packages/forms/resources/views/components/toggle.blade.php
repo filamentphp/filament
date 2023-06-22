@@ -13,7 +13,9 @@
 >
     @capture($content)
         <button
-            x-data="{ state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }} }"
+            x-data="{
+                state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+            }"
             role="switch"
             aria-checked="false"
             x-bind:aria-checked="state?.toString()"
@@ -71,16 +73,18 @@
                     @if ($hasOffIcon())
                         <x-dynamic-component
                             :component="$getOffIcon()"
-                            :class="\Illuminate\Support\Arr::toCssClasses([
-                                'h-3 w-3',
-                                match ($getOffColor()) {
-                                    'danger' => 'text-danger-500',
-                                    'primary' => 'text-primary-500',
-                                    'success' => 'text-success-500',
-                                    'warning' => 'text-warning-500',
-                                    default => 'text-gray-400',
-                                },
-                            ])"
+                            :class="
+                                \Illuminate\Support\Arr::toCssClasses([
+                                    'h-3 w-3',
+                                    match ($getOffColor()) {
+                                        'danger' => 'text-danger-500',
+                                        'primary' => 'text-primary-500',
+                                        'success' => 'text-success-500',
+                                        'warning' => 'text-warning-500',
+                                        default => 'text-gray-400',
+                                    },
+                                ])
+                            "
                         />
                     @endif
                 </span>
@@ -97,16 +101,18 @@
                         <x-dynamic-component
                             :component="$getOnIcon()"
                             x-cloak
-                            :class="\Illuminate\Support\Arr::toCssClasses([
-                                'h-3 w-3',
-                                match ($getOnColor()) {
-                                    'danger' => 'text-danger-500',
-                                    'secondary' => 'text-gray-400',
-                                    'success' => 'text-success-500',
-                                    'warning' => 'text-warning-500',
-                                    default => 'text-primary-500',
-                                },
-                            ])"
+                            :class="
+                                \Illuminate\Support\Arr::toCssClasses([
+                                    'h-3 w-3',
+                                    match ($getOnColor()) {
+                                        'danger' => 'text-danger-500',
+                                        'secondary' => 'text-gray-400',
+                                        'success' => 'text-success-500',
+                                        'warning' => 'text-warning-500',
+                                        default => 'text-primary-500',
+                                    },
+                                ])
+                            "
                         />
                     @endif
                 </span>

@@ -13,8 +13,8 @@
 >
     <div
         x-data="keyValueFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-        })"
+                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+                })"
         {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-key-value-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
     >

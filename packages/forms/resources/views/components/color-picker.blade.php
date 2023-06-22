@@ -43,10 +43,10 @@
 
         <div
             x-data="colorPickerFormComponent({
-                isAutofocused: @js($isAutofocused()),
-                isDisabled: @js($isDisabled()),
-                state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }}
-            })"
+                        isAutofocused: @js($isAutofocused()),
+                        isDisabled: @js($isDisabled()),
+                        state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+                    })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
         >
