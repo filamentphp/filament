@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
