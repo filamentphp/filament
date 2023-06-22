@@ -14,6 +14,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
     use Concerns\BelongsToTable;
     use InteractsWithRecord;
+    use HasMountableArguments;
 
     public function getLivewireCallMountedActionName(): string
     {
