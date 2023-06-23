@@ -12,11 +12,21 @@ use Illuminate\Contracts\View\View;
 trait CanOpenModal
 {
     /**
+     * @var array<string, StaticAction>
+     */
+    protected array $cachedExtraModalFooterActions;
+
+    /**
      * @var array<StaticAction> | Closure
      */
     protected array | Closure $extraModalFooterActions = [];
 
     protected bool | Closure | null $isModalFooterSticky = null;
+
+    /**
+     * @var array<string, StaticAction>
+     */
+    protected array $cachedModalActions;
 
     /**
      * @var array<StaticAction>
@@ -26,6 +36,11 @@ trait CanOpenModal
     protected bool | Closure $isModalSlideOver = false;
 
     protected string | Closure | null $modalAlignment = null;
+
+    /**
+     * @var array<string, StaticAction>
+     */
+    protected array $cachedModalFooterActions;
 
     /**
      * @var array<StaticAction> | Closure | null
@@ -139,17 +154,7 @@ trait CanOpenModal
      */
     public function modalFooterActions(array | Closure | null $actions = null): static
     {
-        if (! is_array($actions)) {
-            $this->modalFooterActions = $actions;
-
-            return $this;
-        }
-
-        $this->modalFooterActions = [];
-
-        foreach ($actions as $action) {
-            $this->modalFooterActions[$action->getName()] = $action;
-        }
+        $this->modalFooterActions = $actions;
 
         return $this;
     }
@@ -308,18 +313,18 @@ trait CanOpenModal
             return [];
         }
 
-        if (is_array($this->modalFooterActions)) {
-            return $this->modalFooterActions;
+        if (isset($this->cachedModalFooterActions)) {
+            return $this->cachedModalFooterActions;
         }
 
-        if ($this->modalFooterActions instanceof Closure) {
+        if ($this->modalFooterActions) {
             $actions = [];
 
             foreach ($this->evaluate($this->modalFooterActions) as $action) {
                 $actions[$action->getName()] = $this->prepareModalAction($action);
             }
 
-            return $this->modalFooterActions = $actions;
+            return $this->cachedModalFooterActions = $actions;
         }
 
         $actions = [];
@@ -341,7 +346,7 @@ trait CanOpenModal
             $actions = array_reverse($actions);
         }
 
-        return $this->modalFooterActions = $actions;
+        return $this->cachedModalFooterActions = $actions;
     }
 
     public function getModalFooterActionsAlignment(): ?string
@@ -354,12 +359,8 @@ trait CanOpenModal
      */
     public function getModalActions(): array
     {
-        if (! count($this->modalActions)) {
-            return [];
-        }
-
-        if (! is_numeric(array_key_first($this->modalActions))) {
-            return $this->modalActions;
+        if (isset($this->cachedModalActions)) {
+            return $this->cachedModalActions;
         }
 
         $actions = $this->getModalFooterActions();
@@ -368,7 +369,7 @@ trait CanOpenModal
             $actions[$action->getName()] = $this->prepareModalAction($action);
         }
 
-        return $this->modalActions = $actions;
+        return $this->cachedModalActions = $actions;
     }
 
     public function getModalAction(string $name): ?StaticAction
@@ -456,13 +457,17 @@ trait CanOpenModal
      */
     public function getExtraModalFooterActions(): array
     {
+        if (isset($this->cachedExtraModalFooterActions)) {
+            return $this->cachedExtraModalFooterActions;
+        }
+
         $actions = [];
 
         foreach ($this->evaluate($this->extraModalFooterActions) as $action) {
             $actions[$action->getName()] = $this->prepareModalAction($action);
         }
 
-        return $this->extraModalFooterActions = $actions;
+        return $this->cachedExtraModalFooterActions = $actions;
     }
 
     public function getModalAlignment(): string
