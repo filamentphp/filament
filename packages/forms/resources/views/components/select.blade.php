@@ -89,7 +89,7 @@
                             isAutofocused: @js($isAutofocused()),
                             isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple()),
-                            livewireId: @js($this->id),
+                            livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
                             loadingMessage: @js($getLoadingMessage()),
