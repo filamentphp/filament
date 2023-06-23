@@ -58,14 +58,14 @@
     @if (filled($prefix))
         <span
             @class([
-                'filament-input-affix-label -me-px',
+                'filament-input-affix-label -me-px text-sm',
                 $baseAffixClasses,
                 'rounded-s-lg' => ! $prefixIcon,
             ])
             @if (filled($statePath))
                 x-bind:class="{
                     'text-gray-400': ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
-                    'text-danger-400': (@js($statePath) in $wire.__instance.snapshot.memo.errors),
+                    'text-danger-400': @js($statePath) in $wire.__instance.snapshot.memo.errors,
                 }"
             @endif
         >
@@ -80,14 +80,14 @@
     @if (filled($suffix))
         <span
             @class([
-                'filament-input-affix-label -ms-px',
+                'filament-input-affix-label -ms-px text-sm',
                 $baseAffixClasses,
                 'rounded-e-lg' => ! $suffixIcon,
             ])
             @if (filled($statePath))
                 x-bind:class="{
                     'text-gray-400': ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
-                    'text-danger-400': (@js($statePath) in $wire.__instance.snapshot.memo.errors),
+                    'text-danger-400': @js($statePath) in $wire.__instance.snapshot.memo.errors,
                 }"
             @endif
         >
@@ -104,7 +104,7 @@
             @if (filled($statePath))
                 x-bind:class="{
                     'text-gray-400': ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
-                    'text-danger-400': (@js($statePath) in $wire.__instance.snapshot.memo.errors),
+                    'text-danger-400': @js($statePath) in $wire.__instance.snapshot.memo.errors,
                 }"
             @endif
         >

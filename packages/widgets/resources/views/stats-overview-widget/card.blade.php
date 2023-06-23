@@ -37,7 +37,7 @@
         @if ($description = $getDescription())
             <div
                 class="flex items-center space-x-1 text-sm font-medium text-custom-600 rtl:space-x-reverse"
-                style="{{ \Filament\Support\get_color_css_variables($getDescriptionColor(), shades: [600]) }}"
+                style="{{ \Filament\Support\get_color_css_variables($getDescriptionColor() ?? 'gray', shades: [600]) }}"
             >
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
@@ -66,9 +66,9 @@
             ax-load
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/card/chart', 'filament/widgets') }}"
             x-data="statsOverviewCardChart({
-                labels: @js(array_keys($chart)),
-                values: @js(array_values($chart)),
-            })"
+                        labels: @js(array_keys($chart)),
+                        values: @js(array_values($chart)),
+                    })"
             wire:ignore
             x-on:theme-changed.window="
                 chart.destroy()

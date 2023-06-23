@@ -40,6 +40,10 @@ trait HasActions
                 /** @var array<string, Action> $flatActions */
                 $flatActions = $action->getFlatActions();
 
+                if (! $action->getDropdownPlacement()) {
+                    $action->dropdownPlacement('bottom-end');
+                }
+
                 $this->mergeCachedFlatActions($flatActions);
             } elseif ($action instanceof Action) {
                 $action->defaultSize('sm');

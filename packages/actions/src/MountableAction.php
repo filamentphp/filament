@@ -21,8 +21,6 @@ class MountableAction extends StaticAction implements HasLivewire
     use Concerns\HasParentActions;
     use Concerns\HasWizard;
 
-    public static string $modalActionsAlignment = 'left';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -82,25 +80,5 @@ class MountableAction extends StaticAction implements HasLivewire
             'livewire' => [$this->getLivewire()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
-    }
-
-    public static function alignModalActionsLeft(): void
-    {
-        static::$modalActionsAlignment = 'left';
-    }
-
-    public static function alignModalActionsCenter(): void
-    {
-        static::$modalActionsAlignment = 'center';
-    }
-
-    public static function alignModalActionsRight(): void
-    {
-        static::$modalActionsAlignment = 'right';
-    }
-
-    public static function getModalActionsAlignment(): string
-    {
-        return static::$modalActionsAlignment;
     }
 }

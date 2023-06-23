@@ -20,14 +20,14 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            'filament-button relative grid-flow-col items-center justify-center rounded-lg border font-medium outline-none transition-colors focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
+            "filament-button filament-button-size-{$size} relative grid-flow-col items-center justify-center rounded-lg font-medium outline-none transition focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
             is_string($color) ? "filament-button-color-{$color}" : null,
             match ($size) {
-                'xs' => 'filament-button-size-xs gap-1.5 px-[calc(theme(spacing.3)-1px)] py-[calc(theme(spacing.2)-1px)] text-xs',
-                'sm' => 'filament-button-size-sm gap-1.5 px-[calc(theme(spacing.[3.5])-1px)] py-[calc(theme(spacing.2)-1px)] text-sm',
-                'md' => 'filament-button-size-md gap-2 px-[calc(theme(spacing.4)-1px)] py-[calc(theme(spacing[2.5])-1px)] text-sm',
-                'lg' => 'filament-button-size-lg gap-2 px-[calc(theme(spacing.5)-1px)] py-[calc(theme(spacing.3)-1px)] text-sm',
-                'xl' => 'filament-button-size-xl gap-2 px-[calc(theme(spacing.6)-1px)] py-[calc(theme(spacing.3)-1px)] text-base',
+                'xs' => 'gap-1 px-2 py-1.5 text-xs',
+                'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
+                'md' => 'gap-1.5 px-3 py-2 text-sm',
+                'lg' => 'gap-1.5 px-3.5 py-2.5 text-sm',
+                'xl' => 'gap-1.5 px-4 py-3 text-sm',
             },
             'hidden' => $labeledFrom,
             match ($labeledFrom) {
@@ -42,17 +42,17 @@
         ...(
             $outlined
                 ? [
-                    'filament-button-outlined',
+                    'filament-button-outlined ring-1 ',
                     match ($color) {
-                        'gray' => 'border-gray-300 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-primary-500/50 dark:border-gray-600 dark:text-gray-200',
-                        default => 'border-custom-600 text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 focus:ring-custom-500/50 dark:border-custom-400 dark:text-custom-400',
+                        'gray' => 'ring-gray-600 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-gray-500/50 dark:ring-gray-300/70 dark:text-gray-200',
+                        default => 'ring-custom-600 text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-300/70',
                     },
                 ]
                 : [
                     'shadow',
                     match ($color) {
-                        'gray' => 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:border-transparent focus:bg-gray-50 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700',
-                        default => 'border-transparent bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 focus:ring-custom-500/50',
+                        'gray' => 'ring-gray-950/10 ring-1 bg-white text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-2 dark:ring-white/20 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:focus:bg-gray-700 dark:hover:ring-white/30 dark:focus:ring-white/30',
+                        default => 'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 focus:ring-custom-500/50',
                     },
                 ]
         ),
@@ -61,13 +61,12 @@
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
         \Filament\Support\get_color_css_variables(
             $color,
-            shades: $outlined ? [400, 500, 600] : [500, 600],
+            shades: $outlined ? [300, 400, 500, 600] : [500, 600],
         ) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {
         'xs', 'sm' => 'sm',
-        'md', 'lg', 'xl' => 'md',
         default => 'md',
     };
 
@@ -78,28 +77,7 @@
         default => $iconSize,
     };
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-icon',
-        match ($iconPosition) {
-            'before' => match ($size) {
-                'xs' => '-ms-0.5',
-                'sm' => '-ms-0.5',
-                'md' => '-ms-1',
-                'lg' => '-ms-1',
-                'xl' => '-ms-1',
-                default => null,
-            },
-            'after' => match ($size) {
-                'xs' => '-me-0.5',
-                'sm' => '-me-0.5',
-                'md' => '-me-1',
-                'lg' => '-me-1',
-                'xl' => '-me-1',
-                default => null,
-            },
-            default => null,
-        } => ! $labelSrOnly,
-    ]);
+    $iconClasses = 'filament-button-icon';
 
     $indicatorClasses = 'filament-button-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
 
@@ -135,14 +113,16 @@
         :tag="$tag"
         :tooltip="$tooltip"
         :type="$type"
-        :class="match ($labeledFrom) {
-            'sm' => 'sm:hidden',
-            'md' => 'md:hidden',
-            'lg' => 'lg:hidden',
-            'xl' => 'xl:hidden',
-            '2xl' => '2xl:hidden',
-            default => 'hidden',
-        }"
+        :class="
+            match ($labeledFrom) {
+                'sm' => 'sm:hidden',
+                'md' => 'md:hidden',
+                'lg' => 'lg:hidden',
+                'xl' => 'xl:hidden',
+                '2xl' => '2xl:hidden',
+                default => 'hidden',
+            }
+        "
         :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
     />
 @endif

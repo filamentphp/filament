@@ -32,7 +32,15 @@
                 return
             }
 
-            setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
+            setTimeout(
+                () =>
+                    $el.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start',
+                        inline: 'start',
+                    }),
+                200,
+            )
         "
     @endif
     {{
@@ -58,7 +66,7 @@
             } => ! $aside,
         ])
     >
-        <div class="filament-section-component-header grid flex-1 gap-y-1">
+        <div class="filament-section-component-header flex-1">
             <div
                 class="filament-section-component-header-heading-wrapper flex items-center gap-x-2"
             >
@@ -67,12 +75,14 @@
                         :name="$icon"
                         alias="support::section.icon"
                         color="text-custom-400"
-                        :size="match ($iconSize) {
-                            'sm' => 'h-4 w-4',
-                            'md' => 'h-5 w-5',
-                            'lg' => 'h-6 w-6',
-                            default => $iconSize,
-                        }"
+                        :size="
+                            match ($iconSize) {
+                                'sm' => 'h-4 w-4',
+                                'md' => 'h-5 w-5',
+                                'lg' => 'h-6 w-6',
+                                default => $iconSize,
+                            }
+                        "
                         class="filament-section-component-header-icon"
                         :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400])"
                     />
@@ -87,7 +97,7 @@
 
             @if ($description?->isNotEmpty())
                 <p
-                    class="filament-section-component-header-description text-sm text-gray-500 dark:text-gray-400"
+                    class="filament-section-component-header-description mt-1 text-sm text-gray-500 dark:text-gray-400"
                 >
                     {{ $description }}
                 </p>

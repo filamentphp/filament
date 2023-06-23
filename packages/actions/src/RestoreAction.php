@@ -32,6 +32,8 @@ class RestoreAction extends Action
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-arrow-uturn-left');
+
         $this->action(function (Model $record): void {
             if (! method_exists($record, 'restore')) {
                 $this->failure();

@@ -14,11 +14,6 @@ class NavigationItem
 
     protected ?string $activeIcon = null;
 
-    /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    protected string | array | null $iconColor = null;
-
     protected string $label;
 
     protected ?string $badge = null;
@@ -89,19 +84,9 @@ class NavigationItem
         return $this;
     }
 
-    public function activeIcon(string $activeIcon): static
+    public function activeIcon(?string $activeIcon): static
     {
         $this->activeIcon = $activeIcon;
-
-        return $this;
-    }
-
-    /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
-     */
-    public function iconColor(string | array | null $color): static
-    {
-        $this->iconColor = $color;
 
         return $this;
     }
@@ -182,14 +167,6 @@ class NavigationItem
     public function getActiveIcon(): ?string
     {
         return $this->activeIcon;
-    }
-
-    /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    public function getIconColor(): string | array | null
-    {
-        return $this->iconColor;
     }
 
     public function getLabel(): string

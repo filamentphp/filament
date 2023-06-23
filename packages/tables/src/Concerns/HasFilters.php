@@ -64,7 +64,7 @@ trait HasFilters
 
             $field->state($filterResetState[$fieldName] ?? match (true) {
                 is_array($state) => [],
-                $state === true => false,
+                is_bool($state) => false,
                 default => null,
             });
         }

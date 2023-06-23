@@ -22,7 +22,7 @@ abstract class ChartWidget extends Widget
 
     protected static ?string $heading = null;
 
-    protected static ?string $subheading = null;
+    protected static ?string $description = null;
 
     protected static ?string $maxHeight = null;
 
@@ -77,9 +77,9 @@ abstract class ChartWidget extends Widget
         return static::$heading;
     }
 
-    public function getSubheading(): string | Htmlable | null
+    public function getDescription(): string | Htmlable | null
     {
-        return static::$subheading;
+        return static::$description;
     }
 
     protected function getMaxHeight(): ?string

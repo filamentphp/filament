@@ -8,10 +8,15 @@
         error: undefined,
         state: @js($state),
         isLoading: false,
+        isEditing: false,
     }"
     x-init="
         Livewire.hook('message.processed', (component) => {
             if (component.component.id !== @js($this->getId())) {
+                return
+            }
+
+            if (isEditing) {
                 return
             }
 
@@ -42,9 +47,15 @@
 
     <input
         x-model="state"
+        x-on:focus="isEditing = true"
+        x-on:blur="isEditing = false"
         x-on:change{{ $type === 'number' ? '.debounce.1s' : null }}="
             isLoading = true
-            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
+            response = await $wire.updateTableColumnState(
+                @js($getName()),
+                @js($recordKey),
+                $event.target.value,
+            )
             error = response?.error ?? undefined
             if (! error) state = response
             isLoading = false
@@ -54,7 +65,8 @@
         x-tooltip="error"
         x-bind:class="{
             'border-gray-300 dark:border-gray-600': ! error,
-            'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400': error,
+            'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400':
+                error,
         }"
         {{
             $attributes

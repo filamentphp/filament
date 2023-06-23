@@ -32,10 +32,10 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
                 x-data="colorPickerFormComponent({
-                    isAutofocused: @js($isAutofocused()),
-                    isDisabled: @js($isDisabled),
-                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }}
-                })"
+                            isAutofocused: @js($isAutofocused()),
+                            isDisabled: @js($isDisabled),
+                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                        })"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
             >
@@ -70,7 +70,10 @@
                     class="pointer-events-none absolute inset-y-0 end-0 flex items-center pe-2"
                 >
                     <span
-                        x-bind:style="{ 'background-color': state, ...(state ? { 'background-image': 'none' } : {}) }"
+                        x-bind:style="{
+                            'background-color': state,
+                            ...(state ? { 'background-image': 'none' } : {}),
+                        }"
                         class="filament-forms-color-picker-component-preview relative h-7 w-7 overflow-hidden rounded-md"
                     ></span>
                 </span>

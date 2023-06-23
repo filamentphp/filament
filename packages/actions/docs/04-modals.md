@@ -137,20 +137,57 @@ Action::make('approvePost')
     })
 ```
 
-## Customizing the modal's heading, subheading, and submit action label
+## Customizing the modal's heading, description, and submit action label
 
-You may customize the heading, subheading and label of the submit button in the modal:
+You may customize the heading, description and label of the submit button in the modal:
 
 ```php
 Action::make('delete')
     ->action(fn () => $this->record->delete())
     ->requiresConfirmation()
     ->modalHeading('Delete post')
-    ->modalSubheading('Are you sure you\'d like to delete this post? This cannot be undone.')
+    ->modalDescription('Are you sure you\'d like to delete this post? This cannot be undone.')
     ->modalSubmitActionLabel('Yes, delete it')
 ```
 
 <AutoScreenshot name="actions/modal/confirmation-custom-text" alt="Confirmation modal with custom text" version="3.x" />
+
+## Adding an icon inside the modal
+
+You may add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) inside the modal using the `modalIcon()` method:
+
+```php
+Action::make('delete')
+    ->action(fn () => $this->record->delete())
+    ->requiresConfirmation()
+    ->modalIcon('heroicon-o-trash')
+```
+
+By default, the icon will inherit the color of the action button. You may customize the color of the icon using the `modalIconColor()` method:
+
+```php
+Action::make('delete')
+    ->action(fn () => $this->record->delete())
+    ->requiresConfirmation()
+    ->color('danger')
+    ->modalIcon('heroicon-o-trash')
+    ->modalIconColor('warning')
+```
+
+## Customizing the alignment of modal content
+
+By default, modal content will be aligned to the start, or centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to change the alignment of content in a modal, you can use the `modalAlignment()` method and pass it `start` or `center`:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->modalAlignment('center')
+```
 
 ## Custom modal content
 
@@ -179,12 +216,12 @@ Action::make('advance')
 
 ### Adding custom modal content below the form
 
-By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalFooter()` if you wish:
+By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalContentFooter()` if you wish:
 
 ```php
 Action::make('advance')
     ->action(fn () => $this->record->advance())
-    ->modalFooter(view('filament.pages.actions.advance'))
+    ->modalContentFooter(view('filament.pages.actions.advance'))
 ```
 
 ### Adding an action to custom modal content
@@ -215,6 +252,7 @@ Now, in the view file, you can render the action button using the name that it w
 </div>
 ```
 
+
 ## Using a slide-over instead of a modal
 
 You can open a "slide-over" dialog instead of a modal by using the `slideOver()` method:
@@ -233,6 +271,21 @@ Action::make('updateAuthor')
 <AutoScreenshot name="actions/modal/slide-over" alt="Slide over with form" version="3.x" />
 
 Instead of opening in the center of the screen, the modal content will now slide in from the right and consume the entire height of the browser.
+
+## Making the modal footer sticky
+
+The footer of a modal is rendered inline after the content by default. Slide-overs, however, have a sticky footer that always shows when scrolling the content. You may enable this for a modal too using `stickyModalFooter()`:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->stickyModalFooter()
+```
 
 ## Changing the modal width
 
@@ -272,50 +325,12 @@ use Filament\Forms\Form;
 Action::make('create')
     ->mountUsing(function (Form $form) {
         $form->fill();
-        
+
         // ...
     })
 ```
 
 Please note that the `mountUsing()` method, by default, is used by Filament to initialize the [form](#modal-forms). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillForm()` on the action itself](#filling-the-form-with-existing-data).
-
-## Centering modal content
-
-By default, the modal's content will be centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to center the content of a larger modal, you can use the `centerModal()` method:
-
-```php
-Action::make('updateAuthor')
-    ->form([
-        // ...
-    ])
-    ->action(function (array $data): void {
-        // ...
-    })
-    ->centerModal()
-```
-
-## Closing the modal by clicking away
-
-By default, when you click away from a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByClickingAway(false)` method:
-
-```php
-Action::make('updateAuthor')
-    ->form([
-        // ...
-    ])
-    ->action(function (array $data): void {
-        // ...
-    })
-    ->closeModalByClickingAway(false)
-```
-
-If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
-
-```php
-use Filament\Support\View\Components\Modal;
-
-Modal::closedByClickingAway(false);
-```
 
 ## Customizing the action buttons in the footer of the modal
 
@@ -367,9 +382,55 @@ Action::make('create')
     ])
     ->action(function (array $data, array $arguments): void {
         // Create
-    
+
         if ($arguments['another'] ?? false) {
             // Reset the form and don't close the modal
         }
     })
+```
+
+## Closing the modal by clicking away
+
+By default, when you click away from a modal, it will close itself. If you wish to disable this behavior for a specific action, you can use the `closeModalByClickingAway(false)` method:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->closeModalByClickingAway(false)
+```
+
+If you'd like to change the behaviour for all modals in the application, you can do so by calling `Modal::closedByClickingAway()` inside a service provider or middleware:
+
+```php
+use Filament\Support\View\Components\Modal;
+
+Modal::closedByClickingAway(false);
+```
+
+## Hiding the modal close button
+
+By default, modals have a close button in the top right corner. If you wish to hide the close button, you can use the `modalCloseButton(false)` method:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->modalCloseButton(false)
+```
+
+If you'd like to hide the close button for all modals in the application, you can do so by calling `Modal::closeButton(false)` inside a service provider or middleware:
+
+```php
+use Filament\Support\View\Components\Modal;
+
+Modal::closeButton(false);
 ```

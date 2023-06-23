@@ -10,19 +10,23 @@
 ])
 
 <div {{ $attributes->class(['filament-tables-header px-4 py-2']) }}>
-    <div class="flex flex-col gap-4 md:flex-row md:items-start">
+    <div class="flex flex-col gap-4 md:flex-row md:items-center">
         @if ($heading || $description || $actionsPosition === ActionsPosition::Start)
             <div>
                 @if ($heading)
-                    <x-filament-tables::header.heading>
+                    <h3
+                        class="filament-tables-header-heading text-base font-semibold leading-6"
+                    >
                         {{ $heading }}
-                    </x-filament-tables::header.heading>
+                    </h3>
                 @endif
 
                 @if ($description)
-                    <x-filament-tables::header.description>
+                    <p
+                        class="filament-tables-header-description mt-1 text-sm text-gray-500 dark:text-gray-400"
+                    >
                         {{ $description }}
-                    </x-filament-tables::header.description>
+                    </p>
                 @endif
 
                 @if ($actionsPosition === ActionsPosition::Start)

@@ -62,7 +62,7 @@ class TestsBulkActions
     public function setTableBulkActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::prependKeysWith($data, 'mountedTableBulkActionData.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedTableBulkActionData.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -73,8 +73,8 @@ class TestsBulkActions
     public function assertTableBulkActionDataSet(): Closure
     {
         return function (array $data): static {
-            foreach ($data as $key => $value) {
-                $this->assertSet("mountedTableBulkActionData.{$key}", $value);
+            foreach (Arr::dot($data, prepend: 'mountedTableBulkActionData.') as $key => $value) {
+                $this->assertSet($key, $value);
             }
 
             return $this;

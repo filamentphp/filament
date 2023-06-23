@@ -267,7 +267,7 @@ protected static ?string $navigationIcon = 'heroicon-o-user-group';
 Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
 
 ```php
-public static function getNavigationIcon(): string
+public static function getNavigationIcon(): ?string
 {
     return 'heroicon-o-user-group';
 }

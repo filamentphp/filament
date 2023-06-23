@@ -180,6 +180,8 @@ export default function selectFormComponent({
 
             this.select.clearStore()
 
+            this.refreshPlaceholder()
+
             this.setChoices(choices)
 
             if (![null, undefined, ''].includes(this.state)) {

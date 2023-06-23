@@ -1,6 +1,6 @@
 @php
     $heading = $this->getHeading();
-    $subheading = $this->getSubheading();
+    $description = $this->getDescription();
     $filters = $this->getFilters();
 @endphp
 
@@ -15,10 +15,10 @@
                         </x-filament::card.heading>
                     @endif
 
-                    @if ($subheading)
-                        <x-filament::card.subheading>
-                            {{ $subheading }}
-                        </x-filament::card.subheading>
+                    @if ($description)
+                        <x-filament::card.description>
+                            {{ $description }}
+                        </x-filament::card.description>
                     @endif
                 </x-filament::card.header>
 
@@ -56,10 +56,10 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 x-data="chart({
-                    cachedData: @js($this->getCachedData()),
-                    options: @js($this->getOptions()),
-                    type: @js($this->getType()),
-                })"
+                            cachedData: @js($this->getCachedData()),
+                            options: @js($this->getOptions()),
+                            type: @js($this->getType()),
+                        })"
                 wire:ignore
             >
                 <canvas

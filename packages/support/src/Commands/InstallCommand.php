@@ -12,7 +12,7 @@ class InstallCommand extends Command
 {
     use CanManipulateFiles;
 
-    protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
+    protected $signature = 'filament:install {--scaffold} {--actions} {--forms} {--infolists} {--notifications} {--panels} {--tables} {--widgets} {--F|force}';
 
     protected $description = 'Install Filament.';
 
@@ -80,6 +80,7 @@ class InstallCommand extends Command
         if (
             (! $this->option('actions')) &&
             (! $this->option('forms')) &&
+            (! $this->option('infolists')) &&
             (! $this->option('tables'))
         ) {
             $css = $filesystem->get(resource_path('css/app.css'));
@@ -159,12 +160,12 @@ class InstallCommand extends Command
 
         $command = '@php artisan filament:upgrade';
 
-        if (in_array($command, $configuration['scripts']['post-update-cmd'] ?? [])) {
+        if (in_array($command, $configuration['scripts']['post-autoload-dump'] ?? [])) {
             return;
         }
 
-        $configuration['scripts']['post-update-cmd'] ??= [];
-        $configuration['scripts']['post-update-cmd'][] = $command;
+        $configuration['scripts']['post-autoload-dump'] ??= [];
+        $configuration['scripts']['post-autoload-dump'][] = $command;
 
         file_put_contents(
             $path,

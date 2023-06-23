@@ -11,8 +11,8 @@
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tags-input', 'filament/forms') }}"
         x-data="tagsInputFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-        })"
+                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                })"
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
@@ -38,28 +38,30 @@
                             @if ($placeholder = $getPlaceholder()) placeholder="{{ $placeholder }}" @endif
                             type="text"
                             dusk="filament.forms.{{ $statePath }}"
-                            x-on:keydown="() => {
-                                if (['Enter', ...@js($splitKeys)].includes($event.key)) {
-                                    $event.preventDefault()
-                                    $event.stopPropagation()
+                            x-on:keydown="
+                                () => {
+                                    if (['Enter', ...@js($splitKeys)].includes($event.key)) {
+                                        $event.preventDefault()
+                                        $event.stopPropagation()
 
-                                    createTag()
+                                        createTag()
+                                    }
                                 }
-                            }"
+                            "
                             x-on:blur="createTag()"
-                            x-on:paste="$nextTick(() => {
-                                const pattern = @js($splitKeys)
-                                    .map((key) => key.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&'))
-                                    .join('|')
+                            x-on:paste="
+                                $nextTick(() => {
+                                    const pattern = @js($splitKeys).map((key) =>
+                                        key.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&'),
+                                    ).join('|')
 
-                                newTag
-                                    .split(new RegExp(pattern, 'g'))
-                                    .forEach((tag) => {
+                                    newTag.split(new RegExp(pattern, 'g')).forEach((tag) => {
                                         newTag = tag
 
                                         createTag()
                                     })
-                            })"
+                                })
+                            "
                             x-model="newTag"
                             {{ $getExtraInputAttributeBag()->class(['webkit-calendar-picker-indicator:opacity-0 block w-full border-0 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400 sm:text-sm']) }}
                         />

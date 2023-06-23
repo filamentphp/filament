@@ -4,10 +4,10 @@
 ])
 
 <header
-    {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 border-b bg-white dark:border-gray-700 dark:bg-gray-800']) }}
+    {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_1px_0_0_theme(colors.white_/_20%)]']) }}
 >
     <div
-        class="-mt-px flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
+        class="flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
     >
         <div class="flex flex-1 items-center">
             {{ filament()->renderHook('topbar.start') }}
@@ -15,7 +15,11 @@
             <button
                 x-cloak
                 x-data="{}"
-                x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
+                x-bind:aria-label="
+                    $store.sidebar.isOpen
+                        ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}'
+                        : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'
+                "
                 x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 @class([
                     'filament-sidebar-open-button flex h-10 w-10 shrink-0 items-center justify-center rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
@@ -43,7 +47,7 @@
                 </div>
 
                 @if (filament()->hasNavigation())
-                    <ul class="hidden flex-wrap items-center gap-3 lg:flex">
+                    <ul class="hidden flex-wrap items-center gap-x-1 lg:flex">
                         @foreach ($navigation as $group)
                             @if ($groupLabel = $group->getLabel())
                                 <x-filament::dropdown placement="bottom-start">

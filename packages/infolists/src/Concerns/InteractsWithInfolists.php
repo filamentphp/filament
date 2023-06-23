@@ -198,9 +198,9 @@ trait InteractsWithInfolists
             return false;
         }
 
-        return $action->getModalSubheading() ||
+        return $action->getModalDescription() ||
             $action->getModalContent() ||
-            $action->getModalFooter() ||
+            $action->getModalContentFooter() ||
             $action->getInfolist() ||
             $this->mountedInfolistActionHasForm();
     }

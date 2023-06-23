@@ -30,6 +30,8 @@ class ForceDeleteAction extends Action
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-trash');
+
         $this->action(function (): void {
             $result = $this->process(static fn (Model $record) => $record->forceDelete());
 

@@ -81,14 +81,15 @@
                                     default => 'text-custom-600',
                                 } => ! ($isBadge || $url),
                                 ($isProse ? match ($size = $getSize($state)) {
-                                    'sm' => 'prose-sm',
-                                    'base', 'md', null => 'prose-base',
+                                    'xs' => 'prose-xs',
+                                    'sm', null => 'prose-sm',
+                                    'base', 'md' => 'prose-base',
                                     'lg' => 'prose-lg',
                                     default => $size,
                                 } : match ($size = ($isBadge ? 'sm' : $getSize($state))) {
                                     'xs' => 'text-xs',
-                                    'sm' => 'text-sm',
-                                    'base', 'md', null => 'text-base',
+                                    'sm', null => 'text-sm',
+                                    'base', 'md' => 'text-base',
                                     'lg' => 'text-lg',
                                     default => $size,
                                 }),
@@ -137,6 +138,8 @@
                                 @endif
                                 @class([
                                     'inline-block',
+                                    '[&>*:first-child]:mt-0 [&>*:last-child]:mb-0' => $isProse,
+                                    'pt-2' => $isProse && (! $isLabelHidden()),
                                     'cursor-pointer' => $isCopyable,
                                 ])
                             >
