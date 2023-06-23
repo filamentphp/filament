@@ -25,11 +25,9 @@
         @if ($isNative())
             <input
                 x-data="{}"
-                x-bind:class="
-                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500':
-                        ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
-                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400':
-                        @js($statePath) in $wire.__instance.snapshot.memo.errors,
+                x-bind:class="{
+                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500': ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
+                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': @js($statePath) in $wire.__instance.snapshot.memo.errors,
                 }"
                 {{
                     $getExtraInputAttributeBag()
