@@ -326,15 +326,15 @@ You can also `emitSelf`, `emitUp` and `emitTo`:
 
 ```php
 Action::make('undo')
-    ->color('secondary')
+    ->color('gray')
     ->emitSelf('undoEditingPost', [$post->id])
 
 Action::make('undo')
-    ->color('secondary')
+    ->color('gray')
     ->emitUp('undoEditingPost', [$post->id])
 
 Action::make('undo')
-    ->color('secondary')
+    ->color('gray')
     ->emitTo('another_component', 'undoEditingPost', [$post->id])
 ```
 
@@ -361,15 +361,15 @@ Similarly, `emitSelf`, `emitUp` and `emitTo` are also available:
 
 ```js
 new NotificationAction('undo')
-    .color('secondary')
+    .color('gray')
     .emitSelf('undoEditingPost')
 
 new NotificationAction('undo')
-    .color('secondary')
+    .color('gray')
     .emitUp('undoEditingPost')
 
 new NotificationAction('undo')
-    .color('secondary')
+    .color('gray')
     .emitTo('another_component', 'undoEditingPost')
 ```
 

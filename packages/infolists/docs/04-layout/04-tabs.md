@@ -119,7 +119,7 @@ Tabs::make('Heading')
 
 ### Setting the tab icon color
 
-The icon of the tab may have a color to indicate its significance using the `iconColor()` method. It may be either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`:
+The icon of the tab may have a color to indicate its significance using the `iconColor()` method. It may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
 
 ```php
 use Filament\Infolists\Components\Tabs;

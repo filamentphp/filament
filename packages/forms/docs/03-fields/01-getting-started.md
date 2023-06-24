@@ -112,7 +112,7 @@ TextInput::make('password')
 
 ### Changing the text color of the hint
 
-You can change the text color of the hint. By default it's gray, but you may use `danger`, `gray`, `info`, `primary`, `secondary`, `success` and `warning`:
+You can change the text color of the hint. By default it's gray, but you may use `danger`, `gray`, `info`, `primary`, `success` and `warning`:
 
 ```php
 use Filament\Forms\Components\RichEditor;
@@ -190,7 +190,7 @@ You may hide a field:
 
  ```php
  use Filament\Forms\Components\TextInput;
- 
+
  TextInput::make('name')
     ->hidden()
  ```
@@ -199,7 +199,7 @@ Optionally, you may pass a boolean value to control if the field should be hidde
 
  ```php
  use Filament\Forms\Components\TextInput;
- 
+
  TextInput::make('name')
     ->hidden(! auth()->user()->isAdmin())
  ```

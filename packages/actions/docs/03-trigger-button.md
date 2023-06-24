@@ -72,7 +72,7 @@ Action::make('edit')
 
 ## Setting a color
 
-Buttons may have a color to indicate their significance. It may be either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`:
+Buttons may have a color to indicate their significance. It may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
 
 ```php
 Action::make('delete')
@@ -174,7 +174,7 @@ Action::make('filter')
 
 <AutoScreenshot name="actions/trigger-button/indicator" alt="Trigger with indicator" version="3.x" />
 
-You can also pass a color to be used for the indicator, which can be either `danger`, `gray`, `info`, `primary`, `secondary`, `success` and `warning`:
+You can also pass a color to be used for the indicator, which can be either `danger`, `gray`, `info`, `primary`, `success` and `warning`:
 
 ```php
 use Filament\Actions\Action;

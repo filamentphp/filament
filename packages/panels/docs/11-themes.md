@@ -19,7 +19,6 @@ public function panel(Panel $panel): Panel
             'gray' => Color::Gray,
             'info' => Color::Blue,
             'primary' => Color::Indigo,
-            'secondary' => Color::Sky,
             'success' => Color::Emerald,
             'warning' => Color::Orange,
         ]);
@@ -58,7 +57,7 @@ $panel
     ->colors([
         'primary' => '#6366f1',
     ])
-    
+
 $panel
     ->colors([
         'primary' => 'rgb(99, 102, 241)',
