@@ -29,16 +29,11 @@
                     return
                 }
 
-                if (
-                    ('mountedFormComponentActions' in livewire?.serverMemo.data) &&
-                    livewire.serverMemo.data.mountedFormComponentActions.length
-                ) {
+                if ($wire.mountedFormComponentActions.length) {
                     return
                 }
 
-                if ('mountedActions' in livewire?.serverMemo.data) {
-                    livewire.call('unmountAction', false)
-                }
+                $wire.unmountAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
         >
@@ -92,16 +87,11 @@
                     return
                 }
 
-                if (
-                    ('mountedFormComponentActions' in livewire?.serverMemo.data) &&
-                    livewire.serverMemo.data.mountedFormComponentActions.length
-                ) {
+                if ($wire.mountedFormComponentActions.length) {
                     return
                 }
 
-                if ('mountedInfolistActions' in livewire?.serverMemo.data) {
-                    livewire.call('unmountInfolistAction', false)
-                }
+                $wire.unmountInfolistAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
         >
@@ -155,16 +145,11 @@
                     return
                 }
 
-                if (
-                    ('mountedFormComponentActions' in livewire?.serverMemo.data) &&
-                    livewire.serverMemo.data.mountedFormComponentActions.length
-                ) {
+                if ($wire.mountedFormComponentActions.length) {
                     return
                 }
 
-                if ('mountedTableActions' in livewire?.serverMemo.data) {
-                    livewire.call('unmountTableAction', false)
-                }
+                $wire.unmountTableAction(false)
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
         >
@@ -212,16 +197,11 @@
                     return
                 }
 
-                if (
-                    ('mountedFormComponentActions' in livewire?.serverMemo.data) &&
-                    livewire.serverMemo.data.mountedFormComponentActions.length
-                ) {
+                if ($wire.mountedFormComponentActions.length) {
                     return
                 }
 
-                if ('mountedTableBulkAction' in livewire?.serverMemo.data) {
-                    livewire.set('mountedTableBulkAction', null)
-                }
+                $wire.mountedTableBulkAction = null
             "
             x-on:opened-form-component-action-modal.window="if ($event.detail.id === '{{ $this->getId() }}') close()"
         >
@@ -270,8 +250,8 @@
             x-on:modal-closed.stop="
                 const mountedFormComponentActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedFormComponentActionShouldOpenModal()) }}
 
-                if (mountedFormComponentActionShouldOpenModal && 'mountedFormComponentActions' in livewire?.serverMemo.data) {
-                    livewire.call('unmountFormComponentAction', false)
+                if (mountedFormComponentActionShouldOpenModal) {
+                    $wire.unmountFormComponentAction(false)
                 }
             "
         >
