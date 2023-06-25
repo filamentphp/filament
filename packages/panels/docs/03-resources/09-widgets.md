@@ -87,7 +87,7 @@ class ListProducts extends ListRecords
 }
 ```
 
-Now, on the widget class, you must add the `InteractsWithPageTable` trait, and return the name of the page class from the `getPage()` method:
+Now, on the widget class, you must add the `InteractsWithPageTable` trait, and return the name of the page class from the `getTablePage()` method:
 
 ```php
 use App\Filament\Resources\ProductResource\Pages\ListProducts;
@@ -98,7 +98,7 @@ class ProductStats extends Widget
 {
     use InteractsWithPageTable;
 
-    protected function getPage(): string
+    protected function getTablePage(): string
     {
         return ListProducts::class;
     }
