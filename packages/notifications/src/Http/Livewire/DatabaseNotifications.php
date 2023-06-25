@@ -14,9 +14,12 @@ use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 class DatabaseNotifications extends Component
 {
+    use WithPagination;
+
     public static bool $isPaginated = true;
 
     public static ?string $trigger = null;
@@ -148,10 +151,12 @@ class DatabaseNotifications extends Component
         static::$pollingInterval = $interval;
     }
 
-    // @todo Replace this method for LW3 to ensure pagination query string is not used.
-    public function queryStringWithPagination(): void
+    /**
+     * @return array<string>
+     */
+    public function queryStringHandlesPagination(): array
     {
-
+        return [];
     }
 
     public function render(): View

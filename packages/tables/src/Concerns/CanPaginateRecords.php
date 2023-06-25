@@ -76,14 +76,6 @@ trait CanPaginateRecords
     }
 
     /**
-     * @param  ?string  $pageName
-     */
-    public function resetPage($pageName = null): void
-    {
-        parent::resetPage($pageName ?? $this->getTablePaginationPageName());
-    }
-
-    /**
      * @deprecated Override the `table()` method to configure the table.
      *
      * @return array<int | string> | null

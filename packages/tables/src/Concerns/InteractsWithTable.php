@@ -11,6 +11,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Livewire\Features\SupportPagination\HandlesPagination;
+use Livewire\WithPagination;
 
 trait InteractsWithTable
 {
@@ -27,6 +29,9 @@ trait InteractsWithTable
     use HasColumns;
     use HasFilters;
     use HasRecords;
+    use WithPagination {
+        WithPagination::resetPage as resetLivewirePage;
+    }
     use CanBeStriped;
     use CanPollRecords;
     use HasContent;
@@ -266,6 +271,14 @@ trait InteractsWithTable
         }
 
         return app($driver, ['locale' => $this->getActiveTableLocale() ?? app()->getLocale()]);
+    }
+
+    /**
+     * @param  ?string  $pageName
+     */
+    public function resetPage($pageName = null): void
+    {
+        $this->resetLivewirePage($pageName ?? $this->getTablePaginationPageName());
     }
 
     /**
