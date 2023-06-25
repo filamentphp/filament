@@ -6,7 +6,6 @@ use Filament\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\RedirectToHomeController;
 use Filament\Http\Controllers\RedirectToTenantController;
 use Filament\Http\Middleware\IdentifyTenant;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
