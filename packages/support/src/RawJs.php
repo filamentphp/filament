@@ -10,4 +10,9 @@ class RawJs extends Js
     {
         $this->js = $js;
     }
+
+    public static function make(string $js): static
+    {
+        return app(static::class, ['js' => $js]);
+    }
 }

@@ -98,7 +98,6 @@ const formComponents = [
     'rich-editor',
     'select',
     'tags-input',
-    'text-input',
     'textarea',
 ]
 
