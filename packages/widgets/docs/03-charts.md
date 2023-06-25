@@ -189,15 +189,17 @@ use Filament\Support\RawJs;
 
 protected function getOptions(): RawJs
 {
-    return new RawJs("{
-        scales: {
-            y: {
-                ticks: {
-                    callback: (value) => '$' + value,
+    return RawJs::make(<<<JS
+        {
+            scales: {
+                y: {
+                    ticks: {
+                        callback: (value) => '$' + value,
+                    },
                 },
             },
-        },
-    }");
+        }
+    JS);
 }
 ```
 

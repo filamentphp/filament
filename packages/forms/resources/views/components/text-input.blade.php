@@ -1,8 +1,8 @@
 @php
     $datalistOptions = $getDatalistOptions();
-    $hasMask = $hasMask();
     $id = $getId();
     $isConcealed = $isConcealed();
+    $mask = $getMask();
     $statePath = $getStatePath();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
@@ -23,19 +23,12 @@
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <input
-            @if ($hasMask)
-                x-ignore
-                ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('text-input', 'filament/forms') }}"
-                x-data="textInputFormComponent({
-                            getMaskOptionsUsing: (IMask) => {{ $getJsonMaskConfiguration() }},
-                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", lazilyEntangledModifiers: ['defer']) }},
-                        })"
-                wire:ignore
-                @if ($isDebounced()) x-on:input.debounce.{{ $getDebounce() }}="$wire.$refresh" @endif
-                @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
-            @else
-                x-data="{}"
+            x-data="{
+                state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+            }"
+            x-model="state"
+            @if (filled($mask))
+                x-mask{{ $mask instanceof \Filament\Support\RawJs ? ':dynamic' : null }}="{{ $mask }}"
             @endif
             x-bind:class="{
                 'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500':
@@ -62,8 +55,7 @@
                         'readonly' => $isReadOnly(),
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
-                        'type' => $hasMask ? 'text' : $getType(),
-                        $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $statePath : null,
+                        'type' => blank($mask) ? $getType() : 'text',
                     ], escape: false)
                     ->class([
                         'filament-forms-input block w-full shadow-sm outline-none transition duration-75 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',

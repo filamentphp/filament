@@ -4,6 +4,7 @@ namespace Filament\Forms;
 
 use Filament\Forms\Testing\TestsForms;
 use Filament\Support\Assets\AlpineComponent;
+use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Filesystem\Filesystem;
 use Livewire\Testing\TestableLivewire;
@@ -32,8 +33,8 @@ class FormsServiceProvider extends PackageServiceProvider
             AlpineComponent::make('rich-editor', __DIR__ . '/../dist/components/rich-editor.js'),
             AlpineComponent::make('select', __DIR__ . '/../dist/components/select.js'),
             AlpineComponent::make('tags-input', __DIR__ . '/../dist/components/tags-input.js'),
-            AlpineComponent::make('text-input', __DIR__ . '/../dist/components/text-input.js'),
             AlpineComponent::make('textarea', __DIR__ . '/../dist/components/textarea.js'),
+            Js::make('forms', __DIR__ . '/../dist/index.js'),
         ], 'filament/forms');
 
         if ($this->app->runningInConsole()) {
