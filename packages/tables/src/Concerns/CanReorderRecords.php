@@ -2,11 +2,11 @@
 
 namespace Filament\Tables\Concerns;
 
+use Closure;
 use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
-
 trait CanReorderRecords
 {
     public bool $isTableReordering = false;
@@ -46,6 +46,11 @@ trait CanReorderRecords
                         ->implode(' ') . ' end'
                 ),
             ]);
+
+        $afterReorder = $this->getTableReorderFunction();
+        if (is_callable($afterReorder)) {
+            $afterReorder($this);
+        }
     }
 
     public function toggleTableReordering(): void
@@ -69,6 +74,11 @@ trait CanReorderRecords
     }
 
     protected function getTableReorderColumn(): ?string
+    {
+        return null;
+    }
+
+    protected function getTableReorderFunction(): ?Closure
     {
         return null;
     }

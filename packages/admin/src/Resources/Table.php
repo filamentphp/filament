@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use Closure;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Support\Arr;
 
@@ -34,6 +35,8 @@ class Table
     protected ?bool $isLoadingDeferred = false;
 
     protected ?string $reorderColumn = null;
+
+    protected ?Closure $reorderFunction = null;
 
     final public function __construct()
     {
@@ -203,9 +206,10 @@ class Table
         return $this;
     }
 
-    public function reorderable(?string $column = 'sort'): static
+    public function reorderable(?string $column = 'sort', ?Closure $function = null): static
     {
         $this->reorderColumn = $column;
+        $this->reorderFunction = $function;
 
         return $this;
     }
@@ -268,6 +272,11 @@ class Table
     public function getReorderColumn(): ?string
     {
         return $this->reorderColumn;
+    }
+
+    public function getReorderFunction(): ?Closure
+    {
+        return $this->reorderFunction;
     }
 
     public function getPollingInterval(): ?string

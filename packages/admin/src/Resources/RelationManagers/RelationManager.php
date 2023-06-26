@@ -488,6 +488,11 @@ class RelationManager extends Component implements Tables\Contracts\HasRelations
         return filled($this->getTableReorderColumn()) && $this->canReorder();
     }
 
+    protected function getTableReorderFunction(): ?Closure
+    {
+        return $this->getResourceTable()->getReorderFunction();
+    }
+
     protected function getTablePollingInterval(): ?string
     {
         return $this->getResourceTable()->getPollingInterval();
