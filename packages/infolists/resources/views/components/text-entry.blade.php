@@ -117,6 +117,7 @@
                                     shades: match (true) {
                                         $isBadge => [500, 700],
                                         ! ($isBadge || $url) => [600],
+                                        default => [],
                                     },
                                 ) => $color !== 'gray',
                             ])
