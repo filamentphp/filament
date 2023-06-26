@@ -3,6 +3,7 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Laravel\SerializableClosure\Serializers\Native;
 
 class MenuItem
 {
@@ -17,7 +18,7 @@ class MenuItem
 
     protected ?int $sort = null;
 
-    protected string | Closure | null $url = null;
+    protected string | Closure | Native | null $url = null;
 
     final public function __construct()
     {

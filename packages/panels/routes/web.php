@@ -48,7 +48,7 @@ Route::name('filament.')
                     Route::middleware($panel->getAuthMiddleware())
                         ->group(function () use ($panel, $hasTenancy, $hasTenantRegistration, $tenantSlugAttribute): void {
                             if ($hasTenancy) {
-                                Route::get('/', RedirectToTenantController::class)->name('home');
+                                Route::get('/', RedirectToTenantController::class)->name('tenant');
                             }
 
                             if ($panel->hasEmailVerification()) {
