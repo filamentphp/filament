@@ -20,6 +20,9 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class SupportServiceProvider extends PackageServiceProvider
 {
@@ -56,8 +59,12 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->scoped(
-            SanitizerInterface::class,
-            fn () => Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php'),
+            HtmlSanitizerInterface::class,
+            fn (): HtmlSanitizer => new HtmlSanitizer(
+                (new HtmlSanitizerConfig())
+                    ->allowSafeElements()
+                    ->allowAttribute('class', allowedElements: '*'),
+            ),
         );
     }
 
@@ -81,7 +88,7 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         Str::macro('sanitizeHtml', function (string $html): string {
-            return app(SanitizerInterface::class)->sanitize($html);
+            return app(HtmlSanitizerInterface::class)->sanitize($html);
         });
 
         Stringable::macro('sanitizeHtml', function (): Stringable {
