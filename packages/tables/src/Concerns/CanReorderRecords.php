@@ -7,6 +7,7 @@ use Filament\Tables\Contracts\HasRelationshipTable;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+
 trait CanReorderRecords
 {
     public bool $isTableReordering = false;
