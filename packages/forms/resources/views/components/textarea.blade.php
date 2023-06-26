@@ -21,7 +21,6 @@
                     'autofocus' => $isAutofocused(),
                     'cols' => $getCols(),
                     'disabled' => $isDisabled(),
-                    'dusk' => "filament.forms.{$statePath}",
                     'id' => $getId(),
                     'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
                     'minlength' => (! $isConcealed) ? $getMinLength() : null,

@@ -36,7 +36,6 @@
                         ->merge([
                             'autofocus' => $isAutofocused(),
                             'disabled' => $isDisabled,
-                            'dusk' => "filament.forms.{$statePath}",
                             'id' => $id,
                             'list' => $datalistOptions ? "{$id}-list" : null,
                             'max' => (! $isConcealed) ? $getMaxDate() : null,
@@ -109,7 +108,6 @@
                     x-on:keydown.clear.stop.prevent="if (! $el.disabled) clearState()"
                     x-on:keydown.delete.stop.prevent="if (! $el.disabled) clearState()"
                     aria-label="{{ $getPlaceholder() }}"
-                    dusk="filament.forms.{{ $statePath }}.open"
                     type="button"
                     tabindex="-1"
                     @disabled($isDisabled)
@@ -172,7 +170,6 @@
                                 <select
                                     x-model="focusedMonth"
                                     class="grow cursor-pointer border-0 px-1 py-0 text-lg font-medium text-gray-800 outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
-                                    dusk="filament.forms.{{ $statePath }}.focusedMonth"
                                 >
                                     <template
                                         x-for="(month, index) in months"
@@ -189,7 +186,6 @@
                                     inputmode="numeric"
                                     x-model.debounce="focusedYear"
                                     class="w-20 border-0 p-0 text-end text-lg outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
-                                    dusk="filament.forms.{{ $statePath }}.focusedYear"
                                 />
                             </div>
 
@@ -239,7 +235,6 @@
                                             'pointer-events-none': dayIsDisabled(day),
                                             'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                         }"
-                                        x-bind:dusk="'filament.forms.{{ $statePath }}' + '.focusedDate.' + day"
                                         class="rounded-full text-center text-sm leading-loose transition duration-100 ease-in-out"
                                     ></div>
                                 </template>
@@ -258,7 +253,6 @@
                                     inputmode="numeric"
                                     x-model.debounce="hour"
                                     class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
-                                    dusk="filament.forms.{{ $statePath }}.hour"
                                 />
 
                                 <span
@@ -275,7 +269,6 @@
                                     inputmode="numeric"
                                     x-model.debounce="minute"
                                     class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
-                                    dusk="filament.forms.{{ $statePath }}.minute"
                                 />
 
                                 @if ($hasSeconds())
@@ -292,7 +285,6 @@
                                         type="number"
                                         inputmode="numeric"
                                         x-model.debounce="second"
-                                        dusk="filament.forms.{{ $statePath }}.second"
                                         class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
                                     />
                                 @endif

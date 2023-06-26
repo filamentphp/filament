@@ -6,7 +6,6 @@
     {{
         $attributes
             ->merge([
-                'dusk' => "filament.forms.{$statePath}",
                 'id' => $getId(),
                 'type' => 'hidden',
                 $applyStateBindingModifiers('wire:model') => $statePath,
