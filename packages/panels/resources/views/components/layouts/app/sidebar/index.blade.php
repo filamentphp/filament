@@ -4,6 +4,7 @@
 
 <aside
     x-data="{}"
+    wire:persist="sidebar"
     @if (filament()->isSidebarCollapsibleOnDesktop())
         x-cloak
         x-bind:class="

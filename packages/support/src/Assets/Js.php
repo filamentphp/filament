@@ -76,6 +76,7 @@ class Js extends Asset
                 src=\"{$html}\"
                 {$async}
                 {$defer}
+                data-navigate-track
             ></script>
         ");
     }

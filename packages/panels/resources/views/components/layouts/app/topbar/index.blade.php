@@ -4,6 +4,7 @@
 ])
 
 <header
+    wire:persist="topbar"
     {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_1px_0_0_theme(colors.white_/_20%)]']) }}
 >
     <div
