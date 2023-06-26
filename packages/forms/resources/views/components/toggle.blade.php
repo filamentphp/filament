@@ -38,7 +38,6 @@
                         'aria-checked' => 'false',
                         'autofocus' => $isAutofocused(),
                         'disabled' => $isDisabled(),
-                        'dusk' => "filament.forms.{$statePath}",
                         'id' => $getId(),
                         'role' => 'switch',
                         'type' => 'button',

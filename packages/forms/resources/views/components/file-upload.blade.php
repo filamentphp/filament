@@ -102,7 +102,6 @@
                     $getExtraInputAttributeBag()
                         ->merge([
                             'disabled' => $isDisabled(),
-                            'dusk' => "filament.forms.{$statePath}",
                             'multiple' => $isMultiple(),
                             'type' => 'file',
                         ], escape: false)
