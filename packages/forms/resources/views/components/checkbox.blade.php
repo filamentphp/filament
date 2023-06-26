@@ -10,7 +10,6 @@
                     ->merge([
                         'autofocus' => $isAutofocused(),
                         'disabled' => $isDisabled(),
-                        'dusk' => "filament.forms.{$statePath}",
                         'id' => $getId(),
                         'required' => $isRequired() && (! $isConcealed()),
                         'type' => 'checkbox',

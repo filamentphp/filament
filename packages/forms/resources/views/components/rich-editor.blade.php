@@ -465,7 +465,6 @@
                 placeholder="{{ $getPlaceholder() }}"
                 toolbar="trix-toolbar-{{ $id }}"
                 x-ref="trix"
-                dusk="filament.forms.{{ $statePath }}"
                 {{ $getExtraInputAttributeBag()->class(['prose block w-full max-w-none break-words rounded-lg bg-white shadow-sm outline-none transition duration-75 dark:prose-invert focus:ring-1 focus:ring-inset dark:bg-gray-700']) }}
                 x-bind:class="{
                     'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500':

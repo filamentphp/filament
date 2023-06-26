@@ -51,7 +51,6 @@
                         'autocomplete' => $getAutocomplete(),
                         'autofocus' => $isAutofocused(),
                         'disabled' => $isDisabled(),
-                        'dusk' => "filament.forms.{$statePath}",
                         'id' => $id,
                         'inputmode' => $getInputMode(),
                         'list' => $datalistOptions ? "{$id}-list" : null,
