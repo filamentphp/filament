@@ -246,7 +246,7 @@ abstract class Page extends BasePage
      */
     public static function alignFormActionsRight(): void
     {
-        static::alignFormactionsEnd();
+        static::alignFormActionsEnd();
     }
 
     public function getFormActionsAlignment(): string
