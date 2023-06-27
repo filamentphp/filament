@@ -394,7 +394,7 @@ Table columns are aligned to the start by default. You may change the alignment 
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
-    ->alignRight() // also, alignLeft(), alignJustify(), etc.
+    ->alignment('end')
 ```
 
 Alternative syntax with `alignment()`: 
