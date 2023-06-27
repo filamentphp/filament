@@ -397,7 +397,7 @@ TextColumn::make('name')
     ->alignment('end')
 ```
 
-Alternatively, you may use any of the shorthand methods like `alignEnd()`:
+Alternatively, you may use shorthand methods like `alignEnd()`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
