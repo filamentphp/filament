@@ -29,6 +29,7 @@ class {{ managerClass }} extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+{{ modifyQueryUsing }}
             ->columns([
                 Tables\Columns\TextColumn::make('{{ recordTitleAttribute }}'),
             ])
@@ -46,5 +47,5 @@ class {{ managerClass }} extends RelationManager
 {{ tableBulkActions }}
                 ]),
             ]);
-    }{{ eloquentQuery }}
+    }
 }

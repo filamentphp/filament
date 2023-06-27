@@ -410,6 +410,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 public function table(Table $table): Table
 {
     return $table
+        ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]))
         ->columns([
             // ...
         ])
@@ -430,14 +433,6 @@ public function table(Table $table): Table
                 Tables\Actions\RestoreBulkAction::make(),
                 // ...
             ]),
-        ]);
-}
-
-protected function getTableQuery(): Builder
-{
-    return parent::getTableQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
         ]);
 }
 ```
