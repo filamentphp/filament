@@ -403,7 +403,7 @@ Alternatively, you may use any of the shorthand methods like `alignEnd()`:
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('name')
-    ->alignment('right')
+    ->alignEnd()
 ```
 
 ## Custom attributes
