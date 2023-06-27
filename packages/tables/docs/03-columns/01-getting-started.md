@@ -388,7 +388,7 @@ TextColumn::make('title')
 
 ## Alignment
 
-The alignment of columns can be customized by using methods like `alignRight()`:
+Table columns are aligned to the start by default. You may change the alignment using the `alignment()` method and passing it `start`, `center`, `end`, `left`, `right` or `justify`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
