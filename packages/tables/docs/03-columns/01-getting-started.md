@@ -386,6 +386,26 @@ TextColumn::make('title')
     ->tooltip(fn (Model $record): string => "By {$record->author->name}")
 ```
 
+## Alignment
+
+The alignment of columns can be customized by using methods like `alignRight()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignRight() // also, alignLeft(), alignJustify(), etc.
+```
+
+Alternative syntax with `alignment()`: 
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignment('right')
+```
+
 ## Custom attributes
 
 The HTML of columns can be customized, by passing an array of `extraAttributes()`:
