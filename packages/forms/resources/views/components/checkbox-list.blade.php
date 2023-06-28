@@ -126,11 +126,12 @@
                     wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}"
                 >
                     <label
-                        class="filament-forms-checkbox-list-component-option-label flex items-center space-x-3 rtl:space-x-reverse"
+                        class="filament-forms-checkbox-list-component-option-label flex items-start space-x-3 rtl:space-x-reverse"
                         @if ($isSearchable())
                             x-show="$el.querySelector('.filament-forms-checkbox-list-component-option-label-text').innerText.toLowerCase().includes(search.toLowerCase())"
                         @endif
                     >
+                    <div class="flex h-5 items-center">
                         <input
                             @if ($isBulkToggleable())
                                 x-on:change="checkIfAllCheckboxesAreChecked()"
@@ -155,11 +156,11 @@
                                     ])
                             }}
                         />
-
-                        <div class="flex flex-col items-start">
+                    </div>
+                        <div class="text-sm">
                             <div
                                 @class([
-                                    'filament-forms-checkbox-list-component-option-label-text text-sm font-medium text-gray-700',
+                                    'filament-forms-checkbox-list-component-option-label-text font-medium text-gray-700',
                                     'dark:text-gray-200' => config('forms.dark_mode'),
                                 ])
                             >
@@ -169,7 +170,7 @@
                             @if ($hasDescription($optionValue))
                                 <p
                                     @class([
-                                        'text-sm text-gray-500',
+                                        'text-gray-500',
                                         'dark:text-gray-400' => config('forms.dark_mode'),
                                     ])
                                 >
