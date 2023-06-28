@@ -13,10 +13,15 @@
         error: undefined,
         state: @js($state),
         isLoading: false,
+        isEditing: false,
     }"
     x-init="
         Livewire.hook('message.processed', (component) => {
             if (component.component.id !== @js($this->id)) {
+                return
+            }
+
+            if (isEditing) {
                 return
             }
 
@@ -52,9 +57,15 @@
         {!! ($inputMode = $getInputMode()) ? "inputmode=\"{$inputMode}\"" : null !!}
         {!! ($placeholder = $getPlaceholder()) ? "placeholder=\"{$placeholder}\"" : null !!}
         {!! ($interval = $getStep()) ? "step=\"{$interval}\"" : null !!}
+        x-on:focus="isEditing = true"
+        x-on:blur="isEditing = false"
         x-on:change{{ $getType() === 'number' ? '.debounce.1s' : null }}="
             isLoading = true
-            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
+            response = await $wire.updateTableColumnState(
+                @js($getName()),
+                @js($recordKey),
+                $event.target.value,
+            )
             error = response?.error ?? undefined
             if (! error) state = response
             isLoading = false
@@ -73,7 +84,7 @@
         }}
         x-bind:class="{
             'border-gray-300': ! error,
-            'dark:border-gray-600': (! error) && @js(config('forms.dark_mode')),
+            'dark:border-gray-600': ! error && @js(config('forms.dark_mode')),
             'border-danger-600 ring-1 ring-inset ring-danger-600': error,
         }"
     />

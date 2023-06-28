@@ -88,18 +88,23 @@
                 },
 
                 initChart: function () {
-                    return this.chart = new Chart(this.$refs.canvas, {
+                    return (this.chart = new Chart(this.$refs.canvas, {
                         type: 'line',
                         data: {
                             labels: this.labels,
-                            datasets: [{
-                                data: this.values,
-                                backgroundColor: getComputedStyle($refs.backgroundColorElement).color,
-                                borderColor: getComputedStyle($refs.borderColorElement).color,
-                                borderWidth: 2,
-                                fill: 'start',
-                                tension: 0.5,
-                            }],
+                            datasets: [
+                                {
+                                    data: this.values,
+                                    backgroundColor: getComputedStyle(
+                                        $refs.backgroundColorElement,
+                                    ).color,
+                                    borderColor: getComputedStyle($refs.borderColorElement)
+                                        .color,
+                                    borderWidth: 2,
+                                    fill: 'start',
+                                    tension: 0.5,
+                                },
+                            ],
                         },
                         options: {
                             elements: {
@@ -114,10 +119,10 @@
                                 },
                             },
                             scales: {
-                                x:  {
+                                x: {
                                     display: false,
                                 },
-                                y:  {
+                                y: {
                                     display: false,
                                 },
                             },
@@ -125,7 +130,7 @@
                                 enabled: false,
                             },
                         },
-                    })
+                    }))
                 },
 
                 updateChart: function () {

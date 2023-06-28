@@ -43,7 +43,11 @@
         type="checkbox"
         x-on:change="
             isLoading = true
-            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.checked)
+            response = await $wire.updateTableColumnState(
+                @js($getName()),
+                @js($recordKey),
+                $event.target.checked,
+            )
             error = response?.error ?? undefined
             isLoading = false
         "
@@ -59,7 +63,7 @@
         x-bind:class="{
             'opacity-70 pointer-events-none': isLoading,
             'border-gray-300': ! error,
-            'dark:border-gray-600': (! error) && @js(config('forms.dark_mode')),
+            'dark:border-gray-600': ! error && @js(config('forms.dark_mode')),
             'border-danger-600 ring-1 ring-inset ring-danger-600': error,
         }"
     />

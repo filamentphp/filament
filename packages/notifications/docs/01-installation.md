@@ -56,9 +56,9 @@ To finish installing Tailwind, you must create a new `tailwind.config.js` file i
 In `tailwind.config.js`, add custom colors used by notifications:
 
 ```js
-const colors = require('tailwindcss/colors') // [tl! focus]
+import colors from 'tailwindcss/colors' // [tl! focus]
 
-module.exports = {
+export default {
     content: [
         './resources/**/*.blade.php',
         './vendor/filament/**/*.blade.php', // [tl! focus]
@@ -93,7 +93,7 @@ npm install autoprefixer --save-dev
 Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
 
 ```js
-module.exports = {
+export default {
     plugins: {
         tailwindcss: {},
         autoprefixer: {},

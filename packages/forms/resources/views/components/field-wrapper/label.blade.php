@@ -20,16 +20,14 @@
         ])
     >
         {{-- Deliberately poor formatting to ensure that the asterisk sticks to the final word in the label. --}}
-        {{ $slot }}@if ($required)<span class="whitespace-nowrap">
-                <sup
-                    @class([
-                        'text-danger-700 font-medium',
-                        'dark:text-danger-400' => config('forms.dark_mode'),
-                    ])
-                >
-                    *
-                </sup>
-            </span>
+        {{ $slot }}@if ($required)<sup
+                @class([
+                    'text-danger-700 whitespace-nowrap font-medium',
+                    'dark:text-danger-400' => config('forms.dark_mode'),
+                ])
+            >
+                *
+            </sup>
         @endif
     </span>
 

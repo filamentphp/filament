@@ -1,6 +1,5 @@
 <div
     x-data="{
-
         tab: null,
 
         init: function () {
@@ -23,7 +22,6 @@
 
             history.pushState(null, document.title, url.toString())
         },
-
     }"
     x-cloak
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}

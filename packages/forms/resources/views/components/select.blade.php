@@ -75,38 +75,38 @@
             @else
                 <div
                     x-data="selectFormComponent({
-                        isHtmlAllowed: @js($isHtmlAllowed()),
-                        getOptionLabelUsing: async () => {
-                            return await $wire.getSelectOptionLabel(@js($getStatePath()))
-                        },
-                        getOptionLabelsUsing: async () => {
-                            return await $wire.getSelectOptionLabels(@js($getStatePath()))
-                        },
-                        getOptionsUsing: async () => {
-                            return await $wire.getSelectOptions(@js($getStatePath()))
-                        },
-                        getSearchResultsUsing: async (search) => {
-                            return await $wire.getSelectSearchResults(@js($getStatePath()), search)
-                        },
-                        isAutofocused: @js($isAutofocused()),
-                        isMultiple: @js($isMultiple()),
-                        hasDynamicOptions: @js($hasDynamicOptions()),
-                        hasDynamicSearchResults: @js($hasDynamicSearchResults()),
-                        loadingMessage: @js($getLoadingMessage()),
-                        maxItems: @js($getMaxItems()),
-                        maxItemsMessage: @js($getMaxItemsMessage()),
-                        noSearchResultsMessage: @js($getNoSearchResultsMessage()),
-                        options: @js($getOptionsForJs()),
-                        optionsLimit: @js($getOptionsLimit()),
-                        placeholder: @js($getPlaceholder()),
-                        position: @js($getPosition()),
-                        isPlaceholderSelectionDisabled: @js($isPlaceholderSelectionDisabled()),
-                        searchDebounce: @js($getSearchDebounce()),
-                        searchingMessage: @js($getSearchingMessage()),
-                        searchPrompt: @js($getSearchPrompt()),
-                        searchableOptionFields: @js($getSearchableOptionFields()),
-                        state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-                    })"
+                                isHtmlAllowed: @js($isHtmlAllowed()),
+                                getOptionLabelUsing: async () => {
+                                    return await $wire.getSelectOptionLabel(@js($getStatePath()))
+                                },
+                                getOptionLabelsUsing: async () => {
+                                    return await $wire.getSelectOptionLabels(@js($getStatePath()))
+                                },
+                                getOptionsUsing: async () => {
+                                    return await $wire.getSelectOptions(@js($getStatePath()))
+                                },
+                                getSearchResultsUsing: async (search) => {
+                                    return await $wire.getSelectSearchResults(@js($getStatePath()), search)
+                                },
+                                isAutofocused: @js($isAutofocused()),
+                                isMultiple: @js($isMultiple()),
+                                hasDynamicOptions: @js($hasDynamicOptions()),
+                                hasDynamicSearchResults: @js($hasDynamicSearchResults()),
+                                loadingMessage: @js($getLoadingMessage()),
+                                maxItems: @js($getMaxItems()),
+                                maxItemsMessage: @js($getMaxItemsMessage()),
+                                noSearchResultsMessage: @js($getNoSearchResultsMessage()),
+                                options: @js($getOptionsForJs()),
+                                optionsLimit: @js($getOptionsLimit()),
+                                placeholder: @js($getPlaceholder()),
+                                position: @js($getPosition()),
+                                isPlaceholderSelectionDisabled: @js($isPlaceholderSelectionDisabled()),
+                                searchDebounce: @js($getSearchDebounce()),
+                                searchingMessage: @js($getSearchingMessage()),
+                                searchPrompt: @js($getSearchPrompt()),
+                                searchableOptionFields: @js($getSearchableOptionFields()),
+                                state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+                            })"
                     x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                     wire:ignore
                     {{
@@ -116,7 +116,7 @@
                             ->class(['filament-forms-input'])
                     }}
                     x-bind:class="{
-                        'choices--error': (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
+                        'choices--error': @js($getStatePath()) in $wire.__instance.serverMemo.errors,
                     }"
                 >
                     <select

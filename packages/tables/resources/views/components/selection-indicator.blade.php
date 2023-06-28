@@ -16,7 +16,11 @@
 
     <span
         @class(['dark:text-white' => config('tables.dark_mode')])
-        x-text="window.pluralize(@js(__('tables::table.selection_indicator.selected_count')), selectedRecords.length, { count: selectedRecords.length })"
+        x-text="
+            window.pluralize(@js(__('tables::table.selection_indicator.selected_count')), selectedRecords.length, {
+                count: selectedRecords.length,
+            })
+        "
     ></span>
 
     <span
@@ -26,6 +30,7 @@
         <button
             x-on:click="selectAllRecords"
             class="text-sm font-medium text-primary-600"
+            type="button"
         >
             {{ trans_choice('tables::table.selection_indicator.buttons.select_all.label', $allSelectableRecordsCount) }}.
         </button>
@@ -35,6 +40,7 @@
         <button
             x-on:click="deselectAllRecords"
             class="text-sm font-medium text-primary-600"
+            type="button"
         >
             {{ __('tables::table.selection_indicator.buttons.deselect_all.label') }}.
         </button>

@@ -74,7 +74,6 @@
 
 <div
     x-data="{
-
         hasHeader: true,
 
         isLoading: false,
@@ -118,7 +117,9 @@
         getRecordsOnPage: function () {
             let keys = []
 
-            for (checkbox of $el.getElementsByClassName('filament-tables-record-checkbox')) {
+            for (checkbox of $el.getElementsByClassName(
+                'filament-tables-record-checkbox',
+            )) {
                 keys.push(checkbox.value)
             }
 
@@ -164,9 +165,8 @@
         },
 
         areRecordsSelected: function (keys) {
-            return keys.every(key => this.isRecordSelected(key))
+            return keys.every((key) => this.isRecordSelected(key))
         },
-
     }"
     class="filament-tables-component"
     @if (! $isLoaded)
@@ -176,7 +176,7 @@
     <x-tables::container>
         <div
             class="filament-tables-header-container"
-            x-show="hasHeader = (@js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length)"
+            x-show="hasHeader = @js($renderHeader = ($header || $heading || ($headerActions && (! $isReordering)) || $isReorderable || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || selectedRecords.length"
             {!! ! $renderHeader ? 'x-cloak' : null !!}
         >
             @if ($header)
@@ -289,20 +289,24 @@
         @if ($isReordering)
             <x-tables::reorder.indicator
                 :colspan="$columnsCount"
-                :class="\Illuminate\Support\Arr::toCssClasses([
-                    'border-t',
-                    'dark:border-gray-700' => config('tables.dark_mode'),
-                ])"
+                :class="
+                    \Illuminate\Support\Arr::toCssClasses([
+                        'border-t',
+                        'dark:border-gray-700' => config('tables.dark_mode'),
+                    ])
+                "
             />
         @elseif ($isSelectionEnabled && $isLoaded)
             <x-tables::selection-indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
                 :colspan="$columnsCount"
                 x-show="selectedRecords.length"
-                :class="\Illuminate\Support\Arr::toCssClasses([
-                    'border-t',
-                    'dark:border-gray-700' => config('tables.dark_mode'),
-                ])"
+                :class="
+                    \Illuminate\Support\Arr::toCssClasses([
+                        'border-t',
+                        'dark:border-gray-700' => config('tables.dark_mode'),
+                    ])
+                "
             >
                 <x-slot name="selectedRecordsCount">
                     <span x-text="selectedRecords.length"></span>
@@ -312,10 +316,12 @@
 
         <x-tables::filters.indicators
             :indicators="$filterIndicators"
-            :class="\Illuminate\Support\Arr::toCssClasses([
-                'border-t',
-                'dark:border-gray-700' => config('tables.dark_mode'),
-            ])"
+            :class="
+                \Illuminate\Support\Arr::toCssClasses([
+                    'border-t',
+                    'dark:border-gray-700' => config('tables.dark_mode'),
+                ])
+            "
         />
 
         <div
@@ -367,9 +373,11 @@
 
                                     return null
                                 "
-                                :class="\Illuminate\Support\Arr::toCssClasses([
-                                    'hidden' => $isReordering,
-                                ])"
+                                :class="
+                                    \Illuminate\Support\Arr::toCssClasses([
+                                        'hidden' => $isReordering,
+                                    ])
+                                "
                             />
                         @endif
 
@@ -468,11 +476,13 @@
                         :lg="$contentGrid['lg'] ?? null"
                         :xl="$contentGrid['xl'] ?? null"
                         :two-xl="$contentGrid['2xl'] ?? null"
-                        :class="\Illuminate\Support\Arr::toCssClasses([
-                            'divide-y' => ! $contentGrid,
-                            'p-2 gap-2' => $contentGrid,
-                            'dark:divide-gray-700' => config('tables.dark_mode'),
-                        ])"
+                        :class="
+                            \Illuminate\Support\Arr::toCssClasses([
+                                'divide-y' => ! $contentGrid,
+                                'p-2 gap-2' => $contentGrid,
+                                'dark:divide-gray-700' => config('tables.dark_mode'),
+                            ])
+                        "
                     >
                         @foreach ($records as $record)
                             @php
@@ -499,7 +509,8 @@
                             >
                                 <div
                                     x-bind:class="{
-                                        'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
+                                        'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}':
+                                            isRecordSelected('{{ $recordKey }}'),
                                     }"
                                     @class(array_merge(
                                         [
@@ -521,11 +532,13 @@
                                         ])
                                     >
                                         <x-tables::reorder.handle
-                                            :class="\Illuminate\Support\Arr::toCssClasses([
-                                                'absolute top-3 right-3 rtl:right-auto rtl:left-3',
-                                                'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
-                                                'hidden' => ! $isReordering,
-                                            ])"
+                                            :class="
+                                                \Illuminate\Support\Arr::toCssClasses([
+                                                    'absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                                    'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                    'hidden' => ! $isReordering,
+                                                ])
+                                            "
                                         />
 
                                         @if ($isSelectionEnabled)
@@ -533,11 +546,13 @@
                                                 x-model="selectedRecords"
                                                 :value="$recordKey"
                                                 :label="__('tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                :class="\Illuminate\Support\Arr::toCssClasses([
-                                                    'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
-                                                    'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
-                                                    'hidden' => $isReordering,
-                                                ])"
+                                                :class="
+                                                    \Illuminate\Support\Arr::toCssClasses([
+                                                        'filament-tables-record-checkbox absolute top-3 right-3 rtl:right-auto rtl:left-3',
+                                                        'md:relative md:top-0 md:right-0 rtl:md:left-0' => ! $contentGrid,
+                                                        'hidden' => $isReordering,
+                                                    ])
+                                                "
                                             />
                                         @endif
 
@@ -615,13 +630,15 @@
                                                 :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'left' : 'left md:right'"
                                                 :record="$record"
                                                 wrap="-md"
-                                                :class="\Illuminate\Support\Arr::toCssClasses([
-                                                    'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
-                                                    'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
-                                                    'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
-                                                    'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
-                                                    'hidden' => $isReordering,
-                                                ])"
+                                                :class="
+                                                    \Illuminate\Support\Arr::toCssClasses([
+                                                        'absolute bottom-1 right-1 rtl:right-auto rtl:left-1' => $actionsPosition === ActionsPosition::BottomCorner,
+                                                        'md:relative md:bottom-0 md:right-0 rtl:md:left-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
+                                                        'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
+                                                        'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
+                                                        'hidden' => $isReordering,
+                                                    ])
+                                                "
                                             />
                                         @endif
                                     </div>
@@ -814,17 +831,21 @@
                                 x-bind:class="{
                                     'bg-gray-50 {{ config('tables.dark_mode') ? 'dark:bg-gray-500/10' : '' }}': isRecordSelected('{{ $recordKey }}'),
                                 }"
-                                :class="\Illuminate\Support\Arr::toCssClasses(array_merge(
-                                    [
-                                        'group cursor-move' => $isReordering,
-                                    ],
-                                    $getRecordClasses($record),
-                                ))"
+                                :class="
+                                    \Illuminate\Support\Arr::toCssClasses(array_merge(
+                                        [
+                                            'group cursor-move' => $isReordering,
+                                        ],
+                                        $getRecordClasses($record),
+                                    ))
+                                "
                             >
                                 <x-tables::reorder.cell
-                                    :class="\Illuminate\Support\Arr::toCssClasses([
-                                        'hidden' => ! $isReordering,
-                                    ])"
+                                    :class="
+                                        \Illuminate\Support\Arr::toCssClasses([
+                                            'hidden' => ! $isReordering,
+                                        ])
+                                    "
                                 >
                                     @if ($isReordering)
                                         <x-tables::reorder.handle />
@@ -833,9 +854,11 @@
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
                                     <x-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
+                                        :class="
+                                            \Illuminate\Support\Arr::toCssClasses([
+                                                'hidden' => $isReordering,
+                                            ])
+                                        "
                                     >
                                         <x-tables::actions
                                             :actions="$actions"
@@ -847,9 +870,11 @@
                                 @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                     @if ($isRecordSelectable($record))
                                         <x-tables::checkbox.cell
-                                            :class="\Illuminate\Support\Arr::toCssClasses([
-                                                'hidden' => $isReordering,
-                                            ])"
+                                            :class="
+                                                \Illuminate\Support\Arr::toCssClasses([
+                                                    'hidden' => $isReordering,
+                                                ])
+                                            "
                                         >
                                             <x-tables::checkbox
                                                 x-model="selectedRecords"
@@ -865,9 +890,11 @@
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
                                     <x-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
+                                        :class="
+                                            \Illuminate\Support\Arr::toCssClasses([
+                                                'hidden' => $isReordering,
+                                            ])
+                                        "
                                     >
                                         <x-tables::actions
                                             :actions="$actions"
@@ -902,9 +929,11 @@
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
                                     <x-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
+                                        :class="
+                                            \Illuminate\Support\Arr::toCssClasses([
+                                                'hidden' => $isReordering,
+                                            ])
+                                        "
                                     >
                                         <x-tables::actions
                                             :actions="$actions"
@@ -916,9 +945,11 @@
                                 @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
                                     @if ($isRecordSelectable($record))
                                         <x-tables::checkbox.cell
-                                            :class="\Illuminate\Support\Arr::toCssClasses([
-                                                'hidden' => $isReordering,
-                                            ])"
+                                            :class="
+                                                \Illuminate\Support\Arr::toCssClasses([
+                                                    'hidden' => $isReordering,
+                                                ])
+                                            "
                                         >
                                             <x-tables::checkbox
                                                 x-model="selectedRecords"
@@ -934,9 +965,11 @@
 
                                 @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
                                     <x-tables::actions.cell
-                                        :class="\Illuminate\Support\Arr::toCssClasses([
-                                            'hidden' => $isReordering,
-                                        ])"
+                                        :class="
+                                            \Illuminate\Support\Arr::toCssClasses([
+                                                'hidden' => $isReordering,
+                                            ])
+                                        "
                                     >
                                         <x-tables::actions
                                             :actions="$actions"

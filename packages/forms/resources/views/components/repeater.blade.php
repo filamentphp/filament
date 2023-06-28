@@ -91,7 +91,15 @@
                                     return
                                 }
 
-                                setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
+                                setTimeout(
+                                    () =>
+                                        $el.scrollIntoView({
+                                            behavior: 'smooth',
+                                            block: 'start',
+                                            inline: 'start',
+                                        }),
+                                    200,
+                                )
                             "
                             @class([
                                 'filament-forms-repeater-component-item relative rounded-xl border border-gray-300 bg-white shadow-sm',
@@ -284,7 +292,11 @@
                                         @if ($isCollapsible)
                                             <li>
                                                 <button
-                                                    x-bind:title="(! isCollapsed) ? '{{ __('forms::components.repeater.buttons.collapse_item.label') }}' : '{{ __('forms::components.repeater.buttons.expand_item.label') }}'"
+                                                    x-bind:title="
+                                                        ! isCollapsed
+                                                            ? '{{ __('forms::components.repeater.buttons.collapse_item.label') }}'
+                                                            : '{{ __('forms::components.repeater.buttons.expand_item.label') }}'
+                                                    "
                                                     x-on:click.stop="isCollapsed = ! isCollapsed"
                                                     type="button"
                                                     @class([
@@ -325,7 +337,10 @@
                             @endif
 
                             <div
-                                x-bind:class="{ 'invisible h-0 !m-0 overflow-y-hidden': isCollapsed, 'p-6': ! isCollapsed}"
+                                x-bind:class="{
+                                    'invisible h-0 !m-0 overflow-y-hidden': isCollapsed,
+                                    'p-6': ! isCollapsed,
+                                }"
                             >
                                 {{ $item }}
                             </div>

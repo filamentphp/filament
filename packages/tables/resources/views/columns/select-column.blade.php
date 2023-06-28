@@ -44,7 +44,11 @@
         x-model="state"
         x-on:change="
             isLoading = true
-            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
+            response = await $wire.updateTableColumnState(
+                @js($getName()),
+                @js($recordKey),
+                $event.target.value,
+            )
             error = response?.error ?? undefined
             if (! error) state = response
             isLoading = false
@@ -66,7 +70,7 @@
         }}
         x-bind:class="{
             'border-gray-300': ! error,
-            'dark:border-gray-600': (! error) && @js(config('forms.dark_mode')),
+            'dark:border-gray-600': ! error && @js(config('forms.dark_mode')),
             'border-danger-600 ring-1 ring-inset ring-danger-600': error,
         }"
     >

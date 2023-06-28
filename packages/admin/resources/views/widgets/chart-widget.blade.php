@@ -58,21 +58,25 @@
                     initChart: function (data = null) {
                         data = data ?? {{ json_encode($this->getCachedData()) }}
 
-                        return this.chart = new Chart($el, {
+                        return (this.chart = new Chart($el, {
                             type: '{{ $this->getType() }}',
                             data: this.applyColorToData(data),
                             options: {{ json_encode($this->getOptions()) }} ?? {},
-                        })
+                        }))
                     },
 
                     applyColorToData: function (data) {
                         data.datasets.forEach((dataset, datasetIndex) => {
                             if (! dataset.backgroundColor) {
-                                data.datasets[datasetIndex].backgroundColor = getComputedStyle($refs.backgroundColorElement).color
+                                data.datasets[datasetIndex].backgroundColor = getComputedStyle(
+                                    $refs.backgroundColorElement,
+                                ).color
                             }
 
                             if (! dataset.borderColor) {
-                                data.datasets[datasetIndex].borderColor = getComputedStyle($refs.borderColorElement).color
+                                data.datasets[datasetIndex].borderColor = getComputedStyle(
+                                    $refs.borderColorElement,
+                                ).color
                             }
                         })
 

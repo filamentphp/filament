@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: previous-tag
         uses: 'WyriHaximus/github-action-get-previous-tag@master'
       - name: Monorepo Split of admin
@@ -40,7 +40,7 @@ jobs:
           - support
           - tables
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - id: previous-tag
         uses: 'WyriHaximus/github-action-get-previous-tag@master'
       - name: Monorepo Split of ${{ matrix.package }}

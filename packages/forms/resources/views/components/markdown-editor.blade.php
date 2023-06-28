@@ -13,9 +13,9 @@
 >
     <div
         x-data="markdownEditorFormComponent({
-            state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-            tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
-        })"
+                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
+                    tab: '{{ $isDisabled() ? 'preview' : 'edit' }}',
+                })"
         wire:ignore
         {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-markdown-editor-component']) }}
         {{ $getExtraAlpineAttributeBag() }}
@@ -322,29 +322,35 @@
 
                                 if (! attachment || ! attachment.file) return
 
-                                $wire.upload(`componentFileAttachments.{{ $getStatePath() }}`, attachment.file, () => {
-                                    $wire.getComponentFileAttachmentUrl('{{ $getStatePath() }}').then((url) => {
-                                        if (! url) {
-                                            return
-                                        }
+                                $wire.upload(
+                                    `componentFileAttachments.{{ $getStatePath() }}`,
+                                    attachment.file,
+                                    () => {
+                                        $wire
+                                            .getComponentFileAttachmentUrl('{{ $getStatePath() }}')
+                                            .then((url) => {
+                                                if (! url) {
+                                                    return
+                                                }
 
-                                        $refs.imageTrigger.click()
+                                                $refs.imageTrigger.click()
 
-                                        const urlStart = $refs.textarea.selectionStart + 2
-                                        const urlEnd = urlStart + 3
+                                                const urlStart = $refs.textarea.selectionStart + 2
+                                                const urlEnd = urlStart + 3
 
-                                        state = [
-                                            $refs.textarea.value.substring(0, urlStart),
-                                            url,
-                                            $refs.textarea.value.substring(urlEnd)
-                                        ].join('')
+                                                state = [
+                                                    $refs.textarea.value.substring(0, urlStart),
+                                                    url,
+                                                    $refs.textarea.value.substring(urlEnd),
+                                                ].join('')
 
-                                        $refs.textarea.selectionStart = urlStart - 2
-                                        $refs.textarea.selectionEnd = urlStart - 2
+                                                $refs.textarea.selectionStart = urlStart - 2
+                                                $refs.textarea.selectionEnd = urlStart - 2
 
-                                        render()
-                                    })
-                                })
+                                                render()
+                                            })
+                                    },
+                                )
                             }
                         "
                         x-ref="textarea"
@@ -355,9 +361,12 @@
                         x-bind:class="{
                             'dark:caret-white dark:focus:border-primary-500': @js(config('forms.dark_mode')),
                             'border-gray-300': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors),
-                            'dark:border-gray-600': ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
-                            'border-danger-600 ring-inset ring-danger-600': @js($getStatePath()) in $wire.__instance.serverMemo.errors,
-                            'dark:border-danger-400 dark:ring-danger-400': (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode'))
+                            'dark:border-gray-600':
+                                ! (@js($getStatePath()) in $wire.__instance.serverMemo.errors) && @js(config('forms.dark_mode')),
+                            'border-danger-600 ring-inset ring-danger-600':
+                                @js($getStatePath()) in $wire.__instance.serverMemo.errors,
+                            'dark:border-danger-400 dark:ring-danger-400':
+                                @js($getStatePath()) in $wire.__instance.serverMemo.errors && @js(config('forms.dark_mode')),
                         }"
                     ></textarea>
                 </file-attachment>

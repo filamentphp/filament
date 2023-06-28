@@ -28253,6 +28253,7 @@ var select_default = (Alpine) => {
             withInitialOptions: !hasDynamicOptions
           });
           this.select.clearStore();
+          this.refreshPlaceholder();
           this.setChoices(choices);
           if (![null, void 0, ""].includes(this.state)) {
             this.select.setChoiceByValue(this.formatState(this.state));
@@ -28706,11 +28707,11 @@ var Masked = class {
         break;
       details.aggregate(d);
     }
-    if (checkTail != null) {
-      details.tailShift += this.appendTail(checkTail).tailShift;
-    }
     if ((this.eager === true || this.eager === "append") && flags !== null && flags !== void 0 && flags.input && str) {
       details.aggregate(this._appendEager());
+    }
+    if (checkTail != null) {
+      details.tailShift += this.appendTail(checkTail).tailShift;
     }
     return details;
   }

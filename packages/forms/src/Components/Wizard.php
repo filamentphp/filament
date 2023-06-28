@@ -50,7 +50,7 @@ class Wizard extends Component
 
                     if (! $component->isSkippable()) {
                         /** @var Step $currentStep */
-                        $currentStep = $component->getChildComponentContainer()->getComponents()[$currentStep];
+                        $currentStep = $component->getChildComponentContainer()->getComponents(withHidden: true)[$currentStep];
 
                         $currentStep->callBeforeValidation();
                         $currentStep->getChildComponentContainer()->validate();

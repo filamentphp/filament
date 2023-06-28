@@ -57,9 +57,11 @@ To finish installing Tailwind, you must create a new `tailwind.config.js` file i
 In `tailwind.config.js`, register the plugins you installed, and add custom colors used by the form builder:
 
 ```js
-const colors = require('tailwindcss/colors') // [tl! focus]
+import colors from 'tailwindcss/colors' // [tl! focus:start]
+import forms from '@tailwindcss/forms'
+import typography from '@tailwindcss/typography' // [tl! focus:end]
 
-module.exports = {
+export default {
     content: [
         './resources/**/*.blade.php',
         './vendor/filament/**/*.blade.php', // [tl! focus]
@@ -75,8 +77,8 @@ module.exports = {
         },
     },
     plugins: [
-        require('@tailwindcss/forms'), // [tl! focus:start]
-        require('@tailwindcss/typography'), // [tl! focus:end]
+        forms, // [tl! focus:start]
+        typography, // [tl! focus:end]
     ],
 }
 ```
@@ -98,7 +100,7 @@ npm install autoprefixer --save-dev
 Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
 
 ```js
-module.exports = {
+export default {
     plugins: {
         tailwindcss: {},
         autoprefixer: {},
