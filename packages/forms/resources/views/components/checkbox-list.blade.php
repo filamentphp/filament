@@ -155,8 +155,8 @@
                         <div class="flex h-5 items-center">
                             <input
                                 @if ($isBulkToggleable())
-                                x-on:change="checkIfAllCheckboxesAreChecked()"
-                            @endif
+                                    x-on:change="checkIfAllCheckboxesAreChecked()"
+                                @endif
                                 wire:loading.attr="disabled"
                                 type="checkbox"
                                 value="{{ $optionValue }}"
