@@ -127,25 +127,21 @@ class MakeRelationManagerCommand extends Command
 
         $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
 
-        $eloquentQuery = '';
+        $modifyQueryUsing = '';
 
         if ($this->option('soft-deletes')) {
+            $modifyQueryUsing .= '->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([';
+            $modifyQueryUsing .= PHP_EOL . '    SoftDeletingScope::class,';
+            $modifyQueryUsing .= PHP_EOL . ']))';
+
             $tableBulkActions[] = 'Tables\Actions\RestoreBulkAction::make(),';
             $tableBulkActions[] = 'Tables\Actions\ForceDeleteBulkAction::make(),';
-
-            $eloquentQuery .= PHP_EOL . PHP_EOL . 'protected function getTableQuery(): Builder';
-            $eloquentQuery .= PHP_EOL . '{';
-            $eloquentQuery .= PHP_EOL . '    return parent::getTableQuery()';
-            $eloquentQuery .= PHP_EOL . '        ->withoutGlobalScopes([';
-            $eloquentQuery .= PHP_EOL . '            SoftDeletingScope::class,';
-            $eloquentQuery .= PHP_EOL . '        ]);';
-            $eloquentQuery .= PHP_EOL . '}';
         }
 
         $tableBulkActions = implode(PHP_EOL, $tableBulkActions);
 
         $this->copyStubToApp('RelationManager', $path, [
-            'eloquentQuery' => $this->indentString($eloquentQuery, 1),
+            'modifyQueryUsing' => $this->indentString($modifyQueryUsing, 3),
             'namespace' => "{$resourceNamespace}\\{$resource}\\RelationManagers",
             'managerClass' => $managerClass,
             'recordTitleAttribute' => $recordTitleAttribute,
