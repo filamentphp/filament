@@ -95,7 +95,7 @@
                 </h3>
             </div>
 
-            @if ($description?->isNotEmpty())
+            @if (filled((string) $description))
                 <p
                     class="filament-section-component-header-description mt-1 text-sm text-gray-500 dark:text-gray-400"
                 >
