@@ -53,14 +53,14 @@ trait CanBeCopied
     {
         return $this->evaluate($this->copyableState, [
             'state' => $state,
-        ]) ?? $this->getState();
+        ]);
     }
 
     public function getCopyMessage(mixed $state): string
     {
         return $this->evaluate($this->copyMessage, [
             'state' => $state,
-        ]) ?? __('filament-support::copyable.messages.copied');
+        ]) ?? __('filament-support::components/copyable.messages.copied');
     }
 
     public function getCopyMessageDuration(mixed $state): int

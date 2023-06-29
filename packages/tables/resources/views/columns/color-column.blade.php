@@ -11,7 +11,7 @@
     @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)
         @php
             $itemIsCopyable = $isCopyable($state);
-            $copyableState = $copyableState($state);
+            $copyableState = $copyableState($state) ?? $state;
             $copyMessage = $getCopyMessage($state);
             $copyMessageDuration = $getCopyMessageDuration($state);
         @endphp

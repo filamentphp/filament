@@ -58,7 +58,7 @@
                 $icon = $getIcon($state);
 
                 $itemIsCopyable = $isCopyable($state);
-                $copyableState = $getCopyableState($state);
+                $copyableState = $getCopyableState($state) ?? $state;
                 $copyMessage = $getCopyMessage($state);
                 $copyMessageDuration = $getCopyMessageDuration($state);
             @endphp
