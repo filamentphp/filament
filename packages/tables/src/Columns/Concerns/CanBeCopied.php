@@ -3,68 +3,34 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Filament\Support\Concerns\CanBeCopied as BaseTrait;
 
 trait CanBeCopied
 {
-    protected bool | Closure $isCopyable = false;
+    use BaseTrait;
 
-    protected string | Closure | null $copyMessage = null;
-
-    protected int | Closure | null $copyMessageDuration = null;
-
-    protected string | Closure | null $copyableState = null;
-
-    public function copyable(bool | Closure $condition = true): static
+    public function isClickDisabled(): bool
     {
-        $this->isCopyable = $condition;
+        if (parent::isClickDisabled()) {
+            return true;
+        }
 
-        return $this;
-    }
+        $state = $this->getState();
 
-    public function copyMessage(string | Closure | null $message): static
-    {
-        $this->copyMessage = $message;
+        if (! is_array($state)) {
+            return $this->isCopyable($state);
+        }
 
-        return $this;
-    }
+        if (! $this->isCopyable instanceof Closure) {
+            return $this->isCopyable;
+        }
 
-    public function copyMessageDuration(int | Closure | null $duration): static
-    {
-        $this->copyMessageDuration = $duration;
+        foreach ($state as $item) {
+            if ($this->isCopyable($item)) {
+                return true;
+            }
+        }
 
-        return $this;
-    }
-
-    public function copyableState(string | Closure | null $state): static
-    {
-        $this->copyableState = $state;
-
-        return $this;
-    }
-
-    public function getCopyMessage(): string
-    {
-        return $this->evaluate($this->copyMessage) ?? __('filament-tables::table.columns.messages.copied');
-    }
-
-    public function getCopyMessageDuration(mixed $state): int
-    {
-        return $this->evaluate($this->copyMessageDuration, [
-            'state' => $state,
-        ]) ?? 2000;
-    }
-
-    public function getCopyableState(mixed $state): ?string
-    {
-        return $this->evaluate($this->copyableState, [
-            'state' => $state,
-        ]) ?? $this->getState();
-    }
-
-    public function isCopyable(mixed $state): bool
-    {
-        return (bool) $this->evaluate($this->isCopyable, [
-            'state' => $state,
-        ]);
+        return false;
     }
 }

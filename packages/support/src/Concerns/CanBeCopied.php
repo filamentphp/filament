@@ -1,12 +1,14 @@
 <?php
 
-namespace Filament\Infolists\Components\Concerns;
+namespace Filament\Support\Concerns;
 
 use Closure;
 
 trait CanBeCopied
 {
     protected bool | Closure $isCopyable = false;
+
+    protected string | Closure | null $copyableState = null;
 
     protected string | Closure | null $copyMessage = null;
 
@@ -15,6 +17,13 @@ trait CanBeCopied
     public function copyable(bool | Closure $condition = true): static
     {
         $this->isCopyable = $condition;
+
+        return $this;
+    }
+
+    public function copyableState(string | Closure | null $state): static
+    {
+        $this->copyableState = $state;
 
         return $this;
     }
@@ -33,11 +42,25 @@ trait CanBeCopied
         return $this;
     }
 
+    public function isCopyable(mixed $state): bool
+    {
+        return (bool) $this->evaluate($this->isCopyable, [
+            'state' => $state,
+        ]);
+    }
+
+    public function getCopyableState(mixed $state): ?string
+    {
+        return $this->evaluate($this->copyableState, [
+            'state' => $state,
+        ]) ?? $this->getState();
+    }
+
     public function getCopyMessage(mixed $state): string
     {
         return $this->evaluate($this->copyMessage, [
             'state' => $state,
-        ]) ?? __('filament-infolists::components.messages.copied');
+        ]) ?? __('filament-support::copyable.messages.copied');
     }
 
     public function getCopyMessageDuration(mixed $state): int
@@ -45,12 +68,5 @@ trait CanBeCopied
         return $this->evaluate($this->copyMessageDuration, [
             'state' => $state,
         ]) ?? 2000;
-    }
-
-    public function isCopyable(mixed $state): bool
-    {
-        return (bool) $this->evaluate($this->isCopyable, [
-            'state' => $state,
-        ]);
     }
 }

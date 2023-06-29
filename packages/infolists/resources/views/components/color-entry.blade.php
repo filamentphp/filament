@@ -11,6 +11,7 @@
         @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)
             @php
                 $itemIsCopyable = $isCopyable($state);
+                $copyableState = $copyableState($state);
                 $copyMessage = $getCopyMessage($state);
                 $copyMessageDuration = $getCopyMessageDuration($state);
             @endphp
@@ -20,7 +21,7 @@
                     style="background-color: {{ $state }}"
                     @if ($itemIsCopyable)
                         x-on:click="
-                            window.navigator.clipboard.writeText(@js($state))
+                            window.navigator.clipboard.writeText(@js($copyableState))
                             $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                         "
                     @endif

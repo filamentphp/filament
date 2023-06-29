@@ -58,6 +58,7 @@
                 $icon = $getIcon($state);
 
                 $itemIsCopyable = $isCopyable($state);
+                $copyableState = $getCopyableState($state);
                 $copyMessage = $getCopyMessage($state);
                 $copyMessageDuration = $getCopyMessageDuration($state);
             @endphp
@@ -125,7 +126,7 @@
                         <span
                             @if ($itemIsCopyable)
                                 x-on:click="
-                                    window.navigator.clipboard.writeText(@js($getCopyableState()))
+                                    window.navigator.clipboard.writeText(@js($copyableState))
                                     $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                                 "
                             @endif
