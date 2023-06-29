@@ -31,6 +31,13 @@ trait HasState
         return $this;
     }
 
+    public function state(mixed $state): static
+    {
+        $this->getStateUsing(fn () => $this->evaluate($state));
+
+        return $this;
+    }
+
     public function default(mixed $state): static
     {
         $this->defaultState = $state;

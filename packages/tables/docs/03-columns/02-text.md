@@ -343,7 +343,7 @@ You may want a column to contain the number of the current row in the table:
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 
-TextColumn::make('index')->getStateUsing(
+TextColumn::make('index')->state(
     static function (HasTable $livewire, stdClass $rowLoop): string {
         return (string) (
             $rowLoop->iteration +

@@ -30,6 +30,13 @@ trait HasState
         return $this;
     }
 
+    public function state(mixed $state): static
+    {
+        $this->getStateUsing(fn (Component $component) => $component->evaluate($state));
+
+        return $this;
+    }
+
     public function default(mixed $state): static
     {
         $this->defaultState = $state;
@@ -52,13 +59,6 @@ trait HasState
     public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState);
-    }
-
-    public function state(mixed $state): static
-    {
-        $this->getStateUsing(fn (Component $component) => $component->evaluate($state));
-
-        return $this;
     }
 
     public function getState(): mixed
