@@ -15,7 +15,7 @@ trait CanBeMarkedAsRequired
         return $this;
     }
 
-    public function isMarkedAsRequired(): string
+    public function isMarkedAsRequired(): bool
     {
         return (bool) $this->evaluate($this->isMarkedAsRequired);
     }
