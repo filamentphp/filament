@@ -25,10 +25,6 @@
     $iconSize = $isBadge ? 'h-3 w-3' : 'h-4 w-4';
 
     $isClickable = $getAction() || $getUrl();
-
-    $isCopyable = $isCopyable();
-    $copyMessage = $getCopyMessage();
-    $copyMessageDuration = $getCopyMessageDuration();
 @endphp
 
 <div
@@ -57,8 +53,13 @@
         @foreach ($arrayState as $state)
             @php
                 $formattedState = $formatState($state);
+
                 $color = $getColor($state) ?? 'gray';
                 $icon = $getIcon($state);
+
+                $itemIsCopyable = $isCopyable($state);
+                $copyMessage = $getCopyMessage($state);
+                $copyMessageDuration = $getCopyMessageDuration($state);
             @endphp
 
             @if (filled($formattedState))
@@ -122,14 +123,14 @@
                         @endif
 
                         <span
-                            @if ($isCopyable)
+                            @if ($itemIsCopyable)
                                 x-on:click="
                                     window.navigator.clipboard.writeText(@js($getCopyableState()))
                                     $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                                 "
                             @endif
                             @class([
-                                'cursor-pointer' => $isCopyable,
+                                'cursor-pointer' => $itemIsCopyable,
                             ])
                         >
                             {{ $formattedState }}
