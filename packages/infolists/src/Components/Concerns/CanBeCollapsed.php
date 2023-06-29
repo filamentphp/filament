@@ -35,6 +35,6 @@ trait CanBeCollapsed
 
     public function isCollapsible(): bool
     {
-        return (bool) ($this->evaluate($this->isCollapsible) ?? false);
+        return (bool) $this->evaluate($this->isCollapsible);
     }
 }

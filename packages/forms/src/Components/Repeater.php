@@ -625,7 +625,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             return false;
         }
 
-        return $this->evaluate($this->isReorderable);
+        return (bool) $this->evaluate($this->isReorderable);
     }
 
     public function isReorderableWithButtons(): bool
@@ -643,7 +643,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             return false;
         }
 
-        return $this->evaluate($this->isAddable);
+        return (bool) $this->evaluate($this->isAddable);
     }
 
     public function isDeletable(): bool
@@ -652,7 +652,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             return false;
         }
 
-        return $this->evaluate($this->isDeletable);
+        return (bool) $this->evaluate($this->isDeletable);
     }
 
     public function isInset(): bool

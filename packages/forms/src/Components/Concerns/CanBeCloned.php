@@ -21,6 +21,6 @@ trait CanBeCloned
             return false;
         }
 
-        return $this->evaluate($this->isCloneable);
+        return (bool) $this->evaluate($this->isCloneable);
     }
 }
