@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
-use Filament\Infolists\Components\Component;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
@@ -13,7 +12,7 @@ trait HasState
 
     protected mixed $defaultState = null;
 
-    protected ?Closure $getStateUsing = null;
+    protected mixed $getStateUsing = null;
 
     protected ?string $statePath = null;
 
@@ -23,9 +22,16 @@ trait HasState
 
     protected string $cachedFullStatePath;
 
-    public function getStateUsing(?Closure $callback): static
+    public function getStateUsing(mixed $callback): static
     {
         $this->getStateUsing = $callback;
+
+        return $this;
+    }
+
+    public function state(mixed $state): static
+    {
+        $this->getStateUsing($state);
 
         return $this;
     }
@@ -52,13 +58,6 @@ trait HasState
     public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState);
-    }
-
-    public function state(mixed $state): static
-    {
-        $this->getStateUsing(fn (Component $component) => $component->evaluate($state));
-
-        return $this;
     }
 
     public function getState(): mixed

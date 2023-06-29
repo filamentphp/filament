@@ -111,11 +111,11 @@ TextEntry::make('role')
 
 Sometimes you need to calculate the state of an entry, instead of directly reading it from a database entry.
 
-By passing a callback function to the `getStateUsing()` method, you can customize the returned state for that entry:
+By passing a callback function to the `state()` method, you can customize the returned state for that entry:
 
 ```php
 Infolists\Components\TextEntry::make('amount_including_vat')
-    ->getStateUsing(function (Model $record): float {
+    ->state(function (Model $record): float {
         return $record->amount * (1 + $record->vat_rate);
     })
 ```
