@@ -2,7 +2,7 @@
     @php
         $isWrappedInCard = $isWrappedInCard();
     @endphp
-    
+
     <ul
         {{
             $attributes
