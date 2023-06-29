@@ -28,7 +28,7 @@ abstract class Page extends BasePage
 
     protected static bool $shouldRegisterNavigation = true;
 
-    public static string $formActionsAlignment = 'left';
+    public static string $formActionsAlignment = 'start';
 
     public static bool $formActionsAreSticky = false;
 
@@ -218,9 +218,9 @@ abstract class Page extends BasePage
         static::$formActionsAreSticky = $condition;
     }
 
-    public static function alignFormActionsLeft(): void
+    public static function alignFormActionsStart(): void
     {
-        static::$formActionsAlignment = 'left';
+        static::$formActionsAlignment = 'start';
     }
 
     public static function alignFormActionsCenter(): void
@@ -228,9 +228,25 @@ abstract class Page extends BasePage
         static::$formActionsAlignment = 'center';
     }
 
+    public static function alignFormactionsEnd(): void
+    {
+        static::$formActionsAlignment = 'end';
+    }
+
+    /**
+     * @deprecated Use `alignFormActionsStart()` instead
+     */
+    public static function alignFormActionsLeft(): void
+    {
+        static::alignFormActionsStart();
+    }
+
+    /**
+     * @deprecated Use `alignFormActionsEnd()` instead
+     */
     public static function alignFormActionsRight(): void
     {
-        static::$formActionsAlignment = 'right';
+        static::alignFormActionsEnd();
     }
 
     public function getFormActionsAlignment(): string

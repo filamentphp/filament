@@ -29,7 +29,6 @@
                 :autofocus="$isAutofocused()"
                 :disabled="$isDisabled"
                 :id="$getId()"
-                dusk="filament.forms.{{ $statePath }}"
                 :required="$isRequired() && ((bool) $isConcealed())"
                 :attributes="
                     \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag()->merge([

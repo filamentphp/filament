@@ -49,7 +49,6 @@
                             ->merge([
                                 'autocomplete' => 'off',
                                 'disabled' => $isDisabled,
-                                'dusk' => "filament.forms.{$statePath}",
                                 'id' => $getId(),
                                 'placeholder' => $getPlaceholder(),
                                 'required' => $isRequired() && (! $isConcealed()),

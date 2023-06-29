@@ -37,7 +37,6 @@
                             list="{{ $id }}-suggestions"
                             @if ($placeholder = $getPlaceholder()) placeholder="{{ $placeholder }}" @endif
                             type="text"
-                            dusk="filament.forms.{{ $statePath }}"
                             x-on:keydown="
                                 () => {
                                     if (['Enter', ...@js($splitKeys)].includes($event.key)) {
@@ -97,7 +96,6 @@
                                         x-on:click="deleteTag(tag)"
                                     @endunless
                                     type="button"
-                                    x-bind:dusk="'filament.forms.{{ $statePath }}' + '.tag.' + tag + '.delete'"
                                     @class([
                                         'min-h-6 inline-flex items-center justify-center space-x-1 rounded-xl bg-primary-500/10 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700 rtl:space-x-reverse dark:text-primary-500',
                                         'cursor-default' => $isDisabled,

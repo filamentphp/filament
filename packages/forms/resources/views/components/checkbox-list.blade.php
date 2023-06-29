@@ -143,7 +143,6 @@
                                 $getExtraAttributeBag()
                                     ->merge([
                                         'disabled' => $isDisabled,
-                                        'dusk' => "filament.forms.{$statePath}",
                                         'type' => 'checkbox',
                                         'value' => $optionValue,
                                         'wire:loading.attr' => 'disabled',

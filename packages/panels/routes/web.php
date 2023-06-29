@@ -3,8 +3,9 @@
 use Filament\Facades\Filament;
 use Filament\Http\Controllers\Auth\EmailVerificationController;
 use Filament\Http\Controllers\Auth\LogoutController;
+use Filament\Http\Controllers\RedirectToHomeController;
+use Filament\Http\Controllers\RedirectToTenantController;
 use Filament\Http\Middleware\IdentifyTenant;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
@@ -47,22 +48,7 @@ Route::name('filament.')
                     Route::middleware($panel->getAuthMiddleware())
                         ->group(function () use ($panel, $hasTenancy, $hasTenantRegistration, $tenantSlugAttribute): void {
                             if ($hasTenancy) {
-                                Route::get('/', function () use ($panel, $hasTenantRegistration): RedirectResponse {
-                                    $tenant = Filament::getUserDefaultTenant(Filament::auth()->user());
-
-                                    if ($tenant) {
-                                        $url = $panel->getUrl($tenant);
-                                        abort_if(blank($url), 404);
-
-                                        return redirect($url);
-                                    }
-
-                                    if (! $hasTenantRegistration) {
-                                        abort(404);
-                                    }
-
-                                    return redirect($panel->getTenantRegistrationUrl());
-                                })->name('home');
+                                Route::get('/', RedirectToTenantController::class)->name('tenant');
                             }
 
                             if ($panel->hasEmailVerification()) {
@@ -90,12 +76,7 @@ Route::name('filament.')
                             Route::middleware($hasTenancy ? [IdentifyTenant::class] : [])
                                 ->prefix($hasTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                                 ->group(function () use ($panel): void {
-                                    Route::get('/', function () use ($panel): RedirectResponse {
-                                        $url = $panel->getUrl(Filament::getTenant());
-                                        abort_if(blank($url), 404);
-
-                                        return redirect($url);
-                                    })->name('tenant');
+                                    Route::get('/', RedirectToHomeController::class)->name('home');
 
                                     if ($panel->hasTenantBilling()) {
                                         Route::get('/billing', $panel->getTenantBillingProvider()->getRouteAction())

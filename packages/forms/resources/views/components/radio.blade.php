@@ -41,7 +41,6 @@
                             id="{{ $id }}-{{ $value }}"
                             type="radio"
                             value="{{ $value }}"
-                            dusk="filament.forms.{{ $statePath }}"
                             @disabled($shouldOptionBeDisabled)
                             {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
                             {{

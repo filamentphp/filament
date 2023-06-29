@@ -64,7 +64,7 @@ Below is a list of available chart widget classes which you may extend, and thei
 
 ## Generating chart data from an Eloquent model
 
-To generate chart data from an Eloquent model, Filament recommends that you install the `flowframe/laravel-trend` package. You can view the documentation on the [Flowframe website](https://docs.flowfra.me/docs/laravel-trend/installation-and-setup).
+To generate chart data from an Eloquent model, Filament recommends that you install the `flowframe/laravel-trend` package. You can view the [documentation](https://github.com/Flowframe/laravel-trend).
 
 Here is an example of generating chart data from a model using the `laravel-trend` package:
 
