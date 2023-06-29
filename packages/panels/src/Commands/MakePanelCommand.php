@@ -21,7 +21,7 @@ class MakePanelCommand extends Command
         $id = Str::lcfirst($this->argument('id') ?? $this->askRequired('ID (e.g. `app`)', 'id'));
 
         $class = (string) str($id)
-            ->ucfirst()
+            ->studly()
             ->append('PanelProvider');
 
         $path = app_path(
@@ -37,7 +37,7 @@ class MakePanelCommand extends Command
 
         $this->copyStubToApp('PanelProvider', $path, [
             'class' => $class,
-            'directory' => Str::ucfirst($id),
+            'directory' => str($id)->studly(),
             'id' => $id,
         ]);
 
