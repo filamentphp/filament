@@ -512,7 +512,7 @@ trait CanOpenModal
 
     public function isModalFooterSticky(): bool
     {
-        return $this->evaluate($this->isModalFooterSticky) ?? $this->isModalSlideOver();
+        return (bool) ($this->evaluate($this->isModalFooterSticky) ?? $this->isModalSlideOver());
     }
 
     public function isModalSlideOver(): bool
@@ -522,7 +522,7 @@ trait CanOpenModal
 
     public function isModalHidden(): bool
     {
-        return $this->evaluate($this->isModalHidden);
+        return (bool) $this->evaluate($this->isModalHidden);
     }
 
     public function hasModalCloseButton(): bool
@@ -532,7 +532,7 @@ trait CanOpenModal
 
     public function isModalClosedByClickingAway(): bool
     {
-        return $this->evaluate($this->isModalClosedByClickingAway) ?? Modal::$isClosedByClickingAway;
+        return (bool) ($this->evaluate($this->isModalClosedByClickingAway) ?? Modal::$isClosedByClickingAway);
     }
 
     /**

@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'ja :count lisää',
         ],
 
-        'messages' => [
-            'copied' => 'Kopioitu',
-        ],
-
     ],
 
     'fields' => [

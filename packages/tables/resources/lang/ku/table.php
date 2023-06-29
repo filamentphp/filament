@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'وە :count زیاتر',
         ],
 
-        'messages' => [
-            'copied' => 'لەبەرگیرا',
-        ],
-
     ],
 
     'fields' => [

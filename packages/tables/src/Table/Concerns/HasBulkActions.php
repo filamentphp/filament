@@ -120,7 +120,7 @@ trait HasBulkActions
 
     public function isRecordSelectable(Model $record): bool
     {
-        return $this->evaluate(
+        return (bool) ($this->evaluate(
             $this->checkIfRecordIsSelectableUsing,
             namedInjections: [
                 'record' => $record,
@@ -129,7 +129,7 @@ trait HasBulkActions
                 Model::class => $record,
                 $record::class => $record,
             ],
-        ) ?? true;
+        ) ?? true);
     }
 
     public function getAllSelectableRecordsCount(): int

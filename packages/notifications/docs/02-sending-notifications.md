@@ -326,11 +326,11 @@ You can also `dispatchSelf` and `dispatchTo`:
 
 ```php
 Action::make('undo')
-    ->color('secondary')
+    ->color('gray')
     ->dispatchSelf('undoEditingPost', [$post->id])
 
 Action::make('undo')
-    ->color('secondary')
+    ->color('gray')
     ->dispatchTo('another_component', 'undoEditingPost', [$post->id])
 ```
 
@@ -357,11 +357,11 @@ Similarly, `dispatchSelf` and `dispatchTo` are also available:
 
 ```js
 new NotificationAction('undo')
-    .color('secondary')
+    .color('gray')
     .dispatchSelf('undoEditingPost')
 
 new NotificationAction('undo')
-    .color('secondary')
+    .color('gray')
     .dispatchTo('another_component', 'undoEditingPost')
 ```
 

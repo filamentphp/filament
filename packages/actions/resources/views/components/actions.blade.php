@@ -1,6 +1,6 @@
 @props([
     'actions',
-    'alignment' => 'left',
+    'alignment' => 'start',
     'fullWidth' => false,
 ])
 
@@ -22,7 +22,7 @@
                     'flex flex-wrap items-center gap-3' => ! $fullWidth,
                     match ($alignment) {
                         'center' => 'justify-center',
-                        'right' => 'flex-row-reverse space-x-reverse',
+                        'end', 'right' => 'flex-row-reverse space-x-reverse',
                         default => 'justify-start',
                     } => ! $fullWidth,
                     'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] gap-2' => $fullWidth,

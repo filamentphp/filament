@@ -5,7 +5,7 @@ namespace Filament\Resources\Pages\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
-use Livewire\Features\SupportLockedProperties\Locked;
+use Livewire\Attributes\Locked;
 
 trait InteractsWithRecord
 {

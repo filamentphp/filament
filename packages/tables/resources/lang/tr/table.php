@@ -8,10 +8,6 @@ return [
             'more_list_items' => 've :count daha',
         ],
 
-        'messages' => [
-            'copied' => 'Kopyalandı',
-        ],
-
     ],
 
     'fields' => [

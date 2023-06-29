@@ -65,9 +65,7 @@ If you're using a widget on an [Edit](editing-records) or [View](viewing-records
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use Livewire\Attributes\Prop;
 
-#[Prop]
 public ?Model $record = null;
 ```
 

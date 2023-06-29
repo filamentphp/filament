@@ -244,7 +244,7 @@ TextColumn::make('updated_at')
 
 ## Customizing the color
 
-You may set a color for the text, either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`:
+You may set a color for the text, either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -343,7 +343,7 @@ You may want a column to contain the number of the current row in the table:
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Contracts\HasTable;
 
-TextColumn::make('index')->getStateUsing(
+TextColumn::make('index')->state(
     static function (HasTable $livewire, stdClass $rowLoop): string {
         return (string) (
             $rowLoop->iteration +

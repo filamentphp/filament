@@ -192,7 +192,7 @@ class NavigationItem
             return false;
         }
 
-        return app()->call($callback);
+        return (bool) app()->call($callback);
     }
 
     public function shouldOpenUrlInNewTab(): bool

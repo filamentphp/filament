@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
-use Livewire\Features\SupportLockedProperties\Locked;
+use Livewire\Attributes\Locked;
 
 /**
  * @property Form $form

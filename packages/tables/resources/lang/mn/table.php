@@ -8,10 +8,6 @@ return [
             'more' => '... :count илүү',
         ],
 
-        'messages' => [
-            'copied' => 'Хуулав',
-        ],
-
     ],
 
     'fields' => [

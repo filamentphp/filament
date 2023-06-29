@@ -48,7 +48,7 @@ class MakeUserCommand extends Command
     {
         $loginUrl = Filament::getLoginUrl();
 
-        $this->components->info('Success! ' . ($user->getAttribute('email') ?? $user->getAttribute('username') ?? 'You') . " may now log in at {$loginUrl}.");
+        $this->components->info('Success! ' . ($user->getAttribute('email') ?? $user->getAttribute('username') ?? 'You') . " may now log in at {$loginUrl}");
     }
 
     protected function getAuthGuard(): Guard

@@ -350,11 +350,11 @@ public function table(Table $table): Table
 
 Sometimes you need to calculate the state of a column, instead of directly reading it from a database column.
 
-By passing a callback function to the `getStateUsing()` method, you can customize the returned state for that column based on the `$record`:
+By passing a callback function to the `state()` method, you can customize the returned state for that column based on the `$record`:
 
 ```php
 Tables\Columns\TextColumn::make('amount_including_vat')
-    ->getStateUsing(function (Model $record): float {
+    ->state(function (Model $record): float {
         return $record->amount * (1 + $record->vat_rate);
     })
 ```
@@ -380,6 +380,26 @@ use Illuminate\Database\Eloquent\Model;
 
 TextColumn::make('title')
     ->tooltip(fn (Model $record): string => "By {$record->author->name}")
+```
+
+## Aligning column content
+
+Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `start`, `center`, `end`, `left`, `right` or `justify` options:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignment('end')
+```
+
+Alternatively, you may use shorthand methods like `alignEnd()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignEnd()
 ```
 
 ## Custom attributes

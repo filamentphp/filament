@@ -1,9 +1,3 @@
-@php
-    $isCopyable = $isCopyable();
-    $copyMessage = $getCopyMessage();
-    $copyMessageDuration = $getCopyMessageDuration();
-@endphp
-
 <div
     {{
         $attributes
@@ -15,19 +9,26 @@
     }}
 >
     @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)
+        @php
+            $itemIsCopyable = $isCopyable($state);
+            $copyableState = $copyableState($state) ?? $state;
+            $copyMessage = $getCopyMessage($state);
+            $copyMessageDuration = $getCopyMessageDuration($state);
+        @endphp
+
         <div
             @if ($state)
                 style="background-color: {{ $state }}"
-                @if ($isCopyable)
+                @if ($itemIsCopyable)
                     x-on:click="
-                        window.navigator.clipboard.writeText(@js($getCopyableState()))
+                        window.navigator.clipboard.writeText(@js($copyableState))
                         $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                     "
                 @endif
             @endif
             @class([
                 'relative flex h-6 w-6 rounded-md',
-                'cursor-pointer' => $isCopyable,
+                'cursor-pointer' => $itemIsCopyable,
             ])
         ></div>
     @endforeach

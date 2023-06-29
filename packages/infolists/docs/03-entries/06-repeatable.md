@@ -38,3 +38,17 @@ RepeatableEntry::make('members')
 ```
 
 This method accepts the same options as the `columns()` method of the [grid](../layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
+
+## Removing the wrapping card
+
+By default, each item in a repeatable entry gets wrapped in a card. This behavior can be disabled using `wrappedInCard()`:
+
+```php
+use Filament\Infolists\Components\RepeatableEntry;
+
+RepeatableEntry::make('members')
+    ->schema([
+        // ...
+    ])
+    ->wrappedInCard(false)
+```

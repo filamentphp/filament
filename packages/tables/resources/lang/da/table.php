@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'og :count flere',
         ],
 
-        'messages' => [
-            'copied' => 'Kopieret',
-        ],
-
     ],
 
     'fields' => [

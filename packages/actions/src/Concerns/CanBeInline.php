@@ -17,6 +17,6 @@ trait CanBeInline
 
     public function isInline(): bool
     {
-        return $this->evaluate($this->isInline);
+        return (bool) $this->evaluate($this->isInline);
     }
 }
