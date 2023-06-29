@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'và còn :count',
         ],
 
-        'messages' => [
-            'copied' => 'Đã sao chép',
-        ],
-
     ],
 
     'fields' => [

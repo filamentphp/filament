@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'و :count تا بیشتر',
         ],
 
-        'messages' => [
-            'copied' => 'کپی شد',
-        ],
-
     ],
 
     'fields' => [

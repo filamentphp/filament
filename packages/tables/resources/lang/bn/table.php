@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'এবং আরো :count',
         ],
 
-        'messages' => [
-            'copied' => 'অনুকৃত',
-        ],
-
     ],
 
     'fields' => [

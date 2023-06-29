@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'あと:count個あります',
         ],
 
-        'messages' => [
-            'copied' => 'コピーしました',
-        ],
-
     ],
 
     'fields' => [

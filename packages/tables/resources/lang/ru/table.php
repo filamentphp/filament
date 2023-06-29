@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'и :count еще',
         ],
 
-        'messages' => [
-            'copied' => 'Скопировано',
-        ],
-
     ],
 
     'fields' => [

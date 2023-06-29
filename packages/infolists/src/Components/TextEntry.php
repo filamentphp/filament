@@ -4,10 +4,11 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\Contracts\HasAffixActions;
+use Filament\Support\Concerns\CanBeCopied;
 
 class TextEntry extends Entry implements HasAffixActions
 {
-    use Concerns\CanBeCopied;
+    use CanBeCopied;
     use Concerns\CanFormatState;
     use Concerns\HasAffixes;
     use Concerns\HasColor;
