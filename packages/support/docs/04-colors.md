@@ -21,7 +21,6 @@ FilamentColor::register([
     'gray' => Color::Gray,
     'info' => Color::Blue,
     'primary' => Color::Amber,
-    'secondary' => Color::Gray,
     'success' => Color::Green,
     'warning' => Color::Amber,
 ]);
@@ -92,4 +91,4 @@ FilamentColor::register([
 ]);
 ```
 
-Now, you can use this color anywhere you would normally add `primary`, `secondary`, `danger`, etc.
+Now, you can use this color anywhere you would normally add `primary`, `danger`, etc.

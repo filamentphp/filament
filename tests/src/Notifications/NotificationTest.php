@@ -28,7 +28,6 @@ it('can send notifications', function () {
             'gray',
             'info',
             'primary',
-            'secondary',
             'success',
             'warning',
         ]);
