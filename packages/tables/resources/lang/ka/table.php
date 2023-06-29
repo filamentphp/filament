@@ -8,10 +8,6 @@ return [
             'more' => 'და კიდევ :count',
         ],
 
-        'messages' => [
-            'copied' => 'დაკოპირებულია',
-        ],
-
     ],
 
     'fields' => [

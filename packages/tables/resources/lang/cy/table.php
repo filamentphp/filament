@@ -8,10 +8,6 @@ return [
             'more' => 'Ychwanegu :count arall',
         ],
 
-        'messages' => [
-            'copied' => 'Wedi Copïo',
-        ],
-
     ],
 
     'fields' => [

@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'na :count zaidi',
         ],
 
-        'messages' => [
-            'copied' => 'Imeigwa',
-        ],
-
     ],
 
     'fields' => [

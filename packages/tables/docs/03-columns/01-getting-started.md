@@ -350,11 +350,11 @@ public function table(Table $table): Table
 
 Sometimes you need to calculate the state of a column, instead of directly reading it from a database column.
 
-By passing a callback function to the `getStateUsing()` method, you can customize the returned state for that column based on the `$record`:
+By passing a callback function to the `state()` method, you can customize the returned state for that column based on the `$record`:
 
 ```php
 Tables\Columns\TextColumn::make('amount_including_vat')
-    ->getStateUsing(function (Model $record): float {
+    ->state(function (Model $record): float {
         return $record->amount * (1 + $record->vat_rate);
     })
 ```

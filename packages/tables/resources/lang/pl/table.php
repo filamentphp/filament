@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'i :count więcej',
         ],
 
-        'messages' => [
-            'copied' => 'Skopiowano',
-        ],
-
     ],
 
     'fields' => [

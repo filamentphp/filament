@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'a 1 další|a :count další| a :count dalších',
         ],
 
-        'messages' => [
-            'copied' => 'Zkopírováno',
-        ],
-
     ],
 
     'fields' => [

@@ -8,10 +8,6 @@ return [
             'more' => 'eta :count gehiago',
         ],
 
-        'messages' => [
-            'copied' => 'Kopiatuta',
-        ],
-
     ],
 
     'fields' => [
