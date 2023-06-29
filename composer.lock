@@ -132,16 +132,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.274.0",
+            "version": "3.275.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "b2f37a49ca40bce633323a6988477c22be562c37"
+                "reference": "a0dfb094d3f94da2ebc86ed9583e14fdc9000f06"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b2f37a49ca40bce633323a6988477c22be562c37",
-                "reference": "b2f37a49ca40bce633323a6988477c22be562c37",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/a0dfb094d3f94da2ebc86ed9583e14fdc9000f06",
+                "reference": "a0dfb094d3f94da2ebc86ed9583e14fdc9000f06",
                 "shasum": ""
             },
             "require": {
@@ -221,9 +221,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.274.0"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.275.0"
             },
-            "time": "2023-06-27T18:32:17+00:00"
+            "time": "2023-06-29T19:21:55+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
@@ -2488,16 +2488,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v10.14.0",
+            "version": "v10.14.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "285cdd86a4beb433513b38f41a89b510e0724a3e"
+                "reference": "6f89a2b74b232d8bf2e1d9ed87e311841263dfcb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/285cdd86a4beb433513b38f41a89b510e0724a3e",
-                "reference": "285cdd86a4beb433513b38f41a89b510e0724a3e",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/6f89a2b74b232d8bf2e1d9ed87e311841263dfcb",
+                "reference": "6f89a2b74b232d8bf2e1d9ed87e311841263dfcb",
                 "shasum": ""
             },
             "require": {
@@ -2684,7 +2684,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2023-06-27T13:26:12+00:00"
+            "time": "2023-06-28T14:25:16+00:00"
         },
         {
             "name": "laravel/pint",
@@ -7727,16 +7727,16 @@
         },
         {
             "name": "spatie/backtrace",
-            "version": "1.4.1",
+            "version": "1.5.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/backtrace.git",
-                "reference": "47794d19e3215ace9e005a8f200cd7cc7be52572"
+                "reference": "483f76a82964a0431aa836b6ed0edde0c248e3ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/backtrace/zipball/47794d19e3215ace9e005a8f200cd7cc7be52572",
-                "reference": "47794d19e3215ace9e005a8f200cd7cc7be52572",
+                "url": "https://api.github.com/repos/spatie/backtrace/zipball/483f76a82964a0431aa836b6ed0edde0c248e3ab",
+                "reference": "483f76a82964a0431aa836b6ed0edde0c248e3ab",
                 "shasum": ""
             },
             "require": {
@@ -7773,7 +7773,7 @@
                 "spatie"
             ],
             "support": {
-                "source": "https://github.com/spatie/backtrace/tree/1.4.1"
+                "source": "https://github.com/spatie/backtrace/tree/1.5.3"
             },
             "funding": [
                 {
@@ -7785,7 +7785,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2023-06-13T14:35:04+00:00"
+            "time": "2023-06-28T12:59:17+00:00"
         },
         {
             "name": "spatie/color",
@@ -8112,16 +8112,16 @@
         },
         {
             "name": "spatie/laravel-medialibrary",
-            "version": "10.10.0",
+            "version": "10.10.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/laravel-medialibrary.git",
-                "reference": "bc802155cd621492fb33cdca6427a2666fdff707"
+                "reference": "84f7bb253bc7b9498ff2cd0d74f82e88d299c517"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/bc802155cd621492fb33cdca6427a2666fdff707",
-                "reference": "bc802155cd621492fb33cdca6427a2666fdff707",
+                "url": "https://api.github.com/repos/spatie/laravel-medialibrary/zipball/84f7bb253bc7b9498ff2cd0d74f82e88d299c517",
+                "reference": "84f7bb253bc7b9498ff2cd0d74f82e88d299c517",
                 "shasum": ""
             },
             "require": {
@@ -8205,7 +8205,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/laravel-medialibrary/issues",
-                "source": "https://github.com/spatie/laravel-medialibrary/tree/10.10.0"
+                "source": "https://github.com/spatie/laravel-medialibrary/tree/10.10.1"
             },
             "funding": [
                 {
@@ -8217,7 +8217,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2023-06-22T10:45:08+00:00"
+            "time": "2023-06-29T07:18:20+00:00"
         },
         {
             "name": "spatie/laravel-package-tools",
