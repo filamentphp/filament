@@ -7,8 +7,9 @@
 
             this.tab = @js(collect($getChildComponentContainer()->getComponents())
                         ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
-                        ->get($getActiveTab() - 1)
-                        ->getId())
+                        ->map(static fn (\Filament\Infolists\Components\Tabs\Tab $tab) => $tab->getId())
+                        ->values()
+                        ->get($getActiveTab() - 1))
         },
 
         updateQueryString: function () {
