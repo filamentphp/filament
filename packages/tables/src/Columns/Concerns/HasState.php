@@ -11,7 +11,7 @@ trait HasState
 {
     protected mixed $defaultState = null;
 
-    protected ?Closure $getStateUsing = null;
+    protected mixed $getStateUsing = null;
 
     protected string | Closure | null $separator = null;
 
@@ -24,7 +24,7 @@ trait HasState
         return $this;
     }
 
-    public function getStateUsing(?Closure $callback): static
+    public function getStateUsing(mixed $callback): static
     {
         $this->getStateUsing = $callback;
 
@@ -33,7 +33,7 @@ trait HasState
 
     public function state(mixed $state): static
     {
-        $this->getStateUsing(fn () => $this->evaluate($state));
+        $this->getStateUsing($state);
 
         return $this;
     }
