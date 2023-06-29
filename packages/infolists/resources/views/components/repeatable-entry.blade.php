@@ -1,4 +1,8 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
+    @php
+        $isWrappedInCard = $isWrappedInCard();
+    @endphp
+    
     <ul
         {{
             $attributes
@@ -19,15 +23,14 @@
             class="gap-6"
         >
             @foreach ($getChildComponentContainers() as $container)
-                @if ($isWrappedInCard())
-                    <li
-                        class="block rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
-                    >
-                        {{ $container }}
-                    </li>
-                @else
+                <li
+                    @class([
+                        'block',
+                        'rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20' => $isWrappedInCard,
+                    ])
+                >
                     {{ $container }}
-                @endif
+                </li>
             @endforeach
         </x-filament::grid>
     </ul>
