@@ -382,6 +382,26 @@ TextColumn::make('title')
     ->tooltip(fn (Model $record): string => "By {$record->author->name}")
 ```
 
+## Aligning column content
+
+Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `start`, `center`, `end`, `left`, `right` or `justify` options:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignment('end')
+```
+
+Alternatively, you may use shorthand methods like `alignEnd()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignEnd()
+```
+
 ## Custom attributes
 
 The HTML of columns can be customized, by passing an array of `extraAttributes()`:

@@ -68,7 +68,6 @@ class ColorManager
             'gray' => Color::Gray,
             'info' => Color::Blue,
             'primary' => Color::Amber,
-            'secondary' => Color::Gray,
             'success' => Color::Green,
             'warning' => Color::Amber,
             ...$this->colors,

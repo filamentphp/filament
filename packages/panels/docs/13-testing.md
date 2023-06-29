@@ -205,7 +205,7 @@ it('can validate input', function () {
 
 ##### Deleting
 
-You can test the `DeleteAction` using `callPageAction()`:
+You can test the `DeleteAction` using `callAction()`:
 
 ```php
 use Filament\Actions\DeleteAction;
@@ -217,13 +217,13 @@ it('can delete', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),
     ])
-        ->callPageAction(DeleteAction::class);
+        ->callAction(DeleteAction::class);
 
     $this->assertModelMissing($post);
 });
 ```
 
-You can ensure that a particular user is not able to see a `DeleteAction` using `assertPageActionHidden()`:
+You can ensure that a particular user is not able to see a `DeleteAction` using `assertActionHidden()`:
 
 ```php
 use Filament\Actions\DeleteAction;
@@ -235,7 +235,7 @@ it('can not delete', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),
     ])
-        ->assertPageActionHidden(DeleteAction::class);
+        ->assertActionHidden(DeleteAction::class);
 });
 ```
 

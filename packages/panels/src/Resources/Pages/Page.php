@@ -4,7 +4,6 @@ namespace Filament\Resources\Pages;
 
 use Filament\Pages\Page as BasePage;
 use Filament\Panel;
-use Filament\Resources\Resource;
 use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Route as RouteFacade;
 
@@ -74,7 +73,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return class-string<Resource>
+     * @return class-string
      */
     public static function getResource(): string
     {
