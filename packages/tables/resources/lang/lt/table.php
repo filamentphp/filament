@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'ir :count daugiau',
         ],
 
-        'messages' => [
-            'copied' => 'Nukopijuota',
-        ],
-
     ],
 
     'fields' => [

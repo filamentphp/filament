@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'és további :count',
         ],
 
-        'messages' => [
-            'copied' => 'Kimásolva',
-        ],
-
     ],
 
     'fields' => [

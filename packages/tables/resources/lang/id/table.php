@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'dan :count lainnya',
         ],
 
-        'messages' => [
-            'copied' => 'Disalin',
-        ],
-
     ],
 
     'fields' => [

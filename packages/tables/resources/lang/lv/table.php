@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'un :count vēl',
         ],
 
-        'messages' => [
-            'copied' => 'Kopēts',
-        ],
-
     ],
 
     'fields' => [

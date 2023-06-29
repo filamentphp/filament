@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'en :count meer',
         ],
 
-        'messages' => [
-            'copied' => 'Gekopieerd',
-        ],
-
     ],
 
     'fields' => [
