@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Prop;
 use Livewire\Component;
-use Livewire\Features\SupportLockedProperties\Locked;
+use Livewire\Attributes\Locked;
 
 class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
