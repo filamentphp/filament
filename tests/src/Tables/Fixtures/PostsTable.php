@@ -68,7 +68,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Columns\TextColumn::make('hidden')
                     ->hidden(),
                 Tables\Columns\TextColumn::make('with_state')
-                    ->state(fn () => 'correct state'),
+                    ->state('correct state'),
                 Tables\Columns\TextColumn::make('formatted_state')
                     ->formatStateUsing(fn () => 'formatted state'),
                 Tables\Columns\TextColumn::make('extra_attributes')
