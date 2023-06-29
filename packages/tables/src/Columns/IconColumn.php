@@ -194,6 +194,6 @@ class IconColumn extends Column
 
     public function isListWithLineBreaks(): bool
     {
-        return $this->evaluate($this->isListWithLineBreaks);
+        return (bool) $this->evaluate($this->isListWithLineBreaks);
     }
 }

@@ -36,7 +36,7 @@ trait HasAction
     public function isLivewireClickHandlerEnabled(): bool
     {
         if (($isLivewireClickHandlerEnabled = $this->evaluate($this->isLivewireClickHandlerEnabled)) !== null) {
-            return $isLivewireClickHandlerEnabled;
+            return (bool) $isLivewireClickHandlerEnabled;
         }
 
         if (filled($this->getUrl())) {
