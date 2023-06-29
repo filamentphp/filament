@@ -8,48 +8,47 @@ use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
-use Livewire\Attributes\Prop;
-use Livewire\Attributes\ReactiveProp;
+use Livewire\Attributes\Reactive;
 use function Livewire\store;
 use function Livewire\trigger;
 
 trait InteractsWithPageTable
 {
     /** @var array<string, int> */
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public $paginators = [];
 
     /**
      * @var array<string, string | array<string, string | null> | null>
      */
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public array $tableColumnSearches = [];
 
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public ?string $tableGrouping = null;
 
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public ?string $tableGroupingDirection = null;
 
     /**
      * @var array<string, mixed> | null
      */
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public ?array $tableFilters = null;
 
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public int | string | null $tableRecordsPerPage = null;
 
     /**
      * @var ?string
      */
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public $tableSearch = '';
 
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public ?string $tableSortColumn = null;
 
-    #[Prop, ReactiveProp]
+    #[Reactive]
     public ?string $tableSortDirection = null;
 
     protected HasTable $tablePage;

@@ -16,7 +16,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
-use Livewire\Attributes\Prop;
 use Livewire\Component;
 use Livewire\Attributes\Locked;
 
@@ -27,10 +26,10 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
         makeTable as makeBaseTable;
     }
 
-    #[Locked, Prop]
+    #[Locked]
     public Model $ownerRecord;
 
-    #[Locked, Prop]
+    #[Locked]
     public ?string $pageClass = null;
 
     protected static string $relationship;
