@@ -36,10 +36,6 @@
         $iconSize = $isBadge ? 'h-3 w-3' : 'h-4 w-4';
 
         $url = $getUrl();
-
-        $isCopyable = $isCopyable();
-        $copyMessage = $getCopyMessage();
-        $copyMessageDuration = $getCopyMessageDuration();
     @endphp
 
     <x-filament-infolists::affixes
@@ -60,8 +56,13 @@
             @foreach ($arrayState as $state)
                 @php
                     $formattedState = $formatState($state);
+
                     $color = $getColor($state) ?? 'gray';
                     $icon = $getIcon($state);
+
+                    $itemIsCopyable = $isCopyable($state);
+                    $copyMessage = $getCopyMessage($state);
+                    $copyMessageDuration = $getCopyMessageDuration($state);
                 @endphp
 
                 @if (filled($formattedState))
@@ -131,7 +132,7 @@
                             @endif
 
                             <div
-                                @if ($isCopyable)
+                                @if ($itemIsCopyable)
                                     x-on:click="
                                         window.navigator.clipboard.writeText(@js($formattedState))
                                         $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
@@ -141,7 +142,7 @@
                                     'inline-block',
                                     '[&>*:first-child]:mt-0 [&>*:last-child]:mb-0' => $isProse,
                                     'pt-2' => $isProse && (! $isLabelHidden()),
-                                    'cursor-pointer' => $isCopyable,
+                                    'cursor-pointer' => $itemIsCopyable,
                                 ])
                             >
                                 {{ $formattedState }}

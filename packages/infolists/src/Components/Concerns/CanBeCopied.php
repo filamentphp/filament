@@ -33,18 +33,24 @@ trait CanBeCopied
         return $this;
     }
 
-    public function getCopyMessage(): string
+    public function getCopyMessage(mixed $state): string
     {
-        return $this->evaluate($this->copyMessage) ?? __('filament-infolists::components.messages.copied');
+        return $this->evaluate($this->copyMessage, [
+            'state' => $state,
+        ]) ?? __('filament-infolists::components.messages.copied');
     }
 
-    public function getCopyMessageDuration(): int
+    public function getCopyMessageDuration(mixed $state): int
     {
-        return $this->evaluate($this->copyMessageDuration) ?? 2000;
+        return $this->evaluate($this->copyMessageDuration, [
+            'state' => $state,
+        ]) ?? 2000;
     }
 
-    public function isCopyable(): bool
+    public function isCopyable(mixed $state): bool
     {
-        return (bool) $this->evaluate($this->isCopyable);
+        return (bool) $this->evaluate($this->isCopyable, [
+            'state' => $state,
+        ]);
     }
 }
