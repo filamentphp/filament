@@ -19,11 +19,15 @@
             class="gap-6"
         >
             @foreach ($getChildComponentContainers() as $container)
-                <li
-                    class="block rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
-                >
+                @if ($isWrappedInCard())
+                    <li
+                        class="block rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
+                    >
+                        {{ $container }}
+                    </li>
+                @else
                     {{ $container }}
-                </li>
+                @endif
             @endforeach
         </x-filament::grid>
     </ul>
