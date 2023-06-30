@@ -3,9 +3,12 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Filament\Support\Concerns\EvaluatesClosures;
 
 class NavigationItem
 {
+    use EvaluatesClosures;
+
     protected string | Closure | null $group = null;
 
     protected ?Closure $isActiveWhen = null;
@@ -132,22 +135,22 @@ class NavigationItem
 
     public function getBadge(): ?string
     {
-        return $this->badge instanceof Closure ? app()->call($this->badge) : $this->badge;
+        return $this->evaluate($this->badge);
     }
 
     public function getBadgeColor(): ?string
     {
-        return $this->badgeColor instanceof Closure ? app()->call($this->badgeColor) : $this->badgeColor;
+        return $this->evaluate($this->badgeColor);
     }
 
     public function getGroup(): ?string
     {
-        return $this->group instanceof Closure ? app()->call($this->group) : $this->group;
+        return $this->evaluate($this->group);
     }
 
     public function getIcon(): string
     {
-        return $this->icon instanceof Closure ? app()->call($this->icon) : $this->icon;
+        return $this->evaluate($this->icon);
     }
 
     public function isVisible(): bool
@@ -166,24 +169,24 @@ class NavigationItem
 
     public function getActiveIcon(): ?string
     {
-        return $this->activeIcon instanceof Closure ? app()->call($this->activeIcon) : $this->activeIcon;
+        return $this->evaluate($this->activeIcon);
     }
 
     public function getIconColor(): ?string
     {
-        return $this->iconColor instanceof Closure ? app()->call($this->iconColor) : $this->iconColor;
+        return $this->evaluate($this->iconColor);
     }
 
     public function getLabel(): string
     {
-        return $this->label instanceof Closure ? app()->call($this->label) : $this->label;
+        return $this->evaluate($this->label);
     }
 
     public function getSort(): int
     {
         if (!$this->sort) return -1;
 
-        return $this->sort instanceof Closure ? app()->call($this->sort) : $this->sort;
+        return $this->evaluate($this->sort);
     }
 
     public function getUrl(): ?string
