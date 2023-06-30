@@ -98,19 +98,21 @@
             @endif
         </div>
 
-        <div class="flex items-center">
-            @if (filament()->getGlobalSearchProvider() !== null)
-                @livewire(Filament\Http\Livewire\GlobalSearch::class, ['lazy' => true])
-            @endif
+        @persist('topbar.end')
+            <div class="flex items-center">
+                @if (filament()->getGlobalSearchProvider() !== null)
+                    @livewire(Filament\Http\Livewire\GlobalSearch::class, ['lazy' => true])
+                @endif
 
-            @if (filament()->hasDatabaseNotifications())
-                @livewire(Filament\Http\Livewire\DatabaseNotifications::class, ['lazy' => true])
-            @endif
+                @if (filament()->hasDatabaseNotifications())
+                    @livewire(Filament\Http\Livewire\DatabaseNotifications::class, ['lazy' => true])
+                @endif
 
-            <x-filament::user-menu />
+                <x-filament::user-menu />
 
-            {{ filament()->renderHook('topbar.end') }}
-        </div>
+                {{ filament()->renderHook('topbar.end') }}
+            </div>
+        @endpersist
     </div>
 
     @if (filament()->hasTopNavigation() && count($breadcrumbs))
