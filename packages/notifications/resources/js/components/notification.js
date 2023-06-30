@@ -103,6 +103,14 @@ export default (Alpine) => {
 
                 animation()
             })
+
+            on('request', (component) => {
+                return () => {
+                    // This would be equivalent to "message.received" I think
+
+                    // Then you could do like: queueMicrotask(() => { ...  }) for message.processed
+                }
+            })
         },
 
         close: function () {
