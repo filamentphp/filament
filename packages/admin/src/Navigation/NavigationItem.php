@@ -73,9 +73,23 @@ class NavigationItem
         return $this;
     }
 
+    public function visibleIfCan(string $ability): static
+    {
+        $this->visible(fn () => auth()->user()?->can($ability));
+
+        return $this;
+    }
+
     public function hidden(bool | Closure $condition = true): static
     {
         $this->isHidden = value($condition);
+
+        return $this;
+    }
+
+    public function hiddenIfCan(string $ability): static
+    {
+        $this->hidden(fn () => auth()->user()?->can($ability));
 
         return $this;
     }
