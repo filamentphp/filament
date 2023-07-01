@@ -134,13 +134,14 @@
 
                             <div
                                 @if ($itemIsCopyable)
+                                    x-data="{}"
                                     x-on:click="
                                         window.navigator.clipboard.writeText(@js($copyableState))
                                         $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                                     "
                                 @endif
                                 @class([
-                                    'inline-block',
+                                    'filament-infolists-text-entry-content inline-block',
                                     '[&>*:first-child]:mt-0 [&>*:last-child]:mb-0' => $isProse,
                                     'pt-2' => $isProse && (! $isLabelHidden()),
                                     'cursor-pointer' => $itemIsCopyable,

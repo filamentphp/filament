@@ -365,8 +365,6 @@ Tables\Columns\TextColumn::make('amount_including_vat')
 
 ## Tooltips
 
-> If you want to use tooltips outside of a panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager). You'll also need to install [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager) if you're using a [custom panel theme](../../panels/themes).
-
 You may specify a tooltip to display when you hover over a cell:
 
 ```php

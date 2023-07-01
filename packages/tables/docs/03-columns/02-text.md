@@ -21,7 +21,7 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('status')
     ->badge()
-    ->color(fn (string $status): string => match ($status) {
+    ->color(fn (string $state): string => match ($state) {
         'draft' => 'gray',
         'reviewing' => 'warning',
         'published' => 'success',
@@ -332,8 +332,6 @@ TextColumn::make('email')
     ->copyMessage('Email address copied')
     ->copyMessageDuration(1500)
 ```
-
-> Filament uses tooltips to display the copy message in the admin panel. If you want to use the copyable feature outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app.
 
 ## Displaying the row index
 

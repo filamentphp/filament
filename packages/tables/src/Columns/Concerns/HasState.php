@@ -61,7 +61,7 @@ trait HasState
             return null;
         }
 
-        $state = $this->getStateUsing ?
+        $state = ($this->getStateUsing !== null) ?
             $this->evaluate($this->getStateUsing) :
             $this->getStateFromRecord();
 

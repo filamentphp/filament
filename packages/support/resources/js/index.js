@@ -2,12 +2,14 @@ import AlpineFloatingUI from '@awcodes/alpine-floating-ui'
 import AlpineLazyLoadAssets from 'alpine-lazy-load-assets'
 import Focus from '@alpinejs/focus'
 import Sortable from './sortable'
+import Tooltip from '@ryangjchandler/alpine-tooltip'
 
 document.addEventListener('alpine:init', () => {
-    window.Alpine.plugin(Focus)
-    window.Alpine.plugin(Sortable)
     window.Alpine.plugin(AlpineFloatingUI)
     window.Alpine.plugin(AlpineLazyLoadAssets)
+    window.Alpine.plugin(Focus)
+    window.Alpine.plugin(Sortable)
+    window.Alpine.plugin(Tooltip)
 })
 
 // https://github.com/laravel/framework/blob/5299c22321c0f1ea8ff770b84a6c6469c4d6edec/src/Illuminate/Translation/MessageSelector.php#L15

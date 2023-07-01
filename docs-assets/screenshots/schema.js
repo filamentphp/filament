@@ -1072,4 +1072,244 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/simple': {
+        url: 'infolists/entries',
+        selector: '#simple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/helper-text': {
+        url: 'infolists/entries',
+        selector: '#helperText',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/hint': {
+        url: 'infolists/entries',
+        selector: '#hint',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/hint-color': {
+        url: 'infolists/entries',
+        selector: '#hintColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/hint-icon': {
+        url: 'infolists/entries',
+        selector: '#hintIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/tooltips': {
+        url: 'infolists/entries',
+        selector: '#tooltips',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('#tooltips .filament-infolists-text-entry')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'infolists/entries/text/simple': {
+        url: 'infolists/entries',
+        selector: '#text',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/badge': {
+        url: 'infolists/entries',
+        selector: '#textBadge',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/list': {
+        url: 'infolists/entries',
+        selector: '#textList',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/bullet-list': {
+        url: 'infolists/entries',
+        selector: '#textBulletList',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/color': {
+        url: 'infolists/entries',
+        selector: '#textColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/icon': {
+        url: 'infolists/entries',
+        selector: '#textIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/icon-after': {
+        url: 'infolists/entries',
+        selector: '#textIconAfter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/large': {
+        url: 'infolists/entries',
+        selector: '#textLarge',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/bold': {
+        url: 'infolists/entries',
+        selector: '#textBold',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/mono': {
+        url: 'infolists/entries',
+        selector: '#textMono',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/text/copyable': {
+        url: 'infolists/entries',
+        selector: '#textCopyable',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#textCopyable .filament-infolists-text-entry-content')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        }
+    },
+    'infolists/entries/icon/simple': {
+        url: 'infolists/entries',
+        selector: '#icon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/icon/color': {
+        url: 'infolists/entries',
+        selector: '#iconColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/icon/medium': {
+        url: 'infolists/entries',
+        selector: '#iconMedium',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/icon/boolean': {
+        url: 'infolists/entries',
+        selector: '#iconBoolean',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/icon/boolean-icon': {
+        url: 'infolists/entries',
+        selector: '#iconBooleanIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/icon/boolean-color': {
+        url: 'infolists/entries',
+        selector: '#iconBooleanColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/color/simple': {
+        url: 'infolists/entries',
+        selector: '#color',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/color/copyable': {
+        url: 'infolists/entries',
+        selector: '#colorCopyable',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#colorCopyable .filament-infolists-color-entry-content')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
 }

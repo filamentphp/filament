@@ -9,28 +9,15 @@ Icon columns render an [icon](https://blade-ui-kit.com/blade-icons?set=1#search)
 ```php
 use Filament\Tables\Columns\IconColumn;
 
-IconColumn::make('is_featured')
-    ->icons([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => 'draft',
-        'heroicon-o-clock' => 'reviewing',
-        'heroicon-o-check-circle' => 'published',
-    ])
+IconColumn::make('status')
+    ->icon(fn (string $state): string => match ($state) {
+        'draft' => 'heroicon-o-pencil',
+        'reviewing' => 'heroicon-o-clock',
+        'published' => 'heroicon-o-check-circle',
+    })
 ```
 
-You may also pass a callback to activate an option, accepting the cell's `$state` and `$record`:
-
-```php
-use Filament\Tables\Columns\IconColumn;
-
-IconColumn::make('is_featured')
-    ->icons([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => fn ($state, $record): bool => $record->status === 2,
-        'heroicon-o-clock' => fn ($state): bool => $state === 'reviewing',
-        'heroicon-o-check-circle' => fn ($state): bool => $state === 'published',
-    ])
-```
+In the function, `$state` is the value of the column, and `$record` can be used to access the underlying Eloquent record.
 
 ## Customizing the color
 
@@ -39,20 +26,16 @@ Icon columns may also have a set of icon colors, using the same syntax. They may
 ```php
 use Filament\Tables\Columns\IconColumn;
 
-IconColumn::make('is_featured')
-    ->icons([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => 'draft',
-        'heroicon-o-clock' => 'reviewing',
-        'heroicon-o-check-circle' => 'published',
-    ])
-    ->colors([
-        'gray',
-        'danger' => 'draft',
-        'warning' => 'reviewing',
-        'success' => 'published',
-    ])
+IconColumn::make('status')
+    ->color(fn (string $state): string => match ($state) {
+        'draft' => 'danger',
+        'reviewing' => 'warning',
+        'published' => 'success',
+        default => 'gray',
+    })
 ```
+
+In the function, `$state` is the value of the column, and `$record` can be used to access the underlying Eloquent record.
 
 ## Customizing the size
 
@@ -61,13 +44,7 @@ The default icon size is `lg`, but you may customize the size to be either `xs`,
 ```php
 use Filament\Tables\Columns\IconColumn;
 
-IconColumn::make('is_featured')
-    ->icons([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => 'draft',
-        'heroicon-o-clock' => 'reviewing',
-        'heroicon-o-check-circle' => 'published',
-    ])
+IconColumn::make('status')
     ->size('md')
 ```
 

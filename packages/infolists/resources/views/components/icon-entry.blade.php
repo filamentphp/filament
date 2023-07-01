@@ -24,7 +24,7 @@
                             default => $size,
                         }
                     "
-                    :style="\Filament\Support\get_color_css_variables($getColor($state), shades: [500])"
+                    :style="\Filament\Support\get_color_css_variables($getColor($state) ?? 'gray', shades: [500])"
                 />
             @endif
         @endforeach
