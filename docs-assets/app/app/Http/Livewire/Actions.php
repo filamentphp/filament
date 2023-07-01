@@ -8,11 +8,14 @@ use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
 
-class Actions extends Component implements HasActions
+class Actions extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
+    use InteractsWithForms;
 
     public function buttonAction(): Action
     {
@@ -113,9 +116,19 @@ class Actions extends Component implements HasActions
             ->color('danger')
             ->requiresConfirmation()
             ->modalHeading('Delete post')
-            ->modalSubheading('Are you sure you\'d like to delete this post? This cannot be undone.')
+            ->modalDescription('Are you sure you\'d like to delete this post? This cannot be undone.')
             ->modalSubmitActionLabel('Yes, delete it')
             ->action(fn () => null);
+    }
+
+    public function modalIconAction(): Action
+    {
+        return Action::make('modalIcon')
+            ->label('Delete')
+            ->color('danger')
+            ->requiresConfirmation()
+            ->action(fn () => null)
+            ->modalIcon('heroicon-o-trash');
     }
 
     public function modalFormAction(): Action

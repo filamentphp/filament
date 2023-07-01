@@ -163,6 +163,8 @@ Action::make('delete')
     ->modalIcon('heroicon-o-trash')
 ```
 
+<AutoScreenshot name="actions/modal/icon" alt="Confirmation modal with icon" version="3.x" />
+
 By default, the icon will inherit the color of the action button. You may customize the color of the icon using the `modalIconColor()` method:
 
 ```php
