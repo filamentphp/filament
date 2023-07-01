@@ -2,8 +2,8 @@ import forms from '@tailwindcss/forms'
 import typography from '@tailwindcss/typography'
 
 export default {
-    content: ['./vendor/filament/**/*.blade.php'],
     darkMode: 'class',
+    content: ['./vendor/filament/**/*.blade.php'],
     theme: {
         extend: {
             colors: {

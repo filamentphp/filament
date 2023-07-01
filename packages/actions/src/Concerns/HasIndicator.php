@@ -6,14 +6,14 @@ use Closure;
 
 trait HasIndicator
 {
-    protected string | Closure | null $indicator = null;
+    protected string | int | float | Closure | null $indicator = null;
 
     /**
      * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
      */
     protected string | array | Closure | null $indicatorColor = null;
 
-    public function indicator(string | Closure | null $indicator): static
+    public function indicator(string | int | float | Closure | null $indicator): static
     {
         $this->indicator = $indicator;
 
@@ -30,7 +30,7 @@ trait HasIndicator
         return $this;
     }
 
-    public function getIndicator(): ?string
+    public function getIndicator(): string | int | float | null
     {
         return $this->evaluate($this->indicator);
     }

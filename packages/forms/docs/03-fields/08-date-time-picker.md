@@ -1,6 +1,7 @@
 ---
 title: Date-time picker
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -16,7 +17,7 @@ DatePicker::make('date_of_birth')
 TimePicker::make('alarm_at')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613326-004b09c8-c224-4676-a70f-cf6b7e3f0306.png)
+<AutoScreenshot name="forms/fields/date-time-picker/simple" alt="Date time pickers" version="3.x" />
 
 ## Customizing the storage format
 
@@ -40,7 +41,7 @@ DateTimePicker::make('published_at')
     ->seconds(false)
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613511-30d7b2d8-227a-42ff-a6c7-e080d22305ad.png)
+<AutoScreenshot name="forms/fields/date-time-picker/without-seconds" alt="Date time picker without seconds" version="3.x" />
 
 ## Timezones
 
@@ -66,6 +67,10 @@ DatePicker::make('date_of_birth')
     ->native(false)
 ```
 
+<AutoScreenshot name="forms/fields/date-time-picker/javascript" alt="JavaScript-based date time picker" version="3.x" />
+
+Please be aware that while being accessible, the JavaScript date picker does not support full keyboard input in the same way that the native date picker does. If you require full keyboard input, you should use the native date picker.
+
 ### Customizing the display format
 
 You may customize the display format of the field, separately from the format used when it is saved in your database. For this, use the `displayFormat()` method, which also accepts a string date format, using [PHP date formatting tokens](https://www.php.net/manual/en/datetime.format.php):
@@ -78,7 +83,7 @@ DatePicker::make('date_of_birth')
     ->displayFormat('d/m/Y')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613473-51ffe805-2a7f-47e5-af8b-e7871e9c5a85.png)
+<AutoScreenshot name="forms/fields/date-time-picker/display-format" alt="Date time picker with custom display format" version="3.x" />
 
 ### Configuring the time input intervals
 
@@ -106,6 +111,8 @@ DateTimePicker::make('published_at')
     ->firstDayOfWeek(7)
 ```
 
+<AutoScreenshot name="forms/fields/date-time-picker/week-starts-on-sunday" alt="Date time picker where the week starts on Sunday" version="3.x" />
+
 There are additionally convenient helper methods to set the first day of the week more semantically:
 
 ```php
@@ -120,8 +127,6 @@ DateTimePicker::make('published_at')
     ->weekStartsOnSunday()
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613536-6c2bdc63-03f8-4dd9-92eb-9a0aca5e7263.png)
-
 ### Disabling specific dates
 
 To prevent specific dates from being selected:
@@ -131,8 +136,10 @@ use Filament\Forms\Components\DateTimePicker;
 
 DateTimePicker::make('date')
     ->native(false)
-    ->disabledDates(['2022-10-02', '2022-10-05', '2022-10-15'])
+    ->disabledDates(['2000-01-03', '2000-01-15', '2000-01-20'])
 ```
+
+<AutoScreenshot name="forms/fields/date-time-picker/disabled-dates" alt="Date time picker where dates are disabled" version="3.x" />
 
 ### Closing the picker when a date is selected
 
@@ -144,6 +151,28 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('date')
     ->native(false)
     ->closeOnDateSelection()
+```
+
+### Customizing the icon
+
+You may change the icon of the JavaScript picker using the `icon()` method, which accepts an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) name:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->native(false)
+    ->icon('heroicon-o-calendar')
+```
+
+Alternatively, you may remove the JavaScript picker icon altogether by passing `false`:
+
+```php
+use Filament\Forms\Components\DateTimePicker;
+
+DateTimePicker::make('date')
+    ->native(false)
+    ->icon(false)
 ```
 
 ## Autocompleting dates with a datalist
@@ -179,41 +208,20 @@ DatePicker::make('date')
     ->suffix('at midnight')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
+<AutoScreenshot name="forms/fields/date-time-picker/affix" alt="Date time picker with affixes" version="3.x" />
 
 ### Using icons as affixes
 
 You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
 
 ```php
-use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\TimePicker;
 
-DateTimePicker::make('at')
-    ->prefixIcon('heroicon-m-calendar')
-    ->suffixIcon('heroicon-m-clock')
+TimePicker::make('at')
+    ->prefixIcon('heroicon-m-play')
 ```
 
-## Customizing the icon
-
-You may change the icon using the `icon()` method, which accepts an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) name:
-
-```php
-use Filament\Forms\Components\DateTimePicker;
-
-DateTimePicker::make('date')
-    ->native(false)
-    ->icon('heroicon-o-calendar')
-```
-
-Alternatively, you may remove the icon altogether by passing `false`:
-
-```php
-use Filament\Forms\Components\DateTimePicker;
-
-DateTimePicker::make('date')
-    ->native(false)
-    ->icon(false)
-```
+<AutoScreenshot name="forms/fields/date-time-picker/prefix-icon" alt="Date time picker with prefix icon" version="3.x" />
 
 ## Date-time picker validation
 
@@ -230,5 +238,3 @@ DatePicker::make('date_of_birth')
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```
-
-![](https://user-images.githubusercontent.com/41773797/147613432-41e22381-af01-4f5e-8d0d-0ba535d1e444.png)

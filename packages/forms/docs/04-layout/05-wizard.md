@@ -1,6 +1,7 @@
 ---
 title: Wizard
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -25,17 +26,7 @@ Wizard::make([
 ])
 ```
 
-Each step has a mandatory label. You may optionally also add a description for extra detail:
-
-```php
-use Filament\Forms\Components\Wizard;
-
-Wizard\Step::make('Order')
-    ->description('Review your basket')
-    ->schema([
-        // ...
-    ]),
-```
+<AutoScreenshot name="forms/layout/wizard/simple" alt="Wizard" version="3.x" />
 
 > We have different setup instructions if you're looking to add a wizard to the creation process inside a [panel resource](../../panels/resources/creating-records#using-a-wizard) or an [action modal](../../actions/modals#using-a-wizard-as-a-modal-form). Following that documentation will ensure that the ability to submit the form is only available on the last step of the wizard.
 
@@ -56,6 +47,27 @@ Wizard::make([
 ])->submitAction(new HtmlString('<button type="submit">Submit</button>'))
 ```
 
+Alternatively, you can use the built-in Filament button Blade component:
+
+```php
+use Filament\Forms\Components\Wizard;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
+
+Wizard::make([
+    // ...
+])->submitAction(new HtmlString(Blade::render(<<<BLADE
+    <x-filament::button
+        type="submit"
+        size="sm"
+    >
+        Submit
+    </button>
+BLADE)))
+```
+
+You could use this component in a separate Blade view if you want.
+
 ## Setting up step icons
 
 Steps may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), set using the `icon()` method:
@@ -70,6 +82,8 @@ Wizard\Step::make('Order')
     ]),
 ```
 
+<AutoScreenshot name="forms/layout/wizard/icons" alt="Wizard with step icons" version="3.x" />
+
 ## Adding descriptions to steps
 
 You may add a short description after the title of each step using the `description()` method:
@@ -83,6 +97,8 @@ Wizard\Step::make('Order')
         // ...
     ]),
 ```
+
+<AutoScreenshot name="forms/layout/wizard/descriptions" alt="Wizard with step descriptions" version="3.x" />
 
 ## Setting the default active step
 

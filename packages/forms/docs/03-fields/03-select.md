@@ -1,6 +1,7 @@
 ---
 title: Select
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -17,7 +18,7 @@ Select::make('status')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png)
+<AutoScreenshot name="forms/fields/select/simple" alt="Select" version="3.x" />
 
 ## Searching options
 
@@ -32,7 +33,7 @@ Select::make('author_id')
     ->searchable()
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613023-cb7d1907-e4d3-4a33-aa86-1c25d780c861.png)
+<AutoScreenshot name="forms/fields/select/searchable" alt="Searchable select" version="3.x" />
 
 ### Returning custom search results
 
@@ -68,7 +69,7 @@ Select::make('technologies')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png)
+<AutoScreenshot name="forms/fields/select/multiple" alt="Multi-select" version="3.x" />
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -209,7 +210,11 @@ Select::make('author_id')
     ]),
 ```
 
+<AutoScreenshot name="forms/fields/select/create-option" alt="Select with create option button" version="3.x" />
+
 The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
+
+<AutoScreenshot name="forms/fields/select/create-option-modal" alt="Select with create option modal" version="3.x" />
 
 ### Editing the selected option in a modal
 
@@ -230,7 +235,11 @@ Select::make('author_id')
     ]),
 ```
 
+<AutoScreenshot name="forms/fields/select/edit-option" alt="Select with edit option button" version="3.x" />
+
 The form opens in a modal, where the user can fill it with data. Upon form submission, the data from the form is saved back to the record.
+
+<AutoScreenshot name="forms/fields/select/edit-option-modal" alt="Select with edit option modal" version="3.x" />
 
 ### Handling `MorphTo` relationships
 
@@ -369,6 +378,8 @@ Select::make('domain')
     ->suffix('.com')
 ```
 
+<AutoScreenshot name="forms/fields/select/affix" alt="Select with affixes" version="3.x" />
+
 ### Using icons as affixes
 
 You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
@@ -377,9 +388,10 @@ You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) befor
 use Filament\Forms\Components\Select;
 
 Select::make('domain')
-    ->prefixIcon('heroicon-m-arrow-top-right-on-square')
-    ->suffixIcon('heroicon-m-arrow-top-right-on-square')
+    ->suffixIcon('heroicon-m-globe-alt')
 ```
+
+<AutoScreenshot name="forms/fields/select/suffix-icon" alt="Select with suffix icon" version="3.x" />
 
 ## Setting a custom loading message
 

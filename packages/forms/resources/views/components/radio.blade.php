@@ -79,7 +79,7 @@
     @endcapture
 
     @if ($isInline)
-        <x-slot name="labelPrefix">
+        <x-slot name="labelSuffix">
             {{ $content() }}
         </x-slot>
     @else

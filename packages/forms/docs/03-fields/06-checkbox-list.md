@@ -1,6 +1,7 @@
 ---
 title: Checkbox list
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -18,7 +19,7 @@ CheckboxList::make('technologies')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147761423-bd6e99ec-104d-40c2-875a-fed1d638f2c3.png)
+<AutoScreenshot name="forms/fields/checkbox-list/simple" alt="Checkbox list" version="3.x" />
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -49,7 +50,7 @@ CheckboxList::make('technologies')
     ->columns(2)
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147761438-558a9dcc-b81a-4fbe-a922-a6771407d928.png)
+<AutoScreenshot name="forms/fields/checkbox-list/columns" alt="Checkbox list with 2 columns" version="3.x" />
 
 This method accepts the same options as the `columns()` method of the [grid](layout/grid). This allows you to responsively customize the number of columns at various breakpoints.
 
@@ -68,6 +69,8 @@ CheckboxList::make('technologies')
     ->gridDirection('row')
 ```
 
+<AutoScreenshot name="forms/fields/checkbox-list/rows" alt="Checkbox list with 2 rows" version="3.x" />
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
@@ -82,6 +85,8 @@ CheckboxList::make('technologies')
     ->searchable()
 ```
 
+<AutoScreenshot name="forms/fields/checkbox-list/searchable" alt="Searchable checkbox list" version="3.x" />
+
 ## Bulk toggling checkboxes
 
 You may allow users to toggle all checkboxes at once using the `bulkToggleable()` method:
@@ -95,6 +100,8 @@ CheckboxList::make('technologies')
     ])
     ->bulkToggleable()
 ```
+
+<AutoScreenshot name="forms/fields/checkbox-list/bulk-toggleable" alt="Bulk toggleable checkbox list" version="3.x" />
 
 ## Integrating with an Eloquent relationship
 

@@ -1,3 +1,8 @@
-<div {{ $attributes->merge($getExtraAttributes(), escape: false) }}>
+<div {{ $attributes
+    ->merge([
+        'id' => $getId(),
+    ], escape: false)
+    ->merge($getExtraAttributes(), escape: false)
+}}>
     {{ $getChildComponentContainer() }}
 </div>

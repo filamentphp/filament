@@ -1,6 +1,7 @@
 ---
 title: Radio
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -17,7 +18,7 @@ Radio::make('status')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613206-644bd6a4-4814-4a99-b398-d03625179bfa.png)
+<AutoScreenshot name="forms/fields/radio/simple" alt="Radio" version="3.x" />
 
 ## Setting option descriptions
 
@@ -39,7 +40,7 @@ Radio::make('status')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613223-0114ad7e-091c-43cf-b156-67cd0aaf5c0c.png)
+<AutoScreenshot name="forms/fields/radio/option-descriptions" alt="Radio with option descriptions" version="3.x" />
 
 Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
 
@@ -53,7 +54,7 @@ Radio::make('feedback')
     ->boolean()
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613274-04745624-3ddd-46bb-b25c-1e756d6f4958.png)
+<AutoScreenshot name="forms/fields/radio/boolean" alt="Boolean radio" version="3.x" />
 
 ## Positioning the options inline with the label
 
@@ -66,7 +67,7 @@ Radio::make('feedback')
     ->inline()
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147709853-198d54fb-1bb1-4e82-87d0-3034b9152f0e.png)
+<AutoScreenshot name="forms/fields/radio/inline" alt="Inline radio" version="3.x" />
 
 ## Disabling specific options
 
@@ -83,6 +84,8 @@ Radio::make('status')
     ])
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
+
+<AutoScreenshot name="forms/fields/radio/disabled-option" alt="Radio with disabled option" version="3.x" />
 
 If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 

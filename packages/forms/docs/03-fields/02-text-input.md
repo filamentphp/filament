@@ -1,6 +1,7 @@
 ---
 title: Text input
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,7 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147612753-1d4514ea-dba9-4f5c-9efc-08f09608e90d.png)
+<AutoScreenshot name="forms/fields/text-input/simple" alt="Text input" version="3.x" />
 
 ## Setting the HTML input type
 
@@ -103,8 +104,6 @@ TextInput::make('manufacturer')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png)
-
 Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking to strictly limit users to a set of predefined options, check out the [select field](select).
 
 ## Autocapitalizing text
@@ -131,7 +130,7 @@ TextInput::make('domain')
     ->suffix('.com')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147612784-5eb58d0f-5111-4db8-8f54-3b5c3e2cc80a.png)
+<AutoScreenshot name="forms/fields/text-input/affix" alt="Text input with affixes" version="3.x" />
 
 ### Using icons as affixes
 
@@ -142,9 +141,10 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
     ->url()
-    ->prefixIcon('heroicon-m-arrow-top-right-on-square')
-    ->suffixIcon('heroicon-m-arrow-top-right-on-square')
+    ->suffixIcon('heroicon-m-globe-alt')
 ```
+
+<AutoScreenshot name="forms/fields/text-input/suffix-icon" alt="Text input with suffix icon" version="3.x" />
 
 ## Input masking
 

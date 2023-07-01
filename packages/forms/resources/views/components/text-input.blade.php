@@ -58,7 +58,7 @@
                         'type' => blank($mask) ? $getType() : 'text',
                     ], escape: false)
                     ->class([
-                        'filament-forms-input block w-full shadow-sm outline-none transition duration-75 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',
+                        'filament-forms-input block w-full shadow-sm outline-none transition duration-75 placeholder:text-gray-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',
                         'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
                         'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
                     ])

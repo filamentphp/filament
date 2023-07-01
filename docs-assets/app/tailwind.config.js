@@ -1,22 +1,13 @@
-import colors from 'tailwindcss/colors'
-import forms from '@tailwindcss/forms'
-import typography from '@tailwindcss/typography'
+import preset from './vendor/filament/support/tailwind.config.preset'
 
 export default {
-    content: ['./resources/**/*.blade.php', './vendor/filament/**/*.blade.php'],
+    presets: [preset],
+    content: ['./app/**/*.php', './resources/**/*.blade.php', './vendor/filament/**/*.blade.php'],
     theme: {
         extend: {
-            colors: {
-                danger: colors.rose,
-                info: colors.blue,
-                primary: colors.blue,
-                success: colors.green,
-                warning: colors.yellow,
-            },
             fontFamily: {
                 sans: ['Be Vietnam Pro', 'sans-serif'],
             },
         },
     },
-    plugins: [forms, typography],
 }
