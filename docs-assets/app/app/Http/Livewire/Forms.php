@@ -435,7 +435,7 @@ class Forms extends Component implements HasForms
                             ->options([
                                 'draft' => 'Draft',
                                 'scheduled' => 'Scheduled',
-                                'published' => 'Published'
+                                'published' => 'Published',
                             ])
                             ->default('draft'),
                     ]),
@@ -450,12 +450,12 @@ class Forms extends Component implements HasForms
                             ->options([
                                 'draft' => 'Draft',
                                 'scheduled' => 'Scheduled',
-                                'published' => 'Published'
+                                'published' => 'Published',
                             ])
                             ->descriptions([
                                 'draft' => 'Is not visible.',
                                 'scheduled' => 'Will be visible.',
-                                'published' => 'Is visible.'
+                                'published' => 'Is visible.',
                             ])
                             ->default('draft'),
                     ]),
@@ -493,7 +493,7 @@ class Forms extends Component implements HasForms
                             ->options([
                                 'draft' => 'Draft',
                                 'scheduled' => 'Scheduled',
-                                'published' => 'Published'
+                                'published' => 'Published',
                             ])
                             ->default('draft')
                             ->disableOptionWhen(fn (string $value): bool => $value === 'published'),
