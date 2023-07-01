@@ -26,7 +26,7 @@
     @if ($alpineActive)
         x-bind:class="{
             'hover:text-gray-800 focus:text-primary-600 dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400':
-                ! ({{ $alpineActive }}),
+                ! {{ $alpineActive }},
             'text-primary-600 shadow bg-white dark:text-white dark:bg-primary-600':
                 {{ $alpineActive }},
         }"
@@ -78,14 +78,15 @@
         <span
             @if ($alpineActive)
                 x-bind:class="{
-                    'bg-white dark:bg-gray-600': ! ({{ $alpineActive }}),
-                    'bg-primary-600 text-white font-medium dark:bg-white dark:text-primary-600': {{ $alpineActive }},
+                    'bg-white dark:bg-gray-600': ! {{ $alpineActive }},
+                    'bg-primary-600 text-white font-medium dark:bg-white dark:text-primary-600':
+                        {{ $alpineActive }},
                 }"
             @endif
             @class([
                 'min-h-4 inline-flex items-center justify-center whitespace-normal rounded-xl px-2 py-0.5 text-xs font-medium tracking-tight',
                 'bg-white dark:bg-gray-600' => (! $active) && (! $alpineActive),
-                'bg-primary-600 text-white font-medium dark:bg-white dark:text-primary-600' => $active && (! $alpineActive),
+                'bg-primary-600 font-medium text-white dark:bg-white dark:text-primary-600' => $active && (! $alpineActive),
             ])
         >
             {{ $badge }}
