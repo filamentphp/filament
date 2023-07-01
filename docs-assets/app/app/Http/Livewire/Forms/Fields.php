@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Http\Livewire\Forms;
 
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
@@ -8,6 +8,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\KeyValue;
@@ -26,7 +27,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Livewire\Component;
 
-class Forms extends Component implements HasForms
+class Fields extends Component implements HasForms
 {
     use InteractsWithForms;
 
@@ -43,9 +44,9 @@ class Forms extends Component implements HasForms
             ->statePath('data')
             ->schema([
                 Group::make()
+                    ->id('simple')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'simple',
                     ])
                     ->schema([
                         TextInput::make('simple')
@@ -53,9 +54,9 @@ class Forms extends Component implements HasForms
                             ->default('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->id('helperText')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'helperText',
                     ])
                     ->schema([
                         TextInput::make('helperText')
@@ -64,9 +65,9 @@ class Forms extends Component implements HasForms
                             ->helperText('Your **full name** here, including any middle names.'),
                     ]),
                 Group::make()
+                    ->id('hint')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'hint',
                     ])
                     ->schema([
                         TextInput::make('hint')
@@ -76,9 +77,9 @@ class Forms extends Component implements HasForms
                             ->hint('[Forgotten your password?](forgotten-password)'),
                     ]),
                 Group::make()
+                    ->id('hintColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'hintColor',
                     ])
                     ->schema([
                         RichEditor::make('hintColor')
@@ -88,9 +89,9 @@ class Forms extends Component implements HasForms
                             ->hintColor('primary'),
                     ]),
                 Group::make()
+                    ->id('hintIcon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'hintIcon',
                     ])
                     ->schema([
                         RichEditor::make('hintIcon')
@@ -100,9 +101,9 @@ class Forms extends Component implements HasForms
                             ->hintIcon('heroicon-m-language'),
                     ]),
                 Group::make()
+                    ->id('disabled')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'disabled',
                     ])
                     ->schema([
                         TextInput::make('disabled')
@@ -111,9 +112,9 @@ class Forms extends Component implements HasForms
                             ->default('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->id('placeholder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'placeholder',
                     ])
                     ->schema([
                         TextInput::make('placeholder')
@@ -121,9 +122,9 @@ class Forms extends Component implements HasForms
                             ->placeholder('John Doe'),
                     ]),
                 Group::make()
+                    ->id('textInput')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'textInput',
                     ])
                     ->schema([
                         TextInput::make('textInput')
@@ -131,9 +132,9 @@ class Forms extends Component implements HasForms
                             ->default('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->id('textInputAffix')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'textInputAffix',
                     ])
                     ->schema([
                         TextInput::make('textInputAffix')
@@ -143,9 +144,9 @@ class Forms extends Component implements HasForms
                             ->suffix('.com'),
                     ]),
                 Group::make()
+                    ->id('textInputSuffixIcon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'textInputSuffixIcon',
                     ])
                     ->schema([
                         TextInput::make('textInputSuffixIcon')
@@ -154,18 +155,18 @@ class Forms extends Component implements HasForms
                             ->suffixIcon('heroicon-m-globe-alt'),
                     ]),
                 Group::make()
+                    ->id('select')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'select',
                     ])
                     ->schema([
                         Select::make('select')
                             ->label('Status'),
                     ]),
                 Group::make()
+                    ->id('searchableSelect')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-72 max-w-xl',
-                        'id' => 'searchableSelect',
                     ])
                     ->schema([
                         Select::make('searchableSelect')
@@ -180,9 +181,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('multipleSelect')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-44 max-w-xl',
-                        'id' => 'multipleSelect',
                     ])
                     ->schema([
                         Select::make('multipleSelect')
@@ -196,9 +197,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('createSelectOption')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'createSelectOption',
                     ])
                     ->schema([
                         Select::make('createSelectOption')
@@ -208,9 +209,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('editSelectOption')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'editSelectOption',
                     ])
                     ->schema([
                         Select::make('editSelectOption')
@@ -225,9 +226,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('selectAffix')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'selectAffix',
                     ])
                     ->schema([
                         Select::make('selectAffix')
@@ -240,9 +241,9 @@ class Forms extends Component implements HasForms
                             ->suffix('.com'),
                     ]),
                 Group::make()
+                    ->id('selectSuffixIcon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'selectSuffixIcon',
                     ])
                     ->schema([
                         Select::make('selectSuffixIcon')
@@ -254,18 +255,18 @@ class Forms extends Component implements HasForms
                             ->suffixIcon('heroicon-m-globe-alt'),
                     ]),
                 Group::make()
+                    ->id('checkbox')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'checkbox',
                     ])
                     ->schema([
                         Checkbox::make('checkbox')
                             ->label('Is admin'),
                     ]),
                 Group::make()
+                    ->id('inlineCheckbox')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'inlineCheckbox',
                     ])
                     ->schema([
                         Checkbox::make('inlineCheckbox')
@@ -273,9 +274,9 @@ class Forms extends Component implements HasForms
                             ->inline(),
                     ]),
                 Group::make()
+                    ->id('notInlineCheckbox')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'notInlineCheckbox',
                     ])
                     ->schema([
                         Checkbox::make('notInlineCheckbox')
@@ -283,18 +284,18 @@ class Forms extends Component implements HasForms
                             ->inline(false),
                     ]),
                 Group::make()
+                    ->id('toggle')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'toggle',
                     ])
                     ->schema([
                         Toggle::make('toggle')
                             ->label('Is admin'),
                     ]),
                 Group::make()
+                    ->id('toggleIcons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'toggleIcons',
                     ])
                     ->schema([
                         Toggle::make('toggleIcons')
@@ -303,9 +304,9 @@ class Forms extends Component implements HasForms
                             ->offIcon('heroicon-m-user'),
                     ]),
                 Group::make()
+                    ->id('toggleOffColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'toggleOffColor',
                     ])
                     ->schema([
                         Toggle::make('toggleOffColor')
@@ -315,9 +316,9 @@ class Forms extends Component implements HasForms
                             ->offColor('danger'),
                     ]),
                 Group::make()
+                    ->id('toggleOnColor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'toggleOnColor',
                     ])
                     ->schema([
                         Toggle::make('toggleOnColor')
@@ -327,9 +328,9 @@ class Forms extends Component implements HasForms
                             ->offColor('danger'),
                     ]),
                 Group::make()
+                    ->id('inlineToggle')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'inlineToggle',
                     ])
                     ->schema([
                         Toggle::make('inlineToggle')
@@ -337,9 +338,9 @@ class Forms extends Component implements HasForms
                             ->inline(),
                     ]),
                 Group::make()
+                    ->id('notInlineToggle')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'notInlineToggle',
                     ])
                     ->schema([
                         Toggle::make('notInlineToggle')
@@ -347,9 +348,9 @@ class Forms extends Component implements HasForms
                             ->inline(false),
                     ]),
                 Group::make()
+                    ->id('checkboxList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'checkboxList',
                     ])
                     ->schema([
                         CheckboxList::make('checkboxList')
@@ -362,9 +363,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('checkboxListColumns')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'checkboxListColumns',
                     ])
                     ->schema([
                         CheckboxList::make('checkboxListColumns')
@@ -379,9 +380,9 @@ class Forms extends Component implements HasForms
                             ->columns(2),
                     ]),
                 Group::make()
+                    ->id('checkboxListRows')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'checkboxListRows',
                     ])
                     ->schema([
                         CheckboxList::make('checkboxListRows')
@@ -397,9 +398,9 @@ class Forms extends Component implements HasForms
                             ->gridDirection('row'),
                     ]),
                 Group::make()
+                    ->id('searchableCheckboxList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'searchableCheckboxList',
                     ])
                     ->schema([
                         CheckboxList::make('searchableCheckboxList')
@@ -414,9 +415,9 @@ class Forms extends Component implements HasForms
                             ->searchable(),
                     ]),
                 Group::make()
+                    ->id('bulkToggleableCheckboxList')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'bulkToggleableCheckboxList',
                     ])
                     ->schema([
                         CheckboxList::make('bulkToggleableCheckboxList')
@@ -431,9 +432,9 @@ class Forms extends Component implements HasForms
                             ->bulkToggleable(),
                     ]),
                 Group::make()
+                    ->id('radio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'radio',
                     ])
                     ->schema([
                         Radio::make('radio')
@@ -446,9 +447,9 @@ class Forms extends Component implements HasForms
                             ->default('draft'),
                     ]),
                 Group::make()
+                    ->id('radioOptionDescriptions')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'radioOptionDescriptions',
                     ])
                     ->schema([
                         Radio::make('radioOptionDescriptions')
@@ -466,9 +467,9 @@ class Forms extends Component implements HasForms
                             ->default('draft'),
                     ]),
                 Group::make()
+                    ->id('booleanRadio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'booleanRadio',
                     ])
                     ->schema([
                         Radio::make('booleanRadio')
@@ -477,9 +478,9 @@ class Forms extends Component implements HasForms
                             ->default(true),
                     ]),
                 Group::make()
+                    ->id('inlineRadio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'inlineRadio',
                     ])
                     ->schema([
                         Radio::make('inlineRadio')
@@ -489,9 +490,9 @@ class Forms extends Component implements HasForms
                             ->default(true),
                     ]),
                 Group::make()
+                    ->id('disabledOptionRadio')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'disabledOptionRadio',
                     ])
                     ->schema([
                         Radio::make('disabledOptionRadio')
@@ -505,9 +506,9 @@ class Forms extends Component implements HasForms
                             ->disableOptionWhen(fn (string $value): bool => $value === 'published'),
                     ]),
                 Group::make()
+                    ->id('dateTimePickers')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'dateTimePickers',
                     ])
                     ->schema([
                         DateTimePicker::make('dateTimePicker')
@@ -518,9 +519,9 @@ class Forms extends Component implements HasForms
                             ->label('Alarm at'),
                     ]),
                 Group::make()
+                    ->id('dateTimePickerWithoutSeconds')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'dateTimePickerWithoutSeconds',
                     ])
                     ->schema([
                         DateTimePicker::make('dateTimePickerWithoutSeconds')
@@ -528,9 +529,9 @@ class Forms extends Component implements HasForms
                             ->seconds(false),
                     ]),
                 Group::make()
+                    ->id('javascriptDateTimePicker')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-96 max-w-xl',
-                        'id' => 'javascriptDateTimePicker',
                     ])
                     ->schema([
                         DatePicker::make('javascriptDateTimePicker')
@@ -539,9 +540,9 @@ class Forms extends Component implements HasForms
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
+                    ->id('dateTimePickerDisplayFormat')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'dateTimePickerDisplayFormat',
                     ])
                     ->schema([
                         DatePicker::make('dateTimePickerDisplayFormat')
@@ -551,9 +552,9 @@ class Forms extends Component implements HasForms
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
+                    ->id('dateTimePickerWeekStartsOnSunday')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-96 max-w-xl',
-                        'id' => 'dateTimePickerWeekStartsOnSunday',
                     ])
                     ->schema([
                         DatePicker::make('dateTimePickerWeekStartsOnSunday')
@@ -563,9 +564,9 @@ class Forms extends Component implements HasForms
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
+                    ->id('dateTimePickerDisabledDates')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-96 max-w-xl',
-                        'id' => 'dateTimePickerDisabledDates',
                     ])
                     ->schema([
                         DatePicker::make('dateTimePickerDisabledDates')
@@ -575,9 +576,9 @@ class Forms extends Component implements HasForms
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
+                    ->id('dateTimePickerAffix')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'dateTimePickerAffix',
                     ])
                     ->schema([
                         DatePicker::make('dateTimePickerAffix')
@@ -587,9 +588,9 @@ class Forms extends Component implements HasForms
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
+                    ->id('dateTimePickerPrefixIcon')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'dateTimePickerPrefixIcon',
                     ])
                     ->schema([
                         TimePicker::make('dateTimePickerPrefixIcon')
@@ -598,36 +599,36 @@ class Forms extends Component implements HasForms
                             ->default('2000-01-01'),
                     ]),
                 Group::make()
+                    ->id('fileUpload')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
-                        'id' => 'fileUpload',
                     ])
                     ->schema([
                         FileUpload::make('fileUpload')
                             ->label('Attachment'),
                     ]),
                 Group::make()
+                    ->id('richEditor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'richEditor',
                     ])
                     ->schema([
                         RichEditor::make('richEditor')
                             ->label('Content'),
                     ]),
                 Group::make()
+                    ->id('markdownEditor')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'markdownEditor',
                     ])
                     ->schema([
                         MarkdownEditor::make('markdownEditor')
                             ->label('Content'),
                     ]),
                 Group::make()
+                    ->id('repeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'repeater',
                     ])
                     ->schema([
                         Repeater::make('repeater')
@@ -663,9 +664,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('repeaterReorderableWithButtons')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'repeaterReorderableWithButtons',
                     ])
                     ->schema([
                         Repeater::make('repeaterReorderableWithButtons')
@@ -698,9 +699,9 @@ class Forms extends Component implements HasForms
                             ->reorderableWithButtons(),
                     ]),
                 Group::make()
+                    ->id('collapsedRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'collapsedRepeater',
                     ])
                     ->schema([
                         Repeater::make('collapsedRepeater')
@@ -709,9 +710,9 @@ class Forms extends Component implements HasForms
                             ->collapsed(),
                     ]),
                 Group::make()
+                    ->id('cloneableRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'cloneableRepeater',
                     ])
                     ->schema([
                         Repeater::make('cloneableRepeater')
@@ -728,9 +729,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('gridRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'gridRepeater',
                     ])
                     ->schema([
                         Repeater::make('gridRepeater')
@@ -747,9 +748,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('labelledRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'labelledRepeater',
                     ])
                     ->schema([
                         Repeater::make('labelledRepeater')
@@ -782,9 +783,9 @@ class Forms extends Component implements HasForms
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),
                 Group::make()
+                    ->id('insetRepeater')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'insetRepeater',
                     ])
                     ->schema([
                         Repeater::make('insetRepeater')
@@ -817,9 +818,9 @@ class Forms extends Component implements HasForms
                             ->inset(),
                     ]),
                 Group::make()
+                    ->id('builder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'builder',
                     ])
                     ->schema([
                         Builder::make('builder')
@@ -896,9 +897,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('labelledBuilder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'labelledBuilder',
                     ])
                     ->schema([
                         Builder::make('labelledBuilder')
@@ -947,9 +948,9 @@ class Forms extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('builderIcons')
                     ->extraAttributes([
                         'class' => 'px-16 pt-16 pb-40 max-w-5xl',
-                        'id' => 'builderIcons',
                     ])
                     ->schema([
                         Builder::make('builderIcons')
@@ -973,227 +974,227 @@ class Forms extends Component implements HasForms
                                     ],
                                 ],
                             ]),
-                        Group::make()
-                            ->extraAttributes([
-                                'class' => 'p-16 max-w-5xl',
-                                'id' => 'builderReorderableWithButtons',
-                            ])
+                    ]),
+                Group::make()
+                    ->id('builderReorderableWithButtons')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Builder::make('builderReorderableWithButtons')
+                            ->label('Content')
                             ->schema([
-                                Builder::make('builderReorderableWithButtons')
-                                    ->label('Content')
+                                Builder\Block::make('paragraph')
                                     ->schema([
-                                        Builder\Block::make('paragraph')
-                                            ->schema([
-                                                Textarea::make('content')
-                                                    ->label('Paragraph')
-                                                    ->required(),
-                                            ])
-                                            ->icon('heroicon-m-bars-3-bottom-left'),
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
                                     ])
-                                    ->default([
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                    ])
-                                    ->reorderableWithButtons(),
-                                ]),
-                        Group::make()
-                            ->extraAttributes([
-                                'class' => 'p-16 max-w-5xl',
-                                'id' => 'collapsedBuilder',
+                                    ->icon('heroicon-m-bars-3-bottom-left'),
                             ])
-                            ->schema([
-                                Builder::make('collapsedBuilder')
-                                    ->label('Content')
-                                    ->schema([
-                                        Builder\Block::make('paragraph')
-                                            ->schema([
-                                                Textarea::make('content')
-                                                    ->label('Paragraph')
-                                                    ->required(),
-                                            ])
-                                            ->icon('heroicon-m-bars-3-bottom-left'),
-                                    ])
-                                    ->default([
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                    ])
-                                    ->collapsed(),
-                            ]),
-                        Group::make()
-                            ->extraAttributes([
-                                'class' => 'p-16 max-w-5xl',
-                                'id' => 'cloneableBuilder',
+                            ->default([
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
                             ])
-                            ->schema([
-                                Builder::make('cloneableBuilder')
-                                    ->label('Content')
-                                    ->schema([
-                                        Builder\Block::make('paragraph')
-                                            ->schema([
-                                                Textarea::make('content')
-                                                    ->label('Paragraph')
-                                                    ->required(),
-                                            ])
-                                            ->icon('heroicon-m-bars-3-bottom-left'),
-                                    ])
-                                    ->default([
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                    ])
-                                    ->cloneable(),
-                            ]),
-                        Group::make()
-                            ->extraAttributes([
-                                'class' => 'p-16 max-w-5xl',
-                                'id' => 'insetBuilder',
-                            ])
-                            ->schema([
-                                Builder::make('insetBuilder')
-                                    ->label('Content')
-                                    ->schema([
-                                        Builder\Block::make('paragraph')
-                                            ->schema([
-                                                Textarea::make('content')
-                                                    ->label('Paragraph')
-                                                    ->required(),
-                                            ])
-                                            ->icon('heroicon-m-bars-3-bottom-left'),
-                                    ])
-                                    ->default([
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                        [
-                                            'type' => 'paragraph',
-                                            'data' => [
-                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                            ],
-                                        ],
-                                    ])
-                                    ->inset(),
-                                ]),
+                            ->reorderableWithButtons(),
                         ]),
                 Group::make()
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                        'id' => 'tagsInput',
-                    ])
-                    ->schema([
-                        TagsInput::make('tagsInput')
-                            ->label('Tags')
-                            ->default(['Tailwind CSS', 'Alpine.js']),
-                    ]),
-                Group::make()
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                        'id' => 'textarea',
-                    ])
-                    ->schema([
-                        Textarea::make('textarea')
-                            ->label('Description')
-                            ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.'),
-                    ]),
-                Group::make()
+                    ->id('collapsedBuilder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
-                        'id' => 'keyValue',
                     ])
                     ->schema([
-                        KeyValue::make('keyValue')
-                            ->label('Meta')
-                            ->default([
-                                'description' => 'Filament is a collection of Laravel packages',
-                                'og:type' => 'website',
-                                'og:site_name' => 'Filament',
-                            ]),
-                    ]),
-                Group::make()
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                        'id' => 'reorderableKeyValue',
-                    ])
-                    ->schema([
-                        KeyValue::make('reorderableKeyValue')
-                            ->label('Meta')
-                            ->default([
-                                'description' => 'Filament is a collection of Laravel packages',
-                                'og:type' => 'website',
-                                'og:site_name' => 'Filament',
+                        Builder::make('collapsedBuilder')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->icon('heroicon-m-bars-3-bottom-left'),
                             ])
-                            ->reorderable(),
+                            ->default([
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                            ])
+                            ->collapsed(),
                     ]),
                 Group::make()
+                    ->id('cloneableBuilder')
                     ->extraAttributes([
-                        'class' => 'p-16 max-w-xl',
-                        'id' => 'colorPicker',
+                        'class' => 'p-16 max-w-5xl',
                     ])
                     ->schema([
-                        ColorPicker::make('colorPicker')
-                            ->label('Color')
-                            ->default('#3490dc'),
+                        Builder::make('cloneableBuilder')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->icon('heroicon-m-bars-3-bottom-left'),
+                            ])
+                            ->default([
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                            ])
+                            ->cloneable(),
                     ]),
+                Group::make()
+                    ->id('insetBuilder')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Builder::make('insetBuilder')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->icon('heroicon-m-bars-3-bottom-left'),
+                            ])
+                            ->default([
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                            ])
+                            ->inset(),
+                        ]),
+                    Group::make()
+                        ->id('tagsInput')
+                        ->extraAttributes([
+                            'class' => 'p-16 max-w-xl',
+                        ])
+                        ->schema([
+                            TagsInput::make('tagsInput')
+                                ->label('Tags')
+                                ->default(['Tailwind CSS', 'Alpine.js']),
+                        ]),
+                    Group::make()
+                        ->id('textarea')
+                        ->extraAttributes([
+                            'class' => 'p-16 max-w-xl',
+                        ])
+                        ->schema([
+                            Textarea::make('textarea')
+                                ->label('Description')
+                                ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.'),
+                        ]),
+                    Group::make()
+                        ->id('keyValue')
+                        ->extraAttributes([
+                            'class' => 'p-16 max-w-5xl',
+                        ])
+                        ->schema([
+                            KeyValue::make('keyValue')
+                                ->label('Meta')
+                                ->default([
+                                    'description' => 'Filament is a collection of Laravel packages',
+                                    'og:type' => 'website',
+                                    'og:site_name' => 'Filament',
+                                ]),
+                        ]),
+                    Group::make()
+                        ->id('reorderableKeyValue')
+                        ->extraAttributes([
+                            'class' => 'p-16 max-w-5xl',
+                        ])
+                        ->schema([
+                            KeyValue::make('reorderableKeyValue')
+                                ->label('Meta')
+                                ->default([
+                                    'description' => 'Filament is a collection of Laravel packages',
+                                    'og:type' => 'website',
+                                    'og:site_name' => 'Filament',
+                                ])
+                                ->reorderable(),
+                        ]),
+                    Group::make()
+                        ->id('colorPicker')
+                        ->extraAttributes([
+                            'class' => 'p-16 max-w-xl',
+                        ])
+                        ->schema([
+                            ColorPicker::make('colorPicker')
+                                ->label('Color')
+                                ->default('#3490dc'),
+                        ]),
             ]);
     }
 
     public function render()
     {
-        return view('livewire.forms');
+        return view('livewire.forms.fields');
     }
 }

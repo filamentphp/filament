@@ -1,6 +1,7 @@
 ---
 title: Section
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -9,27 +10,31 @@ You may want to separate your fields into sections, each with a heading and desc
 ```php
 use Filament\Forms\Components\Section;
 
-Section::make('Heading')
-    ->description('Description')
+Section::make('Rate limiting')
+    ->description('Prevent abuse by limiting the number of requests per period')
     ->schema([
         // ...
     ])
 ```
 
+<AutoScreenshot name="forms/layout/section/simple" alt="Section" version="3.x" />
+
 ## Adding an icon to the section's header
 
-You may add an icon to the section's header using the `icon()` method:
+You may add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to the section's header using the `icon()` method:
 
 ```php
 use Filament\Forms\Components\Section;
 
-Section::make('Heading')
-    ->description('Description')
+Section::make('Cart')
+    ->description('The items you have selected for purchase')
     ->icon('heroicon-m-shopping-bag')
     ->schema([
         // ...
     ])
 ```
+
+<AutoScreenshot name="forms/layout/section/icons" alt="Section with icon" version="3.x" />
 
 ## Positioning the heading and description aside
 
@@ -38,8 +43,8 @@ You may use the `aside()` to align heading & description on the left, and the fo
 ```php
 use Filament\Forms\Components\Section;
 
-Section::make('Heading')
-    ->description('Description')
+Section::make('Rate limiting')
+    ->description('Prevent abuse by limiting the number of requests per period')
     ->aside()
     ->schema([
         // ...
@@ -53,7 +58,8 @@ Sections may be `collapsible()` to optionally hide content in long forms:
 ```php
 use Filament\Forms\Components\Section;
 
-Section::make('Heading')
+Section::make('Cart')
+    ->description('The items you have selected for purchase')
     ->schema([
         // ...
     ])
@@ -65,7 +71,8 @@ Your sections may be `collapsed()` by default:
 ```php
 use Filament\Forms\Components\Section;
 
-Section::make('Heading')
+Section::make('Cart')
+    ->description('The items you have selected for purchase')
     ->schema([
         // ...
     ])
@@ -79,7 +86,8 @@ When nesting sections, you can use a more compact styling:
 ```php
 use Filament\Forms\Components\Section;
 
-Section::make('Heading')
+Section::make('Rate limiting')
+    ->description('Prevent abuse by limiting the number of requests per period')
     ->schema([
         // ...
     ])

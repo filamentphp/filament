@@ -270,7 +270,7 @@ export default {
         selector: 'body',
     },
     'forms/fields/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#simple',
         viewport: {
             width: 1920,
@@ -279,7 +279,7 @@ export default {
         },
     },
     'forms/fields/helper-text': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#helperText',
         viewport: {
             width: 1920,
@@ -288,7 +288,7 @@ export default {
         },
     },
     'forms/fields/hint': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#hint',
         viewport: {
             width: 1920,
@@ -297,7 +297,7 @@ export default {
         },
     },
     'forms/fields/hint-color': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#hintColor',
         viewport: {
             width: 1920,
@@ -306,7 +306,7 @@ export default {
         },
     },
     'forms/fields/hint-icon': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#hintIcon',
         viewport: {
             width: 1920,
@@ -315,7 +315,7 @@ export default {
         },
     },
     'forms/fields/disabled': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#disabled',
         viewport: {
             width: 1920,
@@ -324,7 +324,7 @@ export default {
         },
     },
     'forms/fields/placeholder': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#placeholder',
         viewport: {
             width: 1920,
@@ -333,7 +333,7 @@ export default {
         },
     },
     'forms/fields/text-input/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#textInput',
         viewport: {
             width: 1920,
@@ -342,7 +342,7 @@ export default {
         },
     },
     'forms/fields/text-input/affix': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#textInputAffix',
         viewport: {
             width: 1920,
@@ -351,7 +351,7 @@ export default {
         },
     },
     'forms/fields/text-input/suffix-icon': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#textInputSuffixIcon',
         viewport: {
             width: 1920,
@@ -360,7 +360,7 @@ export default {
         },
     },
     'forms/fields/select/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#select',
         viewport: {
             width: 1920,
@@ -369,7 +369,7 @@ export default {
         },
     },
     'forms/fields/select/searchable': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#searchableSelect',
         viewport: {
             width: 1920,
@@ -383,7 +383,7 @@ export default {
         },
     },
     'forms/fields/select/multiple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#multipleSelect',
         viewport: {
             width: 1920,
@@ -399,7 +399,7 @@ export default {
         },
     },
     'forms/fields/select/create-option': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#createSelectOption',
         viewport: {
             width: 1920,
@@ -408,7 +408,7 @@ export default {
         },
     },
     'forms/fields/select/create-option-modal': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: 'body',
         viewport: {
             width: 640,
@@ -422,7 +422,7 @@ export default {
         },
     },
     'forms/fields/select/edit-option': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#editSelectOption',
         viewport: {
             width: 1920,
@@ -431,7 +431,7 @@ export default {
         },
     },
     'forms/fields/select/edit-option-modal': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: 'body',
         viewport: {
             width: 640,
@@ -445,7 +445,7 @@ export default {
         },
     },
     'forms/fields/select/affix': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#selectAffix',
         viewport: {
             width: 1920,
@@ -454,7 +454,7 @@ export default {
         },
     },
     'forms/fields/select/suffix-icon': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#selectSuffixIcon',
         viewport: {
             width: 1920,
@@ -463,7 +463,7 @@ export default {
         },
     },
     'forms/fields/checkbox/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#checkbox',
         viewport: {
             width: 1920,
@@ -472,7 +472,7 @@ export default {
         },
     },
     'forms/fields/checkbox/inline': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#inlineCheckbox',
         viewport: {
             width: 1920,
@@ -481,7 +481,7 @@ export default {
         },
     },
     'forms/fields/checkbox/not-inline': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#notInlineCheckbox',
         viewport: {
             width: 1920,
@@ -490,7 +490,7 @@ export default {
         },
     },
     'forms/fields/toggle/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#toggle',
         viewport: {
             width: 1920,
@@ -499,7 +499,7 @@ export default {
         },
     },
     'forms/fields/toggle/icons': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#toggleIcons',
         viewport: {
             width: 1920,
@@ -508,7 +508,7 @@ export default {
         },
     },
     'forms/fields/toggle/off-color': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#toggleOffColor',
         viewport: {
             width: 1920,
@@ -517,7 +517,7 @@ export default {
         },
     },
     'forms/fields/toggle/on-color': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#toggleOnColor',
         viewport: {
             width: 1920,
@@ -526,7 +526,7 @@ export default {
         },
     },
     'forms/fields/toggle/inline': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#inlineToggle',
         viewport: {
             width: 1920,
@@ -535,7 +535,7 @@ export default {
         },
     },
     'forms/fields/toggle/not-inline': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#notInlineToggle',
         viewport: {
             width: 1920,
@@ -544,7 +544,7 @@ export default {
         },
     },
     'forms/fields/checkbox-list/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#checkboxList',
         viewport: {
             width: 1920,
@@ -553,7 +553,7 @@ export default {
         },
     },
     'forms/fields/checkbox-list/columns': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#checkboxListColumns',
         viewport: {
             width: 1920,
@@ -562,7 +562,7 @@ export default {
         },
     },
     'forms/fields/checkbox-list/rows': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#checkboxListRows',
         viewport: {
             width: 1920,
@@ -571,7 +571,7 @@ export default {
         },
     },
     'forms/fields/checkbox-list/searchable': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#searchableCheckboxList',
         viewport: {
             width: 1920,
@@ -580,7 +580,7 @@ export default {
         },
     },
     'forms/fields/checkbox-list/bulk-toggleable': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#bulkToggleableCheckboxList',
         viewport: {
             width: 1920,
@@ -589,7 +589,7 @@ export default {
         },
     },
     'forms/fields/radio/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#radio',
         viewport: {
             width: 1920,
@@ -598,7 +598,7 @@ export default {
         },
     },
     'forms/fields/radio/option-descriptions': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#radioOptionDescriptions',
         viewport: {
             width: 1920,
@@ -607,7 +607,7 @@ export default {
         },
     },
     'forms/fields/radio/boolean': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#booleanRadio',
         viewport: {
             width: 1920,
@@ -616,7 +616,7 @@ export default {
         },
     },
     'forms/fields/radio/inline': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#inlineRadio',
         viewport: {
             width: 1920,
@@ -625,7 +625,7 @@ export default {
         },
     },
     'forms/fields/radio/disabled-option': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#disabledOptionRadio',
         viewport: {
             width: 1920,
@@ -634,7 +634,7 @@ export default {
         },
     },
     'forms/fields/date-time-picker/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#dateTimePickers',
         viewport: {
             width: 1920,
@@ -643,7 +643,7 @@ export default {
         },
     },
     'forms/fields/date-time-picker/without-seconds': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#dateTimePickerWithoutSeconds',
         viewport: {
             width: 1920,
@@ -652,7 +652,7 @@ export default {
         },
     },
     'forms/fields/date-time-picker/javascript': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#javascriptDateTimePicker',
         viewport: {
             width: 1920,
@@ -666,7 +666,7 @@ export default {
         },
     },
     'forms/fields/date-time-picker/display-format': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#dateTimePickerDisplayFormat',
         viewport: {
             width: 1920,
@@ -675,7 +675,7 @@ export default {
         },
     },
     'forms/fields/date-time-picker/week-starts-on-sunday': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#dateTimePickerWeekStartsOnSunday',
         viewport: {
             width: 1920,
@@ -689,7 +689,7 @@ export default {
         },
     },
     'forms/fields/date-time-picker/disabled-dates': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#dateTimePickerDisabledDates',
         viewport: {
             width: 1920,
@@ -703,7 +703,7 @@ export default {
         },
     },
     'forms/fields/date-time-picker/affix': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#dateTimePickerAffix',
         viewport: {
             width: 1920,
@@ -712,7 +712,7 @@ export default {
         },
     },
     'forms/fields/date-time-picker/prefix-icon': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#dateTimePickerPrefixIcon',
         viewport: {
             width: 1920,
@@ -721,7 +721,7 @@ export default {
         },
     },
     'forms/fields/file-upload/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#fileUpload',
         viewport: {
             width: 1920,
@@ -730,7 +730,7 @@ export default {
         },
     },
     'forms/fields/rich-editor/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#richEditor',
         viewport: {
             width: 1920,
@@ -739,7 +739,7 @@ export default {
         },
     },
     'forms/fields/markdown-editor/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#markdownEditor',
         viewport: {
             width: 1920,
@@ -755,7 +755,7 @@ export default {
         },
     },
     'forms/fields/repeater/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#repeater',
         viewport: {
             width: 1920,
@@ -764,7 +764,7 @@ export default {
         },
     },
     'forms/fields/repeater/reorderable-with-buttons': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#repeaterReorderableWithButtons',
         viewport: {
             width: 1920,
@@ -773,7 +773,7 @@ export default {
         },
     },
     'forms/fields/repeater/collapsed': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#collapsedRepeater',
         viewport: {
             width: 1920,
@@ -782,7 +782,7 @@ export default {
         },
     },
     'forms/fields/repeater/cloneable': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#cloneableRepeater',
         viewport: {
             width: 1920,
@@ -791,7 +791,7 @@ export default {
         },
     },
     'forms/fields/repeater/grid': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#gridRepeater',
         viewport: {
             width: 1920,
@@ -800,7 +800,7 @@ export default {
         },
     },
     'forms/fields/repeater/labelled': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#labelledRepeater',
         viewport: {
             width: 1920,
@@ -809,7 +809,7 @@ export default {
         },
     },
     'forms/fields/repeater/inset': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#insetRepeater',
         viewport: {
             width: 1920,
@@ -818,7 +818,7 @@ export default {
         },
     },
     'forms/fields/builder/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#builder',
         viewport: {
             width: 1920,
@@ -827,7 +827,7 @@ export default {
         },
     },
     'forms/fields/builder/labelled': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#labelledBuilder',
         viewport: {
             width: 1920,
@@ -836,7 +836,7 @@ export default {
         },
     },
     'forms/fields/builder/icons': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#builderIcons',
         viewport: {
             width: 1920,
@@ -850,7 +850,7 @@ export default {
         },
     },
     'forms/fields/builder/reorderable-with-buttons': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#builderReorderableWithButtons',
         viewport: {
             width: 1920,
@@ -859,7 +859,7 @@ export default {
         },
     },
     'forms/fields/builder/collapsed': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#collapsedBuilder',
         viewport: {
             width: 1920,
@@ -868,7 +868,7 @@ export default {
         },
     },
     'forms/fields/builder/cloneable': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#cloneableBuilder',
         viewport: {
             width: 1920,
@@ -877,7 +877,7 @@ export default {
         },
     },
     'forms/fields/builder/inset': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#insetBuilder',
         viewport: {
             width: 1920,
@@ -886,7 +886,7 @@ export default {
         },
     },
     'forms/fields/tags-input/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#tagsInput',
         viewport: {
             width: 1920,
@@ -895,7 +895,7 @@ export default {
         },
     },
     'forms/fields/textarea/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#textarea',
         viewport: {
             width: 1920,
@@ -904,7 +904,7 @@ export default {
         },
     },
     'forms/fields/key-value/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#keyValue',
         viewport: {
             width: 1920,
@@ -913,7 +913,7 @@ export default {
         },
     },
     'forms/fields/key-value/reorderable': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#reorderableKeyValue',
         viewport: {
             width: 1920,
@@ -922,7 +922,7 @@ export default {
         },
     },
     'forms/fields/color-picker/simple': {
-        url: 'forms',
+        url: 'forms/fields',
         selector: '#colorPicker',
         viewport: {
             width: 1920,
@@ -935,6 +935,141 @@ export default {
             })
 
             await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/layout/fieldset/simple': {
+        url: 'forms/layout',
+        selector: '#fieldset',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/tabs/simple': {
+        url: 'forms/layout',
+        selector: '#tabs',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/tabs/icons': {
+        url: 'forms/layout',
+        selector: '#tabsIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/tabs/icons-after': {
+        url: 'forms/layout',
+        selector: '#tabsIconsAfter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/tabs/badges': {
+        url: 'forms/layout',
+        selector: '#tabsBadges',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/wizard/simple': {
+        url: 'forms/layout',
+        selector: '#wizard',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/wizard/icons': {
+        url: 'forms/layout',
+        selector: '#wizardIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/wizard/descriptions': {
+        url: 'forms/layout',
+        selector: '#wizardDescriptions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/section/simple': {
+        url: 'forms/layout',
+        selector: '#section',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/section/icons': {
+        url: 'forms/layout',
+        selector: '#sectionIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/section/aside': {
+        url: 'forms/layout',
+        selector: '#sectionAside',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/section/collapsed': {
+        url: 'forms/layout',
+        selector: '#sectionCollapsed',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/section/compact': {
+        url: 'forms/layout',
+        selector: '#sectionCompact',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/placeholder/simple': {
+        url: 'forms/layout',
+        selector: '#placeholder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/card/simple': {
+        url: 'forms/layout',
+        selector: '#card',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
 }
