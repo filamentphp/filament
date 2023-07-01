@@ -2,17 +2,12 @@
 
 namespace App\Http\Livewire;
 
-use Filament\Actions\Action;
-use Filament\Actions\Concerns\InteractsWithActions;
-use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -226,7 +221,7 @@ class Forms extends Component implements HasForms
                             ->label('Domain')
                             ->default('filament')
                             ->options([
-                                'filament' => 'filamentphp'
+                                'filament' => 'filamentphp',
                             ])
                             ->prefix('https://')
                             ->suffix('.com'),
@@ -241,7 +236,7 @@ class Forms extends Component implements HasForms
                             ->label('Domain')
                             ->default('filament')
                             ->options([
-                                'filament' => 'filamentphp'
+                                'filament' => 'filamentphp',
                             ])
                             ->suffixIcon('heroicon-m-globe-alt'),
                     ]),
