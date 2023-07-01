@@ -1,6 +1,7 @@
 ---
 title: Toggle
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,7 @@ use Filament\Forms\Components\Toggle;
 Toggle::make('is_admin')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png)
+<AutoScreenshot name="forms/fields/toggle/simple" alt="Toggle" version="3.x" />
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
 
@@ -41,6 +42,8 @@ Toggle::make('is_admin')
     ->offIcon('heroicon-m-user')
 ```
 
+<AutoScreenshot name="forms/fields/toggle/icons" alt="Toggle icons" version="3.x" />
+
 ## Customizing the color of the toggle button
 
 You may also customize the color representing the "on" or "off" state of the toggle. These may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`. To add a color to the "on" state, use the `onColor()` method. To add a color to the "off" state, use the `offColor()` method:
@@ -53,7 +56,9 @@ Toggle::make('is_admin')
     ->offColor('danger')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613184-9086c102-ad71-4c4e-9170-9a4201a80c66.png)
+<AutoScreenshot name="forms/fields/toggle/off-color" alt="Toggle off color" version="3.x" />
+
+<AutoScreenshot name="forms/fields/toggle/on-color" alt="Toggle on color" version="3.x" />
 
 ## Positioning the label above
 
@@ -68,7 +73,7 @@ Toggle::make('is_admin')
     ->inline()
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613146-f5ebde21-f72d-44dd-b5c0-5d229fcd91ef.png)
+<AutoScreenshot name="forms/fields/toggle/inline" alt="Toggle with its label inline" version="3.x" />
 
 When the toggle is stacked, its label is above it:
 
@@ -79,7 +84,7 @@ Toggle::make('is_admin')
     ->inline(false)
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613161-43bfa094-0916-4e01-b86d-dbcf8ee63a17.png)
+<AutoScreenshot name="forms/fields/toggle/not-inline" alt="Toggle with its label above" version="3.x" />
 
 ## Toggle validation
 

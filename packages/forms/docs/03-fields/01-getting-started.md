@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -15,6 +16,8 @@ use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
 ```
+
+<AutoScreenshot name="forms/fields/simple" alt="Form field" version="3.x" />
 
 ## Available fields
 
@@ -97,6 +100,8 @@ TextInput::make('name')
     ->helperText('Your **full name** here, including any middle names.')
 ```
 
+<AutoScreenshot name="forms/fields/helper-text" alt="Form field with helper text" version="3.x" />
+
 ## Adding a hint next to the label
 
 As well as [helper text](#adding-helper-text-below-the-field) below the field, you may also add a "hint" next to the label of the field. This is useful for displaying additional information about the field, such as a link to a help page.
@@ -110,6 +115,8 @@ TextInput::make('password')
     ->hint('[Forgotten your password?](forgotten-password)')
 ```
 
+<AutoScreenshot name="forms/fields/hint" alt="Form field with hint" version="3.x" />
+
 ### Changing the text color of the hint
 
 You can change the text color of the hint. By default it's gray, but you may use `danger`, `gray`, `info`, `primary`, `success` and `warning`:
@@ -122,6 +129,8 @@ RichEditor::make('content')
     ->hintColor('primary')
 ```
 
+<AutoScreenshot name="forms/fields/hint-color" alt="Form field with hint color" version="3.x" />
+
 ### Adding an icon aside the hint
 
 Hints may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) rendered next to them:
@@ -133,6 +142,8 @@ RichEditor::make('content')
     ->hint('Translatable')
     ->hintIcon('heroicon-m-language')
 ```
+
+<AutoScreenshot name="forms/fields/hint-icon" alt="Form field with hint icon" version="3.x" />
 
 ## Adding extra HTML attributes
 
@@ -164,6 +175,8 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
     ->disabled()
 ```
+
+<AutoScreenshot name="forms/fields/disabled" alt="Disabled form field" version="3.x" />
 
 Optionally, you may pass a boolean value to control if the field should be disabled or not:
 
@@ -225,6 +238,8 @@ use Filament\Forms\Components\TextInput;
 TextInput::make('name')
     ->placeholder('John Doe')
 ```
+
+<AutoScreenshot name="forms/fields/placeholder" alt="Form field with placeholder" version="3.x" />
 
 ## Marking a field as required
 

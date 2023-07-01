@@ -1,6 +1,7 @@
 ---
 title: Checkbox
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,7 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613098-db8d3571-1835-4714-b422-619755c0b722.png)
+<AutoScreenshot name="forms/fields/checkbox/simple" alt="Checkbox" version="3.x" />
 
 If you're saving the boolean value using Eloquent, you should be sure to add a `boolean` [cast](https://laravel.com/docs/eloquent-mutators#attribute-casting) to the model property:
 
@@ -41,7 +42,7 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')->inline()
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613098-db8d3571-1835-4714-b422-619755c0b722.png)
+<AutoScreenshot name="forms/fields/checkbox/inline" alt="Checkbox with its label inline" version="3.x" />
 
 When the checkbox is stacked, its label is above it:
 
@@ -51,7 +52,7 @@ use Filament\Forms\Components\Checkbox;
 Checkbox::make('is_admin')->inline(false)
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613119-0bc731dd-fcdd-4c1a-9a26-cce2b0f589d2.png)
+<AutoScreenshot name="forms/fields/checkbox/not-inline" alt="Checkbox with its label above" version="3.x" />
 
 ## Checkbox validation
 

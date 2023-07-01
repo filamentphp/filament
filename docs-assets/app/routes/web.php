@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Livewire\Actions;
+use App\Http\Livewire\Forms;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/actions', Actions::class);
+Route::get('/forms', Forms::class);

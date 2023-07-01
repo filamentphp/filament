@@ -6,8 +6,6 @@ import * as process from 'process'
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-fs.rmSync('images', { recursive: true, force: true })
-
 emitter.setMaxListeners(1024)
 
 const themes = ['light', 'dark']
@@ -57,7 +55,7 @@ const processScreenshot = async (file, options, theme) => {
 
     configure()
 
-    console.log(`✅ Generated ${path.dirname(fileURLToPath(import.meta.url))}/images/${theme}/${file}.jpg`)
+    console.log(`✅  Generated ${path.dirname(fileURLToPath(import.meta.url))}/images/${theme}/${file}.jpg`)
 }
 
 for (const theme of themes) {
@@ -66,8 +64,13 @@ for (const theme of themes) {
             continue
         }
 
-        console.log(`⏳ Processing ${theme}/${file}`)
-        await processScreenshot(file, options, theme)
+        console.log(`⏳  Processing ${theme}/${file}`)
+
+        try {
+            await processScreenshot(file, options, theme)
+        } catch (error) {
+            console.error(`❌  Failed to generate ${theme}/${file} - ${error}`)
+        }
     }
 }
 

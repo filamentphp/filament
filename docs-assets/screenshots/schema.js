@@ -269,4 +269,278 @@ export default {
         url: 'admin',
         selector: 'body',
     },
+    'forms/fields/simple': {
+        url: 'forms',
+        selector: '#simple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/helper-text': {
+        url: 'forms',
+        selector: '#helperText',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/hint': {
+        url: 'forms',
+        selector: '#hint',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/hint-color': {
+        url: 'forms',
+        selector: '#hintColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/hint-icon': {
+        url: 'forms',
+        selector: '#hintIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/disabled': {
+        url: 'forms',
+        selector: '#disabled',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/placeholder': {
+        url: 'forms',
+        selector: '#placeholder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/text-input/simple': {
+        url: 'forms',
+        selector: '#textInput',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/text-input/affix': {
+        url: 'forms',
+        selector: '#textInputAffix',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/text-input/suffix-icon': {
+        url: 'forms',
+        selector: '#textInputSuffixIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/select/simple': {
+        url: 'forms',
+        selector: '#select',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/select/searchable': {
+        url: 'forms',
+        selector: '#searchableSelect',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#searchableSelect .choices')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/select/multiple': {
+        url: 'forms',
+        selector: '#multipleSelect',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#multipleSelect .choices')
+            await page.click('#multipleSelect .choices #choices--datamultipleSelect-item-choice-2')
+            await page.click('#multipleSelect .choices #choices--datamultipleSelect-item-choice-3')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/select/create-option': {
+        url: 'forms',
+        selector: '#createSelectOption',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/select/create-option-modal': {
+        url: 'forms',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 300,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#createSelectOption button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/select/edit-option': {
+        url: 'forms',
+        selector: '#editSelectOption',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/select/edit-option-modal': {
+        url: 'forms',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 300,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#editSelectOption button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/select/affix': {
+        url: 'forms',
+        selector: '#selectAffix',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/select/suffix-icon': {
+        url: 'forms',
+        selector: '#selectSuffixIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/checkbox/simple': {
+        url: 'forms',
+        selector: '#checkbox',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/checkbox/inline': {
+        url: 'forms',
+        selector: '#inlineCheckbox',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/checkbox/not-inline': {
+        url: 'forms',
+        selector: '#notInlineCheckbox',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle/simple': {
+        url: 'forms',
+        selector: '#toggle',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle/icons': {
+        url: 'forms',
+        selector: '#toggleIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle/off-color': {
+        url: 'forms',
+        selector: '#toggleOffColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle/on-color': {
+        url: 'forms',
+        selector: '#toggleOnColor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle/inline': {
+        url: 'forms',
+        selector: '#inlineToggle',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/toggle/not-inline': {
+        url: 'forms',
+        selector: '#notInlineToggle',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
 }
