@@ -343,7 +343,7 @@ class Layout extends Component implements HasForms
                 Group::make()
                     ->id('sectionAside')
                     ->extraAttributes([
-                        'class' => 'p-16 max-w-2xl',
+                        'class' => 'p-16 max-w-5xl',
                     ])
                     ->schema([
                         Section::make('Rate limiting')
