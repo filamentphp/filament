@@ -8,7 +8,7 @@ Icon columns render a Blade icon component representing their contents:
 use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
-    ->options([
+    ->icons([
         'heroicon-o-x-circle',
         'heroicon-o-pencil' => 'draft',
         'heroicon-o-clock' => 'reviewing',
@@ -16,13 +16,13 @@ IconColumn::make('is_featured')
     ])
 ```
 
-You may also pass a callback to activate an option, accepting the cell's `$state` and `$record`:
+You may also pass a callback to activate an icon, accepting the cell's `$state` and `$record`:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
-    ->options([
+    ->icons([
         'heroicon-o-x-circle',
         'heroicon-o-pencil' => fn ($state, $record): bool => $record->status === 2,
         'heroicon-o-clock' => fn ($state): bool => $state === 'reviewing',
@@ -38,7 +38,7 @@ Icon columns may also have a set of icon colors, using the same syntax. They may
 use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
-    ->options([
+    ->icons([
         'heroicon-o-x-circle',
         'heroicon-o-pencil' => 'draft',
         'heroicon-o-clock' => 'reviewing',
@@ -60,7 +60,7 @@ The default icon size is `lg`, but you may customize the size to be either `xs`,
 use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
-    ->options([
+    ->icons([
         'heroicon-s-x-circle',
         'heroicon-s-pencil' => 'draft',
         'heroicon-s-clock' => 'reviewing',
