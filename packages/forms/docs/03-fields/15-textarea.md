@@ -1,6 +1,7 @@
 ---
 title: Textarea
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,7 @@ use Filament\Forms\Components\Textarea;
 Textarea::make('description')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147614131-e3db8d23-5045-4e0e-8de4-30823a4af362.png)
+<AutoScreenshot name="forms/fields/textarea/simple" alt="Textarea" version="3.x" />
 
 ## Resizing the textarea
 

@@ -1,6 +1,7 @@
 ---
 title: Repeater
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -25,7 +26,7 @@ Repeater::make('members')
     ->columns(2)
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613690-9c36779b-f3dc-4710-bdba-dc5c81ddd3cd.png)
+<AutoScreenshot name="forms/fields/repeater/simple" alt="Repeater" version="3.x" />
 
 We recommend that you store repeater data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
@@ -77,8 +78,6 @@ Repeater::make('members')
     ])
     ->addActionLabel('Add member')
 ```
-
-![](https://user-images.githubusercontent.com/41773797/147613748-6fdf2eff-de09-4ba0-8d01-68888802b152.png)
 
 ### Preventing the user from adding items
 
@@ -144,6 +143,8 @@ Repeater::make('members')
     ->reorderableWithButtons()
 ```
 
+<AutoScreenshot name="forms/fields/repeater/reorderable-with-buttons" alt="Repeater that is reorderable with buttons" version="3.x" />
+
 ## Collapsing items
 
 The repeater may be `collapsible()` to optionally hide content in long forms:
@@ -170,6 +171,8 @@ Repeater::make('qualifications')
     ->collapsed()
 ```
 
+<AutoScreenshot name="forms/fields/repeater/collapsed" alt="Collapsed repeater" version="3.x" />
+
 ## Cloning items
 
 You may allow repeater items to be duplicated using the `cloneable()` method:
@@ -183,6 +186,8 @@ Repeater::make('qualifications')
     ])
     ->cloneable()
 ```
+
+<AutoScreenshot name="forms/fields/repeater/cloneable" alt="Cloneable repeater" version="3.x" />
 
 ## Integrating with an Eloquent relationship
 
@@ -292,30 +297,44 @@ You may organize repeater items into columns by using the `grid()` method:
 ```php
 use Filament\Forms\Components\Repeater;
 
-Repeater::make('members')
+Repeater::make('qualifications')
     ->schema([
         // ...
     ])
     ->grid(2)
 ```
 
+<AutoScreenshot name="forms/fields/repeater/grid" alt="Repeater with a 2 column grid of items" version="3.x" />
+
 This method accepts the same options as the `columns()` method of the [grid](../layout/grid). This allows you to responsively customize the number of grid columns at various breakpoints.
 
 ## Adding a label to repeater items based on their content
 
-You may add a label for repeater items using the `itemLabel()` method. This method accepts a closure that recieves the current item's data in a `$state` variable. You must return a string to be used as the item label:
+You may add a label for repeater items using the `itemLabel()` method. This method accepts a closure that receives the current item's data in a `$state` variable. You must return a string to be used as the item label:
 
 ```php
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
 
 Repeater::make('members')
     ->schema([
         TextInput::make('name')
+            ->required()
             ->lazy(),
+        Select::make('role')
+            ->options([
+                'member' => 'Member',
+                'administrator' => 'Administrator',
+                'owner' => 'Owner',
+            ])
+            ->required(),
     ])
+    ->columns(2)
     ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
 ```
+
+<AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="3.x" />
 
 Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
 
@@ -360,6 +379,8 @@ Repeater::make('members')
     ])
     ->inset()
 ```
+
+<AutoScreenshot name="forms/fields/repeater/inset" alt="Repeater with inset design" version="3.x" />
 
 ## Repeater validation
 

@@ -748,7 +748,190 @@ export default {
         },
         before: async (page) => {
             await page.evaluate(() => {
-                document.querySelector('#markdownEditor .filament-forms-markdown-editor-component').scrollIntoView()
+                document.querySelector('#markdownEditor').scrollIntoView()
+            })
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/repeater/simple': {
+        url: 'forms',
+        selector: '#repeater',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/repeater/reorderable-with-buttons': {
+        url: 'forms',
+        selector: '#repeaterReorderableWithButtons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/repeater/collapsed': {
+        url: 'forms',
+        selector: '#collapsedRepeater',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/repeater/cloneable': {
+        url: 'forms',
+        selector: '#cloneableRepeater',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/repeater/grid': {
+        url: 'forms',
+        selector: '#gridRepeater',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/repeater/labelled': {
+        url: 'forms',
+        selector: '#labelledRepeater',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/repeater/inset': {
+        url: 'forms',
+        selector: '#insetRepeater',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/builder/simple': {
+        url: 'forms',
+        selector: '#builder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/builder/labelled': {
+        url: 'forms',
+        selector: '#labelledBuilder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/builder/icons': {
+        url: 'forms',
+        selector: '#builderIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#builderIcons .filament-forms-builder-component-block-picker button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/builder/reorderable-with-buttons': {
+        url: 'forms',
+        selector: '#builderReorderableWithButtons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/builder/collapsed': {
+        url: 'forms',
+        selector: '#collapsedBuilder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/builder/cloneable': {
+        url: 'forms',
+        selector: '#cloneableBuilder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/builder/inset': {
+        url: 'forms',
+        selector: '#insetBuilder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/tags-input/simple': {
+        url: 'forms',
+        selector: '#tagsInput',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/textarea/simple': {
+        url: 'forms',
+        selector: '#textarea',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/key-value/simple': {
+        url: 'forms',
+        selector: '#keyValue',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/key-value/reorderable': {
+        url: 'forms',
+        selector: '#reorderableKeyValue',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/color-picker/simple': {
+        url: 'forms',
+        selector: '#colorPicker',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.evaluate(() => {
+                document.querySelector('#colorPicker').scrollIntoView()
             })
 
             await new Promise((resolve) => setTimeout(resolve, 500))

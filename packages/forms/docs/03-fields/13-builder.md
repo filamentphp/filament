@@ -1,6 +1,7 @@
 ---
 title: Builder
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -11,8 +12,8 @@ The primary use of the builder component is to build web page content using pred
 ```php
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 
 Builder::make('content')
@@ -32,10 +33,11 @@ Builder::make('content')
                         'h6' => 'Heading 6',
                     ])
                     ->required(),
-            ]),
+            ])
+            ->columns(2),
         Builder\Block::make('paragraph')
             ->schema([
-                MarkdownEditor::make('content')
+                Textarea::make('content')
                     ->label('Paragraph')
                     ->required(),
             ]),
@@ -52,7 +54,7 @@ Builder::make('content')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613850-8693abe9-78c9-4f01-b40e-9cd9a567e168.png)
+<AutoScreenshot name="forms/fields/builder/simple" alt="Builder" version="3.x" />
 
 We recommend that you store builder data with a `JSON` column in your database. Additionally, if you're using Eloquent, make sure that column has an `array` cast.
 
@@ -99,16 +101,18 @@ Builder\Block::make('heading')
             ->required(),
         // ...
     ]),
-    ->label(function (?array $state): ?string {
+    ->label(function (?array $state): string {
         if ($state === null) {
             return 'Heading';
         }
 
-        return $state['content'];
+        return $state['content'] ?? 'Untitled heading';
     })
 ```
 
 Any fields that you use from `$state` should be `reactive()` or `lazy()` if you wish to see the item label update live as you use the form.
+
+<AutoScreenshot name="forms/fields/builder/labelled" alt="Builder with labelled blocks based on the content" version="3.x" />
 
 ### Numbering builder items
 
@@ -131,11 +135,11 @@ Blocks may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search
 ```php
 use Filament\Forms\Components\Builder;
 
-Builder\Block::make('heading')
-    ->icon('heroicon-m-bookmark')
+Builder\Block::make('paragraph')
+    ->icon('heroicon-m-bars-3-bottom-left')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147614039-d9aa43dd-acfe-43b6-9cd1-1fc322aa4526.png)
+<AutoScreenshot name="forms/fields/builder/icons" alt="Builder with block icons in the dropdown" version="3.x" />
 
 ## Adding items
 
@@ -219,6 +223,8 @@ Builder::make('content')
     ->reorderableWithButtons()
 ```
 
+<AutoScreenshot name="forms/fields/builder/reorderable-with-buttons" alt="Builder that is reorderable with buttons" version="3.x" />
+
 ## Collapsing items
 
 The builder may be `collapsible()` to optionally hide content in long forms:
@@ -245,6 +251,8 @@ Builder::make('content')
     ->collapsed()
 ```
 
+<AutoScreenshot name="forms/fields/builder/collapsed" alt="Collapsed builder" version="3.x" />
+
 ## Cloning items
 
 You may allow builder items to be duplicated using the `cloneable()` method:
@@ -259,6 +267,8 @@ Builder::make('content')
     ->cloneable()
 ```
 
+<AutoScreenshot name="forms/fields/builder/cloneable" alt="Builder repeater" version="3.x" />
+
 ## Enabling the "inset" design
 
 As part of Filament's design system, you can enable "inset" mode for a builder with the `inset()`. This will give the builder extra padding around the outside of the items, with a background color:
@@ -272,6 +282,8 @@ Builder::make('content')
     ])
     ->inset()
 ```
+
+<AutoScreenshot name="forms/fields/builder/inset" alt="Builder with inset design" version="3.x" />
 
 ## Builder validation
 

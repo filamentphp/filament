@@ -2,16 +2,22 @@
 
 namespace App\Http\Livewire;
 
+use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
@@ -617,6 +623,571 @@ class Forms extends Component implements HasForms
                     ->schema([
                         MarkdownEditor::make('markdownEditor')
                             ->label('Content'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'repeater',
+                    ])
+                    ->schema([
+                        Repeater::make('repeater')
+                            ->label('Members')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                                Select::make('role')
+                                    ->options([
+                                        'member' => 'Member',
+                                        'administrator' => 'Administrator',
+                                        'owner' => 'Owner',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->default([
+                                [
+                                    'name' => 'Dan Harrin',
+                                    'role' => 'owner',
+                                ],
+                                [
+                                    'name' => 'Ryan Chandler',
+                                    'role' => 'administrator',
+                                ],
+                                [
+                                    'name' => 'Zep Fietje',
+                                    'role' => 'member',
+                                ],
+                                [
+                                    'name' => null,
+                                    'role' => null,
+                                ],
+                            ]),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'repeaterReorderableWithButtons',
+                    ])
+                    ->schema([
+                        Repeater::make('repeaterReorderableWithButtons')
+                            ->label('Members')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                                Select::make('role')
+                                    ->options([
+                                        'member' => 'Member',
+                                        'administrator' => 'Administrator',
+                                        'owner' => 'Owner',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->default([
+                                [
+                                    'name' => 'Dan Harrin',
+                                    'role' => 'owner',
+                                ],
+                                [
+                                    'name' => 'Ryan Chandler',
+                                    'role' => 'administrator',
+                                ],
+                                [
+                                    'name' => 'Zep Fietje',
+                                    'role' => 'member',
+                                ],
+                            ])
+                            ->reorderableWithButtons(),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'collapsedRepeater',
+                    ])
+                    ->schema([
+                        Repeater::make('collapsedRepeater')
+                            ->label('Qualifications')
+                            ->defaultItems(3)
+                            ->collapsed(),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'cloneableRepeater',
+                    ])
+                    ->schema([
+                        Repeater::make('cloneableRepeater')
+                            ->label('Qualifications')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                            ])
+                            ->cloneable()
+                            ->default([
+                                ['name' => 'Tailwind CSS Level 1'],
+                                ['name' => 'Alpine.js Level 1'],
+                                ['name' => 'Laravel Level 1'],
+                                ['name' => 'Livewire Level 1'],
+                            ]),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'gridRepeater',
+                    ])
+                    ->schema([
+                        Repeater::make('gridRepeater')
+                            ->label('Qualifications')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                            ])
+                            ->grid(2)
+                            ->default([
+                                ['name' => 'Tailwind CSS Level 1'],
+                                ['name' => 'Alpine.js Level 1'],
+                                ['name' => 'Laravel Level 1'],
+                                ['name' => 'Livewire Level 1'],
+                            ]),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'labelledRepeater',
+                    ])
+                    ->schema([
+                        Repeater::make('labelledRepeater')
+                            ->label('Members')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                                Select::make('role')
+                                    ->options([
+                                        'member' => 'Member',
+                                        'administrator' => 'Administrator',
+                                        'owner' => 'Owner',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->default([
+                                [
+                                    'name' => 'Dan Harrin',
+                                    'role' => 'owner',
+                                ],
+                                [
+                                    'name' => 'Ryan Chandler',
+                                    'role' => 'administrator',
+                                ],
+                                [
+                                    'name' => 'Zep Fietje',
+                                    'role' => 'member',
+                                ],
+                            ])
+                            ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'insetRepeater',
+                    ])
+                    ->schema([
+                        Repeater::make('insetRepeater')
+                            ->label('Members')
+                            ->schema([
+                                TextInput::make('name')->required(),
+                                Select::make('role')
+                                    ->options([
+                                        'member' => 'Member',
+                                        'administrator' => 'Administrator',
+                                        'owner' => 'Owner',
+                                    ])
+                                    ->required(),
+                            ])
+                            ->columns(2)
+                            ->default([
+                                [
+                                    'name' => 'Dan Harrin',
+                                    'role' => 'owner',
+                                ],
+                                [
+                                    'name' => 'Ryan Chandler',
+                                    'role' => 'administrator',
+                                ],
+                                [
+                                    'name' => 'Zep Fietje',
+                                    'role' => 'member',
+                                ],
+                            ])
+                            ->inset(),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'builder',
+                    ])
+                    ->schema([
+                        Builder::make('builder')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('heading')
+                                    ->schema([
+                                        TextInput::make('content')
+                                            ->label('Heading')
+                                            ->required(),
+                                        Select::make('level')
+                                            ->options([
+                                                'h1' => 'Heading 1',
+                                                'h2' => 'Heading 2',
+                                                'h3' => 'Heading 3',
+                                                'h4' => 'Heading 4',
+                                                'h5' => 'Heading 5',
+                                                'h6' => 'Heading 6',
+                                            ])
+                                            ->required(),
+                                    ])
+                                    ->columns(2),
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ]),
+                                Builder\Block::make('image')
+                                    ->schema([
+                                        FileUpload::make('url')
+                                            ->label('Image')
+                                            ->image()
+                                            ->required(),
+                                        TextInput::make('alt')
+                                            ->label('Alt text')
+                                            ->required(),
+                                    ]),
+                            ])
+                            ->default([
+                                [
+                                    'type' => 'heading',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet',
+                                        'level' => 'h2',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'image',
+                                    'data' => [
+                                        'url' => null,
+                                        'alt' => 'Lorem ipsum dolor sit amet',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'image',
+                                    'data' => [
+                                        'url' => null,
+                                        'alt' => 'Lorem ipsum dolor sit amet',
+                                    ],
+                                ],
+                            ]),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'labelledBuilder',
+                    ])
+                    ->schema([
+                        Builder::make('labelledBuilder')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('heading')
+                                    ->schema([
+                                        TextInput::make('content')
+                                            ->label('Heading')
+                                            ->required(),
+                                        Select::make('level')
+                                            ->options([
+                                                'h1' => 'Heading 1',
+                                                'h2' => 'Heading 2',
+                                                'h3' => 'Heading 3',
+                                                'h4' => 'Heading 4',
+                                                'h5' => 'Heading 5',
+                                                'h6' => 'Heading 6',
+                                            ])
+                                            ->required(),
+                                    ])
+                                    ->columns(2)
+                                    ->label(function (?array $state): string {
+                                        if ($state === null) {
+                                            return 'Heading';
+                                        }
+
+                                        return $state['content'] ?? 'Untitled heading';
+                                    }),
+                            ])
+                            ->default([
+                                [
+                                    'type' => 'heading',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet',
+                                        'level' => 'h2',
+                                    ],
+                                ],
+                                [
+                                    'type' => 'heading',
+                                    'data' => [
+                                        'content' => null,
+                                        'level' => 'h3',
+                                    ],
+                                ],
+                            ]),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-40 max-w-5xl',
+                        'id' => 'builderIcons',
+                    ])
+                    ->schema([
+                        Builder::make('builderIcons')
+                            ->label('Content')
+                            ->schema([
+                                Builder\Block::make('paragraph')
+                                    ->schema([
+                                        Textarea::make('content')
+                                            ->label('Paragraph')
+                                            ->required(),
+                                    ])
+                                    ->icon('heroicon-m-bars-3-bottom-left'),
+                                Builder\Block::make('image')
+                                    ->icon('heroicon-m-photo'),
+                            ])
+                            ->default([
+                                [
+                                    'type' => 'paragraph',
+                                    'data' => [
+                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                    ],
+                                ],
+                            ]),
+                        Group::make()
+                            ->extraAttributes([
+                                'class' => 'p-16 max-w-5xl',
+                                'id' => 'builderReorderableWithButtons',
+                            ])
+                            ->schema([
+                                Builder::make('builderReorderableWithButtons')
+                                    ->label('Content')
+                                    ->schema([
+                                        Builder\Block::make('paragraph')
+                                            ->schema([
+                                                Textarea::make('content')
+                                                    ->label('Paragraph')
+                                                    ->required(),
+                                            ])
+                                            ->icon('heroicon-m-bars-3-bottom-left'),
+                                    ])
+                                    ->default([
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                    ])
+                                    ->reorderableWithButtons(),
+                                ]),
+                        Group::make()
+                            ->extraAttributes([
+                                'class' => 'p-16 max-w-5xl',
+                                'id' => 'collapsedBuilder',
+                            ])
+                            ->schema([
+                                Builder::make('collapsedBuilder')
+                                    ->label('Content')
+                                    ->schema([
+                                        Builder\Block::make('paragraph')
+                                            ->schema([
+                                                Textarea::make('content')
+                                                    ->label('Paragraph')
+                                                    ->required(),
+                                            ])
+                                            ->icon('heroicon-m-bars-3-bottom-left'),
+                                    ])
+                                    ->default([
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                    ])
+                                    ->collapsed(),
+                            ]),
+                        Group::make()
+                            ->extraAttributes([
+                                'class' => 'p-16 max-w-5xl',
+                                'id' => 'cloneableBuilder',
+                            ])
+                            ->schema([
+                                Builder::make('cloneableBuilder')
+                                    ->label('Content')
+                                    ->schema([
+                                        Builder\Block::make('paragraph')
+                                            ->schema([
+                                                Textarea::make('content')
+                                                    ->label('Paragraph')
+                                                    ->required(),
+                                            ])
+                                            ->icon('heroicon-m-bars-3-bottom-left'),
+                                    ])
+                                    ->default([
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                    ])
+                                    ->cloneable(),
+                            ]),
+                        Group::make()
+                            ->extraAttributes([
+                                'class' => 'p-16 max-w-5xl',
+                                'id' => 'insetBuilder',
+                            ])
+                            ->schema([
+                                Builder::make('insetBuilder')
+                                    ->label('Content')
+                                    ->schema([
+                                        Builder\Block::make('paragraph')
+                                            ->schema([
+                                                Textarea::make('content')
+                                                    ->label('Paragraph')
+                                                    ->required(),
+                                            ])
+                                            ->icon('heroicon-m-bars-3-bottom-left'),
+                                    ])
+                                    ->default([
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                        [
+                                            'type' => 'paragraph',
+                                            'data' => [
+                                                'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
+                                            ],
+                                        ],
+                                    ])
+                                    ->inset(),
+                                ]),
+                        ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'tagsInput',
+                    ])
+                    ->schema([
+                        TagsInput::make('tagsInput')
+                            ->label('Tags')
+                            ->default(['Tailwind CSS', 'Alpine.js']),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'textarea',
+                    ])
+                    ->schema([
+                        Textarea::make('textarea')
+                            ->label('Description')
+                            ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'keyValue',
+                    ])
+                    ->schema([
+                        KeyValue::make('keyValue')
+                            ->label('Meta')
+                            ->default([
+                                'description' => 'Filament is a collection of Laravel packages',
+                                'og:type' => 'website',
+                                'og:site_name' => 'Filament',
+                            ]),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'reorderableKeyValue',
+                    ])
+                    ->schema([
+                        KeyValue::make('reorderableKeyValue')
+                            ->label('Meta')
+                            ->default([
+                                'description' => 'Filament is a collection of Laravel packages',
+                                'og:type' => 'website',
+                                'og:site_name' => 'Filament',
+                            ])
+                            ->reorderable(),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'colorPicker',
+                    ])
+                    ->schema([
+                        ColorPicker::make('colorPicker')
+                            ->label('Color')
+                            ->default('#3490dc'),
                     ]),
             ]);
     }

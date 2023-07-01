@@ -137,8 +137,6 @@ FileUpload::make('attachment')
     ->uploadProgressIndicatorPosition('left')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613590-9ee07ce7-a43e-46a0-bb40-7a21a3692aea.png)
-
 ## Reordering files
 
 You can also allow users to re-order uploaded files using the `reorderable()` method:
