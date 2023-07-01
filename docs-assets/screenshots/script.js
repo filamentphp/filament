@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url'
 
 emitter.setMaxListeners(1024)
 
-const themes = ['light', 'dark']
+const themes = ['dark']
 
 const processScreenshot = async (file, options, theme) => {
     configure(options.configure)
