@@ -8,7 +8,6 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\KeyValue;
@@ -1013,7 +1012,7 @@ class Fields extends Component implements HasForms
                                 ],
                             ])
                             ->reorderableWithButtons(),
-                        ]),
+                    ]),
                 Group::make()
                     ->id('collapsedBuilder')
                     ->extraAttributes([
@@ -1130,66 +1129,66 @@ class Fields extends Component implements HasForms
                                 ],
                             ])
                             ->inset(),
-                        ]),
-                    Group::make()
-                        ->id('tagsInput')
-                        ->extraAttributes([
-                            'class' => 'p-16 max-w-xl',
-                        ])
-                        ->schema([
-                            TagsInput::make('tagsInput')
-                                ->label('Tags')
-                                ->default(['Tailwind CSS', 'Alpine.js']),
-                        ]),
-                    Group::make()
-                        ->id('textarea')
-                        ->extraAttributes([
-                            'class' => 'p-16 max-w-xl',
-                        ])
-                        ->schema([
-                            Textarea::make('textarea')
-                                ->label('Description')
-                                ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.'),
-                        ]),
-                    Group::make()
-                        ->id('keyValue')
-                        ->extraAttributes([
-                            'class' => 'p-16 max-w-5xl',
-                        ])
-                        ->schema([
-                            KeyValue::make('keyValue')
-                                ->label('Meta')
-                                ->default([
-                                    'description' => 'Filament is a collection of Laravel packages',
-                                    'og:type' => 'website',
-                                    'og:site_name' => 'Filament',
-                                ]),
-                        ]),
-                    Group::make()
-                        ->id('reorderableKeyValue')
-                        ->extraAttributes([
-                            'class' => 'p-16 max-w-5xl',
-                        ])
-                        ->schema([
-                            KeyValue::make('reorderableKeyValue')
-                                ->label('Meta')
-                                ->default([
-                                    'description' => 'Filament is a collection of Laravel packages',
-                                    'og:type' => 'website',
-                                    'og:site_name' => 'Filament',
-                                ])
-                                ->reorderable(),
-                        ]),
-                    Group::make()
-                        ->id('colorPicker')
-                        ->extraAttributes([
-                            'class' => 'p-16 max-w-xl',
-                        ])
-                        ->schema([
-                            ColorPicker::make('colorPicker')
-                                ->label('Color')
-                                ->default('#3490dc'),
-                        ]),
+                    ]),
+                Group::make()
+                    ->id('tagsInput')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TagsInput::make('tagsInput')
+                            ->label('Tags')
+                            ->default(['Tailwind CSS', 'Alpine.js']),
+                    ]),
+                Group::make()
+                    ->id('textarea')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        Textarea::make('textarea')
+                            ->label('Description')
+                            ->default('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.'),
+                    ]),
+                Group::make()
+                    ->id('keyValue')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        KeyValue::make('keyValue')
+                            ->label('Meta')
+                            ->default([
+                                'description' => 'Filament is a collection of Laravel packages',
+                                'og:type' => 'website',
+                                'og:site_name' => 'Filament',
+                            ]),
+                    ]),
+                Group::make()
+                    ->id('reorderableKeyValue')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        KeyValue::make('reorderableKeyValue')
+                            ->label('Meta')
+                            ->default([
+                                'description' => 'Filament is a collection of Laravel packages',
+                                'og:type' => 'website',
+                                'og:site_name' => 'Filament',
+                            ])
+                            ->reorderable(),
+                    ]),
+                Group::make()
+                    ->id('colorPicker')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        ColorPicker::make('colorPicker')
+                            ->label('Color')
+                            ->default('#3490dc'),
+                    ]),
             ]);
     }
 
