@@ -104,8 +104,6 @@ TextInput::make('manufacturer')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147612844-f46e113f-82b3-4675-9097-4d64a4315082.png)
-
 Datalists provide autocomplete options to users when they use a text input. However, these are purely recommendations, and the user is still able to type any value into the input. If you're looking to strictly limit users to a set of predefined options, check out the [select field](select).
 
 ## Autocapitalizing text

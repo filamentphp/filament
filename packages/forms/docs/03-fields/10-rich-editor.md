@@ -1,6 +1,7 @@
 ---
 title: Rich editor
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,7 @@ use Filament\Forms\Components\RichEditor;
 RichEditor::make('content')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613608-b1236c72-d5cf-40d5-aa73-70c37a5c7e4d.png)
+<AutoScreenshot name="forms/fields/rich-editor/simple" alt="Rich editor" version="3.x" />
 
 ## Customizing the toolbar buttons
 

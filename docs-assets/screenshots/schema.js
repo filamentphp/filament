@@ -543,4 +543,215 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/checkbox-list/simple': {
+        url: 'forms',
+        selector: '#checkboxList',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/checkbox-list/columns': {
+        url: 'forms',
+        selector: '#checkboxListColumns',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/checkbox-list/rows': {
+        url: 'forms',
+        selector: '#checkboxListRows',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/checkbox-list/searchable': {
+        url: 'forms',
+        selector: '#searchableCheckboxList',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/checkbox-list/bulk-toggleable': {
+        url: 'forms',
+        selector: '#bulkToggleableCheckboxList',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/simple': {
+        url: 'forms',
+        selector: '#radio',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/option-descriptions': {
+        url: 'forms',
+        selector: '#radioOptionDescriptions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/boolean': {
+        url: 'forms',
+        selector: '#booleanRadio',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/inline': {
+        url: 'forms',
+        selector: '#inlineRadio',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/radio/disabled-option': {
+        url: 'forms',
+        selector: '#disabledOptionRadio',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/date-time-picker/simple': {
+        url: 'forms',
+        selector: '#dateTimePickers',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/date-time-picker/without-seconds': {
+        url: 'forms',
+        selector: '#dateTimePickerWithoutSeconds',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/date-time-picker/javascript': {
+        url: 'forms',
+        selector: '#javascriptDateTimePicker',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#javascriptDateTimePicker button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/date-time-picker/display-format': {
+        url: 'forms',
+        selector: '#dateTimePickerDisplayFormat',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/date-time-picker/week-starts-on-sunday': {
+        url: 'forms',
+        selector: '#dateTimePickerWeekStartsOnSunday',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#dateTimePickerWeekStartsOnSunday button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/date-time-picker/disabled-dates': {
+        url: 'forms',
+        selector: '#dateTimePickerDisabledDates',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#dateTimePickerDisabledDates button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/date-time-picker/affix': {
+        url: 'forms',
+        selector: '#dateTimePickerAffix',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/date-time-picker/prefix-icon': {
+        url: 'forms',
+        selector: '#dateTimePickerPrefixIcon',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/file-upload/simple': {
+        url: 'forms',
+        selector: '#fileUpload',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/rich-editor/simple': {
+        url: 'forms',
+        selector: '#richEditor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/markdown-editor/simple': {
+        url: 'forms',
+        selector: '#markdownEditor',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.evaluate(() => {
+                document.querySelector('#markdownEditor .filament-forms-markdown-editor-component').scrollIntoView()
+            })
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
 }

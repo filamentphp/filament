@@ -3,10 +3,17 @@
 namespace App\Http\Livewire;
 
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Group;
+use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -332,6 +339,284 @@ class Forms extends Component implements HasForms
                         Toggle::make('notInlineToggle')
                             ->label('Is admin')
                             ->inline(false),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'checkboxList',
+                    ])
+                    ->schema([
+                        CheckboxList::make('checkboxList')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ]),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'checkboxListColumns',
+                    ])
+                    ->schema([
+                        CheckboxList::make('checkboxListColumns')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->default(['tailwind', 'laravel'])
+                            ->columns(2),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'checkboxListRows',
+                    ])
+                    ->schema([
+                        CheckboxList::make('checkboxListRows')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->default(['tailwind', 'laravel'])
+                            ->columns(2)
+                            ->gridDirection('row'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'searchableCheckboxList',
+                    ])
+                    ->schema([
+                        CheckboxList::make('searchableCheckboxList')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->default(['tailwind', 'laravel'])
+                            ->searchable(),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'bulkToggleableCheckboxList',
+                    ])
+                    ->schema([
+                        CheckboxList::make('bulkToggleableCheckboxList')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->default(['tailwind', 'laravel'])
+                            ->bulkToggleable(),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'radio',
+                    ])
+                    ->schema([
+                        Radio::make('radio')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published'
+                            ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'radioOptionDescriptions',
+                    ])
+                    ->schema([
+                        Radio::make('radioOptionDescriptions')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published'
+                            ])
+                            ->descriptions([
+                                'draft' => 'Is not visible.',
+                                'scheduled' => 'Will be visible.',
+                                'published' => 'Is visible.'
+                            ])
+                            ->default('draft'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'booleanRadio',
+                    ])
+                    ->schema([
+                        Radio::make('booleanRadio')
+                            ->label('Do you like this post?')
+                            ->boolean()
+                            ->default(true),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'inlineRadio',
+                    ])
+                    ->schema([
+                        Radio::make('inlineRadio')
+                            ->label('Do you like this post?')
+                            ->boolean()
+                            ->inline()
+                            ->default(true),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'disabledOptionRadio',
+                    ])
+                    ->schema([
+                        Radio::make('disabledOptionRadio')
+                            ->label('Status')
+                            ->options([
+                                'draft' => 'Draft',
+                                'scheduled' => 'Scheduled',
+                                'published' => 'Published'
+                            ])
+                            ->default('draft')
+                            ->disableOptionWhen(fn (string $value): bool => $value === 'published'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'dateTimePickers',
+                    ])
+                    ->schema([
+                        DateTimePicker::make('dateTimePicker')
+                            ->label('Published at'),
+                        DatePicker::make('datePickers')
+                            ->label('Date of birth'),
+                        TimePicker::make('timePicker')
+                            ->label('Alarm at'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'dateTimePickerWithoutSeconds',
+                    ])
+                    ->schema([
+                        DateTimePicker::make('dateTimePickerWithoutSeconds')
+                            ->label('Published at')
+                            ->seconds(false),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-96 max-w-xl',
+                        'id' => 'javascriptDateTimePicker',
+                    ])
+                    ->schema([
+                        DatePicker::make('javascriptDateTimePicker')
+                            ->label('Date of birth')
+                            ->native(false)
+                            ->default('2000-01-01'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'dateTimePickerDisplayFormat',
+                    ])
+                    ->schema([
+                        DatePicker::make('dateTimePickerDisplayFormat')
+                            ->label('Date of birth')
+                            ->native(false)
+                            ->displayFormat('d/m/Y')
+                            ->default('2000-01-01'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-96 max-w-xl',
+                        'id' => 'dateTimePickerWeekStartsOnSunday',
+                    ])
+                    ->schema([
+                        DatePicker::make('dateTimePickerWeekStartsOnSunday')
+                            ->label('Published at')
+                            ->native(false)
+                            ->weekStartsOnSunday()
+                            ->default('2000-01-01'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-96 max-w-xl',
+                        'id' => 'dateTimePickerDisabledDates',
+                    ])
+                    ->schema([
+                        DatePicker::make('dateTimePickerDisabledDates')
+                            ->label('Date')
+                            ->native(false)
+                            ->disabledDates(['2000-01-03', '2000-01-15', '2000-01-20'])
+                            ->default('2000-01-01'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'dateTimePickerAffix',
+                    ])
+                    ->schema([
+                        DatePicker::make('dateTimePickerAffix')
+                            ->label('Date')
+                            ->prefix('Starts')
+                            ->suffix('at midnight')
+                            ->default('2000-01-01'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'dateTimePickerPrefixIcon',
+                    ])
+                    ->schema([
+                        TimePicker::make('dateTimePickerPrefixIcon')
+                            ->label('At')
+                            ->prefixIcon('heroicon-m-play')
+                            ->default('2000-01-01'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                        'id' => 'fileUpload',
+                    ])
+                    ->schema([
+                        FileUpload::make('fileUpload')
+                            ->label('Attachment'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'richEditor',
+                    ])
+                    ->schema([
+                        RichEditor::make('richEditor')
+                            ->label('Content'),
+                    ]),
+                Group::make()
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                        'id' => 'markdownEditor',
+                    ])
+                    ->schema([
+                        MarkdownEditor::make('markdownEditor')
+                            ->label('Content'),
                     ]),
             ]);
     }
