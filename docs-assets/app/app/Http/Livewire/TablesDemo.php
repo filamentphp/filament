@@ -4,14 +4,20 @@ namespace App\Http\Livewire;
 
 use App\Models\Post;
 use App\Models\User;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Actions\Position;
+use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
@@ -23,6 +29,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -560,6 +567,313 @@ class TablesDemo extends Component implements HasForms, HasTable
                 TextColumn::make('name'),
                 CheckboxColumn::make('is_admin')
                     ->getStateUsing(fn ($rowLoop): bool => $rowLoop->index < 2),
+            ]);
+    }
+
+    public function filtersTable(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+                IconColumn::make('is_featured')
+                    ->boolean(),
+            ]);
+    }
+
+    public function filters(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                Filter::make('is_featured'),
+            ]);
+    }
+
+    public function filtersToggle(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                Filter::make('is_featured')->toggle(),
+            ]);
+    }
+
+    public function filtersSelect(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status'),
+            ]);
+    }
+
+    public function filtersCustomForm(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
+                    ]),
+            ]);
+    }
+
+    public function filtersIndicators(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                Filter::make('dummy')
+                    ->indicateUsing(fn () => [
+                        'one' => 'Posted by administrator',
+                        'two' => 'Less than 1 year old',
+                    ]),
+            ]);
+    }
+
+    public function filtersAboveContent(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status'),
+                SelectFilter::make('author'),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
+                    ])
+                    ->columns(2)
+                    ->columnSpan(2),
+            ], layout: Layout::AboveContent)
+            ->filtersFormColumns(4);
+    }
+
+    public function filtersBelowContent(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                SelectFilter::make('status'),
+                SelectFilter::make('author'),
+                Filter::make('created_at')
+                    ->form([
+                        DatePicker::make('created_from'),
+                        DatePicker::make('created_until'),
+                    ])
+                    ->columns(2)
+                    ->columnSpan(2),
+            ], layout: Layout::BelowContent)
+            ->filtersFormColumns(4);
+    }
+
+    public function filtersCustomTriggerAction(Table $table): Table
+    {
+        return $this->filtersTable($table)
+            ->filters([
+                Filter::make('is_featured'),
+            ])
+            ->filtersTriggerAction(
+                fn (Action $action) => $action
+                    ->button()
+                    ->label('Filter'),
+            );
+    }
+
+    public function actionsTable(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+                IconColumn::make('is_featured')
+                    ->boolean(),
+            ]);
+    }
+
+    public function actions(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(),
+            ]);
+    }
+
+    public function actionsBeforeColumns(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(),
+            ], position: Position::BeforeColumns);
+    }
+
+    public function actionsBeforeCells(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                EditAction::make(),
+                DeleteAction::make(),
+            ], position: Position::BeforeCells)
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public function bulkActions(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public function bulkActionsNotGrouped(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                    ForceDeleteBulkAction::make(),
+                ]),
+                BulkAction::make('export')->button(),
+            ]);
+    }
+
+    public function headerActions(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->headerActions([
+                CreateAction::make(),
+            ]);
+    }
+
+    public function groupedActions(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ]),
+            ]);
+    }
+
+    public function groupedActionsIconButton(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])->iconButton(),
+            ]);
+    }
+
+    public function groupedActionsButton(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
+                    ->button()
+                    ->label('Actions'),
+            ]);
+    }
+
+    public function groupedActionsLink(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])
+                    ->link()
+                    ->label('Actions'),
+            ]);
+    }
+
+    public function groupedActionsIcon(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])->icon('heroicon-m-ellipsis-horizontal'),
+            ]);
+    }
+
+    public function groupedActionsColor(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])->color('info'),
+            ]);
+    }
+
+    public function groupedActionsSmall(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])->size('sm'),
+            ]);
+    }
+
+    public function groupedActionsTooltip(Table $table): Table
+    {
+        return $this->actionsTable($table)
+            ->actions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ])->tooltip('Actions'),
             ]);
     }
 

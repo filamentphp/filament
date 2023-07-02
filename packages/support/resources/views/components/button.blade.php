@@ -84,7 +84,7 @@
     $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [600]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-label truncate',
+        'filament-button-label',
         'sr-only' => $labelSrOnly,
     ]);
 

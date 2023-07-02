@@ -1822,7 +1822,7 @@ export default {
         url: 'tables?table=iconColumn',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1831,7 +1831,7 @@ export default {
         url: 'tables?table=iconColumnColor',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1840,7 +1840,7 @@ export default {
         url: 'tables?table=iconColumnMedium',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1849,7 +1849,7 @@ export default {
         url: 'tables?table=iconColumnBoolean',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1858,7 +1858,7 @@ export default {
         url: 'tables?table=iconColumnBooleanIcon',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1867,7 +1867,7 @@ export default {
         url: 'tables?table=iconColumnBooleanColor',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1876,7 +1876,7 @@ export default {
         url: 'tables?table=imageColumn',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1885,7 +1885,7 @@ export default {
         url: 'tables?table=imageColumnSquare',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1894,7 +1894,7 @@ export default {
         url: 'tables?table=imageColumnCircular',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1903,7 +1903,7 @@ export default {
         url: 'tables?table=colorColumn',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1912,7 +1912,7 @@ export default {
         url: 'tables?table=colorColumnCopyable',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1926,7 +1926,7 @@ export default {
         url: 'tables?table=selectColumn',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1935,7 +1935,7 @@ export default {
         url: 'tables?table=toggleColumn',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1944,7 +1944,7 @@ export default {
         url: 'tables?table=textInputColumn',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
         },
@@ -1953,9 +1953,279 @@ export default {
         url: 'tables?table=checkboxColumn',
         selector: 'body',
         viewport: {
-            width: 1920,
+            width: 1080,
             height: 640,
             deviceScaleFactor: 3,
+        },
+    },
+    'tables/filters/simple': {
+        url: 'tables?table=filters',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-filters button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/filters/toggle': {
+        url: 'tables?table=filtersToggle',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-filters button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/filters/select': {
+        url: 'tables?table=filtersSelect',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-filters button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/filters/custom-form': {
+        url: 'tables?table=filtersCustomForm',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-filters button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/filters/indicators': {
+        url: 'tables?table=filtersIndicators',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/filters/above-content': {
+        url: 'tables?table=filtersAboveContent',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/filters/below-content': {
+        url: 'tables?table=filtersBelowContent',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/filters/custom-trigger-action': {
+        url: 'tables?table=filtersCustomTriggerAction',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/actions/simple': {
+        url: 'tables?table=actions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/actions/before-columns': {
+        url: 'tables?table=actionsBeforeColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/actions/before-cells': {
+        url: 'tables?table=actionsBeforeCells',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/actions/bulk': {
+        url: 'tables?table=bulkActions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('thead input')
+            await page.click('.filament-dropdown-trigger')
+            await page.click('.filament-dropdown-list-item')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/bulk-not-grouped': {
+        url: 'tables?table=bulkActionsNotGrouped',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('thead input')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/header': {
+        url: 'tables?table=headerActions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/actions/group': {
+        url: 'tables?table=groupedActions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/group-icon-button': {
+        url: 'tables?table=groupedActionsIconButton',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/group-button': {
+        url: 'tables?table=groupedActionsButton',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/group-link': {
+        url: 'tables?table=groupedActionsLink',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/group-icon': {
+        url: 'tables?table=groupedActionsIcon',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/group-color': {
+        url: 'tables?table=groupedActionsColor',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/group-small': {
+        url: 'tables?table=groupedActionsSmall',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions/group-tooltip': {
+        url: 'tables?table=groupedActionsTooltip',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('.filament-dropdown-trigger')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
 }
