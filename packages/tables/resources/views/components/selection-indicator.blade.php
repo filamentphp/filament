@@ -3,6 +3,7 @@
     'colspan',
     'end' => null,
     'selectedRecordsCount',
+    'selectedRecordsPropertyName' => 'selectedRecords'
 ])
 
 <div
@@ -21,15 +22,15 @@
         <span
             @class(['dark:text-white' => config('tables.dark_mode')])
             x-text="
-                window.pluralize(@js(__('tables::table.selection_indicator.selected_count')), selectedRecords.length, {
-                    count: selectedRecords.length,
+                window.pluralize(@js(__('tables::table.selection_indicator.selected_count')), {{ $selectedRecordsPropertyName }}.length, {
+                    count: {{ $selectedRecordsPropertyName }}.length,
                 })
             "
         ></span>
 
         <span
             id="{{ $this->id }}.table.selection.indicator.record-count.{{ $allSelectableRecordsCount }}"
-            x-show="{{ $allSelectableRecordsCount }} !== selectedRecords.length"
+            x-show="{{ $allSelectableRecordsCount }} !== {{ $selectedRecordsPropertyName }}.length"
         >
             <button
                 x-on:click="selectAllRecords"
