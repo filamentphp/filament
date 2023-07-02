@@ -1576,7 +1576,7 @@ export default {
         },
     },
     'tables/getting-started/columns': {
-        url: 'tables?table=columns',
+        url: 'tables?table=gettingStartedColumns',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -1585,7 +1585,7 @@ export default {
         },
     },
     'tables/getting-started/searchable-columns': {
-        url: 'tables?table=searchableColumns',
+        url: 'tables?table=gettingStartedSearchableColumns',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -1594,7 +1594,7 @@ export default {
         },
     },
     'tables/getting-started/sortable-columns': {
-        url: 'tables?table=sortableColumns',
+        url: 'tables?table=gettingStartedSortableColumns',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -1603,7 +1603,7 @@ export default {
         },
     },
     'tables/getting-started/relationship-columns': {
-        url: 'tables?table=relationshipColumns',
+        url: 'tables?table=gettingStartedRelationshipColumns',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -1612,7 +1612,7 @@ export default {
         },
     },
     'tables/getting-started/filters': {
-        url: 'tables?table=filters',
+        url: 'tables?table=gettingStartedFilters',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -1626,7 +1626,7 @@ export default {
         },
     },
     'tables/getting-started/actions': {
-        url: 'tables?table=actions',
+        url: 'tables?table=gettingStartedActions',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -1635,7 +1635,7 @@ export default {
         },
     },
     'tables/getting-started/actions-modal': {
-        url: 'tables?table=actions',
+        url: 'tables?table=gettingStartedActions',
         selector: 'body',
         viewport: {
             width: 1080,
@@ -1648,6 +1648,70 @@ export default {
             await page.click('.filament-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/columns/sortable': {
+        url: 'tables?table=sortableColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/searchable': {
+        url: 'tables?table=searchableColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/individually-searchable': {
+        url: 'tables?table=individuallySearchableColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/toggleable': {
+        url: 'tables?table=toggleableColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-column-toggling button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        }
+    },
+    'tables/columns/tooltips': {
+        url: 'tables?table=columnTooltips',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.hover('[wire\\:key$="4.column.email_verified_at"] .filament-tables-column-wrapper')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/columns/alignment': {
+        url: 'tables?table=columnAlignment',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
 }

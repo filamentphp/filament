@@ -1,3 +1,8 @@
+// Usage
+//   node script.js
+//   node script.js "absolute/schema/key"
+//   node script.js "wildcard/schema/key/*"
+
 import fs from 'fs'
 import puppeteer from 'puppeteer'
 import schema from './schema.js'
@@ -60,9 +65,15 @@ const processScreenshot = async (file, options, theme) => {
 
 const failures = []
 
+const stringMatchesRule = (string, rule) => {
+    const escapeRegex = (str) => str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, '\\$1')
+
+    return new RegExp('^' + rule.split('*').map(escapeRegex).join('.*') + '$').test(string)
+}
+
 for (const theme of themes) {
     for (const [file, options] of Object.entries(schema)) {
-        if ((process.argv[2] ?? null) && ((process.argv[2] ?? null) !== file)) {
+        if ((process.argv[2] ?? null) && (! stringMatchesRule(file, (process.argv[2] ?? null)))) {
             continue
         }
 

@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -75,9 +76,11 @@ Columns may be sortable, by clicking on the column label. To make a column sorta
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')
+TextColumn::make('name')
     ->sortable()
 ```
+
+<AutoScreenshot name="tables/columns/sortable" alt="Table with sortable column" version="3.x" />
 
 If you're using an accessor column, you may pass `sortable()` an array of database columns to sort by:
 
@@ -143,9 +146,11 @@ Columns may be searchable, by using the text input in the top right of the table
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')
+TextColumn::make('name')
     ->searchable()
 ```
+
+<AutoScreenshot name="tables/columns/searchable" alt="Table with searchable column" version="3.x" />
 
 If you're using an accessor column, you may pass `searchable()` an array of database columns to search within:
 
@@ -177,9 +182,11 @@ You can choose to enable a per-column search input using the `isIndividual` para
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')
+TextColumn::make('name')
     ->searchable(isIndividual: true)
 ```
+
+<AutoScreenshot name="tables/columns/individually-searchable" alt="Table with individually searchable column" version="3.x" />
 
 If you use the `isIndividual` parameter, you may still search that column using the main "global" search input for the entire table.
 
@@ -313,9 +320,11 @@ Users may hide or show columns themselves in the table. To make a column togglea
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('id')
+TextColumn::make('email')
     ->toggleable()
 ```
+
+<AutoScreenshot name="tables/columns/toggleable" alt="Table with toggleable column" version="3.x" />
 
 #### Making toggleable columns hidden by default
 
@@ -374,6 +383,8 @@ TextColumn::make('title')
     ->tooltip('Title')
 ```
 
+<AutoScreenshot name="tables/columns/tooptips" alt="Table with column triggering a tooltip" version="3.x" />
+
 This method also accepts a closure that can access the current table record:
 
 ```php
@@ -394,6 +405,8 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('name')
     ->alignment('end')
 ```
+
+<AutoScreenshot name="tables/columns/alignment" alt="Table with column aligned to the right" version="3.x" />
 
 Alternatively, you may use shorthand methods like `alignEnd()`:
 
