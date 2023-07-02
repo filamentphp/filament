@@ -123,17 +123,6 @@ TextEntry::make('description')
     ->words(10)
 ```
 
-## Wrapping content
-
-If you'd like your entry's content to wrap if it's too long, you may use the `wrap()` method:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('description')
-    ->wrap()
-```
-
 ## Listing multiple values
 
 By default, if there are multiple values inside your text entry, they will be comma-separated. You may use the `listWithLineBreaks()` method to display them on new lines instead:

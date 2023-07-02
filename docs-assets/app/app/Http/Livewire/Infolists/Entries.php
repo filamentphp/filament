@@ -8,6 +8,8 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\ImageEntry;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -313,6 +315,35 @@ class Entries extends Component implements HasInfolists
                             ->falseColor('warning'),
                     ]),
                 Group::make()
+                    ->id('image')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('header_image')
+                            ->state('https://picsum.photos/id/12/1200/800'),
+                    ]),
+                Group::make()
+                    ->id('imageSquare')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('author.avatar')
+                            ->state('https://picsum.photos/id/177/1200/800')
+                            ->square(),
+                    ]),
+                Group::make()
+                    ->id('imageCircular')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('author.avatar')
+                            ->state('https://picsum.photos/id/433/1200/800')
+                            ->circular(),
+                    ]),
+                Group::make()
                     ->id('color')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -333,6 +364,51 @@ class Entries extends Component implements HasInfolists
                             ->copyMessage('Copied!')
                             ->copyMessageDuration(1500),
                     ]),
+                Group::make()
+                    ->id('repeatable')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        RepeatableEntry::make('comments')
+                            ->schema([
+                                TextEntry::make('author'),
+                                TextEntry::make('title'),
+                                TextEntry::make('content')
+                                    ->columnSpan(2),
+                            ])
+                            ->columns(2),
+                    ]),
+                Group::make()
+                    ->id('repeatableGrid')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        RepeatableEntry::make('comments')
+                            ->schema([
+                                TextEntry::make('author'),
+                                TextEntry::make('title'),
+                                TextEntry::make('content')
+                                    ->columnSpan(2),
+                            ])
+                            ->columns(2)
+                            ->grid(2),
+                    ]),
+            ])
+            ->state([
+                'comments' => [
+                    [
+                        'author' => ['name' => 'Jane Doe'],
+                        'title' => 'Wow!',
+                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.'
+                    ],
+                    [
+                        'author' => ['name' => 'John Doe'],
+                        'title' => 'This isn\'t working. Help!',
+                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.'
+                    ],
+                ],
             ]);
     }
 

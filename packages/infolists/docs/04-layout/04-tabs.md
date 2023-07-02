@@ -1,6 +1,7 @@
 ---
 title: Tabs
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -9,7 +10,7 @@ Some infolists can be long and complex. You may want to use tabs to reduce the n
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([
@@ -26,6 +27,8 @@ Tabs::make('Heading')
     ])
 ```
 
+<AutoScreenshot name="infolists/layout/tabs/simple" alt="Tabs" version="3.x" />
+
 ## Setting the default active tab
 
 The first tab will be open by default. You can change the default open tab using the `activeTab()` method:
@@ -33,7 +36,7 @@ The first tab will be open by default. You can change the default open tab using
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([
@@ -58,7 +61,7 @@ By default, the current tab is not persisted in the URL's query string. You can 
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([
@@ -81,7 +84,7 @@ By default, the current tab is persisted in the URL's query string using the `ta
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([
@@ -106,7 +109,7 @@ Tabs may have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search), whic
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
@@ -117,6 +120,8 @@ Tabs::make('Heading')
     ])
 ```
 
+<AutoScreenshot name="forms/layout/tabs/icons" alt="Tabs with icons" version="3.x" />
+
 ### Setting the tab icon color
 
 The icon of the tab may have a color to indicate its significance using the `iconColor()` method. It may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
@@ -124,7 +129,7 @@ The icon of the tab may have a color to indicate its significance using the `ico
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
@@ -143,7 +148,7 @@ The icon of the tab may be positioned before or after the label using the `iconP
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
@@ -155,6 +160,8 @@ Tabs::make('Heading')
     ])
 ```
 
+<AutoScreenshot name="infolists/layout/tabs/icons-after" alt="Tabs with icons after their labels" version="3.x" />
+
 ## Setting a tab badge
 
 Tabs may have a badge, which you can set using the `badge()` method:
@@ -162,7 +169,7 @@ Tabs may have a badge, which you can set using the `badge()` method:
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->badge(5)
@@ -173,6 +180,8 @@ Tabs::make('Heading')
     ])
 ```
 
+<AutoScreenshot name="infolists/layout/tabs/badges" alt="Tabs with badges" version="3.x" />
+
 ## Using grid columns within a tab
 
 You may use the `columns()` method to customize the [grid](grid) within the tab:
@@ -180,7 +189,7 @@ You may use the `columns()` method to customize the [grid](grid) within the tab:
 ```php
 use Filament\Infolists\Components\Tabs;
 
-Tabs::make('Heading')
+Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Tab 1')
             ->schema([

@@ -20,7 +20,7 @@
             :lg="$getGridColumns('lg')"
             :xl="$getGridColumns('xl')"
             :two-xl="$getGridColumns('2xl')"
-            class="gap-6"
+            class="gap-2"
         >
             @foreach ($getChildComponentContainers() as $container)
                 <li

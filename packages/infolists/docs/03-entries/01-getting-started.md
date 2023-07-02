@@ -222,14 +222,14 @@ These get merged onto the outer `<div>` element of each entry in that entry.
 
 ## Global settings
 
-If you wish to change the default behaviour of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`wrap()`](text#wrapping-content), you can do it like so:
+If you wish to change the default behaviour of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text#limiting-word-count), you can do it like so:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::configureUsing(function (TextEntry $entry): void {
     $entry
-        ->wrap();
+        ->words(10);
 });
 ```
 
@@ -239,5 +239,5 @@ Of course, you are still able to overwrite this on each entry individually:
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('name')
-    ->wrap(false)
+    ->words(null)
 ```

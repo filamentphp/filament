@@ -2,21 +2,19 @@
 
 namespace App\Http\Livewire\Infolists;
 
-use Filament\Forms\Components\Card;
-use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Wizard;
+use Filament\Infolists\Components\Card;
+use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Group;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Repeater;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Split;
+use Filament\Infolists\Components\Tabs;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
@@ -38,17 +36,13 @@ class Layout extends Component implements HasForms, HasInfolists
                     ])
                     ->schema([
                         Fieldset::make('Rate limiting')
-                            ->statePath('fieldset')
                             ->schema([
-                                TextInput::make('hits')
-                                    ->default(30),
-                                Select::make('period')
-                                    ->default('hour')
-                                    ->options([
-                                        'hour' => 'Hour',
-                                    ]),
-                                TextInput::make('maximum')
-                                    ->default(100),
+                                TextEntry::make('hits')
+                                    ->state(30),
+                                TextEntry::make('period')
+                                    ->state('Hour'),
+                                TextEntry::make('maximum')
+                                    ->state(100),
                             ])
                             ->columns(3),
                     ]),
@@ -59,20 +53,17 @@ class Layout extends Component implements HasForms, HasInfolists
                     ])
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabs')
                             ->schema([
                                 Tabs\Tab::make('Rate Limiting')
                                     ->schema([
-                                        TextInput::make('hits')
-                                            ->default(30),
-                                        Select::make('period')
-                                            ->default('hour')
-                                            ->options([
-                                                'hour' => 'Hour',
-                                            ]),
-                                        TextInput::make('maximum')
-                                            ->default(100),
-                                        Textarea::make('notes')
+                                        TextEntry::make('hits')
+                                            ->state(30),
+                                        TextEntry::make('period')
+                                            ->state('Hour'),
+                                        TextEntry::make('maximum')
+                                            ->state(100),
+                                        TextEntry::make('notes')
+                                            ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
                                             ->columnSpanFull(),
                                     ])
                                     ->columns(3),
@@ -87,19 +78,20 @@ class Layout extends Component implements HasForms, HasInfolists
                     ])
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabsIcons')
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
                                     ->schema([
-                                        Checkbox::make('enabled')
-                                            ->default(true),
-                                        Select::make('frequency')
-                                            ->default('hourly')
-                                            ->options([
-                                                'hourly' => 'Hourly',
-                                            ]),
-                                    ]),
+                                        IconEntry::make('enabled')
+                                            ->boolean()
+                                            ->state(true),
+                                        TextEntry::make('frequency')
+                                            ->state('Hourly'),
+                                        TextEntry::make('notes')
+                                            ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(2),
                                 Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed'),
                                 Tabs\Tab::make('Meta')
@@ -113,20 +105,21 @@ class Layout extends Component implements HasForms, HasInfolists
                     ])
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabsIconsAfter')
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
                                     ->iconPosition('after')
                                     ->schema([
-                                        Checkbox::make('enabled')
-                                            ->default(true),
-                                        Select::make('frequency')
-                                            ->default('hourly')
-                                            ->options([
-                                                'hourly' => 'Hourly',
-                                            ]),
-                                    ]),
+                                        IconEntry::make('enabled')
+                                            ->boolean()
+                                            ->state(true),
+                                        TextEntry::make('frequency')
+                                            ->state('Hourly'),
+                                        TextEntry::make('notes')
+                                            ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(2),
                                 Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
                                     ->iconPosition('after'),
@@ -142,130 +135,23 @@ class Layout extends Component implements HasForms, HasInfolists
                     ])
                     ->schema([
                         Tabs::make('Tabs')
-                            ->statePath('tabsBadges')
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->badge(5)
                                     ->schema([
-                                        Checkbox::make('enabled')
-                                            ->default(true),
-                                        Select::make('frequency')
-                                            ->default('hourly')
-                                            ->options([
-                                                'hourly' => 'Hourly',
-                                            ]),
-                                    ]),
+                                        IconEntry::make('enabled')
+                                            ->boolean()
+                                            ->state(true),
+                                        TextEntry::make('frequency')
+                                            ->state('Hourly'),
+                                        TextEntry::make('notes')
+                                            ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->columns(2),
                                 Tabs\Tab::make('Security'),
                                 Tabs\Tab::make('Meta'),
                             ]),
-                    ]),
-                Group::make()
-                    ->id('wizard')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
-                    ->schema([
-                        Wizard::make([
-                            Wizard\Step::make('Order')
-                                ->schema([
-                                    Repeater::make('items')
-                                        ->hiddenLabel()
-                                        ->schema([
-                                            Select::make('product')
-                                                ->options([
-                                                    'tshirt' => 'Filament t-shirt',
-                                                ]),
-                                            TextInput::make('quantity'),
-                                        ])
-                                        ->columns(2)
-                                        ->reorderable(false)
-                                        ->addActionLabel('Add to order')
-                                        ->default([
-                                            [
-                                                'product' => 'tshirt',
-                                                'quantity' => 3,
-                                            ],
-                                        ]),
-                                    Textarea::make('specialOrderNotes'),
-                                ]),
-                            Wizard\Step::make('Delivery'),
-                            Wizard\Step::make('Billing'),
-                        ])
-                            ->statePath('wizard'),
-                    ]),
-                Group::make()
-                    ->id('wizardIcons')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
-                    ->schema([
-                        Wizard::make([
-                            Wizard\Step::make('Order')
-                                ->icon('heroicon-m-shopping-bag')
-                                ->schema([
-                                    Repeater::make('items')
-                                        ->hiddenLabel()
-                                        ->schema([
-                                            Select::make('product')
-                                                ->options([
-                                                    'tshirt' => 'Filament t-shirt',
-                                                ]),
-                                            TextInput::make('quantity'),
-                                        ])
-                                        ->columns(2)
-                                        ->reorderable(false)
-                                        ->addActionLabel('Add to order')
-                                        ->default([
-                                            [
-                                                'product' => 'tshirt',
-                                                'quantity' => 3,
-                                            ],
-                                        ]),
-                                    Textarea::make('specialOrderNotes'),
-                                ]),
-                            Wizard\Step::make('Delivery')
-                                ->icon('heroicon-m-truck'),
-                            Wizard\Step::make('Billing')
-                                ->icon('heroicon-m-credit-card'),
-                        ])
-                            ->statePath('wizardIcons'),
-                    ]),
-                Group::make()
-                    ->id('wizardDescriptions')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
-                    ->schema([
-                        Wizard::make([
-                            Wizard\Step::make('Order')
-                                ->description('Review your basket')
-                                ->schema([
-                                    Repeater::make('items')
-                                        ->hiddenLabel()
-                                        ->schema([
-                                            Select::make('product')
-                                                ->options([
-                                                    'tshirt' => 'Filament t-shirt',
-                                                ]),
-                                            TextInput::make('quantity'),
-                                        ])
-                                        ->columns(2)
-                                        ->reorderable(false)
-                                        ->addActionLabel('Add to order')
-                                        ->default([
-                                            [
-                                                'product' => 'tshirt',
-                                                'quantity' => 3,
-                                            ],
-                                        ]),
-                                    Textarea::make('specialOrderNotes'),
-                                ]),
-                            Wizard\Step::make('Delivery')
-                                ->description('Send us your address'),
-                            Wizard\Step::make('Billing')
-                                ->description('Select a payment method'),
-                        ])
-                            ->statePath('wizardDescriptions'),
                     ]),
                 Group::make()
                     ->id('section')
@@ -275,18 +161,15 @@ class Layout extends Component implements HasForms, HasInfolists
                     ->schema([
                         Section::make('Rate limiting')
                             ->description('Prevent abuse by limiting the number of requests per period')
-                            ->statePath('section')
                             ->schema([
-                                TextInput::make('hits')
-                                    ->default(30),
-                                Select::make('period')
-                                    ->default('hour')
-                                    ->options([
-                                        'hour' => 'Hour',
-                                    ]),
-                                TextInput::make('maximum')
-                                    ->default(100),
-                                Textarea::make('notes')
+                                TextEntry::make('hits')
+                                    ->state(30),
+                                TextEntry::make('period')
+                                    ->state('Hour'),
+                                TextEntry::make('maximum')
+                                    ->state(100),
+                                TextEntry::make('notes')
+                                    ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
                                     ->columnSpanFull(),
                             ])
                             ->columns(3),
@@ -300,27 +183,16 @@ class Layout extends Component implements HasForms, HasInfolists
                         Section::make('Cart')
                             ->description('The items you have selected for purchase')
                             ->icon('heroicon-m-shopping-bag')
-                            ->statePath('sectionIcons')
                             ->schema([
-                                Repeater::make('items')
+                                RepeatableEntry::make('items')
                                     ->hiddenLabel()
                                     ->schema([
-                                        Select::make('product')
-                                            ->options([
-                                                'tshirt' => 'Filament t-shirt',
-                                            ]),
-                                        TextInput::make('quantity'),
+                                        TextEntry::make('product'),
+                                        TextEntry::make('quantity'),
                                     ])
-                                    ->columns(2)
-                                    ->reorderable(false)
-                                    ->addActionLabel('Add to order')
-                                    ->default([
-                                        [
-                                            'product' => 'tshirt',
-                                            'quantity' => 3,
-                                        ],
-                                    ]),
-                                Textarea::make('specialOrderNotes'),
+                                    ->columns(2),
+                                TextEntry::make('specialOrderNotes')
+                                    ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.'),
                             ]),
                     ]),
                 Group::make()
@@ -332,18 +204,16 @@ class Layout extends Component implements HasForms, HasInfolists
                         Section::make('Rate limiting')
                             ->description('Prevent abuse by limiting the number of requests per period')
                             ->aside()
-                            ->statePath('sectionAside')
                             ->schema([
-                                TextInput::make('hits')
-                                    ->default(30),
-                                Select::make('period')
-                                    ->default('hour')
-                                    ->options([
-                                        'hour' => 'Hour',
-                                    ]),
-                                TextInput::make('maximum')
-                                    ->default(100),
-                                Textarea::make('notes'),
+                                TextEntry::make('hits')
+                                    ->state(30),
+                                TextEntry::make('period')
+                                    ->state('Hour'),
+                                TextEntry::make('maximum')
+                                    ->state(100),
+                                TextEntry::make('notes')
+                                    ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
+                                    ->columnSpanFull(),
                             ]),
                     ]),
                 Group::make()
@@ -354,8 +224,7 @@ class Layout extends Component implements HasForms, HasInfolists
                     ->schema([
                         Section::make('Cart')
                             ->description('The items you have selected for purchase')
-                            ->collapsed()
-                            ->statePath('sectionCollapsed'),
+                            ->collapsed(),
                     ]),
                 Group::make()
                     ->id('sectionCompact')
@@ -366,30 +235,18 @@ class Layout extends Component implements HasForms, HasInfolists
                         Section::make('Rate limiting')
                             ->description('Prevent abuse by limiting the number of requests per period')
                             ->compact()
-                            ->statePath('sectionCompact')
                             ->schema([
-                                TextInput::make('hits')
-                                    ->default(30),
-                                Select::make('period')
-                                    ->default('hour')
-                                    ->options([
-                                        'hour' => 'Hour',
-                                    ]),
-                                TextInput::make('maximum')
-                                    ->default(100),
-                                Textarea::make('notes')
+                                TextEntry::make('hits')
+                                    ->state(30),
+                                TextEntry::make('period')
+                                    ->state('Hour'),
+                                TextEntry::make('maximum')
+                                    ->state(100),
+                                TextEntry::make('notes')
+                                    ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
                                     ->columnSpanFull(),
                             ])
                             ->columns(3),
-                    ]),
-                Group::make()
-                    ->id('placeholder')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-2xl',
-                    ])
-                    ->schema([
-                        Placeholder::make('created')
-                            ->content('May 21, 2021'),
                     ]),
                 Group::make()
                     ->id('card')
@@ -398,21 +255,54 @@ class Layout extends Component implements HasForms, HasInfolists
                     ])
                     ->schema([
                         Card::make([
-                            TextInput::make('hits')
-                                ->default(30),
-                            Select::make('period')
-                                ->default('hour')
-                                ->options([
-                                    'hour' => 'Hour',
-                                ]),
-                            TextInput::make('maximum')
-                                ->default(100),
-                            Textarea::make('notes')
+                            TextEntry::make('hits')
+                                ->state(30),
+                            TextEntry::make('period')
+                                ->state('Hour'),
+                            TextEntry::make('maximum')
+                                ->state(100),
+                            TextEntry::make('notes')
+                                ->state('Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.')
                                 ->columnSpanFull(),
                         ])
-                            ->statePath('card')
                             ->columns(3),
                     ]),
+                Group::make()
+                    ->id('split')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Split::make([
+                            Card::make([
+                                TextEntry::make('title')
+                                    ->state('What is Filament?')
+                                    ->weight('bold'),
+                                TextEntry::make('content')
+                                    ->state(<<<MARKDOWN
+                                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non dui eu augue tempor finibus. Vivamus tincidunt malesuada volutpat. Donec ornare euismod est id cursus. Donec dolor nisl, dignissim vitae vulputate accumsan, consequat a lorem.
+
+                                    Praesent nec nulla ut erat mattis tincidunt. Donec dictum nibh at consequat finibus. Donec dignissim velit euismod dui lobortis, ut cursus ante auctor. Donec id placerat felis. Nulla dolor arcu, sodales nec sapien ut, laoreet rhoncus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.
+                                    MARKDOWN)
+                                    ->markdown()
+                                    ->prose(),
+                            ]),
+                            Card::make([
+                                TextEntry::make('created_at')
+                                    ->dateTime()
+                                    ->state('2022-01-01 14:10:32'),
+                                TextEntry::make('published_at')
+                                    ->dateTime()
+                                    ->state('2023-07-02 23:29:24'),
+                            ])->grow(false),
+                        ]),
+                    ]),
+            ])
+            ->state([
+                'items' => [
+                    ['product' => 'Filament t-shirt', 'quantity' => 3],
+                    ['product' => 'Filament hoodie', 'quantity' => 1],
+                ],
             ]);
     }
 

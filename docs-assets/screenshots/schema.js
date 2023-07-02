@@ -1289,6 +1289,33 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/image/simple': {
+        url: 'infolists/entries',
+        selector: '#image',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/image/square': {
+        url: 'infolists/entries',
+        selector: '#imageSquare',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/image/circular': {
+        url: 'infolists/entries',
+        selector: '#imageCircular',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/color/simple': {
         url: 'infolists/entries',
         selector: '#color',
@@ -1310,6 +1337,132 @@ export default {
             await page.click('#colorCopyable .filament-infolists-color-entry-content')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'infolists/entries/repeatable/simple': {
+        url: 'infolists/entries',
+        selector: '#repeatable',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/repeatable/grid': {
+        url: 'infolists/entries',
+        selector: '#repeatableGrid',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/fieldset/simple': {
+        url: 'infolists/layout',
+        selector: '#fieldset',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/tabs/simple': {
+        url: 'infolists/layout',
+        selector: '#tabs',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/tabs/icons': {
+        url: 'infolists/layout',
+        selector: '#tabsIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/tabs/icons-after': {
+        url: 'infolists/layout',
+        selector: '#tabsIconsAfter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/tabs/badges': {
+        url: 'infolists/layout',
+        selector: '#tabsBadges',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/simple': {
+        url: 'infolists/layout',
+        selector: '#section',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/icons': {
+        url: 'infolists/layout',
+        selector: '#sectionIcons',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/aside': {
+        url: 'infolists/layout',
+        selector: '#sectionAside',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/collapsed': {
+        url: 'infolists/layout',
+        selector: '#sectionCollapsed',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/compact': {
+        url: 'infolists/layout',
+        selector: '#sectionCompact',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/card/simple': {
+        url: 'infolists/layout',
+        selector: '#card',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/split/simple': {
+        url: 'infolists/layout',
+        selector: '#split',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
 }

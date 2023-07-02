@@ -1,6 +1,7 @@
 ---
 title: Fieldset
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -14,6 +15,8 @@ Fieldset::make('Label')
         // ...
     ])
 ```
+
+<AutoScreenshot name="infolists/layout/fieldset/simple" alt="Fieldset" version="3.x" />
 
 ## Using grid columns within a fieldset
 

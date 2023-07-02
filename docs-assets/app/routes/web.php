@@ -2,8 +2,9 @@
 
 use App\Http\Livewire\Actions;
 use App\Http\Livewire\Forms\Fields;
-use App\Http\Livewire\Forms\Layout;
+use App\Http\Livewire\Forms\Layout as FormsLayout;
 use App\Http\Livewire\Infolists\Entries;
+use App\Http\Livewire\Infolists\Layout as InfolistsLayout;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,6 +20,6 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/actions', Actions::class);
 Route::get('/forms/fields', Fields::class);
-Route::get('/forms/layout', Layout::class);
+Route::get('/forms/layout', FormsLayout::class);
 Route::get('/infolists/entries', Entries::class);
-Route::get('/infolists/layout', Layout::class);
+Route::get('/infolists/layout', InfolistsLayout::class);
