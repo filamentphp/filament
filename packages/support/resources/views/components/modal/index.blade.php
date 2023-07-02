@@ -91,7 +91,7 @@
                 $attributes->class([
                     'pointer-events-none relative w-full cursor-pointer transition',
                     'my-auto p-4' => ! $slideOver,
-                    'flex shrink max-h-screen ' => $scrollContent,
+                    'flex max-h-screen shrink' => $scrollContent,
                 ])
             }}
         >
