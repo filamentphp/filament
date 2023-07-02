@@ -1,10 +1,13 @@
 <?php
 
-use App\Http\Livewire\Actions;
-use App\Http\Livewire\Forms\Fields;
-use App\Http\Livewire\Forms\Layout as FormsLayout;
-use App\Http\Livewire\Infolists\Entries;
-use App\Http\Livewire\Infolists\Layout as InfolistsLayout;
+use App\Http\Livewire\ActionsDemo;
+use App\Http\Livewire\Forms\FieldsDemo;
+use App\Http\Livewire\Forms\GettingStartedDemo;
+use App\Http\Livewire\Forms\LayoutDemo as FormsLayoutDemo;
+use App\Http\Livewire\Infolists\EntriesDemo;
+use App\Http\Livewire\Infolists\LayoutDemo as InfolistsLayoutDemo;
+use App\Http\Livewire\NotificationsDemo;
+use App\Http\Livewire\TablesDemo;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,8 +21,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/actions', Actions::class);
-Route::get('/forms/fields', Fields::class);
-Route::get('/forms/layout', FormsLayout::class);
-Route::get('/infolists/entries', Entries::class);
-Route::get('/infolists/layout', InfolistsLayout::class);
+Route::get('/actions', ActionsDemo::class);
+Route::get('/forms/fields', FieldsDemo::class);
+Route::get('/forms/getting-started', GettingStartedDemo::class);
+Route::get('/forms/layout', FormsLayoutDemo::class);
+Route::get('/infolists/entries', EntriesDemo::class);
+Route::get('/infolists/layout', InfolistsLayoutDemo::class);
+Route::get('/notifications', NotificationsDemo::class);
+Route::get('/tables', TablesDemo::class);

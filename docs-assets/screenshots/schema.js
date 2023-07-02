@@ -269,6 +269,42 @@ export default {
         url: 'admin',
         selector: 'body',
     },
+    'forms/getting-started/fields': {
+        url: 'forms/getting-started',
+        selector: '#fields',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/getting-started/columns': {
+        url: 'forms/getting-started',
+        selector: '#columns',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/getting-started/column-span': {
+        url: 'forms/getting-started',
+        selector: '#columnSpan',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/getting-started/section': {
+        url: 'forms/getting-started',
+        selector: '#section',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/simple': {
         url: 'forms/fields',
         selector: '#simple',
@@ -747,6 +783,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
+            // Ensure that the Markdown editor is visible otherwise its JS won't load.
             await page.evaluate(() => {
                 document.querySelector('#markdownEditor').scrollIntoView()
             })
@@ -930,6 +967,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
+            // Ensure that the Markdown editor is visible otherwise its JS won't load.
             await page.evaluate(() => {
                 document.querySelector('#colorPicker').scrollIntoView()
             })
@@ -1463,6 +1501,153 @@ export default {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
+        },
+    },
+    'notifications/success': {
+        url: 'notifications?method=success',
+        selector: 'body',
+        viewport: {
+            width: 420,
+            height: 155,
+            deviceScaleFactor: 3,
+        },
+    },
+    'notifications/icon': {
+        url: 'notifications?method=icon',
+        selector: 'body',
+        viewport: {
+            width: 420,
+            height: 155,
+            deviceScaleFactor: 3,
+        },
+    },
+    'notifications/statuses': {
+        url: 'notifications?method=statuses',
+        selector: 'body',
+        viewport: {
+            width: 420,
+            height: 295,
+            deviceScaleFactor: 3,
+        },
+    },
+    'notifications/color': {
+        url: 'notifications?method=color',
+        selector: 'body',
+        viewport: {
+            width: 420,
+            height: 155,
+            deviceScaleFactor: 3,
+        },
+    },
+    'notifications/body': {
+        url: 'notifications?method=body',
+        selector: 'body',
+        viewport: {
+            width: 420,
+            height: 155,
+            deviceScaleFactor: 3,
+        },
+    },
+    'notifications/actions': {
+        url: 'notifications?method=actions',
+        selector: 'body',
+        viewport: {
+            width: 420,
+            height: 155,
+            deviceScaleFactor: 3,
+        },
+    },
+    'notifications/database': {
+        url: 'notifications?method=openDatabaseNotifications',
+        selector: 'body',
+        viewport: {
+            width: 860,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/example': {
+        url: 'tables?table=example',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns': {
+        url: 'tables?table=columns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/searchable-columns': {
+        url: 'tables?table=searchableColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/sortable-columns': {
+        url: 'tables?table=sortableColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/relationship-columns': {
+        url: 'tables?table=relationshipColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/filters': {
+        url: 'tables?table=filters',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-filters button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/actions': {
+        url: 'tables?table=actions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/actions-modal': {
+        url: 'tables?table=actions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('thead input')
+            await page.click('.filament-dropdown-trigger')
+            await page.click('.filament-dropdown-list-item')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
 }

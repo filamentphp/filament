@@ -19,7 +19,7 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Livewire\Component;
 
-class Layout extends Component implements HasForms, HasInfolists
+class LayoutDemo extends Component implements HasForms, HasInfolists
 {
     use InteractsWithForms;
     use InteractsWithInfolists;

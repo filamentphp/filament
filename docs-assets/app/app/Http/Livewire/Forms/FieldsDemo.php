@@ -26,7 +26,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Livewire\Component;
 
-class Fields extends Component implements HasForms
+class FieldsDemo extends Component implements HasForms
 {
     use InteractsWithForms;
 
@@ -118,7 +118,7 @@ class Fields extends Component implements HasForms
                     ->schema([
                         TextInput::make('placeholder')
                             ->label('Name')
-                            ->placeholder('John Doe'),
+                            ->placeholder('Dan Harrin'),
                     ]),
                 Group::make()
                     ->id('textInput')

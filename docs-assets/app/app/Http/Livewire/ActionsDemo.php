@@ -12,7 +12,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
 
-class Actions extends Component implements HasActions, HasForms
+class ActionsDemo extends Component implements HasActions, HasForms
 {
     use InteractsWithActions;
     use InteractsWithForms;

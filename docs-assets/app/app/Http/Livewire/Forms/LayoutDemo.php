@@ -19,7 +19,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Livewire\Component;
 
-class Layout extends Component implements HasForms
+class LayoutDemo extends Component implements HasForms
 {
     use InteractsWithForms;
 

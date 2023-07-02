@@ -1,6 +1,7 @@
 ---
 title: Database notifications
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -19,6 +20,8 @@ To add database notifications to your app, you must add a new Livewire component
 ```blade
 @livewire('database-notifications')
 ```
+
+<AutoScreenshot name="notifications/database" alt="Database notifications" version="3.x" />
 
 Database notifications will be rendered within a modal. To open this modal, you must have a "trigger" button in your view. Create a new trigger button component in your app, for instance at `/resources/views/notifications/database-notifications-trigger.blade.php`:
 

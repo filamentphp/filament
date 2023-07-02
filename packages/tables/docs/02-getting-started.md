@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -33,6 +34,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/getting-started/columns" alt="Table with columns" version="3.x" />
+
 In this example, there are 3 columns in the table. The first two display [text](columns/text) - the title and slug of each row in the table. The third column displays an [icon](columns/icon), either a green check or a red cross depending on if the row is featured or not.
 
 ### Making columns sortable and searchable
@@ -46,6 +49,8 @@ TextColumn::make('title')
     ->searchable()
 ```
 
+<AutoScreenshot name="tables/getting-started/searchable-columns" alt="Table with searchable column" version="3.x" />
+
 You can make multiple columns searchable, and Filament will be able to search for matches within any of them, all at once.
 
 You can also make a column [sortable](columns/getting-started#sorting) using the `sortable()` method. This will add a sort button to the column header, and clicking it will sort the table by that column:
@@ -57,6 +62,8 @@ TextColumn::make('title')
     ->sortable()
 ```
 
+<AutoScreenshot name="tables/getting-started/sortable-columns" alt="Table with sortable column" version="3.x" />
+
 ### Accessing related data from columns
 
 You can also display data in a column that belongs to a relationship. For example, if you have a `Post` model that belongs to a `User` model (the author of the post), you can display the user's name in the table:
@@ -66,6 +73,8 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('author.name')
 ```
+
+<AutoScreenshot name="tables/getting-started/relationship-columns" alt="Table with relationship column" version="3.x" />
 
 In this case, Filament will search for an `author` relationship on the `Post` model, and then display the `name` attribute of that relationship. We call this "dot notation" - you can use it to display any attribute of any relationship, even nested distant relationships. This dot notation is used by Filament to eager-load the results of that relationship for you.
 
@@ -77,15 +86,17 @@ As well as making columns `searchable()`, you can allow the users to filter rows
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 public function table(Table $table): Table
 {
     return $table
-        ->schema([
+        ->columns([
             // ...
         ])
         ->filters([
-            Filter::make('is_featured'),
+            Filter::make('is_featured')
+                ->query(fn (Builder $query) => $query->where('is_featured', true)),
             SelectFilter::make('status')
                 ->options([
                     'draft' => 'Draft',
@@ -95,6 +106,8 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+<AutoScreenshot name="tables/getting-started/filters" alt="Table with filters" version="3.x" />
 
 In this example, we have defined 2 table filters. On the table, there is now a "filter" icon button in the top corner. Clicking it will open a dropdown with the 2 filters we have defined.
 
@@ -117,7 +130,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 public function table(Table $table): Table
 {
     return $table
-        ->schema([
+        ->columns([
             // ...
         ])
         ->actions([
@@ -126,7 +139,7 @@ public function table(Table $table): Table
                     $record->is_featured = true;
                     $record->save();
                 })
-                ->hidden(fn (Post $record): bool => $record->is_featured),,
+                ->hidden(fn (Post $record): bool => $record->is_featured),
             Action::make('unfeature')
                 ->action(function (Post $record) {
                     $record->is_featured = false;
@@ -142,9 +155,13 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/getting-started/actions" alt="Table with actions" version="3.x" />
+
 In this example, we define 2 actions for table rows. The first action is a "feature" action. When clicked, it will set the `is_featured` attribute on the record to `true` - which is written within the `action()` method. Using the `hidden()` method, the action will be hidden if the record is already featured. The second action is an "unfeature" action. When clicked, it will set the `is_featured` attribute on the record to `false`. Using the `visible()` method, the action will be hidden if the record is not featured.
 
 We also define a bulk action. When bulk actions are defined, each row in the table will have a checkbox. This bulk action is [built-in to Filament](../actions/prebuilt-actions/delete#bulk-delete), and it will delete all selected records. However, you can [write your own custom bulk actions](actions#bulk-actions) easily too.
+
+<AutoScreenshot name="tables/getting-started/actions-modal" alt="Table with action modal open" version="3.x" />
 
 Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [actions documentation](../actions/overview) to learn more about their extensive capabilities throughout Filament.
 

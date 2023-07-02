@@ -14,7 +14,7 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Livewire\Component;
 
-class Entries extends Component implements HasInfolists
+class EntriesDemo extends Component implements HasInfolists
 {
     use InteractsWithForms;
     use InteractsWithInfolists;
@@ -152,7 +152,7 @@ class Entries extends Component implements HasInfolists
                     ])
                     ->schema([
                         TextEntry::make('email')
-                            ->state('dan@danharrin.com')
+                            ->state('dan@filamentphp.com')
                             ->icon('heroicon-m-envelope'),
                     ]),
                 Group::make()
@@ -162,7 +162,7 @@ class Entries extends Component implements HasInfolists
                     ])
                     ->schema([
                         TextEntry::make('email')
-                            ->state('dan@danharrin.com')
+                            ->state('dan@filamentphp.com')
                             ->icon('heroicon-m-envelope')
                             ->iconPosition('after'),
                     ]),

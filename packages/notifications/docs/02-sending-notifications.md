@@ -1,6 +1,7 @@
 ---
 title: Sending notifications
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -30,7 +31,7 @@ class EditPost extends Component
 }
 ```
 
-![Notification](https://user-images.githubusercontent.com/44533235/180995786-c9d6ac68-959a-45d2-8f05-e09ff2b9abd9.png)
+<AutoScreenshot name="notifications/success" alt="Success notification" version="3.x" />
 
 ## Setting a title
 
@@ -78,7 +79,7 @@ new Notification()
     .send()
 ```
 
-![Notification with icon](https://user-images.githubusercontent.com/44533235/180996863-1eee77fb-2504-4d70-972d-d120bef631dc.png)
+<AutoScreenshot name="notifications/icon" alt="Notification with icon" version="3.x" />
 
 Notifications often have a status like `success`, `warning`, `danger` or `info`. Instead of manually setting the corresponding icons and colors, there's a `status()` method which you can pass the status. You may also use the dedicated `success()`, `warning()`, `danger()` and `info()` methods instead. So, cleaning up the above example would look like this:
 
@@ -100,7 +101,7 @@ new Notification()
     .send()
 ```
 
-![Success, warning and danger notifications](https://user-images.githubusercontent.com/44533235/180995801-3e706ca6-773b-47a0-9fc6-3e28900a9ea9.png)
+<AutoScreenshot name="notifications/statuses" alt="Notifications with various statuses" version="3.x" />
 
 ## Setting a background color
 
@@ -123,6 +124,8 @@ new Notification()
     .color('success') // [tl! focus]
     .send()
 ```
+
+<AutoScreenshot name="notifications/color" alt="Notification with background color" version="3.x" />
 
 ## Setting a duration
 
@@ -216,7 +219,7 @@ new Notification()
     .send()
 ```
 
-![Notification with Markdown body](https://user-images.githubusercontent.com/44533235/180995813-ce93e747-0f66-4fc5-becb-7e535fb80e46.png)
+<AutoScreenshot name="notifications/body" alt="Notification with body text" version="3.x" />
 
 ## Adding actions to notifications
 
@@ -255,7 +258,7 @@ new Notification()
     .send()
 ```
 
-![Notification with actions](https://user-images.githubusercontent.com/44533235/180995819-ed5c78fa-b567-4bc6-9e5c-64fe615c4360.png)
+<AutoScreenshot name="notifications/actions" alt="Notification with actions" version="3.x" />
 
 You can learn more about how to style action buttons [here](../actions/trigger-button).
 

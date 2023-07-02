@@ -89,8 +89,6 @@ Finally, in your Livewire component's view, render the table:
 
 Visit your Livewire component in the browser, and you should see the table.
 
-![](https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png)
-
 ## Generating table Livewire components with the CLI
 
 It's advised that you learn how to set up a Livewire component with the table builder manually, but once you are confident, you can use the CLI to generate a table for you.

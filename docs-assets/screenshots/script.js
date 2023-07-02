@@ -58,6 +58,8 @@ const processScreenshot = async (file, options, theme) => {
     console.log(`✅  Generated ${path.dirname(fileURLToPath(import.meta.url))}/images/${theme}/${file}.jpg`)
 }
 
+const failures = []
+
 for (const theme of themes) {
     for (const [file, options] of Object.entries(schema)) {
         if ((process.argv[2] ?? null) && ((process.argv[2] ?? null) !== file)) {
@@ -70,9 +72,18 @@ for (const theme of themes) {
             await processScreenshot(file, options, theme)
         } catch (error) {
             console.error(`❌  Failed to generate ${theme}/${file} - ${error}`)
+            failures.push(`${theme}/${file}`)
         }
     }
 }
+
+if (failures.length) {
+    console.error(`❌  Failed to generate ${failures.length} screenshots:`)
+    failures.forEach((failure) => console.error(`-  ${failure}`))
+    process.exit(1)
+}
+
+process.exit(0)
 
 function configure(php = null) {
     fs.writeFileSync(

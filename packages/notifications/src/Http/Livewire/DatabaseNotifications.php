@@ -23,6 +23,7 @@ class DatabaseNotifications extends Component
      * @var array<string, string>
      */
     protected $listeners = [
+        'databaseNotificationsSent' => '$refresh',
         'markedNotificationAsRead' => 'markNotificationAsRead',
         'markedNotificationAsUnread' => 'markNotificationAsUnread',
         'notificationClosed' => 'removeNotification',
