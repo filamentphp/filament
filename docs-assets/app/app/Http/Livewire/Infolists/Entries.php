@@ -2,11 +2,9 @@
 
 namespace App\Http\Livewire\Infolists;
 
+use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\Group;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\RepeatableEntry;
