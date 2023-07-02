@@ -175,8 +175,8 @@ class FieldsDemo extends Component implements HasForms
                                 'dan' => 'Dan Harrin',
                                 'ryan' => 'Ryan Chandler',
                                 'zep' => 'Zep Fietje',
-                                'adam' => 'Adam Weston',
                                 'dennis' => 'Dennis Koch',
+                                'adam' => 'Adam Weston',
                             ]),
                     ]),
                 Group::make()

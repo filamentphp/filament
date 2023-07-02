@@ -1,6 +1,7 @@
 ---
 title: Text input column
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -9,8 +10,10 @@ The text input column allows you to render a text input inside the table, which 
 ```php
 use Filament\Tables\Columns\TextInputColumn;
 
-TextInputColumn::make('name')
+TextInputColumn::make('email')
 ```
+
+<AutoScreenshot name="tables/columns/text-input/simple" alt="Text input column" version="3.x" />
 
 ## Validation
 

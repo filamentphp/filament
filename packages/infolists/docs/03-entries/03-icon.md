@@ -31,7 +31,7 @@ use Filament\Infolists\Components\IconEntry;
 
 IconEntry::make('status')
     ->color(fn (string $state): string => match ($state) {
-        'draft' => 'danger',
+        'draft' => 'info',
         'reviewing' => 'warning',
         'published' => 'success',
         default => 'gray',

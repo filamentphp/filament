@@ -12,8 +12,14 @@ use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\CheckboxColumn;
+use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
@@ -367,6 +373,196 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function iconColumn(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                IconColumn::make('status')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    }),
+            ]);
+    }
+
+    public function iconColumnColor(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                IconColumn::make('status')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'info',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        default => 'gray',
+                    }),
+            ]);
+    }
+
+    public function iconColumnMedium(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                IconColumn::make('status')
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    })
+                    ->size('md'),
+            ]);
+    }
+
+    public function iconColumnBoolean(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                IconColumn::make('is_featured')
+                    ->boolean(),
+            ]);
+    }
+
+    public function iconColumnBooleanIcon(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                IconColumn::make('is_featured')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-check-badge')
+                    ->falseIcon('heroicon-o-x-mark'),
+            ]);
+    }
+
+    public function iconColumnBooleanColor(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                IconColumn::make('is_featured')
+                    ->boolean()
+                    ->trueColor('info')
+                    ->falseColor('warning'),
+            ]);
+    }
+
+    public function imageColumn(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('avatar'),
+            ]);
+    }
+
+    public function imageColumnSquare(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('avatar')
+                    ->square(),
+            ]);
+    }
+
+    public function imageColumnCircular(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('avatar')
+                    ->circular(),
+            ]);
+    }
+
+    public function colorColumn(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                ColorColumn::make('color')
+                    ->getStateUsing(fn ($rowLoop): string => match ($rowLoop->index) {
+                        0 => '#ef4444',
+                        1 => '#fde047',
+                        2 => '#22c55e',
+                        3 => '#0ea5e9',
+                        default => '#8b5cf6',
+                    }),
+            ]);
+    }
+
+    public function colorColumnCopyable(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                ColorColumn::make('color')
+                    ->getStateUsing(fn ($rowLoop): string => match ($rowLoop->index) {
+                        0 => '#ef4444',
+                        1 => '#fde047',
+                        2 => '#22c55e',
+                        3 => '#0ea5e9',
+                        default => '#8b5cf6',
+                    })
+                    ->copyable()
+                    ->copyMessage('Color code copied')
+                    ->copyMessageDuration(1500),
+            ]);
+    }
+
+    public function selectColumn(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                SelectColumn::make('status')
+                    ->options([
+                        'draft' => 'Draft',
+                        'reviewing' => 'Reviewing',
+                        'published' => 'Published',
+                    ]),
+            ]);
+    }
+
+    public function toggleColumn(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ToggleColumn::make('is_admin')
+                    ->getStateUsing(fn ($rowLoop): bool => $rowLoop->index < 2),
+            ]);
+    }
+
+    public function textInputColumn(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextInputColumn::make('email'),
+            ]);
+    }
+
+    public function checkboxColumn(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                CheckboxColumn::make('is_admin')
+                    ->getStateUsing(fn ($rowLoop): bool => $rowLoop->index < 2),
+            ]);
+    }
+
     public function postsTable(Table $table): Table
     {
         User::truncate();
@@ -402,7 +598,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'description' => 'Learn how to customize Filament\'s UI with a theme and make it your own.',
                 'is_featured' => false,
                 'status' => 'reviewing',
-                'author_id' => User::factory()->create(['name' => 'Adam Weston'])->id,
+                'author_id' => User::factory()->create(['name' => 'Dennis Koch'])->id,
             ],
             [
                 'title' => 'New Filament plugins in August',
@@ -410,7 +606,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'description' => 'Discover the latest Filament plugins that were released in August.',
                 'is_featured' => false,
                 'status' => 'published',
-                'author_id' => User::factory()->create(['name' => 'Dennis Koch'])->id,
+                'author_id' => User::factory()->create(['name' => 'Adam Weston'])->id,
             ],
         ]);
         Post::factory()->count(45)->create();
@@ -429,30 +625,35 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'email' => 'dan@filamentphp.com',
                 'email_verified_at' => '2023-08-01 11:30:00',
                 'password' => 'password',
+                'avatar' => 'https://avatars.githubusercontent.com/u/41773797?v=4',
             ],
             [
                 'name' => 'Ryan Chandler',
                 'email' => 'ryan@filamentphp.com',
                 'email_verified_at' => null,
                 'password' => 'password',
+                'avatar' => 'https://avatars.githubusercontent.com/u/41837763?v=4',
             ],
             [
                 'name' => 'Zep Fietje',
                 'email' => 'zep@filamentphp.com',
                 'email_verified_at' => null,
                 'password' => 'password',
-            ],
-            [
-                'name' => 'Adam Weston',
-                'email' => 'adam@filamentphp.com',
-                'email_verified_at' => '2023-08-01 11:30:00',
-                'password' => 'password',
+                'avatar' => 'https://avatars.githubusercontent.com/u/44533235?v=4',
             ],
             [
                 'name' => 'Dennis Koch',
                 'email' => 'dennis@filamentphp.com',
                 'email_verified_at' => '2023-08-01 11:30:00',
                 'password' => 'password',
+                'avatar' => 'https://avatars.githubusercontent.com/u/22632550?v=4',
+            ],
+            [
+                'name' => 'Adam Weston',
+                'email' => 'adam@filamentphp.com',
+                'email_verified_at' => '2023-08-01 11:30:00',
+                'password' => 'password',
+                'avatar' => 'https://avatars.githubusercontent.com/u/3596800?v=4',
             ],
         ]);
         User::factory()->count(45)->create();

@@ -122,7 +122,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ->schema([
                         TextEntry::make('authors.name')
                             ->listWithLineBreaks()
-                            ->state(['Dan Harrin', 'Ryan Chandler', 'Zep Fietje', 'Adam Weston', 'Dennis Koch']),
+                            ->state(['Dan Harrin', 'Ryan Chandler', 'Zep Fietje', 'Dennis Koch', 'Adam Weston']),
                     ]),
                 Group::make()
                     ->id('textBulletList')
@@ -133,7 +133,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('authors.name')
                             ->listWithLineBreaks()
                             ->bulleted()
-                            ->state(['Dan Harrin', 'Ryan Chandler', 'Zep Fietje', 'Adam Weston', 'Dennis Koch']),
+                            ->state(['Dan Harrin', 'Ryan Chandler', 'Zep Fietje', 'Dennis Koch', 'Adam Weston']),
                     ]),
                 Group::make()
                     ->id('textColor')
@@ -238,7 +238,7 @@ class EntriesDemo extends Component implements HasInfolists
                                 'published' => 'heroicon-o-check-circle',
                             })
                             ->color(fn (string $state): string => match ($state) {
-                                'draft' => 'danger',
+                                'draft' => 'info',
                                 'reviewing' => 'warning',
                                 'published' => 'success',
                                 default => 'gray',

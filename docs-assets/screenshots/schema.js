@@ -1818,4 +1818,144 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'tables/columns/icon/simple': {
+        url: 'tables?table=iconColumn',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/icon/color': {
+        url: 'tables?table=iconColumnColor',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/icon/medium': {
+        url: 'tables?table=iconColumnMedium',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/icon/boolean': {
+        url: 'tables?table=iconColumnBoolean',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/icon/boolean-icon': {
+        url: 'tables?table=iconColumnBooleanIcon',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/icon/boolean-color': {
+        url: 'tables?table=iconColumnBooleanColor',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/image/simple': {
+        url: 'tables?table=imageColumn',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/image/square': {
+        url: 'tables?table=imageColumnSquare',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/image/circular': {
+        url: 'tables?table=imageColumnCircular',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/color/simple': {
+        url: 'tables?table=colorColumn',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/color/copyable': {
+        url: 'tables?table=colorColumnCopyable',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('[wire\\:key$="4.column.color"] .filament-tables-color-column-content')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/columns/select/simple': {
+        url: 'tables?table=selectColumn',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/toggle/simple': {
+        url: 'tables?table=toggleColumn',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text-input/simple': {
+        url: 'tables?table=textInputColumn',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/checkbox/simple': {
+        url: 'tables?table=checkboxColumn',
+        selector: 'body',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
 }
