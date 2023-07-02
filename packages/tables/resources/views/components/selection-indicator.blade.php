@@ -1,7 +1,9 @@
 @props([
     'allSelectableRecordsCount',
     'colspan',
+    'deselectAllRecordsAction' => 'deselectAllRecords',
     'end' => null,
+    'selectAllRecordsAction' => 'selectAllRecords',
     'selectedRecordsCount',
     'selectedRecordsPropertyName' => 'selectedRecords',
 ])
@@ -33,7 +35,7 @@
             x-show="{{ $allSelectableRecordsCount }} !== {{ $selectedRecordsPropertyName }}.length"
         >
             <button
-                x-on:click="selectAllRecords"
+                x-on:click="{{ $selectAllRecordsAction }}"
                 class="text-sm font-medium text-primary-600"
                 type="button"
             >
@@ -43,7 +45,7 @@
 
         <span>
             <button
-                x-on:click="deselectAllRecords"
+                x-on:click="{{ $deselectAllRecordsAction }}"
                 class="text-sm font-medium text-primary-600"
                 type="button"
             >
