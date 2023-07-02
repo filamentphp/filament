@@ -46,7 +46,7 @@ Split::make([
 ])
 ```
 
-<AutoScreenshot name="tables/split/demo" alt="Table with a split layout" version="3.x" />
+<AutoScreenshot name="tables/layout/split" alt="Table with a split layout" version="3.x" />
 
 <AutoScreenshot name="tables/layout/split/mobile" alt="Table with a split layout on mobile" version="3.x" />
 
@@ -196,8 +196,6 @@ Split::make([
 Ensure that the columns within the stack have `grow(false)` set, otherwise they will stretch to fill the entire width of the stack and follow their own alignment configuration instead of the stack's.
 
 <AutoScreenshot name="tables/layout/stack-aligned-right" alt="Table with a stack aligned right" version="3.x" />
-
-<AutoScreenshot name="tables/layout/stack-aligned-right/mobile" alt="Table with a stack aligned right on mobile" version="3.x" />
 
 #### Spacing stacked content
 
