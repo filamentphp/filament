@@ -3,7 +3,7 @@
     'colspan',
     'end' => null,
     'selectedRecordsCount',
-    'selectedRecordsPropertyName' => 'selectedRecords'
+    'selectedRecordsPropertyName' => 'selectedRecords',
 ])
 
 <div
