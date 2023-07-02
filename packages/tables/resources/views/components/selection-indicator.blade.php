@@ -1,6 +1,7 @@
 @props([
     'allSelectableRecordsCount',
     'colspan',
+    'end' => null,
     'selectedRecordsCount',
 ])
 
@@ -9,6 +10,8 @@
     x-cloak
     {{ $attributes->class(['filament-tables-selection-indicator flex flex-wrap items-center gap-1 whitespace-nowrap bg-primary-500/10 px-4 py-2 text-sm']) }}
 >
+    {{ $slot }}
+
     <div class="flex-1">
         <x-filament-support::loading-indicator
             x-show="isLoading"
@@ -48,5 +51,5 @@
         </span>
     </div>
 
-    {{ $slot }}
+    {{ $end }}
 </div>
