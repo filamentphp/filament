@@ -2,6 +2,8 @@
 
 namespace App\Http\Livewire\Infolists;
 
+use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\Card;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Group;
@@ -10,9 +12,6 @@ use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\Tabs;
-use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
@@ -278,7 +277,7 @@ class Layout extends Component implements HasForms, HasInfolists
                                     ->state('What is Filament?')
                                     ->weight('bold'),
                                 TextEntry::make('content')
-                                    ->state(<<<MARKDOWN
+                                    ->state(<<<'MARKDOWN'
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non dui eu augue tempor finibus. Vivamus tincidunt malesuada volutpat. Donec ornare euismod est id cursus. Donec dolor nisl, dignissim vitae vulputate accumsan, consequat a lorem.
 
                                     Praesent nec nulla ut erat mattis tincidunt. Donec dictum nibh at consequat finibus. Donec dignissim velit euismod dui lobortis, ut cursus ante auctor. Donec id placerat felis. Nulla dolor arcu, sodales nec sapien ut, laoreet rhoncus risus. Interdum et malesuada fames ac ante ipsum primis in faucibus.
