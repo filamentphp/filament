@@ -9,6 +9,7 @@ import schema from './schema.js'
 import emitter from 'events'
 import * as process from 'process'
 import path from 'path'
+import sharp from 'sharp'
 import { fileURLToPath } from 'url'
 
 emitter.setMaxListeners(1024)
@@ -59,6 +60,12 @@ const processScreenshot = async (file, options, theme) => {
     await browser.close()
 
     configure()
+
+    if (options.crop) {
+        fs.createWriteStream(`images/${theme}/${file}.jpg`).write(
+            await options.crop(sharp(fs.readFileSync(`images/${theme}/${file}.jpg`))).toBuffer()
+        )
+    }
 
     console.log(`✅  Generated ${path.dirname(fileURLToPath(import.meta.url))}/images/${theme}/${file}.jpg`)
 }

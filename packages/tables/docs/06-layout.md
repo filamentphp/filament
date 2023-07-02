@@ -1,6 +1,7 @@
 ---
 title: Layout
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## The problem with traditional table layouts
 
@@ -14,14 +15,17 @@ Both of these are possible with Filament. Tables automatically scroll horizontal
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('slug')->visibleFrom('md')
+TextColumn::make('slug')
+    ->visibleFrom('md')
 ```
 
 This is fine, but there is still a glaring issue - **on mobile, the user is unable to see much information in a table row at once without scrolling**.
 
 Thankfully, Filament lets you build responsive table-like interfaces, without touching HTML or CSS. These layouts let you define exactly where content appears in a table row, at each responsive breakpoint.
 
-![Layout demo](https://user-images.githubusercontent.com/41773797/191832816-fe2d6e1b-a9b1-4133-b52a-d315705feb8f.png)
+<AutoScreenshot name="tables/layout/demo" alt="Table with responsive layout" version="3.x" />
+
+<AutoScreenshot name="tables/layout/demo/mobile" alt="Table with responsive layout on mobile" version="3.x" />
 
 ## Allowing columns to stack on mobile
 
@@ -32,13 +36,19 @@ use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\TextColumn;
 
 Split::make([
-    ImageColumn::make('avatar'),
-    TextColumn::make('name'),
+    ImageColumn::make('avatar')
+        ->circular(),
+    TextColumn::make('name')
+        ->weight('bold')
+        ->searchable()
+        ->sortable(),
     TextColumn::make('email'),
 ])
 ```
 
-![Split layout](https://user-images.githubusercontent.com/41773797/191833019-efa1cede-3483-451a-8ee3-7f5405d5cb38.png)
+<AutoScreenshot name="tables/split/demo" alt="Table with a split layout" version="3.x" />
+
+<AutoScreenshot name="tables/layout/split/mobile" alt="Table with a split layout on mobile" version="3.x" />
 
 A `Split` component is used to wrap around columns, and allow them to stack on mobile.
 
@@ -50,15 +60,21 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
 Split::make([
-    ImageColumn::make('avatar'),
-    TextColumn::make('name'),
+    ImageColumn::make('avatar')
+        ->circular(),
+    TextColumn::make('name')
+        ->weight('bold')
+        ->searchable()
+        ->sortable(),
     TextColumn::make('email'),
 ])->from('md')
 ```
 
 In this example, the columns will only appear horizontally aside each other from `md` [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) devices onwards:
 
-![Split layout only on desktop](https://user-images.githubusercontent.com/41773797/191833132-0648cbc8-5d31-45ea-b978-be316ebcf73c.png)
+<AutoScreenshot name="tables/layout/split-desktop" alt="Table with a split layout on desktop" version="3.x" />
+
+<AutoScreenshot name="tables/layout/split-desktop/mobile" alt="Table with a stacked layout on mobile" version="3.x" />
 
 ### Preventing a column from creating whitespace
 
@@ -70,15 +86,22 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
 Split::make([
-    ImageColumn::make('avatar')->grow(false),
-    TextColumn::make('name'),
+    ImageColumn::make('avatar')
+        ->circular()
+        ->grow(false),
+    TextColumn::make('name')
+        ->weight('bold')
+        ->searchable()
+        ->sortable(),
     TextColumn::make('email'),
 ])
 ```
 
 The other columns which are allowed to `grow()` will adjust to consume the newly-freed space:
 
-![Image column not growing](https://user-images.githubusercontent.com/41773797/191833422-d34035b9-f99d-4711-9a1c-e073b013e5b4.png)
+<AutoScreenshot name="tables/layout/grow-disabled" alt="Table with a column that doesn't grow" version="3.x" />
+
+<AutoScreenshot name="tables/layout/grow-disabled/mobile" alt="Table with a column that doesn't grow on mobile" version="3.x" />
 
 ### Stacking within a split
 
@@ -91,16 +114,24 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
 Split::make([
-    ImageColumn::make('avatar'),
-    TextColumn::make('name'),
+    ImageColumn::make('avatar')
+        ->circular(),
+    TextColumn::make('name')
+        ->weight('bold')
+        ->searchable()
+        ->sortable(),
     Stack::make([
-        TextColumn::make('email'),
-        TextColumn::make('phone'),
+        TextColumn::make('phone')
+            ->icon('heroicon-m-phone'),
+        TextColumn::make('email')
+            ->icon('heroicon-m-envelope'),
     ]),
 ])
 ```
 
-![Stack within a split](https://user-images.githubusercontent.com/41773797/191833594-3ab5cf7a-e8f3-4662-ab34-1f8ee50c20f4.png)
+<AutoScreenshot name="tables/layout/stack" alt="Table with a stack" version="3.x" />
+
+<AutoScreenshot name="tables/layout/stack/mobile" alt="Table with a stack on mobile" version="3.x" />
 
 #### Hiding a stack on mobile
 
@@ -113,16 +144,24 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
 Split::make([
-    ImageColumn::make('avatar'),
-    TextColumn::make('name'),
+    ImageColumn::make('avatar') 
+        ->circular(),
+    TextColumn::make('name')
+        ->weight('bold')
+        ->searchable()
+        ->sortable(),
     Stack::make([
-        TextColumn::make('email'),
-        TextColumn::make('phone'),
+        TextColumn::make('phone')
+            ->icon('heroicon-m-phone'),
+        TextColumn::make('email')
+            ->icon('heroicon-m-envelope'),
     ])->visibleFrom('md'),
 ])
 ```
 
-![Stack hidden on mobile](https://user-images.githubusercontent.com/41773797/191833730-2b2faa7f-5678-4746-9b80-570ae59ad9f5.png)
+<AutoScreenshot name="tables/layout/stack-hidden-on-mobile" alt="Table with a stack" version="3.x" />
+
+<AutoScreenshot name="tables/layout/stack-hidden-on-mobile/mobile" alt="Table with no stack on mobile" version="3.x" />
 
 #### Aligning stacked content
 
@@ -135,16 +174,30 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 
 Split::make([
-    ImageColumn::make('avatar'),
-    TextColumn::make('name'),
+    ImageColumn::make('avatar')
+        ->circular(),
+    TextColumn::make('name')
+        ->weight('bold')
+        ->searchable()
+        ->sortable(),
     Stack::make([
-        TextColumn::make('email'),
-        TextColumn::make('phone'),
-    ])->alignment('right'),
+        TextColumn::make('phone')
+            ->icon('heroicon-m-phone')
+            ->grow(false),
+        TextColumn::make('email')
+            ->icon('heroicon-m-envelope')
+            ->grow(false),
+    ])
+        ->alignment('right')
+        ->visibleFrom('md'),
 ])
 ```
 
-![Stacked content aligned to the right](https://user-images.githubusercontent.com/41773797/191833849-4dc5972a-9f3b-466a-9c13-22ac93ec801c.png)
+Ensure that the columns within the stack have `grow(false)` set, otherwise they will stretch to fill the entire width of the stack and follow their own alignment configuration instead of the stack's.
+
+<AutoScreenshot name="tables/layout/stack-aligned-right" alt="Table with a stack aligned right" version="3.x" />
+
+<AutoScreenshot name="tables/layout/stack-aligned-right/mobile" alt="Table with a stack aligned right on mobile" version="3.x" />
 
 #### Spacing stacked content
 
@@ -155,8 +208,10 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 
 Stack::make([
-    TextColumn::make('email'),
-    TextColumn::make('phone'),
+    TextColumn::make('phone')
+        ->icon('heroicon-m-phone'),
+    TextColumn::make('email')
+        ->icon('heroicon-m-envelope'),
 ])->space(1)
 ```
 
@@ -174,8 +229,10 @@ Grid::make([
     'lg' => 2,
 ])
     ->schema([
-        TextColumn::make('email'),
-        TextColumn::make('phone'),
+        TextColumn::make('phone')
+            ->icon('heroicon-m-phone'),
+        TextColumn::make('email')
+            ->icon('heroicon-m-envelope'),
     ])
 ```
 
@@ -197,8 +254,10 @@ Grid::make([
             TextColumn::make('name'),
             TextColumn::make('job'),
         ]),
-        TextColumn::make('email'),
-        TextColumn::make('phone'),
+        TextColumn::make('phone')
+            ->icon('heroicon-m-phone'),
+        TextColumn::make('email')
+            ->icon('heroicon-m-envelope'),
     ])
 ```
 
@@ -221,11 +280,13 @@ Grid::make([
             'lg' => 'full',
             '2xl' => 2,
         ]),
-        TextColumn::make('email')
+        TextColumn::make('phone')
+            ->icon('heroicon-m-phone')
             ->columnSpan([
                 '2xl' => 2,
             ]),
-        TextColumn::make('phone'),
+        TextColumn::make('email')
+            ->icon('heroicon-m-envelope'),
     ])
 ```
 
@@ -244,13 +305,19 @@ use Filament\Tables\Columns\TextColumn;
 
 [
     Split::make([
-        ImageColumn::make('avatar'),
-        TextColumn::make('name'),
+        ImageColumn::make('avatar')
+            ->circular(),
+        TextColumn::make('name')
+        ->weight('bold')
+        ->searchable()
+            ->sortable(),
     ]),
     Panel::make([
         Stack::make([
-            TextColumn::make('email'),
-            TextColumn::make('phone'),
+            TextColumn::make('phone')
+                ->icon('heroicon-m-phone'),
+            TextColumn::make('email')
+                ->icon('heroicon-m-envelope'),
         ]),
     ])->collapsible(),
 ]
@@ -260,17 +327,22 @@ You can expand a panel by default using the `collapsed(false)` method:
 
 ```php
 use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\TextColumn;
 
 Panel::make([
-    Stack::make([
-        TextColumn::make('email'),
-        TextColumn::make('phone'),
-    ]),
+    Split::make([
+        TextColumn::make('phone')
+            ->icon('heroicon-m-phone'),
+        TextColumn::make('email')
+            ->icon('heroicon-m-envelope'),
+    ])->from('md'),
 ])->collapsed(false)
 ```
 
-![Collapsible content](https://user-images.githubusercontent.com/41773797/191834045-e423afd4-1ad3-4636-8635-fe9453423555.png)
+<AutoScreenshot name="tables/layout/collapsible" alt="Table with collapsible content" version="3.x" />
+
+<AutoScreenshot name="tables/layout/collapsible/mobile" alt="Table with collapsible content on mobile" version="3.x" />
 
 ### Adding a collapse animation
 
@@ -316,7 +388,9 @@ In this example, the rows will be displayed in a grid:
 
 These settings are fully customizable, any [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) from `sm` to `2xl` can contain `1` to `12` columns.
 
-![Records in a grid](https://user-images.githubusercontent.com/41773797/191834232-df5a73bc-392b-4fff-a4ac-8486f4e76aaf.png)
+<AutoScreenshot name="tables/layout/grid" alt="Table with grid layout" version="3.x" />
+
+<AutoScreenshot name="tables/layout/grid/mobile" alt="Table with grid layout on mobile" version="3.x" />
 
 ## Custom HTML
 
@@ -330,8 +404,12 @@ use Filament\Tables\Columns\TextColumn;
 
 [
     Split::make([
-        ImageColumn::make('avatar'),
-        TextColumn::make('name'),
+        ImageColumn::make('avatar')
+            ->circular(),
+        TextColumn::make('name')
+            ->weight('bold')
+            ->searchable()
+            ->sortable(),
     ]),
     View::make('users.table.collapsible-row-content')
         ->collapsible(),
@@ -364,12 +442,17 @@ use Filament\Tables\Columns\TextColumn;
 
 [
     Split::make([
-        ImageColumn::make('avatar'),
-        TextColumn::make('name'),
+        ImageColumn::make('avatar')
+            ->circular(),
+        TextColumn::make('name')
+            ->weight('bold')
+            ->searchable()
+            ->sortable(),
     ]),
     View::make('users.table.collapsible-row-content')
         ->components([
-            TextColumn::make('email'),
+            TextColumn::make('email')
+                ->icon('heroicon-m-envelope'),
         ])
         ->collapsible(),
 ]

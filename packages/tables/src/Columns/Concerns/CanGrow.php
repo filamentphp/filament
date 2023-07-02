@@ -6,7 +6,7 @@ use Closure;
 
 trait CanGrow
 {
-    protected bool | Closure $canGrow = false;
+    protected bool | Closure $canGrow = true;
 
     public function grow(bool | Closure $condition = true): static
     {

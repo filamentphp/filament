@@ -2228,4 +2228,196 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'tables/layout/demo': {
+        url: 'tables?table=layoutDemo',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/demo/mobile': {
+        url: 'tables?table=layoutDemo',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-table-container .filament-icon-button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+        crop: (image) => {
+            return image.extract({ width: 1920, height: 1200, left: 0, top: 0 })
+        },
+    },
+    'tables/layout/split': {
+        url: 'tables?table=layoutSplit',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/split/mobile': {
+        url: 'tables?table=layoutSplit',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1920, height: 1000, left: 0, top: 0 })
+        },
+    },
+    'tables/layout/split-desktop': {
+        url: 'tables?table=layoutSplitDesktop',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/split-desktop/mobile': {
+        url: 'tables?table=layoutSplitDesktop',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1920, height: 1000, left: 0, top: 0 })
+        },
+    },
+    'tables/layout/grow-disabled': {
+        url: 'tables?table=layoutGrowDisabled',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/grow-disabled/mobile': {
+        url: 'tables?table=layoutGrowDisabled',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1920, height: 1000, left: 0, top: 0 })
+        },
+    },
+    'tables/layout/stack': {
+        url: 'tables?table=layoutStack',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/stack/mobile': {
+        url: 'tables?table=layoutStack',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1920, height: 1200, left: 0, top: 0 })
+        },
+    },
+    'tables/layout/stack-hidden-on-mobile': {
+        url: 'tables?table=layoutStackHiddenOnMobile',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/stack-hidden-on-mobile/mobile': {
+        url: 'tables?table=layoutStackHiddenOnMobile',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1920, height: 1000, left: 0, top: 0 })
+        },
+    },
+    'tables/layout/stack-aligned-right': {
+        url: 'tables?table=layoutStackAlignedRight',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/collapsible': {
+        url: 'tables?table=layoutCollapsible',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-table-container .filament-icon-button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/layout/collapsible/mobile': {
+        url: 'tables?table=layoutCollapsible',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-tables-table-container .filament-icon-button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+        crop: (image) => {
+            return image.extract({ width: 1920, height: 1600, left: 0, top: 0 })
+        },
+    },
+    'tables/layout/grid': {
+        url: 'tables?table=layoutGrid',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/layout/grid/mobile': {
+        url: 'tables?table=layoutGrid',
+        selector: 'body',
+        viewport: {
+            width: 640,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        crop: (image) => {
+            return image.extract({ width: 1920, height: 1600, left: 0, top: 0 })
+        },
+    },
 }

@@ -22,6 +22,9 @@ use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Split;
+use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SelectColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -877,6 +880,218 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function layoutTable(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->actions([
+                EditAction::make(),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public function layoutDemo(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    Stack::make([
+                        TextColumn::make('name')
+                            ->weight('bold')
+                            ->searchable()
+                            ->sortable(),
+                        TextColumn::make('job'),
+                    ]),
+                    Stack::make([
+                        TextColumn::make('phone')
+                            ->icon('heroicon-m-phone'),
+                        TextColumn::make('email')
+                            ->icon('heroicon-m-envelope'),
+                    ])
+                        ->visibleFrom('md'),
+                ]),
+                Panel::make([
+                    TextColumn::make('email')
+                        ->icon('heroicon-m-envelope'),
+                    TextColumn::make('phone')
+                        ->icon('heroicon-m-phone'),
+                ])->collapsible(),
+            ]);
+    }
+
+    public function layoutSplit(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular(),
+                    TextColumn::make('name')
+                        ->weight('bold')
+                        ->searchable()
+                        ->sortable(),
+                    TextColumn::make('email'),
+                ]),
+            ]);
+    }
+
+    public function layoutSplitDesktop(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular(),
+                    TextColumn::make('name')
+                        ->weight('bold')
+                        ->searchable()
+                        ->sortable(),
+                    TextColumn::make('email'),
+                ])->from('md'),
+            ]);
+    }
+
+    public function layoutGrowDisabled(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    TextColumn::make('name')
+                        ->weight('bold')
+                        ->searchable()
+                        ->sortable(),
+                    TextColumn::make('email'),
+                ])->from('md'),
+            ]);
+    }
+
+    public function layoutStack(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    TextColumn::make('name')
+                        ->weight('bold')
+                        ->searchable()
+                        ->sortable(),
+                    Stack::make([
+                        TextColumn::make('phone')
+                            ->icon('heroicon-m-phone'),
+                        TextColumn::make('email')
+                            ->icon('heroicon-m-envelope'),
+                    ]),
+                ])->from('md'),
+            ]);
+    }
+
+    public function layoutStackHiddenOnMobile(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    TextColumn::make('name')
+                        ->weight('bold')
+                        ->searchable()
+                        ->sortable(),
+                    Stack::make([
+                        TextColumn::make('phone')
+                            ->icon('heroicon-m-phone'),
+                        TextColumn::make('email')
+                            ->icon('heroicon-m-envelope'),
+                    ])->visibleFrom('md'),
+                ])->from('md'),
+            ]);
+    }
+
+    public function layoutStackAlignedRight(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    TextColumn::make('name')
+                        ->weight('bold')
+                        ->searchable()
+                        ->sortable(),
+                    Stack::make([
+                        TextColumn::make('phone')
+                            ->icon('heroicon-m-phone')
+                            ->grow(false),
+                        TextColumn::make('email')
+                            ->icon('heroicon-m-envelope')
+                            ->grow(false),
+                    ])
+                        ->alignment('right')
+                        ->visibleFrom('md'),
+                ])->from('md'),
+            ]);
+    }
+
+    public function layoutCollapsible(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Split::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    TextColumn::make('name')
+                        ->weight('bold')
+                        ->searchable()
+                        ->sortable(),
+                ])->from('md'),
+                Panel::make([
+                    Split::make([
+                        TextColumn::make('phone')
+                            ->icon('heroicon-m-phone'),
+                        TextColumn::make('email')
+                            ->icon('heroicon-m-envelope'),
+                    ])->from('md'),
+                ])->collapsible(),
+            ]);
+    }
+
+    public function layoutGrid(Table $table): Table
+    {
+        return $this->layoutTable($table)
+            ->columns([
+                Stack::make([
+                    ImageColumn::make('avatar')
+                        ->circular()
+                        ->grow(false),
+                    TextColumn::make('name')
+                        ->weight('bold')
+                        ->searchable()
+                        ->sortable(),
+                    TextColumn::make('job'),
+                ]),
+                Panel::make([])->collapsible(),
+            ])
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
+            ])
+            ->paginated([6])
+            ->defaultPaginationPageOption(6);
+    }
+
     public function postsTable(Table $table): Table
     {
         User::truncate();
@@ -940,6 +1155,8 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'email_verified_at' => '2023-08-01 11:30:00',
                 'password' => 'password',
                 'avatar' => 'https://avatars.githubusercontent.com/u/41773797?v=4',
+                'phone' => '+1 (555) 555-5555',
+                'job' => 'Developer',
             ],
             [
                 'name' => 'Ryan Chandler',
@@ -947,6 +1164,8 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'email_verified_at' => null,
                 'password' => 'password',
                 'avatar' => 'https://avatars.githubusercontent.com/u/41837763?v=4',
+                'phone' => '+1 (555) 555-5555',
+                'job' => 'Developer',
             ],
             [
                 'name' => 'Zep Fietje',
@@ -954,6 +1173,8 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'email_verified_at' => null,
                 'password' => 'password',
                 'avatar' => 'https://avatars.githubusercontent.com/u/44533235?v=4',
+                'phone' => '+1 (555) 555-5555',
+                'job' => 'Developer',
             ],
             [
                 'name' => 'Dennis Koch',
@@ -961,6 +1182,8 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'email_verified_at' => '2023-08-01 11:30:00',
                 'password' => 'password',
                 'avatar' => 'https://avatars.githubusercontent.com/u/22632550?v=4',
+                'phone' => '+1 (555) 555-5555',
+                'job' => 'Developer',
             ],
             [
                 'name' => 'Adam Weston',
@@ -968,6 +1191,17 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'email_verified_at' => '2023-08-01 11:30:00',
                 'password' => 'password',
                 'avatar' => 'https://avatars.githubusercontent.com/u/3596800?v=4',
+                'phone' => '+1 (555) 555-5555',
+                'job' => 'Developer',
+            ],
+            [
+                'name' => 'Ryan Scherler',
+                'email' => 'ryans@filamentphp.com',
+                'email_verified_at' => '2023-08-01 11:30:00',
+                'password' => 'password',
+                'avatar' => 'https://avatars.githubusercontent.com/u/881938?v=4',
+                'phone' => '+1 (555) 555-5555',
+                'job' => 'Developer',
             ],
         ]);
         User::factory()->count(45)->create();
