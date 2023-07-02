@@ -17,6 +17,7 @@ return new class extends Migration
             $table->boolean('is_featured')->nullable();
             $table->string('slug')->nullable();
             $table->string('status')->nullable();
+            $table->text('description')->nullable();
             $table->string('title')->nullable();
             $table->timestamps();
         });

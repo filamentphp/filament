@@ -383,7 +383,7 @@ TextColumn::make('title')
     ->tooltip('Title')
 ```
 
-<AutoScreenshot name="tables/columns/tooptips" alt="Table with column triggering a tooltip" version="3.x" />
+<AutoScreenshot name="tables/columns/tooltips" alt="Table with column triggering a tooltip" version="3.x" />
 
 This method also accepts a closure that can access the current table record:
 

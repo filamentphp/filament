@@ -1714,4 +1714,108 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/columns/text/simple': {
+        url: 'tables?table=textColumn',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/badge': {
+        url: 'tables?table=textColumnBadge',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/description': {
+        url: 'tables?table=textColumnDescription',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/description-above': {
+        url: 'tables?table=textColumnDescriptionAbove',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/color': {
+        url: 'tables?table=textColumnColor',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/icon': {
+        url: 'tables?table=textColumnIcon',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/icon-after': {
+        url: 'tables?table=textColumnIconAfter',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/large': {
+        url: 'tables?table=textColumnLarge',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/bold': {
+        url: 'tables?table=textColumnBold',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/mono': {
+        url: 'tables?table=textColumnMono',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/text/copyable': {
+        url: 'tables?table=textColumnCopyable',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('[wire\\:key$="4.column.email"] .filament-tables-text-column-content')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
 }

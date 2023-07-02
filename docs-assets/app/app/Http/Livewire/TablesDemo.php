@@ -53,7 +53,6 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ->getStateUsing(fn ($record) => filled($record->email_verified_at))
                     ->toggleable(),
             ])
-            ->defaultPaginationPageOption(5)
             ->filters([
                 Filter::make('verified'),
             ])
@@ -255,6 +254,119 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function textColumn(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+            ]);
+    }
+
+    public function textColumnBadge(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                        'rejected' => 'danger',
+                    }),
+            ]);
+    }
+
+    public function textColumnDescription(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->description(fn (Post $record): string => $record->description),
+            ]);
+    }
+
+    public function textColumnDescriptionAbove(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->description(fn (Post $record): string => $record->description, position: 'above'),
+            ]);
+    }
+
+    public function textColumnColor(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('status')
+                    ->color('primary'),
+            ]);
+    }
+
+    public function textColumnIcon(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->icon('heroicon-m-envelope'),
+            ]);
+    }
+
+    public function textColumnIconAfter(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->icon('heroicon-m-envelope')
+                    ->iconPosition('after'),
+            ]);
+    }
+
+    public function textColumnLarge(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->size('lg'),
+            ]);
+    }
+
+    public function textColumnBold(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->weight('bold'),
+            ]);
+    }
+
+    public function textColumnMono(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->fontFamily('mono'),
+            ]);
+    }
+
+    public function textColumnCopyable(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                TextColumn::make('email')
+                    ->copyable()
+                    ->copyMessage('Email address copied')
+                    ->copyMessageDuration(1500),
+            ]);
+    }
+
     public function postsTable(Table $table): Table
     {
         User::truncate();
@@ -263,31 +375,41 @@ class TablesDemo extends Component implements HasForms, HasTable
             [
                 'title' => 'What is Filament?',
                 'slug' => 'what-is-filament',
+                'description' => 'Find out what Filament is and how it can help you build your next project.',
                 'is_featured' => true,
+                'status' => 'published',
                 'author_id' => User::factory()->create(['name' => 'Dan Harrin'])->id,
             ],
             [
                 'title' => 'Top 5 best features of Filament',
                 'slug' => 'top-5-features',
+                'description' => 'Discover the top 5 best features of Filament and how they can help you build your next project.',
                 'is_featured' => false,
+                'status' => 'reviewing',
                 'author_id' => User::factory()->create(['name' => 'Ryan Chandler'])->id,
             ],
             [
                 'title' => 'Tips for building a great Filament plugin',
                 'slug' => 'plugin-tips',
+                'description' => 'Learn how to build a great Filament plugin and get it featured in the official plugin directory.',
                 'is_featured' => true,
+                'status' => 'draft',
                 'author_id' => User::factory()->create(['name' => 'Zep Fietje'])->id,
             ],
             [
                 'title' => 'Customizing Filament\'s UI with a theme',
                 'slug' => 'theme-guide',
+                'description' => 'Learn how to customize Filament\'s UI with a theme and make it your own.',
                 'is_featured' => false,
+                'status' => 'reviewing',
                 'author_id' => User::factory()->create(['name' => 'Adam Weston'])->id,
             ],
             [
-                'title' => 'New Filament plugins in August 2023',
-                'slug' => 'new-plugins-august-2023',
+                'title' => 'New Filament plugins in August',
+                'slug' => 'new-plugins-august',
+                'description' => 'Discover the latest Filament plugins that were released in August.',
                 'is_featured' => false,
+                'status' => 'published',
                 'author_id' => User::factory()->create(['name' => 'Dennis Koch'])->id,
             ],
         ]);
@@ -336,7 +458,8 @@ class TablesDemo extends Component implements HasForms, HasTable
         User::factory()->count(45)->create();
 
         return $table
-            ->query(User::query());
+            ->query(User::query())
+            ->defaultPaginationPageOption(5);
     }
 
     public function table(Table $table): Table

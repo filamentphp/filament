@@ -1,6 +1,7 @@
 ---
 title: Text column
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -11,6 +12,8 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
 ```
+
+<AutoScreenshot name="tables/columns/text/simple" alt="Text column" version="3.x" />
 
 ## Displaying as a "badge"
 
@@ -29,6 +32,8 @@ TextColumn::make('status')
     })
 ```
 
+<AutoScreenshot name="tables/columns/text/badge" alt="Text column as badge" version="3.x" />
+
 You may add other things to the badge, like an [icon](#adding-an-icon).
 
 ## Displaying a description
@@ -44,6 +49,8 @@ TextColumn::make('title')
     ->description(fn (Post $record): string => $record->description)
 ```
 
+<AutoScreenshot name="tables/columns/text/description" alt="Text column with description" version="3.x" />
+
 By default, the description is displayed below the main text, but you can move it above using the second parameter:
 
 ```php
@@ -52,6 +59,8 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')
     ->description(fn (Post $record): string => $record->description, position: 'above')
 ```
+
+<AutoScreenshot name="tables/columns/text/description-above" alt="Text column with description above the content" version="3.x" />
 
 ## Date formatting
 
@@ -253,6 +262,8 @@ TextColumn::make('status')
     ->color('primary')
 ```
 
+<AutoScreenshot name="tables/columns/text/color" alt="Text column in the primary color" version="3.x" />
+
 ## Adding an icon
 
 Text columns may also have an icon:
@@ -264,6 +275,8 @@ TextColumn::make('email')
     ->icon('heroicon-m-envelope')
 ```
 
+<AutoScreenshot name="tables/columns/text/icon" alt="Text column with icon" version="3.x" />
+
 You may set the position of an icon using `iconPosition()`:
 
 ```php
@@ -274,18 +287,11 @@ TextColumn::make('email')
     ->iconPosition('after') // `before` or `after`
 ```
 
+<AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" version="3.x" />
+
 ## Customizing the text size
 
-You may make the text smaller using `size('sm')`:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('email')
-    ->size('sm')
-```
-
-Or you can make it larger using `size('lg')`:
+You may make the text larger using `size('lg')`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -293,6 +299,8 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')
     ->size('lg')
 ```
+
+<AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" version="3.x" />
 
 ## Customizing the font weight
 
@@ -303,9 +311,11 @@ For instance, you may make the font bold using `weight('bold')`:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('email')
+TextColumn::make('title')
     ->weight('bold')
 ```
+
+<AutoScreenshot name="tables/columns/text/bold" alt="Text column in a bold font" version="3.x" />
 
 ## Customizing the font family
 
@@ -316,9 +326,11 @@ For instance, you may make the font mono using `fontFamily('mono')`:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('text')
+TextColumn::make('email')
     ->fontFamily('mono')
 ```
+
+<AutoScreenshot name="tables/columns/text/mono" alt="Text column in a monospaced font" version="3.x" />
 
 ## Allowing the text to be copied to the clipboard
 
@@ -332,6 +344,8 @@ TextColumn::make('email')
     ->copyMessage('Email address copied')
     ->copyMessageDuration(1500)
 ```
+
+<AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" version="3.x" />
 
 ## Displaying the row index
 
