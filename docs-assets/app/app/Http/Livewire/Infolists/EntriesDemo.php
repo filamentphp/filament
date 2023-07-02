@@ -399,12 +399,12 @@ class EntriesDemo extends Component implements HasInfolists
                     [
                         'author' => ['name' => 'Jane Doe'],
                         'title' => 'Wow!',
-                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.'
+                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.',
                     ],
                     [
                         'author' => ['name' => 'John Doe'],
                         'title' => 'This isn\'t working. Help!',
-                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.'
+                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, nunc nisl aliquet nunc, quis aliquam nisl.',
                     ],
                 ],
             ]);
