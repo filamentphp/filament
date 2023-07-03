@@ -1508,7 +1508,7 @@ export default {
         selector: 'body',
         viewport: {
             width: 420,
-            height: 155,
+            height: 90,
             deviceScaleFactor: 3,
         },
     },
@@ -1517,7 +1517,7 @@ export default {
         selector: 'body',
         viewport: {
             width: 420,
-            height: 155,
+            height: 90,
             deviceScaleFactor: 3,
         },
     },
@@ -1535,7 +1535,7 @@ export default {
         selector: 'body',
         viewport: {
             width: 420,
-            height: 155,
+            height: 90,
             deviceScaleFactor: 3,
         },
     },
@@ -1544,7 +1544,7 @@ export default {
         selector: 'body',
         viewport: {
             width: 420,
-            height: 155,
+            height: 115,
             deviceScaleFactor: 3,
         },
     },
