@@ -4,7 +4,6 @@ namespace Filament\Navigation;
 
 use Closure;
 use Filament\Support\Components\Component;
-use Filament\Support\Concerns\EvaluatesClosures;
 
 class NavigationItem extends Component
 {
@@ -183,7 +182,9 @@ class NavigationItem extends Component
 
     public function getSort(): int
     {
-        if (!$this->sort) return -1;
+        if (! $this->sort) {
+            return -1;
+        }
 
         return $this->evaluate($this->sort);
     }
