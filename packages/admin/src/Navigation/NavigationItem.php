@@ -3,12 +3,11 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Filament\Support\Components\Component;
 use Filament\Support\Concerns\EvaluatesClosures;
 
-class NavigationItem
+class NavigationItem extends Component
 {
-    use EvaluatesClosures;
-
     protected string | Closure | null $group = null;
 
     protected ?Closure $isActiveWhen = null;
@@ -25,15 +24,15 @@ class NavigationItem
 
     protected string | Closure | null $badgeColor = null;
 
-    protected bool $shouldOpenUrlInNewTab = false;
+    protected bool | Closure $shouldOpenUrlInNewTab = false;
 
     protected int | Closure | null $sort = null;
 
     protected string | Closure | null $url = null;
 
-    protected bool $isHidden = false;
+    protected bool | Closure $isHidden = false;
 
-    protected bool $isVisible = true;
+    protected bool | Closure $isVisible = true;
 
     final public function __construct(?string $label = null)
     {
@@ -71,14 +70,14 @@ class NavigationItem
 
     public function visible(bool | Closure $condition = true): static
     {
-        $this->isVisible = value($condition);
+        $this->isVisible = $condition;
 
         return $this;
     }
 
     public function hidden(bool | Closure $condition = true): static
     {
-        $this->isHidden = value($condition);
+        $this->isHidden = $condition;
 
         return $this;
     }
@@ -111,9 +110,9 @@ class NavigationItem
         return $this;
     }
 
-    public function openUrlInNewTab(bool | Closure  $condition = true): static
+    public function openUrlInNewTab(bool | Closure $condition = true): static
     {
-        $this->shouldOpenUrlInNewTab = value($condition);
+        $this->shouldOpenUrlInNewTab = $condition;
 
         return $this;
     }
@@ -125,7 +124,7 @@ class NavigationItem
         return $this;
     }
 
-    public function url(string | Closure | null $url, bool $shouldOpenInNewTab = false): static
+    public function url(string | Closure | null $url, bool | Closure $shouldOpenInNewTab = false): static
     {
         $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
         $this->url = $url;
@@ -160,11 +159,11 @@ class NavigationItem
 
     public function isHidden(): bool
     {
-        if ($this->isHidden) {
+        if ($this->evaluate($this->isHidden)) {
             return true;
         }
 
-        return ! $this->isVisible;
+        return ! $this->evaluate($this->isVisible);
     }
 
     public function getActiveIcon(): ?string
@@ -191,7 +190,7 @@ class NavigationItem
 
     public function getUrl(): ?string
     {
-        return value($this->url);
+        return $this->evaluate($this->url);
     }
 
     public function isActive(): bool
@@ -202,11 +201,11 @@ class NavigationItem
             return false;
         }
 
-        return app()->call($callback);
+        return (bool) $this->evaluate($callback);
     }
 
     public function shouldOpenUrlInNewTab(): bool
     {
-        return $this->shouldOpenUrlInNewTab;
+        return (bool) $this->evaluate($this->shouldOpenUrlInNewTab);
     }
 }
