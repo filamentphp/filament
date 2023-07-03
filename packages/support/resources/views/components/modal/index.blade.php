@@ -180,6 +180,7 @@
                         @if ($header && ($actions || $heading || $slot->isNotEmpty() || $subheading))
                             <x-dynamic-component
                                 :component="$hrComponent"
+                                :dark-mode="$darkMode"
                                 class="px-2"
                             />
                         @endif
@@ -231,6 +232,7 @@
                         @if ($footer && ($actions || $heading || $slot->isNotEmpty() || $subheading))
                             <x-dynamic-component
                                 :component="$hrComponent"
+                                :dark-mode="$darkMode"
                                 class="px-2"
                             />
                         @endif
