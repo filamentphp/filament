@@ -13,7 +13,7 @@
 <nav
     role="navigation"
     aria-label="{{ __('tables::table.pagination.label') }}"
-    class="filament-tables-pagination flex items-center justify-between"
+    {{ $attributes->class(["filament-tables-pagination flex items-center justify-between"]) }}
 >
     <div class="flex flex-1 items-center justify-between lg:hidden">
         <div class="w-10">
