@@ -24,6 +24,7 @@ class PostFactory extends Factory
             'status' => $this->faker->randomElement(['draft', 'reviewing', 'published']),
             'is_featured' => $this->faker->boolean(),
             'author_id' => User::factory(),
+            'rating' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

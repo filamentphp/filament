@@ -2420,4 +2420,76 @@ export default {
             return image.extract({ width: 1920, height: 1200, left: 0, top: 0 })
         },
     },
+    'tables/summaries': {
+        url: 'tables?table=summaries',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/grouping': {
+        url: 'tables?table=grouping',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/grouping-descriptions': {
+        url: 'tables?table=groupingDescriptions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/empty-state': {
+        url: 'tables?table=emptyState',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/empty-state-heading': {
+        url: 'tables?table=emptyStateHeading',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/empty-state-description': {
+        url: 'tables?table=emptyStateDescription',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/empty-state-icon': {
+        url: 'tables?table=emptyStateIcon',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/empty-state-actions': {
+        url: 'tables?table=emptyStateActions',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
 }

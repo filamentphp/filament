@@ -26,6 +26,9 @@ use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\SelectColumn;
+use Filament\Tables\Columns\Summarizers\Average;
+use Filament\Tables\Columns\Summarizers\Count;
+use Filament\Tables\Columns\Summarizers\Range;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -1092,7 +1095,135 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->defaultPaginationPageOption(6);
     }
 
-    public function postsTable(Table $table): Table
+    public function summaries(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('rating')
+                    ->numeric()
+                    ->summarize([
+                        Average::make(),
+                        Range::make(),
+                    ]),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+                IconColumn::make('is_featured')
+                    ->boolean()
+                    ->summarize([
+                        Count::make()
+                            ->query(fn ($query) => $query->where('is_featured', true)),
+                    ]),
+            ]);
+    }
+
+    public function grouping(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('author.name')
+                    ->numeric(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+            ])
+            ->defaultGroup('status');
+    }
+
+    public function groupingDescriptions(Table $table): Table
+    {
+        return $this->postsTable($table, hasSeededPosts: false)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('author.name')
+                    ->numeric(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+            ])
+            ->defaultGroup(Group::make('status')->getDescriptionFromRecordUsing(fn (Post $post): string => match ($post->status) {
+                'draft' => 'Posts that are still being written.',
+                'reviewing' => 'Posts that are being checked by the content team.',
+                'published' => 'Posts that are public on the website.',
+            }));
+    }
+
+    public function emptyState(Table $table): Table
+    {
+        Post::truncate();
+
+        return $table
+            ->query(Post::query());
+    }
+
+    public function emptyStateHeading(Table $table): Table
+    {
+        return $this->emptyState($table)
+            ->emptyStateHeading('No posts yet');
+    }
+
+    public function emptyStateDescription(Table $table): Table
+    {
+        return $this->emptyStateHeading($table)
+            ->emptyStateDescription('Once you write your first post, it will appear here.');
+    }
+
+    public function emptyStateIcon(Table $table): Table
+    {
+        return $this->emptyStateDescription($table)
+            ->emptyStateIcon('heroicon-o-bookmark');
+    }
+
+    public function emptyStateActions(Table $table): Table
+    {
+        return $this->emptyStateIcon($table)
+            ->emptyStateActions([
+                Action::make('create')
+                    ->label('Create post')
+                    ->icon('heroicon-m-plus')
+                    ->button(),
+            ]);
+    }
+
+    public function postsTable(Table $table, bool $hasSeededPosts = true): Table
     {
         User::truncate();
         Post::truncate();
@@ -1104,6 +1235,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'is_featured' => true,
                 'status' => 'published',
                 'author_id' => User::factory()->create(['name' => 'Dan Harrin'])->id,
+                'rating' => 8.1,
             ],
             [
                 'title' => 'Top 5 best features of Filament',
@@ -1112,6 +1244,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'is_featured' => false,
                 'status' => 'reviewing',
                 'author_id' => User::factory()->create(['name' => 'Ryan Chandler'])->id,
+                'rating' => 9.3,
             ],
             [
                 'title' => 'Tips for building a great Filament plugin',
@@ -1120,6 +1253,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'is_featured' => true,
                 'status' => 'draft',
                 'author_id' => User::factory()->create(['name' => 'Zep Fietje'])->id,
+                'rating' => 9.7,
             ],
             [
                 'title' => 'Customizing Filament\'s UI with a theme',
@@ -1128,6 +1262,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'is_featured' => false,
                 'status' => 'reviewing',
                 'author_id' => User::factory()->create(['name' => 'Dennis Koch'])->id,
+                'rating' => 9.5,
             ],
             [
                 'title' => 'New Filament plugins in August',
@@ -1136,9 +1271,13 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'is_featured' => false,
                 'status' => 'published',
                 'author_id' => User::factory()->create(['name' => 'Adam Weston'])->id,
+                'rating' => 8.4,
             ],
         ]);
-        Post::factory()->count(45)->create();
+
+        if ($hasSeededPosts) {
+            Post::factory()->count(45)->create();
+        }
 
         return $table
             ->query(Post::query())

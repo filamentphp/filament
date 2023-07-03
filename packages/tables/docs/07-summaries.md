@@ -1,6 +1,7 @@
 ---
 title: Summaries
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -25,14 +26,17 @@ use Filament\Tables\Columns\Summarizers\Average;
 use Filament\Tables\Columns\Summarizers\Range;
 use Filament\Tables\Columns\TextColumn;
 
-Tables\Columns\TextColumn::make('rating')
+TextColumn::make('rating')
+    ->numeric()
     ->summarize([
-        Tables\Columns\Summarizers\Average::make(),
-        Tables\Columns\Summarizers\Range::make(),
+        Average::make(),
+        Range::make(),
     ])
 ```
 
 > Note: The first column in a table may not use summarizers. That column is used to render the heading and subheading/s of the summary section.
+
+<AutoScreenshot name="tables/summaries" alt="Table with summaries" version="3.x" />
 
 ## Available summarizers
 
