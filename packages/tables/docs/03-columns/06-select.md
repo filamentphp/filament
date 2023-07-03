@@ -1,6 +1,7 @@
 ---
 title: Select column
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -18,6 +19,8 @@ SelectColumn::make('status')
         'published' => 'Published',
     ])
 ```
+
+<AutoScreenshot name="tables/columns/select/simple" alt="Select column" version="3.x" />
 
 ## Validation
 

@@ -1,6 +1,7 @@
 ---
 title: Card
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -14,6 +15,8 @@ Card::make()
         // ...
     ])
 ```
+
+<AutoScreenshot name="infolists/layout/card/simple" alt="Card" version="3.x" />
 
 ## Using grid columns within a card
 

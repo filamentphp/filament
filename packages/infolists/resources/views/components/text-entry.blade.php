@@ -30,8 +30,6 @@
         }
         $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
 
-        $canWrap = $canWrap();
-
         $iconPosition = $getIconPosition();
         $iconSize = $isBadge ? 'h-3 w-3' : 'h-4 w-4';
 
@@ -73,7 +71,6 @@
                                 'inline-flex items-center space-x-1 rtl:space-x-reverse',
                                 'min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
                                 'prose max-w-none dark:prose-invert' => $isProse,
-                                'whitespace-normal' => $canWrap,
                                 match ($color) {
                                     'gray' => 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
                                     default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
@@ -134,13 +131,14 @@
 
                             <div
                                 @if ($itemIsCopyable)
+                                    x-data="{}"
                                     x-on:click="
                                         window.navigator.clipboard.writeText(@js($copyableState))
                                         $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                                     "
                                 @endif
                                 @class([
-                                    'inline-block',
+                                    'filament-infolists-text-entry-content inline-block',
                                     '[&>*:first-child]:mt-0 [&>*:last-child]:mb-0' => $isProse,
                                     'pt-2' => $isProse && (! $isLabelHidden()),
                                     'cursor-pointer' => $itemIsCopyable,

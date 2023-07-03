@@ -104,8 +104,6 @@ Finally, in your Livewire component's view, render the form:
 
 Visit your Livewire component in the browser, and you should see the form components from `schema()`:
 
-![](https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png)
-
 Submit the form with data, and you'll see the form's data dumped to the screen. You can save the data to a model instead of dumping it:
 
 ```php

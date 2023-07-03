@@ -51,6 +51,8 @@ Section::make('Rate limiting')
     ])
 ```
 
+<AutoScreenshot name="forms/layout/section/aside" alt="Section with heading and description aside" version="3.x" />
+
 ## Collapsing sections
 
 Sections may be `collapsible()` to optionally hide content in long forms:
@@ -79,6 +81,8 @@ Section::make('Cart')
     ->collapsed()
 ```
 
+<AutoScreenshot name="forms/layout/section/collapsed" alt="Collapsed section" version="3.x" />
+
 ## Compact section styling
 
 When nesting sections, you can use a more compact styling:
@@ -93,6 +97,8 @@ Section::make('Rate limiting')
     ])
     ->compact()
 ```
+
+<AutoScreenshot name="forms/layout/section/compact" alt="Compact section" version="3.x" />
 
 ## Using grid columns within a section
 

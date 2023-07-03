@@ -23,10 +23,7 @@
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <input
-            x-data="{
-                state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-            }"
-            x-model="state"
+            x-data="{}"
             @if (filled($mask))
                 x-mask{{ $mask instanceof \Filament\Support\RawJs ? ':dynamic' : null }}="{{ $mask }}"
             @endif
@@ -56,6 +53,7 @@
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
                         'type' => blank($mask) ? $getType() : 'text',
+                        $applyStateBindingModifiers('wire:model') => $statePath,
                     ], escape: false)
                     ->class([
                         'filament-forms-input block w-full shadow-sm outline-none transition duration-75 placeholder:text-gray-500 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',

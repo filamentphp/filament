@@ -62,7 +62,7 @@ trait HasState
 
     public function getState(): mixed
     {
-        if ($this->getStateUsing) {
+        if ($this->getStateUsing !== null) {
             $state = $this->evaluate($this->getStateUsing);
         } else {
             $containerState = $this->getContainer()->getState();

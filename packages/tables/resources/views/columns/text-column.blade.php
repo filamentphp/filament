@@ -131,6 +131,7 @@
                                 "
                             @endif
                             @class([
+                                'filament-tables-text-column-content',
                                 'cursor-pointer' => $itemIsCopyable,
                             ])
                         >

@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -36,6 +37,8 @@ public function form(Form $form): Form
 }
 ```
 
+<AutoScreenshot name="forms/getting-started/fields" alt="Form fields" version="3.x" />
+
 Forms within a panel and other packages usually have 2 columns by default. For custom forms, you can use the `columns()` method to achieve the same effect:
 
 ```php
@@ -45,6 +48,8 @@ $form
     ])
     ->columns(2);
 ```
+
+<AutoScreenshot name="forms/getting-started/columns" alt="Form fields in 2 columns" version="3.x" />
 
 Now, the `RichEditor` will only consume half of the available width. We can use the `columnSpan()` method to make it span the full width:
 
@@ -59,6 +64,8 @@ use Filament\Forms\Components\TextInput;
         ->columnSpan(2), // or `columnSpan('full')`
 ]
 ```
+
+<AutoScreenshot name="forms/getting-started/column-span" alt="Form fields in 2 columns, but with the rich editor spanning the full width of the form" version="3.x" />
 
 You can learn more about columns and spans in the [layout documentation](layout/grid). You can even make them responsive!
 
@@ -104,6 +111,8 @@ Section::make('Publishing')
     ])
 ```
 
+<AutoScreenshot name="forms/getting-started/section" alt="Form with section component" version="3.x" />
+
 This section now contains a [`Select` field](fields/select) and a [`DateTimePicker` field](fields/date-time-picker). You can learn more about those fields and their functionalities on the respective docs pages.
 
 ## Validating fields
@@ -135,7 +144,7 @@ use Filament\Forms\Components\TextInput;
             Select::make('status')
                 ->options([
                     'draft' => 'Draft',
-                'reviewing' => 'Reviewing',
+                    'reviewing' => 'Reviewing',
                     'published' => 'Published',
                 ])
                 ->required(),

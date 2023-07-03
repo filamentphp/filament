@@ -22,8 +22,6 @@ class TextEntry extends Entry implements HasAffixActions
      */
     protected string $view = 'filament-infolists::components.text-entry';
 
-    protected bool | Closure $canWrap = false;
-
     protected bool | Closure $isBadge = false;
 
     protected bool | Closure $isBulleted = false;
@@ -62,23 +60,11 @@ class TextEntry extends Entry implements HasAffixActions
         return $this;
     }
 
-    public function wrap(bool | Closure $condition = true): static
-    {
-        $this->canWrap = $condition;
-
-        return $this;
-    }
-
     public function prose(bool | Closure $condition = true): static
     {
         $this->isProse = $condition;
 
         return $this;
-    }
-
-    public function canWrap(): bool
-    {
-        return (bool) $this->evaluate($this->canWrap);
     }
 
     public function isBadge(): bool

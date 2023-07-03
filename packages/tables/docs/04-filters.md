@@ -1,6 +1,7 @@
 ---
 title: Filters
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -17,6 +18,8 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+<AutoScreenshot name="tables/filters/simple" alt="Table with filter" version="3.x" />
 
 Filters may be created using the static `make()` method, passing its unique name. You should then pass a callback to `query()` which applies your filter's scope:
 
@@ -64,6 +67,8 @@ use Filament\Tables\Filters\Filter;
 Filter::make('is_featured')
     ->toggle()
 ```
+
+<AutoScreenshot name="tables/filters/toggle" alt="Table with toggle filter" version="3.x" />
 
 ### Applying the filter by default
 
@@ -243,6 +248,8 @@ Filter::make('created_at')
     })
 ```
 
+<AutoScreenshot name="tables/filters/custom-form" alt="Table with custom filter form" version="3.x" />
+
 #### Setting default values for custom filter fields
 
 To customize the default value of a field in a custom filter form, you may use the `default()` method:
@@ -262,6 +269,8 @@ Filter::make('created_at')
 ## Active indicators
 
 When a filter is active, an indicator is displayed above the table content to signal that the table query has been scoped.
+
+<AutoScreenshot name="tables/filters/indicators" alt="Table with filter indicators" version="3.x" />
 
 By default, the label of the filter is used as the indicator. You can override this using the `indicator()` method:
 
@@ -392,6 +401,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/filters/above-content" alt="Table with filters above content" version="3.x" />
+
 ### Allowing filters above the table content to be collapsed
 
 To allow the filters above the table content to be collapsed, you may use:
@@ -424,6 +435,8 @@ public function table(Table $table): Table
         ], layout: Layout::BelowContent);
 }
 ```
+
+<AutoScreenshot name="tables/filters/below-content" alt="Table with filters below content" version="3.x" />
 
 ## Persist filters in session
 
@@ -500,3 +513,5 @@ public function table(Table $table): Table
         );
 }
 ```
+
+<AutoScreenshot name="tables/filters/custom-trigger-action" alt="Table with custom filters trigger action" version="3.x" />

@@ -1,6 +1,7 @@
 ---
 title: Getting started
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -27,6 +28,8 @@ TextEntry::make('title')
 
 TextEntry::make('author.name')
 ```
+
+<AutoScreenshot name="infolists/entries/simple" alt="Entries in an infolist" version="3.x" />
 
 ## Available entries
 
@@ -93,6 +96,67 @@ TextEntry::make('title')
     ->default('Untitled')
 ```
 
+## Adding helper text below the entry
+
+Sometimes, you may wish to provide extra information for the user of the infolist. For this purpose, you may add helper text below the entry.
+
+The `helperText()` method is used to add helper text, and supports Markdown formatting:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('name')
+    ->helperText('Your **full name** here, including any middle names.')
+```
+
+<AutoScreenshot name="infolists/entries/helper-text" alt="Entry with helper text" version="3.x" />
+
+## Adding a hint next to the label
+
+As well as [helper text](#adding-helper-text-below-the-entry) below the entry, you may also add a "hint" next to the label of the entry. This is useful for displaying additional information about the entry, such as a link to a help page.
+
+The `hint()` method is used to add a hint, and supports Markdown formatting:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('apiKey')
+    ->label('API key')
+    ->hint('[Documentation](/documentation)')
+```
+
+<AutoScreenshot name="infolists/entries/hint" alt="Entry with hint" version="3.x" />
+
+### Changing the text color of the hint
+
+You can change the text color of the hint. By default, it's gray, but you may use `danger`, `info`, `primary`, `success` and `warning`:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('apiKey')
+    ->label('API key')
+    ->hint('[Documentation](/documentation)')
+    ->hintColor('primary')
+```
+
+<AutoScreenshot name="infolists/entries/hint-color" alt="Entry with hint color" version="3.x" />
+
+### Adding an icon aside the hint
+
+Hints may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) rendered next to them:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('apiKey')
+    ->label('API key')
+    ->hint('[Documentation](/documentation)')
+    ->hintIcon('heroicon-m-question-mark-circle')
+```
+
+<AutoScreenshot name="infolists/entries/hint-icon" alt="Entry with hint icon" version="3.x" />
+
 ## Hiding entries
 
 To hide an entry conditionally, you may use the `hidden()` and `visible()` methods, whichever you prefer:
@@ -122,16 +186,16 @@ Infolists\Components\TextEntry::make('amount_including_vat')
 
 ## Tooltips
 
-> If you want to use tooltips outside of a panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager). You'll also need to install [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager) if you're using a [custom panel theme](../../panels/themes).
-
 You may specify a tooltip to display when you hover over an entry:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('title')
-    ->tooltip('Title')
+    ->tooltip('Shown at the top of the page')
 ```
+
+<AutoScreenshot name="infolists/entries/tooltips" alt="Entry with tooltip" version="3.x" />
 
 This method also accepts a closure that can access the current infolist record:
 
@@ -158,14 +222,14 @@ These get merged onto the outer `<div>` element of each entry in that entry.
 
 ## Global settings
 
-If you wish to change the default behaviour of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`wrap()`](text#wrapping-content), you can do it like so:
+If you wish to change the default behaviour of all entries globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the entries using. For example, if you wish to make all `TextEntry` components [`words(10)`](text#limiting-word-count), you can do it like so:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::configureUsing(function (TextEntry $entry): void {
     $entry
-        ->wrap();
+        ->words(10);
 });
 ```
 
@@ -175,5 +239,5 @@ Of course, you are still able to overwrite this on each entry individually:
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('name')
-    ->wrap(false)
+    ->words(null)
 ```

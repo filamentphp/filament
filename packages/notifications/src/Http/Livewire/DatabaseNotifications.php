@@ -26,6 +26,11 @@ class DatabaseNotifications extends Component
 
     public static ?string $pollingInterval = '30s';
 
+    #[On('databaseNotificationsSent')]
+    public function refresh(): void
+    {
+    }
+
     #[On('notificationClosed')]
     public function removeNotification(string $id): void
     {

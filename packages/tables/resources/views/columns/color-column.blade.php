@@ -27,7 +27,7 @@
                 @endif
             @endif
             @class([
-                'relative flex h-6 w-6 rounded-md',
+                'filament-tables-color-column-content relative flex h-6 w-6 rounded-md',
                 'cursor-pointer' => $itemIsCopyable,
             ])
         ></div>

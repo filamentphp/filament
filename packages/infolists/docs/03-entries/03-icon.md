@@ -1,6 +1,7 @@
 ---
 title: Icon entry
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -9,28 +10,17 @@ Icon entries render an [icon](https://blade-ui-kit.com/blade-icons?set=1#search)
 ```php
 use Filament\Infolists\Components\IconEntry;
 
-IconEntry::make('is_featured')
-    ->icons([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => 'draft',
-        'heroicon-o-clock' => 'reviewing',
-        'heroicon-o-check-circle' => 'published',
-    ])
+IconEntry::make('status')
+    ->icon(fn (string $state): string => match ($state) {
+        'draft' => 'heroicon-o-pencil',
+        'reviewing' => 'heroicon-o-clock',
+        'published' => 'heroicon-o-check-circle',
+    })
 ```
 
-You may also pass a callback to activate an option, accepting the entry's `$state` and `$record`:
+In the function, `$state` is the value of the entry, and `$record` can be used to access the underlying Eloquent record.
 
-```php
-use Filament\Infolists\Components\IconEntry;
-
-IconEntry::make('is_featured')
-    ->icons([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => fn ($state, $record): bool => $record->status === 2,
-        'heroicon-o-clock' => fn ($state): bool => $state === 'reviewing',
-        'heroicon-o-check-circle' => fn ($state): bool => $state === 'published',
-    ])
-```
+<AutoScreenshot name="infolists/entries/icon/simple" alt="Icon entry" version="3.x" />
 
 ## Customizing the color
 
@@ -39,20 +29,18 @@ Icon entries may also have a set of icon colors, using the same syntax. They may
 ```php
 use Filament\Infolists\Components\IconEntry;
 
-IconEntry::make('is_featured')
-    ->icons([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => 'draft',
-        'heroicon-o-clock' => 'reviewing',
-        'heroicon-o-check-circle' => 'published',
-    ])
-    ->colors([
-        'gray',
-        'danger' => 'draft',
-        'warning' => 'reviewing',
-        'success' => 'published',
-    ])
+IconEntry::make('status')
+    ->color(fn (string $state): string => match ($state) {
+        'draft' => 'info',
+        'reviewing' => 'warning',
+        'published' => 'success',
+        default => 'gray',
+    })
 ```
+
+In the function, `$state` is the value of the entry, and `$record` can be used to access the underlying Eloquent record.
+
+<AutoScreenshot name="infolists/entries/icon/color" alt="Icon entry with color" version="3.x" />
 
 ## Customizing the size
 
@@ -61,15 +49,11 @@ The default icon size is `lg`, but you may customize the size to be either `xs`,
 ```php
 use Filament\Infolists\Components\IconEntry;
 
-IconEntry::make('is_featured')
-    ->icons([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => 'draft',
-        'heroicon-o-clock' => 'reviewing',
-        'heroicon-o-check-circle' => 'published',
-    ])
+IconEntry::make('status')
     ->size('md')
 ```
+
+<AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="3.x" />
 
 ## Handling booleans
 
@@ -82,6 +66,8 @@ IconEntry::make('is_featured')
     ->boolean()
 ```
 
+<AutoScreenshot name="infolists/entries/icon/boolean" alt="Icon entry to display a boolean" version="3.x" />
+
 ### Customizing the boolean icons
 
 You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons v1](https://v1.heroicons.com) are installed:
@@ -92,8 +78,10 @@ use Filament\Infolists\Components\IconEntry;
 IconEntry::make('is_featured')
     ->boolean()
     ->trueIcon('heroicon-o-check-badge')
-    ->falseIcon('heroicon-o-x-circle')
+    ->falseIcon('heroicon-o-x-mark')
 ```
+
+<AutoScreenshot name="infolists/entries/icon/boolean-icon" alt="Icon entry to display a boolean with custom icons" version="3.x" />
 
 ### Customizing the boolean colors
 
@@ -104,6 +92,8 @@ use Filament\Infolists\Components\IconEntry;
 
 IconEntry::make('is_featured')
     ->boolean()
-    ->trueColor('primary')
+    ->trueColor('info')
     ->falseColor('warning')
 ```
+
+<AutoScreenshot name="infolists/entries/icon/boolean-color" alt="Icon entry to display a boolean with custom colors" version="3.x" />

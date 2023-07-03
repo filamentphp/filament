@@ -1,6 +1,7 @@
 ---
 title: Image entry
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,9 @@ use Filament\Infolists\Components\ImageEntry;
 ImageEntry::make('header_image')
 ```
 
-The entry must contain the path to the image, relative to the root directory of its storage disk.
+The entry must contain the path to the image, relative to the root directory of its storage disk, or an absolute URL to it.
+
+<AutoScreenshot name="infolists/entries/image/simple" alt="Image entry" version="3.x" />
 
 ## Managing the image disk
 
@@ -47,6 +50,8 @@ ImageEntry::make('author.avatar')
     ->square()
 ```
 
+<AutoScreenshot name="infolists/entries/image/square" alt="Square image entry" version="3.x" />
+
 ## Circular image
 
 You may make the image fully rounded, which is useful for rendering avatars:
@@ -57,6 +62,8 @@ use Filament\Infolists\Components\ImageEntry;
 ImageEntry::make('author.avatar')
     ->circular()
 ```
+
+<AutoScreenshot name="infolists/entries/image/circular" alt="Circular image entry" version="3.x" />
 
 ## Customizing the size
 

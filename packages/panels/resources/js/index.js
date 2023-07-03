@@ -1,9 +1,7 @@
 import Mousetrap from '@danharrin/alpine-mousetrap'
-import Tooltip from '@ryangjchandler/alpine-tooltip'
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(Mousetrap)
-    window.Alpine.plugin(Tooltip)
 
     window.Alpine.store('sidebar', {
         isOpen: window.Alpine.$persist(true).as('isOpen'),

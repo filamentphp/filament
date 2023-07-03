@@ -1,6 +1,7 @@
 ---
 title: Text entry
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,6 +13,8 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('title')
 ```
 
+<AutoScreenshot name="infolists/entries/text/simple" alt="Text entry" version="3.x" />
+
 ## Displaying as a "badge"
 
 By default, text is quite plain and has no background color. You can make it appear as a "badge" instead using the `badge()` method. A great use case for this is with statuses, where may want to display a badge with a [color](#customizing-the-color) that matches the status:
@@ -21,13 +24,15 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('status')
     ->badge()
-    ->color(fn (string $status): string => match ($status) {
+    ->color(fn (string $state): string => match ($state) {
         'draft' => 'gray',
         'reviewing' => 'warning',
         'published' => 'success',
         'rejected' => 'danger',
     })
 ```
+
+<AutoScreenshot name="infolists/entries/text/badge" alt="Text entry as badge" version="3.x" />
 
 You may add other things to the badge, like an [icon](#adding-an-icon).
 
@@ -118,17 +123,6 @@ TextEntry::make('description')
     ->words(10)
 ```
 
-## Wrapping content
-
-If you'd like your entry's content to wrap if it's too long, you may use the `wrap()` method:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('description')
-    ->wrap()
-```
-
 ## Listing multiple values
 
 By default, if there are multiple values inside your text entry, they will be comma-separated. You may use the `listWithLineBreaks()` method to display them on new lines instead:
@@ -139,6 +133,8 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('authors.name')
     ->listWithLineBreaks()
 ```
+
+<AutoScreenshot name="infolists/entries/text/list" alt="Text entry with multiple values" version="3.x" />
 
 ### Adding bullet points to the list
 
@@ -151,6 +147,8 @@ TextEntry::make('authors.name')
     ->listWithLineBreaks()
     ->bulleted()
 ```
+
+<AutoScreenshot name="infolists/entries/text/bullet-list" alt="Text entry with multiple values and bullet points" version="3.x" />
 
 ### Limiting the number of values in the list
 
@@ -231,6 +229,8 @@ TextEntry::make('status')
     ->color('primary')
 ```
 
+<AutoScreenshot name="infolists/entries/text/color" alt="Text entry in the primary color" version="3.x" />
+
 ## Adding an icon
 
 Text entries may also have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search):
@@ -242,6 +242,8 @@ TextEntry::make('email')
     ->icon('heroicon-m-envelope')
 ```
 
+<AutoScreenshot name="infolists/entries/text/icon" alt="Text entry with icon" version="3.x" />
+
 You may set the position of an icon using `iconPosition()`:
 
 ```php
@@ -252,18 +254,11 @@ TextEntry::make('email')
     ->iconPosition('after') // `before` or `after`
 ```
 
+<AutoScreenshot name="infolists/entries/text/icon-after" alt="Text entry with icon after" version="3.x" />
+
 ## Customizing the text size
 
-You may make the text smaller using `size('sm')`:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('email')
-    ->size('sm')
-```
-
-Or you can make it larger using `size('lg')`:
+You may make the text larger using `size('lg')`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -271,6 +266,8 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('title')
     ->size('lg')
 ```
+
+<AutoScreenshot name="infolists/entries/text/large" alt="Text entry in a large font size" version="3.x" />
 
 ## Customizing the font weight
 
@@ -281,22 +278,27 @@ For instance, you may make the font bold using `weight('bold')`:
 ```php
 use Filament\Infolists\Components\TextEntry;
 
-TextEntry::make('email')
+TextEntry::make('title')
     ->weight('bold')
 ```
+
+<AutoScreenshot name="infolists/entries/text/bolt" alt="Text entry in a bold font" version="3.x" />
 
 ## Customizing the font family
 
 You can change the text font family to any of the following options: `sans`, `serif` or `mono`.
 
-For instance, you may make the font mono using `fontFamily('mono')`:
+For instance, you may make the font monospaced using `fontFamily('mono')`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
-TextEntry::make('text')
+TextEntry::make('apiKey')
+    ->label('API key')
     ->fontFamily('mono')
 ```
+
+<AutoScreenshot name="infolists/entries/text/mono" alt="Text entry in a monospaced font" version="3.x" />
 
 ## Allowing the text to be copied to the clipboard
 
@@ -305,10 +307,11 @@ You may make the text copyable, such that clicking on the entry copies the text 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
-TextEntry::make('email')
+TextEntry::make('apiKey')
+    ->label('API key')
     ->copyable()
-    ->copyMessage('Email address copied')
+    ->copyMessage('Copied!')
     ->copyMessageDuration(1500)
 ```
 
-> Filament uses tooltips to display the copy message in the admin panel. If you want to use the copyable feature outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app.
+<AutoScreenshot name="infolists/entries/text/copyable" alt="Text entry with a button to copy it" version="3.x" />

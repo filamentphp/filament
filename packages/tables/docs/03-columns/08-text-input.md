@@ -1,6 +1,7 @@
 ---
 title: Text input column
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -9,8 +10,10 @@ The text input column allows you to render a text input inside the table, which 
 ```php
 use Filament\Tables\Columns\TextInputColumn;
 
-TextInputColumn::make('name')
+TextInputColumn::make('email')
 ```
+
+<AutoScreenshot name="tables/columns/text-input/simple" alt="Text input column" version="3.x" />
 
 ## Validation
 
@@ -22,8 +25,6 @@ use Filament\Tables\Columns\TextInputColumn;
 TextInputColumn::make('name')
     ->rules(['required', 'max:255'])
 ```
-
-> Filament uses tooltips to display validation errors. If you want to use tooltips outside of the admin panel to display validation errors, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app.
 
 ## Customizing the HTML input type
 

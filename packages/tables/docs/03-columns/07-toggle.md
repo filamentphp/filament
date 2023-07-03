@@ -1,6 +1,7 @@
 ---
 title: Toggle column
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -11,3 +12,5 @@ use Filament\Tables\Columns\ToggleColumn;
 
 ToggleColumn::make('is_admin')
 ```
+
+<AutoScreenshot name="tables/columns/toggle/simple" alt="Toggle column" version="3.x" />

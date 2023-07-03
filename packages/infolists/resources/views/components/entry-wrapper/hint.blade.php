@@ -10,7 +10,7 @@
             ->class([
                 'filament-infolists-entry-wrapper-hint flex items-center space-x-2 text-custom-500 rtl:space-x-reverse dark:text-custom-300',
             ])
-            ->styles([
+            ->style([
                 \Filament\Support\get_color_css_variables($color, shades: [300, 500]),
             ])
     }}

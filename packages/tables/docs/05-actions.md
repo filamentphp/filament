@@ -1,6 +1,7 @@
 ---
 title: Actions
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -32,16 +33,18 @@ You can then pass a function to `action()` which executes the task, or a functio
 use App\Models\Post;
 use Filament\Tables\Actions\Action;
 
-Action::make('delete')
-    ->requiresConfirmation()
-    ->action(fn (Post $record) => $record->delete())
-
 Action::make('edit')
     ->url(fn (Post $record): string => route('posts.edit', $record))
     ->openUrlInNewTab()
+
+Action::make('delete')
+    ->requiresConfirmation()
+    ->action(fn (Post $record) => $record->delete())
 ```
 
 All methods on the action accept callback functions, where you can access the current table `$record` that was clicked.
+
+<AutoScreenshot name="tables/actions/simple" alt="Table with actions" version="3.x" />
 
 ### Positioning row actions before columns
 
@@ -60,6 +63,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/actions/before-columns" alt="Table with actions before columns" version="3.x" />
+
 ### Positioning row actions before the checkbox column
 
 By default, the row actions in your table are rendered in the final cell of each row. You may move them before the checkbox column by using the `position` argument:
@@ -76,6 +81,8 @@ public function table(Table $table): Table
         ], position: Position::BeforeCells);
 }
 ```
+
+<AutoScreenshot name="tables/actions/before-cells" alt="Table with actions before cells" version="3.x" />
 
 ## Bulk actions
 
@@ -106,6 +113,8 @@ BulkAction::make('delete')
 
 The function allows you to access the current table `$records` that are selected. It is an Eloquent collection of models.
 
+<AutoScreenshot name="tables/actions/bulk" alt="Table with bulk action" version="3.x" />
+
 ### Grouping bulk actions
 
 You may use a `BulkActionGroup` object to [group multiple bulk actions together](../actions/grouping-actions) in a dropdown. Any bulk actions that remain outside of the `BulkActionGroup` will be rendered next to the dropdown's trigger button:
@@ -127,7 +136,7 @@ public function table(Table $table): Table
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->forceDelete()),
             ]),
-            BulkAction::make('export')->action(fn (Collection $records) => ...),
+            BulkAction::make('export')->button()->action(fn (Collection $records) => ...),
         ]);
 }
 ```
@@ -204,6 +213,8 @@ public function table(Table $table): Table
 
 This is useful for things like "create" actions, which are not related to any specific table row, or bulk actions that need to be more visible.
 
+<AutoScreenshot name="tables/actions/header" alt="Table with header actions" version="3.x" />
+
 ## Column actions
 
 Actions can be added to columns, such that when a cell in that column is clicked, it acts as the trigger for an action. You can learn more about [column actions](columns/getting-started#running-actions) in the documentation.
@@ -245,6 +256,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/actions/group" alt="Table with action group" version="3.x" />
+
 ### Choosing a action group button style
 
 Out of the box, action group triggers have 3 styles - "button", "link", and "icon button".
@@ -252,36 +265,42 @@ Out of the box, action group triggers have 3 styles - "button", "link", and "ico
 "Icon button" triggers are circular buttons with an [icon](#setting-the-action-group-button-icon) and no label. Usually, this is the default button style, but you can use it manually with the `iconButton()` method:
 
 ```php
-Action::make('edit')
-    ->icon('heroicon-o-pencil-square')
-    ->iconButton()
+use Filament\Tables\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])->iconButton()
 ```
+
+<AutoScreenshot name="tables/actions/group-icon-button" alt="Table with icon button action group" version="3.x" />
 
 "Button" triggers have a background color, label, and optionally an [icon](#setting-the-action-group-button-icon). You can switch to that style with the `button()` method:
-
-```php
-Action::make('edit')
-    ->button()
-```
-
-"Link" triggers have no background color. They must have a label and optionally an [icon](#setting-the-action-group-button-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
-
-```php
-Action::make('edit')
-    ->link()
-```
-
-### Setting the action group button label
-
-You may set the label of the action group button using the `label()` method:
 
 ```php
 use Filament\Tables\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
-])->label('Actions');
+])
+    ->button()
+    ->label('Actions')
 ```
+
+<AutoScreenshot name="tables/actions/group-button" alt="Table with button action group" version="3.x" />
+
+"Link" triggers have no background color. They must have a label and optionally an [icon](#setting-the-action-group-button-icon). They look like a link that you might find embedded within text. You can switch to that style with the `link()` method:
+
+```php
+use Filament\Tables\Actions\ActionGroup;
+
+ActionGroup::make([
+    // ...
+])
+    ->link()
+    ->label('Actions')
+```
+
+<AutoScreenshot name="tables/actions/group-link" alt="Table with link action group" version="3.x" />
 
 ### Setting the action group button icon
 
@@ -292,8 +311,10 @@ use Filament\Tables\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
-])->icon('heroicon-m-ellipsis-vertical');
+])->icon('heroicon-m-ellipsis-horizontal');
 ```
+
+<AutoScreenshot name="tables/actions/group-icon" alt="Table with customized action group icon" version="3.x" />
 
 ### Setting the action group button color
 
@@ -304,8 +325,10 @@ use Filament\Tables\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
-])->color('primary');
+])->color('info');
 ```
+
+<AutoScreenshot name="tables/actions/group-color" alt="Table with customized action group color" version="3.x" />
 
 ### Setting the action group button size
 
@@ -316,8 +339,10 @@ use Filament\Tables\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
-])->size('md');
+])->size('sm');
 ```
+
+<AutoScreenshot name="tables/actions/group-small" alt="Table with small action group" version="3.x" />
 
 ### Setting the action group tooltip
 
@@ -328,5 +353,7 @@ use Filament\Tables\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
-])->tooltip('More actions');
+])->tooltip('Actions');
 ```
+
+<AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="3.x" />
