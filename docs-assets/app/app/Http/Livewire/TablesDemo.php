@@ -1259,6 +1259,12 @@ class TablesDemo extends Component implements HasForms, HasTable
             );
     }
 
+    public function striped(Table $table): Table
+    {
+        return $this->example($table)
+            ->striped();
+    }
+
     public function postsTable(Table $table, bool $hasSeededPosts = true): Table
     {
         User::truncate();

@@ -2520,4 +2520,13 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'tables/striped': {
+        url: 'tables?table=striped',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
 }

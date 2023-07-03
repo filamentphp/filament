@@ -238,6 +238,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/striped" alt="Table with striped rows" version="3.x" />
+
 ### Custom row classes
 
 You may want to conditionally style rows based on the record data. This can be achieved by specifying a string or array of CSS classes to be applied to the row using the `$table->recordClasses()` method:
