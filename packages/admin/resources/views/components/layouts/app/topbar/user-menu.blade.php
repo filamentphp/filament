@@ -88,7 +88,7 @@
             },
         }"
     >
-        <div>
+        <div class="filament-theme-toggle">
             @if (config('filament.dark_mode'))
                 <x-filament::dropdown.list.item
                     icon="heroicon-s-moon"
