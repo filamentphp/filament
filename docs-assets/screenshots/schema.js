@@ -2492,4 +2492,32 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/reordering': {
+        url: 'tables?table=reordering',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-icon-button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'tables/reordering/custom-trigger-action': {
+        url: 'tables?table=reorderingCustomTriggerAction',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('.filament-button')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
 }

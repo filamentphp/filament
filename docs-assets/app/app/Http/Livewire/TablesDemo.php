@@ -1223,6 +1223,42 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function reordering(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('slug'),
+                TextColumn::make('author.name')
+                    ->numeric(),
+                TextColumn::make('status')
+                    ->badge()
+                    ->icon(fn (string $state): string => match ($state) {
+                        'draft' => 'heroicon-o-pencil',
+                        'reviewing' => 'heroicon-o-clock',
+                        'published' => 'heroicon-o-check-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        'draft' => 'gray',
+                        'reviewing' => 'warning',
+                        'published' => 'success',
+                    }),
+            ])
+            ->reorderable('rating');
+    }
+
+    public function reorderingCustomTriggerAction(Table $table): Table
+    {
+        return $this->reordering($table)
+            ->reorderRecordsTriggerAction(
+                fn (Action $action, bool $isReordering) => $action
+                    ->button()
+                    ->label($isReordering ? 'Disable reordering' : 'Enable reordering'),
+            );
+    }
+
     public function postsTable(Table $table, bool $hasSeededPosts = true): Table
     {
         User::truncate();
