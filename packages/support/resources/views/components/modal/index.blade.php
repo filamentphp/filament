@@ -15,6 +15,7 @@
     'iconColor' => 'primary',
     'id' => null,
     'openEventName' => 'open-modal',
+    'scrollableContent' => false,
     'slideOver' => false,
     'stickyFooter' => false,
     'description' => null,
@@ -94,6 +95,7 @@
                 $attributes->class([
                     'pointer-events-none relative w-full transition',
                     'my-auto p-4' => ! $slideOver,
+                    'flex max-h-screen shrink' => $scrollableContent,
                 ])
             }}
         >
@@ -147,7 +149,7 @@
             >
                 <div
                     @class([
-                        'relative flex h-full flex-col' => ($width === 'screen') || $slideOver,
+                        'relative flex h-full flex-col' => ($width === 'screen') || $slideOver || $scrollableContent,
                     ])
                 >
                     @if ($heading || $header)
@@ -237,7 +239,7 @@
                         <div
                             @class([
                                 'filament-modal-content flex flex-col gap-y-4 py-6',
-                                'flex-1' => ($width === 'screen') || $slideOver,
+                                'flex-1' => ($width === 'screen') || $slideOver || $scrollableContent,
                                 'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start'),
                                 'px-6' => ! ($icon && ($alignment === 'start')),
                             ])
