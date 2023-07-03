@@ -188,6 +188,12 @@ Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
 });
 ```
 
+The NavigationItem class uses lazy evaluation, so Closures can be used instead of strings for things like `url()`, `icon()`, `badge()`, ... . This enables you to vary the badge color based on a model method, for example: 
+```php
+NavigationItem::make('$account->name')
+->badge($account->amount), $account->getTotalAmount() > 0 ? 'secondary' : 'danger')
+```
+
 If you want to register groups, you can call the `groups()` method:
 
 ```php
