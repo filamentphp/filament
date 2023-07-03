@@ -2396,7 +2396,7 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
         crop: (image) => {
-            return image.extract({ width: 1920, height: 1600, left: 0, top: 0 })
+            return image.extract({ width: 1920, height: 1200, left: 0, top: 0 })
         },
     },
     'tables/layout/grid': {
@@ -2417,7 +2417,7 @@ export default {
             deviceScaleFactor: 3,
         },
         crop: (image) => {
-            return image.extract({ width: 1920, height: 1600, left: 0, top: 0 })
+            return image.extract({ width: 1920, height: 1200, left: 0, top: 0 })
         },
     },
 }
