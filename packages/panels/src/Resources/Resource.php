@@ -156,6 +156,10 @@ abstract class Resource
             return true;
         }
 
+        if (method_exists($policy, 'before') && is_bool($condition = $policy->before($user, $action))) {
+            return $condition;
+        }
+
         if (! method_exists($policy, $action)) {
             return true;
         }

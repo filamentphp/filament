@@ -241,6 +241,10 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
             return true;
         }
 
+        if (method_exists($policy, 'before') && is_bool($condition = $policy->before($user, $action))) {
+            return $condition;
+        }
+
         if (! method_exists($policy, $action)) {
             return true;
         }
@@ -282,6 +286,10 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
 
         if ($policy === null) {
             return true;
+        }
+
+        if (method_exists($policy, 'before') && is_bool($condition = $policy->before($user, $action))) {
+            return $condition;
         }
 
         if (! method_exists($policy, $action)) {
