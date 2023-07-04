@@ -60,80 +60,96 @@ export default (Alpine) => {
         configureAnimations: function () {
             let animation
 
-            // @todo: This hook was in Livewire 2 but I can't find it in Livewire v3 yet.
-            Livewire.hook('message.received', (_, component) => {
-                if (
-                    !component.snapshot.isFilamentNotificationsComponent
-                ) {
-                    return
-                }
+            Livewire.hook(
+                'commit',
+                ({ component, commit, respond, succeed }) => {
+                    respond(() => {
+                        if (
+                            !component.snapshot.data
+                                .isFilamentNotificationsComponent
+                        ) {
+                            return
+                        }
 
-                const getTop = () => this.$el.getBoundingClientRect().top
-                const oldTop = getTop()
+                        const getTop = () =>
+                            this.$el.getBoundingClientRect().top
+                        const oldTop = getTop()
 
-                animation = () => {
-                    this.$el.animate(
-                        [
-                            { transform: `translateY(${oldTop - getTop()}px)` },
-                            { transform: 'translateY(0px)' },
-                        ],
-                        {
-                            duration: this.getTransitionDuration(),
-                            easing: this.computedStyle.transitionTimingFunction,
-                        },
-                    )
-                }
+                        animation = () => {
+                            this.$el.animate(
+                                [
+                                    {
+                                        transform: `translateY(${
+                                            oldTop - getTop()
+                                        }px)`,
+                                    },
+                                    { transform: 'translateY(0px)' },
+                                ],
+                                {
+                                    duration: this.getTransitionDuration(),
+                                    easing: this.computedStyle
+                                        .transitionTimingFunction,
+                                },
+                            )
+                        }
 
-                this.$el
-                    .getAnimations()
-                    .forEach((animation) => animation.finish())
-            })
+                        this.$el
+                            .getAnimations()
+                            .forEach((animation) => animation.finish())
+                    })
 
-            // @todo: This hook was in Livewire 2 but I can't find it in Livewire v3 yet.
-            Livewire.hook('message.processed', (_, component) => {
-                if (
-                    !component.snapshot.isFilamentNotificationsComponent
-                ) {
-                    return
-                }
+                    succeed(({ snapshot, effect }) => {
+                        if (
+                            !component.snapshot.data
+                                .isFilamentNotificationsComponent
+                        ) {
+                            return
+                        }
 
-                if (!this.isShown) {
-                    return
-                }
+                        if (!this.isShown) {
+                            return
+                        }
 
-                animation()
-            })
-
-            on('request', (component) => {
-                return () => {
-                    // This would be equivalent to "message.received" I think
-
-                    // Then you could do like: queueMicrotask(() => { ...  }) for message.processed
-                }
-            })
+                        animation()
+                    })
+                },
+            )
         },
 
         close: function () {
             this.isShown = false
 
             setTimeout(
-                () => window.dispatchEvent(new CustomEvent('notificationClosed', { detail: {
-                    id: notification.id,
-                }})),
+                () =>
+                    window.dispatchEvent(
+                        new CustomEvent('notificationClosed', {
+                            detail: {
+                                id: notification.id,
+                            },
+                        }),
+                    ),
                 this.getTransitionDuration(),
             )
         },
 
         markAsRead: function () {
-            window.dispatchEvent(new CustomEvent('markedNotificationAsRead', { detail: {
-                id: notification.id,
-            }}))
+            window.dispatchEvent(
+                new CustomEvent('markedNotificationAsRead', {
+                    detail: {
+                        id: notification.id,
+                    },
+                }),
+            )
         },
 
         markAsUnread: function () {
-            window.dispatchEvent(new CustomEvent('markedNotificationAsUnread', { detail: {
-                id: notification.id,
-            }}))
+            window.dispatchEvent(
+                new CustomEvent('markedNotificationAsUnread', {
+                    detail: {
+                        id: notification.id,
+                    },
+                }),
+            )
         },
 
         getTransitionDuration: function () {
