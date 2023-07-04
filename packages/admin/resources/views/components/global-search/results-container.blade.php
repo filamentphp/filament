@@ -12,7 +12,7 @@
 >
     <div
         @class([
-            'max-h-96 overflow-x-hidden overflow-y-scroll rounded-xl bg-white shadow',
+            'max-h-96 overflow-x-hidden rounded-xl bg-white shadow',
             'dark:bg-gray-800' => config('filament.dark_mode'),
         ])
     >
