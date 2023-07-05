@@ -9,7 +9,7 @@
 ])
 
 @php
-    $baseAffixClasses = 'flex items-center self-stretch whitespace-nowrap border border-gray-300 px-2 shadow-sm group-focus-within:text-primary-500 dark:border-gray-600 dark:bg-gray-700';
+    $baseAffixClasses = 'flex items-center self-stretch whitespace-nowrap border border-gray-300 px-3 text-gray-500 shadow-sm dark:border-gray-600 dark:bg-gray-700 dark:text-gray-400';
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -39,12 +39,6 @@
                 $baseAffixClasses,
                 '-me-px rounded-s-lg',
             ])
-            @if (filled($statePath))
-                x-bind:class="{
-                    'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'text-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
-                }"
-            @endif
         >
             <x-filament::icon
                 alias="forms::components.affixes.prefix"
@@ -62,12 +56,6 @@
                 $baseAffixClasses,
                 'rounded-s-lg' => ! $prefixIcon,
             ])
-            @if (filled($statePath))
-                x-bind:class="{
-                    'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'text-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
-                }"
-            @endif
         >
             {{ $prefix }}
         </span>
@@ -84,12 +72,6 @@
                 $baseAffixClasses,
                 'rounded-e-lg' => ! $suffixIcon,
             ])
-            @if (filled($statePath))
-                x-bind:class="{
-                    'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'text-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
-                }"
-            @endif
         >
             {{ $suffix }}
         </span>
@@ -101,12 +83,6 @@
                 $baseAffixClasses,
                 '-ms-px rounded-e-lg',
             ])
-            @if (filled($statePath))
-                x-bind:class="{
-                    'text-gray-400': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'text-danger-400': @js($statePath) in $wire.__instance.serverMemo.errors,
-                }"
-            @endif
         >
             <x-filament::icon
                 alias="forms::components.affixes.suffix"
