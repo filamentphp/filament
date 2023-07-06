@@ -32,14 +32,14 @@
 <div
     x-bind:class="
         @js($statePath) in $wire.__instance.serverMemo.errors
-            ? 'ring-danger-600 focus:ring-danger-600 dark:ring-danger-400 dark:focus:ring-danger-400'
-            : 'ring-gray-950/10 dark:focus-within:ring-primary-600 dark:ring-white/20 focus-within:ring-primary-600'
+            ? 'ring-danger-600 dark:ring-danger-400 {{ $disabled ? null : 'focus-within:ring-danger-600 dark:focus-within:ring-danger-400' }}'
+            : 'ring-gray-950/10 dark:ring-white/20 {{ $disabled ? null : 'focus-within:ring-primary-600 dark:focus-within:ring-primary-600' }}'
     "
     {{
         $attributes->class([
-            'filament-forms-affix-container flex rounded-lg shadow-sm ring-1 transition duration-75 focus-within:ring-2',
+            'filament-forms-affix-container flex rounded-lg shadow-sm ring-1 transition duration-75',
             'bg-gray-50 dark:bg-gray-900' => $disabled,
-            'bg-white dark:bg-gray-800' => ! $disabled,
+            'bg-white focus-within:ring-2 dark:bg-gray-800' => ! $disabled,
         ])
     }}
 >

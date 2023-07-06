@@ -635,7 +635,7 @@ class TestsActions
     }
 
     /**
-     * @deprecated Use `->assertTableActionHalted()` instead.
+     * @deprecated Use `assertTableActionHalted()` instead.
      */
     public function assertTableActionHeld(): Closure
     {

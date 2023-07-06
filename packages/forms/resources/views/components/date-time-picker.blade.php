@@ -1,7 +1,6 @@
 @php
     $datalistOptions = $getDatalistOptions();
     $extraAlpineAttributes = $getExtraAlpineAttributes();
-    $icon = $getIcon();
     $id = $getId();
     $isDisabled = $isDisabled();
     $statePath = $getStatePath();
@@ -14,6 +13,7 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
+        :disabled="$isDisabled"
         :prefix="$prefixLabel"
         :prefix-actions="$getPrefixActions()"
         :prefix-icon="$prefixIcon"
@@ -77,11 +77,13 @@
                     type="hidden"
                     value="{{ $getMaxDate() }}"
                 />
+
                 <input
                     x-ref="minDate"
                     type="hidden"
                     value="{{ $getMinDate() }}"
                 />
+
                 <input
                     x-ref="disabledDates"
                     type="hidden"
@@ -109,15 +111,7 @@
                     @disabled($isDisabled)
                     {{
                         $getExtraTriggerAttributeBag()->class([
-                            'relative w-full cursor-default border bg-white py-2 text-start shadow-sm outline-none dark:bg-gray-700 sm:text-sm',
-                            'focus-within:ring-1 focus-within:ring-inset' => ! $isDisabled,
-                            'border-gray-300 focus-within:border-primary-500 focus-within:ring-primary-500 dark:border-gray-600 dark:focus-within:border-primary-500' => ! $errors->has($statePath),
-                            'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
-                            'opacity-70 dark:text-gray-300' => $isDisabled,
-                            'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
-                            'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
-                            'px-3' => $icon === false,
-                            'pe-10 ps-3' => $icon !== false,
+                            'w-full cursor-default px-3 py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 dark:text-white dark:placeholder:text-gray-500 sm:text-sm sm:leading-6',
                         ])
                     }}
                 >
@@ -128,23 +122,10 @@
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
-                            'h-full w-full border-0 bg-transparent p-0 placeholder-gray-400 outline-none focus:placeholder-gray-500 focus:outline-none focus:ring-0 dark:bg-gray-700 dark:placeholder-gray-400',
+                            'h-full w-full border-0 bg-transparent p-0 placeholder-gray-400 outline-none focus:placeholder-gray-500 focus:outline-none focus:ring-0 dark:placeholder-gray-400',
                             'cursor-default' => $isDisabled,
                         ])
                     />
-
-                    @if ($icon !== false)
-                        <span
-                            class="pointer-events-none absolute inset-y-0 end-0 flex items-center pe-2"
-                        >
-                            <x-filament::icon
-                                :name="$icon"
-                                alias="forms::components.date-time-picker.suffix"
-                                color="text-gray-400 dark:text-gray-400"
-                                size="h-5 w-5"
-                            />
-                        </span>
-                    @endif
                 </button>
 
                 <div

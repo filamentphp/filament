@@ -50,7 +50,7 @@ class MountableAction extends StaticAction implements HasLivewire
     }
 
     /**
-     * @deprecated Use `->halt()` instead.
+     * @deprecated Use `halt()` instead.
      */
     public function hold(): void
     {

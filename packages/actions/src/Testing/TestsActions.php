@@ -525,7 +525,7 @@ class TestsActions
     }
 
     /**
-     * @deprecated Use `->assertActionHalted()` instead.
+     * @deprecated Use `assertActionHalted()` instead.
      */
     public function assertActionHeld(): Closure
     {
