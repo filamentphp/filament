@@ -5,6 +5,7 @@ namespace Filament\Tables\Filters;
 use Closure;
 use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 
 class SelectFilter extends BaseFilter
@@ -39,7 +40,14 @@ class SelectFilter extends BaseFilter
                     return [];
                 }
 
-                $labels = Arr::only($this->getOptions(), $state['values']);
+                if ($filter->queriesRelationships()) {
+                    $labels = $filter->getRelationshipQuery()
+                        ->whereKey($state['values'])
+                        ->pluck($filter->getRelationshipTitleAttribute())
+                        ->all();
+                } else {
+                    $labels = Arr::only($filter->getOptions(), $state['values']);
+                }
 
                 if (! count($labels)) {
                     return [];
@@ -47,20 +55,27 @@ class SelectFilter extends BaseFilter
 
                 $labels = collect($labels)->join(', ', ' & ');
 
-                return ["{$this->getIndicator()}: {$labels}"];
+                return ["{$filter->getIndicator()}: {$labels}"];
             }
 
             if (blank($state['value'] ?? null)) {
                 return [];
             }
 
-            $label = $this->getOptions()[$state['value']] ?? null;
+            if ($filter->queriesRelationships()) {
+                $label = $filter->getRelationshipQuery()
+                    ->whereKey($state['value'])
+                    ->first()
+                    ?->getAttributeValue($filter->getRelationshipTitleAttribute());
+            } else {
+                $label = $filter->getOptions()[$state['value']] ?? null;
+            }
 
             if (blank($label)) {
                 return [];
             }
 
-            return ["{$this->getIndicator()}: {$label}"];
+            return ["{$filter->getIndicator()}: {$label}"];
         });
 
         $this->resetState(['value' => null]);
@@ -101,17 +116,14 @@ class SelectFilter extends BaseFilter
 
         return $query->whereHas(
             $this->getRelationshipName(),
-            function (Builder $query) use ($isMultiple, $values) {
+            function (Builder $query) use ($values) {
                 if ($this->modifyRelationshipQueryUsing) {
                     $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
                         'query' => $query,
                     ]) ?? $query;
                 }
 
-                return $query->{$isMultiple ? 'whereIn' : 'where'}(
-                    $this->getRelationshipKey(),
-                    $values,
-                );
+                return $query->whereKey($values);
             },
         );
     }
@@ -170,12 +182,34 @@ class SelectFilter extends BaseFilter
     public function getFormField(): Select
     {
         $field = Select::make($this->isMultiple() ? 'values' : 'value')
-            ->multiple($this->isMultiple())
             ->label($this->getLabel())
-            ->options($this->getOptions())
+            ->multiple($this->isMultiple())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
             ->optionsLimit($this->getOptionsLimit());
+
+        if ($this->queriesRelationships()) {
+            $field
+                ->relationship(
+                    $this->getRelationshipName(),
+                    $this->getRelationshipTitleAttribute(),
+                    $this->modifyRelationshipQueryUsing,
+                );
+        } else {
+            $field->options($this->getOptions());
+        }
+
+        if ($this->getOptionLabelUsing) {
+            $field->getOptionLabelUsing($this->getOptionLabelUsing);
+        }
+
+        if ($this->getOptionLabelsUsing) {
+            $field->getOptionLabelsUsing($this->getOptionLabelsUsing);
+        }
+
+        if ($this->getSearchResultsUsing) {
+            $field->getSearchResultsUsing($this->getSearchResultsUsing);
+        }
 
         if (filled($defaultState = $this->getDefaultState())) {
             $field->default($defaultState);

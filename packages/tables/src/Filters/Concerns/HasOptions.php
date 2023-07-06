@@ -14,6 +14,12 @@ trait HasOptions
      */
     protected array | Arrayable | string | Closure | null $options = null;
 
+    protected ?Closure $getOptionLabelUsing = null;
+
+    protected ?Closure $getOptionLabelsUsing = null;
+
+    protected ?Closure $getSearchResultsUsing = null;
+
     /**
      * @param  array<string> | Arrayable | class-string | Closure | null  $options
      */
@@ -30,10 +36,6 @@ trait HasOptions
     public function getOptions(): array
     {
         $options = $this->evaluate($this->options);
-
-        if ($options === null) {
-            $options = $this->queriesRelationships() ? $this->getRelationshipOptions() : [];
-        }
 
         $enum = $options;
         if (
@@ -60,6 +62,27 @@ trait HasOptions
             $options = $options->toArray();
         }
 
-        return $options;
+        return $options ?? [];
+    }
+
+    public function getOptionLabelUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelUsing = $callback;
+
+        return $this;
+    }
+
+    public function getOptionLabelsUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelsUsing = $callback;
+
+        return $this;
+    }
+
+    public function getSearchResultsUsing(?Closure $callback): static
+    {
+        $this->getSearchResultsUsing = $callback;
+
+        return $this;
     }
 }

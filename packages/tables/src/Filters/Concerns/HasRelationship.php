@@ -10,6 +10,8 @@ trait HasRelationship
 {
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
+    protected bool | Closure $isPreloaded = false;
+
     public function relationship(string $name, string $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
     {
         $this->attribute("{$name}.{$titleAttribute}");
@@ -19,35 +21,16 @@ trait HasRelationship
         return $this;
     }
 
-    public function getRelationshipKey(): string
+    public function preload(bool | Closure $condition = true): static
     {
-        return $this->getRelationship()->getRelated()->getQualifiedKeyName();
+        $this->isPreloaded = $condition;
+
+        return $this;
     }
 
-    /**
-     * @return array<scalar, string>
-     */
-    protected function getRelationshipOptions(): array
+    public function isPreloaded(): bool
     {
-        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
-
-        $titleAttribute = $this->getRelationshipTitleAttribute();
-
-        $relationshipQuery = $relationship->getQuery();
-
-        if ($this->modifyRelationshipQueryUsing) {
-            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
-                'query' => $relationshipQuery,
-            ]) ?? $relationshipQuery;
-        }
-
-        if (empty($relationshipQuery->getQuery()->orders)) {
-            $relationshipQuery->orderBy($titleAttribute);
-        }
-
-        return $relationshipQuery
-            ->pluck($titleAttribute, $this->getRelationshipKey())
-            ->toArray();
+        return (bool) $this->evaluate($this->isPreloaded);
     }
 
     public function queriesRelationships(): bool
@@ -55,7 +38,7 @@ trait HasRelationship
         return str($this->getAttribute())->contains('.');
     }
 
-    protected function getRelationship(): Relation | Builder
+    public function getRelationship(): Relation | Builder
     {
         $record = app($this->getTable()->getModel());
 
@@ -75,13 +58,37 @@ trait HasRelationship
         return $relationship;
     }
 
-    protected function getRelationshipName(): string
+    public function getRelationshipName(): string
     {
         return (string) str($this->getAttribute())->beforeLast('.');
     }
 
-    protected function getRelationshipTitleAttribute(): string
+    public function getRelationshipTitleAttribute(): string
     {
         return (string) str($this->getAttribute())->afterLast('.');
+    }
+
+    public function getModifyRelationshipQueryUsing(): ?Closure
+    {
+        return $this->modifyRelationshipQueryUsing;
+    }
+
+    public function getRelationshipQuery(): ?Builder
+    {
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
+
+        $relationshipQuery = $relationship->getQuery();
+
+        if ($this->getModifyRelationshipQueryUsing()) {
+            $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                'query' => $relationshipQuery,
+            ]) ?? $relationshipQuery;
+        }
+
+        if (empty($relationshipQuery->getQuery()->orders)) {
+            $relationshipQuery->orderBy($this->getRelationshipTitleAttribute());
+        }
+
+        return $relationshipQuery;
     }
 }

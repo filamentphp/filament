@@ -12,6 +12,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -658,7 +659,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $keyName = $relationship->getRelated()->getKeyName();
             } else {
-                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -706,7 +707,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $keyName = $relationship->getRelated()->getKeyName();
             } else {
-                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -739,7 +740,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationship = $component->getRelationship();
 
-            if ($component->isMultiple()) {
+            if ($relationship instanceof BelongsToMany) {
+                /** @var Collection $relatedModels */
                 $relatedModels = $relationship->getResults();
 
                 $component->state(
@@ -787,7 +789,10 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getQuery()->where($relationship->getOwnerKeyName(), $state);
+            $relationshipQuery = $relationship->getQuery()->where(
+                $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName(),
+                $state,
+            );
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -800,7 +805,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
-            $relatedKeyName = $relationship->getRelatedKeyName();
+            $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
 
             $relationshipQuery = $relationship->getQuery()
                 ->whereIn($relatedKeyName, $values);
@@ -851,13 +856,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         );
 
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
-            if ($component->isMultiple()) {
-                $component->getRelationship()->sync($state ?? []);
+            $relationship = $component->getRelationship();
+
+            if ($relationship instanceof BelongsToMany) {
+                $relationship->sync($state ?? []);
 
                 return;
             }
 
-            $component->getRelationship()->associate($state);
+            $relationship->associate($state);
             $record->save();
         });
 

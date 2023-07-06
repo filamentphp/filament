@@ -693,7 +693,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             }
 
             $relationship
-                ->whereIn($relationship->getRelated()->getQualifiedKeyName(), $recordsToDelete)
+                ->whereKey($recordsToDelete)
                 ->get()
                 ->each(static fn (Model $record) => $record->delete());
 
