@@ -84,7 +84,8 @@
                 values: {{ json_encode(array_values($chart)) }},
 
                 init: function () {
-                    this.chart ? this.updateChart() : this.initChart()
+                    chart = Chart.getChart(this.$refs.canvas);
+                    chart !== undefined ? this.updateChart() : this.initChart()
                 },
 
                 initChart: function () {
@@ -134,9 +135,9 @@
                 },
 
                 updateChart: function () {
-                    this.chart.data.labels = this.labels
-                    this.chart.data.datasets[0].data = this.values
-                    this.chart.update()
+                    chart.data.labels = this.labels
+                    chart.data.datasets[0].data = this.values
+                    chart.update()
                 },
             }"
             x-on:dark-mode-toggled.window="
