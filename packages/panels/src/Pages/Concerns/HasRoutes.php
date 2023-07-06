@@ -14,12 +14,18 @@ trait HasRoutes
      */
     protected static string | array $routeMiddleware = [];
 
+    /**
+     * @var string | array<string>
+     */
+    protected static string | array $withoutRouteMiddleware = [];
+
     public static function routes(Panel $panel): void
     {
         $slug = static::getSlug();
 
         Route::get("/{$slug}", static::class)
             ->middleware(static::getRouteMiddleware($panel))
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name((string) str($slug)->replace('/', '.'));
     }
 
@@ -40,6 +46,14 @@ trait HasRoutes
             ...(static::isTenantSubscriptionRequired($panel) ? [static::getTenantSubscribedMiddleware($panel)] : []),
             ...static::$routeMiddleware,
         ];
+    }
+
+    /**
+     * @return string | array<string>
+     */
+    public static function getWithoutRouteMiddleware(Panel $panel): string | array
+    {
+        return static::$withoutRouteMiddleware;
     }
 
     public static function getEmailVerifiedMiddleware(Panel $panel): string

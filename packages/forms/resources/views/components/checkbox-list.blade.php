@@ -26,6 +26,8 @@
                 this.checkIfAllCheckboxesAreChecked()
 
                 Livewire.hook('message.processed', () => {
+                    this.updateVisibleCheckboxListOptions()
+
                     this.checkIfAllCheckboxesAreChecked()
                 })
 
