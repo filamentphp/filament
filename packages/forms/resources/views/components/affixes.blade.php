@@ -14,6 +14,8 @@
 
     $affixActionsClasses = '-mx-2.5 flex';
 
+    $affixIconColor = 'text-gray-400 dark:text-gray-500';
+
     $affixLabelClasses = 'filament-input-affix-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $prefixActions = array_filter(
@@ -59,6 +61,7 @@
             @if ($prefixIcon)
                 <x-filament::icon
                     alias="forms::components.affixes.prefix"
+                    :color="$affixIconColor"
                     :name="$prefixIcon"
                     size="h-5 w-5"
                     class="filament-input-affix-icon"
@@ -93,6 +96,7 @@
             @if ($suffixIcon)
                 <x-filament::icon
                     alias="forms::components.affixes.suffix"
+                    :color="$affixIconColor"
                     :name="$suffixIcon"
                     size="h-5 w-5"
                     class="filament-input-affix-icon"
