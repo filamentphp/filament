@@ -46,7 +46,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected static string $view;
 
     protected static string | array $middlewares = [];
-    
+
     protected static string | array $withoutRouteMiddleware = [];
 
     public static ?Closure $reportValidationErrorUsing = null;

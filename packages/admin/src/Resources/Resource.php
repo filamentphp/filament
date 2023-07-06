@@ -64,7 +64,7 @@ class Resource
     protected static ?string $slug = null;
 
     protected static string | array $middlewares = [];
-    
+
     protected static string | array $withoutRouteMiddleware = [];
 
     protected static int $globalSearchResultsLimit = 50;
