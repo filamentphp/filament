@@ -46,6 +46,8 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     protected static string $view;
 
     protected static string | array $middlewares = [];
+    
+    protected static string | array $withoutRouteMiddleware = [];
 
     public static ?Closure $reportValidationErrorUsing = null;
 
@@ -88,6 +90,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
             Route::get($slug, static::class)
                 ->middleware(static::getMiddlewares())
+                ->withoutMiddleware(static::getWithoutRouteMiddleware())
                 ->name($slug);
         };
     }
@@ -95,6 +98,11 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
     public static function getMiddlewares(): string | array
     {
         return static::$middlewares;
+    }
+
+    public static function getWithoutRouteMiddleware(): string | array
+    {
+        return static::$withoutRouteMiddleware;
     }
 
     public static function getSlug(): string
