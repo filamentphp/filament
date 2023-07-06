@@ -135,15 +135,21 @@
                 },
 
                 updateChart: function () {
+                    
                     chart.data.labels = this.labels
                     chart.data.datasets[0].data = this.values
                     chart.update()
                 },
+
+                darkModeToggled: function() {
+
+                    chart = Chart.getChart(this.$refs.canvas);
+                    chart.data.datasets[0].backgroundColor = getComputedStyle($refs.backgroundColorElement).color
+                    chart.data.datasets[0].borderColor = getComputedStyle($refs.borderColorElement).color
+                    chart.update('none');
+                }
             }"
-            x-on:dark-mode-toggled.window="
-                chart.destroy()
-                initChart()
-            "
+            x-on:dark-mode-toggled.window="darkModeToggled()"
             class="absolute inset-x-0 bottom-0 overflow-hidden rounded-b-2xl"
         >
             <canvas wire:ignore x-ref="canvas" class="h-6">
