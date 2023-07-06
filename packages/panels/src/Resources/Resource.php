@@ -11,6 +11,10 @@ use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Auth\Authenticatable;
+use function Filament\authorize;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Table;
@@ -84,9 +88,9 @@ abstract class Resource
 
     protected static int $globalSearchResultsLimit = 50;
 
-    protected static bool $shouldAuthorizeWithGate = false;
+    protected static bool $shouldCheckPolicyExistence = true;
 
-    protected static bool $shouldIgnorePolicies = false;
+    protected static bool $shouldSkipAuthorization = false;
 
     public static function form(Form $form): Form
     {
@@ -145,47 +149,55 @@ abstract class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
-        $user = Filament::auth()->user();
+        if (static::shouldSkipAuthorization()) {
+            return true;
+        }
+
         $model = static::getModel();
 
-        if (static::shouldAuthorizeWithGate()) {
-            return Gate::forUser($user)->check($action, $record ?? $model);
+        try {
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
         }
-
-        if (static::shouldIgnorePolicies()) {
-            return true;
-        }
-
-        $policy = Gate::getPolicyFor($model);
-        if ($policy === null) {
-            return true;
-        }
-
-        if (! method_exists($policy, $action)) {
-            return true;
-        }
-
-        return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
-    public static function authorizeWithGate(bool $condition = true): void
+    /**
+     * @throws AuthorizationException
+     */
+    public static function authorize(string $action, ?Model $record = null): ?Response
     {
-        static::$shouldAuthorizeWithGate = $condition;
+        if (static::shouldSkipAuthorization()) {
+            return null;
+        }
+
+        $model = static::getModel();
+
+        try {
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence());
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse();
+        }
     }
 
-    public static function ignorePolicies(bool $condition = true): void
+    public static function checkPolicyExistence(bool $condition = true): void
     {
-        static::$shouldIgnorePolicies = $condition;
+        static::$shouldCheckPolicyExistence = $condition;
     }
 
-    public static function shouldAuthorizeWithGate(): bool
+    public static function skipAuthorization(bool $condition = true): void
     {
-        return static::$shouldAuthorizeWithGate;
+        static::$shouldSkipAuthorization = $condition;
     }
 
-    public static function shouldIgnorePolicies(): bool
+    public static function shouldCheckPolicyExistence(): bool
     {
-        return static::$shouldIgnorePolicies;
+        return static::$shouldCheckPolicyExistence;
+    }
+
+    public static function shouldSkipAuthorization(): bool
+    {
+        return static::$shouldSkipAuthorization;
     }
 
     public static function canViewAny(): bool
@@ -243,14 +255,34 @@ abstract class Resource
         return static::can('restoreAny');
     }
 
-    public static function canGloballySearch(): bool
-    {
-        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
-    }
-
     public static function canView(Model $record): bool
     {
         return static::can('view', $record);
+    }
+
+    public static function authorizeViewAny(): void
+    {
+        static::authorize('viewAny');
+    }
+
+    public static function authorizeCreate(): void
+    {
+        static::authorize('create');
+    }
+
+    public static function authorizeEdit(Model $record): void
+    {
+        static::authorize('update', $record);
+    }
+
+    public static function authorizeView(Model $record): void
+    {
+        static::authorize('view', $record);
+    }
+
+    public static function canGloballySearch(): bool
+    {
+        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
     }
 
     public static function getBreadcrumb(): string

@@ -10,6 +10,10 @@ use Filament\Resources\Pages\ViewRecord;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Contracts\Auth\Access\Authorizable;
+use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -17,6 +21,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
+use function Filament\authorize;
 
 class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
@@ -79,9 +84,9 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
      */
     protected static ?string $pluralModelLabel = null;
 
-    protected static bool $shouldAuthorizeWithGate = false;
+    protected static bool $shouldCheckPolicyExistence = true;
 
-    protected static bool $shouldIgnorePolicies = false;
+    protected static bool $shouldSkipAuthorization = false;
 
     public function isReadOnly(): bool
     {
@@ -224,71 +229,52 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
 
     protected function can(string $action, ?Model $record = null): bool
     {
-        $user = Filament::auth()->user();
+        if (static::shouldSkipAuthorization()) {
+            return true;
+        }
+
         $model = $this->getTable()->getModel();
 
-        if (static::shouldAuthorizeWithGate()) {
-            return Gate::forUser($user)->check($action, $record ?? $model);
+        try {
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
         }
-
-        if (static::shouldIgnorePolicies()) {
-            return true;
-        }
-
-        $policy = Gate::getPolicyFor($model);
-
-        if ($policy === null) {
-            return true;
-        }
-
-        if (! method_exists($policy, $action)) {
-            return true;
-        }
-
-        return Gate::forUser($user)->check($action, $record ?? $model);
-    }
-
-    public static function authorizeWithGate(bool $condition = true): void
-    {
-        static::$shouldAuthorizeWithGate = $condition;
-    }
-
-    public static function ignorePolicies(bool $condition = true): void
-    {
-        static::$shouldIgnorePolicies = $condition;
-    }
-
-    public static function shouldAuthorizeWithGate(): bool
-    {
-        return static::$shouldAuthorizeWithGate;
-    }
-
-    public static function shouldIgnorePolicies(): bool
-    {
-        return static::$shouldIgnorePolicies;
     }
 
     public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
     {
-        if (static::shouldIgnorePolicies()) {
+        if (static::shouldSkipAuthorization()) {
             return true;
         }
 
         $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
 
-        $policy = Gate::getPolicyFor($model);
-        $user = Filament::auth()->user();
-        $action = 'viewAny';
-
-        if ($policy === null) {
-            return true;
+        try {
+            return authorize('viewAll', $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
         }
+    }
 
-        if (! method_exists($policy, $action)) {
-            return true;
-        }
+    public static function checkPolicyExistence(bool $condition = true): void
+    {
+        static::$shouldCheckPolicyExistence = $condition;
+    }
 
-        return Gate::forUser($user)->check($action, $model);
+    public static function skipAuthorization(bool $condition = true): void
+    {
+        static::$shouldSkipAuthorization = $condition;
+    }
+
+    public static function shouldCheckPolicyExistence(): bool
+    {
+        return static::$shouldCheckPolicyExistence;
+    }
+
+    public static function shouldSkipAuthorization(): bool
+    {
+        return static::$shouldSkipAuthorization;
     }
 
     public function form(Form $form): Form

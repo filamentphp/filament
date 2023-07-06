@@ -191,12 +191,12 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant.
 - `reorder()` is used to control [reordering a record](listing-records#reordering-records).
 
-### Ignoring authorization policies
+### Skipping authorization
 
-If you'd like to ignore policies for a resource, you may set the `$shouldIgnorePolicies` property to `false`:
+If you'd like to skip authorization for a resource, you may set the `$shouldSkipAuthorization` property to `true`:
 
 ```php
-protected static bool $shouldIgnorePolicies = true;
+protected static bool $shouldSkipAuthorization = true;
 ```
 
 ## Customizing the model label
