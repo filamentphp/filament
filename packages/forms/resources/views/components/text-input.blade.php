@@ -26,7 +26,7 @@
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <input
-            @if (filled($extraAlpineAttributes) || filled($mask))
+            @if (count($extraAlpineAttributes) || filled($mask))
                 x-data="{}"
             @endif
             @if (filled($mask))

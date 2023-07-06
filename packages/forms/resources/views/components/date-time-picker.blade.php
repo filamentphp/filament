@@ -1,5 +1,6 @@
 @php
     $datalistOptions = $getDatalistOptions();
+    $extraAlpineAttributes = $getExtraAlpineAttributes();
     $icon = $getIcon();
     $id = $getId();
     $isDisabled = $isDisabled();
@@ -24,15 +25,12 @@
     >
         @if ($isNative())
             <input
-                x-data="{}"
-                x-bind:class="{
-                    'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500':
-                        ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                    'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400':
-                        @js($statePath) in $wire.__instance.serverMemo.errors,
-                }"
+                @if (count($extraAlpineAttributes)))
+                    x-data="{}"
+                @endif
                 {{
                     $getExtraInputAttributeBag()
+                        ->merge($extraAlpineAttributes, escape: false)
                         ->merge([
                             'autofocus' => $isAutofocused(),
                             'disabled' => $isDisabled,
@@ -48,9 +46,7 @@
                             $applyStateBindingModifiers('wire:model') => $statePath,
                         ], escape: false)
                         ->class([
-                            'block w-full shadow-sm outline-none transition duration-75 focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',
-                            'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
-                            'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
+                            'block w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
                         ])
                 }}
             />
