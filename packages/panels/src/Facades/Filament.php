@@ -45,6 +45,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string | null getLoginUrl(array<mixed> $parameters = [])
  * @method static string getLogoutUrl(array<mixed> $parameters = [])
  * @method static string | null getMaxContentWidth()
+ * @method static string | null getMaxTopNavigationWidth()
  * @method static string | null getModelResource(string | Model $model)
  * @method static string getNameForDefaultAvatar(Model | Authenticatable $user)
  * @method static array<NavigationGroup> getNavigation()

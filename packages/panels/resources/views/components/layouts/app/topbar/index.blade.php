@@ -6,9 +6,20 @@
 <header
     {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_1px_0_0_theme(colors.white_/_20%)]']) }}
 >
-    <div
-        class="flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
-    >
+    <div @class([
+        'mx-auto flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8',
+        match ($maxTopNavigationWidth = filament()->getMaxTopNavigationWidth() ?? null) {
+            'xl' => 'max-w-xl',
+            '2xl' => 'max-w-2xl',
+            '3xl' => 'max-w-3xl',
+            '4xl' => 'max-w-4xl',
+            '5xl' => 'max-w-5xl',
+            '6xl' => 'max-w-6xl',
+            '7xl' => 'max-w-7xl',
+            'full' => 'max-w-full',
+            default => $maxTopNavigationWidth,
+        },
+    ])>
         <div class="flex flex-1 items-center">
             {{ filament()->renderHook('topbar.start') }}
 

@@ -178,6 +178,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getMaxContentWidth();
     }
 
+    public function getMaxTopNavigationWidth(): ?string
+    {
+        return $this->getCurrentPanel()->getMaxTopNavigationWidth();
+    }
+
     public function getModelResource(string | Model $model): ?string
     {
         return $this->getCurrentPanel()->getModelResource($model);
