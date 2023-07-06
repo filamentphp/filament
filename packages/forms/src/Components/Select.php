@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
@@ -627,9 +628,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->relationshipTitleAttribute = $titleAttribute;
 
         $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyQueryUsing): array {
-            $relationship = $component->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -688,9 +689,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return null;
             }
 
-            $relationship = $component->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -784,9 +785,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         });
 
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
-            $relationship = $component->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $state);
+            $relationshipQuery = $relationship->getQuery()->where($relationship->getOwnerKeyName(), $state);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -798,10 +799,10 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         });
 
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
-            $relationship = $component->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
             $relatedKeyName = $relationship->getRelatedKeyName();
 
-            $relationshipQuery = $relationship->getRelated()->query()
+            $relationshipQuery = $relationship->getQuery()
                 ->whereIn($relatedKeyName, $values);
 
             if ($modifyQueryUsing) {

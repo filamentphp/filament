@@ -29,11 +29,11 @@ trait HasRelationship
      */
     protected function getRelationshipOptions(): array
     {
-        $relationship = $this->getRelationship();
+        $relationship = Relation::noConstraints(fn () => $this->getRelationship());
 
         $titleAttribute = $this->getRelationshipTitleAttribute();
 
-        $relationshipQuery = $relationship->getRelated()->query();
+        $relationshipQuery = $relationship->getQuery();
 
         if ($this->modifyRelationshipQueryUsing) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
