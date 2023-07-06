@@ -43,8 +43,6 @@ class CreateRecord extends Page implements HasFormActions
 
     protected function authorizeAccess(): void
     {
-        static::authorizeResourceAccess();
-
         abort_unless(static::getResource()::canCreate(), 403);
     }
 

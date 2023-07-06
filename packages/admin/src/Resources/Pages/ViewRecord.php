@@ -41,8 +41,6 @@ class ViewRecord extends Page
 
     public function mount($record): void
     {
-        static::authorizeResourceAccess();
-
         $this->record = $this->resolveRecord($record);
 
         abort_unless(static::getResource()::canView($this->getRecord()), 403);

@@ -58,8 +58,6 @@ class EditRecord extends Page implements HasFormActions
 
     protected function authorizeAccess(): void
     {
-        static::authorizeResourceAccess();
-
         abort_unless(static::getResource()::canEdit($this->getRecord()), 403);
     }
 
