@@ -2,7 +2,7 @@
 
 namespace Filament\Resources\RelationManagers;
 
-use Filament\Facades\Filament;
+use function Filament\authorize;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
@@ -11,17 +11,12 @@ use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\Access\Response;
-use Illuminate\Contracts\Auth\Access\Authorizable;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 use Livewire\Component;
-use function Filament\authorize;
 
 class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {

@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
@@ -11,20 +12,17 @@ use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Auth\Access\Response;
-use Illuminate\Contracts\Auth\Authenticatable;
-use function Filament\authorize;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Table;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;

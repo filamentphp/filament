@@ -2,9 +2,7 @@
 
 namespace Filament;
 
-use Filament\Contracts\Plugin;
 use Filament\Facades\Filament;
-use Filament\FilamentManager;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +28,9 @@ if (! function_exists('authorize')) {
         ) {
             /** @var bool | Response | null $response */
             $response = invade(Gate::forUser($user))->callBeforeCallbacks(
-                $user, $action, [$model],
+                $user,
+                $action,
+                [$model],
             );
 
             if ($response === false) {
