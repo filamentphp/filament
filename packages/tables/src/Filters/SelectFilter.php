@@ -99,20 +99,20 @@ class SelectFilter extends BaseFilter
             );
         }
 
-        if ($isMultiple) {
-            return $query->whereHas(
-                $this->getRelationshipName(),
-                fn (Builder $query) => $query->whereIn(
+        return $query->whereHas(
+            $this->getRelationshipName(),
+            function (Builder $query) use ($isMultiple, $values) {
+                if ($this->modifyRelationshipQueryUsing) {
+                    $query = $this->evaluate($this->modifyRelationshipQueryUsing, [
+                        'query' => $query,
+                    ]) ?? $query;
+                }
+
+                return $query->{$isMultiple ? 'whereIn' : 'where'}(
                     $this->getRelationshipKey(),
                     $values,
-                ),
-            );
-        }
-
-        return $query->whereRelation(
-            $this->getRelationshipName(),
-            $this->getRelationshipKey(),
-            $values,
+                );
+            },
         );
     }
 
