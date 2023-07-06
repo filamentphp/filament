@@ -1,7 +1,9 @@
 @php
     $datalistOptions = $getDatalistOptions();
+    $extraAlpineAttributes = $getExtraAlpineAttributes();
     $id = $getId();
     $isConcealed = $isConcealed();
+    $isDisabled = $isDisabled();
     $mask = $getMask();
     $statePath = $getStatePath();
     $prefixIcon = $getPrefixIcon();
@@ -13,6 +15,7 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
+        :disabled="$isDisabled"
         :prefix="$prefixLabel"
         :prefix-actions="$getPrefixActions()"
         :prefix-icon="$prefixIcon"
@@ -23,23 +26,20 @@
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <input
-            x-data="{}"
+            @if (filled($extraAlpineAttributes) || filled($mask))
+                x-data="{}"
+            @endif
             @if (filled($mask))
                 x-mask{{ $mask instanceof \Filament\Support\RawJs ? ':dynamic' : null }}="{{ $mask }}"
             @endif
-            x-bind:class="
-                @js($statePath) in $wire.__instance.serverMemo.errors
-                    ? 'ring-danger-600 focus:ring-danger-600 dark:ring-danger-400 dark:focus:ring-danger-400'
-                    : 'ring-gray-950/10 focus:ring-primary-600 dark:ring-white/20 dark:focus:ring-primary-600'
-            "
             {{
                 $getExtraInputAttributeBag()
-                    ->merge($getExtraAlpineAttributes(), escape: false)
+                    ->merge($extraAlpineAttributes, escape: false)
                     ->merge([
                         'autocapitalize' => $getAutocapitalize(),
                         'autocomplete' => $getAutocomplete(),
                         'autofocus' => $isAutofocused(),
-                        'disabled' => $isDisabled(),
+                        'disabled' => $isDisabled,
                         'id' => $id,
                         'inputmode' => $getInputMode(),
                         'list' => $datalistOptions ? "{$id}-list" : null,
@@ -55,9 +55,7 @@
                         $applyStateBindingModifiers('wire:model') => $statePath,
                     ], escape: false)
                     ->class([
-                        'filament-forms-input block w-full border-none bg-white px-3 py-1.5 text-base shadow-sm outline-none ring-1 transition duration-75 placeholder:text-gray-400 focus:ring-2 disabled:bg-gray-50 dark:bg-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:disabled:bg-gray-900 sm:text-sm sm:leading-6',
-                        'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
-                        'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
+                        'filament-forms-input block w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
                     ])
             }}
         />
