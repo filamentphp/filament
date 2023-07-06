@@ -102,7 +102,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
     public static function getWithoutRouteMiddleware(): string | array
     {
-        return static::$withoutMiddlewares;
+        return static::$withoutRouteMiddleware;
     }
 
     public static function getSlug(): string
