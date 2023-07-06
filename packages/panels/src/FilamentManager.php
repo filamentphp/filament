@@ -612,10 +612,10 @@ class FilamentManager
         }
     }
 
-    public function registerRenderHook(string $name, Closure $callback): void
+    public function registerRenderHook(string $name, Closure $hook): void
     {
         try {
-            $this->getDefaultPanel()->renderHook($name, $callback);
+            $this->getDefaultPanel()->renderHook($name, $hook);
         } catch (NoDefaultPanelSetException $exception) {
             throw new Exception('Please use the `renderHook()` method on the panel configuration to register render hooks. See the documentation - https://filamentphp.com/docs/panels/configuration#render-hooks');
         }

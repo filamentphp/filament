@@ -127,7 +127,7 @@ use Illuminate\Database\Eloquent\Builder;
 CheckboxList::make('technologies')
     ->relationship(
         titleAttribute: 'name',
-        modifyOptionsQueryUsing: fn (Builder $query) => $query->withTrashed(),
+        modifyQueryUsing: fn (Builder $query) => $query->withTrashed(),
     )
 ```
 
@@ -155,7 +155,7 @@ use Illuminate\Database\Eloquent\Model;
 
 CheckboxList::make('authors')
     ->relationship(
-        modifyOptionsQueryUsing: fn (Builder $query) => $query->orderBy('first_name')->orderBy('last_name'),
+        modifyQueryUsing: fn (Builder $query) => $query->orderBy('first_name')->orderBy('last_name'),
     )
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
 ```
