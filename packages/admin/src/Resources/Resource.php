@@ -64,6 +64,7 @@ class Resource
     protected static ?string $slug = null;
 
     protected static string | array $middlewares = [];
+    protected static string | array $withoutMiddlewares = [];
 
     protected static int $globalSearchResultsLimit = 50;
 
@@ -403,6 +404,7 @@ class Resource
             Route::name("{$slug}.")
                 ->prefix($slug)
                 ->middleware(static::getMiddlewares())
+                ->withoutMiddlware(static::getWithoutMiddlewares())
                 ->group(function () {
                     foreach (static::getPages() as $name => $page) {
                         Route::get($page['route'], $page['class'])->name($name);
@@ -414,6 +416,11 @@ class Resource
     public static function getMiddlewares(): string | array
     {
         return static::$middlewares;
+    }
+
+    public static function getWithoutMiddlewares(): string | array
+    {
+        return static::$withoutMiddlewares;
     }
 
     public static function getSlug(): string
