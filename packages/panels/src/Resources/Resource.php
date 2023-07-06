@@ -77,6 +77,11 @@ abstract class Resource
      */
     protected static string | array $routeMiddleware = [];
 
+    /**
+     * @var string | array<string>
+     */
+    protected static string | array $withoutRouteMiddleware = [];
+
     protected static int $globalSearchResultsLimit = 50;
 
     protected static bool $shouldAuthorizeWithGate = false;
@@ -463,6 +468,7 @@ abstract class Resource
         )
             ->prefix($slug)
             ->middleware(static::getRouteMiddleware($panel))
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->group(function () use ($panel) {
                 foreach (static::getPages() as $name => $page) {
                     $page->registerRoute($panel)?->name($name);
@@ -476,6 +482,14 @@ abstract class Resource
     public static function getRouteMiddleware(Panel $panel): string | array
     {
         return static::$routeMiddleware;
+    }
+
+    /**
+     * @return string | array<string>
+     */
+    public static function getWithoutRouteMiddleware(Panel $panel): string | array
+    {
+        return static::$withoutRouteMiddleware;
     }
 
     public static function getEmailVerifiedMiddleware(Panel $panel): string
