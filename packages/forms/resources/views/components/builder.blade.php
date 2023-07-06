@@ -50,8 +50,8 @@
                 x-sortable
                 :wire:end.stop="'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })'"
                 @class([
-                    'space-y-12' => $addAction && $reorderAction,
-                    'space-y-6' => ! ($addAction && $reorderAction),
+                    'space-y-12' => $addAction->isVisible() && $reorderAction->isVisible(),
+                    'space-y-6' => ! ($addAction->isVisible() && $reorderAction->isVisible()),
                 ])
             >
                 @php
@@ -98,7 +98,7 @@
                         "
                         class="filament-forms-builder-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
                     >
-                        @if ($reorderAction || $hasBlockLabels || $deleteAction || $isCollapsible || $isCloneable)
+                        @if ($reorderAction->isVisible() || $hasBlockLabels || $cloneAction->isVisible() || $deleteAction->isVisible() || $isCollapsible || $isCloneable)
                             <header
                                 @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
                                 @class([
@@ -106,7 +106,7 @@
                                     'cursor-pointer' => $isCollapsible,
                                 ])
                             >
-                                @if ($reorderAction)
+                                @if ($reorderAction->isVisible())
                                     <div x-sortable-handle>
                                         {{ $reorderAction }}
                                     </div>
@@ -159,7 +159,7 @@
                                         @endif
                                     @endif
 
-                                    @if ($cloneAction)
+                                    @if ($cloneAction->isVisible())
                                         <li
                                             class="flex items-center justify-center"
                                         >
@@ -167,7 +167,7 @@
                                         </li>
                                     @endif
 
-                                    @if ($deleteAction)
+                                    @if ($deleteAction->isVisible())
                                         <li
                                             class="flex items-center justify-center"
                                         >
@@ -212,7 +212,7 @@
                             {{ __('filament-forms::components.builder.collapsed') }}
                         </div>
 
-                        @if ((! $loop->last) && $addBetweenAction && $reorderAction)
+                        @if ((! $loop->last) && $addBetweenAction->isVisible() && $reorderAction->isVisible())
                             <div
                                 x-show="isAddButtonVisible"
                                 x-transition
@@ -235,7 +235,7 @@
             </ul>
         @endif
 
-        @if ($addAction)
+        @if ($addAction->isVisible())
             <x-filament-forms::builder.block-picker
                 :action="$addAction"
                 :blocks="$getBlocks()"

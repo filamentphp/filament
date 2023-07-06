@@ -1,18 +1,49 @@
 <?php
 
-use Filament\Contracts\Plugin;
-use Filament\FilamentManager;
+namespace Filament;
 
-if (! function_exists('filament')) {
-    function filament(?string $plugin = null): FilamentManager | Plugin
+use Filament\Facades\Filament;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Access\Response;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Gate;
+
+if (! function_exists('authorize')) {
+    /**
+     * @throws AuthorizationException
+     */
+    function authorize(string $action, Model | string $model, bool $shouldCheckPolicyExistence = true): Response
     {
-        /** @var FilamentManager $filament */
-        $filament = app('filament');
+        $user = Filament::auth()->user();
 
-        if ($plugin !== null) {
-            return $filament->getPlugin($plugin);
+        if (! $shouldCheckPolicyExistence) {
+            return Gate::forUser($user)->authorize($action, $model);
         }
 
-        return $filament;
+        $policy = Gate::getPolicyFor($model);
+
+        if (
+            ($policy === null) ||
+            (! method_exists($policy, $action))
+        ) {
+            /** @var bool | Response | null $response */
+            $response = invade(Gate::forUser($user))->callBeforeCallbacks(
+                $user,
+                $action,
+                [$model],
+            );
+
+            if ($response === false) {
+                throw new AuthorizationException();
+            }
+
+            if (! $response instanceof Response) {
+                return Response::allow();
+            }
+
+            return $response->authorize();
+        }
+
+        return Gate::forUser($user)->authorize($action, $model);
     }
 }

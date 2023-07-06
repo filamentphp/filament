@@ -59,23 +59,20 @@ class KeyValue extends Field
         });
 
         $this->registerActions([
-            fn (KeyValue $component): ?Action => $component->getAddAction(),
-            fn (KeyValue $component): ?Action => $component->getDeleteAction(),
-            fn (KeyValue $component): ?Action => $component->getReorderAction(),
+            fn (KeyValue $component): Action => $component->getAddAction(),
+            fn (KeyValue $component): Action => $component->getDeleteAction(),
+            fn (KeyValue $component): Action => $component->getReorderAction(),
         ]);
     }
 
-    public function getAddAction(): ?Action
+    public function getAddAction(): Action
     {
-        if (! $this->isAddable()) {
-            return null;
-        }
-
         $action = Action::make($this->getAddActionName())
             ->label(fn (KeyValue $component) => $component->getAddActionLabel())
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isAddable());
 
         if ($this->modifyAddActionUsing) {
             $action = $this->evaluate($this->modifyAddActionUsing, [
@@ -98,12 +95,8 @@ class KeyValue extends Field
         return 'add';
     }
 
-    public function getDeleteAction(): ?Action
+    public function getDeleteAction(): Action
     {
-        if (! $this->isDeletable()) {
-            return null;
-        }
-
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.key_value.actions.delete.label'))
             ->icon('heroicon-m-trash')
@@ -111,7 +104,8 @@ class KeyValue extends Field
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
             $action = $this->evaluate($this->modifyDeleteActionUsing, [
@@ -134,12 +128,8 @@ class KeyValue extends Field
         return 'delete';
     }
 
-    public function getReorderAction(): ?Action
+    public function getReorderAction(): Action
     {
-        if (! $this->isReorderable()) {
-            return null;
-        }
-
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.key_value.actions.reorder.label'))
             ->icon('heroicon-m-arrows-up-down')
@@ -147,7 +137,8 @@ class KeyValue extends Field
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyReorderActionUsing) {
             $action = $this->evaluate($this->modifyReorderActionUsing, [

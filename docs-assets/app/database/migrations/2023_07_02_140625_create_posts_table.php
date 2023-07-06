@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->text('description')->nullable();
             $table->string('title')->nullable();
+            $table->integer('rating')->nullable();
             $table->timestamps();
         });
     }

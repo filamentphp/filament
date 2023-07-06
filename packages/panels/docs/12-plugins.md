@@ -166,7 +166,7 @@ class BlogPlugin implements Plugin
 {
     public static function get(): static
     {
-        return filament($this->getId());
+        return filament(app(static::class)->getId());
     }
     
     // ...

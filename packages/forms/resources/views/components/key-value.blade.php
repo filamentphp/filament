@@ -46,11 +46,11 @@
                             {{ $getValueLabel() }}
                         </th>
 
-                        @if (($deleteAction || $reorderAction) && (! $isDisabled))
+                        @if (($deleteAction->isVisible() || $reorderAction->isVisible()) && (! $isDisabled))
                             <th
                                 scope="col"
                                 x-show="rows.length"
-                                class="{{ ($deleteAction && $reorderAction) ? 'w-16' : 'w-12' }}"
+                                class="{{ ($deleteAction->isVisible() && $reorderAction->isVisible()) ? 'w-16' : 'w-12' }}"
                             >
                                 <span class="sr-only"></span>
                             </th>
@@ -59,7 +59,7 @@
                 </thead>
 
                 <tbody
-                    @if ($reorderAction)
+                    @if ($reorderAction->isVisible())
                         x-sortable
                         x-on:end="reorderRows($event)"
                     @endif
@@ -72,7 +72,7 @@
                         x-ref="rowTemplate"
                     >
                         <tr
-                            @if ($reorderAction)
+                            @if ($reorderAction->isVisible())
                                 x-bind:x-sortable-item="row.key"
                             @endif
                             class="divide-x rtl:divide-x-reverse dark:divide-gray-600"
@@ -103,18 +103,18 @@
                                 />
                             </td>
 
-                            @if (($deleteAction || $reorderAction) && (! $isDisabled))
+                            @if (($deleteAction->isVisible() || $reorderAction->isVisible()) && (! $isDisabled))
                                 <td class="whitespace-nowrap">
                                     <div
                                         class="flex items-center justify-center px-2"
                                     >
-                                        @if ($reorderAction)
+                                        @if ($reorderAction->isVisible())
                                             <div x-sortable-handle>
                                                 {{ $reorderAction }}
                                             </div>
                                         @endif
 
-                                        @if ($deleteAction)
+                                        @if ($deleteAction->isVisible())
                                             <div
                                                 x-on:click="deleteRow(index)"
                                             >
@@ -129,7 +129,7 @@
                 </tbody>
             </table>
 
-            @if ($addAction && (! $isDisabled))
+            @if ($addAction->isVisible() && (! $isDisabled))
                 <div x-on:click="addRow" class="px-4 py-3">
                     {{ $addAction }}
                 </div>

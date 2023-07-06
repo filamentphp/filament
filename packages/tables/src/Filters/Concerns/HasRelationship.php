@@ -10,11 +10,11 @@ trait HasRelationship
 {
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
-    public function relationship(string $relationshipName, string $titleAttribute = null, Closure $callback = null): static
+    public function relationship(string $name, string $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
     {
-        $this->attribute("{$relationshipName}.{$titleAttribute}");
+        $this->attribute("{$name}.{$titleAttribute}");
 
-        $this->modifyRelationshipQueryUsing = $callback;
+        $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
         return $this;
     }

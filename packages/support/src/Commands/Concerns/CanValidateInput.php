@@ -15,9 +15,9 @@ trait CanValidateInput
     /**
      * @param  array<array-key>  $rules
      */
-    protected function validateInput(Closure $callback, string $field, array $rules, ?Closure $onError = null): string
+    protected function validateInput(Closure $askUsing, string $field, array $rules, ?Closure $onError = null): string
     {
-        $input = $callback();
+        $input = $askUsing();
 
         $validator = Validator::make(
             [$field => $input],
@@ -31,7 +31,7 @@ trait CanValidateInput
                 $onError($validator);
             }
 
-            $input = $this->validateInput($callback, $field, $rules);
+            $input = $this->validateInput($askUsing, $field, $rules);
         }
 
         return $input;

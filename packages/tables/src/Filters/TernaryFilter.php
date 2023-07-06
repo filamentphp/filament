@@ -144,4 +144,17 @@ class TernaryFilter extends SelectFilter
 
         return $this;
     }
+
+    public function getDefaultState(): mixed
+    {
+        $defaultState = $this->evaluate($this->defaultState);
+
+        // Ensure that the default state is cast to an integer
+        // so that it matches the value of a select option.
+        if (is_bool($defaultState)) {
+            $defaultState = $defaultState ? 1 : 0;
+        }
+
+        return $defaultState;
+    }
 }

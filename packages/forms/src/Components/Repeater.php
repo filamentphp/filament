@@ -92,16 +92,16 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         });
 
         $this->registerActions([
-            fn (Repeater $component): ?Action => $component->getAddAction(),
-            fn (Repeater $component): ?Action => $component->getCloneAction(),
-            fn (Repeater $component): ?Action => $component->getCollapseAction(),
-            fn (Repeater $component): ?Action => $component->getCollapseAllAction(),
-            fn (Repeater $component): ?Action => $component->getDeleteAction(),
-            fn (Repeater $component): ?Action => $component->getExpandAction(),
-            fn (Repeater $component): ?Action => $component->getExpandAllAction(),
-            fn (Repeater $component): ?Action => $component->getMoveDownAction(),
-            fn (Repeater $component): ?Action => $component->getMoveUpAction(),
-            fn (Repeater $component): ?Action => $component->getReorderAction(),
+            fn (Repeater $component): Action => $component->getAddAction(),
+            fn (Repeater $component): Action => $component->getCloneAction(),
+            fn (Repeater $component): Action => $component->getCollapseAction(),
+            fn (Repeater $component): Action => $component->getCollapseAllAction(),
+            fn (Repeater $component): Action => $component->getDeleteAction(),
+            fn (Repeater $component): Action => $component->getExpandAction(),
+            fn (Repeater $component): Action => $component->getExpandAllAction(),
+            fn (Repeater $component): Action => $component->getMoveDownAction(),
+            fn (Repeater $component): Action => $component->getMoveUpAction(),
+            fn (Repeater $component): Action => $component->getReorderAction(),
         ]);
 
         $this->mutateDehydratedStateUsing(static function (?array $state): array {
@@ -109,12 +109,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         });
     }
 
-    public function getAddAction(): ?Action
+    public function getAddAction(): Action
     {
-        if (! $this->isAddable()) {
-            return null;
-        }
-
         $action = Action::make($this->getAddActionName())
             ->label(fn (Repeater $component) => $component->getAddActionLabel())
             ->action(function (Repeater $component): void {
@@ -131,7 +127,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             })
             ->button()
             ->outlined()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isAddable());
 
         if ($this->modifyAddActionUsing) {
             $action = $this->evaluate($this->modifyAddActionUsing, [
@@ -154,12 +151,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'add';
     }
 
-    public function getCloneAction(): ?Action
+    public function getCloneAction(): Action
     {
-        if (! $this->isCloneable()) {
-            return null;
-        }
-
         $action = Action::make($this->getCloneActionName())
             ->label(__('filament-forms::components.repeater.actions.clone.label'))
             ->icon('heroicon-m-square-2-stack')
@@ -176,7 +169,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             })
             ->iconButton()
             ->inline()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isCloneable());
 
         if ($this->modifyCloneActionUsing) {
             $action = $this->evaluate($this->modifyCloneActionUsing, [
@@ -199,12 +193,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'clone';
     }
 
-    public function getDeleteAction(): ?Action
+    public function getDeleteAction(): Action
     {
-        if (! $this->isDeletable()) {
-            return null;
-        }
-
         $action = Action::make($this->getDeleteActionName())
             ->label(__('filament-forms::components.repeater.actions.delete.label'))
             ->icon('heroicon-m-trash')
@@ -217,7 +207,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             })
             ->iconButton()
             ->inline()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
             $action = $this->evaluate($this->modifyDeleteActionUsing, [
@@ -240,12 +231,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'delete';
     }
 
-    public function getMoveDownAction(): ?Action
+    public function getMoveDownAction(): Action
     {
-        if (! $this->isReorderable()) {
-            return null;
-        }
-
         $action = Action::make($this->getMoveDownActionName())
             ->label(__('filament-forms::components.repeater.actions.move_down.label'))
             ->icon('heroicon-m-chevron-down')
@@ -257,7 +244,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             })
             ->iconButton()
             ->inline()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyMoveDownActionUsing) {
             $action = $this->evaluate($this->modifyMoveDownActionUsing, [
@@ -280,12 +268,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'moveDown';
     }
 
-    public function getMoveUpAction(): ?Action
+    public function getMoveUpAction(): Action
     {
-        if (! $this->isReorderable()) {
-            return null;
-        }
-
         $action = Action::make($this->getMoveUpActionName())
             ->label(__('filament-forms::components.repeater.actions.move_up.label'))
             ->icon('heroicon-m-chevron-up')
@@ -297,7 +281,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             })
             ->iconButton()
             ->inline()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyMoveUpActionUsing) {
             $action = $this->evaluate($this->modifyMoveUpActionUsing, [
@@ -320,12 +305,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'moveUp';
     }
 
-    public function getReorderAction(): ?Action
+    public function getReorderAction(): Action
     {
-        if (! $this->isReorderable()) {
-            return null;
-        }
-
         $action = Action::make($this->getReorderActionName())
             ->label(__('filament-forms::components.repeater.actions.reorder.label'))
             ->icon('heroicon-m-arrows-up-down')
@@ -341,7 +322,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
             ->inline()
-            ->size('sm');
+            ->size('sm')
+            ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyReorderActionUsing) {
             $action = $this->evaluate($this->modifyReorderActionUsing, [
@@ -364,7 +346,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'reorder';
     }
 
-    public function getCollapseAction(): ?Action
+    public function getCollapseAction(): Action
     {
         $action = Action::make($this->getCollapseActionName())
             ->label(__('filament-forms::components.repeater.actions.collapse.label'))
@@ -396,7 +378,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'collapse';
     }
 
-    public function getExpandAction(): ?Action
+    public function getExpandAction(): Action
     {
         $action = Action::make($this->getExpandActionName())
             ->label(__('filament-forms::components.repeater.actions.expand.label'))
@@ -428,7 +410,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'expand';
     }
 
-    public function getCollapseAllAction(): ?Action
+    public function getCollapseAllAction(): Action
     {
         $action = Action::make($this->getCollapseAllActionName())
             ->label(__('filament-forms::components.repeater.actions.collapse_all.label'))
@@ -457,7 +439,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return 'collapseAll';
     }
 
-    public function getExpandAllAction(): ?Action
+    public function getExpandAllAction(): Action
     {
         $action = Action::make($this->getExpandAllActionName())
             ->label(__('filament-forms::components.repeater.actions.expand_all.label'))

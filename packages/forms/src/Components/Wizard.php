@@ -56,8 +56,8 @@ class Wizard extends Component
         parent::setUp();
 
         $this->registerActions([
-            fn (Wizard $component): ?Action => $component->getNextAction(),
-            fn (Wizard $component): ?Action => $component->getPreviousAction(),
+            fn (Wizard $component): Action => $component->getNextAction(),
+            fn (Wizard $component): Action => $component->getPreviousAction(),
         ]);
 
         $this->registerListeners([
@@ -84,7 +84,7 @@ class Wizard extends Component
         ]);
     }
 
-    public function getNextAction(): ?Action
+    public function getNextAction(): Action
     {
         $action = Action::make($this->getNextActionName())
             ->label(__('filament-forms::components.wizard.actions.next_step.label'))
@@ -116,7 +116,7 @@ class Wizard extends Component
         return 'next';
     }
 
-    public function getPreviousAction(): ?Action
+    public function getPreviousAction(): Action
     {
         $action = Action::make($this->getPreviousActionName())
             ->label(__('filament-forms::components.wizard.actions.previous_step.label'))

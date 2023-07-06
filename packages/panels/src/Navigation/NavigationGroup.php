@@ -63,7 +63,8 @@ class NavigationGroup
                 continue;
             }
 
-            throw new Exception("Navigation group [{$this->getLabel()}] has a nested group, which is not supported.");
+            /** @phpstan-ignore-next-line */
+            throw new Exception("Navigation group [{$this->getLabel()}] has a nested group, which is not supported in the sidebar design at the moment.");
         }
 
         $this->items = $items;

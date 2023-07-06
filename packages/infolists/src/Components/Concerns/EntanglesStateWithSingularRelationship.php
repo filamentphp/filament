@@ -4,9 +4,9 @@ namespace Filament\Infolists\Components\Concerns;
 
 trait EntanglesStateWithSingularRelationship
 {
-    public function relationship(string $relationshipName): static
+    public function relationship(string $name): static
     {
-        $this->statePath($relationshipName);
+        $this->statePath($name);
 
         return $this;
     }

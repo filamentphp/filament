@@ -33,21 +33,21 @@ trait HasComponents
         return $this;
     }
 
-    public function getComponent(string | Closure $callback, bool $withHidden = false): ?Component
+    public function getComponent(string | Closure $findComponentUsing, bool $withHidden = false): ?Component
     {
-        if (is_string($callback)) {
-            $callback = static function (Component $component) use ($callback): bool {
+        if (is_string($findComponentUsing)) {
+            $findComponentUsing = static function (Component $component) use ($findComponentUsing): bool {
                 $key = $component->getKey();
 
                 if ($key === null) {
                     return false;
                 }
 
-                return $key === $callback;
+                return $key === $findComponentUsing;
             };
         }
 
-        return collect($this->getFlatComponents($withHidden))->first($callback);
+        return collect($this->getFlatComponents($withHidden))->first($findComponentUsing);
     }
 
     /**

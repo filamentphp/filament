@@ -23,6 +23,7 @@ return [
         'search' => [
             'label' => 'Sök',
             'placeholder' => 'Sök',
+            'indicator' => 'Sök',
         ],
 
     ],
@@ -65,6 +66,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'Sammanfattning',
+
+        'subheadings' => [
+            'all' => 'Alla :label',
+            'group' => ':group sammanfattning',
+            'page' => 'Denna sida',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Medelvärde',
+            ],
+
+            'count' => [
+                'label' => 'Antal',
+            ],
+
+            'sum' => [
+                'label' => 'Summa',
+            ],
+
+        ],
+
+    ],
+
     'buttons' => [
 
         'disable_reordering' => [
@@ -77,6 +106,10 @@ return [
 
         'filter' => [
             'label' => 'Filter',
+        ],
+
+        'group' => [
+            'label' => 'Gruppera',
         ],
 
         'open_bulk_actions' => [
@@ -131,6 +164,30 @@ return [
             'with_trashed' => 'Med raderade rader',
 
             'without_trashed' => 'Utan raderade rader',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Gruppera',
+                'placeholder' => 'Välj ett fält för gruppering',
+            ],
+
+            'direction' => [
+
+                'label' => 'Riktning',
+
+                'options' => [
+                    'asc' => 'Stigande',
+                    'desc' => 'Fallande',
+                ],
+
+            ],
 
         ],
 

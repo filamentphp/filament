@@ -138,9 +138,9 @@ class TestsForms
 
     public function assertFormFieldExists(): Closure
     {
-        return function (string $fieldName, string | Closure $formName = 'form', ?Closure $callback = null): static {
+        return function (string $fieldName, string | Closure $formName = 'form', ?Closure $checkFieldUsing = null): static {
             if ($formName instanceof Closure) {
-                $callback = $formName;
+                $checkFieldUsing = $formName;
                 $formName = 'form';
             }
 
@@ -161,9 +161,9 @@ class TestsForms
                 "Failed asserting that a field with the name [{$fieldName}] exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
             );
 
-            if ($callback) {
+            if ($checkFieldUsing) {
                 Assert::assertTrue(
-                    $callback($field),
+                    $checkFieldUsing($field),
                     "Failed asserting that a field with the name [{$fieldName}] and provided configuration exists on the form with the name [{$formName}] on the [{$livewireClass}] component."
                 );
             }

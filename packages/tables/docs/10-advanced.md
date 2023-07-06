@@ -1,6 +1,7 @@
 ---
 title: Advanced
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Pagination
 
@@ -103,6 +104,8 @@ If you're using mass assignment protection on your model, you will also need to 
 
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 
+<AutoScreenshot name="tables/reordering" alt="Table with reorderable rows" version="3.x" />
+
 The `reorderable()` method accepts the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may use this instead:
 
 ```php
@@ -140,9 +143,6 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->filters([
-            // ...
-        ])
         ->reorderRecordsTriggerAction(
             fn (Action $action, bool $isReordering) => $action
                 ->button()
@@ -150,6 +150,8 @@ public function table(Table $table): Table
         );
 }
 ```
+
+<AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="3.x" />
 
 ## Polling table content
 
@@ -235,6 +237,8 @@ public function table(Table $table): Table
         ->striped();
 }
 ```
+
+<AutoScreenshot name="tables/striped" alt="Table with striped rows" version="3.x" />
 
 ### Custom row classes
 

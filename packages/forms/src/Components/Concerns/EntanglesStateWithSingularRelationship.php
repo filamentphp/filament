@@ -24,10 +24,10 @@ trait EntanglesStateWithSingularRelationship
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
-    public function relationship(string $relationshipName, bool | Closure $condition = true): static
+    public function relationship(string $name, bool | Closure $condition = true): static
     {
-        $this->relationship = $relationshipName;
-        $this->statePath($relationshipName);
+        $this->relationship = $name;
+        $this->statePath($name);
 
         $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component) {
             $component->clearCachedExistingRecord();

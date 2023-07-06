@@ -50,12 +50,12 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         $this->searchDebounce(0);
 
         $this->registerActions([
-            fn (CheckboxList $component): ?Action => $component->getSelectAllAction(),
-            fn (CheckboxList $component): ?Action => $component->getDeselectAllAction(),
+            fn (CheckboxList $component): Action => $component->getSelectAllAction(),
+            fn (CheckboxList $component): Action => $component->getDeselectAllAction(),
         ]);
     }
 
-    public function getSelectAllAction(): ?Action
+    public function getSelectAllAction(): Action
     {
         $action = Action::make($this->getSelectAllActionName())
             ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
@@ -84,7 +84,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'selectAll';
     }
 
-    public function getDeselectAllAction(): ?Action
+    public function getDeselectAllAction(): Action
     {
         $action = Action::make($this->getDeselectAllActionName())
             ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
@@ -113,18 +113,18 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'deselectAll';
     }
 
-    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
-        $this->relationship = $relationshipName ?? $this->getName();
+        $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
 
-        $this->options(static function (CheckboxList $component) use ($modifyOptionsQueryUsing): array {
+        $this->options(static function (CheckboxList $component) use ($modifyQueryUsing): array {
             $relationship = $component->getRelationship();
 
             $relationshipQuery = $relationship->getRelated()->query();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
