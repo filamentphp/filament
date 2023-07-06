@@ -92,7 +92,7 @@
                             "
                             class="filament-forms-repeater-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
                         >
-                            @if ($reorderAction || $deleteAction || $cloneAction || $isCollapsible || $hasItemLabels)
+                            @if ($reorderAction->isVisible() || $cloneAction->isVisible() || $deleteAction->isVisible() || $isCollapsible || $hasItemLabels)
                                 <header
                                     @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
                                     @class([
@@ -100,7 +100,7 @@
                                         'cursor-pointer' => $isCollapsible,
                                     ])
                                 >
-                                    @if ($reorderAction)
+                                    @if ($reorderAction->isVisible())
                                         <div x-sortable-handle>
                                             {{ $reorderAction }}
                                         </div>
@@ -135,7 +135,7 @@
                                             @endif
                                         @endif
 
-                                        @if ($cloneAction)
+                                        @if ($cloneAction->isVisible())
                                             <li
                                                 class="flex items-center justify-center"
                                             >
@@ -143,7 +143,7 @@
                                             </li>
                                         @endif
 
-                                        @if ($deleteAction)
+                                        @if ($deleteAction->isVisible())
                                             <li
                                                 class="flex items-center justify-center"
                                             >
@@ -193,7 +193,7 @@
             </ul>
         @endif
 
-        @if ($addAction)
+        @if ($addAction->isVisible())
             <div class="relative flex justify-center">
                 {{ $addAction }}
             </div>

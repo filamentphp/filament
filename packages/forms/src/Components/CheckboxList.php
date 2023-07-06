@@ -50,12 +50,12 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         $this->searchDebounce(0);
 
         $this->registerActions([
-            fn (CheckboxList $component): ?Action => $component->getSelectAllAction(),
-            fn (CheckboxList $component): ?Action => $component->getDeselectAllAction(),
+            fn (CheckboxList $component): Action => $component->getSelectAllAction(),
+            fn (CheckboxList $component): Action => $component->getDeselectAllAction(),
         ]);
     }
 
-    public function getSelectAllAction(): ?Action
+    public function getSelectAllAction(): Action
     {
         $action = Action::make($this->getSelectAllActionName())
             ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
@@ -84,7 +84,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'selectAll';
     }
 
-    public function getDeselectAllAction(): ?Action
+    public function getDeselectAllAction(): Action
     {
         $action = Action::make($this->getDeselectAllActionName())
             ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
