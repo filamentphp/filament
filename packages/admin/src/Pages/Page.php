@@ -90,7 +90,7 @@ class Page extends Component implements Forms\Contracts\HasForms, RendersFormCom
 
             Route::get($slug, static::class)
                 ->middleware(static::getMiddlewares())
-                ->withoutMiddlware(static::getWithoutRouteMiddleware())
+                ->withoutMiddleware(static::getWithoutRouteMiddleware())
                 ->name($slug);
         };
     }

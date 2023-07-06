@@ -405,7 +405,7 @@ class Resource
             Route::name("{$slug}.")
                 ->prefix($slug)
                 ->middleware(static::getMiddlewares())
-                ->withoutMiddlware(static::getWithoutRouteMiddleware())
+                ->withoutMiddleware(static::getWithoutRouteMiddleware())
                 ->group(function () {
                     foreach (static::getPages() as $name => $page) {
                         Route::get($page['route'], $page['class'])->name($name);
