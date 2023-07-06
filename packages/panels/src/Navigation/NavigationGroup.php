@@ -2,23 +2,25 @@
 
 namespace Filament\Navigation;
 
+use Closure;
 use Exception;
+use Filament\Support\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
 
-class NavigationGroup
+class NavigationGroup extends Component
 {
-    protected bool $isCollapsed = false;
+    protected bool | Closure $isCollapsed = false;
 
-    protected ?bool $isCollapsible = null;
+    protected bool | Closure | null $isCollapsible = null;
 
-    protected ?string $icon = null;
+    protected string | Closure | null $icon = null;
 
     /**
      * @var array<NavigationItem> | Arrayable
      */
     protected array | Arrayable $items = [];
 
-    protected ?string $label = null;
+    protected string | Closure | null $label = null;
 
     final public function __construct(?string $label = null)
     {
@@ -30,23 +32,23 @@ class NavigationGroup
         return app(static::class, ['label' => $label]);
     }
 
-    public function collapsed(bool $condition = true): static
+    public function collapsed(bool | Closure $condition = true): static
     {
         $this->isCollapsed = $condition;
 
-        $this->collapsible();
+        $this->collapsible($condition);
 
         return $this;
     }
 
-    public function collapsible(?bool $condition = true): static
+    public function collapsible(bool | Closure | null $condition = true): static
     {
         $this->isCollapsible = $condition;
 
         return $this;
     }
 
-    public function icon(?string $icon): static
+    public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -72,7 +74,7 @@ class NavigationGroup
         return $this;
     }
 
-    public function label(?string $label): static
+    public function label(string | Closure | null $label): static
     {
         $this->label = $label;
 
@@ -81,11 +83,13 @@ class NavigationGroup
 
     public function getIcon(): ?string
     {
-        if (filled($this->icon) && $this->hasItemIcons()) {
+        $icon = $this->evaluate($this->icon);
+
+        if (filled($icon) && $this->hasItemIcons()) {
             throw new Exception("Navigation group [{$this->getLabel()}] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.");
         }
 
-        return $this->icon;
+        return $icon;
     }
 
     /**
@@ -98,17 +102,17 @@ class NavigationGroup
 
     public function getLabel(): ?string
     {
-        return $this->label;
+        return $this->evaluate($this->label);
     }
 
     public function isCollapsed(): bool
     {
-        return $this->isCollapsed;
+        return (bool) $this->evaluate($this->isCollapsed);
     }
 
     public function isCollapsible(): bool
     {
-        return $this->isCollapsible ?? filament()->hasCollapsibleNavigationGroups();
+        return (bool) ($this->evaluate($this->isCollapsible) ?? filament()->hasCollapsibleNavigationGroups());
     }
 
     public function isActive(): bool

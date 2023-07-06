@@ -3,20 +3,21 @@
 namespace Filament\Navigation;
 
 use Closure;
+use Filament\Support\Components\Component;
 use Laravel\SerializableClosure\Serializers\Native;
 
-class MenuItem
+class MenuItem extends Component
 {
     /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
      */
-    protected string | array | null $color = null;
+    protected string | array | Closure | null $color = null;
 
-    protected ?string $icon = null;
+    protected string | Closure | null $icon = null;
 
-    protected ?string $label = null;
+    protected string | Closure | null $label = null;
 
-    protected ?int $sort = null;
+    protected int | Closure | null $sort = null;
 
     protected string | Closure | Native | null $url = null;
 
@@ -30,30 +31,30 @@ class MenuItem
     }
 
     /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
      */
-    public function color(string | array | null $color): static
+    public function color(string | array | Closure | null $color): static
     {
         $this->color = $color;
 
         return $this;
     }
 
-    public function icon(?string $icon): static
+    public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
 
         return $this;
     }
 
-    public function label(?string $label): static
+    public function label(string | Closure | null $label): static
     {
         $this->label = $label;
 
         return $this;
     }
 
-    public function sort(?int $sort): static
+    public function sort(int | Closure | null $sort): static
     {
         $this->sort = $sort;
 
@@ -72,26 +73,26 @@ class MenuItem
      */
     public function getColor(): string | array | null
     {
-        return $this->color;
+        return $this->evaluate($this->color);
     }
 
     public function getIcon(): ?string
     {
-        return $this->icon;
+        return $this->evaluate($this->icon);
     }
 
     public function getLabel(): ?string
     {
-        return $this->label;
+        return $this->evaluate($this->label);
     }
 
     public function getSort(): int
     {
-        return $this->sort ?? -1;
+        return $this->evaluate($this->sort) ?? -1;
     }
 
     public function getUrl(): ?string
     {
-        return value($this->url);
+        return $this->evaluate($this->url);
     }
 }
