@@ -27,6 +27,7 @@ trait HasFilters
         return $this->makeForm()
             ->schema($this->getTableFiltersFormSchema())
             ->columns($this->getTable()->getFiltersFormColumns())
+            ->model($this->getTable()->getModel())
             ->statePath('tableFilters')
             ->reactive();
     }

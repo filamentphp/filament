@@ -251,7 +251,7 @@ trait HasBulkActions
         $table = $this->getTable();
 
         if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
-            $query = $table->getQuery()->whereIn(app($table->getModel())->getQualifiedKeyName(), $this->selectedTableRecords);
+            $query = $table->getQuery()->whereKey($this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 
             foreach ($this->getTable()->getColumns() as $column) {

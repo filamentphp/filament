@@ -191,7 +191,7 @@ You can further customize the rule by passing a [closure](advanced#closure-custo
 use Illuminate\Validation\Rules\Exists;
 
 Field::make('invitation')
-    ->exists(callback: function (Exists $rule) {
+    ->exists(modifyRuleUsing: function (Exists $rule) {
         return $rule->where('is_active', 1);
     })
 ```
@@ -436,7 +436,7 @@ You can further customize the rule by passing a [closure](advanced#closure-custo
 use Illuminate\Validation\Rules\Unique;
 
 Field::make('email')
-    ->unique(callback: function (Unique $rule) {
+    ->unique(modifyRuleUsing: function (Unique $rule) {
         return $rule->where('is_active', 1);
     })
 ```

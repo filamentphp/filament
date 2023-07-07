@@ -12,9 +12,11 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
@@ -621,18 +623,18 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
-        $this->relationship = $relationshipName ?? $this->getName();
+        $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
 
-        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyOptionsQueryUsing): array {
-            $relationship = $component->getRelationship();
+        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyQueryUsing): array {
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -657,7 +659,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $keyName = $relationship->getRelated()->getKeyName();
             } else {
-                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -683,17 +685,17 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ->toArray();
         });
 
-        $this->options(static function (Select $component) use ($modifyOptionsQueryUsing): ?array {
+        $this->options(static function (Select $component) use ($modifyQueryUsing): ?array {
             if (($component->isSearchable()) && ! $component->isPreloaded()) {
                 return null;
             }
 
-            $relationship = $component->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -705,7 +707,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $keyName = $relationship->getRelated()->getKeyName();
             } else {
-                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -738,7 +740,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationship = $component->getRelationship();
 
-            if ($component->isMultiple()) {
+            if ($relationship instanceof BelongsToMany) {
+                /** @var Collection $relatedModels */
                 $relatedModels = $relationship->getResults();
 
                 $component->state(
@@ -783,13 +786,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $record->getAttributeValue($component->getRelationshipTitleAttribute());
         });
 
-        $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyOptionsQueryUsing): ?Model {
-            $relationship = $component->getRelationship();
+        $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $state);
+            $relationshipQuery = $relationship->getQuery()->where(
+                $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName(),
+                $state,
+            );
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -797,15 +803,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $relationshipQuery->first();
         });
 
-        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyOptionsQueryUsing): array {
-            $relationship = $component->getRelationship();
-            $relatedKeyName = $relationship->getRelatedKeyName();
+        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
+            $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
 
-            $relationshipQuery = $relationship->getRelated()->query()
+            $relationshipQuery = $relationship->getQuery()
                 ->whereIn($relatedKeyName, $values);
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -850,13 +856,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         );
 
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
-            if ($component->isMultiple()) {
-                $component->getRelationship()->sync($state ?? []);
+            $relationship = $component->getRelationship();
+
+            if ($relationship instanceof BelongsToMany) {
+                $relationship->sync($state ?? []);
 
                 return;
             }
 
-            $component->getRelationship()->associate($state);
+            $relationship->associate($state);
             $record->save();
         });
 

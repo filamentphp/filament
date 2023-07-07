@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
@@ -113,18 +114,18 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'deselectAll';
     }
 
-    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
-        $this->relationship = $relationshipName ?? $this->getName();
+        $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
 
-        $this->options(static function (CheckboxList $component) use ($modifyOptionsQueryUsing): array {
-            $relationship = $component->getRelationship();
+        $this->options(static function (CheckboxList $component) use ($modifyQueryUsing): array {
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
