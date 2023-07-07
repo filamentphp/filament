@@ -1,9 +1,8 @@
 @php
     $isDisabled = $isDisabled();
-    $statePath = $getStatePath();
-
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
+    $statePath = $getStatePath();
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
 @endphp
@@ -11,94 +10,77 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
+        :disabled="$isDisabled"
         :prefix="$prefixLabel"
         :prefix-actions="$getPrefixActions()"
         :prefix-icon="$prefixIcon"
         :suffix="$suffixLabel"
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
-        class="filament-forms-text-input-component"
+        class="filament-forms-color-picker-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <div
-            {{
-                $attributes
-                    ->merge($getExtraAttributes(), escape: false)
-                    ->class(['filament-forms-color-picker-component group flex items-center space-x-1 rtl:space-x-reverse'])
-            }}
+            x-ignore
+            ax-load
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
+            x-data="colorPickerFormComponent({
+                        isAutofocused: @js($isAutofocused()),
+                        isDisabled: @js($isDisabled),
+                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    })"
+            x-on:keydown.esc="isOpen() && $event.stopPropagation()"
+            {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
         >
+            <input
+                x-model="state"
+                x-on:focus="togglePanelVisibility()"
+                x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
+                x-ref="input"
+                {{
+                    $getExtraInputAttributeBag()
+                        ->merge([
+                            'autocomplete' => 'off',
+                            'disabled' => $isDisabled,
+                            'id' => $getId(),
+                            'placeholder' => $getPlaceholder(),
+                            'required' => $isRequired() && (! $isConcealed()),
+                            'type' => 'text',
+                        ], escape: false)
+                        ->class([
+                            'filament-forms-input block w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
+                        ])
+                }}
+            />
+
             <div
-                x-ignore
-                ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('color-picker', 'filament/forms') }}"
-                x-data="colorPickerFormComponent({
-                            isAutofocused: @js($isAutofocused()),
-                            isDisabled: @js($isDisabled),
-                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-                        })"
-                x-on:keydown.esc="isOpen() && $event.stopPropagation()"
-                {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
+                class="flex min-h-full items-center pe-3"
+                x-on:click="$refs.input.focus()"
             >
-                <input
-                    x-ref="input"
-                    x-model="state"
-                    x-on:click="togglePanelVisibility()"
-                    x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
-                    {{
-                        $getExtraInputAttributeBag()
-                            ->merge([
-                                'autocomplete' => 'off',
-                                'disabled' => $isDisabled,
-                                'id' => $getId(),
-                                'placeholder' => $getPlaceholder(),
-                                'required' => $isRequired() && (! $isConcealed()),
-                                'type' => 'text',
-                            ], escape: false)
-                            ->class([
-                                'filament-forms-input block w-full text-gray-900 shadow-sm outline-none transition duration-75 focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white sm:text-sm',
-                                'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500' => ! $errors->has($statePath),
-                                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
-                                'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
-                                'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
-                            ])
-                    }}
-                />
-
-                <span
-                    x-cloak
-                    class="pointer-events-none absolute inset-y-0 end-0 flex items-center pe-2"
-                >
-                    <span
-                        x-bind:style="{
-                            'background-color': state,
-                            ...(state ? { 'background-image': 'none' } : {}),
-                        }"
-                        class="filament-forms-color-picker-component-preview relative h-7 w-7 overflow-hidden rounded-md"
-                    ></span>
-                </span>
-
                 <div
-                    x-cloak
-                    x-ref="panel"
-                    x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
-                    wire:ignore.self
-                    wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
-                    @class([
-                        'absolute z-10 hidden shadow-lg',
-                        'pointer-events-none opacity-70' => $isDisabled,
-                    ])
-                >
-                    @php
-                        $tag = match ($getFormat()) {
-                            'hsl' => 'hsl-string',
-                            'rgb' => 'rgb-string',
-                            'rgba' => 'rgba-string',
-                            default => 'hex',
-                        } . '-color-picker';
-                    @endphp
+                    x-bind:style="{ 'background-color': state }"
+                    class="h-5 w-5 rounded-full ring-1 ring-inset ring-gray-950/10 dark:ring-white/20"
+                ></div>
+            </div>
 
-                    <{{ $tag }} color="{{ $getState() }}" />
-                </div>
+            <div
+                wire:ignore.self
+                wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
+                x-cloak
+                x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
+                x-ref="panel"
+                class="absolute z-10 hidden rounded-lg shadow-lg"
+            >
+                @php
+                    $tag = match ($getFormat()) {
+                        'hsl' => 'hsl-string',
+                        'rgb' => 'rgb-string',
+                        'rgba' => 'rgba-string',
+                        default => 'hex',
+                    } . '-color-picker';
+                @endphp
+
+                <{{ $tag }} color="{{ $getState() }}" />
             </div>
         </div>
     </x-filament-forms::affixes>

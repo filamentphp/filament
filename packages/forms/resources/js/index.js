@@ -1,7 +1,5 @@
 import mask from '@alpinejs/mask'
 
-import '../css/components/color-picker.css'
-
 import '../css/components/date-time-picker.css'
 
 import 'filepond/dist/filepond.min.css'
