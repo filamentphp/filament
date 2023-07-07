@@ -126,7 +126,7 @@
                     x-transition:leave-end="translate-y-8"
                 @endif
                 @class([
-                    'filament-modal-window pointer-events-auto w-full cursor-default bg-white dark:bg-gray-800',
+                    'filament-modal-window pointer-events-auto w-full cursor-default bg-white dark:bg-gray-900',
                     'relative' => $width !== 'screen',
                     'ms-auto h-screen overflow-y-auto' => $slideOver,
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
@@ -251,7 +251,7 @@
                             'filament-modal-footer w-full',
                             'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter),
                             'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
-                            'sticky bottom-0 rounded-b-xl border-t border-gray-200 bg-white py-5 dark:border-gray-700 dark:bg-gray-800' => $stickyFooter,
+                            'sticky bottom-0 rounded-b-xl border-t border-gray-200 bg-white py-5 dark:border-gray-800 dark:bg-gray-900' => $stickyFooter,
                             'pb-6' => ! $stickyFooter,
                             'mt-6' => (! $stickyFooter) && $slot->isEmpty() && (! $slideOver),
                             'mt-auto' => $slideOver,

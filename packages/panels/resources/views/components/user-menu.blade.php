@@ -109,7 +109,7 @@
                     return window.matchMedia('(prefers-color-scheme: dark)').matches
                 },
             }"
-            class="filament-theme-switcher flex items-center divide-x divide-gray-950/5 border-b border-gray-950/5 dark:divide-gray-700 dark:border-gray-700"
+            class="filament-theme-switcher flex items-center divide-x divide-gray-100 dark:divide-gray-800"
         >
             <button
                 type="button"

@@ -27,9 +27,9 @@
         ...match ($isInline) {
             true => [],
             false => [
-                'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-800',
+                'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-900',
                 match ($color) {
-                    'gray' => 'ring-gray-950/5 dark:ring-white/20',
+                    'gray' => 'ring-gray-950/5 dark:ring-white/10',
                     default => 'ring-custom-500/50',
                 },
             ],

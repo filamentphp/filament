@@ -135,7 +135,7 @@
                     wire:ignore
                     wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
-                        'absolute z-10 my-1 hidden rounded-lg border border-gray-300 bg-white shadow-md dark:border-gray-600 dark:bg-gray-700',
+                        'absolute z-10 my-1 hidden rounded-lg border border-gray-300 bg-white shadow-md dark:border-gray-800 dark:bg-gray-900',
                         'w-fit min-w-[16rem] p-4' => $hasDate(),
                     ])
                 >
@@ -146,7 +146,7 @@
                             >
                                 <select
                                     x-model="focusedMonth"
-                                    class="grow cursor-pointer border-0 px-1 py-0 text-lg font-medium text-gray-800 outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
+                                    class="grow cursor-pointer border-0 bg-transparent px-1 py-0 text-lg font-medium text-gray-800 outline-none focus:ring-0 dark:text-gray-200"
                                 >
                                     <template
                                         x-for="(month, index) in months"
@@ -162,7 +162,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="focusedYear"
-                                    class="w-20 border-0 p-0 text-end text-lg outline-none focus:ring-0 dark:bg-gray-700 dark:text-gray-200"
+                                    class="w-20 border-0 bg-transparent p-0 text-end text-lg outline-none focus:ring-0 dark:text-gray-200"
                                 />
                             </div>
 
@@ -220,7 +220,7 @@
 
                         @if ($hasTime())
                             <div
-                                class="flex items-center justify-center rounded-lg bg-gray-50 py-2 rtl:flex-row-reverse dark:bg-gray-800"
+                                class="flex items-center justify-center rounded-lg py-2 rtl:flex-row-reverse"
                             >
                                 <input
                                     max="23"
@@ -229,11 +229,11 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="hour"
-                                    class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
+                                    class="w-16 border-0 bg-transparent p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:text-gray-200"
                                 />
 
                                 <span
-                                    class="bg-gray-50 text-xl font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                    class="text-xl font-medium text-gray-700 dark:text-gray-200"
                                 >
                                     :
                                 </span>
@@ -245,12 +245,12 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="minute"
-                                    class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
+                                    class="w-16 border-0 bg-transparent p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:text-gray-200"
                                 />
 
                                 @if ($hasSeconds())
                                     <span
-                                        class="bg-gray-50 text-xl font-medium text-gray-700 dark:bg-gray-800 dark:text-gray-200"
+                                        class="text-xl font-medium text-gray-700 dark:text-gray-200"
                                     >
                                         :
                                     </span>
@@ -262,7 +262,7 @@
                                         type="number"
                                         inputmode="numeric"
                                         x-model.debounce="second"
-                                        class="w-16 border-0 bg-gray-50 p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:bg-gray-800 dark:text-gray-200"
+                                        class="w-16 border-0 bg-transparent p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:text-gray-200"
                                     />
                                 @endif
                             </div>

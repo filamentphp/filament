@@ -38,8 +38,8 @@
     {{
         $attributes->class([
             'filament-forms-affix-container flex rounded-lg shadow-sm ring-1 transition duration-75',
-            'bg-gray-50 dark:bg-gray-900' => $disabled,
-            'bg-white focus-within:ring-2 dark:bg-gray-800' => ! $disabled,
+            'bg-gray-50 dark:bg-gray-950' => $disabled,
+            'bg-white focus-within:ring-2 dark:bg-gray-900' => ! $disabled,
         ])
     }}
 >

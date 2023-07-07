@@ -1,5 +1,5 @@
 <div
-    {{ $attributes->class(['mx-auto my-6 flex flex-col items-center justify-center space-y-4 bg-white text-center dark:bg-gray-800']) }}
+    {{ $attributes->class(['mx-auto my-6 flex flex-col items-center justify-center space-y-4 bg-white text-center dark:bg-gray-900']) }}
 >
     <div
         class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-50 dark:bg-gray-700"
