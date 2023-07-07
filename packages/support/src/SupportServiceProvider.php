@@ -12,8 +12,6 @@ use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
-use HtmlSanitizer\Sanitizer;
-use HtmlSanitizer\SanitizerInterface;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
