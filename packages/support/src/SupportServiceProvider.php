@@ -63,7 +63,8 @@ class SupportServiceProvider extends PackageServiceProvider
             fn (): HtmlSanitizer => new HtmlSanitizer(
                 (new HtmlSanitizerConfig())
                     ->allowSafeElements()
-                    ->allowAttribute('class', allowedElements: '*'),
+                    ->allowAttribute('class', allowedElements: '*')
+                    ->allowAttribute('style', allowedElements: '*'),
             ),
         );
     }
