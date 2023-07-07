@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AssociateAction extends Action
 {
@@ -63,9 +64,9 @@ class AssociateAction extends Action
 
         $this->action(function (array $arguments, array $data, Form $form, Table $table): void {
             /** @var HasMany | MorphMany $relationship */
-            $relationship = $table->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $record = $relationship->getRelated()->query()->find($data['recordId']);
+            $record = $relationship->getQuery()->find($data['recordId']);
 
             /** @var BelongsTo $inverseRelationship */
             $inverseRelationship = $table->getInverseRelationshipFor($record);
@@ -168,11 +169,11 @@ class AssociateAction extends Action
 
         $getOptions = function (?string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var HasMany | MorphMany $relationship */
-            $relationship = $table->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
             $titleAttribute = $this->getRecordTitleAttribute();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleAttribute);
+            $relationshipQuery = $relationship->getQuery()->orderBy($titleAttribute);
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
@@ -239,7 +240,7 @@ class AssociateAction extends Action
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($table->getRelationship()->getRelated()->query()->find($value)))
+            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle(Relation::noConstraints(fn () => $table->getRelationship())->getQuery()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
             ->hiddenLabel();
 

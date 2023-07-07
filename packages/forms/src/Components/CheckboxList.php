@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
@@ -119,9 +120,9 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         $this->relationshipTitleAttribute = $titleAttribute;
 
         $this->options(static function (CheckboxList $component) use ($modifyQueryUsing): array {
-            $relationship = $component->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
