@@ -1,12 +1,20 @@
+@php
+    $id = $getId();
+@endphp
+
 <div class="filament-actions-select-action">
-    <label for="{{ $getId() }}" class="sr-only">
+    <label for="{{ $id }}" class="sr-only">
         {{ $getLabel() }}
     </label>
 
     <select
-        id="{{ $getId() }}"
+        id="{{ $id }}"
         wire:model="{{ $getName() }}"
-        {{ $attributes->class(['block h-9 w-full rounded-lg border-gray-300 py-1 text-gray-900 shadow-sm outline-none transition duration-75 invalid:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-primary-500']) }}
+        {{
+            $attributes->class([
+                'block w-full rounded-lg border-none bg-white py-1.5 pe-8 ps-3 text-base text-gray-950 shadow-sm ring-1 ring-gray-950/10 transition duration-75 focus:ring-2 focus:ring-primary-600 dark:bg-gray-800 dark:text-white dark:ring-white/20 dark:focus:ring-primary-600 sm:text-sm sm:leading-6',
+            ])
+        }}
     >
         @if (($placeholder = $getPlaceholder()) !== null)
             <option value="">{{ $placeholder }}</option>
