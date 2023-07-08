@@ -25,11 +25,4 @@
         z-index: 1;
         top: -1px;
     }
-
-    .filament-sidebar-header::before {
-        @apply pointer-events-none absolute inset-x-0 mx-auto h-px w-full bg-gradient-to-r from-gray-950/5 via-primary-400 to-gray-950/5;
-        content: '';
-        z-index: 1;
-        bottom: -1px;
-    }
 }
