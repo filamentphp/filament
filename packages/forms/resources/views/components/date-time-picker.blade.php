@@ -24,18 +24,15 @@
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @if ($isNative())
-            <input
-                @if (count($extraAlpineAttributes)))
-                    x-data="{}"
-                @endif
-                {{
+            <x-filament::input
+                :attributes="
                     $getExtraInputAttributeBag()
                         ->merge($extraAlpineAttributes, escape: false)
                         ->merge([
                             'autofocus' => $isAutofocused(),
                             'disabled' => $isDisabled,
                             'id' => $id,
-                            'list' => $datalistOptions ? "{$id}-list" : null,
+                            'list' => $datalistOptions ? $id . '-list' : null,
                             'max' => (! $isConcealed) ? $getMaxDate() : null,
                             'min' => (! $isConcealed) ? $getMinDate() : null,
                             'placeholder' => $getPlaceholder(),
@@ -44,11 +41,9 @@
                             'step' => $getStep(),
                             'type' => $getType(),
                             $applyStateBindingModifiers('wire:model') => $statePath,
+                            'x-data' => count($extraAlpineAttributes) ? '{}' : null,
                         ], escape: false)
-                        ->class([
-                            'block w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 outline-none transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
-                        ])
-                }}
+                "
             />
         @else
             <div

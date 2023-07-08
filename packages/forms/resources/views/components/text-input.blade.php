@@ -42,9 +42,9 @@
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
                         'type' => blank($mask) ? $getType() : 'text',
+                        $applyStateBindingModifiers('wire:model') => $statePath,
                         'x-data' => (count($extraAlpineAttributes) || filled($mask)) ? '{}' : null,
                         'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
-                        $applyStateBindingModifiers('wire:model') => $statePath,
                     ], escape: false)
             "
         />
