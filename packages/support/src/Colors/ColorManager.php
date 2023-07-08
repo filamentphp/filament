@@ -65,7 +65,7 @@ class ColorManager
     {
         return [
             'danger' => Color::Red,
-            'gray' => Color::Zinc,
+            'gray' => Color::Gray,
             'info' => Color::Blue,
             'primary' => Color::Amber,
             'success' => Color::Green,
