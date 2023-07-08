@@ -135,9 +135,9 @@
                 },
 
                 updateChart: function () {
-                    chart.data.labels = this.labels
-                    chart.data.datasets[0].data = this.values
-                    chart.update()
+                    this.chart.data.labels = this.labels
+                    this.chart.data.datasets[0].data = this.values
+                    this.chart.update()
                 },
 
                 updateChartColors: function() {
