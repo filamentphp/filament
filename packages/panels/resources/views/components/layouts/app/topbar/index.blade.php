@@ -101,11 +101,11 @@
         @persist('topbar.end')
             <div class="flex items-center">
                 @if (filament()->getGlobalSearchProvider() !== null)
-                    @livewire(Filament\Http\Livewire\GlobalSearch::class, ['lazy' => true])
+                    @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
                 @endif
 
                 @if (filament()->hasDatabaseNotifications())
-                    @livewire(Filament\Http\Livewire\DatabaseNotifications::class, ['lazy' => true])
+                    @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
                 @endif
 
                 <x-filament::user-menu />

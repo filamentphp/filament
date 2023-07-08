@@ -80,7 +80,7 @@ class MakeWidgetCommand extends Command
             }
         }
 
-        $path = $panel ? ($panel->getWidgetDirectory() ?? app_path('Filament/Widgets/')) : app_path('Http/Livewire/');
+        $path = $panel ? ($panel->getWidgetDirectory() ?? app_path('Filament/Widgets/')) : app_path('Livewire/');
         $namespace = $panel ? ($panel->getWidgetNamespace() ?? 'App\\Filament\\Widgets') : 'App\\Http\\Livewire';
         $resourcePath = $panel ? ($panel->getResourceDirectory() ?? app_path('Filament/Resources/')) : null;
         $resourceNamespace = $panel ? ($panel->getResourceNamespace() ?? 'App\\Filament\\Resources') : null;

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use Filament\Actions\Action;
 use Filament\Actions\Concerns\InteractsWithActions;

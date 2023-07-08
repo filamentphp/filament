@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Forms;
+namespace App\Livewire\Forms;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Group;

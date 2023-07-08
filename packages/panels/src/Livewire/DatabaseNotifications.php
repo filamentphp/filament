@@ -1,9 +1,9 @@
 <?php
 
-namespace Filament\Http\Livewire;
+namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
-use Filament\Notifications\Http\Livewire\DatabaseNotifications as BaseComponent;
+use Filament\Notifications\Livewire\DatabaseNotifications as BaseComponent;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;

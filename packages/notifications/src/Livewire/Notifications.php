@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Notifications\Http\Livewire;
+namespace Filament\Notifications\Livewire;
 
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;

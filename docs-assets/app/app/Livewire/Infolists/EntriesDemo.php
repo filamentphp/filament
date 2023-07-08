@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Livewire\Infolists;
+namespace App\Livewire\Infolists;
 
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Components\ColorEntry;

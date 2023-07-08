@@ -89,7 +89,7 @@
 
         {{ $slot }}
 
-        @livewire(Filament\Http\Livewire\Notifications::class)
+        @livewire(Filament\Livewire\Notifications::class)
 
         {{ filament()->renderHook('scripts.start') }}
 

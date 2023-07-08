@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Livewire\ActionsDemo;
-use App\Http\Livewire\Forms\FieldsDemo;
-use App\Http\Livewire\Forms\GettingStartedDemo;
-use App\Http\Livewire\Forms\LayoutDemo as FormsLayoutDemo;
-use App\Http\Livewire\Infolists\EntriesDemo;
-use App\Http\Livewire\Infolists\LayoutDemo as InfolistsLayoutDemo;
-use App\Http\Livewire\NotificationsDemo;
-use App\Http\Livewire\TablesDemo;
+use App\Livewire\ActionsDemo;
+use App\Livewire\Forms\FieldsDemo;
+use App\Livewire\Forms\GettingStartedDemo;
+use App\Livewire\Forms\LayoutDemo as FormsLayoutDemo;
+use App\Livewire\Infolists\EntriesDemo;
+use App\Livewire\Infolists\LayoutDemo as InfolistsLayoutDemo;
+use App\Livewire\NotificationsDemo;
+use App\Livewire\TablesDemo;
 use Illuminate\Support\Facades\Route;
 
 /*

@@ -8,6 +8,6 @@ Since widgets are Livewire components, you can easily render a widget in any Bla
 
 ```blade
 <div>
-    @livewire(\App\Http\Livewire\Dashboard\PostsChart::class)
+    @livewire(\App\Livewire\Dashboard\PostsChart::class)
 </div>
 ```

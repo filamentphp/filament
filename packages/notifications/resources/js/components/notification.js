@@ -62,7 +62,7 @@ export default (Alpine) => {
 
             Livewire.hook(
                 'commit',
-                ({ component, commit, respond, succeed }) => {
+                ({ component, commit, succeed, fail, respond }) => {
                     respond(() => {
                         if (
                             !component.snapshot.data

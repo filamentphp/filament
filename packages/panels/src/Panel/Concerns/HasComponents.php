@@ -2,9 +2,9 @@
 
 namespace Filament\Panel\Concerns;
 
-use Filament\Http\Livewire\DatabaseNotifications;
-use Filament\Http\Livewire\GlobalSearch;
-use Filament\Http\Livewire\Notifications;
+use Filament\Livewire\DatabaseNotifications;
+use Filament\Livewire\GlobalSearch;
+use Filament\Livewire\Notifications;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;

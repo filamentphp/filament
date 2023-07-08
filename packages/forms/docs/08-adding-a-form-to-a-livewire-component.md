@@ -19,7 +19,7 @@ Then, render your Livewire component on the page:
 Alternatively, you can use a full-page Livewire component:
 
 ```php
-use App\Http\Livewire\CreatePost;
+use App\Livewire\CreatePost;
 use Illuminate\Support\Facades\Route;
 
 Route::get('posts/create', CreatePost::class);
@@ -38,7 +38,7 @@ There are 5 main tasks when adding a form to a Livewire component class. Each on
 ```php
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Post;
 use Filament\Forms\Components\TextInput;
@@ -302,7 +302,7 @@ It's advised that you learn how to set up a Livewire component with the form bui
 php artisan make:livewire-form RegistrationForm
 ```
 
-This will generate a new `app/Http/Livewire/RegistrationForm.php` component, which you can customize.
+This will generate a new `app/Livewire/RegistrationForm.php` component, which you can customize.
 
 ### Generating a form for an Eloquent model
 

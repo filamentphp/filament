@@ -19,7 +19,7 @@ Then, render your Livewire component on the page:
 Alternatively, you can use a full-page Livewire component:
 
 ```php
-use App\Http\Livewire\ListProducts;
+use App\Livewire\ListProducts;
 use Illuminate\Support\Facades\Route;
 
 Route::get('products', ListProducts::class);
@@ -36,7 +36,7 @@ There are 3 tasks when adding a table to a Livewire component class:
 ```php
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Post;
 use App\Models\Shop\Product;
@@ -97,7 +97,7 @@ It's advised that you learn how to set up a Livewire component with the table bu
 php artisan make:livewire-table Products/ListProducts
 ```
 
-This will ask you for the name of a prebuilt model, for example `Product`. Finally, it will generate a new `app/Http/Livewire/Products/ListProducts.php` component, which you can customize.
+This will ask you for the name of a prebuilt model, for example `Product`. Finally, it will generate a new `app/Livewire/Products/ListProducts.php` component, which you can customize.
 
 ### Automatically generating table columns
 

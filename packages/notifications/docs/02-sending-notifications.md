@@ -12,7 +12,7 @@ Notifications are sent using a `Notification` object that's constructed through 
 ```php
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use Filament\Notifications\Notification;
 use Livewire\Component;

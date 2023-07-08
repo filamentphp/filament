@@ -47,7 +47,7 @@ class MakeTableCommand extends Command
 
         $path = (string) str($component)
             ->prepend('/')
-            ->prepend(app_path('Http/Livewire/'))
+            ->prepend(app_path('Livewire/'))
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');

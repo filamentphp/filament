@@ -4,7 +4,7 @@ use Filament\Facades\Filament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\GlobalSearch\GlobalSearchResults;
-use Filament\Http\Livewire\GlobalSearch;
+use Filament\Livewire\GlobalSearch;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;

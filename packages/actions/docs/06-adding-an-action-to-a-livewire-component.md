@@ -19,7 +19,7 @@ Then, render your Livewire component on the page:
 Alternatively, you can use a full-page Livewire component:
 
 ```php
-use App\Http\Livewire\ManageProduct;
+use App\Livewire\ManageProduct;
 use Illuminate\Support\Facades\Route;
 
 Route::get('products/{product}/manage', ManageProduct::class);

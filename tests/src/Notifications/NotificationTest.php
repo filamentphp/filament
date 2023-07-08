@@ -4,7 +4,7 @@ use BladeUI\Icons\Factory;
 use BladeUI\Icons\IconsManifest;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Collection;
-use Filament\Notifications\Http\Livewire\Notifications;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;

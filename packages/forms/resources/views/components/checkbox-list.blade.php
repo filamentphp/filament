@@ -25,11 +25,20 @@
                 this.updateVisibleCheckboxListOptions()
                 this.checkIfAllCheckboxesAreChecked()
 
-                Livewire.hook('message.processed', () => {
-                    this.updateVisibleCheckboxListOptions()
+                Livewire.hook(
+                    'commit',
+                    ({ component, commit, succeed, fail, respond }) => {
+                        succeed(({ snapshot, effect }) => {
+                            if (component.id !== @js($this->getId())) {
+                                return
+                            }
 
-                    this.checkIfAllCheckboxesAreChecked()
-                })
+                            this.updateVisibleCheckboxListOptions()
+
+                            this.checkIfAllCheckboxesAreChecked()
+                        })
+                    },
+                )
 
                 $watch('search', () => {
                     this.updateVisibleCheckboxListOptions()

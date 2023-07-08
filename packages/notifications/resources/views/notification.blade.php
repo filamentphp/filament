@@ -8,7 +8,7 @@
     :x-transition:enter-start="
         \Illuminate\Support\Arr::toCssClasses([
             'opacity-0',
-            ($this instanceof \Filament\Notifications\Http\Livewire\Notifications)
+            ($this instanceof \Filament\Notifications\Livewire\Notifications)
             ? match (static::$horizontalAlignment) {
                 'left' => '-translate-x-12',
                 'right' => 'translate-x-12',

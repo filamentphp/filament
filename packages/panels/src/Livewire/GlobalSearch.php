@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Http\Livewire;
+namespace Filament\Livewire;
 
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResults;

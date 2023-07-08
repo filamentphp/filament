@@ -155,7 +155,7 @@ A route action could be a callback function that gets executed when you visit th
 Most people will be able to make their desired customizations by extending the default Livewire class from the Filament codebase, overriding methods like `form()`, and then passing the new Livewire class in as the route action:
 
 ```php
-use App\Http\Livewire\Auth\Login;
+use App\Livewire\Auth\Login;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
