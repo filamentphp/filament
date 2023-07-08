@@ -32,12 +32,12 @@
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
         >
-            <input
+            <x-filament::input
                 x-model="state"
                 x-on:focus="togglePanelVisibility()"
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 x-ref="input"
-                {{
+                :attributes="
                     $getExtraInputAttributeBag()
                         ->merge([
                             'autocomplete' => 'off',
@@ -47,10 +47,7 @@
                             'required' => $isRequired() && (! $isConcealed()),
                             'type' => 'text',
                         ], escape: false)
-                        ->class([
-                            'filament-forms-input block w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
-                        ])
-                }}
+                "
             />
 
             <div

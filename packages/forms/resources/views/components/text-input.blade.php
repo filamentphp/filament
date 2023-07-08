@@ -21,14 +21,8 @@
         class="filament-forms-text-input-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        <input
-            @if (count($extraAlpineAttributes) || filled($mask))
-                x-data="{}"
-            @endif
-            @if (filled($mask))
-                x-mask{{ $mask instanceof \Filament\Support\RawJs ? ':dynamic' : null }}="{{ $mask }}"
-            @endif
-            {{
+        <x-filament::input
+            :attributes="
                 $getExtraInputAttributeBag()
                     ->merge($extraAlpineAttributes, escape: false)
                     ->merge([
@@ -38,7 +32,7 @@
                         'disabled' => $isDisabled,
                         'id' => $id,
                         'inputmode' => $getInputMode(),
-                        'list' => $datalistOptions ? "{$id}-list" : null,
+                        'list' => $datalistOptions ? $id . '-list' : null,
                         'max' => (! $isConcealed) ? $getMaxValue() : null,
                         'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
                         'min' => (! $isConcealed) ? $getMinValue() : null,
@@ -48,12 +42,11 @@
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
                         'type' => blank($mask) ? $getType() : 'text',
+                        'x-data' => (count($extraAlpineAttributes) || filled($mask)) ? '{}' : null,
+                        'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
                         $applyStateBindingModifiers('wire:model') => $statePath,
                     ], escape: false)
-                    ->class([
-                        'filament-forms-input block w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
-                    ])
-            }}
+            "
         />
     </x-filament-forms::affixes>
 
