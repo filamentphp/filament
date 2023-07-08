@@ -9,9 +9,12 @@
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
         x-data="richEditorFormComponent({
-                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", isOptimisticallyLive: false) }},
                 })"
         x-on:trix-change="state = $event.target.value"
+        @if ($isLiveDebounced())
+            x-on:trix-change.debounce.{{ $getLiveDebounce() }}="$wire.call('$refresh')"
+        @endif
         x-on:trix-attachment-add="
             if (! $event.attachment.file) return
 
@@ -464,6 +467,9 @@
                 input="trix-value-{{ $id }}"
                 placeholder="{{ $getPlaceholder() }}"
                 toolbar="trix-toolbar-{{ $id }}"
+                @if ($isLiveOnBlur())
+                    x-on:blur="$wire.call('$refresh')"
+                @endif
                 x-ref="trix"
                 {{ $getExtraInputAttributeBag()->class(['prose block w-full max-w-none break-words rounded-lg bg-white shadow-sm outline-none transition duration-75 dark:prose-invert focus:ring-1 focus:ring-inset dark:bg-gray-700']) }}
                 x-bind:class="{

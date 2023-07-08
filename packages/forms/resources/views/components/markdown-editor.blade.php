@@ -10,8 +10,11 @@
             ax-load="visible"
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
             x-data="markdownEditorFormComponent({
+                        isLiveDebounced: @js($isLiveDebounced()),
+                        isLiveOnBlur: @js($isLiveOnBlur()),
+                        liveDebounce: @js($getNormalizedLiveDebounce()),
                         placeholder: @js($getPlaceholder()),
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         toolbarButtons: @js($getToolbarButtons()),
                         translations: @js(__('filament-forms::components.markdown_editor')),
                         uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
@@ -36,7 +39,10 @@
                     ->class(['filament-forms-markdown-editor-component font-mono'])
             }}
         >
-            <textarea x-ref="editor" class="hidden"></textarea>
+            <textarea
+                x-ref="editor"
+                class="hidden"
+            ></textarea>
         </div>
     @else
         <div

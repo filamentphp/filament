@@ -4,7 +4,7 @@
         $deleteAction = $getAction('delete');
         $reorderAction = $getAction('reorder');
 
-        $debounce = $getDebounce();
+        $debounce = $getLiveDebounce();
         $isDisabled = $isDisabled();
         $statePath = $getStatePath();
     @endphp

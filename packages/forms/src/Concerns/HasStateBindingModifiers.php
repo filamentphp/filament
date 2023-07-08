@@ -13,17 +13,17 @@ trait HasStateBindingModifiers
      */
     protected ?array $stateBindingModifiers = null;
 
-    protected int | string | null $debounce = null;
+    protected int | string | null $liveDebounce = null;
 
     protected bool $isLive = false;
 
-    protected bool $isBlur = false;
+    protected bool $isLiveOnBlur = false;
 
-    public function live(bool $onBlur = false, int | string | null $debounce = null, int | string | null $throttle = null): static
+    public function live(bool $onBlur = false, int | string | null $debounce = null): static
     {
         $this->isLive = true;
-        $this->isBlur = $onBlur;
-        $this->debounce = $debounce;
+        $this->isLiveOnBlur = $onBlur;
+        $this->liveDebounce = $debounce;
 
         return $this;
     }
@@ -59,11 +59,11 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function applyStateBindingModifiers(string $expression): string
+    public function applyStateBindingModifiers(string $expression, bool $isOptimisticallyLive = true): string
     {
         $entangled = str($expression)->contains('entangle');
 
-        $modifiers = $this->getStateBindingModifiers(withBlur: ! $entangled, withDebounce: ! $entangled);
+        $modifiers = $this->getStateBindingModifiers(withBlur: ! $entangled, withDebounce: ! $entangled, isOptimisticallyLive: $isOptimisticallyLive);
 
         return implode('.', [
             $expression,
@@ -74,22 +74,26 @@ trait HasStateBindingModifiers
     /**
      * @return array<string>
      */
-    public function getStateBindingModifiers(bool $withBlur = true, bool $withDebounce = true): array
+    public function getStateBindingModifiers(bool $withBlur = true, bool $withDebounce = true, bool $isOptimisticallyLive = true): array
     {
         if ($this->stateBindingModifiers !== null) {
             return $this->stateBindingModifiers;
         }
 
-        if ($withDebounce && filled($debounce = $this->getDebounce())) {
-            if ($this->isBlur()) {
-                throw new InvalidArgumentException('A field cannot use [debounce()] and [blur()] at the same time.');
+        if ($this->isLiveOnBlur()) {
+            if (! $withBlur) {
+                return $isOptimisticallyLive ? ['live'] : [];
             }
 
-            return ['live', 'debounce', $debounce];
+            return ['blur'];
         }
 
-        if ($withBlur && $this->isBlur()) {
-            return ['blur'];
+        if ($this->isLiveDebounced()) {
+            if (! $withDebounce) {
+                return $isOptimisticallyLive ? ['live'] : [];
+            }
+
+            return ['live', 'debounce', $this->getLiveDebounce()];
         }
 
         if ($this->isLive()) {
@@ -112,23 +116,50 @@ trait HasStateBindingModifiers
         return $this->isLive;
     }
 
-    public function isBlur(): bool
+    public function isLiveOnBlur(): bool
     {
-        return $this->isBlur;
+        return $this->isLiveOnBlur;
     }
 
     public function isLazy(): bool
     {
-        return $this->isBlur();
+        return $this->isLiveOnBlur();
     }
 
-    public function isDebounced(): bool
+    public function isLiveDebounced(): bool
     {
-        return filled($this->debounce);
+        if ($this->isLiveOnBlur()) {
+            return false;
+        }
+
+        return filled($this->liveDebounce);
     }
 
-    public function getDebounce(): int | string | null
+    public function getLiveDebounce(): int | string | null
     {
-        return $this->debounce;
+        return $this->liveDebounce;
+    }
+
+    public function getNormalizedLiveDebounce(): ?int
+    {
+        $debounce = $this->getLiveDebounce();
+
+        if (! $debounce) {
+            return null;
+        }
+
+        if (is_numeric($debounce)) {
+            return (int) $debounce;
+        }
+
+        if (str($debounce)->endsWith('ms')) {
+            return (int) (string) str($debounce)->beforeLast('ms');
+        }
+
+        if (str($debounce)->endsWith('s')) {
+            return ((int) (string) str($debounce)->beforeLast('s')) * 1000;
+        }
+
+        return preg_replace("/[^0-9]/", '', $debounce) ?: 0;
     }
 }

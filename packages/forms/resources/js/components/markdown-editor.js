@@ -83,6 +83,9 @@ CodeMirror.commands.shiftTabAndUnindentMarkdownList = function (codemirror) {
 }
 
 export default function markdownEditorFormComponent({
+    isLiveDebounced,
+    isLiveOnBlur,
+    liveDebounce,
     placeholder,
     state,
     translations,
@@ -164,8 +167,19 @@ export default function markdownEditorFormComponent({
                 'change',
                 Alpine.debounce(() => {
                     this.state = this.editor.value()
-                }, 300),
+
+                    if (isLiveDebounced) {
+                        this.$wire.call('$refresh')
+                    }
+                }, liveDebounce ?? 300),
             )
+
+            if (isLiveOnBlur) {
+                this.editor.codemirror.on(
+                    'blur',
+                    () => this.$wire.call('$refresh'),
+                )
+            }
 
             this.$watch('state', () => {
                 if (!this.editor) {

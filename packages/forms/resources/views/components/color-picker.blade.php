@@ -34,14 +34,18 @@
                 x-data="colorPickerFormComponent({
                             isAutofocused: @js($isAutofocused()),
                             isDisabled: @js($isDisabled),
-                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                            isLiveOnPickerClose: @js($isLiveOnBlur() || $isLiveDebounced()),
+                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         })"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{ $getExtraAlpineAttributeBag()->class(['relative flex-1']) }}
             >
                 <input
                     x-ref="input"
-                    x-model="state"
+                    x-model{{ $isLiveDebounced() ? ".debounce.{$getLiveDebounce()}" : null }}="state"
+                    @if ($isLiveOnBlur())
+                        x-on:blur="$wire.call('$refresh')"
+                    @endif
                     x-on:click="togglePanelVisibility()"
                     x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                     {{
