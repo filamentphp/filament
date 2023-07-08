@@ -251,7 +251,7 @@ trait InteractsWithActions
         return $action->getForm(
             $this->makeForm()
                 ->statePath('mountedActionsData.' . array_key_last($this->mountedActionsData))
-                ->model($action->getModel() ?? $this->getMountedActionFormModel())
+                ->model($action->getRecord() ?? $action->getModel() ?? $this->getMountedActionFormModel())
                 ->operation(implode('.', $this->mountedActions)),
         );
     }
