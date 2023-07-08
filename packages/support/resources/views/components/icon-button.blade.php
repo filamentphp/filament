@@ -105,7 +105,7 @@
         @if ($indicator)
             <span
                 class="{{ $indicatorClasses }}"
-                styles="{{ $indicatorStyles }}"
+                style="{{ $indicatorStyles }}"
             >
                 {{ $indicator }}
             </span>
@@ -147,7 +147,7 @@
         @if ($indicator)
             <span
                 class="{{ $indicatorClasses }}"
-                styles="{{ $indicatorStyles }}"
+                style="{{ $indicatorStyles }}"
             >
                 {{ $indicator }}
             </span>
