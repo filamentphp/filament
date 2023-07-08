@@ -467,6 +467,22 @@ AttachAction::make()
 
 In this example, `$action->getRecordSelect()` outputs the select field to pick the record to attach. The `role` text input is then saved to the pivot table's `role` column.
 
+Instead of using `$action->getRecordSelect()`, you can create a custom select field. The parameter of the `make()` must be `'recordId'`:
+```php
+use Filament\Forms;
+use Filament\Tables\Actions\AttachAction;
+ 
+AttachAction::make()
+    ->form(fn (AttachAction $action): array => [
+        Forms\Components\Select::make('recordId')
+            ->options(User::get()->pluck('name', 'id')->toArray())
+            ->required()
+            ->searchable()
+            ->label(__('Name')),
+        Forms\Components\TextInput::make('role')->required(),
+    ])
+```
+
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
 ### Scoping the options
