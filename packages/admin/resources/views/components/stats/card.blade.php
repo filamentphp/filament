@@ -147,7 +147,7 @@
                     chart.update('none');
                 }
             }"
-            x-on:dark-mode-toggled.window="darkModeToggled()"
+            x-on:dark-mode-toggled.window="updateChartColors()"
             class="absolute inset-x-0 bottom-0 overflow-hidden rounded-b-2xl"
         >
             <canvas wire:ignore x-ref="canvas" class="h-6">
