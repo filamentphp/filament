@@ -30,7 +30,7 @@
     ])
 >
     <header
-        class="filament-sidebar-header relative flex h-[4rem] shrink-0 items-center justify-center bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_20%)]"
+        class="filament-sidebar-header relative flex h-[4rem] shrink-0 items-center justify-center bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)]"
     >
         <div
             @class([
