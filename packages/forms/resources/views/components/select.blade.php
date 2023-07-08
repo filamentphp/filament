@@ -28,7 +28,6 @@
                             ->merge([
                                 $applyStateBindingModifiers('wire:model') => $statePath,
                             ], escape: false)
-                            ->class(['filament-forms-input'])
                     )
                 "
             >
@@ -107,7 +106,6 @@
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class(['filament-forms-input'])
                 }}
             >
                 <select
