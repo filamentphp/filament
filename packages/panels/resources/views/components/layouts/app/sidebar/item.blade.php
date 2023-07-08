@@ -13,7 +13,7 @@
 
 <li
     @class([
-        'filament-sidebar-item',
+        'filament-sidebar-item overflow-hidden',
         'filament-sidebar-item-active' => $active,
     ])
 >
@@ -84,7 +84,7 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
-            class="flex-1"
+            class="flex-1 truncate"
         >
             {{ $slot }}
         </span>
