@@ -2,11 +2,30 @@
 
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Field;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
 
 uses(TestCase::class);
+
+test('fields can have state binding modifiers', function () {
+    $field = (new Field(Str::random()))
+        ->container(ComponentContainer::make(Livewire::make()))
+        ->stateBindingModifiers($modifiers = [Str::random(), Str::random()]);
+
+    expect($field)
+        ->applyStateBindingModifiers($expression = Str::random())
+        ->toBe(
+            implode(
+                '.',
+                [
+                    $expression,
+                    ...$modifiers,
+                ],
+            ),
+        );
+});
 
 test('component state binding is deferred by default', function () {
     $component = (new Component())->container(ComponentContainer::make(Livewire::make()));
@@ -24,19 +43,19 @@ test('component state binding can be live', function () {
         ->getStateBindingModifiers()->toBe(['live']);
 });
 
-test('component state binding can be lazy', function () {
+test('component state binding can be triggered on blur', function () {
     $component = (new Component())
         ->container(ComponentContainer::make(Livewire::make()))
-        ->lazy();
+        ->live(onBlur: true);
 
     expect($component)
-        ->getStateBindingModifiers()->toBe(['lazy']);
+        ->getStateBindingModifiers()->toBe(['blur']);
 });
 
 test('component state binding can be debounced', function () {
     $component = (new Component())
         ->container(ComponentContainer::make(Livewire::make()))
-        ->debounce('750ms');
+        ->live(debounce: '750ms');
 
     expect($component)
         ->getStateBindingModifiers()->toBe(['live', 'debounce', '750ms']);

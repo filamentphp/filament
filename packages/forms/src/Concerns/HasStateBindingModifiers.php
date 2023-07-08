@@ -2,7 +2,9 @@
 
 namespace Filament\Forms\Concerns;
 
+use App\Models\Shop\Product;
 use Filament\Forms\Components\Component;
+use InvalidArgumentException;
 
 trait HasStateBindingModifiers
 {
@@ -11,11 +13,17 @@ trait HasStateBindingModifiers
      */
     protected ?array $stateBindingModifiers = null;
 
-    protected string | int | null $debounce = null;
+    protected int | string | null $debounce = null;
 
-    public function live(): static
+    protected bool $isLive = false;
+
+    protected bool $isBlur = false;
+
+    public function live(bool $onBlur = false, int | string | null $debounce = null, int | string | null $throttle = null): static
     {
-        $this->stateBindingModifiers(['live']);
+        $this->isLive = true;
+        $this->isBlur = $onBlur;
+        $this->debounce = $debounce;
 
         return $this;
     }
@@ -29,14 +37,14 @@ trait HasStateBindingModifiers
 
     public function lazy(): static
     {
-        $this->stateBindingModifiers(['lazy']);
+        $this->live(onBlur: true);
 
         return $this;
     }
 
-    public function debounce(string | int | null $delay = '500ms'): static
+    public function debounce(int | string | null $delay = 500): static
     {
-        $this->debounce = $delay;
+        $this->live(debounce: $delay);
 
         return $this;
     }
@@ -51,16 +59,11 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    /**
-     * @param  array<string>  $lazilyEntangledModifiers
-     */
-    public function applyStateBindingModifiers(string $expression, array $lazilyEntangledModifiers = []): string
+    public function applyStateBindingModifiers(string $expression): string
     {
-        $modifiers = $this->getStateBindingModifiers();
+        $entangled = str($expression)->contains('entangle');
 
-        if (str($expression)->contains('entangle') && ($this->isLazy() || $this->getDebounce())) {
-            $modifiers = $lazilyEntangledModifiers;
-        }
+        $modifiers = $this->getStateBindingModifiers(withBlur: ! $entangled, withDebounce: ! $entangled);
 
         return implode('.', [
             $expression,
@@ -71,14 +74,26 @@ trait HasStateBindingModifiers
     /**
      * @return array<string>
      */
-    public function getStateBindingModifiers(): array
+    public function getStateBindingModifiers(bool $withBlur = true, bool $withDebounce = true): array
     {
         if ($this->stateBindingModifiers !== null) {
             return $this->stateBindingModifiers;
         }
 
-        if ($debounce = $this->getDebounce()) {
+        if ($withDebounce && filled($debounce = $this->getDebounce())) {
+            if ($this->isBlur()) {
+                throw new InvalidArgumentException('A field cannot use [debounce()] and [blur()] at the same time.');
+            }
+
             return ['live', 'debounce', $debounce];
+        }
+
+        if ($withBlur && $this->isBlur()) {
+            return ['blur'];
+        }
+
+        if ($this->isLive()) {
+            return ['live'];
         }
 
         if ($this instanceof Component) {
@@ -94,20 +109,25 @@ trait HasStateBindingModifiers
 
     public function isLive(): bool
     {
-        return in_array('live', $this->getStateBindingModifiers());
+        return $this->isLive;
+    }
+
+    public function isBlur(): bool
+    {
+        return $this->isBlur;
     }
 
     public function isLazy(): bool
     {
-        return in_array('lazy', $this->getStateBindingModifiers());
+        return $this->isBlur();
     }
 
     public function isDebounced(): bool
     {
-        return in_array('debounce', $this->getStateBindingModifiers());
+        return filled($this->debounce);
     }
 
-    public function getDebounce(): string | int | null
+    public function getDebounce(): int | string | null
     {
         return $this->debounce;
     }

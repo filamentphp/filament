@@ -26,27 +26,29 @@ Select::make('status')
 
 In this example, when the user changes the value of the `status` field, the form will re-render. This allows you to then make changes to fields in the form based on the new value of the `status` field. Also, you can [hook in to the field's lifecycle](#field-updates) to perform custom logic when the field is updated.
 
-### Lazily reactive fields
+### Reactive fields on blur
 
-By default, when a field is set to `live()`, the form will re-render every time the field is interacted with. However, this may not be appropriate for some fields like the text input, since making network requests while the user is still typing results in suboptimal performance. You may wish to re-render the form only after the user has finished using the field, often when it becomes out of focus. You can do this using the `lazy()` method *instead* of `live()`:
+By default, when a field is set to `live()`, the form will re-render every time the field is interacted with. However, this may not be appropriate for some fields like the text input, since making network requests while the user is still typing results in suboptimal performance. You may wish to re-render the form only after the user has finished using the field, when it becomes out of focus. You can do this using the `live(onBlur: true)` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('username')
-    ->lazy()
+    ->live(onBlur: true)
 ```
 
 ### Debouncing reactive fields
 
-Lazy fields require the user to blur (remove focus) from the field before the form will re-render. This allows you to make network requests only when the user has finished typing. However, you may with to find a middle ground between the two, using "debouncing". Debouncing will still send a network request before the user has finished typing, but those requests will be limited to an interval of your choosing. You can do this using the `debounce()` method:
+You may with to find a middle ground between `live()` and `live(onBlur: true)`, using "debouncing". Debouncing will prevent a network request from being sent until a user has finished typing for a certain period of time. You can do this using the `live(debounce: 500)` method:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('username')
-    ->debounce(500) // Wait 500ms before re-rendering the form.
+    ->live(debounce: 500) // Wait 500ms before re-rendering the form.
 ```
+
+In this example, `500` is the number of milliseconds to wait before sending a network request. You can customize this number to whatever you want, or even use a string like `'1s'`.
 
 ## Form component utility injection
 
@@ -316,13 +318,13 @@ use Filament\Forms\Get;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('company_name')
-    ->lazy()
+    ->live(onBlur: true)
     
 TextInput::make('vat_number')
     ->required(fn (Get $get): bool => filled($get('company_name')))
 ```
 
-In this example, the `company_name` field is [`lazy()`](#lazily-reactive-fields). This allows the form to rerender after the value of the `company_name` field changes and the user clicks away. You can access the value of that field from within the `required()` function using the [`$get()` utility](#injecting-the-current-state-of-a-field). The value of the field is checked using `filled()` so that the `vat_number` field is required when the `company_name` field is not `null` or an empty string. The result is that the `vat_number` field is only required when the `company_name` field is filled in.
+In this example, the `company_name` field is [`live(onBlur: true)`](#reactive-fields-on-blur). This allows the form to rerender after the value of the `company_name` field changes and the user clicks away. You can access the value of that field from within the `required()` function using the [`$get()` utility](#injecting-the-current-state-of-a-field). The value of the field is checked using `filled()` so that the `vat_number` field is required when the `company_name` field is not `null` or an empty string. The result is that the `vat_number` field is only required when the `company_name` field is filled in.
 
 Using a function is able to make any other [validation rule](validation) dynamic in a similar way.
 

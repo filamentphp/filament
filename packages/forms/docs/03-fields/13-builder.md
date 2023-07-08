@@ -97,7 +97,7 @@ use Filament\Forms\Components\TextInput;
 Builder\Block::make('heading')
     ->schema([
         TextInput::make('content')
-            ->lazy()
+            ->live(onBlur: true)
             ->required(),
         // ...
     ]),
@@ -110,7 +110,7 @@ Builder\Block::make('heading')
     })
 ```
 
-Any fields that you use from `$state` should be `live()` or `lazy()` if you wish to see the item label update live as you use the form.
+Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 
 <AutoScreenshot name="forms/fields/builder/labelled" alt="Builder with labelled blocks based on the content" version="3.x" />
 

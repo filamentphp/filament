@@ -321,7 +321,7 @@ Repeater::make('members')
     ->schema([
         TextInput::make('name')
             ->required()
-            ->lazy(),
+            ->blur(),
         Select::make('role')
             ->options([
                 'member' => 'Member',
@@ -334,7 +334,7 @@ Repeater::make('members')
     ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
 ```
 
-Any fields that you use from `$state` should be `live()` or `lazy()` if you wish to see the item label update live as you use the form.
+Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 
 <AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="3.x" />
 
