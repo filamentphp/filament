@@ -4,6 +4,7 @@ namespace Filament\Tables\Filters\Concerns;
 
 use Closure;
 use Filament\Tables\Contracts\HasTable;
+use Illuminate\Support\Arr;
 
 trait CanBeHidden
 {
@@ -24,7 +25,7 @@ trait CanBeHidden
     public function hiddenOn(string | array $livewireComponents): static
     {
         $this->hidden(static function (HasTable $livewire) use ($livewireComponents): bool {
-            foreach ($livewireComponents as $livewireComponent) {
+            foreach (Arr::wrap($livewireComponents) as $livewireComponent) {
                 if ($livewire instanceof $livewireComponent) {
                     return true;
                 }
@@ -49,7 +50,7 @@ trait CanBeHidden
     public function visibleOn(string | array $livewireComponents): static
     {
         $this->visible(static function (HasTable $livewire) use ($livewireComponents): bool {
-            foreach ($livewireComponents as $livewireComponent) {
+            foreach (Arr::wrap($livewireComponents) as $livewireComponent) {
                 if ($livewire instanceof $livewireComponent) {
                     return true;
                 }
