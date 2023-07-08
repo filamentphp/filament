@@ -6,22 +6,18 @@
     $isDisabled = $isDisabled();
     $mask = $getMask();
     $statePath = $getStatePath();
-    $prefixIcon = $getPrefixIcon();
-    $prefixLabel = $getPrefixLabel();
-    $suffixIcon = $getSuffixIcon();
-    $suffixLabel = $getSuffixLabel();
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
         :disabled="$isDisabled"
-        :prefix="$prefixLabel"
+        :prefix="$getPrefixLabel()"
         :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$prefixIcon"
-        :suffix="$suffixLabel"
+        :prefix-icon="$getPrefixIcon()"
+        :suffix="$getSuffixLabel()"
         :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$suffixIcon"
+        :suffix-icon="$getSuffixIcon()"
         class="filament-forms-text-input-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >

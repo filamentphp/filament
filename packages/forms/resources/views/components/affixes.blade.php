@@ -10,6 +10,16 @@
 ])
 
 @php
+    $ringClasses = \Illuminate\Support\Arr::toCssClasses([
+        'ring-gray-950/10 dark:ring-white/20',
+        'focus-within:ring-primary-600 dark:focus-within:ring-primary-600' => ! $disabled,
+    ]);
+
+    $errorRingClasses = \Illuminate\Support\Arr::toCssClasses([
+        'ring-danger-600 dark:ring-danger-400',
+        'focus-within:ring-danger-600 dark:focus-within:ring-danger-400' => ! $disabled,
+    ]);
+
     $affixesClasses = 'flex items-center gap-x-3 border-gray-950/10 px-3 dark:border-white/20';
 
     $affixActionsClasses = '-mx-2.5 flex';
@@ -30,14 +40,17 @@
 @endphp
 
 <div
-    x-bind:class="
-        @js($statePath) in $wire.__instance.serverMemo.errors
-            ? 'ring-danger-600 dark:ring-danger-400 {{ $disabled ? null : 'focus-within:ring-danger-600 dark:focus-within:ring-danger-400' }}'
-            : 'ring-gray-950/10 dark:ring-white/20 {{ $disabled ? null : 'focus-within:ring-primary-600 dark:focus-within:ring-primary-600' }}'
-    "
+    @if ($statePath)
+        x-bind:class="
+            @js($statePath) in $wire.__instance.serverMemo.errors
+                ? '{{ $errorRingClasses }}'
+                : '{{ $ringClasses }}'
+        "
+    @endif
     {{
         $attributes->class([
             'filament-forms-affix-container flex rounded-lg shadow-sm ring-1 transition duration-75',
+            $ringClasses => ! $statePath,
             'bg-gray-50 dark:bg-gray-950' => $disabled,
             'bg-white focus-within:ring-2 dark:bg-gray-900' => ! $disabled,
         ])

@@ -1,26 +1,18 @@
 @php
     $isDisabled = $isDisabled();
-
     $statePath = $getStatePath();
-
-    $prefixLabel = $getPrefixLabel();
-    $prefixIcon = $getPrefixIcon();
-    $hasPrefix = $prefixLabel || $prefixIcon;
-
-    $suffixLabel = $getSuffixLabel();
-    $suffixIcon = $getSuffixIcon();
-    $hasSuffix = $suffixLabel || $suffixIcon;
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
-        :prefix="$prefixLabel"
+        :disabled="$isDisabled"
+        :prefix="$getPrefixLabel()"
         :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$prefixIcon"
-        :suffix="$suffixLabel"
+        :prefix-icon="$getPrefixIcon()"
+        :suffix="$getSuffixLabel()"
         :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$suffixIcon"
+        :suffix-icon="$getSuffixIcon()"
         class="filament-forms-select-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
@@ -31,14 +23,14 @@
                 :id="$getId()"
                 :required="$isRequired() && ((bool) $isConcealed())"
                 :attributes="
-                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag()->merge([
-                        $applyStateBindingModifiers('wire:model') => $statePath,
-                    ], escape: false))
+                    \Filament\Support\prepare_inherited_attributes(
+                        $getExtraInputAttributeBag()
+                            ->merge([
+                                $applyStateBindingModifiers('wire:model') => $statePath,
+                            ], escape: false)
+                            ->class(['filament-forms-input'])
+                    )
                 "
-                :error="$errors->has($statePath)"
-                :prefix="$hasPrefix"
-                :suffix="$hasSuffix"
-                class="filament-forms-input w-full"
             >
                 @php
                     $isHtmlAllowed = $isHtmlAllowed();
@@ -115,11 +107,7 @@
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class([
-                            'filament-forms-input',
-                            'filament-select-input-with-prefix' => $hasPrefix,
-                            'filament-select-input-with-suffix' => $hasSuffix,
-                        ])
+                        ->class(['filament-forms-input'])
                 }}
             >
                 <select
