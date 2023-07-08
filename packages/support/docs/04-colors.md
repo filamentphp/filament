@@ -18,7 +18,7 @@ use Filament\Support\Facades\FilamentColor;
 
 FilamentColor::register([
     'danger' => Color::Red,
-    'gray' => Color::Gray,
+    'gray' => Color::Zinc,
     'info' => Color::Blue,
     'primary' => Color::Amber,
     'success' => Color::Green,
