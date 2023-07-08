@@ -140,7 +140,7 @@
                     chart.update()
                 },
 
-                darkModeToggled: function() {
+                updateChartColors: function() {
                     chart = Chart.getChart(this.$refs.canvas);
                     chart.data.datasets[0].backgroundColor = getComputedStyle($refs.backgroundColorElement).color
                     chart.data.datasets[0].borderColor = getComputedStyle($refs.borderColorElement).color
