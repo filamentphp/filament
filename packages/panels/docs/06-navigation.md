@@ -340,6 +340,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+For more information on creating a profile page, check out the [authentication features documentation](users#authentication-features).
+
 ### Customizing the logout link
 
 To customize the user logout link at the end of the user menu, register a new item with the `logout` array key:

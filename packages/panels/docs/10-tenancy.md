@@ -54,9 +54,9 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
 In this example, users belong to many teams, so there is a `teams()` relationship. The `getTenants()` method returns the teams that the user belongs to. Filament uses this to list the tenants that the user has access to.
 
-You'll also want users to be able to [register new teams](#registration).
+You'll also want users to be able to [register new teams](#adding-a-tenant-registration-page).
 
-## Registration
+## Adding a tenant registration page
 
 A registration page will allow users to create a new tenant.
 
@@ -115,11 +115,61 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Customizing the registration page
+### Customizing the tenant registration page
 
-You can override anything you want on the registration page class to make it act as you want. Even the `$view` property can be overridden to use a custom view.
+You can override any method you want on the base registration page class to make it act as you want. Even the `$view` property can be overridden to use a custom view of your choice.
 
-Alternatively, you can pass any route action to the `tenantRegistration()` method. That could be a callback function that gets executed when you visit the page, or the name of a controller, or a Livewire component - anything that works when using `Route::get()` in Laravel normally.
+## Adding a tenant profile page
+
+A profile page will allow users to edit information about the tenant.
+
+To set up a profile page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\EditTenantProfile`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Pages/Tenancy/EditTeamProfile.php`:
+
+```php
+namespace App\Filament\Pages\Tenancy;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Pages\Tenancy\EditTenantProfile;
+use Illuminate\Database\Eloquent\Model;
+
+class EditTeamProfile extends EditTenantProfile
+{
+    public static function getLabel(): string
+    {
+        return 'Team profile';
+    }
+    
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name'),
+                // ...
+            ]);
+    }
+}
+```
+
+You may add any [form components](../forms/getting-started) to the `form()` method. They will get saved directly to the tenant model.
+
+Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
+
+```php
+use App\Filament\Pages\Tenancy\RegisterTeam;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantProfile(RegisterTeam::class);
+}
+```
+
+### Customizing the tenant profile page
+
+You can override any method you want on the base profile page class to make it act as you want. Even the `$view` property can be overridden to use a custom view of your choice.
 
 ## Accessing the current tenant
 
@@ -238,7 +288,7 @@ public function panel(Panel $panel): Panel
             MenuItem::make()
                 ->label('Settings')
                 ->url(route('filament.pages.settings'))
-                ->icon('heroicon-m-cog-6-tooth'),
+                ->icon('heroicon-m-cog-8-tooth'),
             // ...
         ]);
 }

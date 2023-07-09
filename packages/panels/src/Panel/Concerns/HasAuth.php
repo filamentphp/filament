@@ -3,6 +3,7 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Pages\Auth\EditProfile;
 use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use Filament\Pages\Auth\Login;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
@@ -98,7 +99,7 @@ trait HasAuth
         return $this;
     }
 
-    public function profile(?string $page): static
+    public function profile(?string $page = EditProfile::class): static
     {
         $this->profilePage = $page;
 
