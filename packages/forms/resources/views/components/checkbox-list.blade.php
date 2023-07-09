@@ -137,11 +137,8 @@
                             "
                         @endif
                     >
-                        <input
-                            @if ($isBulkToggleable)
-                                x-on:change="checkIfAllCheckboxesAreChecked()"
-                            @endif
-                            {{
+                        <x-filament::input.checkbox
+                            :attributes="
                                 $getExtraAttributeBag()
                                     ->merge([
                                         'disabled' => $isDisabled,
@@ -149,13 +146,14 @@
                                         'value' => $optionValue,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,
+                                        'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)
                                     ->class([
                                         'rounded text-primary-600 shadow-sm transition duration-75 focus:ring-2 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
                                         'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500' => ! $errors->has($statePath),
                                         'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
                                     ])
-                            }}
+                            "
                         />
 
                         <span
