@@ -14,7 +14,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
-abstract class BasePage extends Component implements HasActions, HasForms, RendersActionModal
+abstract class BasePage extends Component implements HasForms, HasActions, RendersActionModal
 {
     use InteractsWithActions;
     use InteractsWithForms;

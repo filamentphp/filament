@@ -4,6 +4,7 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Form;
 use Illuminate\Database\Eloquent\Model;
 
@@ -42,7 +43,18 @@ class CreateAction extends Action
         $this->action(function (array $arguments, Form $form): void {
             $model = $this->getModel();
 
-            $record = $this->process(fn (array $data): Model => $model::create($data));
+            $record = $this->process(function (array $data, HasActions $livewire) use ($model): Model {
+                if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
+                    $record = $translatableContentDriver->makeRecord($model, $data);
+                } else {
+                    $record = new $model();
+                    $record->fill($data);
+                }
+
+                $record->save();
+
+                return $record;
+            });
 
             $this->record($record);
             $form->model($record)->saveRelationships();

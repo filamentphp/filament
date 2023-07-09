@@ -40,6 +40,15 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
         return $record;
     }
 
+    public function setRecordLocale(Model $record): Model
+    {
+        if (! method_exists($record, 'setLocale')) {
+            return $record;
+        }
+
+        return $record->setLocale($this->activeLocale);
+    }
+
     /**
      * @param  array<string, mixed>  $data
      */

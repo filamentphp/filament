@@ -72,7 +72,7 @@ use Filament\Actions\Action;
 
 Action::make('approve')
     ->action(function () {
-        $this->record->approve();
+        $this->getRecord()->approve();
 
         $this->refreshFormData([
             'status',

@@ -210,23 +210,23 @@ trait InteractsWithForms
     /**
      * @return class-string<TranslatableContentDriver> | null
      */
-    public function getFormTranslatableContentDriver(): ?string
+    public function getFilamentTranslatableContentDriver(): ?string
     {
         return null;
     }
 
-    public function makeFormTranslatableContentDriver(): ?TranslatableContentDriver
+    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver
     {
-        $driver = $this->getFormTranslatableContentDriver();
+        $driver = $this->getFilamentTranslatableContentDriver();
 
         if (! $driver) {
             return null;
         }
 
-        return app($driver, ['locale' => $this->getActiveFormLocale() ?? app()->getLocale()]);
+        return app($driver, ['activeLocale' => $this->getActiveFormsLocale() ?? app()->getLocale()]);
     }
 
-    public function getActiveFormLocale(): ?string
+    public function getActiveFormsLocale(): ?string
     {
         return null;
     }

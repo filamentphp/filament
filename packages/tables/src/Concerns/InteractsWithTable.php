@@ -255,25 +255,6 @@ trait InteractsWithTable
     }
 
     /**
-     * @return class-string<TranslatableContentDriver> | null
-     */
-    public function getTableTranslatableContentDriver(): ?string
-    {
-        return null;
-    }
-
-    public function makeTableTranslatableContentDriver(): ?TranslatableContentDriver
-    {
-        $driver = $this->getTableTranslatableContentDriver();
-
-        if (! $driver) {
-            return null;
-        }
-
-        return app($driver, ['locale' => $this->getActiveTableLocale() ?? app()->getLocale()]);
-    }
-
-    /**
      * @param  ?string  $pageName
      */
     public function resetPage($pageName = null): void

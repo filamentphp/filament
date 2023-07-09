@@ -4,11 +4,16 @@ namespace Filament\Actions\Contracts;
 
 use Filament\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Contracts\TranslatableContentDriver;
 
-interface HasActions extends HasForms
+interface HasActions
 {
     /**
      * @param  string | array<string>  $name
      */
     public function getAction(string | array $name): ?Action;
+
+    public function getActiveActionsLocale(): ?string;
+
+    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver;
 }

@@ -10,9 +10,9 @@ interface HasForms
 {
     public function dispatchFormEvent(mixed ...$args): void;
 
-    public function getActiveFormLocale(): ?string;
+    public function getActiveFormsLocale(): ?string;
 
-    public function makeFormTranslatableContentDriver(): ?TranslatableContentDriver;
+    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver;
 
     public function getForm(string $name): ?Form;
 

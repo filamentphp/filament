@@ -702,7 +702,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             $itemOrder = 1;
             $orderColumn = $component->getOrderColumn();
 
-            $translatableContentDriver = $livewire->makeFormTranslatableContentDriver();
+            $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
 
             foreach ($childComponentContainers as $itemKey => $item) {
                 $itemData = $item->getState(shouldCallHooksBefore: false);
@@ -769,7 +769,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             return [];
         }
 
-        $translatableContentDriver = $this->getLivewire()->makeFormTranslatableContentDriver();
+        $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
         return $records
             ->map(function (Model $record) use ($translatableContentDriver): array {

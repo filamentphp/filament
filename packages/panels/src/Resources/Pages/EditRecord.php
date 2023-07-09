@@ -75,9 +75,20 @@ class EditRecord extends Page
 
     protected function fillForm(): void
     {
-        $this->callHook('beforeFill');
-
         $data = $this->getRecord()->attributesToArray();
+
+        /** @internal Read the DocBlock above the following method. */
+        $this->fillFormWithDataAndCallHooks($data);
+    }
+
+    /**
+     * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
+     *
+     * @param array<string, mixed> $data
+     */
+    protected function fillFormWithDataAndCallHooks(array $data): void
+    {
+        $this->callHook('beforeFill');
 
         $data = $this->mutateFormDataBeforeFill($data);
 
@@ -111,23 +122,41 @@ class EditRecord extends Page
         $this->authorizeAccess();
 
         try {
-            $this->callHook('beforeValidate');
-
-            $data = $this->form->getState();
-
-            $this->callHook('afterValidate');
-
-            $data = $this->mutateFormDataBeforeSave($data);
-
-            $this->callHook('beforeSave');
-
-            $this->handleRecordUpdate($this->getRecord(), $data);
-
-            $this->callHook('afterSave');
+            /** @internal Read the DocBlock above the following method. */
+            $this->validateFormAndUpdateRecordAndCallHooks();
         } catch (Halt $exception) {
             return;
         }
 
+        /** @internal Read the DocBlock above the following method. */
+        $this->sendSavedNotificationAndRedirect(shouldRedirect: $shouldRedirect);
+    }
+
+    /**
+     * @internal Never override or call this method. If you completely override `save()`, copy the contents of this method into your override.
+     */
+    protected function validateFormAndUpdateRecordAndCallHooks(): void
+    {
+        $this->callHook('beforeValidate');
+
+        $data = $this->form->getState();
+
+        $this->callHook('afterValidate');
+
+        $data = $this->mutateFormDataBeforeSave($data);
+
+        $this->callHook('beforeSave');
+
+        $this->handleRecordUpdate($this->getRecord(), $data);
+
+        $this->callHook('afterSave');
+    }
+
+    /**
+     * @internal Never override or call this method. If you completely override `save()`, copy the contents of this method into your override.
+     */
+    protected function sendSavedNotificationAndRedirect(bool $shouldRedirect = true): void
+    {
         $this->getSavedNotification()?->send();
 
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
@@ -289,10 +318,15 @@ class EditRecord extends Page
             $form
                 ->operation('edit')
                 ->model($this->getRecord())
-                ->statePath('data')
+                ->statePath($this->getFormStatePath())
                 ->columns($this->hasInlineLabels() ? 1 : 2)
                 ->inlineLabel($this->hasInlineLabels()),
         );
+    }
+
+    public function getFormStatePath(): ?string
+    {
+        return 'data';
     }
 
     protected function getRedirectUrl(): ?string

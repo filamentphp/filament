@@ -34,7 +34,7 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Livewire\Component;
 
-class ViewProduct extends Component implements HasInfolists, HasForms
+class ViewProduct extends Component implements HasForms, HasInfolists
 {
     use InteractsWithInfolists;
     use InteractsWithForms;

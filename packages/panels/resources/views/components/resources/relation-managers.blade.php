@@ -1,4 +1,5 @@
 @props([
+    'activeLocale' => null,
     'activeManager',
     'content' => null,
     'contentTabLabel' => null,
@@ -59,16 +60,24 @@
             @endif
             class="space-y-4 outline-none"
         >
+            @php
+                $managerLivewireProperties = ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass];
+
+                if (filled($activeLocale)) {
+                    $managerLivewireProperties['activeLocale'] = $activeLocale;
+                }
+            @endphp
+
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
                 @foreach ($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManager)
-                    @livewire($manager, ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($groupedManager))
+                    @livewire($manager, $managerLivewireProperties, key($groupedManager))
                 @endforeach
             @else
                 @php
                     $manager = $managers[$activeManager];
                 @endphp
 
-                @livewire($manager, ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($manager))
+                @livewire($manager, $managerLivewireProperties, key($manager))
             @endif
         </div>
     @elseif ($content)

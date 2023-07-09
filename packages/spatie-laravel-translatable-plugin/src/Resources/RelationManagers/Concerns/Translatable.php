@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Resources\Pages\ListRecords\Concerns;
+namespace Filament\Resources\RelationManagers\Concerns;
 
 use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
 use Filament\SpatieLaravelTranslatableContentDriver;
@@ -15,12 +15,22 @@ trait Translatable
 
     public function mountTranslatable(): void
     {
-        $this->setActiveLocale();
+        if (
+            blank($this->activeLocale) ||
+            (! in_array($this->activeLocale, $this->getTranslatableLocales()))
+        ) {
+            $this->setActiveLocale();
+        }
     }
 
     public function getTranslatableLocales(): array
     {
-        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
+        return $this->translatableLocales ?? filament('spatie-laravel-translatable')->getDefaultLocales();
+    }
+
+    public function getDefaultTranslatableLocale(): string
+    {
+        return $this->getTranslatableLocales()[0];
     }
 
     public function getActiveTableLocale(): ?string
@@ -30,6 +40,6 @@ trait Translatable
 
     protected function setActiveLocale(): void
     {
-        $this->activeLocale = static::getResource()::getDefaultTranslatableLocale();
+        $this->activeLocale = $this->getDefaultTranslatableLocale();
     }
 }

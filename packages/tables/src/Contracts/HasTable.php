@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-interface HasTable extends HasForms
+interface HasTable
 {
     public function callTableColumnAction(string $name, string $recordKey): mixed;
 
@@ -88,8 +88,6 @@ interface HasTable extends HasForms
 
     public function isTableLoaded(): bool;
 
-    public function makeTableTranslatableContentDriver(): ?TranslatableContentDriver;
-
     public function hasTableSearch(): bool;
 
     public function resetTableSearch(): void;
@@ -106,4 +104,6 @@ interface HasTable extends HasForms
     public function getFilteredTableQuery(): Builder;
 
     public function getFilteredSortedTableQuery(): Builder;
+
+    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver;
 }

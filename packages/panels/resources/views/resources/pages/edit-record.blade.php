@@ -6,7 +6,10 @@
     ])
 >
     @capture($form)
-        <x-filament::form wire:submit="save">
+        <x-filament::form
+            wire:submit="save"
+            :wire:key="$this->getId() . '.forms.' . $this->getFormStatePath()"
+        >
             {{ $this->form }}
 
             <x-filament::form.actions
@@ -30,6 +33,7 @@
         @endif
 
         <x-filament::resources.relation-managers
+            :active-locale="isset($activeLocale) ? $activeLocale : null"
             :active-manager="$activeRelationManager"
             :content-tab-label="$this->getContentTabLabel()"
             :managers="$relationManagers"

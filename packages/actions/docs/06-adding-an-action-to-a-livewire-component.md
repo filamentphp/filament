@@ -34,7 +34,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
 
-class ManagePost extends Component implements HasActions, HasForms
+class ManagePost extends Component implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;
@@ -56,7 +56,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Livewire\Component;
 
-class ManagePost extends Component implements HasActions, HasForms
+class ManagePost extends Component implements HasForms, HasActions
 {
     use InteractsWithActions;
     use InteractsWithForms;

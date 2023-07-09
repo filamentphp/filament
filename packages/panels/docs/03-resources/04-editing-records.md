@@ -69,7 +69,7 @@ Or the [View page](viewing-records):
 ```php
 protected function getRedirectUrl(): string
 {
-    return $this->getResource()::getUrl('view', ['record' => $this->record]);
+    return $this->getResource()::getUrl('view', ['record' => $this->getRecord()]);
 }
 ```
 
@@ -188,7 +188,7 @@ use Filament\Notifications\Notification;
 
 protected function beforeSave(): void
 {
-    if (! $this->record->team->subscribed()) {
+    if (! $this->getRecord()->team->subscribed()) {
         Notification::make()
             ->warning()
             ->title('You don\'t have an active subscription!')

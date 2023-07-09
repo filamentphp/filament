@@ -13,7 +13,9 @@
         @if ($this->hasInfolist())
             {{ $this->infolist }}
         @else
-            {{ $this->form }}
+            <div wire:key="{{ $this->getId() }}.forms.{{ $this->getFormStatePath() }}">
+                {{ $this->form }}
+            </div>
         @endif
     @endif
 
@@ -23,6 +25,7 @@
         @endif
 
         <x-filament::resources.relation-managers
+            :active-locale="isset($activeLocale) ? $activeLocale : null"
             :active-manager="$activeRelationManager"
             :content-tab-label="$this->getContentTabLabel()"
             :managers="$relationManagers"

@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -412,5 +413,10 @@ trait InteractsWithActions
     protected function openActionModal(): void
     {
         $this->dispatch('open-modal', id: "{$this->getId()}-action");
+    }
+
+    public function getActiveActionsLocale(): ?string
+    {
+        return null;
     }
 }

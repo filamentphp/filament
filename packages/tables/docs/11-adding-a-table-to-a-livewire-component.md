@@ -49,7 +49,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Livewire\Component;
 
-class ListProducts extends Component implements HasTable, HasForms
+class ListProducts extends Component implements HasForms, HasTable
 {
     use InteractsWithTable;
     use InteractsWithForms;
