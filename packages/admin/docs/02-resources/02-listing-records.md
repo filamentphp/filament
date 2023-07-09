@@ -84,7 +84,26 @@ public static function table(Table $table): Table
 }
 ```
 
-To render the filters above the table content in a collapsible panel, you may use: `layout: Layout::AboveContentCollapsible`
+To render the filters above the table content in a collapsible panel, you may use:
+
+```php
+use Filament\Tables\Filters\Layout;
+use Filament\Resources\Table;
+
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->filters(
+            [
+                // ...
+            ],
+            layout: Layout::AboveContentCollapsible,
+        );
+}
+```
 
 ## Actions
 
