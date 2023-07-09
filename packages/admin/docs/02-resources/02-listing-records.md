@@ -84,6 +84,8 @@ public static function table(Table $table): Table
 }
 ```
 
+To render the filters above the table content in a collapsible panel, you may use: `layout: Layout::AboveContentCollapsible`
+
 ## Actions
 
 [Actions](../../tables/actions#single-actions) are buttons that are rendered at the end of table rows. They allow the user to perform a task on a record in the table. To learn how to build actions, see the [full actions documentation](../../tables/actions#single-actions).
