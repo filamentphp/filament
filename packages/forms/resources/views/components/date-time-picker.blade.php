@@ -20,7 +20,6 @@
         :suffix="$suffixLabel"
         :suffix-actions="$getSuffixActions()"
         :suffix-icon="$suffixIcon"
-        class="filament-forms-text-input-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @if ($isNative())
@@ -64,7 +63,7 @@
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class(['filament-forms-date-time-picker-component relative'])
+                        ->class(['filament-forms-date-time-picker-component'])
                 }}
             >
                 <input
@@ -106,19 +105,19 @@
                     @disabled($isDisabled)
                     {{
                         $getExtraTriggerAttributeBag()->class([
-                            'w-full cursor-default px-3 py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 dark:text-white dark:placeholder:text-gray-500 sm:text-sm sm:leading-6',
+                            'w-full',
                         ])
                     }}
                 >
                     <input
+                        @disabled($isDisabled)
                         readonly
                         placeholder="{{ $getPlaceholder() }}"
                         wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.display-text"
                         x-model="displayText"
                         @if ($id = $getId()) id="{{ $id }}" @endif
                         @class([
-                            'h-full w-full border-0 bg-transparent p-0 placeholder-gray-400 outline-none focus:placeholder-gray-500 focus:outline-none focus:ring-0 dark:placeholder-gray-400',
-                            'cursor-default' => $isDisabled,
+                            'w-full border-none bg-transparent px-3 py-1.5 text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] sm:text-sm sm:leading-6',
                         ])
                     />
                 </button>
@@ -130,18 +129,15 @@
                     wire:ignore
                     wire:key="{{ $this->id }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
-                        'absolute z-10 my-1 hidden rounded-lg border border-gray-300 bg-white shadow-md dark:border-gray-800 dark:bg-gray-900',
-                        'w-fit min-w-[16rem] p-4' => $hasDate(),
+                        'absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     ])
                 >
-                    <div class="space-y-3">
+                    <div class="grid gap-y-3">
                         @if ($hasDate())
-                            <div
-                                class="flex items-center justify-between space-x-1 rtl:space-x-reverse"
-                            >
+                            <div class="flex items-center justify-between">
                                 <select
                                     x-model="focusedMonth"
-                                    class="grow cursor-pointer border-0 bg-transparent px-1 py-0 text-lg font-medium text-gray-800 outline-none focus:ring-0 dark:text-gray-200"
+                                    class="grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:text-white"
                                 >
                                     <template
                                         x-for="(month, index) in months"
@@ -157,7 +153,7 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="focusedYear"
-                                    class="w-20 border-0 bg-transparent p-0 text-end text-lg outline-none focus:ring-0 dark:text-gray-200"
+                                    class="w-16 border-none bg-transparent p-0 text-right text-sm text-gray-950 focus:ring-0 dark:text-white"
                                 />
                             </div>
 
@@ -168,19 +164,20 @@
                                 >
                                     <div
                                         x-text="day"
-                                        class="text-center text-xs font-medium text-gray-800 dark:text-gray-200"
+                                        class="text-center text-xs font-medium text-gray-500 dark:text-gray-400"
                                     ></div>
                                 </template>
                             </div>
 
-                            <div role="grid" class="grid grid-cols-7 gap-1">
+                            <div
+                                role="grid"
+                                class="grid grid-cols-[repeat(7,_theme(spacing.7))] gap-1"
+                            >
                                 <template
                                     x-for="day in emptyDaysInFocusedMonth"
                                     x-bind:key="day"
                                 >
-                                    <div
-                                        class="border border-transparent text-center text-sm"
-                                    ></div>
+                                    <div></div>
                                 </template>
 
                                 <template
@@ -194,20 +191,21 @@
                                         role="option"
                                         x-bind:aria-selected="focusedDate.date() === day"
                                         x-bind:class="{
-                                            'text-gray-700 dark:text-gray-300': ! dayIsSelected(day),
+                                            'text-gray-950 dark:text-white': ! dayIsToday(day) && ! dayIsSelected(day),
                                             'cursor-pointer': ! dayIsDisabled(day),
-                                            'bg-primary-50 dark:bg-primary-100 dark:text-gray-600':
+                                            'text-primary-600 dark:text-primary-400':
                                                 dayIsToday(day) &&
                                                 ! dayIsSelected(day) &&
                                                 focusedDate.date() !== day &&
                                                 ! dayIsDisabled(day),
-                                            'bg-primary-200 dark:text-gray-600':
+                                            'bg-gray-950/5 dark:bg-white/5':
                                                 focusedDate.date() === day && ! dayIsSelected(day),
-                                            'bg-primary-500 text-white': dayIsSelected(day),
+                                            'text-primary-600 bg-gray-950/5 dark:bg-white/5 dark:text-primary-400':
+                                                dayIsSelected(day),
                                             'pointer-events-none': dayIsDisabled(day),
                                             'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
                                         }"
-                                        class="rounded-full text-center text-sm leading-loose transition duration-100 ease-in-out"
+                                        class="rounded-full text-center text-sm leading-loose transition duration-75"
                                     ></div>
                                 </template>
                             </div>
@@ -215,7 +213,7 @@
 
                         @if ($hasTime())
                             <div
-                                class="flex items-center justify-center rounded-lg py-2 rtl:flex-row-reverse"
+                                class="flex items-center justify-center rtl:flex-row-reverse"
                             >
                                 <input
                                     max="23"
@@ -224,11 +222,11 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="hour"
-                                    class="w-16 border-0 bg-transparent p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:text-gray-200"
+                                    class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                                 />
 
                                 <span
-                                    class="text-xl font-medium text-gray-700 dark:text-gray-200"
+                                    class="text-sm font-medium text-gray-500 dark:text-gray-400"
                                 >
                                     :
                                 </span>
@@ -240,12 +238,12 @@
                                     type="number"
                                     inputmode="numeric"
                                     x-model.debounce="minute"
-                                    class="w-16 border-0 bg-transparent p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:text-gray-200"
+                                    class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                                 />
 
                                 @if ($hasSeconds())
                                     <span
-                                        class="text-xl font-medium text-gray-700 dark:text-gray-200"
+                                        class="text-sm font-medium text-gray-500 dark:text-gray-400"
                                     >
                                         :
                                     </span>
@@ -257,7 +255,7 @@
                                         type="number"
                                         inputmode="numeric"
                                         x-model.debounce="second"
-                                        class="w-16 border-0 bg-transparent p-0 pe-1 text-center text-xl text-gray-700 outline-none focus:ring-0 dark:text-gray-200"
+                                        class="me-1 w-10 border-none bg-transparent p-0 text-center text-sm text-gray-950 focus:ring-0 dark:text-white"
                                     />
                                 @endif
                             </div>
