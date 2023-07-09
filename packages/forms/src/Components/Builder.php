@@ -28,6 +28,8 @@ class Builder extends Field implements Contracts\CanConcealComponents
 
     protected bool | Closure $isReorderable = true;
 
+    protected bool | Closure $isReorderableWithDragAndDrop = true;
+
     protected bool | Closure $isReorderableWithButtons = false;
 
     protected bool | Closure $isAddable = true;
@@ -378,7 +380,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->iconButton()
             ->inline()
             ->size('sm')
-            ->visible(fn (): bool => $this->isReorderable());
+            ->visible(fn (): bool => $this->isReorderableWithDragAndDrop());
 
         if ($this->modifyReorderActionUsing) {
             $action = $this->evaluate($this->modifyReorderActionUsing, [
@@ -615,6 +617,13 @@ class Builder extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function reorderableWithDragAndDrop(bool | Closure $condition = true): static
+    {
+        $this->isReorderableWithDragAndDrop = $condition;
+
+        return $this;
+    }
+
     public function reorderableWithButtons(bool | Closure $condition = true): static
     {
         $this->isReorderableWithButtons = $condition;
@@ -721,6 +730,11 @@ class Builder extends Field implements Contracts\CanConcealComponents
         }
 
         return (bool) $this->evaluate($this->isReorderable);
+    }
+
+    public function isReorderableWithDragAndDrop(): bool
+    {
+        return $this->evaluate($this->isReorderableWithDragAndDrop) && $this->isReorderable();
     }
 
     public function isReorderableWithButtons(): bool

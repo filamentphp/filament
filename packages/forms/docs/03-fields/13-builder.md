@@ -209,9 +209,9 @@ Builder::make('content')
     ->reorderable(false)
 ```
 
-### Reordering items with buttons instead of drag and drop
+### Reordering items with buttons
 
-You may use the `reorderableWithButtons()` method to enable reordering items with buttons instead of drag and drop:
+You may use the `reorderableWithButtons()` method to enable reordering items with buttons to move the item up and down:
 
 ```php
 use Filament\Forms\Components\Builder;
@@ -224,6 +224,20 @@ Builder::make('content')
 ```
 
 <AutoScreenshot name="forms/fields/builder/reorderable-with-buttons" alt="Builder that is reorderable with buttons" version="3.x" />
+
+### Preventing reordering with drag and drop
+
+You may use the `reorderableWithDragAndDrop(false)` method to prevent items from being ordered with drag and drop:
+
+```php
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->reorderableWithDragAndDrop(false)
+```
 
 ## Collapsing items
 

@@ -98,7 +98,7 @@
                         "
                         class="filament-forms-builder-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20"
                     >
-                        @if ($reorderAction->isVisible() || $hasBlockLabels || $cloneAction->isVisible() || $deleteAction->isVisible() || $isCollapsible || $isCloneable)
+                        @if ($reorderAction->isVisible() || $hasBlockLabels || $isReorderableWithButtons || $cloneAction->isVisible() || $deleteAction->isVisible() || $isCollapsible || $isCloneable)
                             <header
                                 @if ($isCollapsible) x-on:click.stop="isCollapsed = ! isCollapsed" @endif
                                 @class([
