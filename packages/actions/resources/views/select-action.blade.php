@@ -1,6 +1,6 @@
 @php
-    $disabled = $isDisabled();
     $id = $getId();
+    $isDisabled = $isDisabled();
 @endphp
 
 <div class="filament-actions-select-action">
@@ -8,9 +8,9 @@
         {{ $getLabel() }}
     </label>
 
-    <x-filament-forms::affixes :disabled="$disabled">
+    <x-filament-forms::affixes :disabled="$isDisabled">
         <x-filament::input.select
-            :disabled="$disabled"
+            :disabled="$isDisabled"
             :id="$id"
             :wire:model="$getName()"
         >
