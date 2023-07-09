@@ -7,6 +7,7 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
@@ -79,21 +80,36 @@ class Login extends CardPage
     {
         return $form
             ->schema([
-                TextInput::make('email')
-                    ->label(__('filament::pages/auth/login.fields.email.label'))
-                    ->email()
-                    ->required()
-                    ->autocomplete()
-                    ->autofocus(),
-                TextInput::make('password')
-                    ->label(__('filament::pages/auth/login.fields.password.label'))
-                    ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament::pages/auth/login.buttons.request_password_reset.label\') }}</x-filament::link>')) : null)
-                    ->password()
-                    ->required(),
-                Checkbox::make('remember')
-                    ->label(__('filament::pages/auth/login.fields.remember.label')),
+                $this->getEmailFormComponent(),
+                $this->getPasswordFormComponent(),
+                $this->getRememberFormComponent(),
             ])
             ->statePath('data');
+    }
+
+    protected function getEmailFormComponent(): Component
+    {
+        return TextInput::make('email')
+            ->label(__('filament::pages/auth/login.form.email.label'))
+            ->email()
+            ->required()
+            ->autocomplete()
+            ->autofocus();
+    }
+
+    protected function getPasswordFormComponent(): Component
+    {
+        return TextInput::make('password')
+            ->label(__('filament::pages/auth/login.form.password.label'))
+            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament::pages/auth/login.buttons.request_password_reset.label\') }}</x-filament::link>')) : null)
+            ->password()
+            ->required();
+    }
+
+    protected function getRememberFormComponent(): Component
+    {
+        return Checkbox::make('remember')
+            ->label(__('filament::pages/auth/login.form.remember.label'));
     }
 
     public function authenticateAction(): Action

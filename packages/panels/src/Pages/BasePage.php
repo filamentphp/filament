@@ -19,7 +19,7 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
     use InteractsWithActions;
     use InteractsWithForms;
 
-    protected static string $layout;
+    protected static string $layout = 'filament::components.layouts.base';
 
     protected static ?string $title = null;
 
@@ -32,6 +32,12 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
     public static ?Closure $reportValidationErrorUsing = null;
 
     protected ?string $maxContentWidth = null;
+
+    public static string $formActionsAlignment = 'start';
+
+    public static bool $formActionsAreSticky = false;
+
+    public static bool $hasInlineLabels = false;
 
     public function render(): View
     {
@@ -103,5 +109,66 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
         }
 
         $this->{$hook}();
+    }
+
+    public static function stickyFormActions(bool $condition = true): void
+    {
+        static::$formActionsAreSticky = $condition;
+    }
+
+    public static function alignFormActionsStart(): void
+    {
+        static::$formActionsAlignment = 'start';
+    }
+
+    public static function alignFormActionsCenter(): void
+    {
+        static::$formActionsAlignment = 'center';
+    }
+
+    public static function alignFormactionsEnd(): void
+    {
+        static::$formActionsAlignment = 'end';
+    }
+
+    /**
+     * @deprecated Use `alignFormActionsStart()` instead
+     */
+    public static function alignFormActionsLeft(): void
+    {
+        static::alignFormActionsStart();
+    }
+
+    /**
+     * @deprecated Use `alignFormActionsEnd()` instead
+     */
+    public static function alignFormActionsRight(): void
+    {
+        static::alignFormActionsEnd();
+    }
+
+    public function getFormActionsAlignment(): string
+    {
+        return static::$formActionsAlignment;
+    }
+
+    public function areFormActionsSticky(): bool
+    {
+        return static::$formActionsAreSticky;
+    }
+
+    public function hasInlineLabels(): bool
+    {
+        return static::$hasInlineLabels;
+    }
+
+    public static function formActionsAlignment(string $alignment): void
+    {
+        static::$formActionsAlignment = $alignment;
+    }
+
+    public static function inlineLabels(bool $condition = true): void
+    {
+        static::$hasInlineLabels = $condition;
     }
 }

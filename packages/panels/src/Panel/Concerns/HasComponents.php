@@ -5,6 +5,7 @@ namespace Filament\Panel\Concerns;
 use Filament\Livewire\DatabaseNotifications;
 use Filament\Livewire\GlobalSearch;
 use Filament\Livewire\Notifications;
+use Filament\Pages\Auth\EditProfile;
 use Filament\Pages\Page;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\Resource;
@@ -274,6 +275,7 @@ trait HasComponents
     public function registerLivewireComponents(): void
     {
         $this->queueLivewireComponentForRegistration(DatabaseNotifications::class);
+        $this->queueLivewireComponentForRegistration(EditProfile::class);
         $this->queueLivewireComponentForRegistration(GlobalSearch::class);
         $this->queueLivewireComponentForRegistration(Notifications::class);
 

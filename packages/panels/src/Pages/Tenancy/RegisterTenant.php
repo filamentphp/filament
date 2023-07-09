@@ -143,4 +143,9 @@ abstract class RegisterTenant extends CardPage
     {
         return static::$slug ?? 'new';
     }
+
+    public function hasLogo(): bool
+    {
+        return false;
+    }
 }

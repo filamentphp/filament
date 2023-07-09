@@ -7,6 +7,7 @@ use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
@@ -28,7 +29,10 @@ class RequestPasswordReset extends CardPage
      */
     protected static string $view = 'filament::pages.auth.password-reset.request-password-reset';
 
-    public ?string $email = '';
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $data = [];
 
     public function mount(): void
     {
@@ -94,13 +98,19 @@ class RequestPasswordReset extends CardPage
     {
         return $form
             ->schema([
-                TextInput::make('email')
-                    ->label(__('filament::pages/auth/password-reset/request-password-reset.fields.email.label'))
-                    ->email()
-                    ->required()
-                    ->autocomplete()
-                    ->autofocus(),
-            ]);
+                $this->getEmailFormComponent(),
+            ])
+            ->statePath('data');
+    }
+
+    protected function getEmailFormComponent(): Component
+    {
+        return TextInput::make('email')
+            ->label(__('filament::pages/auth/password-reset/request-password-reset.form.email.label'))
+            ->email()
+            ->required()
+            ->autocomplete()
+            ->autofocus();
     }
 
     public function requestAction(): Action

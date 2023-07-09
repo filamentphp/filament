@@ -1,4 +1,4 @@
-<div>
+<x-filament::layouts.card>
     @if (filament()->hasLogin())
         <x-slot name="subheading">
             {{ $this->loginAction }}
@@ -10,4 +10,4 @@
 
         {{ $this->requestAction }}
     </form>
-</div>
+</x-filament::layouts.card>

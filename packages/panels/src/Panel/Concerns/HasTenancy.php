@@ -13,6 +13,8 @@ trait HasTenancy
 
     protected ?string $tenantModel = null;
 
+    protected ?string $tenantProfilePage = null;
+
     protected ?string $tenantRegistrationPage = null;
 
     protected ?string $tenantSlugAttribute = null;
@@ -62,6 +64,13 @@ trait HasTenancy
         return $this;
     }
 
+    public function tenantProfile(?string $page): static
+    {
+        $this->tenantProfilePage = $page;
+
+        return $this;
+    }
+
     public function tenantRegistration(?string $page): static
     {
         $this->tenantRegistrationPage = $page;
@@ -84,6 +93,11 @@ trait HasTenancy
         return filled($this->getTenantBillingProvider());
     }
 
+    public function hasTenantProfile(): bool
+    {
+        return filled($this->getTenantProfilePage());
+    }
+
     public function hasTenantRegistration(): bool
     {
         return filled($this->getTenantRegistrationPage());
@@ -92,6 +106,11 @@ trait HasTenancy
     public function getTenantBillingProvider(): ?BillingProvider
     {
         return $this->tenantBillingProvider;
+    }
+
+    public function getTenantProfilePage(): ?string
+    {
+        return $this->tenantProfilePage;
     }
 
     public function getTenantRegistrationPage(): ?string
@@ -139,6 +158,18 @@ trait HasTenancy
                 ...$parameters,
             ],
         );
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getTenantProfileUrl(array $parameters = []): ?string
+    {
+        if (! $this->hasTenantProfile()) {
+            return null;
+        }
+
+        return route("filament.{$this->getId()}.tenant.profile", $parameters);
     }
 
     /**

@@ -19,7 +19,7 @@ return [
 
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Email address',

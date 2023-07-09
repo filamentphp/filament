@@ -6,6 +6,7 @@ use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse;
@@ -111,23 +112,38 @@ class ResetPassword extends CardPage
     {
         return $form
             ->schema([
-                TextInput::make('email')
-                    ->label(__('filament::pages/auth/password-reset/reset-password.fields.email.label'))
-                    ->disabled()
-                    ->autofocus(),
-                TextInput::make('password')
-                    ->label(__('filament::pages/auth/password-reset/reset-password.fields.password.label'))
-                    ->password()
-                    ->required()
-                    ->rule(PasswordRule::default())
-                    ->same('passwordConfirmation')
-                    ->validationAttribute(__('filament::pages/auth/password-reset/reset-password.fields.password.validation_attribute')),
-                TextInput::make('passwordConfirmation')
-                    ->label(__('filament::pages/auth/password-reset/reset-password.fields.password_confirmation.label'))
-                    ->password()
-                    ->required()
-                    ->dehydrated(false),
+                $this->getEmailFormComponent(),
+                $this->getPasswordFormComponent(),
+                $this->getPasswordConfirmationFormComponent(),
             ]);
+    }
+
+    protected function getEmailFormComponent(): Component
+    {
+        return TextInput::make('email')
+            ->label(__('filament::pages/auth/password-reset/reset-password.form.email.label'))
+            ->disabled()
+            ->autofocus();
+    }
+
+    protected function getPasswordFormComponent(): Component
+    {
+        return TextInput::make('password')
+            ->label(__('filament::pages/auth/password-reset/reset-password.form.password.label'))
+            ->password()
+            ->required()
+            ->rule(PasswordRule::default())
+            ->same('passwordConfirmation')
+            ->validationAttribute(__('filament::pages/auth/password-reset/reset-password.form.password.validation_attribute'));
+    }
+
+    protected function getPasswordConfirmationFormComponent(): Component
+    {
+        return TextInput::make('passwordConfirmation')
+            ->label(__('filament::pages/auth/password-reset/reset-password.form.password_confirmation.label'))
+            ->password()
+            ->required()
+            ->dehydrated(false);
     }
 
     public function resetPasswordAction(): Action

@@ -1,4 +1,4 @@
-<div>
+<x-filament::layouts.card>
     <form wire:submit="register" class="grid gap-y-8">
         {{ $this->form }}
 
@@ -32,4 +32,4 @@
             </ul>
         </x-slot>
     @endif
-</div>
+</x-filament::layouts.card>

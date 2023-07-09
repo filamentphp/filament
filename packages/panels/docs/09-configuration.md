@@ -124,8 +124,8 @@ The available hooks are as follows:
 - `tenant-menu.end` - after tenant menu
 - `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)
 - `user-menu.end` - after [user menu](navigation#customizing-the-user-menu)
-- `user-menu.account.before` - before the account item in the [user menu](navigation#customizing-the-user-menu)
-- `user-menu.account.after` - after the account item in the [user menu](navigation#customizing-the-user-menu)
+- `user-menu.profile.before` - before the profile item in the [user menu](navigation#customizing-the-user-menu)
+- `user-menu.profile.after` - after the profile item in the [user menu](navigation#customizing-the-user-menu)
 
 ## Setting a domain
 

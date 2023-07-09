@@ -245,6 +245,14 @@ class FilamentManager
     /**
      * @param  array<mixed>  $parameters
      */
+    public function getProfileUrl(array $parameters = []): ?string
+    {
+        return $this->getCurrentPanel()->getProfileUrl($parameters);
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getRegistrationUrl(array $parameters = []): ?string
     {
         return $this->getCurrentPanel()->getRegistrationUrl($parameters);
@@ -337,6 +345,26 @@ class FilamentManager
     public function getTenantOwnershipRelationshipName(): string
     {
         return $this->getCurrentPanel()->getTenantOwnershipRelationshipName();
+    }
+
+    public function getProfilePage(): ?string
+    {
+        return $this->getCurrentPanel()->getProfilePage();
+    }
+
+    public function getTenantProfilePage(): ?string
+    {
+        return $this->getCurrentPanel()->getTenantProfilePage();
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
+    public function getTenantProfileUrl(array $parameters = []): ?string
+    {
+        $parameters['tenant'] ??= $this->getTenant();
+
+        return $this->getCurrentPanel()->getTenantProfileUrl($parameters);
     }
 
     public function getTenantRegistrationPage(): ?string
@@ -487,6 +515,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasPasswordReset();
     }
 
+    public function hasProfile(): bool
+    {
+        return $this->getCurrentPanel()->hasProfile();
+    }
+
     public function hasRegistration(): bool
     {
         return $this->getCurrentPanel()->hasRegistration();
@@ -500,6 +533,11 @@ class FilamentManager
     public function hasTenantBilling(): bool
     {
         return $this->getCurrentPanel()->hasTenantBilling();
+    }
+
+    public function hasTenantProfile(): bool
+    {
+        return $this->getCurrentPanel()->hasTenantProfile();
     }
 
     public function hasTenantRegistration(): bool

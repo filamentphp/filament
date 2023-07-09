@@ -321,9 +321,9 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Customizing the account link
+### Customizing the profile link
 
-To customize the user account link at the start of the user menu, register a new item with the `account` array key:
+To customize the user profile link at the start of the user menu, register a new item with the `profile` array key:
 
 ```php
 use Filament\Navigation\MenuItem;
@@ -334,7 +334,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->userMenuItems([
-            'account' => MenuItem::make()->url(route('filament.pages.account')),
+            'profile' => MenuItem::make()->label('Edit profile'),
             // ...
         ]);
 }
@@ -342,7 +342,7 @@ public function panel(Panel $panel): Panel
 
 ### Customizing the logout link
 
-To customize the user account link at the end of the user menu, register a new item with the `logout` array key:
+To customize the user logout link at the end of the user menu, register a new item with the `logout` array key:
 
 ```php
 use Filament\Navigation\MenuItem;

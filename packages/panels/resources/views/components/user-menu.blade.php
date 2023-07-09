@@ -2,12 +2,13 @@
     $user = filament()->auth()->user();
     $items = filament()->getUserMenuItems();
 
-    $accountItem = $items['account'] ?? null;
-    $accountItemUrl = $accountItem?->getUrl();
+    $profileItem = $items['profile'] ?? $items['account'] ?? null;
+    $profileItemUrl = $profileItem?->getUrl();
+    $hasProfile = filament()->hasProfile() || filled($profileItemUrl);
 
     $logoutItem = $items['logout'] ?? null;
 
-    $items = \Illuminate\Support\Arr::except($items, ['account', 'logout']);
+    $items = \Illuminate\Support\Arr::except($items, ['account', 'logout', 'profile']);
 @endphp
 
 {{ filament()->renderHook('user-menu.start') }}
@@ -22,29 +23,29 @@
         </button>
     </x-slot>
 
-    {{ filament()->renderHook('user-menu.account.before') }}
+    {{ filament()->renderHook('user-menu.profile.before') }}
 
-    @if (filled($accountItemUrl))
+    @if (filled($hasProfile))
         <x-filament::dropdown.list>
             <x-filament::dropdown.list.item
-                :color="$accountItem->getColor() ?? 'gray'"
-                :icon="$accountItem->getIcon() ?? 'heroicon-m-user-circle'"
-                :href="$accountItemUrl"
+                :color="$profileItem?->getColor() ?? 'gray'"
+                :icon="$profileItem?->getIcon() ?? 'heroicon-m-user-circle'"
+                :href="$profileItemUrl ?? filament()->getProfileUrl()"
                 tag="a"
             >
-                {{ $accountItem->getLabel() ?? filament()->getUserName($user) }}
+                {{ $profileItem?->getLabel() ?? filament()->getProfilePage()::getLabel() ?? filament()->getUserName($user) }}
             </x-filament::dropdown.list.item>
         </x-filament::dropdown.list>
     @else
         <x-filament::dropdown.header
-            :color="$accountItem?->getColor() ?? 'gray'"
-            :icon="$accountItem?->getIcon() ?? 'heroicon-m-user-circle'"
+            :color="$profileItem?->getColor() ?? 'gray'"
+            :icon="$profileItem?->getIcon() ?? 'heroicon-m-user-circle'"
         >
-            {{ $accountItem?->getLabel() ?? filament()->getUserName($user) }}
+            {{ $profileItem?->getLabel() ?? filament()->getUserName($user) }}
         </x-filament::dropdown.header>
     @endif
 
-    {{ filament()->renderHook('user-menu.account.after') }}
+    {{ filament()->renderHook('user-menu.profile.after') }}
 
     @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
         <div
