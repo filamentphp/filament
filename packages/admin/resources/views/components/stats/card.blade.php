@@ -78,18 +78,16 @@
         <div
             x-title="filament-stats-card-chart"
             x-data="{
-                chart: null,
-
                 labels: {{ json_encode(array_keys($chart)) }},
+
                 values: {{ json_encode(array_values($chart)) }},
 
                 init: function () {
-                    chart = Chart.getChart(this.$refs.canvas);
-                    chart !== undefined ? this.updateChart() : this.initChart()
+                    this.getChart() === undefined ? this.initChart() : this.updateChart()
                 },
 
                 initChart: function () {
-                    return (this.chart = new Chart(this.$refs.canvas, {
+                    return (new Chart(this.$refs.canvas, {
                         type: 'line',
                         data: {
                             labels: this.labels,
@@ -134,17 +132,22 @@
                     }))
                 },
 
+                getChart: function () {
+                    return Chart.getChart(this.$refs.canvas)
+                },
+
                 updateChart: function () {
-                    this.chart.data.labels = this.labels
-                    this.chart.data.datasets[0].data = this.values
-                    this.chart.update()
+                    chart = this.getChart()
+                    chart.data.labels = this.labels
+                    chart.data.datasets[0].data = this.values
+                    chart.update()
                 },
 
                 updateChartColors: function() {
-                    chart = Chart.getChart(this.$refs.canvas);
+                    chart = this.getChart()
                     chart.data.datasets[0].backgroundColor = getComputedStyle($refs.backgroundColorElement).color
                     chart.data.datasets[0].borderColor = getComputedStyle($refs.borderColorElement).color
-                    chart.update('none');
+                    chart.update('none')
                 }
             }"
             x-on:dark-mode-toggled.window="updateChartColors()"
