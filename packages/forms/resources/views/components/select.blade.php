@@ -1,4 +1,5 @@
 @php
+    $canSelectPlaceholder = $canSelectPlaceholder();
     $isDisabled = $isDisabled();
     $statePath = $getStatePath();
 @endphp
@@ -19,6 +20,7 @@
         @unless ($isSearchable() || $isMultiple())
             <x-filament::input.select
                 :autofocus="$isAutofocused()"
+                :can-select-placeholder="$canSelectPlaceholder"
                 :disabled="$isDisabled"
                 :id="$getId()"
                 :required="$isRequired() && ((bool) $isConcealed())"
@@ -32,7 +34,7 @@
                     $isHtmlAllowed = $isHtmlAllowed();
                 @endphp
 
-                @if ($canSelectPlaceholder())
+                @if ($canSelectPlaceholder)
                     <option value="">
                         @if (! $isDisabled)
                             {{ $getPlaceholder() }}
@@ -59,7 +61,7 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
-                            canSelectPlaceholder: @js($canSelectPlaceholder()),
+                            canSelectPlaceholder: @js($canSelectPlaceholder),
                             isHtmlAllowed: @js($isHtmlAllowed()),
                             getOptionLabelUsing: async () => {
                                 return await $wire.getFormSelectOptionLabel(@js($statePath))
@@ -94,8 +96,8 @@
                             state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
                             statePath: @js($statePath),
                         })"
-                x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 wire:ignore
+                x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 x-bind:class="{
                     'choices--error': @js($statePath) in $wire.__instance.serverMemo.errors,
                 }"
