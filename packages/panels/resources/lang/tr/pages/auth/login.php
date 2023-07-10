@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Hesabınıza giriş yapın',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Giriş yap',

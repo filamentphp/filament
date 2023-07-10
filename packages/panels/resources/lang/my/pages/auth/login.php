@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Sign in to your account',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => '၀င်မည်',

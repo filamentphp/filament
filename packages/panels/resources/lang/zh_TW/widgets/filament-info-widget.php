@@ -2,7 +2,7 @@
 
 return [
 
-    'buttons' => [
+    'actions' => [
 
         'visit_documentation' => [
             'label' => '說明文件',

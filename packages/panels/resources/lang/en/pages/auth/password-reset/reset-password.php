@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Reset your password',
 
-    'buttons' => [
+    'actions' => [
 
         'reset' => [
             'label' => 'Reset password',

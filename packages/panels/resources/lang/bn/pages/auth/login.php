@@ -6,7 +6,7 @@ return [
 
     'heading' => 'আপনার অ্যাকাউন্টে সাইন ইন করুন',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'সাইন ইন',

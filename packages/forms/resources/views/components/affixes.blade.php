@@ -47,10 +47,8 @@
             @endif
         >
             <x-filament::icon
-                alias="forms::components.affixes.prefix"
-                :name="$prefixIcon"
-                size="h-5 w-5"
-                class="filament-input-affix-icon"
+                alias="forms::components.affix"
+                class="filament-input-affix-icon h-5 w-5"
             />
         </span>
     @endif
@@ -109,10 +107,8 @@
             @endif
         >
             <x-filament::icon
-                alias="forms::components.affixes.suffix"
-                :name="$suffixIcon"
-                size="h-5 w-5"
-                class="filament-input-affix-icon"
+                alias="forms::components.affix"
+                class="filament-input-affix-icon h-5 w-5"
             />
         </span>
     @endif

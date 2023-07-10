@@ -47,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Ga naar pagina :page',
@@ -93,7 +93,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Herordenen van records voltooien',
@@ -127,7 +127,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Filter verwijderen',
@@ -198,7 +198,7 @@ return [
 
         'selected_count' => '1 record geselecteerd.|:count records geselecteerd.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Selecteer alle :count',

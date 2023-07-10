@@ -13,10 +13,9 @@
     >
         <x-filament::icon
             :name="$icon"
-            alias="tables::empty-state"
-            size="h-6 w-6"
             wire:loading.remove.delay=""
             :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
+            class="filament-tables-empty-state-icon h-6 w-6"
         />
 
         <x-filament::loading-indicator

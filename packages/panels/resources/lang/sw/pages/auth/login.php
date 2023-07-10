@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Ingia kwenye akaunti yako',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Ingia',

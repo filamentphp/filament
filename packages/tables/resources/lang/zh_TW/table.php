@@ -25,7 +25,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => '前往第 :page 頁',
@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => '篩選',
@@ -65,7 +65,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'reset' => [
                 'label' => '重設篩選',
@@ -99,7 +99,7 @@ return [
 
         'selected_count' => '已選擇 :count 個項目。',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => '選擇全部 :count 項',

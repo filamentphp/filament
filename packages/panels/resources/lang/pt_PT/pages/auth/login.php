@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Iniciar sessão',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Login',

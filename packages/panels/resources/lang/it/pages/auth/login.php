@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Accedi al tuo account',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Accedi',

@@ -47,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Przejdź do strony :page',
@@ -65,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Zakończ zmienianie kolejności',
@@ -97,7 +97,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Usuń filtr',
@@ -144,7 +144,7 @@ return [
 
         'selected_count' => '{1} 1 rekord zaznaczony.|[2,4]:count rekordy zaznaczone.|[5,*]:count rekordów zaznaczonych.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Zaznacz wszystkie :count',

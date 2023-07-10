@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Sign in',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Sign in',

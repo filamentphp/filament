@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Контент хаагдав',
 
-        'buttons' => [
+        'actions' => [
 
             'clone_item' => [
                 'label' => 'Хуулбарлах',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Бүгдийг эс сонгох',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Шинэ мөр',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Контент хаах',
 
-        'buttons' => [
+        'actions' => [
 
             'create_item' => [
                 'label' => 'Нэмэх :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Линк',
                     'unlink' => 'Unlink',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Буцах',

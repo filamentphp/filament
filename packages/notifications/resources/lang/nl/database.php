@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Meldingen',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Wissen',
@@ -27,7 +27,7 @@ return [
 
             'label' => 'Paginering navigatie',
 
-            'buttons' => [
+            'actions' => [
 
                 'next' => [
                     'label' => 'Volgende',

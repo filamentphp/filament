@@ -116,7 +116,7 @@ class RequestPasswordReset extends CardPage
     public function requestAction(): Action
     {
         return Action::make('request')
-            ->label(__('filament::pages/auth/password-reset/request-password-reset.buttons.request.label'))
+            ->label(__('filament::pages/auth/password-reset/request-password-reset.actions.request.label'))
             ->submit('request');
     }
 
@@ -124,7 +124,7 @@ class RequestPasswordReset extends CardPage
     {
         return Action::make('login')
             ->link()
-            ->label(__('filament::pages/auth/password-reset/request-password-reset.buttons.login.label'))
+            ->label(__('filament::pages/auth/password-reset/request-password-reset.actions.login.label'))
             ->icon(match (__('filament::layout.direction')) {
                 'rtl' => 'heroicon-m-arrow-right',
                 default => 'heroicon-m-arrow-left',

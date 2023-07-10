@@ -39,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => '{1} :page-ელ გვერდზე გადასვლა|[2,*] მე-:page გვერდზე გადასვლა',
@@ -57,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'ჩანაწერების გადანაცვლების დასრულება',
@@ -89,7 +89,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'ფილტრის მოხსნა',
@@ -136,7 +136,7 @@ return [
 
         'selected_count' => 'მონიშნულია :count ჩანაწერი.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => '{1} მონიშნე ყველა|[2,*] მონიშნე :count-ივე',

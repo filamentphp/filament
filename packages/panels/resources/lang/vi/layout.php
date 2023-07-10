@@ -4,7 +4,7 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
+    'actions' => [
 
         'billing' => [
             'label' => 'Quản lý gói đăng ký',

@@ -23,7 +23,7 @@
                         type="submit"
                         class="text-gray-600 outline-none hover:text-primary-500 focus:underline dark:text-gray-300 dark:hover:text-primary-500"
                     >
-                        {{ __('filament::widgets/account-widget.buttons.logout.label') }}
+                        {{ __('filament::widgets/account-widget.actions.logout.label') }}
                     </button>
                 </form>
             </div>

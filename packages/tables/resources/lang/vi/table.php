@@ -47,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Đi tới trang :page',
@@ -93,7 +93,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Sắp xếp lại bản ghi thành công',
@@ -129,7 +129,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Xóa bộ lọc',
@@ -200,7 +200,7 @@ return [
 
         'selected_count' => 'đã chọn 1 bản ghi.|đã chọn :count bản ghi.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Chọn tất cả :count',

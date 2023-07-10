@@ -34,7 +34,7 @@ trait CanReorderRecords
     public function getReorderRecordsTriggerAction(bool $isReordering): Action
     {
         $action = Action::make('reorderRecords')
-            ->label($isReordering ? __('filament-tables::table.buttons.disable_reordering.label') : __('filament-tables::table.buttons.enable_reordering.label'))
+            ->label($isReordering ? __('filament-tables::table.actions.disable_reordering.label') : __('filament-tables::table.actions.enable_reordering.label'))
             ->iconButton()
             ->icon($isReordering ? 'heroicon-m-check' : 'heroicon-m-chevron-up-down')
             ->color('gray')

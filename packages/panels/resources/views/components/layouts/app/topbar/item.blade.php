@@ -33,10 +33,8 @@
         @if ($icon || $activeIcon)
             <x-filament::icon
                 :name="($active && $activeIcon) ? $activeIcon : $icon"
-                alias="panels::topbar.item"
-                color="text-custom-600 dark:text-custom-400"
-                size="h-6 w-6"
                 :style="\Filament\Support\get_color_css_variables(($active ? 'primary' : 'gray'), shades: [400, 600])"
+                class="filament-topbar-item-icon h-6 w-6 text-custom-600 dark:text-custom-400"
             />
         @endif
 

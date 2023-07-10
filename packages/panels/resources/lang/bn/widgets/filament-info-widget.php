@@ -2,7 +2,7 @@
 
 return [
 
-    'buttons' => [
+    'actions' => [
 
         'visit_documentation' => [
             'label' => 'ব্যবহার গাইড',

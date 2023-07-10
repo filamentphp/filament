@@ -39,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Mergi la pagina :page',
@@ -57,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Dezactivați reordonarea',
@@ -87,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Ştergere filtru',
@@ -134,7 +134,7 @@ return [
 
         'selected_count' => '1 element selectat.|:count elemente selectate.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Selectare toate :count',

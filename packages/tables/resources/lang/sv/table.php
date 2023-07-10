@@ -48,7 +48,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Gå till sida :page',
@@ -94,7 +94,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Sluta ändra ordning på rader',
@@ -128,7 +128,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Ta bort filter',
@@ -199,7 +199,7 @@ return [
 
         'selected_count' => '1 rad vald.|:count rader valda.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Markera alla :count',

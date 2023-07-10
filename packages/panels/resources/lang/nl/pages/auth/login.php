@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Inloggen op je account',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Inloggen',

@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Forgotten your password?',
 
-    'buttons' => [
+    'actions' => [
 
         'login' => [
             'label' => 'back to login',

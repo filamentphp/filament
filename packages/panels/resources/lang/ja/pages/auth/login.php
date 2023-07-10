@@ -6,7 +6,7 @@ return [
 
     'heading' => 'アカウントにログインする',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'ログイン',

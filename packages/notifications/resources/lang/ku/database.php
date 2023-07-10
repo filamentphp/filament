@@ -6,7 +6,7 @@ return [
 
         'heading' => 'ئاگانامەکان',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'سرینەوەی هەموو',

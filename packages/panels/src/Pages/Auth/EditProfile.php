@@ -286,7 +286,7 @@ class EditProfile extends CardPage
     {
         return Action::make('back')
             ->link()
-            ->label(__('filament::pages/auth/edit-profile.buttons.back.label'))
+            ->label(__('filament::pages/auth/edit-profile.actions.back.label'))
             ->icon('heroicon-m-arrow-small-left')
             ->url(filament()->getUrl());
     }

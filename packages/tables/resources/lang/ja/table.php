@@ -39,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => ':pageページへ移動',
@@ -57,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'レコードの並び替えを終了',
@@ -87,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => '絞り込みを解除',
@@ -134,7 +134,7 @@ return [
 
         'selected_count' => '1件選択済み|:count件選択済み',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => ':count件全て選択',

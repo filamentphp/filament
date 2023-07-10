@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Sign up',
 
-    'buttons' => [
+    'actions' => [
 
         'login' => [
             'before' => 'or',

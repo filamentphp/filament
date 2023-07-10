@@ -15,7 +15,7 @@
                 wire:loading.attr="disabled"
                 class="disabled:pointer-events-none disabled:opacity-70"
             >
-                {{ __('filament-notifications::database.modal.buttons.mark_all_as_read.label') }}
+                {{ __('filament-notifications::database.modal.actions.mark_all_as_read.label') }}
             </x-filament::link>
 
             <span>&bull;</span>
@@ -31,7 +31,7 @@
             wire:loading.attr="disabled"
             class="disabled:pointer-events-none disabled:opacity-70"
         >
-            {{ __('filament-notifications::database.modal.buttons.clear.label') }}
+            {{ __('filament-notifications::database.modal.actions.clear.label') }}
         </x-filament::link>
     </div>
 </div>

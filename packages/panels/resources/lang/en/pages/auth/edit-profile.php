@@ -36,7 +36,7 @@ return [
         'saved' => 'Saved',
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'back' => [
             'label' => 'back',

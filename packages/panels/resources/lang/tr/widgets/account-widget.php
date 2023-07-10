@@ -2,7 +2,7 @@
 
 return [
 
-    'buttons' => [
+    'actions' => [
 
         'logout' => [
             'label' => 'Oturumu kapat',

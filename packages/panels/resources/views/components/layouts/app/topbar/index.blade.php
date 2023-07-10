@@ -17,8 +17,8 @@
                 x-data="{}"
                 x-bind:aria-label="
                     $store.sidebar.isOpen
-                        ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}'
-                        : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'
+                        ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
+                        : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
                 "
                 x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 @class([
@@ -30,8 +30,7 @@
                 <x-filament::icon
                     name="heroicon-o-bars-3"
                     alias="panels::topbar.open-mobile-sidebar-button"
-                    color="text-primary-500"
-                    size="h-6 w-6"
+                    class="h-6 w-6 text-primary-500"
                 />
             </button>
 

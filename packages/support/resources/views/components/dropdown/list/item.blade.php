@@ -23,14 +23,12 @@
         \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
     ]);
 
-    $iconSize = match ($iconSize) {
+    $iconClasses = 'filament-dropdown-list-item-icon shrink-0 ' . match ($iconSize) {
         'sm' => 'h-4 w-4',
         'md' => 'h-5 w-5',
         'lg' => 'h-6 w-6',
         default => $iconSize,
     };
-
-    $iconClasses = 'filament-dropdown-list-item-icon shrink-0';
 
     $imageClasses = 'filament-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
 
@@ -68,8 +66,6 @@
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
-                alias="dropdown.list.item"
-                :size="$iconSize"
                 :class="$iconClasses"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
                 :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
@@ -116,8 +112,6 @@
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
-                alias="dropdown.list.item"
-                :size="$iconSize"
                 :class="$iconClasses"
             />
         @endif
@@ -161,8 +155,6 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    alias="dropdown.list.item"
-                    :size="$iconSize"
                     :class="$iconClasses"
                 />
             @endif

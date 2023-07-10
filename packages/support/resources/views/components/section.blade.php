@@ -68,22 +68,20 @@
     >
         <div class="filament-section-component-header flex-1">
             <div
-                class="filament-section-component-header-heading-wrapper flex items-center gap-x-2"
+                class="filament-section-component-header-heading-and-icon-wrapper flex items-center gap-x-2"
             >
                 @if ($icon)
                     <x-filament::icon
                         :name="$icon"
-                        alias="section.icon"
-                        color="text-custom-400"
-                        :size="
+                        @class([
+                            'filament-section-component-header-icon text-custom-400',
                             match ($iconSize) {
                                 'sm' => 'h-4 w-4',
                                 'md' => 'h-5 w-5',
                                 'lg' => 'h-6 w-6',
                                 default => $iconSize,
-                            }
-                        "
-                        class="filament-section-component-header-icon"
+                            },
+                        ])
                         :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400])"
                     />
                 @endif

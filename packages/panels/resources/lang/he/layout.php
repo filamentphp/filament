@@ -4,7 +4,7 @@ return [
 
     'direction' => 'rtl',
 
-    'buttons' => [
+    'actions' => [
 
         'dark_theme' => [
             'label' => 'הפעל מצב כהה',

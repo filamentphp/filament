@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Passwort zurücksetzen',
 
-    'buttons' => [
+    'actions' => [
 
         'reset' => [
             'label' => 'Passwort zurücksetzen',

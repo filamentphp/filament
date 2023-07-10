@@ -6,7 +6,7 @@ return [
 
     'heading' => 'अपने अकाउंट में साइन इन करें',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'लॉग इन',

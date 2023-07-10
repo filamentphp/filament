@@ -6,7 +6,7 @@ return [
 
     'heading' => 'התחבר לחשבון שלך',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'התחבר',

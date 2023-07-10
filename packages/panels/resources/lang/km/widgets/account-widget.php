@@ -2,7 +2,7 @@
 
 return [
 
-    'buttons' => [
+    'actions' => [
 
         'logout' => [
             'label' => 'ចាកចេញពីកម្មវិធីប្រព័ន្ធ',

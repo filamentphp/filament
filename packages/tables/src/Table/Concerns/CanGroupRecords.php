@@ -68,7 +68,7 @@ trait CanGroupRecords
     public function getGroupRecordsTriggerAction(): Action
     {
         $action = Action::make('groupRecords')
-            ->label(__('filament-tables::table.buttons.group.label'))
+            ->label(__('filament-tables::table.actions.group.label'))
             ->iconButton()
             ->icon('heroicon-m-rectangle-stack')
             ->color('gray')

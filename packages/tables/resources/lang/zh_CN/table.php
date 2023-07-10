@@ -25,7 +25,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => '跳转到 :page',
@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => '筛选',
@@ -65,7 +65,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'reset' => [
                 'label' => '重置筛选条件',
@@ -99,7 +99,7 @@ return [
 
         'selected_count' => '已选 :count 条记录',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => '选择全部 :count 条记录',

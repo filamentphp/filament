@@ -39,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Перейти к странице :page',
@@ -57,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Сохранить порядок',
@@ -87,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Удалить фильтр',
@@ -134,7 +134,7 @@ return [
 
         'selected_count' => 'Выбрана 1 запись.|Выбрано :count записей.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Выбрать всё :count',

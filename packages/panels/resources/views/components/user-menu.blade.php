@@ -18,7 +18,7 @@
     <x-slot name="trigger" class="ms-4">
         <button
             class="block"
-            aria-label="{{ __('filament::layout.buttons.user_menu.label') }}"
+            aria-label="{{ __('filament::layout.actions.user_menu.label') }}"
         >
             <x-filament::avatar.user :user="$user" />
         </button>
@@ -115,8 +115,8 @@
         >
             <button
                 type="button"
-                aria-label="{{ __('filament::layout.buttons.light_theme.label') }}"
-                x-tooltip="'{{ __('filament::layout.buttons.light_theme.label') }}'"
+                aria-label="{{ __('filament::layout.actions.light_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.actions.light_theme.label') }}'"
                 x-on:click="theme = 'light'"
                 x-bind:class="theme === 'light' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 class="flex flex-1 items-center justify-center p-2 hover:bg-gray-500/10 focus:bg-gray-500/10"
@@ -124,14 +124,14 @@
                 <x-filament::icon
                     name="heroicon-m-sun"
                     alias="panels::topbar.user-menu.theme-switcher.light-button"
-                    size="h-5 w-5"
+                    class="h-5 w-5"
                 />
             </button>
 
             <button
                 type="button"
-                aria-label="{{ __('filament::layout.buttons.dark_theme.label') }}"
-                x-tooltip="'{{ __('filament::layout.buttons.dark_theme.label') }}'"
+                aria-label="{{ __('filament::layout.actions.dark_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.actions.dark_theme.label') }}'"
                 x-on:click="theme = 'dark'"
                 x-bind:class="theme === 'dark' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 class="flex flex-1 items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
@@ -139,14 +139,14 @@
                 <x-filament::icon
                     name="heroicon-m-moon"
                     alias="panels::topbar.user-menu.theme-switcher.dark-button"
-                    size="h-5 w-5"
+                    class="h-5 w-5"
                 />
             </button>
 
             <button
                 type="button"
-                aria-label="{{ __('filament::layout.buttons.system_theme.label') }}"
-                x-tooltip="'{{ __('filament::layout.buttons.system_theme.label') }}'"
+                aria-label="{{ __('filament::layout.actions.system_theme.label') }}"
+                x-tooltip="'{{ __('filament::layout.actions.system_theme.label') }}'"
                 x-on:click="theme = 'system'"
                 x-bind:class="theme === 'system' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 class="flex flex-1 items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
@@ -154,7 +154,7 @@
                 <x-filament::icon
                     name="heroicon-m-computer-desktop"
                     alias="panels::topbar.user-menu.theme-switcher.system-button"
-                    size="h-5 w-5"
+                    class="h-5 w-5"
                 />
             </button>
         </div>
@@ -179,7 +179,7 @@
             method="post"
             tag="form"
         >
-            {{ $logoutItem?->getLabel() ?? __('filament::layout.buttons.logout.label') }}
+            {{ $logoutItem?->getLabel() ?? __('filament::layout.actions.logout.label') }}
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
 </x-filament::dropdown>

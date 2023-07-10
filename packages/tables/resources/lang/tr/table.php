@@ -37,7 +37,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => ':page. sayfaya git',
@@ -55,7 +55,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Sıralamayı kapat',
@@ -85,7 +85,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Filtreyi kaldır',
@@ -132,7 +132,7 @@ return [
 
         'selected_count' => '1 kayıt seçildi.|:count kayıt seçildi.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Tüm :count kaydı seç',

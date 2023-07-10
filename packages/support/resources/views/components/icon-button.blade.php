@@ -33,15 +33,13 @@
 
     $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [500]);
 
-    $iconSize = match ($iconSize) {
+    $iconClasses = 'filament-icon-button-icon ' . match ($iconSize) {
         'sm' => 'h-4 w-4',
         'sm md:md' => 'h-4 w-4 md:h-5 md:w-5',
         'md' => 'h-5 w-5',
         'lg' => 'h-6 w-6',
         default => $iconSize,
     };
-
-    $iconClasses = 'filament-icon-button-icon';
 
     $indicatorClasses = 'filament-icon-button-indicator absolute -end-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
 
@@ -86,9 +84,6 @@
 
         <x-filament::icon
             :name="$icon"
-            :alias="$iconAlias"
-            group="icon-button"
-            :size="$iconSize"
             :class="$iconClasses"
             :wire:loading.remove.delay="$hasLoadingIndicator"
             :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
@@ -139,9 +134,6 @@
 
         <x-filament::icon
             :name="$icon"
-            :alias="$iconAlias"
-            group="icon-button"
-            :size="$iconSize"
             :class="$iconClasses"
         />
 

@@ -135,7 +135,7 @@ class Register extends CardPage
     public function registerAction(): Action
     {
         return Action::make('register')
-            ->label(__('filament::pages/auth/register.buttons.register.label'))
+            ->label(__('filament::pages/auth/register.actions.register.label'))
             ->submit('register');
     }
 
@@ -143,7 +143,7 @@ class Register extends CardPage
     {
         return Action::make('login')
             ->link()
-            ->label(__('filament::pages/auth/register.buttons.login.label'))
+            ->label(__('filament::pages/auth/register.actions.login.label'))
             ->url(filament()->getLoginUrl());
     }
 

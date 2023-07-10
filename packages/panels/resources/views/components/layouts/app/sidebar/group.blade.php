@@ -31,9 +31,7 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    alias="panels::sidebar.group"
-                    color="text-gray-600 dark:text-gray-400"
-                    size="h-6 w-6"
+                    class="filament-sidebar-group-icon h-6 w-6 text-gray-600 dark:text-gray-400"
                 />
             @endif
 

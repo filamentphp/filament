@@ -47,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Nenda kwenye kurasa :page',
@@ -65,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Maliza kupangilia rekodi upya',
@@ -95,7 +95,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Toa mchujo',
@@ -142,7 +142,7 @@ return [
 
         'selected_count' => 'Rekodi 1 imeshaguliwa .|Rekodi :count zimeshaguliwa.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Chagua :count',

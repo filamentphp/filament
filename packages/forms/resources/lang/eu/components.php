@@ -6,7 +6,7 @@ return [
 
         'collapsed' => 'Uzkurtutako edukia',
 
-        'buttons' => [
+        'actions' => [
 
             'clone_item' => [
                 'label' => 'Klonatu',
@@ -58,7 +58,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Guztiak deshautatu',
@@ -74,7 +74,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Gehitu lerroa',
@@ -125,7 +125,7 @@ return [
 
         'collapsed' => 'Uzkurtutako edukia',
 
-        'buttons' => [
+        'actions' => [
 
             'create_item' => [
                 'label' => 'Gehitu :label',
@@ -177,7 +177,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Esteka',
                     'unlink' => 'Kendu esteka',
                 ],
@@ -258,7 +258,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Aurrekoa',

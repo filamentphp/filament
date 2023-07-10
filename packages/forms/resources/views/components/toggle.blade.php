@@ -66,14 +66,13 @@
                     @if ($hasOffIcon())
                         <x-filament::icon
                             :name="$getOffIcon()"
-                            alias="forms::components.toggle.off"
-                            :color="
+                            @class([
+                                'filament-forms-toggle-component-off-icon h-3 w-3',
                                 match ($offColor) {
                                     'gray' => 'text-gray-400 dark:text-gray-700',
                                     default => 'text-custom-600',
-                                }
-                            "
-                            size="h-3 w-3"
+                                },
+                            ])
                         />
                     @endif
                 </span>
@@ -89,15 +88,14 @@
                     @if ($hasOnIcon())
                         <x-filament::icon
                             :name="$getOnIcon()"
-                            alias="forms::components.toggle.on"
-                            :color="
+                            x-cloak="x-cloak"
+                            @class([
+                                'filament-forms-toggle-component-on-icon h-3 w-3',
                                 match ($onColor) {
                                     'gray' => 'text-gray-400 dark:text-gray-700',
                                     default => 'text-custom-600',
-                                }
-                            "
-                            size="h-3 w-3"
-                            x-cloak="x-cloak"
+                                },
+                            ])
                         />
                     @endif
                 </span>

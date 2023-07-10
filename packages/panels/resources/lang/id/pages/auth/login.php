@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Masuk ke akun Anda',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Masuk',

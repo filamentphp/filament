@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Kirjaudu tilillesi',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Kirjaudu',

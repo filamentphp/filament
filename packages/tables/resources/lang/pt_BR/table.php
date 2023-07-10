@@ -47,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Ir para página :page',
@@ -65,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Concluir a reordenação de registros',
@@ -97,7 +97,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Remover filtro',
@@ -144,7 +144,7 @@ return [
 
         'selected_count' => '1 registro selecionado.|:count registros selecionados.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Selecione todos os :count',

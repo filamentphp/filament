@@ -47,13 +47,14 @@
     @if ($icon && $iconPosition === 'before')
         <x-filament::icon
             :name="$icon"
-            :color="$iconColorClasses"
-            alias="tabs.item"
-            size="h-5 w-5"
             :style="$iconStyles"
             x-bind:class="{
                 '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
             }"
+            @class([
+                'filament-tabs-item-icon h-5 w-5',
+                $iconColorClasses,
+            ])
         />
     @endif
 
@@ -64,13 +65,14 @@
     @if ($icon && $iconPosition === 'after')
         <x-filament::icon
             :name="$icon"
-            :color="$iconColorClasses"
-            alias="tabs.item"
-            size="h-5 w-5"
             :style="$iconStyles"
             x-bind:class="{
                 '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
             }"
+            @class([
+                'filament-tabs-item-icon h-5 w-5',
+                $iconColorClasses,
+            ])
         />
     @endif
 

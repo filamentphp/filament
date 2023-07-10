@@ -58,7 +58,7 @@
                                 size="sm"
                                 color="gray"
                             >
-                                {{ __('filament-notifications::database.modal.pagination.buttons.previous.label') }}
+                                {{ __('filament-notifications::database.modal.pagination.actions.previous.label') }}
                             </x-filament::button>
                         @endif
                     </div>
@@ -73,7 +73,7 @@
                                 size="sm"
                                 color="gray"
                             >
-                                {{ __('filament-notifications::database.modal.pagination.buttons.next.label') }}
+                                {{ __('filament-notifications::database.modal.pagination.actions.next.label') }}
                             </x-filament::button>
                         @endif
                     </div>

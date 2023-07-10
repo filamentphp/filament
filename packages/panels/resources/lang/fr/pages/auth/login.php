@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Connectez-vous à votre compte',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Connexion',

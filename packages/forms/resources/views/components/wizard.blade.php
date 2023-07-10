@@ -146,28 +146,26 @@
                                     'border-gray-300 dark:border-gray-500':
                                         getStepIndex(step) < {{ $loop->index }},
                                 }"
-                                class="filament-forms-wizard-component-header-step-icon flex h-10 w-10 items-center justify-center rounded-full"
+                                class="filament-forms-wizard-component-header-step-icon-container flex h-10 w-10 items-center justify-center rounded-full"
                             >
                                 <x-filament::icon
                                     name="heroicon-m-check"
                                     alias="forms::components.wizard.completed-step"
-                                    color="text-white"
-                                    size="h-5 w-5"
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
                                     x-cloak="x-cloak"
+                                    class="filament-forms-wizard-component-header-step-icon h-5 w-5 text-white"
                                 />
 
                                 @if ($icon = $step->getIcon())
                                     <x-filament::icon
                                         :name="$icon"
-                                        alias="forms::components.wizard.current-step"
-                                        size="h-5 w-5"
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-cloak="x-cloak"
                                         x-bind:class="{
                                             'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-500': getStepIndex(step) === {{ $loop->index }},
                                         }"
+                                        class="filament-forms-wizard-component-header-step-icon h-5 w-5"
                                     />
                                 @else
                                     <span

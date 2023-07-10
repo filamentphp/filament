@@ -39,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Gå til side :page',
@@ -57,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => 'Filtrer',
@@ -75,7 +75,7 @@ return [
 
     'selection_indicator' => [
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Vælg alle :count',

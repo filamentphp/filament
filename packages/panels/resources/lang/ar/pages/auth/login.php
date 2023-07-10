@@ -6,7 +6,7 @@ return [
 
     'heading' => 'الدخول إلى حسابك',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'تسجيل الدخول',

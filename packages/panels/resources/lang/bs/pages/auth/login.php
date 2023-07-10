@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Prijavite se na svoj račun',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Prijavite se',

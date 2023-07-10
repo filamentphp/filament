@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Log masuk ke akaun anda',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Log masuk',

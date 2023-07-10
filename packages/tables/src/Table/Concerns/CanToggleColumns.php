@@ -53,7 +53,7 @@ trait CanToggleColumns
     public function getToggleColumnsTriggerAction(): Action
     {
         $action = Action::make('toggleColumns')
-            ->label(__('filament-tables::table.buttons.toggle_columns.label'))
+            ->label(__('filament-tables::table.actions.toggle_columns.label'))
             ->iconButton()
             ->icon('heroicon-m-view-columns')
             ->color('gray')

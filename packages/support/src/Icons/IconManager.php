@@ -5,12 +5,12 @@ namespace Filament\Support\Icons;
 class IconManager
 {
     /**
-     * @var array<string, Icon>
+     * @var array<string, string>
      */
     protected array $icons = [];
 
     /**
-     * @param  array<string, Icon>  $icons
+     * @param  array<string, string>  $icons
      */
     public function register(array $icons): void
     {
@@ -20,7 +20,7 @@ class IconManager
         ];
     }
 
-    public function resolve(string $name): ?Icon
+    public function resolve(string $name): ?string
     {
         return $this->icons[$name] ?? null;
     }

@@ -4,7 +4,7 @@ return [
 
     'direction' => 'বাম থেকে ডানে',
 
-    'buttons' => [
+    'actions' => [
 
         'dark_theme' => [
             'label' => 'ডার্ক মোড',

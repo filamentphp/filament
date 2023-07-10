@@ -22,7 +22,7 @@
     $descriptionBelow = $getDescriptionBelow();
 
     $iconPosition = $getIconPosition();
-    $iconSize = $isBadge ? 'h-3 w-3' : 'h-4 w-4';
+    $iconClasses = 'filament-tables-text-column-icon ' . ($isBadge ? 'h-3 w-3' : 'h-4 w-4');
 
     $isClickable = $getAction() || $getUrl();
 @endphp
@@ -118,8 +118,7 @@
                         @if ($icon && $iconPosition === 'before')
                             <x-filament::icon
                                 :name="$icon"
-                                alias="tables::columns.text"
-                                :size="$iconSize"
+                                :class="$iconClasses"
                             />
                         @endif
 
@@ -141,8 +140,7 @@
                         @if ($icon && $iconPosition === 'after')
                             <x-filament::icon
                                 :name="$icon"
-                                alias="tables::columns.text"
-                                :size="$iconSize"
+                                :class="$iconClasses"
                             />
                         @endif
                     </div>

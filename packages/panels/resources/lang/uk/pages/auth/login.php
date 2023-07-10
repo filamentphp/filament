@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Увійдіть у свій акаунт',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Увійти',

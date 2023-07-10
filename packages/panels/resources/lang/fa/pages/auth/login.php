@@ -6,7 +6,7 @@ return [
 
     'heading' => 'ورود به حساب کاربری شما',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'ورود',

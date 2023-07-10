@@ -101,7 +101,7 @@ class Login extends CardPage
     {
         return TextInput::make('password')
             ->label(__('filament::pages/auth/login.form.password.label'))
-            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament::pages/auth/login.buttons.request_password_reset.label\') }}</x-filament::link>')) : null)
+            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament::pages/auth/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
             ->password()
             ->required();
     }
@@ -115,7 +115,7 @@ class Login extends CardPage
     public function authenticateAction(): Action
     {
         return Action::make('authenticate')
-            ->label(__('filament::pages/auth/login.buttons.authenticate.label'))
+            ->label(__('filament::pages/auth/login.actions.authenticate.label'))
             ->submit('authenticate');
     }
 
@@ -123,7 +123,7 @@ class Login extends CardPage
     {
         return Action::make('register')
             ->link()
-            ->label(__('filament::pages/auth/login.buttons.register.label'))
+            ->label(__('filament::pages/auth/login.actions.register.label'))
             ->url(filament()->getRegistrationUrl());
     }
 

@@ -6,7 +6,7 @@ return [
 
     'heading' => '로그인하세요',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => '로그인',

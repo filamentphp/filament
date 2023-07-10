@@ -19,10 +19,8 @@
 
                     <x-filament::icon
                         :name="$icon"
-                        alias="tables::columns.summaries.icon-count"
-                        color="text-custom-500"
-                        size="h-4 w-4"
                         :style="\Filament\Support\get_color_css_variables(json_decode($color) ?? 'gray', shades: [500])"
+                        class="filament-tables-icon-count-summary-icon h-4 w-4 text-custom-500"
                     />
                 </div>
             @endif

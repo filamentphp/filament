@@ -31,7 +31,7 @@
         $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
 
         $iconPosition = $getIconPosition();
-        $iconSize = $isBadge ? 'h-3 w-3' : 'h-4 w-4';
+        $iconClasses = 'filament-infolists-text-entry-icon ' . ($isBadge ? 'h-3 w-3' : 'h-4 w-4');
 
         $url = $getUrl();
     @endphp
@@ -124,8 +124,7 @@
                             @if ($icon && $iconPosition === 'before')
                                 <x-filament::icon
                                     :name="$icon"
-                                    alias="infolists::components.text-entry"
-                                    :size="$iconSize"
+                                    :class="$iconClasses"
                                 />
                             @endif
 
@@ -150,8 +149,7 @@
                             @if ($icon && $iconPosition === 'after')
                                 <x-filament::icon
                                     :name="$icon"
-                                    alias="infolists::components.text-entry"
-                                    :size="$iconSize"
+                                    :class="$iconClasses"
                                 />
                             @endif
                         </div>

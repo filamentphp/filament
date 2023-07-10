@@ -6,7 +6,7 @@ return [
 
     'heading' => '登录您的账号',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => '登录',

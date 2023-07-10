@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Bejelentkezés a fiókba',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Bejelentkezés',

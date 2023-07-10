@@ -581,9 +581,7 @@
                                             <x-filament::icon
                                                 name="heroicon-m-chevron-up"
                                                 alias="tables::grouping.collapse-button"
-                                                size="h-5 w-5"
-                                                color="text-gray-600 dark:text-gray-300"
-                                                class="transition"
+                                                class="transition h-5 w-5 text-gray-600 dark:text-gray-300"
                                                 x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) && 'rotate-180'"
                                             />
                                         @endif
@@ -1022,9 +1020,7 @@
                                                     <x-filament::icon
                                                         name="heroicon-m-chevron-up"
                                                         alias="tables::grouping.collapse-button"
-                                                        size="h-5 w-5"
-                                                        color="text-gray-600 dark:text-gray-300"
-                                                        class="transition"
+                                                        class="transition h-5 w-5 text-gray-600 dark:text-gray-300"
                                                         x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) && 'rotate-180'"
                                                     />
                                                 @endif

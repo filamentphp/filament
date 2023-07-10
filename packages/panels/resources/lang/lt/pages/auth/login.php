@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Prisijunkite prie savo paskyros',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Prisijungti',

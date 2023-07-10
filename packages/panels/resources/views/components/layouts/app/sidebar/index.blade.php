@@ -48,8 +48,8 @@
                     class="filament-sidebar-collapse-button hidden h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10 lg:flex"
                     x-bind:aria-label="
                         $store.sidebar.isOpen
-                            ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}'
-                            : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'
+                            ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
+                            : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
                     "
                     x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                     x-transition:enter="delay-100 lg:transition"
@@ -58,8 +58,7 @@
                 >
                     <x-filament::icon
                         alias="panels::sidebar.collapse-button"
-                        color="text-primary-500"
-                        size="h-6 w-6"
+                        class="h-6 w-6 text-primary-500"
                     >
                         <svg
                             class="h-full w-full"
@@ -104,8 +103,8 @@
                 class="filament-sidebar-close-button flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10"
                 x-bind:aria-label="
                     $store.sidebar.isOpen
-                        ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}'
-                        : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'
+                        ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
+                        : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
                 "
                 x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen && @js(! filament()->isSidebarFullyCollapsibleOnDesktop())"
@@ -116,7 +115,7 @@
                 <x-filament::icon
                     name="heroicon-o-bars-3"
                     alias="panels::sidebar.collapse-button.full"
-                    size="h-6 w-6"
+                    class="h-6 w-6"
                 />
             </button>
         @endif

@@ -4,7 +4,7 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
+    'actions' => [
 
         'dark_theme' => [
             'label' => '切换暗黑模式',

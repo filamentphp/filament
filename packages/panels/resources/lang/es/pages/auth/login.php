@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Entre a su cuenta',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Entrar',

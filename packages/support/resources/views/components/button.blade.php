@@ -70,14 +70,12 @@
         default => 'md',
     };
 
-    $iconSize = match ($iconSize) {
+    $iconClasses = 'filament-button-icon ' . match ($iconSize) {
         'sm' => 'h-4 w-4',
         'md' => 'h-5 w-5',
         'lg' => 'h-6 w-6',
         default => $iconSize,
     };
-
-    $iconClasses = 'filament-button-icon';
 
     $indicatorClasses = 'filament-button-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
 
@@ -173,8 +171,6 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    group="button"
-                    :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
@@ -217,8 +213,6 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    group="button"
-                    :size="$iconSize"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
@@ -271,8 +265,6 @@
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
                 :name="$icon"
-                group="button"
-                :size="$iconSize"
                 :class="$iconClasses"
             />
         @endif
@@ -284,8 +276,6 @@
         @if ($icon && $iconPosition === 'after')
             <x-filament::icon
                 :name="$icon"
-                group="button"
-                :size="$iconSize"
                 :class="$iconClasses"
             />
         @endif

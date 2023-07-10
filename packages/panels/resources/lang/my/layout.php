@@ -4,7 +4,7 @@ return [
 
     'direction' => 'ဘယ်မှညာ',
 
-    'buttons' => [
+    'actions' => [
 
         'dark_theme' => [
             'label' => 'အနက်နောက်ခံပုံစံ',

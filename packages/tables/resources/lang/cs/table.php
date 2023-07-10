@@ -45,7 +45,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Jít na stránku :page',
@@ -63,7 +63,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Dokončit změnu pořadí položek',
@@ -93,7 +93,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Odstranit filtr',
@@ -140,7 +140,7 @@ return [
 
         'selected_count' => '{1} 1 záznam zvolen.|[2,4] :count záznamy zvoleny.|[5,*] :count záznamů zvoleno.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Označit všechny :count',

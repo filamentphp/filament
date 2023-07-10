@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Melden Sie sich an.',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Anmelden',

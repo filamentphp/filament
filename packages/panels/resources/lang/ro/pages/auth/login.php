@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Logheaza-te în contul tau',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Autentificare',

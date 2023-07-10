@@ -39,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Ke halaman :page',
@@ -57,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Selesaikan pengurutan ulang data',
@@ -87,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Hapus filter',
@@ -134,7 +134,7 @@ return [
 
         'selected_count' => ':count data dipilih.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Pilih semua (:count)',

@@ -47,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Joan :page orrira',
@@ -65,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Erregistroak berrantolatzen amaitu',
@@ -97,7 +97,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Kendu filtroak',
@@ -144,7 +144,7 @@ return [
 
         'selected_count' => 'Erregistro bat hautatu da.|Hautatutako erregistroak: :count',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Hautatu denak :count',

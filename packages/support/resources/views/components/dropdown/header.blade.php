@@ -23,9 +23,7 @@
     @if ($icon)
         <x-filament::icon
             :name="$icon"
-            alias="dropdown.header"
-            size="h-5 w-5"
-            class="filament-dropdown-header-icon"
+            class="filament-dropdown-header-icon h-5 w-5"
         />
     @endif
 

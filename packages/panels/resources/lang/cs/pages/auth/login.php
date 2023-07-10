@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Přihlašte se k Vašemu účtu',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Přihlásit se',

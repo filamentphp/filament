@@ -4,7 +4,7 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
+    'actions' => [
 
         'dark_theme' => [
             'label' => 'Skift til mørk tilstand',

@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Đăng nhập vào tài khoản của bạn',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Đăng nhập',

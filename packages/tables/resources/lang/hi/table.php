@@ -25,7 +25,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'पृष्ठ :page पर जाएं',
@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => 'फ़िल्टर',
@@ -61,7 +61,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'reset' => [
                 'label' => 'फ़िल्टर रीसेट करें',
@@ -83,7 +83,7 @@ return [
 
         'selected_count' => '1 रिकॉर्ड चयनित।|:count रिकॉर्ड चयनित।',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'सभी :count चुने',

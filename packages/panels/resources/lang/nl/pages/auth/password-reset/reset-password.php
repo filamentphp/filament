@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Wachtwoord opnieuw instellen',
 
-    'buttons' => [
+    'actions' => [
 
         'reset' => [
             'label' => 'Wachtwoord opnieuw instellen',

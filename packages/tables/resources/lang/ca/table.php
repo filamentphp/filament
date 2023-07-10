@@ -25,7 +25,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Anar a la pàgina :page',
@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => 'Filtre',
@@ -61,7 +61,7 @@ return [
 
     'selection_indicator' => [
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Select all :count',

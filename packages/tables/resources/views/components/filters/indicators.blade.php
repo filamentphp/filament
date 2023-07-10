@@ -27,11 +27,11 @@
                         <x-filament::icon
                             name="heroicon-m-x-mark"
                             alias="tables::filters.remove-button"
-                            size="h-3 w-3"
+                            class="h-3 w-3"
                         />
 
                         <span class="sr-only">
-                            {{ __('filament-tables::table.filters.buttons.remove.label') }}
+                            {{ __('filament-tables::table.filters.actions.remove.label') }}
                         </span>
                     </button>
                 </span>
@@ -48,8 +48,8 @@
                     <x-filament::icon
                         name="heroicon-m-x-mark"
                         alias="tables::filters.remove-all-button"
-                        size="h-5 w-5"
-                        :x-tooltip.raw="__('filament-tables::table.filters.buttons.remove_all.tooltip')"
+                        class="h-5 w-5"
+                        :x-tooltip.raw="__('filament-tables::table.filters.actions.remove_all.tooltip')"
                         wire:loading.remove.delay=""
                         wire:target="removeTableFilters,removeTableFilter"
                     />
@@ -62,7 +62,7 @@
                 </div>
 
                 <span class="sr-only">
-                    {{ __('filament-tables::table.filters.buttons.remove_all.label') }}
+                    {{ __('filament-tables::table.filters.actions.remove_all.label') }}
                 </span>
             </button>
         </div>

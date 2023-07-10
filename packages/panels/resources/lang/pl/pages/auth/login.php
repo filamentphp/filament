@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Zaloguj się',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Zaloguj się',

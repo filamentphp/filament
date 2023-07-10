@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
 
 /**
  * @method static void register(array $icons)
- * @method static Icon | null resolve(string $name)
+ * @method static string | null resolve(string $name)
  *
  * @see IconManager
  */

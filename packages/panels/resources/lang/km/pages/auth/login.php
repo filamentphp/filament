@@ -6,7 +6,7 @@ return [
 
     'heading' => 'ចូលទៅក្នុងគណនីរបស់អ្នក',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'ចុះឈ្មោះចូល',

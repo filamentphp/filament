@@ -6,7 +6,7 @@ return [
 
     'heading' => '登入帳號',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => '登入',

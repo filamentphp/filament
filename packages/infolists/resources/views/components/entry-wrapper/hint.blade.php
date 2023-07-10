@@ -24,8 +24,7 @@
     @if ($icon)
         <x-filament::icon
             :name="$icon"
-            alias="infolists::components.hint"
-            size="h-5 w-5"
+            class="filament-infolists-entry-wrapper-hint-icon h-5 w-5"
         />
     @endif
 

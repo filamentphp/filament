@@ -21,9 +21,7 @@
             @if ($icon = $getIcon())
                 <x-filament::icon
                     :name="$icon"
-                    alias="widgets::stats-overview.card"
-                    color="text-gray-500 dark:text-gray-200"
-                    size="h-4 w-4"
+                    class="filament-stats-overview-widget-card-icon h-4 w-4 text-gray-500 dark:text-gray-200"
                 />
             @endif
 
@@ -36,14 +34,13 @@
 
         @if ($description = $getDescription())
             <div
-                class="flex items-center space-x-1 text-sm font-medium text-custom-600 rtl:space-x-reverse"
+                class="filament-stats-overview-widget-card-description flex items-center space-x-1 text-sm font-medium text-custom-600 rtl:space-x-reverse"
                 style="{{ \Filament\Support\get_color_css_variables($getDescriptionColor() ?? 'gray', shades: [600]) }}"
             >
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
                         :name="$descriptionIcon"
-                        alias="widgets::stats-overview.card.description"
-                        size="h-4 w-4"
+                        class="filament-stats-overview-widget-card-description-icon h-4 w-4"
                     />
                 @endif
 
@@ -52,8 +49,7 @@
                 @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
                     <x-filament::icon
                         :name="$descriptionIcon"
-                        alias="widgets::stats-overview.card.description"
-                        size="h-4 w-4"
+                        class="filament-stats-overview-widget-card-description-icon h-4 w-4"
                     />
                 @endif
             </div>

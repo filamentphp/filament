@@ -4,7 +4,7 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
+    'actions' => [
 
         'dark_theme' => [
             'label' => 'डार्क मोड टॉगल करें',

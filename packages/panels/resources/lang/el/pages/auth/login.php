@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Συνδεθείτε στο λογαριασμό σας',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Συνδεθείτε',

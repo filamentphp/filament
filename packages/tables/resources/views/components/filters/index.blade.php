@@ -20,7 +20,7 @@
             tag="button"
             size="sm"
         >
-            {{ __('filament-tables::table.filters.buttons.reset.label') }}
+            {{ __('filament-tables::table.filters.actions.reset.label') }}
         </x-filament::link>
     </div>
 </div>

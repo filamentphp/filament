@@ -29,9 +29,7 @@
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
-                alias="tables::pagination.item"
-                size="h-5 w-5"
-                class="rtl:-scale-x-100"
+                class="filament-tables-pagination-item-icon h-5 w-5 rtl:-scale-x-100"
             />
         @endif
 

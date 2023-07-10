@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Logga in på ditt konto',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Logga in',

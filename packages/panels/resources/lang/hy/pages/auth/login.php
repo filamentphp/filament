@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Մուտք գործեք ձեր հաշիվ',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'Մուտք գործել',

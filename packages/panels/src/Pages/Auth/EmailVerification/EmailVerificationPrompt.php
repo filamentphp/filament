@@ -40,7 +40,7 @@ class EmailVerificationPrompt extends CardPage
     {
         return Action::make('resendNotification')
             ->link()
-            ->label(__('filament::pages/auth/email-verification/email-verification-prompt.buttons.resend_notification.label') . '.')
+            ->label(__('filament::pages/auth/email-verification/email-verification-prompt.actions.resend_notification.label') . '.')
             ->action(function (): void {
                 try {
                     $this->rateLimit(2);

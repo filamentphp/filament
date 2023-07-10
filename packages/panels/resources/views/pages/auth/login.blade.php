@@ -1,7 +1,7 @@
 <x-filament::layouts.card>
     @if (filament()->hasRegistration())
         <x-slot name="subheading">
-            {{ __('filament::pages/auth/login.buttons.register.before') }}
+            {{ __('filament::pages/auth/login.actions.register.before') }}
 
             {{ $this->registerAction }}
         </x-slot>

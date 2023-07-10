@@ -7,8 +7,7 @@
         <x-filament::icon
             name="heroicon-o-bell"
             alias="notifications::database.modal.empty-state"
-            color="text-primary-500"
-            size="h-6 w-6"
+            class="h-6 w-6 text-primary-500"
         />
     </div>
 

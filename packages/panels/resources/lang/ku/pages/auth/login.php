@@ -6,7 +6,7 @@ return [
 
     'heading' => 'بچۆ ژوورەوە بۆ ناو هەژمارەکەت',
 
-    'buttons' => [
+    'actions' => [
 
         'authenticate' => [
             'label' => 'چوونەژوورەوە',

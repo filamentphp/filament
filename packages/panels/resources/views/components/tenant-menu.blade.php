@@ -116,7 +116,7 @@
                 :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
                 tag="a"
             >
-                {{ $billingItem?->getLabel() ?? __('filament::layout.buttons.billing.label') }}
+                {{ $billingItem?->getLabel() ?? __('filament::layout.actions.billing.label') }}
             </x-filament::dropdown.list.item>
         </x-filament::dropdown.list>
     @endif

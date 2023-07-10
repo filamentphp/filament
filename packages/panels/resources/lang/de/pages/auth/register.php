@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Registrieren',
 
-    'buttons' => [
+    'actions' => [
 
         'login' => [
             'before' => 'oder',
