@@ -5,7 +5,6 @@ use Filament\Http\Controllers\Auth\EmailVerificationController;
 use Filament\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\RedirectToHomeController;
 use Filament\Http\Controllers\RedirectToTenantController;
-use Filament\Http\Middleware\IdentifyTenant;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
@@ -79,7 +78,7 @@ Route::name('filament.')
                                 $routes($panel);
                             }
 
-                            Route::middleware($hasTenancy ? [IdentifyTenant::class] : [])
+                            Route::middleware($hasTenancy ? $panel->getTenantMiddleware() : [])
                                 ->prefix($hasTenancy ? ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                                 ->group(function () use ($panel): void {
                                     Route::get('/', RedirectToHomeController::class)->name('home');
@@ -115,7 +114,7 @@ Route::name('filament.')
                         });
 
                     if ($hasTenancy) {
-                        Route::middleware([IdentifyTenant::class])
+                        Route::middleware($panel->getTenantMiddleware())
                             ->prefix('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}')
                             ->group(function () use ($panel): void {
                                 if ($routes = $panel->getTenantRoutes()) {

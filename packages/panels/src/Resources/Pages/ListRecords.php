@@ -224,7 +224,6 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     {
         return $this->makeBaseTable()
             ->query(fn (): Builder => $this->getTableQuery())
-            ->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null)
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
             ->recordAction(function (Model $record, Table $table): ?string {

@@ -341,7 +341,14 @@ In this example, `$customer` can be an Eloquent model object, or an ID.
 
 Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.
 
-Because of this, it's very easy to apply your own [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire resource. You can use this to implement [multi-tenancy](#multi-tenancy) easily within the app.
+Because of this, it's very easy to apply your own query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire resource:
+
+```php
+public static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()->where('is_active', true);
+}
+```
 
 ### Disabling global scopes
 

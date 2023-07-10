@@ -50,7 +50,9 @@ class Panel extends Component
         FilamentColor::register($this->colors);
 
         FilamentIcon::register($this->icons);
+
         $this->registerLivewireComponents();
+        $this->registerLivewirePersistentMiddleware();
 
         foreach ($this->plugins as $plugin) {
             $plugin->boot($this);

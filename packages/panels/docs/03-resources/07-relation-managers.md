@@ -608,3 +608,21 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+## Customizing the relation manager Eloquent query
+
+You can apply your own query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire relation manager. To do this, you can pass a function to the `modifyQueryUsing()` method of the table, inside which you can customize the query:
+
+```php
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->modifyQueryUsing(fn (Builder $query) => $query->where('is_active', true))
+        ->columns([
+            // ...
+        ]);
+}
+```
