@@ -405,7 +405,7 @@ class TestsBulkActions
     }
 
     /**
-     * @deprecated Use `->assertTableBulkActionHalted()` instead.
+     * @deprecated Use `assertTableBulkActionHalted()` instead.
      */
     public function assertTableBulkActionHeld(): Closure
     {

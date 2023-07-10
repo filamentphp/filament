@@ -23,6 +23,7 @@
     :tooltip="$action->getTooltip()"
     :disabled="$isDisabled"
     :icon="$icon ?? $action->getIcon()"
+    :icon-size="$action->getIconSize()"
     :indicator="$action->getIndicator()"
     :indicator-color="$action->getIndicatorColor()"
     :size="$action->getSize()"

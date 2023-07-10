@@ -1,4 +1,5 @@
 @props([
+    'disabled' => false,
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
@@ -9,7 +10,23 @@
 ])
 
 @php
-    $baseAffixClasses = 'flex items-center self-stretch whitespace-nowrap border border-gray-300 px-2 shadow-sm group-focus-within:text-primary-500 dark:border-gray-600 dark:bg-gray-700';
+    $ringClasses = \Illuminate\Support\Arr::toCssClasses([
+        'ring-gray-950/10 dark:ring-white/20',
+        'focus-within:ring-primary-600 dark:focus-within:ring-primary-600' => ! $disabled,
+    ]);
+
+    $errorRingClasses = \Illuminate\Support\Arr::toCssClasses([
+        'ring-danger-600 dark:ring-danger-400',
+        'focus-within:ring-danger-600 dark:focus-within:ring-danger-400' => ! $disabled,
+    ]);
+
+    $affixesClasses = 'flex items-center gap-x-3 border-gray-950/10 px-3 dark:border-white/20';
+
+    $affixActionsClasses = '-mx-2.5 flex';
+
+    $affixIconClasses = 'filament-input-affix-icon h-5 w-5 text-gray-400 dark:text-gray-500';
+
+    $affixLabelClasses = 'filament-input-affix-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -23,101 +40,85 @@
 @endphp
 
 <div
-    {{ $attributes->class(['filament-forms-affix-container group flex rtl:space-x-reverse']) }}
+    @if ($statePath)
+        x-bind:class="
+            @js($statePath) in $wire.__instance.snapshot.memo.errors
+                ? '{{ $errorRingClasses }}'
+                : '{{ $ringClasses }}'
+        "
+    @endif
+    {{
+        $attributes->class([
+            'filament-forms-affix-container flex rounded-lg shadow-sm ring-1 transition duration-75',
+            $ringClasses => ! $statePath,
+            'bg-gray-50 dark:bg-gray-950' => $disabled,
+            'bg-white focus-within:ring-2 dark:bg-gray-900' => ! $disabled,
+        ])
+    }}
 >
-    @if (count($prefixActions))
-        <div class="flex items-center gap-1 self-stretch pe-2">
-            @foreach ($prefixActions as $prefixAction)
-                {{ $prefixAction }}
-            @endforeach
+    @if (count($prefixActions) || $prefixIcon || filled($prefix))
+        <div
+            @class([
+                $affixesClasses,
+                'border-e',
+            ])
+        >
+            @if (count($prefixActions))
+                <div @class([$affixActionsClasses])>
+                    @foreach ($prefixActions as $prefixAction)
+                        {{ $prefixAction }}
+                    @endforeach
+                </div>
+            @endif
+
+            @if ($prefixIcon)
+                <x-filament::icon
+                    alias="forms::components.affixes.prefix"
+                    :name="$prefixIcon"
+                    :class="$affixIconClasses"
+                />
+            @endif
+
+            @if (filled($prefix))
+                <span @class([$affixLabelClasses])>
+                    {{ $prefix }}
+                </span>
+            @endif
         </div>
-    @endif
-
-    @if ($prefixIcon)
-        <span
-            @class([
-                $baseAffixClasses,
-                '-me-px rounded-s-lg',
-            ])
-            @if (filled($statePath))
-                x-bind:class="{
-                    'text-gray-400': ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
-                    'text-danger-400': @js($statePath) in $wire.__instance.snapshot.memo.errors,
-                }"
-            @endif
-        >
-            <x-filament::icon
-                alias="forms::components.affix"
-                class="filament-input-affix-icon h-5 w-5"
-            />
-        </span>
-    @endif
-
-    @if (filled($prefix))
-        <span
-            @class([
-                'filament-input-affix-label -me-px text-sm',
-                $baseAffixClasses,
-                'rounded-s-lg' => ! $prefixIcon,
-            ])
-            @if (filled($statePath))
-                x-bind:class="{
-                    'text-gray-400': ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
-                    'text-danger-400': @js($statePath) in $wire.__instance.snapshot.memo.errors,
-                }"
-            @endif
-        >
-            {{ $prefix }}
-        </span>
     @endif
 
     <div class="min-w-0 flex-1">
         {{ $slot }}
     </div>
 
-    @if (filled($suffix))
-        <span
+    @if (count($suffixActions) || $suffixIcon || filled($suffix))
+        <div
             @class([
-                'filament-input-affix-label -ms-px text-sm',
-                $baseAffixClasses,
-                'rounded-e-lg' => ! $suffixIcon,
+                $affixesClasses,
+                'border-s',
             ])
-            @if (filled($statePath))
-                x-bind:class="{
-                    'text-gray-400': ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
-                    'text-danger-400': @js($statePath) in $wire.__instance.snapshot.memo.errors,
-                }"
-            @endif
         >
-            {{ $suffix }}
-        </span>
-    @endif
-
-    @if ($suffixIcon)
-        <span
-            @class([
-                $baseAffixClasses,
-                '-ms-px rounded-e-lg',
-            ])
-            @if (filled($statePath))
-                x-bind:class="{
-                    'text-gray-400': ! (@js($statePath) in $wire.__instance.snapshot.memo.errors),
-                    'text-danger-400': @js($statePath) in $wire.__instance.snapshot.memo.errors,
-                }"
+            @if (filled($suffix))
+                <span @class([$affixLabelClasses])>
+                    {{ $suffix }}
+                </span>
             @endif
-        >
-            <x-filament::icon
-                alias="forms::components.affix"
-                class="filament-input-affix-icon h-5 w-5"
-            />
-        </span>
-    @endif
 
-    @if (count($suffixActions))
-        <div class="flex items-center gap-1 self-stretch ps-2">
-            @foreach ($suffixActions as $suffixAction)
-                {{ $suffixAction }}
-            @endforeach
+            @if ($suffixIcon)
+                <x-filament::icon
+                    alias="forms::components.affixes.suffix"
+                    :name="$suffixIcon"
+                    :class="$affixIconClasses"
+                />
+            @endif
+
+            @if (count($suffixActions))
+                <div @class([$affixActionsClasses])>
+                    @foreach ($suffixActions as $suffixAction)
+                        {{ $suffixAction }}
+                    @endforeach
+                </div>
+            @endif
         </div>
     @endif
 </div>

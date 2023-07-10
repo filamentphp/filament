@@ -1,7 +1,7 @@
 @props([
     'action',
-    'blocks',
     'afterItem' => null,
+    'blocks',
     'statePath',
     'trigger',
 ])
@@ -17,17 +17,19 @@
         @foreach ($blocks as $block)
             @php
                 $wireClickActionArguments = ['block' => $block->getName()];
+
                 if ($afterItem) {
                     $wireClickActionArguments['afterItem'] = $afterItem;
                 }
+
                 $wireClickActionArguments = \Illuminate\Support\Js::from($wireClickActionArguments);
 
                 $wireClickAction = "mountFormComponentAction('{$statePath}', '{$action->getName()}', {$wireClickActionArguments})";
             @endphp
 
             <x-filament::dropdown.list.item
-                :wire:click="$wireClickAction"
                 :icon="$block->getIcon()"
+                :wire:click="$wireClickAction"
                 x-on:click="close"
             >
                 {{ $block->getLabel() }}

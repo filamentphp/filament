@@ -38,8 +38,6 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
 
     protected bool | Closure $isNative = true;
 
-    protected string | bool | Closure | null $icon = null;
-
     protected bool | Closure $hasDate = true;
 
     protected bool | Closure $hasSeconds = true;
@@ -177,9 +175,16 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
         return $this;
     }
 
+    /**
+     * @deprecated Use `suffixIcon('heroicon-m-calendar')` instead.
+     */
     public function icon(string | bool | Closure | null $icon): static
     {
-        $this->icon = $icon;
+        if (is_bool($icon)) {
+            $icon = $icon ? 'heroicon-m-calendar' : null;
+        }
+
+        $this->suffixIcon($icon);
 
         return $this;
     }
@@ -511,10 +516,5 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
         }
 
         return 'datetime-local';
-    }
-
-    public function getIcon(): string | bool | null
-    {
-        return $this->evaluate($this->icon);
     }
 }

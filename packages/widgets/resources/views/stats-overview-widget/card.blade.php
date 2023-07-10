@@ -10,7 +10,7 @@
         href="{{ $url }}"
         @if ($shouldOpenUrlInNewTab()) target="_blank" @endif
     @endif
-    {{ $getExtraAttributeBag()->class(['filament-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20']) }}
+    {{ $getExtraAttributeBag()->class(['filament-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10']) }}
 >
     <div @class([
         'space-y-2',

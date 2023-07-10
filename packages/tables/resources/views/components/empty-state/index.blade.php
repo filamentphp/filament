@@ -6,7 +6,7 @@
 ])
 
 <div
-    {{ $attributes->class(['filament-tables-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center dark:bg-gray-800']) }}
+    {{ $attributes->class(['filament-tables-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center dark:bg-gray-900']) }}
 >
     <div
         class="filament-tables-empty-state-icon-wrapper flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500 dark:bg-gray-700"

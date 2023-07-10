@@ -108,7 +108,7 @@
     <ol
         @if ($label = $getLabel()) aria-label="{{ $label }}" @endif
         role="list"
-        class="filament-forms-wizard-component-header divide-y divide-gray-300 overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm dark:divide-gray-700 dark:border-gray-700 dark:bg-gray-800 md:flex md:divide-y-0"
+        class="filament-forms-wizard-component-header divide-y divide-gray-300 overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm dark:divide-gray-700 dark:border-gray-800 dark:bg-gray-900 md:flex md:divide-y-0"
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
             <li

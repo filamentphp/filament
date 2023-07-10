@@ -8,7 +8,7 @@
     @if (count($tenants = filament()->getUserTenants(filament()->auth()->user())))
         <x-slot name="after">
             <ul
-                class="mt-8 divide-y overflow-hidden rounded-xl bg-white/50 shadow-sm ring-1 ring-gray-950/5 backdrop-blur-xl dark:divide-gray-700 dark:bg-gray-900/50 dark:ring-white/20"
+                class="mt-8 divide-y overflow-hidden rounded-xl bg-white/50 shadow-sm ring-1 ring-gray-950/5 backdrop-blur-xl dark:divide-gray-700 dark:bg-gray-900/50 dark:ring-white/10"
             >
                 @foreach ($tenants as $tenant)
                     <li>

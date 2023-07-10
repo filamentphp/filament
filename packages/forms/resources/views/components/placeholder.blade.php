@@ -11,7 +11,11 @@
     :state-path="$getStatePath()"
 >
     <div
-        {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-forms-placeholder-component sm:text-sm']) }}
+        {{
+            $attributes
+                ->merge($getExtraAttributes(), escape: false)
+                ->class(['filament-forms-placeholder-component sm:text-sm'])
+        }}
     >
         {{ $getContent() }}
     </div>

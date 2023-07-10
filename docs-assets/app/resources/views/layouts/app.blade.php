@@ -33,7 +33,7 @@
         </script>
     </head>
 
-    <body class="antialiased bg-gray-50 text-gray-900 dark:text-white dark:bg-gray-900">
+    <body class="antialiased bg-gray-50 text-gray-950 dark:text-white dark:bg-gray-950">
         {{ $slot }}
 
         @livewire('notifications')

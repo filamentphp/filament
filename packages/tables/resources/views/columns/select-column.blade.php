@@ -71,7 +71,7 @@
                 ->merge([
                     'disabled' => $isDisabled,
                 ])
-                ->class(['ms-0.5 inline-block rounded-lg text-gray-900 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 sm:text-sm'])
+                ->class(['ms-0.5 inline-block rounded-lg text-gray-950 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 sm:text-sm'])
         }}
     >
         @if ($canSelectPlaceholder())

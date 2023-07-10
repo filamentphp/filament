@@ -1,21 +1,28 @@
+@php
+    $id = $getId();
+    $isDisabled = $isDisabled();
+@endphp
+
 <div class="filament-actions-select-action">
-    <label for="{{ $getId() }}" class="sr-only">
+    <label for="{{ $id }}" class="sr-only">
         {{ $getLabel() }}
     </label>
 
-    <select
-        id="{{ $getId() }}"
-        wire:model.live="{{ $getName() }}"
-        {{ $attributes->class(['block h-9 w-full rounded-lg border-gray-300 py-1 text-sm text-gray-900 shadow-sm outline-none transition duration-75 invalid:text-gray-400 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-primary-500']) }}
-    >
-        @if (($placeholder = $getPlaceholder()) !== null)
-            <option value="">{{ $placeholder }}</option>
-        @endif
+    <x-filament-forms::affixes :disabled="$isDisabled">
+        <x-filament::input.select
+            :disabled="$isDisabled"
+            :id="$id"
+            :wire:model.live="$getName()"
+        >
+            @if (($placeholder = $getPlaceholder()) !== null)
+                <option value="">{{ $placeholder }}</option>
+            @endif
 
-        @foreach ($getOptions() as $value => $label)
-            <option value="{{ $value }}">
-                {{ $label }}
-            </option>
-        @endforeach
-    </select>
+            @foreach ($getOptions() as $value => $label)
+                <option value="{{ $value }}">
+                    {{ $label }}
+                </option>
+            @endforeach
+        </x-filament::input.select>
+    </x-filament-forms::affixes>
 </div>

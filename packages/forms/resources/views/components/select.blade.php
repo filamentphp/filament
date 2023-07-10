@@ -1,50 +1,40 @@
 @php
+    $canSelectPlaceholder = $canSelectPlaceholder();
     $isDisabled = $isDisabled();
-
     $statePath = $getStatePath();
-
-    $prefixLabel = $getPrefixLabel();
-    $prefixIcon = $getPrefixIcon();
-    $hasPrefix = $prefixLabel || $prefixIcon;
-
-    $suffixLabel = $getSuffixLabel();
-    $suffixIcon = $getSuffixIcon();
-    $hasSuffix = $suffixLabel || $suffixIcon;
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
-        :prefix="$prefixLabel"
+        :disabled="$isDisabled"
+        :prefix="$getPrefixLabel()"
         :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$prefixIcon"
-        :suffix="$suffixLabel"
+        :prefix-icon="$getPrefixIcon()"
+        :suffix="$getSuffixLabel()"
         :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$suffixIcon"
+        :suffix-icon="$getSuffixIcon()"
         class="filament-forms-select-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        @unless ($isSearchable() || $isMultiple())
+        @if (! ($isSearchable() || $isMultiple()))
             <x-filament::input.select
                 :autofocus="$isAutofocused()"
+                :can-select-placeholder="$canSelectPlaceholder"
                 :disabled="$isDisabled"
                 :id="$getId()"
                 :required="$isRequired() && ((bool) $isConcealed())"
                 :attributes="
-                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag()->merge([
+                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())->merge([
                         $applyStateBindingModifiers('wire:model') => $statePath,
-                    ], escape: false))
+                    ], escape: false)
                 "
-                :error="$errors->has($statePath)"
-                :prefix="$hasPrefix"
-                :suffix="$hasSuffix"
-                class="filament-forms-input w-full"
             >
                 @php
                     $isHtmlAllowed = $isHtmlAllowed();
                 @endphp
 
-                @if ($canSelectPlaceholder())
+                @if ($canSelectPlaceholder)
                     <option value="">
                         @if (! $isDisabled)
                             {{ $getPlaceholder() }}
@@ -71,7 +61,7 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('select', 'filament/forms') }}"
                 x-data="selectFormComponent({
-                            canSelectPlaceholder: @js($canSelectPlaceholder()),
+                            canSelectPlaceholder: @js($canSelectPlaceholder),
                             isHtmlAllowed: @js($isHtmlAllowed()),
                             getOptionLabelUsing: async () => {
                                 return await $wire.getFormSelectOptionLabel(@js($statePath))
@@ -106,20 +96,12 @@
                             state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
                             statePath: @js($statePath),
                         })"
-                x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 wire:ignore
-                x-bind:class="{
-                    'choices--error': @js($statePath) in $wire.__instance.snapshot.memo.errors,
-                }"
+                x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
                 {{
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class([
-                            'filament-forms-input',
-                            'filament-select-input-with-prefix' => $hasPrefix,
-                            'filament-select-input-with-suffix' => $hasSuffix,
-                        ])
                 }}
             >
                 <select

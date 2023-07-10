@@ -1,6 +1,6 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
-        $gridDirection = $getGridDirection();
+        $gridDirection = $getGridDirection() ?? 'column';
         $isBulkToggleable = $isBulkToggleable();
         $isDisabled = $isDisabled();
         $isSearchable = $isSearchable();
@@ -83,12 +83,17 @@
     >
         @if (! $isDisabled)
             @if ($isSearchable)
-                <input
-                    x-model.debounce.{{ $getSearchDebounce() }}="search"
-                    type="search"
-                    placeholder="{{ $getSearchPrompt() }}"
-                    class="mb-2 block h-7 w-full rounded-lg border-gray-300 px-2 text-sm text-gray-700 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-primary-500"
-                />
+                <x-filament-forms::affixes class="mb-4">
+                    <x-filament::input
+                        :placeholder="$getSearchPrompt()"
+                        type="search"
+                        :attributes="
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'x-model.debounce.' . $getSearchDebounce() => 'search',
+                            ])
+                        "
+                    />
+                </x-filament-forms::affixes>
             @endif
 
             @if ($isBulkToggleable && count($getOptions()))
@@ -123,34 +128,36 @@
             :lg="$getColumns('lg')"
             :xl="$getColumns('xl')"
             :two-xl="$getColumns('2xl')"
-            :direction="$gridDirection ?? 'column'"
+            :direction="$gridDirection"
             :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
             :attributes="
-                \Filament\Support\prepare_inherited_attributes($attributes->class([
-                    'filament-forms-checkbox-list-component gap-1',
-                    'space-y-2' => $gridDirection !== 'row',
-                ]))
+                \Filament\Support\prepare_inherited_attributes($attributes)->class([
+                    'filament-forms-checkbox-list-component gap-2',
+                    '-mt-2' => $gridDirection === 'column',
+                ])
             "
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
                 <div
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}"
+                    @if ($isSearchable)
+                        x-show="
+                            $el.querySelector('.filament-forms-checkbox-list-component-option-label-text')
+                                .innerText.toLowerCase()
+                                .includes(search.toLowerCase())
+                        "
+                    @endif
+                    @class([
+                        'break-inside-avoid pt-2' => $gridDirection === 'column',
+                    ])
                 >
                     <label
-                        class="filament-forms-checkbox-list-component-option-label flex items-center space-x-3 rtl:space-x-reverse"
-                        @if ($isSearchable)
-                            x-show="
-                                $el.querySelector('.filament-forms-checkbox-list-component-option-label-text')
-                                    .innerText.toLowerCase()
-                                    .includes(search.toLowerCase())
-                            "
-                        @endif
+                        class="filament-forms-checkbox-list-component-option-label flex items-center gap-x-3"
                     >
-                        <input
-                            @if ($isBulkToggleable)
-                                x-on:change="checkIfAllCheckboxesAreChecked()"
-                            @endif
-                            {{
+                        <x-filament::input.checkbox
+                            :errors="$errors"
+                            :state-path="$statePath"
+                            :attributes="
                                 $getExtraAttributeBag()
                                     ->merge([
                                         'disabled' => $isDisabled,
@@ -158,17 +165,13 @@
                                         'value' => $optionValue,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,
+                                        'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)
-                                    ->class([
-                                        'rounded text-primary-600 shadow-sm transition duration-75 focus:ring-2 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500',
-                                        'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500' => ! $errors->has($statePath),
-                                        'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400' => $errors->has($statePath),
-                                    ])
-                            }}
+                            "
                         />
 
                         <span
-                            class="filament-forms-checkbox-list-component-option-label-text text-sm text-gray-700 dark:text-gray-200"
+                            class="filament-forms-checkbox-list-component-option-label-text text-sm font-medium text-gray-950 dark:text-white"
                         >
                             {{ $optionLabel }}
                         </span>
@@ -185,7 +188,7 @@
             <div
                 x-cloak
                 x-show="! visibleCheckboxListOptions.length"
-                class="filament-forms-checkbox-list-component-no-search-results-message text-sm text-gray-700 dark:text-gray-200"
+                class="filament-forms-checkbox-list-component-no-search-results-message text-sm text-gray-500 dark:text-gray-400"
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>

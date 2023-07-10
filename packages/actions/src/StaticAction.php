@@ -144,7 +144,7 @@ class StaticAction extends ViewComponent
     }
 
     /**
-     * @deprecated Use `->extraAttributes()` instead.
+     * @deprecated Use `extraAttributes()` instead.
      *
      * @param  array<mixed>  $attributes
      */

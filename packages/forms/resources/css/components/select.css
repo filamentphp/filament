@@ -6,199 +6,115 @@ select:not(.choices) {
     @apply relative outline-none;
 }
 
-.choices:last-child {
-    @apply mb-0;
-}
-
-.choices.is-open {
-    @apply overflow-visible;
-}
-
-.choices.is-disabled .choices__inner,
-.choices.is-disabled .choices__input {
-    @apply select-none;
-}
-
 .choices.is-disabled .choices__input {
     @apply hidden;
 }
 
-.choices.is-disabled .choices__item {
-    @apply pointer-events-none opacity-70;
-}
-
 .choices [hidden] {
-    display: none !important;
-}
-
-.choices[data-type*='select-one'] {
-    @apply cursor-pointer;
+    @apply !hidden;
 }
 
 .choices[data-type*='select-one'] .has-no-choices {
-    display: none;
+    @apply hidden;
 }
 
 .choices[data-type*='select-one'] .choices__input {
-    @apply m-0 block w-full border-b p-2;
-}
-
-.dark .choices[data-type*='select-one'] .choices__input {
-    @apply bg-gray-700;
-}
-
-.choices[data-type*='select-multiple'] .choices__inner {
-    @apply cursor-text;
+    @apply m-0 block w-full;
 }
 
 .choices__inner {
-    @apply inline-block w-full rounded-lg border border-gray-300 bg-white bg-no-repeat px-3 py-2 align-top text-sm shadow-sm transition duration-75;
+    @apply cursor-text bg-no-repeat py-1.5 pe-8 ps-3 outline-none sm:text-sm sm:leading-6;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
     background-position: right 0.5rem center;
     background-size: 1.5em 1.5em;
-}
-
-.choices.is-disabled .choices__inner {
-    background-image: none;
-}
-
-.dark .choices__inner {
-    @apply border-gray-600 bg-gray-700 text-white;
-}
-
-.filament-select-input-with-prefix .choices__inner {
-    @apply rounded-s-none;
-}
-
-.filament-select-input-with-suffix .choices__inner {
-    @apply rounded-e-none;
-}
-
-.choices--error .choices__inner {
-    @apply border-danger-600 ring-danger-600;
-}
-
-.dark .choices--error .choices__inner {
-    @apply border-danger-400 ring-danger-400;
 }
 
 [dir='rtl'] .choices__inner {
     background-position: left 0.5rem center;
 }
 
-.is-focused .choices__inner,
-.is-open .choices__inner {
-    @apply border-primary-500 outline-none ring-1 ring-inset ring-primary-500;
-}
-
-.choices__list {
-    @apply m-0 list-none ps-0;
-}
-
 .choices__list--single {
-    @apply inline-block w-full pe-12;
+    @apply inline-block;
 }
 
 .choices__list--single .choices__item {
-    @apply w-full;
+    @apply text-gray-950 dark:text-white;
+}
+
+.choices.is-disabled .choices__list--single .choices__item {
+    @apply text-gray-500 dark:text-gray-400;
 }
 
 .choices__list--multiple {
-    @apply flex flex-wrap gap-1 pe-6;
+    @apply flex flex-wrap gap-1.5;
 }
 
 .choices__list--multiple:not(:empty) {
-    @apply mb-1 flex;
+    @apply py-2;
 }
 
 .choices__list--multiple .choices__item {
-    @apply box-border inline-flex cursor-pointer items-center justify-between gap-2 space-x-1 break-all rounded-lg bg-primary-500/10 px-2 py-0.5 text-sm font-medium tracking-tight text-primary-700;
-}
-
-.dark .choices__list--multiple .choices__item {
-    @apply text-primary-500;
-}
-
-[dir='rtl'] .choices__list--multiple .choices__item {
-    @apply space-x-reverse break-normal;
+    @apply inline-flex items-center gap-1 break-all rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 ring-1 ring-inset ring-primary-600/20 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400/30;
 }
 
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
-    @apply invisible absolute top-full z-[1] mt-2 w-full overflow-hidden break-words rounded-lg border border-gray-300 bg-white shadow-sm will-change-[visibility];
-}
-
-.dark .choices__list--dropdown,
-.dark .choices__list[aria-expanded] {
-    @apply border-gray-600 bg-gray-700;
+    @apply absolute top-full z-10 mt-2 hidden w-full overflow-hidden break-words rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 will-change-[visibility] dark:bg-gray-900 dark:ring-white/10;
 }
 
 .is-active.choices__list--dropdown,
 .is-active.choices__list[aria-expanded] {
-    @apply visible z-10;
+    @apply block p-1;
 }
 
 .choices__list--dropdown .choices__list,
 .choices__list[aria-expanded] .choices__list {
-    @apply relative max-h-60 overflow-auto will-change-scroll;
+    @apply max-h-60 overflow-auto will-change-scroll;
 }
 
-.choices__list--dropdown .choices__item,
-.choices__list[aria-expanded] .choices__item {
-    @apply relative px-3 py-2 text-start;
+.choices__item--choice {
+    @apply p-2 text-gray-500 transition-colors duration-75 dark:text-gray-400;
+}
+
+.choices__item--choice.choices__item--selectable {
+    @apply rounded-md text-gray-950 dark:text-white;
 }
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-    @apply bg-primary-600 text-white;
-}
-
-.choices__list--dropdown .choices__item--selectable.is-highlighted::after,
-.choices__list[aria-expanded] .choices__item--selectable.is-highlighted::after {
-    @apply opacity-70;
+    @apply bg-gray-500/10;
 }
 
 .choices__item {
     @apply cursor-default text-sm;
 }
 
-.choices__item--selectable {
-    @apply cursor-pointer;
-}
-
 .choices__item--disabled {
-    @apply pointer-events-none select-none opacity-70;
+    @apply pointer-events-none disabled:text-gray-500 dark:disabled:text-gray-400;
 }
 
-.choices__placeholder {
-    @apply opacity-70;
+.choices__placeholder.choices__item {
+    @apply cursor-default text-gray-400 dark:text-gray-500;
 }
 
 .choices__button {
-    @apply cursor-pointer appearance-none border-0 bg-transparent bg-center bg-no-repeat outline-none;
-    text-indent: -9999px;
+    @apply border-0 bg-transparent bg-center bg-no-repeat indent-[-9999px] outline-none;
 }
 
 .choices[data-type*='select-one'] .choices__button {
-    @apply absolute end-0 me-9 h-4 w-4 p-0 opacity-60;
+    @apply absolute end-0 me-9 h-4 w-4 p-0 opacity-50 transition-opacity duration-75 dark:opacity-40;
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==');
-    background-size: 0.7em 0.7em;
-    top: calc(50% - 0.55em);
+    background-size: 0.7142em 0.7142em;
+    top: calc(50% - 0.5714em);
 }
 
 .dark .choices[data-type*='select-one'] .choices__button {
-    @apply opacity-30;
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==');
 }
 
 .choices[data-type*='select-one'] .choices__button:hover,
 .choices[data-type*='select-one'] .choices__button:focus {
-    @apply opacity-75;
-}
-
-.dark .choices[data-type*='select-one'] .choices__button:hover,
-.dark .choices[data-type*='select-one'] .choices__button:focus {
-    @apply opacity-60;
+    @apply opacity-70 dark:opacity-60;
 }
 
 .choices[data-type*='select-one']
@@ -208,24 +124,18 @@ select:not(.choices) {
 }
 
 .choices[data-type*='select-multiple'] .choices__button {
-    @apply inline-block h-3 w-3 text-primary-700 opacity-60;
+    @apply h-4 w-4 opacity-50 dark:opacity-40;
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==');
-    background-size: 0.6em 0.6em;
+    background-size: 0.7142em 0.7142em;
 }
 
 .dark .choices[data-type*='select-multiple'] .choices__button {
-    @apply opacity-75;
     background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjEiIGhlaWdodD0iMjEiIHZpZXdCb3g9IjAgMCAyMSAyMSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0yLjU5Mi4wNDRsMTguMzY0IDE4LjM2NC0yLjU0OCAyLjU0OEwuMDQ0IDIuNTkyeiIvPjxwYXRoIGQ9Ik0wIDE4LjM2NEwxOC4zNjQgMGwyLjU0OCAyLjU0OEwyLjU0OCAyMC45MTJ6Ii8+PC9nPjwvc3ZnPg==');
 }
 
 .choices[data-type*='select-multiple'] .choices__button:hover,
 .choices[data-type*='select-multiple'] .choices__button:focus {
-    @apply opacity-75;
-}
-
-.dark .choices[data-type*='select-multiple'] .choices__button:hover,
-.dark .choices[data-type*='select-multiple'] .choices__button:focus {
-    @apply opacity-100;
+    @apply opacity-70 dark:opacity-60;
 }
 
 .choices.is-disabled .choices__button {
@@ -234,31 +144,12 @@ select:not(.choices) {
 
 /* !important is used to override default Tailwind input styling */
 
-.choices__list--dropdown .choices__input {
-    padding: 0.5rem 0.75rem !important;
-    border-top-width: 0 !important;
-    border-left-width: 0 !important;
-    border-bottom-width: 1px !important;
-    border-right-width: 0 !important;
-    border-color: rgb(209 213 219) !important;
-}
-
-.dark .choices__list--dropdown .choices__input {
-    @apply placeholder-gray-300;
-    border-color: rgb(75 85 99) !important;
-}
-
 .choices__input {
-    @apply inline-block max-w-full border-none !text-sm outline-none;
-    border-color: transparent !important;
-    background-color: transparent !important;
-    padding: 0 !important;
+    @apply border-none !bg-transparent !p-0 !text-base text-gray-950 transition duration-75 placeholder:text-gray-400 focus:!ring-0 disabled:text-gray-500 disabled:[-webkit-text-fill-color:theme(colors.gray.500)] disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.400)] dark:text-white dark:placeholder:text-gray-500 dark:disabled:text-gray-400 dark:disabled:[-webkit-text-fill-color:theme(colors.gray.400)] dark:disabled:placeholder:[-webkit-text-fill-color:theme(colors.gray.500)] sm:!text-sm sm:leading-6;
 }
 
-.choices__input:focus {
-    outline-color: transparent !important;
-    box-shadow: var(--tw-ring-inset) 0 0 0
-        calc(0px + var(--tw-ring-offset-width)) var(--tw-ring-color) !important;
+.choices__list--dropdown .choices__input {
+    @apply !px-2 !py-2;
 }
 
 .choices__input::-webkit-search-decoration,
