@@ -41,7 +41,7 @@
         @if ($sortable)
             <x-filament::icon
                 :name="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
-                :alias="$activelySorted && $sortDirection === 'asc' ? 'filament-tables::header-cell.sort-asc' : 'filament-tables::header-cell.sort-desc'"
+                :alias="$activelySorted && $sortDirection === 'asc' ? 'tables::header-cell.sort-asc' : 'tables::header-cell.sort-desc'"
                 color="dark:text-gray-300"
                 size="h-5 w-5"
                 :class="

@@ -40,7 +40,7 @@
                     :wire:click="'nextPage(\'' . $paginator->getPageName() . '\')'"
                     rel="next"
                     :icon="$nextArrowIcon"
-                    icon-alias="tables::pagination.buttons.next"
+                    icon-alias="tables::pagination.next-button"
                     :label="__('filament-tables::table.pagination.buttons.next.label')"
                 />
             @endif

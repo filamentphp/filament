@@ -24,7 +24,7 @@
 
                             <x-filament::icon-button
                                 icon="heroicon-m-chevron-right"
-                                icon-alias="panels::pages.tenancy.register-tenant.tenant"
+                                icon-alias="panels::pages.tenancy.register-tenant.open-tenant-button"
                             />
                         </a>
                     </li>

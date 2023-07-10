@@ -47,7 +47,7 @@
                 <x-filament::icon-button
                     color="gray"
                     icon="heroicon-m-chevron-down"
-                    icon-alias="panels::sidebar.group.collapse"
+                    icon-alias="panels::sidebar.group.collapse-button"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
                     x-bind:class="{ 'rotate-180': ! $store.sidebar.groupIsCollapsed(label) }"
                     class="-my-2.5 -me-2.5"

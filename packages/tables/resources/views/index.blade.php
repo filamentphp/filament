@@ -580,7 +580,7 @@
                                         @if ($group->isCollapsible())
                                             <x-filament::icon
                                                 name="heroicon-m-chevron-up"
-                                                alias="tables::grouping.collapse"
+                                                alias="tables::grouping.collapse-button"
                                                 size="h-5 w-5"
                                                 color="text-gray-600 dark:text-gray-300"
                                                 class="transition"
@@ -683,7 +683,7 @@
                                             >
                                                 <x-filament::icon-button
                                                     icon="heroicon-m-chevron-down"
-                                                    icon-alias="tables::collapsible-column.trigger"
+                                                    icon-alias="tables::columns.collapse-button"
                                                     color="gray"
                                                     size="sm"
                                                     x-on:click="isCollapsed = ! isCollapsed"
@@ -1021,7 +1021,7 @@
                                                 @if ($group->isCollapsible())
                                                     <x-filament::icon
                                                         name="heroicon-m-chevron-up"
-                                                        alias="tables::grouping.collapse"
+                                                        alias="tables::grouping.collapse-button"
                                                         size="h-5 w-5"
                                                         color="text-gray-600 dark:text-gray-300"
                                                         class="transition"

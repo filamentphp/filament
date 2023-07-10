@@ -9,7 +9,7 @@
         >
             <x-filament::icon
                 name="heroicon-m-magnifying-glass"
-                alias="panels::global-search.input.prefix"
+                alias="panels::topbar.global-search.input"
                 color="text-gray-500 dark:text-gray-400"
                 size="h-5 w-5"
                 wire:loading.remove.delay=""

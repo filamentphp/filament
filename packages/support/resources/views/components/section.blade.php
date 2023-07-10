@@ -108,7 +108,7 @@
             <x-filament::icon-button
                 color="gray"
                 icon="heroicon-m-chevron-down"
-                icon-alias="support::section.buttons.collapse"
+                icon-alias="support::section.collapse-button"
                 x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{ 'rotate-180': ! isCollapsed }"
                 class="-my-2.5 -me-2.5"

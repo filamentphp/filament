@@ -12,7 +12,7 @@
             @if ($icon = $getIcon($state))
                 <x-filament::icon
                     :name="$icon"
-                    alias="infolists::entries.icon"
+                    alias="infolists::components.icon-entry"
                     color="text-custom-500"
                     :size="
                         match ($size = ($getSize($state) ?? 'lg')) {

@@ -29,7 +29,7 @@
             >
                 <x-filament::icon
                     name="heroicon-o-bars-3"
-                    alias="panels::topbar.buttons.toggle-sidebar"
+                    alias="panels::topbar.open-mobile-sidebar-button"
                     color="text-primary-500"
                     size="h-6 w-6"
                 />

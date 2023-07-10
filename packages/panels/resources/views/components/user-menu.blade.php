@@ -123,7 +123,7 @@
             >
                 <x-filament::icon
                     name="heroicon-m-sun"
-                    alias="panels::theme.light"
+                    alias="panels::topbar.user-menu.theme-switcher.light-button"
                     size="h-5 w-5"
                 />
             </button>
@@ -138,7 +138,7 @@
             >
                 <x-filament::icon
                     name="heroicon-m-moon"
-                    alias="panels::theme.dark"
+                    alias="panels::topbar.user-menu.theme-switcher.dark-button"
                     size="h-5 w-5"
                 />
             </button>
@@ -153,7 +153,7 @@
             >
                 <x-filament::icon
                     name="heroicon-m-computer-desktop"
-                    alias="panels::theme.system"
+                    alias="panels::topbar.user-menu.theme-switcher.system-button"
                     size="h-5 w-5"
                 />
             </button>

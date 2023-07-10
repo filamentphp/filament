@@ -181,7 +181,7 @@
                                             style="{{ \Filament\Support\get_color_css_variables($iconColor, shades: [100, 500]) }}"
                                         >
                                             <x-filament::icon
-                                                alias="filament::modal"
+                                                alias="support::modal"
                                                 color="text-custom-600 dark:text-custom-400"
                                                 :name="$icon"
                                                 size="h-6 w-6"

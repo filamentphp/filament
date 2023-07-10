@@ -9,7 +9,7 @@
         >
             <x-filament::icon
                 name="heroicon-m-magnifying-glass"
-                alias="tables::search-input.prefix"
+                alias="tables::search-input"
                 color="text-gray-400"
                 size="h-5 w-5"
             />

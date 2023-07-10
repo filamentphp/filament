@@ -139,7 +139,8 @@
 
         <x-filament::icon
             :name="$icon"
-            alias="support::icon-button"
+            :alias="$iconAlias"
+            group="support::icon-button"
             :size="$iconSize"
             :class="$iconClasses"
         />

@@ -24,7 +24,7 @@
     @if ($icon)
         <x-filament::icon
             :name="$icon"
-            alias="forms::field-wrapper.hint"
+            alias="forms::components.hint"
             size="h-5 w-5"
         />
     @endif

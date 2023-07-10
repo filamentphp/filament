@@ -143,7 +143,7 @@
                         >
                             <x-filament::icon
                                 :name="$icon"
-                                alias="forms::components.date-time-picker.suffix"
+                                alias="forms::components.date-time-picker"
                                 color="text-gray-400 dark:text-gray-400"
                                 size="h-5 w-5"
                             />
