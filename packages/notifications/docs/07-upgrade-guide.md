@@ -56,3 +56,7 @@ The Heroicons library has been updated to v2. This means that any icons you use 
 #### Secondary color
 
 Filament v2 had a `secondary` color for many components which was gray. All references to `secondary` should be replaced with `gray` to preserve the same appearance. This frees `secondary` to be registered to a new custom color of your choice.
+
+#### Notification JS objects
+
+The `Notification` JavaScript object has been renamed to `FilamentNotification` to avoid conflicts with the native browser `Notification` object. The same has been done for `NotificationAction` (now `FilamentNotificationAction`) and `NotificationActionGroup` (now `FilamentNotificationActionGroup`) for consistency.
