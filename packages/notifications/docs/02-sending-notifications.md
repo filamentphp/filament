@@ -48,7 +48,7 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .send()
 ```
@@ -72,7 +72,7 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .icon('heroicon-o-document-text')
     .iconColor('success')
@@ -95,7 +95,7 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .send()
@@ -119,7 +119,7 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .color('success') // [tl! focus]
     .send()
@@ -144,7 +144,7 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .duration(5000)
@@ -166,7 +166,7 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .seconds(5)
@@ -188,7 +188,7 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .persistent()
@@ -212,7 +212,7 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .body('Changes to the **post** have been saved.')
@@ -245,14 +245,14 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .body('Changes to the **post** have been saved.')
     .actions([
-        new NotificationAction('view')
+        new FilamentNotificationAction('view')
             .button(),
-        new NotificationAction('undo')
+        new FilamentNotificationAction('undo')
             .color('gray'),
     ])
     .send()
@@ -287,16 +287,16 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .body('Changes to the **post** have been saved.')
     .actions([
-        new NotificationAction('view')
+        new FilamentNotificationAction('view')
             .button()
             .url('/view')
             .openUrlInNewTab(),
-        new NotificationAction('undo')
+        new FilamentNotificationAction('undo')
             .color('gray'),
     ])
     .send()
@@ -340,16 +340,16 @@ Action::make('undo')
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .body('Changes to the **post** have been saved.')
     .actions([
-        new NotificationAction('view')
+        new FilamentNotificationAction('view')
             .button()
             .url('/view')
             .openUrlInNewTab(),
-        new NotificationAction('undo')
+        new FilamentNotificationAction('undo')
             .color('gray')
             .dispatch('undoEditingPost'),
     ])
@@ -359,11 +359,11 @@ new Notification()
 Similarly, `dispatchSelf` and `dispatchTo` are also available:
 
 ```js
-new NotificationAction('undo')
+new FilamentNotificationAction('undo')
     .color('gray')
     .dispatchSelf('undoEditingPost')
 
-new NotificationAction('undo')
+new FilamentNotificationAction('undo')
     .color('gray')
     .dispatchTo('another_component', 'undoEditingPost')
 ```
@@ -395,16 +395,16 @@ Notification::make()
 Or with JavaScript:
 
 ```js
-new Notification()
+new FilamentNotification()
     .title('Saved successfully')
     .success()
     .body('Changes to the **post** have been saved.')
     .actions([
-        new NotificationAction('view')
+        new FilamentNotificationAction('view')
             .button()
             .url('/view')
             .openUrlInNewTab(),
-        new NotificationAction('undo')
+        new FilamentNotificationAction('undo')
             .color('gray')
             .dispatch('undoEditingPost')
             .close(),
@@ -414,7 +414,7 @@ new Notification()
 
 ## Using the JavaScript objects
 
-The JavaScript objects (`Notification` and `NotificationAction`) are assigned to `window.Notification` and `window.NotificationAction`, so they are available in on-page scripts.
+The JavaScript objects (`FilamentNotification` and `FilamentNotificationAction`) are assigned to `window.FilamentNotification` and `window.FilamentNotificationAction`, so they are available in on-page scripts.
 
 You may also import them in a bundled JavaScript file:
 
