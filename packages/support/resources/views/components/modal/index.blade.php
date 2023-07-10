@@ -128,7 +128,7 @@
                 @class([
                     'filament-modal-window pointer-events-auto w-full cursor-default bg-white dark:bg-gray-800',
                     'relative' => $width !== 'screen',
-                    'ms-auto h-screen overflow-y-auto' => $slideOver,
+                    'filament-modal-slide-over-window ms-auto h-screen overflow-y-auto' => $slideOver,
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
