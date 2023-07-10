@@ -23,12 +23,9 @@
                 :id="$getId()"
                 :required="$isRequired() && ((bool) $isConcealed())"
                 :attributes="
-                    \Filament\Support\prepare_inherited_attributes(
-                        $getExtraInputAttributeBag()
-                            ->merge([
-                                $applyStateBindingModifiers('wire:model') => $statePath,
-                            ], escape: false)
-                    )
+                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())->merge([
+                        $applyStateBindingModifiers('wire:model') => $statePath,
+                    ], escape: false)
                 "
             >
                 @php

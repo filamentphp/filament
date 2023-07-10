@@ -122,10 +122,10 @@
             :direction="$gridDirection"
             :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
             :attributes="
-                \Filament\Support\prepare_inherited_attributes($attributes->class([
+                \Filament\Support\prepare_inherited_attributes($attributes)->class([
                     'filament-forms-checkbox-list-component gap-2',
                     '-mt-2' => $gridDirection === 'column',
-                ]))
+                ])
             "
         >
             @forelse ($getOptions() as $optionValue => $optionLabel)
