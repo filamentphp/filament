@@ -69,6 +69,10 @@
         }
     },
     "scripts": {
+        "cs": [
+            "pint",
+            "npm run prettier"
+        ],
         "pint": "pint",
         "test:pest": "pest --parallel",
         "test:phpstan": "phpstan analyse",

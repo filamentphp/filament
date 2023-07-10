@@ -134,9 +134,13 @@ class Notification {
     }
 
     send() {
-        window.dispatchEvent(new CustomEvent('notificationSent', { detail: {
-            notification: this,
-        } }))
+        window.dispatchEvent(
+            new CustomEvent('notificationSent', {
+                detail: {
+                    notification: this,
+                },
+            }),
+        )
 
         return this
     }

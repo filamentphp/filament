@@ -3,7 +3,6 @@
 namespace Filament\Actions\Contracts;
 
 use Filament\Actions\Action;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Contracts\TranslatableContentDriver;
 
 interface HasActions

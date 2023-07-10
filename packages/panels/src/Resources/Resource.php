@@ -2,6 +2,7 @@
 
 namespace Filament\Resources;
 
+use Exception;
 use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
@@ -21,6 +22,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
@@ -73,6 +76,10 @@ abstract class Resource
     protected static ?string $recordTitleAttribute = null;
 
     protected static ?string $slug = null;
+
+    protected static ?string $tenantOwnershipRelationshipName = null;
+
+    protected static ?string $tenantRelationshipName = null;
 
     /**
      * @var string | array<string>
@@ -299,9 +306,23 @@ abstract class Resource
         return $query;
     }
 
-    public static function scopeEloquentQueryToTenant(Builder $query, Model $tenant): Builder
+    public static function scopeEloquentQueryToTenant(Builder $query, ?Model $tenant): Builder
     {
-        return $query->whereBelongsTo($tenant);
+        $tenant ??= Filament::getTenant();
+
+        $tenantOwnershipRelationship = static::getTenantOwnershipRelationship($query->getModel());
+        $tenantOwnershipRelationshipName = static::getTenantOwnershipRelationshipName();
+
+        return match (true) {
+            $tenantOwnershipRelationship instanceof BelongsTo => $query->whereBelongsTo(
+                $tenant,
+                $tenantOwnershipRelationshipName,
+            ),
+            default => $query->whereHas(
+                $tenantOwnershipRelationshipName,
+                fn (Builder $query) => $query->whereKey($tenant->getKey()),
+            ),
+        };
     }
 
     /**
@@ -707,5 +728,46 @@ abstract class Resource
     public static function isDiscovered(): bool
     {
         return static::$isDiscovered;
+    }
+
+    public static function getTenantOwnershipRelationshipName(): string
+    {
+        return static::$tenantOwnershipRelationshipName ?? Filament::getTenantOwnershipRelationshipName();
+    }
+
+    public static function getTenantOwnershipRelationship(Model $record): Relation
+    {
+        $relationshipName = static::getTenantOwnershipRelationshipName();
+
+        if (! $record->isRelation($relationshipName)) {
+            $resourceClass = static::class;
+            $recordClass = $record::class;
+
+            throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. You can change the relationship being used per-resource by setting it as the [\$tenantOwnershipRelationshipName] static property on the [{$resourceClass}] resource class.");
+        }
+
+        return $record->{$relationshipName}();
+    }
+
+    public static function getTenantRelationshipName(): string
+    {
+        return static::$tenantRelationshipName ?? (string) str(static::getModel())
+            ->classBasename()
+            ->pluralStudly()
+            ->camel();
+    }
+
+    public static function getTenantRelationship(Model $tenant): Relation
+    {
+        $relationshipName = static::getTenantRelationshipName();
+
+        if (! $tenant->isRelation($relationshipName)) {
+            $resourceClass = static::class;
+            $tenantClass = $tenant::class;
+
+            throw new Exception("The model [{$tenantClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by setting it as the [\$tenantRelationshipName] static property on the [{$resourceClass}] resource class.");
+        }
+
+        return $tenant->{$relationshipName}();
     }
 }

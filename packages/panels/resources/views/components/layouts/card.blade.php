@@ -4,7 +4,9 @@
     'subheading' => null,
 ])
 
-<div class="filament-card-layout flex min-h-screen items-center justify-center py-14">
+<div
+    class="filament-card-layout flex min-h-screen items-center justify-center py-14"
+>
     <div
         @class([
             'w-screen space-y-8 px-6 md:mt-0 md:px-2',
@@ -35,9 +37,7 @@
 
             <div class="space-y-2">
                 @if (filled($heading ??= $this->getHeading()))
-                    <h2
-                        class="text-center text-2xl font-bold tracking-tight"
-                    >
+                    <h2 class="text-center text-2xl font-bold tracking-tight">
                         {{ $heading }}
                     </h2>
                 @endif
@@ -64,7 +64,8 @@
             class="absolute end-0 top-0 flex w-full items-center justify-end p-2"
         >
             @if (filament()->hasDatabaseNotifications())
-                @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true]))
+                @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
+                )
             @endif
 
             <x-filament::user-menu />

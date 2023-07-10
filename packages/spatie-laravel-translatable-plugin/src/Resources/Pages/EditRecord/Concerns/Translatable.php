@@ -5,7 +5,6 @@ namespace Filament\Resources\Pages\EditRecord\Concerns;
 use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
 use Filament\Resources\Pages\Concerns\HasTranslatableFormWithExistingRecordData;
 use Filament\Resources\Pages\Concerns\HasTranslatableRecord;
-use Filament\Resources\Pages\Concerns\HasTranslatableRecordTitle;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
@@ -77,6 +76,7 @@ trait Translatable
             $this->form->validate();
         } catch (ValidationException $exception) {
             $this->activeLocale = $this->oldActiveLocale;
+
             throw $exception;
         }
 

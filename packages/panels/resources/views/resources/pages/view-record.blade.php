@@ -13,7 +13,9 @@
         @if ($this->hasInfolist())
             {{ $this->infolist }}
         @else
-            <div wire:key="{{ $this->getId() }}.forms.{{ $this->getFormStatePath() }}">
+            <div
+                wire:key="{{ $this->getId() }}.forms.{{ $this->getFormStatePath() }}"
+            >
                 {{ $this->form }}
             </div>
         @endif

@@ -2,7 +2,7 @@
 
 use Closure;
 
-namespace Livewire\Features\SupportUnitTesting\Tests {
+namespace Livewire\Features\SupportTesting\Tests {
 
     class Testable {
         public function fillForm(array $state = [], string $formName = 'form'): static {}

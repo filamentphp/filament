@@ -119,7 +119,9 @@
         shouldCheckUniqueSelection: true,
 
         init: function () {
-            $el.addEventListener('deselectAllTableRecords', () => this.deselectAllRecords())
+            $el.addEventListener('deselectAllTableRecords', () =>
+                this.deselectAllRecords(),
+            )
 
             $watch('selectedRecords', () => {
                 if (! this.shouldCheckUniqueSelection) {

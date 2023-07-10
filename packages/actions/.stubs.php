@@ -1,6 +1,6 @@
 <?php
 
-namespace Livewire\Features\SupportUnitTesting\Tests {
+namespace Livewire\Features\SupportTesting\Tests {
 
     class Testable {
         public function mountAction(string $name, array $arguments = []): static {}

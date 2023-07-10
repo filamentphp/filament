@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
@@ -14,6 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 
 class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
@@ -97,7 +99,8 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
             ->authorize($resource::canCreate())
             ->model($this->getModel())
             ->modelLabel($this->getModelLabel())
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)))
+            ->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
 
         if ($resource::hasPage('create')) {
             $action->url(fn (): string => $resource::getUrl('create'));
@@ -221,6 +224,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     {
         return $this->makeBaseTable()
             ->query(fn (): Builder => $this->getTableQuery())
+            ->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null)
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
             ->recordAction(function (Model $record, Table $table): ?string {

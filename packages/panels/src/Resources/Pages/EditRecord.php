@@ -84,7 +84,7 @@ class EditRecord extends Page
     /**
      * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function fillFormWithDataAndCallHooks(array $data): void
     {

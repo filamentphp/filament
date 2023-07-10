@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists\Contracts;
 
-use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Infolist;
 
 interface HasInfolists

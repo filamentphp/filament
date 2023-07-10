@@ -2,9 +2,7 @@
 
 namespace Filament\Forms\Concerns;
 
-use App\Models\Shop\Product;
 use Filament\Forms\Components\Component;
-use InvalidArgumentException;
 
 trait HasStateBindingModifiers
 {
@@ -160,6 +158,6 @@ trait HasStateBindingModifiers
             return ((int) (string) str($debounce)->beforeLast('s')) * 1000;
         }
 
-        return preg_replace("/[^0-9]/", '', $debounce) ?: 0;
+        return preg_replace('/[^0-9]/', '', $debounce) ?: 0;
     }
 }

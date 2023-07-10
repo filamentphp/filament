@@ -39,7 +39,7 @@ return [
     'buttons' => [
 
         'back' => [
-            'label' => 'back'
+            'label' => 'back',
         ],
 
     ],

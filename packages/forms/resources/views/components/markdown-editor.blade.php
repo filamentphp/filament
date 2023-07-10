@@ -39,10 +39,7 @@
                     ->class(['filament-forms-markdown-editor-component font-mono'])
             }}
         >
-            <textarea
-                x-ref="editor"
-                class="hidden"
-            ></textarea>
+            <textarea x-ref="editor" class="hidden"></textarea>
         </div>
     @else
         <div

@@ -8,7 +8,7 @@ use Filament\Notifications\Testing\TestsNotifications;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Livewire\Component;
-use Livewire\Features\SupportUnitTesting\Testable;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
 use function Livewire\on;
 use function Livewire\store;

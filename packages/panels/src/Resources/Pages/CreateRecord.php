@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
@@ -102,7 +101,7 @@ class CreateRecord extends Page
     /**
      * @internal Never override or call this method. If you completely override `create()`, copy the contents of this method into your override.
      *
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function createRecordAndCallHooks(array $data): void
     {
@@ -174,7 +173,7 @@ class CreateRecord extends Page
         $record = new ($this->getModel())($data);
 
         if ($tenant = Filament::getTenant()) {
-            $this->associateRecordWithTenant($record, $tenant);
+            return $this->associateRecordWithTenant($record, $tenant);
         }
 
         $record->save();
@@ -182,18 +181,9 @@ class CreateRecord extends Page
         return $record;
     }
 
-    protected function associateRecordWithTenant(Model $record, Model $tenant): void
+    protected function associateRecordWithTenant(Model $record, Model $tenant): Model
     {
-        $relationshipName = Filament::getTenantOwnershipRelationshipName();
-
-        if (! $record->isRelation($relationshipName)) {
-            $pageClass = static::class;
-            $recordClass = $record::class;
-
-            throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. This relationship is required to associate the record with the tenant. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. Alternatively, you can override the [associateRecordWithTenant()] method on the [{$pageClass}] class to associate the record with the tenant in a different way.");
-        }
-
-        $record->{$relationshipName}()->associate($tenant);
+        return static::getResource()::getTenantRelationship($tenant)->save($record);
     }
 
     /**

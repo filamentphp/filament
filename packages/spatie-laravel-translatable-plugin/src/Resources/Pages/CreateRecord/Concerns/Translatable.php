@@ -3,7 +3,6 @@
 namespace Filament\Resources\Pages\CreateRecord\Concerns;
 
 use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
-use Filament\Resources\Pages\Concerns\HasTranslatableRecordTitle;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;

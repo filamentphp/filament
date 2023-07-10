@@ -2,8 +2,6 @@
 
 namespace Filament\Actions;
 
-use Filament\SpatieLaravelTranslatablePlugin;
-
 class LocaleSwitcher extends SelectAction
 {
     use Concerns\HasTranslatableLocaleOptions;

@@ -4,6 +4,7 @@
 
     $profileItem = $items['profile'] ?? $items['account'] ?? null;
     $profileItemUrl = $profileItem?->getUrl();
+    $profilePage = filament()->getProfilePage();
     $hasProfile = filament()->hasProfile() || filled($profileItemUrl);
 
     $logoutItem = $items['logout'] ?? null;
@@ -33,7 +34,7 @@
                 :href="$profileItemUrl ?? filament()->getProfileUrl()"
                 tag="a"
             >
-                {{ $profileItem?->getLabel() ?? filament()->getProfilePage()::getLabel() ?? filament()->getUserName($user) }}
+                {{ $profileItem?->getLabel() ?? ($profilePage ? $profilePage::getLabel() : null) ?? filament()->getUserName($user) }}
             </x-filament::dropdown.list.item>
         </x-filament::dropdown.list>
     @else

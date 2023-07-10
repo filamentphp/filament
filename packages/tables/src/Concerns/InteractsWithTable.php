@@ -4,14 +4,12 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms;
-use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Livewire\Features\SupportPagination\HandlesPagination;
 use Livewire\WithPagination;
 
 trait InteractsWithTable

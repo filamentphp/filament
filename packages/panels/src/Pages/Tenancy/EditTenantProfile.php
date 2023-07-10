@@ -4,10 +4,10 @@ namespace Filament\Pages\Tenancy;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
-use Filament\Pages\CardPage;
 use Filament\Pages\Concerns;
 use Filament\Pages\Page;
 use Filament\Panel;
@@ -17,7 +17,6 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Locked;
-use function Filament\authorize;
 
 /**
  * @property Form $form
@@ -37,6 +36,9 @@ abstract class EditTenantProfile extends Page
      */
     public ?array $data = [];
 
+    /**
+     * @var ?Model
+     */
     #[Locked]
     public $tenant = null;
 

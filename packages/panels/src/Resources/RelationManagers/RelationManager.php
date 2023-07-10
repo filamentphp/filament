@@ -16,8 +16,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use Livewire\Component;
 use Livewire\Attributes\Locked;
+use Livewire\Component;
 
 class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {

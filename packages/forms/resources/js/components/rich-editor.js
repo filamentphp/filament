@@ -49,9 +49,7 @@ Trix.LineBreakInsertion.prototype.shouldInsertBlockBreak = function () {
     }
 }
 
-export default function richEditorFormComponent({
-    state,
-}) {
+export default function richEditorFormComponent({ state }) {
     return {
         state,
 

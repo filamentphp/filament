@@ -2,6 +2,7 @@
 
 namespace Filament\Pages\Auth;
 
+use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
@@ -14,7 +15,8 @@ use Filament\Pages\CardPage;
 use Filament\Pages\Concerns;
 use Filament\Panel;
 use Filament\Support\Exceptions\Halt;
-use Illuminate\Contracts\Auth\Authenticatable;use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
@@ -68,9 +70,15 @@ class EditProfile extends CardPage
         $this->fillForm();
     }
 
-    public function getUser(): Authenticatable
+    public function getUser(): Authenticatable & Model
     {
-        return Filament::auth()->getUser();
+        $user = Filament::auth()->user();
+
+        if (! $user instanceof Model) {
+            throw new Exception('The authenticated user object must be an Eloquent model to allow the profile page to update it.');
+        }
+
+        return $user;
     }
 
     protected function fillForm(): void

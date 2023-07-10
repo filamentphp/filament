@@ -7,9 +7,7 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Arr;
 use Livewire\Attributes\Reactive;
-use function Livewire\store;
 use function Livewire\trigger;
 
 trait InteractsWithPageTable

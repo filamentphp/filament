@@ -11,7 +11,7 @@ use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
-use Livewire\Features\SupportUnitTesting\Testable;
+use Livewire\Features\SupportTesting\Testable;
 use function Livewire\store;
 
 /**

@@ -2,8 +2,6 @@
 
 namespace Filament\Resources\Pages\Concerns;
 
-use Illuminate\Database\Eloquent\Model;
-
 trait HasTranslatableFormWithExistingRecordData
 {
     protected function fillForm(): void

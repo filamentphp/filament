@@ -6,7 +6,7 @@ use Closure;
 use Filament\Tables\Columns\Summarizers\Summarizer;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Testing\Assert;
-use Livewire\Features\SupportUnitTesting\Testable;
+use Livewire\Features\SupportTesting\Testable;
 
 /**
  * @method HasTable instance()
