@@ -9,6 +9,7 @@
 <select
     @if ($canSelectPlaceholder)
         x-data="{ isPlaceholderSelected: true }"
+        x-init="isPlaceholderSelected = $el.value === ''"
         x-on:change="isPlaceholderSelected = $event.target.value === ''"
         x-bind:class="
             isPlaceholderSelected

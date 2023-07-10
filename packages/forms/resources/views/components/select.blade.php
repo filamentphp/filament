@@ -17,7 +17,7 @@
         class="filament-forms-select-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        @unless ($isSearchable() || $isMultiple())
+        @if (! ($isSearchable() || $isMultiple()))
             <x-filament::input.select
                 :autofocus="$isAutofocused()"
                 :can-select-placeholder="$canSelectPlaceholder"
@@ -98,9 +98,6 @@
                         })"
                 wire:ignore
                 x-on:keydown.esc="select.dropdown.isActive && $event.stopPropagation()"
-                x-bind:class="{
-                    'choices--error': @js($statePath) in $wire.__instance.serverMemo.errors,
-                }"
                 {{
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)

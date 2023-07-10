@@ -11,7 +11,7 @@
 
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors outline-none disabled:pointer-events-none disabled:opacity-70',
+        'filament-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
         is_string($color) ? "filament-dropdown-list-item-color-{$color}" : null,
         match ($color) {
             'gray' => 'filament-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
