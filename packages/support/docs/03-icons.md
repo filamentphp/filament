@@ -169,15 +169,15 @@ If you have built a Filament plugin, your users may want to be able to customize
 - `widgets::stats-overview.card` - Aside a stats overview card's label
 - `widgets::stats-overview.card.description` - Aside a stats overview card's description
 
-### Core components icon aliases
+### UI components icon aliases
 
-- `support::button` - Button
-- `support::dropdown.header` - Dropdown header
-- `support::dropdown.list.item` - Dropdown item in a list
-- `support::icon-button` - Icon button
-- `support::link` - Link
-- `support::modal` - Inside a modal's content
-- `support::modal.close-button` - Button to close a modal
-- `support::section.collapse-button` - Button to collapse a section
-- `support::section.icon` - Aside a section's heading
-- `support::tabs.item` - Tab item
+- `button` - Button
+- `dropdown.header` - Dropdown header
+- `dropdown.list.item` - Dropdown item in a list
+- `icon-button` - Icon button
+- `link` - Link
+- `modal` - Inside a modal's content
+- `modal.close-button` - Button to close a modal
+- `section.collapse-button` - Button to collapse a section
+- `section.icon` - Aside a section's heading
+- `tabs.item` - Tab item

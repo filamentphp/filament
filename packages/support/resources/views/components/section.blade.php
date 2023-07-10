@@ -73,7 +73,7 @@
                 @if ($icon)
                     <x-filament::icon
                         :name="$icon"
-                        alias="support::section.icon"
+                        alias="section.icon"
                         color="text-custom-400"
                         :size="
                             match ($iconSize) {
@@ -108,7 +108,7 @@
             <x-filament::icon-button
                 color="gray"
                 icon="heroicon-m-chevron-down"
-                icon-alias="support::section.collapse-button"
+                icon-alias="section.collapse-button"
                 x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{ 'rotate-180': ! isCollapsed }"
                 class="-my-2.5 -me-2.5"

@@ -68,7 +68,7 @@
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
-                alias="support::dropdown.list.item"
+                alias="dropdown.list.item"
                 :size="$iconSize"
                 :class="$iconClasses"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -116,7 +116,7 @@
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
-                alias="support::dropdown.list.item"
+                alias="dropdown.list.item"
                 :size="$iconSize"
                 :class="$iconClasses"
             />
@@ -161,7 +161,7 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    alias="support::dropdown.list.item"
+                    alias="dropdown.list.item"
                     :size="$iconSize"
                     :class="$iconClasses"
                 />

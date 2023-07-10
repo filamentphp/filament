@@ -48,7 +48,7 @@
         <x-filament::icon
             :name="$icon"
             :color="$iconColorClasses"
-            alias="support::tabs.item"
+            alias="tabs.item"
             size="h-5 w-5"
             :style="$iconStyles"
             x-bind:class="{
@@ -65,7 +65,7 @@
         <x-filament::icon
             :name="$icon"
             :color="$iconColorClasses"
-            alias="support::tabs.item"
+            alias="tabs.item"
             size="h-5 w-5"
             :style="$iconStyles"
             x-bind:class="{

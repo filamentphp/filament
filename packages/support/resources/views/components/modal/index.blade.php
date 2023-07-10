@@ -181,7 +181,7 @@
                                             style="{{ \Filament\Support\get_color_css_variables($iconColor, shades: [100, 500]) }}"
                                         >
                                             <x-filament::icon
-                                                alias="support::modal"
+                                                alias="modal"
                                                 color="text-custom-600 dark:text-custom-400"
                                                 :name="$icon"
                                                 size="h-6 w-6"
@@ -223,7 +223,7 @@
                             <x-filament::icon-button
                                 color="gray"
                                 icon="heroicon-o-x-mark"
-                                icon-alias="support::modal.close-button"
+                                icon-alias="modal.close-button"
                                 icon-size="lg"
                                 :label="__('filament-support::components/modal.actions.close.label')"
                                 tabindex="-1"

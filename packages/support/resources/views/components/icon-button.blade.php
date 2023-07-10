@@ -87,7 +87,7 @@
         <x-filament::icon
             :name="$icon"
             :alias="$iconAlias"
-            group="support::icon-button"
+            group="icon-button"
             :size="$iconSize"
             :class="$iconClasses"
             :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -140,7 +140,7 @@
         <x-filament::icon
             :name="$icon"
             :alias="$iconAlias"
-            group="support::icon-button"
+            group="icon-button"
             :size="$iconSize"
             :class="$iconClasses"
         />
