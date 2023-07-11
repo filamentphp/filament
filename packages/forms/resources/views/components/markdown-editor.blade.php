@@ -36,7 +36,7 @@
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
                     ->class([
-                        'filament-forms-markdown-editor-component overflow-hidden rounded-lg bg-white font-mono text-base text-gray-950 shadow-sm ring-1 focus-within:ring-2 dark:bg-gray-900 dark:text-white sm:text-sm',
+                        'filament-forms-markdown-editor-component overflow-hidden h-[calc(100%-28px)] rounded-lg bg-white font-mono text-base text-gray-950 shadow-sm ring-1 focus-within:ring-2 dark:bg-gray-900 dark:text-white sm:text-sm',
                         'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-600' => ! $errors->has($statePath),
                         'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-400 dark:focus-within:ring-danger-400' => $errors->has($statePath),
                     ])
