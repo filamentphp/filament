@@ -209,7 +209,7 @@
 
             @if ($hasFiltersAboveContent)
                 <div
-                    class="px-2 pt-2"
+                    class="filament-tables-filters-above-content px-2 pt-2"
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
                 >
                     @if ($hasFiltersAboveContentCollapsible)
@@ -1049,7 +1049,7 @@
         @endif
 
         @if ($hasFiltersAfterContent)
-            <div class="px-2 pb-2">
+            <div class="filament-tables-filters-after-content px-2 pb-2">
                 <x-tables::hr />
 
                 <div class="mt-2 p-4">
