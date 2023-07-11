@@ -21,7 +21,9 @@
     <{{ $tag }}
         @if ($url)
             href="{{ $url }}"
-            @if ($shouldOpenUrlInNewTab) target="_blank" @endif
+            @if ($shouldOpenUrlInNewTab)
+                target="_blank"
+            @endif
         @else
             type="button"
         @endif

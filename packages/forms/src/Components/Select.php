@@ -135,7 +135,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $labels;
         });
 
-        $this->placeholder(__('filament-forms::components.select.placeholder'));
+        $this->placeholder(fn (self $component) => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
 
         $this->suffixActions([
             fn (Select $component): ?Action => $component->getCreateOptionAction(),
