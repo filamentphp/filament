@@ -19,7 +19,7 @@ select:not(.choices) {
 }
 
 .choices__inner {
-    @apply cursor-text bg-no-repeat py-1.5 pe-8 ps-3 outline-none sm:text-sm sm:leading-6;
+    @apply bg-no-repeat py-1.5 pe-8 ps-3 outline-none sm:text-sm sm:leading-6;
     background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
     background-position: right 0.5rem center;
     background-size: 1.5em 1.5em;
