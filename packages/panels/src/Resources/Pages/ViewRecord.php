@@ -36,13 +36,6 @@ class ViewRecord extends Page implements HasInfolists
      */
     public ?array $data = [];
 
-    /**
-     * @var array<int | string, string | array<mixed>>
-     */
-    protected $queryString = [
-        'activeRelationManager',
-    ];
-
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/view-record.breadcrumb');

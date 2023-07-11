@@ -38,13 +38,6 @@ class EditRecord extends Page
 
     public ?string $previousUrl = null;
 
-    /**
-     * @var array<int | string, string | array<mixed>>
-     */
-    protected $queryString = [
-        'activeRelationManager',
-    ];
-
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/edit-record.breadcrumb');

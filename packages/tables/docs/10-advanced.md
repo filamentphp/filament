@@ -212,14 +212,34 @@ With Filament, this allows you to store your table's filters, sort, search and p
 To store the filters, sorting, and search state of your table in the query string:
 
 ```php
-protected $queryString = [
-    'isTableReordering',
-    'tableFilters',
-    'tableSortColumn',
-    'tableSortDirection',
-    'tableSearch',
-    'tableColumnSearches',
-];
+use Livewire\Attributes\Url;
+
+#[Url]
+public bool $isTableReordering = false;
+
+/**
+ * @var array<string, mixed> | null
+ */
+#[Url]
+public ?array $tableFilters = null;
+
+#[Url]
+public ?string $tableGrouping = null;
+
+#[Url]
+public ?string $tableGroupingDirection = null;
+
+/**
+ * @var ?string
+ */
+#[Url]
+public $tableSearch = '';
+
+#[Url]
+public ?string $tableSortColumn = null;
+
+#[Url]
+public ?string $tableSortDirection = null;
 ```
 
 ## Styling table rows

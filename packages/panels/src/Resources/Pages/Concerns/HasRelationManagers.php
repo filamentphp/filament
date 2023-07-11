@@ -3,9 +3,11 @@
 namespace Filament\Resources\Pages\Concerns;
 
 use Filament\Resources\RelationManagers\RelationGroup;
+use Livewire\Features\SupportQueryString\Url;
 
 trait HasRelationManagers
 {
+    #[Url]
     public ?string $activeRelationManager = null;
 
     /**

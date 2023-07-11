@@ -202,10 +202,13 @@ TextColumn::make('title')
 You may optionally persist the searches in the query string:
 
 ```php
-protected $queryString = [
-    // ...
-    'tableColumnSearches',
-];
+use Livewire\Attributes\Url;
+
+/**
+ * @var array<string, string | array<string, string | null> | null>
+ */
+#[Url]
+public array $tableColumnSearches = [];
 ```
 
 ### Persist search in session

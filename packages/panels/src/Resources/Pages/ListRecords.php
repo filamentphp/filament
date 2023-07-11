@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Reactive;
+use Livewire\Features\SupportQueryString\Url;
 
 class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
@@ -30,20 +32,34 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
      */
     protected static string $view = 'filament::resources.pages.list-records';
 
-    /**
-     * @var array<int | string, string | array<mixed>>
-     */
-    protected $queryString = [
-        'activeTab',
-        'isTableReordering',
-        'tableFilters',
-        'tableGrouping',
-        'tableGroupingDirection',
-        'tableSortColumn',
-        'tableSortDirection',
-        'tableSearch',
-    ];
+    #[Url]
+    public bool $isTableReordering = false;
 
+    /**
+     * @var array<string, mixed> | null
+     */
+    #[Url]
+    public ?array $tableFilters = null;
+
+    #[Url]
+    public ?string $tableGrouping = null;
+
+    #[Url]
+    public ?string $tableGroupingDirection = null;
+
+    /**
+     * @var ?string
+     */
+    #[Url]
+    public $tableSearch = '';
+
+    #[Url]
+    public ?string $tableSortColumn = null;
+
+    #[Url]
+    public ?string $tableSortDirection = null;
+
+    #[Url]
     public ?string $activeTab = null;
 
     public function mount(): void
