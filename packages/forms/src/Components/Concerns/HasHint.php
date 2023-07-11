@@ -107,7 +107,7 @@ trait HasHint
 
         foreach ($this->hintActions as $hintAction) {
             foreach (Arr::wrap($this->evaluate($hintAction)) as $action) {
-                $this->cachedHintActions[$action->getName()] = $this->prepareAction($action);
+                $this->cachedHintActions[$action->getName()] = $this->prepareAction($action->defaultSize('sm'));
             }
         }
 
