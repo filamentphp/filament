@@ -4,22 +4,20 @@
     $id = $getId();
     $isDisabled = $isDisabled();
     $statePath = $getStatePath();
-    $prefixIcon = $getPrefixIcon();
-    $prefixLabel = $getPrefixLabel();
-    $suffixIcon = $getSuffixIcon();
-    $suffixLabel = $getSuffixLabel();
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
         :disabled="$isDisabled"
-        :prefix="$prefixLabel"
+        :inline-prefix="$isPrefixInline()"
+        :inline-suffix="$isSuffixInline()"
+        :prefix="$getPrefixLabel()"
         :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$prefixIcon"
-        :suffix="$suffixLabel"
+        :prefix-icon="$getPrefixIcon()"
+        :suffix="$getSuffixLabel()"
         :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$suffixIcon"
+        :suffix-icon="$getSuffixIcon()"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @if ($isNative())

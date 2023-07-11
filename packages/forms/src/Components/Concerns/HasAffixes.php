@@ -36,16 +36,21 @@ trait HasAffixes
 
     protected string | Closure | null $suffixIcon = null;
 
-    public function prefix(string | Closure | null $label): static
+    protected bool | Closure $isSuffixInline = false;
+
+    protected bool | Closure $isPrefixInline = false;
+
+    public function prefix(string | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->prefixLabel = $label;
+        $this->inlinePrefix($isInline);
 
         return $this;
     }
 
-    public function postfix(string | Closure | null $label): static
+    public function postfix(string | Closure | null $label, bool | Closure $isInline = false): static
     {
-        return $this->suffix($label);
+        return $this->suffix($label, $isInline);
     }
 
     public function prefixAction(Action | Closure $action): static
@@ -88,9 +93,24 @@ trait HasAffixes
         return $this;
     }
 
-    public function suffix(string | Closure | null $label): static
+    public function suffix(string | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->suffixLabel = $label;
+        $this->inlineSuffix($isInline);
+
+        return $this;
+    }
+
+    public function inlineSuffix(bool | Closure $isInline = true): static
+    {
+        $this->isSuffixInline = $isInline;
+
+        return $this;
+    }
+
+    public function inlinePrefix(bool | Closure $isInline = true): static
+    {
+        $this->isPrefixInline = $isInline;
 
         return $this;
     }
@@ -175,5 +195,15 @@ trait HasAffixes
     public function getSuffixIcon(): ?string
     {
         return $this->evaluate($this->suffixIcon);
+    }
+
+    public function isSuffixInline(): bool
+    {
+        return (bool) $this->evaluate($this->isSuffixInline);
+    }
+
+    public function isPrefixInline(): bool
+    {
+        return (bool) $this->evaluate($this->isPrefixInline);
     }
 }

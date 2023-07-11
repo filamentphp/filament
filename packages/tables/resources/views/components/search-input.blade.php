@@ -11,6 +11,7 @@
     </label>
 
     <x-filament-forms::affixes
+        inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
         prefix-icon-alias="tables::search-input"
     >

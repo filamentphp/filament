@@ -12,6 +12,8 @@
     <x-filament-forms::affixes
         :state-path="$statePath"
         :disabled="$isDisabled"
+        :inline-prefix="$isPrefixInline()"
+        :inline-suffix="$isSuffixInline()"
         :prefix="$getPrefixLabel()"
         :prefix-actions="$getPrefixActions()"
         :prefix-icon="$getPrefixIcon()"

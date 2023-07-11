@@ -1,22 +1,20 @@
 @php
     $isDisabled = $isDisabled();
-    $prefixIcon = $getPrefixIcon();
-    $prefixLabel = $getPrefixLabel();
     $statePath = $getStatePath();
-    $suffixIcon = $getSuffixIcon();
-    $suffixLabel = $getSuffixLabel();
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
         :disabled="$isDisabled"
-        :prefix="$prefixLabel"
+        :inline-prefix="$isPrefixInline()"
+        :inline-suffix="$isSuffixInline()"
+        :prefix="$getPrefixLabel()"
         :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$prefixIcon"
-        :suffix="$suffixLabel"
+        :prefix-icon="$getPrefixIcon()"
+        :suffix="$getSuffixLabel()"
         :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$suffixIcon"
+        :suffix-icon="$getSuffixIcon()"
         class="filament-forms-color-picker-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >

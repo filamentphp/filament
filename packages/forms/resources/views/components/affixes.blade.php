@@ -1,5 +1,7 @@
 @props([
     'disabled' => false,
+    'inlinePrefix' => false,
+    'inlineSuffix' => false,
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
