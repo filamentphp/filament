@@ -214,10 +214,6 @@ export default function selectFormComponent({
         },
 
         refreshPlaceholder: function () {
-            if (isDisabled) {
-                return
-            }
-
             if (isMultiple) {
                 return
             }

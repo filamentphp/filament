@@ -6,10 +6,6 @@ select:not(.choices) {
     @apply relative outline-none;
 }
 
-.choices.is-disabled .choices__input {
-    @apply hidden;
-}
-
 .choices [hidden] {
     @apply !hidden;
 }
@@ -97,7 +93,8 @@ select:not(.choices) {
     @apply pointer-events-none disabled:text-gray-500 dark:disabled:text-gray-400;
 }
 
-.choices__placeholder.choices__item {
+.choices__placeholder.choices__item,
+.choices.is-disabled .choices__placeholder.choices__item {
     @apply cursor-default text-gray-400 dark:text-gray-500;
 }
 
