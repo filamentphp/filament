@@ -4,7 +4,15 @@
     $id = $getId();
     $isConcealed = $isConcealed();
     $isDisabled = $isDisabled();
+    $isPrefixInline = $isPrefixInline();
+    $isSuffixInline = $isSuffixInline();
     $mask = $getMask();
+    $prefixActions = $getPrefixActions();
+    $prefixIcon = $getPrefixIcon();
+    $prefixLabel = $getPrefixLabel();
+    $suffixActions = $getSuffixActions();
+    $suffixIcon = $getSuffixIcon();
+    $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
 @endphp
 
@@ -12,14 +20,14 @@
     <x-filament-forms::affixes
         :state-path="$statePath"
         :disabled="$isDisabled"
-        :inline-prefix="$isPrefixInline()"
-        :inline-suffix="$isSuffixInline()"
-        :prefix="$getPrefixLabel()"
-        :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$getPrefixIcon()"
-        :suffix="$getSuffixLabel()"
-        :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$getSuffixIcon()"
+        :inline-prefix="$isPrefixInline"
+        :inline-suffix="$isSuffixInline"
+        :prefix="$prefixLabel"
+        :prefix-actions="$prefixActions"
+        :prefix-icon="$prefixIcon"
+        :suffix="$suffixLabel"
+        :suffix-actions="$suffixActions"
+        :suffix-icon="$suffixIcon"
         class="filament-forms-text-input-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
@@ -33,6 +41,8 @@
                         'autofocus' => $isAutofocused(),
                         'disabled' => $isDisabled,
                         'id' => $id,
+                        'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefix)),
+                        'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffix)),
                         'inputmode' => $getInputMode(),
                         'list' => $datalistOptions ? $id . '-list' : null,
                         'max' => (! $isConcealed) ? $getMaxValue() : null,

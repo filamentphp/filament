@@ -24,9 +24,7 @@
         'focus-within:ring-danger-600 dark:focus-within:ring-danger-400' => ! $disabled,
     ]);
 
-    $affixesClasses = 'flex items-center gap-x-3 border-gray-950/10 px-3 dark:border-white/20';
-
-    $affixActionsClasses = '-mx-2.5 flex';
+    $affixActionsClasses = '-mx-1.5 flex';
 
     $affixIconClasses = 'filament-input-affix-icon h-5 w-5 text-gray-400 dark:text-gray-500';
 
@@ -63,8 +61,11 @@
     @if (count($prefixActions) || $prefixIcon || filled($prefix))
         <div
             @class([
-                $affixesClasses,
-                'border-e',
+                'flex items-center gap-x-3',
+                'ps-3' => $inlinePrefix,
+                'pe-1' => $inlinePrefix && filled($prefix),
+                'pe-2' => $inlinePrefix && blank($prefix),
+                'border-e border-gray-950/10 px-3 dark:border-white/20' => ! $inlinePrefix,
             ])
         >
             @if (count($prefixActions))
@@ -84,7 +85,7 @@
             @endif
 
             @if (filled($prefix))
-                <span @class([$affixLabelClasses])>
+                <span class="{{ $affixLabelClasses }}">
                     {{ $prefix }}
                 </span>
             @endif
@@ -98,12 +99,15 @@
     @if (count($suffixActions) || $suffixIcon || filled($suffix))
         <div
             @class([
-                $affixesClasses,
-                'border-s',
+                'flex items-center gap-x-3',
+                'pe-3' => $inlineSuffix,
+                'ps-1' => $inlineSuffix && filled($suffix),
+                'ps-2' => $inlineSuffix && blank($suffix),
+                'border-s border-gray-950/10 px-3 dark:border-white/20' => ! $inlineSuffix,
             ])
         >
             @if (filled($suffix))
-                <span @class([$affixLabelClasses])>
+                <span class="{{ $affixLabelClasses }}">
                     {{ $suffix }}
                 </span>
             @endif
