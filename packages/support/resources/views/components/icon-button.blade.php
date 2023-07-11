@@ -17,13 +17,11 @@
 ])
 
 @php
-    $iconSize = match ($size) {
+    $iconSize ??= match ($size) {
         'sm' => 'md',
         'md' => 'md',
         'lg' => 'lg',
     };
-
-    $iconSize ??= $size;
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'filament-icon-button relative flex items-center justify-center text-custom-500 outline-none transition disabled:pointer-events-none disabled:opacity-70',
