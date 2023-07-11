@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Comutați modul întunecat',
+        'logout' => [
+            'label' => 'Deconectare',
         ],
 
         'open_database_notifications' => [
             'label' => 'Deschideți notificările',
         ],
 
-        'light_theme' => [
-            'label' => 'Comutați modul deschis',
-        ],
-
-        'logout' => [
-            'label' => 'Deconectare',
+        'open_user_menu' => [
+            'label' => 'meniul utilizatorului',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'meniul utilizatorului',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Comutați modul întunecat',
+            ],
+
+            'light' => [
+                'label' => 'Comutați modul deschis',
+            ],
+
         ],
 
     ],

@@ -6,24 +6,28 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'הפעל מצב כהה',
+        'logout' => [
+            'label' => 'התנתק',
         ],
 
         'open_database_notifications' => [
             'label' => 'פתח התראות',
         ],
 
-        'light_theme' => [
-            'label' => 'הפעל מצב מואר',
-        ],
-
-        'logout' => [
-            'label' => 'התנתק',
-        ],
-
         'open_user_menu' => [
             'label' => 'תפריט משתמש',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'הפעל מצב כהה',
+            ],
+
+            'light' => [
+                'label' => 'הפעל מצב מואר',
+            ],
+
         ],
 
     ],

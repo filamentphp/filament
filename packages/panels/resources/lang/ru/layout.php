@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Включить темный режим',
+        'logout' => [
+            'label' => 'Выйти',
         ],
 
         'open_database_notifications' => [
             'label' => 'Открыть уведомления',
         ],
 
-        'light_theme' => [
-            'label' => 'Включить светлый режим',
-        ],
-
-        'logout' => [
-            'label' => 'Выйти',
+        'open_user_menu' => [
+            'label' => 'Меню пользователя',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Меню пользователя',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Включить темный режим',
+            ],
+
+            'light' => [
+                'label' => 'Включить светлый режим',
+            ],
+
         ],
 
     ],

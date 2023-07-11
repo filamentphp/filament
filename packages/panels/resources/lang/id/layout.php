@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Mode Gelap',
+        'logout' => [
+            'label' => 'Keluar',
         ],
 
         'open_database_notifications' => [
             'label' => 'Buka notifikasi',
         ],
 
-        'light_theme' => [
-            'label' => 'Mode Terang',
-        ],
-
-        'logout' => [
-            'label' => 'Keluar',
+        'open_user_menu' => [
+            'label' => 'Menu pengguna',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Menu pengguna',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Mode Gelap',
+            ],
+
+            'light' => [
+                'label' => 'Mode Terang',
+            ],
+
         ],
 
     ],

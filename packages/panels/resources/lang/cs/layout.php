@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Zapnout tmavý režim',
+        'logout' => [
+            'label' => 'Odhlásit se',
         ],
 
         'open_database_notifications' => [
             'label' => 'Zobrazit notifikace',
         ],
 
-        'light_theme' => [
-            'label' => 'Zapnout světlý režim',
-        ],
-
-        'logout' => [
-            'label' => 'Odhlásit se',
+        'open_user_menu' => [
+            'label' => 'Nabídka uživatele',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Nabídka uživatele',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Zapnout tmavý režim',
+            ],
+
+            'light' => [
+                'label' => 'Zapnout světlý režim',
+            ],
+
         ],
 
     ],

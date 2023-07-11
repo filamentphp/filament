@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'A modo oscuro',
+        'logout' => [
+            'label' => 'Salir',
         ],
 
         'open_database_notifications' => [
             'label' => 'Abrir notificaciones',
         ],
 
-        'light_theme' => [
-            'label' => 'A modo claro',
-        ],
-
-        'logout' => [
-            'label' => 'Salir',
+        'open_user_menu' => [
+            'label' => 'Menú del Usuario',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Menú del Usuario',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'A modo oscuro',
+            ],
+
+            'light' => [
+                'label' => 'A modo claro',
+            ],
+
         ],
 
     ],

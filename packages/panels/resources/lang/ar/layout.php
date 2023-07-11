@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'تفعيل الوضع الليلي',
+        'logout' => [
+            'label' => 'تسجيل الخروج',
         ],
 
         'open_database_notifications' => [
             'label' => 'عرض التنبيهات',
         ],
 
-        'light_theme' => [
-            'label' => 'تفعيل وضع النهار',
-        ],
-
-        'logout' => [
-            'label' => 'تسجيل الخروج',
+        'open_user_menu' => [
+            'label' => 'قائمة المستخدم',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'قائمة المستخدم',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'تفعيل الوضع الليلي',
+            ],
+
+            'light' => [
+                'label' => 'تفعيل وضع النهار',
+            ],
+
         ],
 
     ],

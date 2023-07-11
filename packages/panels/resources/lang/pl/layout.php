@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Tryb ciemny',
+        'logout' => [
+            'label' => 'Wyloguj się',
         ],
 
         'open_database_notifications' => [
             'label' => 'Otwórz powiadomienia',
         ],
 
-        'light_theme' => [
-            'label' => 'Tryb jasny',
-        ],
-
-        'logout' => [
-            'label' => 'Wyloguj się',
+        'open_user_menu' => [
+            'label' => 'Menu użytkownika',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Menu użytkownika',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Tryb ciemny',
+            ],
+
+            'light' => [
+                'label' => 'Tryb jasny',
+            ],
+
         ],
 
     ],

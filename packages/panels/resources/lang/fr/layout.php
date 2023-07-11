@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Activer le mode sombre',
+        'logout' => [
+            'label' => 'Déconnexion',
         ],
 
         'open_database_notifications' => [
             'label' => 'Ouvrir les notifications',
         ],
 
-        'light_theme' => [
-            'label' => 'Désactiver le mode sombre',
-        ],
-
-        'logout' => [
-            'label' => 'Déconnexion',
+        'open_user_menu' => [
+            'label' => 'Menu utilisateur',
         ],
 
         'sidebar' => [
@@ -34,9 +30,18 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Menu utilisateur',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Activer le mode sombre',
+            ],
+
+            'light' => [
+                'label' => 'Désactiver le mode sombre',
+            ],
+
         ],
+
     ],
 
 ];

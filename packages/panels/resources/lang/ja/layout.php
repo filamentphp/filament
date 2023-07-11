@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'ダークモードに切り替える',
+        'logout' => [
+            'label' => 'ログアウト',
         ],
 
         'open_database_notifications' => [
             'label' => 'お知らせを確認',
         ],
 
-        'light_theme' => [
-            'label' => 'ライトモードに切り替える',
-        ],
-
-        'logout' => [
-            'label' => 'ログアウト',
+        'open_user_menu' => [
+            'label' => 'ユーザーメニュー',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'ユーザーメニュー',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'ダークモードに切り替える',
+            ],
+
+            'light' => [
+                'label' => 'ライトモードに切り替える',
+            ],
+
         ],
 
     ],

@@ -115,8 +115,8 @@
         >
             <button
                 type="button"
-                aria-label="{{ __('filament::layout.actions.light_theme.label') }}"
-                x-tooltip="'{{ __('filament::layout.actions.light_theme.label') }}'"
+                aria-label="{{ __('filament::layout.actions.theme_switcher.light.label') }}"
+                x-tooltip="'{{ __('filament::layout.actions.theme_switcher.light.label') }}'"
                 x-on:click="theme = 'light'"
                 x-bind:class="theme === 'light' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 class="flex flex-1 items-center justify-center p-2 hover:bg-gray-500/10 focus:bg-gray-500/10"
@@ -130,8 +130,8 @@
 
             <button
                 type="button"
-                aria-label="{{ __('filament::layout.actions.dark_theme.label') }}"
-                x-tooltip="'{{ __('filament::layout.actions.dark_theme.label') }}'"
+                aria-label="{{ __('filament::layout.actions.theme_switcher.dark.label') }}"
+                x-tooltip="'{{ __('filament::layout.actions.theme_switcher.dark.label') }}'"
                 x-on:click="theme = 'dark'"
                 x-bind:class="theme === 'dark' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 class="flex flex-1 items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"
@@ -145,8 +145,8 @@
 
             <button
                 type="button"
-                aria-label="{{ __('filament::layout.actions.system_theme.label') }}"
-                x-tooltip="'{{ __('filament::layout.actions.system_theme.label') }}'"
+                aria-label="{{ __('filament::layout.actions.theme_switcher.system.label') }}"
+                x-tooltip="'{{ __('filament::layout.actions.theme_switcher.system.label') }}'"
                 x-on:click="theme = 'system'"
                 x-bind:class="theme === 'system' ? 'text-primary-500' : 'text-gray-700 dark:text-gray-200'"
                 class="flex flex-1 items-center justify-center p-2 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10"

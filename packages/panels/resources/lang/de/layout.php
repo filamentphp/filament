@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Dark Mode einschalten',
+        'logout' => [
+            'label' => 'Abmelden',
         ],
 
         'open_database_notifications' => [
             'label' => 'Benachrichtigungen öffnen',
         ],
 
-        'light_theme' => [
-            'label' => 'Light Mode einschalten',
-        ],
-
-        'logout' => [
-            'label' => 'Abmelden',
+        'open_user_menu' => [
+            'label' => 'Benutzermenü',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Benutzermenü',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Dark Mode einschalten',
+            ],
+
+            'light' => [
+                'label' => 'Light Mode einschalten',
+            ],
+
         ],
 
     ],

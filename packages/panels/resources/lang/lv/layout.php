@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Pārslēgt uz tumšo režīmu',
+        'logout' => [
+            'label' => 'Iziet',
         ],
 
         'open_database_notifications' => [
             'label' => 'Atvērt paziņojumus',
         ],
 
-        'light_theme' => [
-            'label' => 'Pārslēgt uz gaišo režīmu',
-        ],
-
-        'logout' => [
-            'label' => 'Iziet',
+        'open_user_menu' => [
+            'label' => 'Lietotāja izvēlne',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Lietotāja izvēlne',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Pārslēgt uz tumšo režīmu',
+            ],
+
+            'light' => [
+                'label' => 'Pārslēgt uz gaišo režīmu',
+            ],
+
         ],
 
     ],

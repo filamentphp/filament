@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Tukar mod gelap',
+        'logout' => [
+            'label' => 'Log keluar',
         ],
 
         'open_database_notifications' => [
             'label' => 'Buka pemberitahuan',
         ],
 
-        'light_theme' => [
-            'label' => 'Tukar mod terang',
-        ],
-
-        'logout' => [
-            'label' => 'Log keluar',
+        'open_user_menu' => [
+            'label' => 'Menu Pengguna',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Menu Pengguna',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Tukar mod gelap',
+            ],
+
+            'light' => [
+                'label' => 'Tukar mod terang',
+            ],
+
         ],
 
     ],

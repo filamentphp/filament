@@ -6,24 +6,28 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Skift til mørk tilstand',
+        'logout' => [
+            'label' => 'Log ud',
         ],
 
         'open_database_notifications' => [
             'label' => 'Åbn notifikationer',
         ],
 
-        'light_theme' => [
-            'label' => 'Skift til lys tilstand',
-        ],
-
-        'logout' => [
-            'label' => 'Log ud',
-        ],
-
         'open_user_menu' => [
             'label' => 'Brugermenu',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Skift til mørk tilstand',
+            ],
+
+            'light' => [
+                'label' => 'Skift til lys tilstand',
+            ],
+
         ],
 
     ],

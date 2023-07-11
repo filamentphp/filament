@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'حالت تیره',
+        'logout' => [
+            'label' => 'خروج',
         ],
 
         'open_database_notifications' => [
             'label' => 'نمایش اعلانات',
         ],
 
-        'light_theme' => [
-            'label' => 'حالت روشن',
-        ],
-
-        'logout' => [
-            'label' => 'خروج',
+        'open_user_menu' => [
+            'label' => 'منو کاربر',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'منو کاربر',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'حالت تیره',
+            ],
+
+            'light' => [
+                'label' => 'حالت روشن',
+            ],
+
         ],
 
     ],

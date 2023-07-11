@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Tumma tila',
+        'logout' => [
+            'label' => 'Kirjaudu ulos',
         ],
 
         'open_database_notifications' => [
             'label' => 'Avaa ilmoitukset',
         ],
 
-        'light_theme' => [
-            'label' => 'Vaalea tila',
-        ],
-
-        'logout' => [
-            'label' => 'Kirjaudu ulos',
+        'open_user_menu' => [
+            'label' => 'Käyttäjävalikko',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Käyttäjävalikko',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Tumma tila',
+            ],
+
+            'light' => [
+                'label' => 'Vaalea tila',
+            ],
+
         ],
 
     ],

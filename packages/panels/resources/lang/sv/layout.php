@@ -6,20 +6,16 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Växla till mörkt läge',
+        'logout' => [
+            'label' => 'Logga ut',
         ],
 
         'open_database_notifications' => [
             'label' => 'Öppna aviseringar',
         ],
 
-        'light_theme' => [
-            'label' => 'Växla till ljust läge',
-        ],
-
-        'logout' => [
-            'label' => 'Logga ut',
+        'open_user_menu' => [
+            'label' => 'Användarmeny',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'open_user_menu' => [
-            'label' => 'Användarmeny',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Växla till mörkt läge',
+            ],
+
+            'light' => [
+                'label' => 'Växla till ljust läge',
+            ],
+
         ],
 
     ],

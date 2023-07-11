@@ -6,24 +6,28 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Geuza hali ya giza',
+        'logout' => [
+            'label' => 'Toka',
         ],
 
         'open_database_notifications' => [
             'label' => 'Fungua arifa',
         ],
 
-        'light_theme' => [
-            'label' => 'Geuza hali ya mwanga',
-        ],
-
-        'logout' => [
-            'label' => 'Toka',
-        ],
-
         'open_user_menu' => [
             'label' => 'Menyu ya Mtumiaji',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Geuza hali ya giza',
+            ],
+
+            'light' => [
+                'label' => 'Geuza hali ya mwanga',
+            ],
+
         ],
 
     ],

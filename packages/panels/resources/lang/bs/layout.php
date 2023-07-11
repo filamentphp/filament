@@ -6,24 +6,28 @@ return [
 
     'actions' => [
 
-        'dark_theme' => [
-            'label' => 'Uključite tamni način rada',
+        'logout' => [
+            'label' => 'Odjava',
         ],
 
         'open_database_notifications' => [
             'label' => 'Otvorite notifikacije',
         ],
 
-        'light_theme' => [
-            'label' => 'Uključite svjijetli način rada',
-        ],
-
-        'logout' => [
-            'label' => 'Odjava',
-        ],
-
         'open_user_menu' => [
             'label' => 'Korisnički meni',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Uključite tamni način rada',
+            ],
+
+            'light' => [
+                'label' => 'Uključite svjijetli način rada',
+            ],
+
         ],
 
     ],
