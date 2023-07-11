@@ -2,12 +2,11 @@
     'wireModel' => 'tableSearch',
 ])
 
-@php
-    $id = 'filament-tables-search-input-' . str()->random();
-@endphp
-
-<div {{ $attributes->class(['filament-tables-search-input']) }}>
-    <label for="{{ $id }}" class="sr-only">
+<div
+    x-id="['filament-tables-search-input']"
+    {{ $attributes->class(['filament-tables-search-input']) }}
+>
+    <label x-bind:for="$id('filament-tables-search-input')" class="sr-only">
         {{ __('filament-tables::table.fields.search.label') }}
     </label>
 
@@ -17,9 +16,9 @@
     >
         <x-filament::input
             autocomplete="off"
-            :id="$id"
             :placeholder="__('filament-tables::table.fields.search.placeholder')"
             :wire:model.live.debounce.500ms="$wireModel"
+            x-bind:for="$id('filament-tables-search-input')"
         />
     </x-filament-forms::affixes>
 </div>
