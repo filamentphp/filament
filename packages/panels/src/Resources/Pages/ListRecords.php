@@ -34,14 +34,14 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
      * @var array<int | string, string | array<mixed>>
      */
     protected $queryString = [
-        'activeTab' => ['except' => ''],
-        'isTableReordering' => ['except' => false],
+        'activeTab',
+        'isTableReordering',
         'tableFilters',
-        'tableGrouping' => ['except' => ''],
-        'tableGroupingDirection' => ['except' => ''],
-        'tableSortColumn' => ['except' => ''],
-        'tableSortDirection' => ['except' => ''],
-        'tableSearch' => ['except' => ''],
+        'tableGrouping',
+        'tableGroupingDirection',
+        'tableSortColumn',
+        'tableSortDirection',
+        'tableSearch',
     ];
 
     public ?string $activeTab = null;

@@ -68,6 +68,7 @@ If you have built a Filament plugin, your users may want to be able to customize
 
 ### Form Builder icon aliases
 
+- `forms:components.checkbox-list.search-field` - Search input in a checkbox list
 - `forms::components.tags-input.delete-button` - Button to delete a tag in a tags input
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 

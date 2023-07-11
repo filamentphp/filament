@@ -213,11 +213,11 @@ To store the filters, sorting, and search state of your table in the query strin
 
 ```php
 protected $queryString = [
-    'isTableReordering' => ['except' => false],
+    'isTableReordering',
     'tableFilters',
-    'tableSortColumn' => ['except' => ''],
-    'tableSortDirection' => ['except' => ''],
-    'tableSearch' => ['except' => ''],
+    'tableSortColumn',
+    'tableSortDirection',
+    'tableSearch',
     'tableColumnSearches',
 ];
 ```
