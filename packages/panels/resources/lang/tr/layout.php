@@ -10,7 +10,7 @@ return [
             'label' => 'Koyu tema',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Bildirimleri aç',
         ],
 

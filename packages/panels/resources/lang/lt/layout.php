@@ -10,7 +10,7 @@ return [
             'label' => 'Perjungti tamsos režimą',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Atidaryti pranešimus',
         ],
 

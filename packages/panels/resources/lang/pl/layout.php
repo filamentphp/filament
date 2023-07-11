@@ -10,7 +10,7 @@ return [
             'label' => 'Tryb ciemny',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Otwórz powiadomienia',
         ],
 

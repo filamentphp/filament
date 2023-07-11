@@ -10,7 +10,7 @@ return [
             'label' => 'Tumma tila',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Avaa ilmoitukset',
         ],
 

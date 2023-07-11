@@ -10,7 +10,7 @@ return [
             'label' => 'Comutați modul întunecat',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Deschideți notificările',
         ],
 

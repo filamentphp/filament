@@ -10,7 +10,7 @@ return [
             'label' => 'ダークモードに切り替える',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'お知らせを確認',
         ],
 

@@ -10,7 +10,7 @@ return [
             'label' => 'Skift til mørk tilstand',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Åbn notifikationer',
         ],
 

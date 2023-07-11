@@ -14,7 +14,7 @@ return [
             'label' => 'Chuyển chế độ tối',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Mở thông báo',
         ],
 

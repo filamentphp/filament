@@ -10,7 +10,7 @@ return [
             'label' => 'Uključite tamni način rada',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Otvorite notifikacije',
         ],
 

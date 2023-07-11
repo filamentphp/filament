@@ -10,7 +10,7 @@ return [
             'label' => '切换暗黑模式',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => '打开通知',
         ],
 

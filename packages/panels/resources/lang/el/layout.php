@@ -10,7 +10,7 @@ return [
             'label' => 'Σκοτεινή λειτουργία',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Προβολή ειδοποιήσεων',
         ],
 

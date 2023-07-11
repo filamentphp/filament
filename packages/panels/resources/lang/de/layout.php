@@ -10,7 +10,7 @@ return [
             'label' => 'Dark Mode einschalten',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Benachrichtigungen öffnen',
         ],
 

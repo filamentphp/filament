@@ -10,7 +10,7 @@ return [
             'label' => 'Zapnout tmavý režim',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Zobrazit notifikace',
         ],
 

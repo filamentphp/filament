@@ -10,7 +10,7 @@ return [
             'label' => 'ডার্ক মোড',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'বিজ্ঞপ্তি খুলুন',
         ],
 

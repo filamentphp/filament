@@ -10,7 +10,7 @@ return [
             'label' => 'הפעל מצב כהה',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'פתח התראות',
         ],
 

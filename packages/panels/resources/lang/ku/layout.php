@@ -9,7 +9,7 @@ return [
             'label' => 'گۆڕینی ڕوانگە بۆ تاریک',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'کردنەوەی ئاگانامەکان',
         ],
 

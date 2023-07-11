@@ -10,7 +10,7 @@ return [
             'label' => 'حالت تیره',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'نمایش اعلانات',
         ],
 

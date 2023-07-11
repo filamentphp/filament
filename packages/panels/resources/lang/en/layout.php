@@ -14,7 +14,7 @@ return [
             'label' => 'Toggle dark theme',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Open notifications',
         ],
 

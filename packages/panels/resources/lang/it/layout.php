@@ -10,7 +10,7 @@ return [
             'label' => 'Attiva modalità scura',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Apri notifiche',
         ],
 

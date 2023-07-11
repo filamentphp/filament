@@ -10,7 +10,7 @@ return [
             'label' => 'Mode Gelap',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Buka notifikasi',
         ],
 

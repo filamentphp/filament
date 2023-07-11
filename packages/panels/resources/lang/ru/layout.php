@@ -10,7 +10,7 @@ return [
             'label' => 'Включить темный режим',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Открыть уведомления',
         ],
 

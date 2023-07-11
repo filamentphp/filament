@@ -10,7 +10,7 @@ return [
             'label' => 'Växla till mörkt läge',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Öppna aviseringar',
         ],
 

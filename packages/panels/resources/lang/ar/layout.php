@@ -10,7 +10,7 @@ return [
             'label' => 'تفعيل الوضع الليلي',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'عرض التنبيهات',
         ],
 

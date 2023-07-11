@@ -10,7 +10,7 @@ return [
             'label' => 'Geuza hali ya giza',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Fungua arifa',
         ],
 

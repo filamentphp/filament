@@ -10,7 +10,7 @@ return [
             'label' => 'Pārslēgt uz tumšo režīmu',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Atvērt paziņojumus',
         ],
 

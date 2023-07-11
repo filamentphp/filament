@@ -14,7 +14,7 @@ return [
             'label' => 'Donkere weergave inschakelen',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Meldingen openen',
         ],
 

@@ -10,7 +10,7 @@ return [
             'label' => 'Tukar mod gelap',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Buka pemberitahuan',
         ],
 

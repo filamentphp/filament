@@ -10,7 +10,7 @@ return [
             'label' => 'Activer le mode sombre',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Ouvrir les notifications',
         ],
 
