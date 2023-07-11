@@ -143,21 +143,23 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
                 ]) ?? $relationshipQuery;
             }
 
+            $qualifiedRelationshipTitleAttributeName = $relationshipQuery->qualifyColumn($component->getRelationshipTitleAttribute());
+
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($component->getRelationshipTitleAttribute());
+                $relationshipQuery->orderBy($qualifiedRelationshipTitleAttributeName);
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
+                        $record->{$relationship->getQualifiedRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
 
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleAttribute(), $relationship->getRelatedKeyName())
+                ->pluck($qualifiedRelationshipTitleAttributeName, $relationship->getQualifiedRelatedKeyName())
                 ->toArray();
         });
 

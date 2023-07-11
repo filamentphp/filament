@@ -200,7 +200,7 @@ class AttachAction extends Action
                 }
             }
 
-            $titleAttribute = $this->getRecordTitleAttribute();
+            $titleAttribute = $relationshipQuery->qualifyColumn($this->getRecordTitleAttribute());
 
             $relationshipQuery->orderBy($titleAttribute);
 
@@ -248,7 +248,7 @@ class AttachAction extends Action
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $table->getInverseRelationship(),
                         fn (Builder $query): Builder => $query->where(
-                            $query->qualifyColumn($table->getRelationship()->getParent()->getKeyName()),
+                            $table->getRelationship()->getParent()->getQualifiedKeyName(),
                             $table->getRelationship()->getParent()->getKey(),
                         ),
                     ),

@@ -171,9 +171,11 @@ class AssociateAction extends Action
             /** @var HasMany | MorphMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $titleAttribute = $this->getRecordTitleAttribute();
+            $relationshipQuery = $relationship->getQuery();
 
-            $relationshipQuery = $relationship->getQuery()->orderBy($titleAttribute);
+            $titleAttribute = $relationshipQuery->qualifyColumn($this->getRecordTitleAttribute());
+
+            $relationshipQuery->orderBy($titleAttribute);
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
@@ -226,7 +228,7 @@ class AssociateAction extends Action
                     }
 
                     return $query->where(
-                        $query->qualifyColumn($relationship->getParent()->getKeyName()),
+                        $relationship->getParent()->getQualifiedKeyName(),
                         $relationship->getParent()->getKey(),
                     );
                 })
