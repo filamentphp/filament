@@ -88,9 +88,11 @@
                         :placeholder="$getSearchPrompt()"
                         type="search"
                         :attributes="
-                            new \Illuminate\View\ComponentAttributeBag([
-                                'x-model.debounce.' . $getSearchDebounce() => 'search',
-                            ])
+                            \Filament\Support\prepare_inherited_attributes(
+                                new \Illuminate\View\ComponentAttributeBag([
+                                    'x-model.debounce.' . $getSearchDebounce() => 'search',
+                                ])
+                            )
                         "
                     />
                 </x-filament-forms::affixes>

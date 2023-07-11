@@ -39,6 +39,14 @@
         $suffixActions,
         fn (\Filament\Forms\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
+
+    $wireTarget = $attributes->whereStartsWith(['wire:target'])->first();
+
+    $hasLoadingIndicator = filled($wireTarget);
+
+    if ($hasLoadingIndicator) {
+        $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
+    }
 @endphp
 
 <div
@@ -80,8 +88,18 @@
                 <x-filament::icon
                     :alias="$prefixIconAlias"
                     :name="$prefixIcon"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                     :class="$affixIconClasses"
                 />
+
+                @if ($hasLoadingIndicator)
+                    <x-filament::loading-indicator
+                        wire:loading.delay=""
+                        :wire:target="$loadingIndicatorTarget"
+                        :class="$affixIconClasses"
+                    />
+                @endif
             @endif
 
             @if (filled($prefix))
