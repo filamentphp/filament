@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
@@ -652,8 +653,10 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($component->getRelationshipTitleAttribute());
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             $component->applySearchConstraint(
@@ -670,21 +673,19 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $keyName = $relationship->getRelated()->getKeyName();
+                $keyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
-                $keyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$keyName} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::beforeLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
-
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (
                 str_contains($relationshipTitleAttribute, '->') &&
@@ -725,26 +726,26 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($component->getRelationshipTitleAttribute());
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $keyName = $relationship->getRelated()->getKeyName();
+                $keyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
-                $keyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$keyName} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::beforeLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
-
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (
                 str_contains($relationshipTitleAttribute, '->') &&
@@ -859,7 +860,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 }
             }
 
-            $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+            $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
 
             $relationshipQuery->whereIn($relatedKeyName, $values);
 
@@ -873,7 +874,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relatedKeyName} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::beforeLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
