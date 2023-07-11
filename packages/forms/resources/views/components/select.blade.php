@@ -76,7 +76,6 @@
                                 return await $wire.getFormSelectSearchResults(@js($statePath), search)
                             },
                             isAutofocused: @js($isAutofocused()),
-                            isDisabled: @js($isDisabled),
                             isMultiple: @js($isMultiple()),
                             livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
