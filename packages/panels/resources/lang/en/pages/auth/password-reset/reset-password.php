@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Reset your password',
 
-    'actions' => [
-
-        'reset' => [
-            'label' => 'Reset password',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -27,6 +19,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Confirm password',
+        ],
+
+        'actions' => [
+
+            'reset' => [
+                'label' => 'Reset password',
+            ],
+
         ],
 
     ],

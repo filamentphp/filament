@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Συνδεθείτε στο λογαριασμό σας',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Συνδεθείτε',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Θυμήσου με',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Συνδεθείτε',
+            ],
+
         ],
 
     ],

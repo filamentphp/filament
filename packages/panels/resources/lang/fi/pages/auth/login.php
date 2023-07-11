@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Kirjaudu tilillesi',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Kirjaudu',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Muista minut',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Kirjaudu',
+            ],
+
         ],
 
     ],

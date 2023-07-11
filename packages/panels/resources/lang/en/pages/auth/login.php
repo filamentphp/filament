@@ -8,10 +8,6 @@ return [
 
     'actions' => [
 
-        'authenticate' => [
-            'label' => 'Sign in',
-        ],
-
         'register' => [
             'before' => 'or',
             'label' => 'sign up for an account',
@@ -35,6 +31,14 @@ return [
 
         'remember' => [
             'label' => 'Remember me',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Sign in',
+            ],
+
         ],
 
     ],

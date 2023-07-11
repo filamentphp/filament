@@ -13,10 +13,6 @@ return [
             'label' => 'inloggen op je account',
         ],
 
-        'register' => [
-            'label' => 'Registreren',
-        ],
-
     ],
 
     'form' => [
@@ -36,6 +32,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Wachtwoord bevestigen',
+        ],
+
+        'actions' => [
+
+            'register' => [
+                'label' => 'Registreren',
+            ],
+
         ],
 
     ],

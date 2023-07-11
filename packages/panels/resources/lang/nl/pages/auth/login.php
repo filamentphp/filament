@@ -8,10 +8,6 @@ return [
 
     'actions' => [
 
-        'authenticate' => [
-            'label' => 'Inloggen',
-        ],
-
         'register' => [
             'before' => 'of',
             'label' => 'maak een account aan',
@@ -35,6 +31,14 @@ return [
 
         'remember' => [
             'label' => 'Herinner mij',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Inloggen',
+            ],
+
         ],
 
     ],

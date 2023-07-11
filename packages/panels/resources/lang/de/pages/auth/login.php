@@ -8,10 +8,6 @@ return [
 
     'actions' => [
 
-        'authenticate' => [
-            'label' => 'Anmelden',
-        ],
-
         'register' => [
             'before' => 'oder',
             'label' => 'erstellen Sie ein Konto',
@@ -20,6 +16,7 @@ return [
         'request_password_reset' => [
             'label' => 'Passwort vergessen?',
         ],
+
     ],
 
     'form' => [
@@ -34,6 +31,14 @@ return [
 
         'remember' => [
             'label' => 'Angemeldet bleiben',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Anmelden',
+            ],
+
         ],
 
     ],

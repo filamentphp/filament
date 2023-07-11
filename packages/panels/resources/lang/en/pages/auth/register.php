@@ -13,10 +13,6 @@ return [
             'label' => 'sign in to your account',
         ],
 
-        'register' => [
-            'label' => 'Sign up',
-        ],
-
     ],
 
     'form' => [
@@ -36,6 +32,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Confirm password',
+        ],
+
+        'actions' => [
+
+            'register' => [
+                'label' => 'Sign up',
+            ],
+
         ],
 
     ],

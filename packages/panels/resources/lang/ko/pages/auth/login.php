@@ -6,14 +6,6 @@ return [
 
     'heading' => '로그인하세요',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => '로그인',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => '기억하기',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => '로그인',
+            ],
+
         ],
 
     ],

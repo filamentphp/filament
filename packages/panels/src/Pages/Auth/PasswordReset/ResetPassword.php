@@ -149,7 +149,7 @@ class ResetPassword extends CardPage
     public function resetPasswordAction(): Action
     {
         return Action::make('resetPassword')
-            ->label(__('filament::pages/auth/password-reset/reset-password.actions.reset.label'))
+            ->label(__('filament::pages/auth/password-reset/reset-password.form.actions.reset.label'))
             ->submit('resetPassword');
     }
 

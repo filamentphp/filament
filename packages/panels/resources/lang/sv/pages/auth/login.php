@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Logga in på ditt konto',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Logga in',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Kom ihåg mig',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Logga in',
+            ],
+
         ],
 
     ],

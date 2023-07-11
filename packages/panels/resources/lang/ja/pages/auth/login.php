@@ -6,14 +6,6 @@ return [
 
     'heading' => 'アカウントにログインする',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'ログイン',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'ログイン状態を保持する',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'ログイン',
+            ],
+
         ],
 
     ],

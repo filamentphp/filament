@@ -115,7 +115,7 @@ class Login extends CardPage
     public function authenticateAction(): Action
     {
         return Action::make('authenticate')
-            ->label(__('filament::pages/auth/login.actions.authenticate.label'))
+            ->label(__('filament::pages/auth/login.form.actions.authenticate.label'))
             ->submit('authenticate');
     }
 

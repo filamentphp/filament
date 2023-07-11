@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Zaloguj się',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Zaloguj się',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Zapamiętaj mnie',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Zaloguj się',
+            ],
+
         ],
 
     ],

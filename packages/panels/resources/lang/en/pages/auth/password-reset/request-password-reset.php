@@ -12,16 +12,20 @@ return [
             'label' => 'back to login',
         ],
 
-        'request' => [
-            'label' => 'Send email',
-        ],
-
     ],
 
     'form' => [
 
         'email' => [
             'label' => 'Email address',
+        ],
+
+        'actions' => [
+
+            'request' => [
+                'label' => 'Send email',
+            ],
+
         ],
 
     ],

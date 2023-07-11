@@ -6,14 +6,6 @@ return [
 
     'heading' => 'আপনার অ্যাকাউন্টে সাইন ইন করুন',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'সাইন ইন',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'মনে রাখুন',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'সাইন ইন',
+            ],
+
         ],
 
     ],

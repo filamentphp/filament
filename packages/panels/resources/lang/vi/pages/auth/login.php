@@ -8,10 +8,6 @@ return [
 
     'actions' => [
 
-        'authenticate' => [
-            'label' => 'Đăng nhập',
-        ],
-
         'register' => [
             'before' => 'hoặc',
             'label' => 'đăng ký tài khoản',
@@ -35,6 +31,14 @@ return [
 
         'remember' => [
             'label' => 'Ghi nhớ đăng nhập',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Đăng nhập',
+            ],
+
         ],
 
     ],

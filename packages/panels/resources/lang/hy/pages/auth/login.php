@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Մուտք գործեք ձեր հաշիվ',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Մուտք գործել',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Հիշել',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Մուտք գործել',
+            ],
+
         ],
 
     ],

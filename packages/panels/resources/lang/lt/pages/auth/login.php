@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Prisijunkite prie savo paskyros',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Prisijungti',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Prisiminti mane',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Prisijungti',
+            ],
+
         ],
 
     ],

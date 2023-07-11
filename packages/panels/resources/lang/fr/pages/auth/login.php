@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Connectez-vous à votre compte',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Connexion',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Se souvenir de moi',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Connexion',
+            ],
+
         ],
 
     ],

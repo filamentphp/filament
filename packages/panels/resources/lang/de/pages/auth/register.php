@@ -13,10 +13,6 @@ return [
             'label' => 'mit Konto anmelden',
         ],
 
-        'register' => [
-            'label' => 'Registrieren',
-        ],
-
     ],
 
     'form' => [
@@ -36,6 +32,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Passwort bestätigen',
+        ],
+
+        'actions' => [
+
+            'register' => [
+                'label' => 'Registrieren',
+            ],
+
         ],
 
     ],

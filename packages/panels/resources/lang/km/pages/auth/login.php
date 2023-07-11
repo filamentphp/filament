@@ -6,14 +6,6 @@ return [
 
     'heading' => 'ចូលទៅក្នុងគណនីរបស់អ្នក',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'ចុះឈ្មោះចូល',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'ចងចាំក្នុងប្រព័ន្ធនេះ',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'ចុះឈ្មោះចូល',
+            ],
+
         ],
 
     ],

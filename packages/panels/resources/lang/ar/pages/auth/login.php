@@ -6,14 +6,6 @@ return [
 
     'heading' => 'الدخول إلى حسابك',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'تسجيل الدخول',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'تذكرني',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'تسجيل الدخول',
+            ],
+
         ],
 
     ],

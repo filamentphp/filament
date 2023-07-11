@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Bejelentkezés a fiókba',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Bejelentkezés',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Emlékezz rám',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Bejelentkezés',
+            ],
+
         ],
 
     ],

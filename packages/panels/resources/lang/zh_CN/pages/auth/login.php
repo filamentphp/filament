@@ -6,14 +6,6 @@ return [
 
     'heading' => '登录您的账号',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => '登录',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => '记住我',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => '登录',
+            ],
+
         ],
 
     ],

@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Passwort zurücksetzen',
 
-    'actions' => [
-
-        'reset' => [
-            'label' => 'Passwort zurücksetzen',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -27,6 +19,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Passwort bestätigen',
+        ],
+
+        'actions' => [
+
+            'reset' => [
+                'label' => 'Passwort zurücksetzen',
+            ],
+
         ],
 
     ],

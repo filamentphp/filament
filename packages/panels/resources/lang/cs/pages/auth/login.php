@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Přihlašte se k Vašemu účtu',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Přihlásit se',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Zapamatovat si mě',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Přihlásit se',
+            ],
+
         ],
 
     ],

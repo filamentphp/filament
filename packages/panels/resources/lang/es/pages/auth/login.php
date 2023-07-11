@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Entre a su cuenta',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Entrar',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Recordarme',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Entrar',
+            ],
+
         ],
 
     ],

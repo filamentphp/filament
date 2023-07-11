@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Войдите в свой аккаунт',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Войти',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Запомнить меня',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Войти',
+            ],
+
         ],
 
     ],

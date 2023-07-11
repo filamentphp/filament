@@ -6,14 +6,6 @@ return [
 
     'heading' => 'بچۆ ژوورەوە بۆ ناو هەژمارەکەت',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'چوونەژوورەوە',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'لەبیرم مەکە',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'چوونەژوورەوە',
+            ],
+
         ],
 
     ],

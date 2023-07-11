@@ -12,16 +12,20 @@ return [
             'label' => 'terug naar inloggen',
         ],
 
-        'request' => [
-            'label' => 'E-mail verzenden',
-        ],
-
     ],
 
     'form' => [
 
         'email' => [
             'label' => 'E-mailadres',
+        ],
+
+        'actions' => [
+
+            'request' => [
+                'label' => 'E-mail verzenden',
+            ],
+
         ],
 
     ],

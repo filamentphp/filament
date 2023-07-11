@@ -6,14 +6,6 @@ return [
 
     'heading' => 'Prijavite se na svoj račun',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'Prijavite se',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Zapamti me',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Prijavite se',
+            ],
+
         ],
 
     ],

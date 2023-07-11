@@ -6,14 +6,6 @@ return [
 
     'heading' => 'अपने अकाउंट में साइन इन करें',
 
-    'actions' => [
-
-        'authenticate' => [
-            'label' => 'लॉग इन',
-        ],
-
-    ],
-
     'form' => [
 
         'email' => [
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'मुझे याद रखना',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'लॉग इन',
+            ],
+
         ],
 
     ],
