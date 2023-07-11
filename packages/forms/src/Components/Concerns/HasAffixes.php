@@ -53,9 +53,9 @@ trait HasAffixes
         return $this->suffix($label, $isInline);
     }
 
-    public function prefixAction(Action | Closure $action): static
+    public function prefixAction(Action | Closure $action, bool | Closure $isInline = false): static
     {
-        $this->prefixActions([$action]);
+        $this->prefixActions([$action], $isInline);
 
         return $this;
     }
@@ -63,19 +63,20 @@ trait HasAffixes
     /**
      * @param  array<Action | Closure>  $actions
      */
-    public function prefixActions(array $actions): static
+    public function prefixActions(array $actions, bool | Closure $isInline = false): static
     {
         $this->prefixActions = [
             ...$this->prefixActions,
             ...$actions,
         ];
+        $this->inlinePrefix($isInline);
 
         return $this;
     }
 
-    public function suffixAction(Action | Closure $action): static
+    public function suffixAction(Action | Closure $action, bool | Closure $isInline = false): static
     {
-        $this->suffixActions([$action]);
+        $this->suffixActions([$action], $isInline);
 
         return $this;
     }
@@ -83,12 +84,13 @@ trait HasAffixes
     /**
      * @param  array<Action | Closure>  $actions
      */
-    public function suffixActions(array $actions): static
+    public function suffixActions(array $actions, bool | Closure $isInline = false): static
     {
         $this->suffixActions = [
             ...$this->suffixActions,
             ...$actions,
         ];
+        $this->inlineSuffix($isInline);
 
         return $this;
     }
@@ -115,16 +117,18 @@ trait HasAffixes
         return $this;
     }
 
-    public function prefixIcon(string | Closure | null $iconName): static
+    public function prefixIcon(string | Closure | null $iconName, bool | Closure $isInline = false): static
     {
         $this->prefixIcon = $iconName;
+        $this->inlinePrefix($isInline);
 
         return $this;
     }
 
-    public function suffixIcon(string | Closure | null $iconName): static
+    public function suffixIcon(string | Closure | null $iconName, bool | Closure $isInline = false): static
     {
         $this->suffixIcon = $iconName;
+        $this->inlineSuffix($isInline);
 
         return $this;
     }
