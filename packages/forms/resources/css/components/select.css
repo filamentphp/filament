@@ -29,6 +29,10 @@ select:not(.choices) {
     background-size: 1.5em 1.5em;
 }
 
+.choices.is-disabled .choices__inner {
+    @apply cursor-default;
+}
+
 [dir='rtl'] .choices__inner {
     background-position: left 0.5rem center;
 }
@@ -59,7 +63,7 @@ select:not(.choices) {
 
 .choices__list--dropdown,
 .choices__list[aria-expanded] {
-    @apply absolute top-full z-10 mt-2 hidden w-full overflow-hidden break-words rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 will-change-[visibility] dark:bg-gray-900 dark:ring-white/10;
+    @apply absolute top-full z-10 mt-2 hidden w-full overflow-hidden break-words rounded-lg bg-white text-sm shadow-lg ring-1 ring-gray-950/5 will-change-[visibility] dark:bg-gray-900 dark:ring-white/10;
 }
 
 .is-active.choices__list--dropdown,
@@ -86,7 +90,7 @@ select:not(.choices) {
 }
 
 .choices__item {
-    @apply cursor-default text-sm;
+    @apply cursor-default;
 }
 
 .choices__item--disabled {

@@ -17,6 +17,12 @@
 ])
 
 @php
+    $iconSize = match ($size) {
+        'sm' => 'md',
+        'md' => 'md',
+        'lg' => 'lg',
+    };
+
     $iconSize ??= $size;
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
