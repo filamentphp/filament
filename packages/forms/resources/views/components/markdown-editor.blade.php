@@ -1,12 +1,10 @@
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     @php
-        $id = $getId();
         $statePath = $getStatePath();
     @endphp
 
     @unless ($isDisabled())
         <div
-            x-ignore
             ax-load="visible"
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('markdown-editor', 'filament/forms') }}"
             x-data="markdownEditorFormComponent({
@@ -31,19 +29,24 @@
                             })
                         },
                     })"
+            x-ignore
             wire:ignore
             {{
                 $attributes
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
-                    ->class(['filament-forms-markdown-editor-component font-mono'])
+                    ->class([
+                        'filament-forms-markdown-editor-component overflow-hidden rounded-lg bg-white font-mono text-base text-gray-950 shadow-sm ring-1 focus-within:ring-2 dark:bg-gray-900 dark:text-white sm:text-sm',
+                        'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-600' => ! $errors->has($statePath),
+                        'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-400 dark:focus-within:ring-danger-400' => $errors->has($statePath),
+                    ])
             }}
         >
             <textarea x-ref="editor" class="hidden"></textarea>
         </div>
     @else
         <div
-            class="prose block w-full max-w-none rounded-lg border border-gray-300 bg-white p-3 opacity-70 shadow-sm dark:prose-invert dark:border-gray-600 dark:bg-gray-700"
+            class="prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-gray-950 dark:text-gray-400 dark:ring-white/20 sm:text-sm"
         >
             {!! str($getState())->markdown()->sanitizeHtml() !!}
         </div>

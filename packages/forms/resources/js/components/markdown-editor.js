@@ -250,7 +250,7 @@ export default function markdownEditorFormComponent({
                 toolbar.push({
                     name: 'heading',
                     action: EasyMDE.toggleHeadingSmaller,
-                    text: translations.toolbar_buttons?.heading,
+                    title: translations.toolbar_buttons?.heading,
                 })
             }
 
