@@ -110,6 +110,10 @@
     @apply border-none bg-transparent p-3 text-inherit;
 }
 
+.EasyMDEContainer .CodeMirror-scroll {
+    min-height: 13.5rem !important;
+}
+
 .EasyMDEContainer .CodeMirror-cursor {
     border-color: currentColor;
 }
