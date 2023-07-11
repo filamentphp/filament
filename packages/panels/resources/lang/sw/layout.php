@@ -22,7 +22,7 @@ return [
             'label' => 'Toka',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Menyu ya Mtumiaji',
         ],
 

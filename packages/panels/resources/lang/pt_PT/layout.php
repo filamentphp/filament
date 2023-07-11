@@ -14,7 +14,7 @@ return [
         'logout' => [
             'label' => 'Terminar Sessão',
         ],
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'menu do usuário',
         ],
     ],

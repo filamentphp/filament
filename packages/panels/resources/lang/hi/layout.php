@@ -18,7 +18,7 @@ return [
             'label' => 'साइन आउट',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'उपयोगकर्ता विकल्प सूची',
         ],
 

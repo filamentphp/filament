@@ -18,7 +18,7 @@
     <x-slot name="trigger" class="ms-4">
         <button
             class="block"
-            aria-label="{{ __('filament::layout.actions.user_menu.label') }}"
+            aria-label="{{ __('filament::layout.actions.open_user_menu.label') }}"
         >
             <x-filament::avatar.user :user="$user" />
         </button>

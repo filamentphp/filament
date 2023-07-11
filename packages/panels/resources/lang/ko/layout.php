@@ -18,7 +18,7 @@ return [
             'label' => '로그아웃',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => '사용자 메뉴',
         ],
 

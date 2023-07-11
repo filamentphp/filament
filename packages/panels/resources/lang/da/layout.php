@@ -22,7 +22,7 @@ return [
             'label' => 'Log ud',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Brugermenu',
         ],
 

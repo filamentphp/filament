@@ -18,7 +18,7 @@ return [
             'label' => '登出',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => '用戶菜單',
         ],
 

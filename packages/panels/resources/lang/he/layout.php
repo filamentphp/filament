@@ -22,7 +22,7 @@ return [
             'label' => 'התנתק',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'תפריט משתמש',
         ],
 

@@ -18,7 +18,7 @@ return [
             'label' => 'Դուրս գալ',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Օգտագործողի ընտրացանկ',
         ],
 

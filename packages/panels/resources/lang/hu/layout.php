@@ -22,7 +22,7 @@ return [
             'label' => 'Kijelentkezés',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'felhasználói menü',
         ],
 

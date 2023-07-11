@@ -22,7 +22,7 @@ return [
             'label' => 'Disconnetti',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Menu utente',
         ],
     ],

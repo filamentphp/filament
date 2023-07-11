@@ -42,7 +42,7 @@ return [
             'label' => 'Toggle system theme',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'User menu',
         ],
 

@@ -38,7 +38,7 @@ return [
 
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Menu người dùng',
         ],
 

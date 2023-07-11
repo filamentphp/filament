@@ -22,7 +22,7 @@ return [
             'label' => 'সাইন আউট',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'ব্যবহার সূচী',
         ],
 

@@ -22,7 +22,7 @@ return [
             'label' => 'Αποσύνδεση',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Μενού χρήστη',
         ],
 

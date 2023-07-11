@@ -18,7 +18,7 @@ return [
             'label' => 'ထွက်မည်',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'အသုံးပြုသူမီနူး',
         ],
 

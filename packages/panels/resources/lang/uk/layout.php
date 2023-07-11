@@ -22,7 +22,7 @@ return [
             'label' => 'Вийти',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Меню користувача',
         ],
 

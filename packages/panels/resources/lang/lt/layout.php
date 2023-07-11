@@ -22,7 +22,7 @@ return [
             'label' => 'Atsijungti',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Vartotojo meniu',
         ],
 
