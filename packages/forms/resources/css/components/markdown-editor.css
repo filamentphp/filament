@@ -111,7 +111,7 @@
 }
 
 .EasyMDEContainer .CodeMirror-scroll {
-    min-height: 13.5rem !important;
+    @apply h-auto;
 }
 
 .EasyMDEContainer .CodeMirror-cursor {
