@@ -178,15 +178,13 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
     /**
      * @deprecated Use `suffixIcon('heroicon-m-calendar')` instead.
      */
-    public function icon(string | bool | Closure | null $icon): static
+    public function icon(string | bool | null $icon = null): static
     {
-        if (is_bool($icon)) {
-            $icon = $icon ? 'heroicon-m-calendar' : null;
+        if ($icon === false) {
+            return $this;
         }
 
-        $this->suffixIcon($icon);
-
-        return $this;
+        return $this->suffixIcon($icon ?? 'heroicon-m-calendar', isInline: true);
     }
 
     public function maxDate(CarbonInterface | string | Closure | null $date): static

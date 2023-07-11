@@ -83,8 +83,14 @@
     >
         @if (! $isDisabled)
             @if ($isSearchable)
-                <x-filament-forms::affixes class="mb-4">
+                <x-filament-forms::affixes
+                    inline-prefix
+                    prefix-icon="heroicon-m-magnifying-glass"
+                    prefix-icon-alias="forms:components.checkbox-list.search-field"
+                    class="mb-4"
+                >
                     <x-filament::input
+                        inline-prefix
                         :placeholder="$getSearchPrompt()"
                         type="search"
                         :attributes="

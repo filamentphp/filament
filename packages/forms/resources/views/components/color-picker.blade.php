@@ -1,5 +1,13 @@
 @php
     $isDisabled = $isDisabled();
+    $isPrefixInline = $isPrefixInline();
+    $isSuffixInline = $isSuffixInline();
+    $prefixActions = $getPrefixActions();
+    $prefixIcon = $getPrefixIcon();
+    $prefixLabel = $getPrefixLabel();
+    $suffixActions = $getSuffixActions();
+    $suffixIcon = $getSuffixIcon();
+    $suffixLabel = $getSuffixLabel();
     $statePath = $getStatePath();
 @endphp
 
@@ -7,14 +15,14 @@
     <x-filament-forms::affixes
         :state-path="$statePath"
         :disabled="$isDisabled"
-        :inline-prefix="$isPrefixInline()"
-        :inline-suffix="$isSuffixInline()"
-        :prefix="$getPrefixLabel()"
-        :prefix-actions="$getPrefixActions()"
-        :prefix-icon="$getPrefixIcon()"
-        :suffix="$getSuffixLabel()"
-        :suffix-actions="$getSuffixActions()"
-        :suffix-icon="$getSuffixIcon()"
+        :inline-prefix="$isPrefixInline"
+        :inline-suffix="$isSuffixInline"
+        :prefix="$prefixLabel"
+        :prefix-actions="$prefixActions"
+        :prefix-icon="$prefixIcon"
+        :suffix="$suffixLabel"
+        :suffix-actions="$suffixActions"
+        :suffix-icon="$suffixIcon"
         class="filament-forms-color-picker-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
@@ -32,10 +40,6 @@
             {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
         >
             <x-filament::input
-                {{ 'x-model' . ($isLiveDebounced() ? ".debounce.{$getLiveDebounce()}" : null) }}="state"
-                @if ($isLiveOnBlur())
-                x-on:blur="$wire.call('$refresh')"
-                @endif
                 x-on:focus="togglePanelVisibility()"
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 x-ref="input"
@@ -45,9 +49,13 @@
                             'autocomplete' => 'off',
                             'disabled' => $isDisabled,
                             'id' => $getId(),
+                            'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                            'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                             'placeholder' => $getPlaceholder(),
                             'required' => $isRequired() && (! $isConcealed()),
                             'type' => 'text',
+                            'x-model' . ($isLiveDebounced() ? '.debounce.' . $getLiveDebounce() : null) => 'state',
+                            'x-on:blur' => $isLiveOnBlur() ? '$wire.call(\'$refresh\')' : null,
                         ], escape: false)
                 "
             />
