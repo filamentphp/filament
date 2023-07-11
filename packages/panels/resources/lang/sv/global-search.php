@@ -2,7 +2,7 @@
 
 return [
 
-    'field' => [
+    'input' => [
         'label' => 'Global sökning',
         'placeholder' => 'Sök',
     ],

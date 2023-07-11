@@ -2,7 +2,7 @@
 
 return [
 
-    'field' => [
+    'input' => [
         'label' => 'Globaali haku',
         'placeholder' => 'Etsi',
     ],

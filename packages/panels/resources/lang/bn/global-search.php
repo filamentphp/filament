@@ -2,7 +2,7 @@
 
 return [
 
-    'field' => [
+    'input' => [
         'label' => 'সব জায়গায় খুঁজুন',
         'placeholder' => 'খুঁজুন',
     ],

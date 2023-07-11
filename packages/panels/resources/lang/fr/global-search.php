@@ -2,7 +2,7 @@
 
 return [
 
-    'field' => [
+    'input' => [
         'label' => 'Recherche globale',
         'placeholder' => 'Rechercher',
     ],

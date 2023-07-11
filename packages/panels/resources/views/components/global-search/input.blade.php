@@ -1,6 +1,6 @@
 <div {{ $attributes->class(['filament-global-search-input']) }}>
     <label for="globalSearchInput" class="sr-only">
-        {{ __('filament::global-search.field.label') }}
+        {{ __('filament::global-search.input.label') }}
     </label>
 
     <div class="group relative max-w-md">
@@ -29,7 +29,7 @@
                 x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="$el.focus()"
             @endif
             id="globalSearchInput"
-            placeholder="{{ __('filament::global-search.field.placeholder') }}"
+            placeholder="{{ __('filament::global-search.input.placeholder') }}"
             type="search"
             autocomplete="off"
             class="block h-10 w-full rounded-lg border-transparent bg-gray-400/10 ps-10 placeholder-gray-500 outline-none transition duration-75 focus:border-primary-500 focus:bg-white focus:placeholder-gray-400 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"

@@ -2,7 +2,7 @@
 
 return [
 
-    'field' => [
+    'input' => [
         'label' => 'جستجو در کل سایت',
         'placeholder' => 'جستجو',
     ],

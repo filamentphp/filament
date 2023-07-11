@@ -2,7 +2,7 @@
 
 return [
 
-    'field' => [
+    'input' => [
         'label' => 'البحث العام',
         'placeholder' => 'البحث',
     ],
