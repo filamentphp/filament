@@ -4,7 +4,7 @@
 
 <div
     x-id="['input']"
-    {{ $attributes->class(['filament-tables-search-input']) }}
+    {{ $attributes->class(['filament-tables-search-field']) }}
 >
     <label x-bind:for="$id('input')" class="sr-only">
         {{ __('filament-tables::table.fields.search.label') }}
@@ -13,7 +13,7 @@
     <x-filament-forms::affixes
         inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
-        prefix-icon-alias="tables::search-input"
+        prefix-icon-alias="tables::search-field"
     >
         <x-filament::input
             autocomplete="off"

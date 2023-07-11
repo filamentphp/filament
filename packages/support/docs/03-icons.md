@@ -32,7 +32,7 @@ To replace an icon, you can use the `FilamentIcon` facade. It has a `register()`
 use Filament\Support\Facades\FilamentIcon;
 
 FilamentIcon::register([
-    'panels::topbar.global-search.input' => 'fas-magnifying-glass',
+    'panels::topbar.global-search.field' => 'fas-magnifying-glass',
     'panels::sidebar.group.collapse-button' => 'fas-chevron-up',
 ]);
 ```
@@ -44,7 +44,7 @@ If you have built a Filament plugin, your users may want to be able to customize
 ```blade
 <x-filament::icon
     name="heroicon-m-magnifying-glass"
-    alias="panels::topbar.global-search.input"
+    alias="panels::topbar.global-search.field"
     wire:target="search"
     class="h-5 w-5 text-gray-500 dark:text-gray-400"
 />
@@ -59,7 +59,7 @@ If you have built a Filament plugin, your users may want to be able to customize
 - `panels::sidebar.collapse-button` - Desktop sidebar collapse button when it is partially collapsible
 - `panels::sidebar.collapse-button.full` - Desktop sidebar collapse button when it is fully collapsible
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
-- `panels::topbar.global-search.input` - Global search input
+- `panels::topbar.global-search.field` - Global search field
 - `panels::topbar.open-mobile-sidebar-button` - Button to open the mobile sidebar
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::topbar.user-menu.theme-switcher.light-button` - Button in the user menu to switch to the light theme
@@ -82,7 +82,7 @@ If you have built a Filament plugin, your users may want to be able to customize
 - `tables::pagination.previous-button` - Button to go to the previous page, used on mobile and by "simple pagination"
 - `tables::pagination.next-button` - Button to go to the next page, used on mobile and by "simple pagination"
 - `tables::reorder.handle` - Handle to grab in order to reorder a record with drag and drop
-- `tables::search-input` - Search input
+- `tables::search-field` - Search input
 
 ### Notifications icon aliases
 

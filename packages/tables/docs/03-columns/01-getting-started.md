@@ -141,7 +141,7 @@ public function table(Table $table): Table
 
 ## Searching
 
-Columns may be searchable, by using the text input in the top right of the table. To make a column searchable, you must use the `searchable()` method:
+Columns may be searchable, by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -177,7 +177,7 @@ TextColumn::make('full_name')
 
 ### Searching individually
 
-You can choose to enable a per-column search input using the `isIndividual` parameter:
+You can choose to enable a per-column search input field using the `isIndividual` parameter:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -188,7 +188,7 @@ TextColumn::make('name')
 
 <AutoScreenshot name="tables/columns/individually-searchable" alt="Table with individually searchable column" version="3.x" />
 
-If you use the `isIndividual` parameter, you may still search that column using the main "global" search input for the entire table.
+If you use the `isIndividual` parameter, you may still search that column using the main "global" search input field for the entire table.
 
 To disable that functionality while still preserving the individual search functionality, you need the `isGlobal` parameter:
 

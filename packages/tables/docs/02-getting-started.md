@@ -40,7 +40,7 @@ In this example, there are 3 columns in the table. The first two display [text](
 
 ### Making columns sortable and searchable
 
-You can easily modify columns by chaining methods onto them. For example, you can make a column [searchable](columns/getting-started#searching) using the `searchable()` method. Now, there will be a search input in the table, and you will be able to filter rows by the value of that column:
+You can easily modify columns by chaining methods onto them. For example, you can make a column [searchable](columns/getting-started#searching) using the `searchable()` method. Now, there will be a search field in the table, and you will be able to filter rows by the value of that column:
 
 ```php
 use Filament\Tables\Columns\TextColumn;

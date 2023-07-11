@@ -1,6 +1,6 @@
-<div {{ $attributes->class(['filament-global-search-input']) }}>
-    <label for="globalSearchInput" class="sr-only">
-        {{ __('filament::global-search.input.label') }}
+<div {{ $attributes->class(['filament-global-search-field']) }}>
+    <label for="globalSearchField" class="sr-only">
+        {{ __('filament::global-search.field.label') }}
     </label>
 
     <div class="group relative max-w-md">
@@ -12,7 +12,7 @@
                 alias="panels::topbar.global-search.field"
                 wire:loading.remove.delay=""
                 wire:target="search"
-                class="filament-global-search-input-icon h-5 w-5 text-gray-500 dark:text-gray-400"
+                class="filament-global-search-field-icon h-5 w-5 text-gray-500 dark:text-gray-400"
             />
 
             <x-filament::loading-indicator
@@ -28,7 +28,7 @@
             @if ($keyBindings = filament()->getGlobalSearchKeyBindings())
                 x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="$el.focus()"
             @endif
-            id="globalSearchInput"
+            id="globalSearchField"
             placeholder="{{ __('filament::global-search.field.placeholder') }}"
             type="search"
             autocomplete="off"

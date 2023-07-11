@@ -3,7 +3,7 @@
 
     @if ($this->isEnabled())
         <div class="relative">
-            <x-filament::global-search.input />
+            <x-filament::global-search.field />
 
             @if ($results !== null)
                 <x-filament::global-search.results-container

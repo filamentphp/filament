@@ -141,7 +141,7 @@ public function panel(Panel $panel): Panel
 
 ## Registering global search keybindings
 
-The global search input can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](configuration):
+The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](configuration):
 
 ```php
 use Filament\Panel;

@@ -254,7 +254,7 @@ public function table(Table $table): Table
 
 ## Enabling the groups dropdown on desktop
 
-By default, the groups dropdown will only be shown on mobile devices. On desktop devices, the group select input is in the header of the time. You can enable the dropdown on desktop devices too by using the `groupsInDropdownOnDesktop()` method:
+By default, the groups dropdown will only be shown on mobile devices. On desktop devices, the group select field is in the header of the time. You can enable the dropdown on desktop devices too by using the `groupsInDropdownOnDesktop()` method:
 
 ```php
 use Filament\Tables\Table;

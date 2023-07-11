@@ -324,7 +324,7 @@
                             <div
                                 class="filament-tables-search-container flex flex-1 items-center justify-end"
                             >
-                                <x-filament-tables::search-input />
+                                <x-filament-tables::search-field />
                             </div>
                         @endif
 
@@ -950,7 +950,7 @@
                                     class="filament-table-individual-search-cell-{{ str($column->getName())->camel()->kebab() }} px-4 py-1"
                                 >
                                     @if ($column->isIndividuallySearchable())
-                                        <x-filament-tables::search-input
+                                        <x-filament-tables::search-field
                                             wire-model="tableColumnSearches.{{ $column->getName() }}"
                                         />
                                     @endif
