@@ -8,7 +8,6 @@ export default function selectFormComponent({
     getOptionsUsing,
     getSearchResultsUsing,
     isAutofocused,
-    isDisabled,
     isMultiple,
     hasDynamicOptions,
     hasDynamicSearchResults,
@@ -226,7 +225,9 @@ export default function selectFormComponent({
 
             this.$el.querySelector(
                 '.choices__list--single',
-            ).innerHTML = `<div class="choices__placeholder choices__item">${placeholder}</div>`
+            ).innerHTML = `<div class="choices__placeholder choices__item">${
+                placeholder ?? ''
+            }</div>`
         },
 
         formatState: function (state) {
