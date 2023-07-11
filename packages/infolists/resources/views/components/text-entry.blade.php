@@ -164,7 +164,7 @@
                         'text-xs' => $isBadge,
                     ])
                 >
-                    {{ trans_choice('filament-infolists::components.text.more_list_items', $limitedArrayStateCount) }}
+                    {{ trans_choice('filament-infolists::components.text_entry.more_list_items', $limitedArrayStateCount) }}
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
         </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
