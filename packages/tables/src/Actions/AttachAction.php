@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 
 class AttachAction extends Action
@@ -65,7 +66,21 @@ class AttachAction extends Action
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $record = $relationship->getQuery()
+            $relationshipQuery = $relationship->getQuery();
+
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+            }
+
+            $record = $relationshipQuery
                 ->{is_array($data['recordId']) ? 'whereIn' : 'where'}($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
                 ->first();
 
@@ -171,9 +186,23 @@ class AttachAction extends Action
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
+            $relationshipQuery = $relationship->getQuery();
+
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+            }
+
             $titleAttribute = $this->getRecordTitleAttribute();
 
-            $relationshipQuery = $relationship->getQuery()->orderBy($titleAttribute);
+            $relationshipQuery->orderBy($titleAttribute);
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
@@ -234,7 +263,25 @@ class AttachAction extends Action
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle(Relation::noConstraints(fn () => $table->getRelationship())->getQuery()->find($value)))
+            ->getOptionLabelUsing(function ($value) use ($table): string {
+                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                $relationshipQuery = $relationship->getQuery();
+
+                // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+                // those that are attached in the pivot table. We need to change this to a left join so
+                // that we can still get results when the relationship is not attached to the record.
+                if ($relationship instanceof BelongsToMany) {
+                    /** @var ?JoinClause $firstRelationshipJoinClause */
+                    $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                    if ($firstRelationshipJoinClause) {
+                        $firstRelationshipJoinClause->type = 'left';
+                    }
+                }
+
+                return $this->getRecordTitle($relationshipQuery->find($value));
+            })
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
             ->hiddenLabel();
 
