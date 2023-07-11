@@ -78,8 +78,6 @@ class ActionGroup extends ViewComponent implements HasLivewire
         $this->flatActions = [];
 
         foreach ($actions as $action) {
-            $action->grouped();
-
             if ($action instanceof ActionGroup) {
                 $action->dropdownPlacement('right-top');
 
@@ -150,7 +148,10 @@ class ActionGroup extends ViewComponent implements HasLivewire
      */
     public function getActions(): array
     {
-        return $this->actions;
+        return array_map(
+            fn (StaticAction | ActionGroup $action) => $this->hasDropdown() ? $action->grouped() : $action,
+            $this->actions,
+        );
     }
 
     /**
