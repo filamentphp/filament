@@ -253,6 +253,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
                 $action->halt();
             })
+            ->color('gray')
             ->icon('heroicon-m-plus')
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
@@ -393,6 +394,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 $livewire = $component->getLivewire();
                 $livewire->dispatch('filament-forms::select.refreshSelectedOptionLabel', livewireId: $livewire->getId(), statePath: $statePath);
             })
+            ->color('gray')
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
