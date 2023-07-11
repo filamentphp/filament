@@ -15,7 +15,7 @@
     :two-xl="$columns['2xl'] ?? null"
     class="filament-widgets-container mb-6 gap-4 lg:gap-8"
 >
-    @foreach ($widgets as $key = $widget)
+    @foreach ($widgets as $key => $widget)
         @if ($widget::canView())
             @livewire($widget, ['lazy' => true, ...$data], $key)
         @endif
