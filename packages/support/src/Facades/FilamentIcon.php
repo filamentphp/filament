@@ -2,7 +2,6 @@
 
 namespace Filament\Support\Facades;
 
-use Filament\Support\Icons\Icon;
 use Filament\Support\Icons\IconManager;
 use Illuminate\Support\Facades\Facade;
 

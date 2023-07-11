@@ -2,8 +2,6 @@
 
 namespace Filament\Panel\Concerns;
 
-use Filament\Support\Icons\Icon;
-
 trait HasIcons
 {
     /**

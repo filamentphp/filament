@@ -263,10 +263,7 @@
         }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-filament::icon
-                :name="$icon"
-                :class="$iconClasses"
-            />
+            <x-filament::icon :name="$icon" :class="$iconClasses" />
         @endif
 
         <span class="{{ $labelClasses }}">
@@ -274,10 +271,7 @@
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament::icon
-                :name="$icon"
-                :class="$iconClasses"
-            />
+            <x-filament::icon :name="$icon" :class="$iconClasses" />
         @endif
 
         @if ($indicator)

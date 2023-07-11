@@ -136,10 +136,7 @@
             </span>
         @endif
 
-        <x-filament::icon
-            :name="$icon"
-            :class="$iconClasses"
-        />
+        <x-filament::icon :name="$icon" :class="$iconClasses" />
 
         @if ($indicator)
             <span

@@ -34,9 +34,9 @@
             {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
         >
             <x-filament::input
-                x-model{{ $isLiveDebounced() ? ".debounce.{$getLiveDebounce()}" : null }}="state"
+                {{ 'x-model' . ($isLiveDebounced() ? ".debounce.{$getLiveDebounce()}" : null) }}="state"
                 @if ($isLiveOnBlur())
-                    x-on:blur="$wire.call('$refresh')"
+                x-on:blur="$wire.call('$refresh')"
                 @endif
                 x-on:focus="togglePanelVisibility()"
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"

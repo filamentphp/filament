@@ -110,10 +110,7 @@
         }}
     >
         @if ($icon)
-            <x-filament::icon
-                :name="$icon"
-                :class="$iconClasses"
-            />
+            <x-filament::icon :name="$icon" :class="$iconClasses" />
         @endif
 
         @if ($image)
@@ -153,10 +150,7 @@
             }}
         >
             @if ($icon)
-                <x-filament::icon
-                    :name="$icon"
-                    :class="$iconClasses"
-                />
+                <x-filament::icon :name="$icon" :class="$iconClasses" />
             @endif
 
             <span class="{{ $labelClasses }}">
