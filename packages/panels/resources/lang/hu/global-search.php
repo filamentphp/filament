@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'Globális keresés',
         'placeholder' => 'Keres',
     ],

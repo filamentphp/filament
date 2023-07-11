@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'Pencarian global',
         'placeholder' => 'Cari',
     ],

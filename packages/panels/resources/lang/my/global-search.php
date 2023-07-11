@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'ကမ္ဘာလုံးဆိုင်ရာ ရှာဖွေမှု',
         'placeholder' => 'ရှာမယ်',
     ],

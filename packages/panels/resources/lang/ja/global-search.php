@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'グローバル検索',
         'placeholder' => '検索',
     ],

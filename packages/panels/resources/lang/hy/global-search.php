@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'Գլոբալ որոնում',
         'placeholder' => 'Որոնել',
     ],

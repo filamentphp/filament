@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'Globalna pretraga',
         'placeholder' => 'Tražite',
     ],

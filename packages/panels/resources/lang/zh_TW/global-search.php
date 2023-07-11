@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => '全域搜尋',
         'placeholder' => '搜尋',
     ],

@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'Tìm kiếm toàn hệ thống',
         'placeholder' => 'Tìm kiếm',
     ],

@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'گەڕانی گشتی',
         'placeholder' => 'گەڕان',
     ],

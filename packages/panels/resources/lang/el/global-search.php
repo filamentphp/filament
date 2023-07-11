@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'Γενική αναζήτηση',
         'placeholder' => 'Αναζήτηση',
     ],

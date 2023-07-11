@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'Genel arama',
         'placeholder' => 'Ara',
     ],

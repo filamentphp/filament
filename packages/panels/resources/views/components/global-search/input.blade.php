@@ -9,7 +9,7 @@
         >
             <x-filament::icon
                 name="heroicon-m-magnifying-glass"
-                alias="panels::topbar.global-search.input"
+                alias="panels::topbar.global-search.field"
                 wire:loading.remove.delay=""
                 wire:target="search"
                 class="filament-global-search-input-icon h-5 w-5 text-gray-500 dark:text-gray-400"
@@ -29,7 +29,7 @@
                 x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}="$el.focus()"
             @endif
             id="globalSearchInput"
-            placeholder="{{ __('filament::global-search.input.placeholder') }}"
+            placeholder="{{ __('filament::global-search.field.placeholder') }}"
             type="search"
             autocomplete="off"
             class="block h-10 w-full rounded-lg border-transparent bg-gray-400/10 ps-10 placeholder-gray-500 outline-none transition duration-75 focus:border-primary-500 focus:bg-white focus:placeholder-gray-400 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:text-gray-200 dark:placeholder-gray-400"

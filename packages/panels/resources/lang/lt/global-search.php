@@ -2,7 +2,7 @@
 
 return [
 
-    'input' => [
+    'field' => [
         'label' => 'Globali paieška',
         'placeholder' => 'Paieška',
     ],
