@@ -3,10 +3,12 @@
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
+    'prefixIconAlias' => null,
     'statePath' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
+    'suffixIconAlias' => null,
 ])
 
 @php
@@ -73,7 +75,7 @@
 
             @if ($prefixIcon)
                 <x-filament::icon
-                    alias="forms::components.affixes.prefix"
+                    :alias="$prefixIconAlias"
                     :name="$prefixIcon"
                     :class="$affixIconClasses"
                 />
@@ -106,7 +108,7 @@
 
             @if ($suffixIcon)
                 <x-filament::icon
-                    alias="forms::components.affixes.suffix"
+                    :alias="$suffixIconAlias"
                     :name="$suffixIcon"
                     :class="$affixIconClasses"
                 />
