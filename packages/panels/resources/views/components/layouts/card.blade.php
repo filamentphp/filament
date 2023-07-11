@@ -27,25 +27,21 @@
         ])
     >
         <div
-            class="filament-card-layout-card relative space-y-4 rounded-xl bg-white/50 p-8 shadow-2xl ring-1 ring-gray-950/5 backdrop-blur-xl dark:bg-gray-900/50 dark:ring-white/20"
+            class="filament-card-layout-card relative space-y-4 rounded-xl bg-white/50 p-8 shadow-2xl ring-1 ring-gray-950/5 backdrop-blur-xl dark:bg-gray-900/50 dark:ring-white/10"
         >
-            <div
-                class="filament-card-layout-card relative space-y-4 rounded-xl bg-white/50 p-8 shadow-2xl ring-1 ring-gray-950/5 backdrop-blur-xl dark:bg-gray-900/50 dark:ring-white/10"
-            >
-                @if ($this->hasLogo())
-                    <div class="flex w-full justify-center">
-                        <x-filament::logo />
-                    </div>
-                @endif
+            @if ($this->hasLogo())
+                <div class="flex w-full justify-center">
+                    <x-filament::logo />
+                </div>
+            @endif
 
-                @if (filled($subheading ??= $this->getSubHeading()))
-                    <h3
-                        class="text-center text-sm font-medium tracking-tight text-gray-600 dark:text-gray-300"
-                    >
-                        {{ $subheading }}
-                    </h3>
-                @endif
-            </div>
+            @if (filled($subheading ??= $this->getSubHeading()))
+                <h3
+                    class="text-center text-sm font-medium tracking-tight text-gray-600 dark:text-gray-300"
+                >
+                    {{ $subheading }}
+                </h3>
+            @endif
 
             <div {{ $attributes }}>
                 {{ $slot }}

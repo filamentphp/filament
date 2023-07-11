@@ -3446,7 +3446,7 @@
             "dist": {
                 "type": "path",
                 "url": "../../livewire3",
-                "reference": "940a90dcd1a4b4fdba77d57f5c618304ca4f0869"
+                "reference": "9b68f216997a5c0feccdc73ca106c72eef5990eb"
             },
             "require": {
                 "illuminate/database": "^9.0|^10.0",
