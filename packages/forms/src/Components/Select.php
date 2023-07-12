@@ -918,7 +918,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 )) {
                     return false;
                 }
-                
+
                 return ! $component->isMultiple();
             },
         );
