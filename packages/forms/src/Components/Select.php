@@ -686,11 +686,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     ->toArray();
             }
 
-            if (
-                str_contains($relationshipTitleAttribute, '->') &&
-                (! str_contains($relationshipTitleAttribute, ' as '))
-            ) {
-                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery
@@ -746,11 +747,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     ->toArray();
             }
 
-            if (
-                str_contains($relationshipTitleAttribute, '->') &&
-                (! str_contains($relationshipTitleAttribute, ' as '))
-            ) {
-                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery
@@ -880,11 +882,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (
-                str_contains($relationshipTitleAttribute, '->') &&
-                (! str_contains($relationshipTitleAttribute, ' as '))
-            ) {
-                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery

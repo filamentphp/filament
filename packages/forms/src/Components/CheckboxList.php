@@ -143,10 +143,10 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
                 ]) ?? $relationshipQuery;
             }
 
-            $qualifiedRelationshipTitleAttributeName = $relationshipQuery->qualifyColumn($component->getRelationshipTitleAttribute());
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($qualifiedRelationshipTitleAttributeName);
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -158,8 +158,16 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
                     ->toArray();
             }
 
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+            }
+
             return $relationshipQuery
-                ->pluck($qualifiedRelationshipTitleAttributeName, $relationship->getQualifiedRelatedKeyName())
+                ->pluck($relationshipTitleAttribute, $relationship->getQualifiedRelatedKeyName())
                 ->toArray();
         });
 

@@ -100,7 +100,7 @@ trait HasRelationship
         }
 
         if (empty($relationshipQuery->getQuery()->orders)) {
-            $relationshipQuery->orderBy($this->getRelationshipTitleAttribute());
+            $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($this->getRelationshipTitleAttribute()));
         }
 
         return $relationshipQuery;
