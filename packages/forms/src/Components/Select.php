@@ -909,7 +909,18 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $column,
                 );
             },
-            static fn (Select $component): bool => ! $component->isMultiple(),
+            static function (Select $component): bool {
+                $relationship = $component->getRelationship();
+
+                if (! (
+                    $relationship instanceof BelongsTo ||
+                    $relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough
+                )) {
+                    return false;
+                }
+                
+                return ! $component->isMultiple();
+            },
         );
 
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
