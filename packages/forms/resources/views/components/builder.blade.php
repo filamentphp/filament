@@ -182,7 +182,7 @@
                     @if ((! $loop->last) && $isAddable)
                         <li class="relative top-0.5 !mt-0 h-0">
                             <div
-                                class="flex w-full justify-center opacity-0 transition duration-300 hover:opacity-100"
+                                class="flex w-full justify-center opacity-0 transition duration-75 hover:opacity-100"
                             >
                                 <x-filament-forms::builder.block-picker
                                     :action="$addBetweenAction"
