@@ -40,9 +40,11 @@ class SelectFilter extends BaseFilter
                 }
 
                 if ($filter->queriesRelationships()) {
-                    $labels = $filter->getRelationshipQuery()
+                    $relationshipQuery = $filter->getRelationshipQuery();
+
+                    $labels = $relationshipQuery
                         ->whereKey($state['values'])
-                        ->pluck($filter->getRelationshipTitleAttribute())
+                        ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
                 } else {
                     $labels = Arr::only($filter->getOptions(), $state['values']);
