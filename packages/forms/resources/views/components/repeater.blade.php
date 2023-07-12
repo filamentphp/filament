@@ -39,10 +39,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class([
-                    'filament-forms-repeater-component space-y-6 rounded-xl',
-                    'bg-gray-50 p-6 dark:bg-gray-500/10' => $isInset(),
-                ])
+                ->class(['filament-forms-repeater-component space-y-6 rounded-xl'])
         }}
     >
         @if (count($containers))

@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Tampilkan semua',
-
         'actions' => [
 
             'clone' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Tampilkan semua',
 
         'actions' => [
 

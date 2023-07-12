@@ -573,10 +573,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    /**
+     * @deprecated No longer part of the design system.
+     */
     public function inset(bool | Closure $condition = true): static
     {
-        $this->isInset = $condition;
-
         return $this;
     }
 
@@ -649,11 +650,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         }
 
         return (bool) $this->evaluate($this->isDeletable);
-    }
-
-    public function isInset(): bool
-    {
-        return (bool) $this->evaluate($this->isInset);
     }
 
     public function orderColumn(string | Closure | null $column = 'sort'): static

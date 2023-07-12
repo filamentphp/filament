@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Contenu plié',
-
         'actions' => [
 
             'clone' => [
@@ -122,7 +120,6 @@ return [
     ],
 
     'repeater' => [
-        'collapsed' => 'Contenu plié',
 
         'actions' => [
 

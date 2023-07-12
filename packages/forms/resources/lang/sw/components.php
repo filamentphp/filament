@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Maudhui yamefichwa',
-
         'actions' => [
 
             'clone' => [
@@ -106,8 +104,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Maudhui yamefichwa',
 
         'actions' => [
 

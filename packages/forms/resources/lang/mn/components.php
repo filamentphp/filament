@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Контент хаагдав',
-
         'actions' => [
 
             'clone_item' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Контент хаах',
 
         'actions' => [
 

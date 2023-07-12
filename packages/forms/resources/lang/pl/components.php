@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Treść zwinięta',
-
         'actions' => [
 
             'clone' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Treść zwinięta',
 
         'actions' => [
 

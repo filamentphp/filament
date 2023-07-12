@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Thu gọn nội dung',
-
         'actions' => [
 
             'clone' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Thu gọn nội dung',
 
         'actions' => [
 

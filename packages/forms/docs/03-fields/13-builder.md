@@ -283,22 +283,6 @@ Builder::make('content')
 
 <AutoScreenshot name="forms/fields/builder/cloneable" alt="Builder repeater" version="3.x" />
 
-## Enabling the "inset" design
-
-As part of Filament's design system, you can enable "inset" mode for a builder with the `inset()`. This will give the builder extra padding around the outside of the items, with a background color:
-
-```php
-use Filament\Forms\Components\Builder;
-
-Builder::make('content')
-    ->blocks([
-        // ...
-    ])
-    ->inset()
-```
-
-<AutoScreenshot name="forms/fields/builder/inset" alt="Builder with inset design" version="3.x" />
-
 ## Builder validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to builders.

@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Вміст згорнутий',
-
         'actions' => [
 
             'add' => [
@@ -94,8 +92,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Вміст згорнутий',
 
         'actions' => [
 

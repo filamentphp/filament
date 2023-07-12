@@ -845,15 +845,6 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/fields/repeater/inset': {
-        url: 'forms/fields',
-        selector: '#insetRepeater',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'forms/fields/builder/simple': {
         url: 'forms/fields',
         selector: '#builder',
@@ -907,15 +898,6 @@ export default {
     'forms/fields/builder/cloneable': {
         url: 'forms/fields',
         selector: '#cloneableBuilder',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'forms/fields/builder/inset': {
-        url: 'forms/fields',
-        selector: '#insetBuilder',
         viewport: {
             width: 1920,
             height: 640,

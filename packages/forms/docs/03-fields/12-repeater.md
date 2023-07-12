@@ -380,21 +380,6 @@ You are trying to retrieve the value of `client_id` from inside the repeater ite
 
 You can use `../` to go up a level in the data structure, so `$get('../client_id')` is `$get('repeater.client_id')` and `$get('../../client_id')` is `$get('client_id')`.
 
-## Enabling the "inset" design
-
-As part of Filament's design system, you can enable "inset" mode for a repeater with the `inset()`. This will give the repeater extra padding around the outside of the items, with a background color:
-
-```php
-use Filament\Forms\Components\Repeater;
-
-Repeater::make('members')
-    ->schema([
-        // ...
-    ])
-    ->inset()
-```
-
-<AutoScreenshot name="forms/fields/repeater/inset" alt="Repeater with inset design" version="3.x" />
 
 ## Repeater validation
 

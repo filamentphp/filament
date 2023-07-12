@@ -29,8 +29,8 @@
 
             <x-filament::dropdown.list.item
                 :icon="$block->getIcon()"
-                :wire:click="$wireClickAction"
                 x-on:click="close"
+                :wire:click="$wireClickAction"
             >
                 {{ $block->getLabel() }}
             </x-filament::dropdown.list.item>

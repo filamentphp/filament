@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => '内容已收起',
-
         'actions' => [
 
             'add' => [
@@ -90,8 +88,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => '内容已收起',
 
         'actions' => [
 

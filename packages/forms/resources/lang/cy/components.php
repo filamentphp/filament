@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Cynnwys wedi Cwympo',
-
         'actions' => [
 
             'clone' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Cynnwys wedi Cwympo',
 
         'actions' => [
 

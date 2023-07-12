@@ -782,41 +782,6 @@ class FieldsDemo extends Component implements HasForms
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),
                 Group::make()
-                    ->id('insetRepeater')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
-                    ->schema([
-                        Repeater::make('insetRepeater')
-                            ->label('Members')
-                            ->schema([
-                                TextInput::make('name')->required(),
-                                Select::make('role')
-                                    ->options([
-                                        'member' => 'Member',
-                                        'administrator' => 'Administrator',
-                                        'owner' => 'Owner',
-                                    ])
-                                    ->required(),
-                            ])
-                            ->columns(2)
-                            ->default([
-                                [
-                                    'name' => 'Dan Harrin',
-                                    'role' => 'owner',
-                                ],
-                                [
-                                    'name' => 'Ryan Chandler',
-                                    'role' => 'administrator',
-                                ],
-                                [
-                                    'name' => 'Zep Fietje',
-                                    'role' => 'member',
-                                ],
-                            ])
-                            ->inset(),
-                    ]),
-                Group::make()
                     ->id('builder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',
@@ -1090,45 +1055,6 @@ class FieldsDemo extends Component implements HasForms
                                 ],
                             ])
                             ->cloneable(),
-                    ]),
-                Group::make()
-                    ->id('insetBuilder')
-                    ->extraAttributes([
-                        'class' => 'p-16 max-w-5xl',
-                    ])
-                    ->schema([
-                        Builder::make('insetBuilder')
-                            ->label('Content')
-                            ->schema([
-                                Builder\Block::make('paragraph')
-                                    ->schema([
-                                        Textarea::make('content')
-                                            ->label('Paragraph')
-                                            ->required(),
-                                    ])
-                                    ->icon('heroicon-m-bars-3-bottom-left'),
-                            ])
-                            ->default([
-                                [
-                                    'type' => 'paragraph',
-                                    'data' => [
-                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                    ],
-                                ],
-                                [
-                                    'type' => 'paragraph',
-                                    'data' => [
-                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                    ],
-                                ],
-                                [
-                                    'type' => 'paragraph',
-                                    'data' => [
-                                        'content' => 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc. Donec euismod, nisl eget aliquam ultricies, quam sapien aliquet nunc, eget aliquam velit nisl quis nunc.',
-                                    ],
-                                ],
-                            ])
-                            ->inset(),
                     ]),
                 Group::make()
                     ->id('tagsInput')

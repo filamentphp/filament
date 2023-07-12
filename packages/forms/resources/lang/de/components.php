@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Inhalt eingeklappt',
-
         'actions' => [
 
             'clone' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Inhalt eingeklappt',
 
         'actions' => [
 
