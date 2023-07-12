@@ -91,6 +91,8 @@ trait HasRelationship
             if ($firstRelationshipJoinClause) {
                 $firstRelationshipJoinClause->type = 'left';
             }
+
+            $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
         }
 
         if ($this->getModifyRelationshipQueryUsing()) {
