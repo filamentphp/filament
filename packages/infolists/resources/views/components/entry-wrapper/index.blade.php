@@ -49,11 +49,9 @@
         </dt>
     @endif
 
-    <div class="space-y-2">
+    <div class="grid gap-y-2">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon)
-            <div
-                class="flex items-center justify-between space-x-2 rtl:space-x-reverse"
-            >
+            <div class="flex items-center justify-between gap-x-3">
                 @if ($label && (! $labelSrOnly))
                     <x-filament-infolists::entry-wrapper.label
                         :prefix="$labelPrefix"
@@ -99,7 +97,9 @@
             @if ($url)
                 <a
                     href="{{ $url }}"
-                    @if ($shouldOpenUrlInNewTab) target="_blank" @endif
+                    @if ($shouldOpenUrlInNewTab)
+                        target="_blank"
+                    @endif
                     class="block"
                 >
                     {{ $slot }}
@@ -110,10 +110,10 @@
                 @endphp
 
                 <button
-                    wire:click="{{ $wireClickAction }}"
-                    wire:target="{{ $wireClickAction }}"
-                    wire:loading.attr="disabled"
                     type="button"
+                    wire:click="{{ $wireClickAction }}"
+                    wire:loading.attr="disabled"
+                    wire:target="{{ $wireClickAction }}"
                     class="block"
                 >
                     {{ $slot }}

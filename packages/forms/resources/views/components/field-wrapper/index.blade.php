@@ -47,11 +47,9 @@
         </label>
     @endif
 
-    <div class="space-y-2">
+    <div class="grid gap-y-2">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || count($hintActions))
-            <div
-                class="flex items-center justify-between space-x-2 rtl:space-x-reverse"
-            >
+            <div class="flex items-center justify-between gap-x-3">
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
