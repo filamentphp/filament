@@ -645,6 +645,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 if ($firstRelationshipJoinClause) {
                     $firstRelationshipJoinClause->type = 'left';
                 }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($modifyQueryUsing) {
@@ -719,6 +721,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 if ($firstRelationshipJoinClause) {
                     $firstRelationshipJoinClause->type = 'left';
                 }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($modifyQueryUsing) {
@@ -829,6 +833,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 if ($firstRelationshipJoinClause) {
                     $firstRelationshipJoinClause->type = 'left';
                 }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             $relationshipQuery->where(
@@ -860,6 +866,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 if ($firstRelationshipJoinClause) {
                     $firstRelationshipJoinClause->type = 'left';
                 }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();

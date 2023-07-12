@@ -78,6 +78,8 @@ class AttachAction extends Action
                 if ($firstRelationshipJoinClause) {
                     $firstRelationshipJoinClause->type = 'left';
                 }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             $record = $relationshipQuery
@@ -198,6 +200,8 @@ class AttachAction extends Action
                 if ($firstRelationshipJoinClause) {
                     $firstRelationshipJoinClause->type = 'left';
                 }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             $titleAttribute = $relationshipQuery->qualifyColumn($this->getRecordTitleAttribute());
@@ -278,6 +282,8 @@ class AttachAction extends Action
                     if ($firstRelationshipJoinClause) {
                         $firstRelationshipJoinClause->type = 'left';
                     }
+
+                    $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
                 }
 
                 return $this->getRecordTitle($relationshipQuery->find($value));
