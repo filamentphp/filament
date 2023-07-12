@@ -102,4 +102,6 @@ interface HasTable extends HasForms
      * @return array<string, string>
      */
     public function getTableColumnSearchIndicators(): array;
+
+    public function getFilteredSortedTableQuery(): Builder;
 }
