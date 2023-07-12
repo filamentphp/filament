@@ -20,7 +20,7 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "filament-button filament-button-size-{$size} relative grid-flow-col items-center justify-center rounded-lg font-medium outline-none transition focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            "filament-button filament-button-size-{$size} relative grid-flow-col items-center justify-center rounded-lg font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
             is_string($color) ? "filament-button-color-{$color}" : null,
             match ($size) {
                 'xs' => 'gap-1 px-2 py-1.5 text-xs',

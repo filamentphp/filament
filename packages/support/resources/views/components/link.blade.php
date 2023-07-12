@@ -18,7 +18,7 @@
     $iconSize ??= $size;
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        "filament-link filament-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
+        "filament-link filament-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
         'pe-4' => $indicator,
         'pointer-events-none opacity-70' => $disabled,
         match ($size) {

@@ -12,7 +12,6 @@
     @endphp
 
     <div
-        x-ignore
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
@@ -66,6 +65,7 @@
                         )
                     },
                 })"
+        x-ignore
         wire:ignore
         {{
             $attributes
@@ -87,9 +87,6 @@
         }}
     >
         <div
-            style="
-                min-height: {{ $isAvatar ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }};
-            "
             @class([
                 'h-full',
                 'w-32' => $isAvatar,
