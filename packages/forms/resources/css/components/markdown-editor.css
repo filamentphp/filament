@@ -107,7 +107,7 @@
 }
 
 .EasyMDEContainer .CodeMirror {
-    @apply mb-0 border-none bg-transparent p-3 text-inherit;
+    @apply border-none bg-transparent p-3 text-inherit;
 }
 
 .EasyMDEContainer .CodeMirror-scroll {
