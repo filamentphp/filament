@@ -1,8 +1,22 @@
 @php
+    $chartColor = $getChartColor();
+    $descriptionColor = $getDescriptionColor();
     $descriptionIcon = $getDescriptionIcon();
     $descriptionIconPosition = $getDescriptionIconPosition();
     $url = $getUrl();
     $tag = $url ? 'a' : 'div';
+
+    $descriptionIconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-wi-stats-overview-card-description-icon h-5 w-5',
+        match ($descriptionColor) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500',
+        },
+    ]);
+
+    $descriptionIconStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables($descriptionColor, shades: [400, 500]) => $descriptionColor !== 'gray',
+    ]);
 @endphp
 
 <{!! $tag !!}
@@ -14,42 +28,56 @@
     @endif
     {{ $getExtraAttributeBag()->class(['fi-wi-stats-overview-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10']) }}
 >
-    <div class="space-y-2">
-        <div
-            class="flex items-center space-x-2 text-sm font-medium rtl:space-x-reverse"
-        >
+    <div class="grid gap-y-2">
+        <div class="flex items-center gap-x-2">
             @if ($icon = $getIcon())
                 <x-filament::icon
                     :name="$icon"
-                    class="fi-wi-stats-overview-card-icon h-4 w-4 text-gray-500 dark:text-gray-200"
+                    class="fi-wi-stats-overview-card-icon h-5 w-5 text-gray-400 dark:text-gray-500"
                 />
             @endif
 
-            <span>{{ $getLabel() }}</span>
+            <span class="text-sm font-medium text-gray-500 dark:text-gray-400">
+                {{ $getLabel() }}
+            </span>
         </div>
 
-        <div class="text-3xl">
+        <div
+            class="text-3xl font-semibold tracking-tight text-gray-950 dark:text-white"
+        >
             {{ $getValue() }}
         </div>
 
         @if ($description = $getDescription())
-            <div
-                class="fi-wi-stats-overview-card-description flex items-center space-x-1 text-sm font-medium text-custom-600 rtl:space-x-reverse"
-                style="{{ \Filament\Support\get_color_css_variables($getDescriptionColor() ?? 'gray', shades: [600]) }}"
-            >
+            <div class="flex items-center gap-x-1">
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
                         :name="$descriptionIcon"
-                        class="fi-wi-stats-overview-card-description-icon h-4 w-4"
+                        class="{{ $descriptionIconClasses }}"
+                        style="{{ $descriptionIconStyles }}"
                     />
                 @endif
 
-                <span>{{ $description }}</span>
+                <span
+                    @class([
+                        'fi-wi-stats-overview-card-description text-sm',
+                        match ($descriptionColor) {
+                            'gray' => 'text-gray-500 dark:text-gray-400',
+                            default => 'text-custom-600 dark:text-custom-400',
+                        },
+                    ])
+                    @style([
+                        \Filament\Support\get_color_css_variables($descriptionColor, shades: [400, 600]) => $descriptionColor !== 'gray',
+                    ])
+                >
+                    {{ $description }}
+                </span>
 
                 @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
                     <x-filament::icon
                         :name="$descriptionIcon"
-                        class="fi-wi-stats-overview-card-description-icon h-4 w-4"
+                        class="{{ $descriptionIconClasses }}"
+                        style="{{ $descriptionIconStyles }}"
                     />
                 @endif
             </div>
@@ -58,29 +86,47 @@
 
     @if ($chart = $getChart())
         <div
-            x-ignore
             ax-load
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/card/chart', 'filament/widgets') }}"
+            wire:ignore
             x-data="statsOverviewCardChart({
                         labels: @js(array_keys($chart)),
                         values: @js(array_values($chart)),
                     })"
-            wire:ignore
+            x-ignore
             x-on:theme-changed.window="
                 chart.destroy()
                 initChart()
             "
-            class="absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
-            style="{{ \Filament\Support\get_color_css_variables($getChartColor() ?? 'gray', shades: [50, 400, 700]) }}"
+            @class([
+                'absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl',
+            ])
+            @style([
+                \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
+            ])
         >
             <canvas x-ref="canvas" class="h-6"></canvas>
 
             <span
                 x-ref="backgroundColorElement"
-                class="text-custom-50 dark:text-custom-700"
+                @class([
+                    match ($chartColor) {
+                        'gray' => 'text-gray-100 dark:text-gray-800',
+                        default => 'text-custom-50 dark:text-custom-400/10',
+                    },
+                ])
+                class=""
             ></span>
 
-            <span x-ref="borderColorElement" class="text-custom-400"></span>
+            <span
+                x-ref="borderColorElement"
+                @class([
+                    match ($chartColor) {
+                        'gray' => 'text-gray-400',
+                        default => 'text-custom-500 dark:text-custom-400',
+                    },
+                ])
+            ></span>
         </div>
     @endif
 </{!! $tag !!}>
