@@ -28,7 +28,7 @@ Alternatively, since Filament is built upon Tailwind CSS, you can use their `@ap
 
 ```css
 .fi-sidebar {
-    @apply bg-gray-50;
+    @apply bg-gray-50 dark:bg-gray-950;
 }
 ```
 
@@ -36,7 +36,15 @@ Occasionally, you may need to use the `!important` modifier to override existing
 
 ```css
 .fi-sidebar {
-    @apply bg-gray-50 !important;
+    @apply bg-gray-50 dark:bg-gray-950 !important;
+}
+```
+
+You can even apply `!important` to only specific Tailwind classes, which is a little less intrusive, by prefixing the class name with `!`:
+
+```css
+.fi-sidebar {
+    @apply !bg-gray-50 dark:bg-gray-950;
 }
 ```
 
