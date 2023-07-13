@@ -1,5 +1,6 @@
 @props([
     'field' => null,
+    'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => false,
     'helperText' => null,
     'hint' => null,
@@ -19,6 +20,7 @@
 
 @php
     if ($field) {
+        $hasInlineLabel ??= $field->hasInlineLabel();
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
         $helperText ??= $field->getHelperText();
         $hint ??= $field->getHint();
@@ -47,9 +49,19 @@
         </label>
     @endif
 
-    <div class="grid gap-y-2">
+    <div
+        @class([
+            'grid gap-y-2',
+            'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
+        ])
+    >
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || count($hintActions))
-            <div class="flex items-center justify-between gap-x-3">
+            <div
+                @class([
+                    'flex items-center justify-between gap-x-3',
+                    'sm:pt-1.5' => $hasInlineLabel,
+                ])
+            >
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
@@ -80,18 +92,25 @@
             </div>
         @endif
 
-        {{ $slot }}
+        <div
+            @class([
+                'grid gap-y-2',
+                'sm:col-span-2' => $hasInlineLabel,
+            ])
+        >
+            {{ $slot }}
 
-        @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
-            <x-filament-forms::field-wrapper.error-message>
-                {{ $errors->first($statePath) ?: ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
-            </x-filament-forms::field-wrapper.error-message>
-        @endif
+            @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
+                <x-filament-forms::field-wrapper.error-message>
+                    {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
+                </x-filament-forms::field-wrapper.error-message>
+            @endif
 
-        @if ($helperText)
-            <x-filament-forms::field-wrapper.helper-text>
-                {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : str($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
-            </x-filament-forms::field-wrapper.helper-text>
-        @endif
+            @if ($helperText)
+                <x-filament-forms::field-wrapper.helper-text>
+                    {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : str($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
+                </x-filament-forms::field-wrapper.helper-text>
+            @endif
+        </div>
     </div>
 </div>
