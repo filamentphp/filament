@@ -9,7 +9,6 @@
 ])
 
 <div
-    {{ $attributes->class(['fi-dropdown']) }}
     x-data="{
         toggle: function (event) {
             $refs.panel.toggle(event)
@@ -21,6 +20,7 @@
             $refs.panel.close(event)
         },
     }"
+    {{ $attributes->class(['fi-dropdown']) }}
 >
     <div
         x-on:click="toggle"

@@ -6,12 +6,12 @@
 ])
 
 <x-filament::dropdown
-    {{ $attributes->class(['fi-ta-col-toggling']) }}
     :max-height="$maxHeight"
     placement="bottom-end"
     shift
     :width="$width"
     wire:key="{{ $this->getId() }}.table.toggle"
+    {{ $attributes->class(['fi-ta-col-toggling']) }}
 >
     <x-slot name="trigger">
         {{ $triggerAction }}
