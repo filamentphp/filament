@@ -17,10 +17,6 @@ trait HasEntryWrapper
 
     public function getEntryWrapperView(): string
     {
-        if ($this->hasInlineLabel()) {
-            return 'filament-infolists::entry-wrapper.inline';
-        }
-
         return $this->getCustomEntryWrapperView() ??
             $this->getContainer()->getCustomEntryWrapperView() ??
             'filament-infolists::entry-wrapper';
