@@ -3,7 +3,7 @@
 ])
 
 <div
-    {{ $attributes->class(['fi-no-actions mt-3 flex gap-3']) }}
+    {{ $attributes->class(['fi-no-notification-actions flex gap-x-3']) }}
 >
     @foreach ($actions as $action)
         {{ $action }}

@@ -30,13 +30,13 @@
                 'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-900',
                 match ($color) {
                     'gray' => 'ring-gray-950/5 dark:ring-white/10',
-                    default => 'ring-custom-500/50',
+                    default => 'ring-custom-600/20 dark:ring-custom-400/30',
                 },
             ],
         },
     ])
     @style([
-        \Filament\Support\get_color_css_variables($color, shades: [500]) => ! ($isInline || $color === 'gray'),
+        \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! ($isInline || $color === 'gray'),
     ])
 >
     <div
@@ -48,24 +48,24 @@
                     'rounded-xl p-4',
                     match ($color) {
                         'gray' => null,
-                        default => 'bg-custom-500/10 dark:bg-custom-500/20',
+                        default => 'bg-custom-50 dark:bg-custom-400/10',
                     },
                 ],
             },
         ])
         @style([
-            \Filament\Support\get_color_css_variables($color, shades: [500]) => ! ($isInline || $color === 'gray'),
+            \Filament\Support\get_color_css_variables($color, shades: [50, 400]) => ! ($isInline || $color === 'gray'),
         ])
     >
         @if ($icon = $getIcon())
             <x-filament-notifications::icon
-                :name="$icon"
                 :color="$getIconColor()"
+                :name="$icon"
                 :size="$getIconSize()"
             />
         @endif
 
-        <div class="grid flex-1">
+        <div class="mt-0.5 grid flex-1">
             @if ($title = $getTitle())
                 <x-filament-notifications::title>
                     {{ str($title)->markdown()->sanitizeHtml()->toHtmlString() }}
@@ -79,13 +79,16 @@
             @endif
 
             @if ($body = $getBody())
-                <x-filament-notifications::body>
+                <x-filament-notifications::body class="mt-1">
                     {{ str($body)->markdown()->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::body>
             @endif
 
             @if ($actions = $getActions())
-                <x-filament-notifications::actions :actions="$actions" />
+                <x-filament-notifications::actions
+                    :actions="$actions"
+                    class="mt-3"
+                />
             @endif
         </div>
 

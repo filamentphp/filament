@@ -1,5 +1,5 @@
-<p
-    {{ $attributes->class(['fi-no-date text-xs text-gray-500 dark:text-gray-300']) }}
+<time
+    {{ $attributes->class(['fi-no-notification-date text-sm text-gray-500 dark:text-gray-400']) }}
 >
     {{ $slot }}
-</p>
+</time>
