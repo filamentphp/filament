@@ -46,8 +46,6 @@
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
-        if ($wireTarget === 'filter') {
-        }
     }
 @endphp
 
