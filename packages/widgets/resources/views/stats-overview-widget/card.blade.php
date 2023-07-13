@@ -12,18 +12,16 @@
             target="_blank"
         @endif
     @endif
-    {{ $getExtraAttributeBag()->class(['fi-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10']) }}
+    {{ $getExtraAttributeBag()->class(['fi-wi-stats-overview-widget-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10']) }}
 >
-    <div @class([
-        'space-y-2',
-    ])>
+    <div class="space-y-2">
         <div
             class="flex items-center space-x-2 text-sm font-medium rtl:space-x-reverse"
         >
             @if ($icon = $getIcon())
                 <x-filament::icon
                     :name="$icon"
-                    class="fi-stats-overview-widget-card-icon h-4 w-4 text-gray-500 dark:text-gray-200"
+                    class="fi-wi-stats-overview-widget-card-icon h-4 w-4 text-gray-500 dark:text-gray-200"
                 />
             @endif
 
@@ -36,13 +34,13 @@
 
         @if ($description = $getDescription())
             <div
-                class="fi-stats-overview-widget-card-description flex items-center space-x-1 text-sm font-medium text-custom-600 rtl:space-x-reverse"
+                class="fi-wi-stats-overview-widget-card-description flex items-center space-x-1 text-sm font-medium text-custom-600 rtl:space-x-reverse"
                 style="{{ \Filament\Support\get_color_css_variables($getDescriptionColor() ?? 'gray', shades: [600]) }}"
             >
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
                         :name="$descriptionIcon"
-                        class="fi-stats-overview-widget-card-description-icon h-4 w-4"
+                        class="fi-wi-stats-overview-widget-card-description-icon h-4 w-4"
                     />
                 @endif
 
@@ -51,7 +49,7 @@
                 @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
                     <x-filament::icon
                         :name="$descriptionIcon"
-                        class="fi-stats-overview-widget-card-description-icon h-4 w-4"
+                        class="fi-wi-stats-overview-widget-card-description-icon h-4 w-4"
                     />
                 @endif
             </div>
