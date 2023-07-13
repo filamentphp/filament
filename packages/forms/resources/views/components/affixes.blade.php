@@ -58,7 +58,7 @@
         "
     @endif
     {{
-        $attributes->class([
+        $attributes->except('wire:target')->class([
             'fi-fo-affixes flex rounded-lg shadow-sm ring-1 transition duration-75',
             $ringClasses => ! $statePath,
             'bg-gray-50 dark:bg-gray-950' => $disabled,
@@ -71,6 +71,7 @@
             @if (! (count($prefixActions) || $prefixIcon || filled($prefix)))
                 wire:loading.delay
                 wire:target="{{ $loadingIndicatorTarget }}"
+                wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Prevents the loading indicator from disappearing when the prefix is empty. --}}
             @endif
             @class([
                 'flex items-center gap-x-3',
@@ -99,11 +100,13 @@
             @endif
 
             @if ($hasLoadingIndicator)
-                <x-filament::loading-indicator
-                    wire:loading.delay=""
-                    :wire:target="$loadingIndicatorTarget"
-                    :class="$affixIconClasses"
-                />
+                <div class="flex items-center h-full">
+                    <x-filament::loading-indicator
+                        wire:loading.delay
+                        :wire:target="$loadingIndicatorTarget"
+                        :class="$affixIconClasses"
+                    />
+                </div>
             @endif
 
             @if (filled($prefix))
