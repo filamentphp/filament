@@ -16,7 +16,7 @@
 @endphp
 
 <div
-    {{ $attributes->class(['fi-in-affix-container group flex rtl:space-x-reverse']) }}
+    {{ $attributes->class(['fi-in-affixes group flex rtl:space-x-reverse']) }}
 >
     @if (count($prefixActions))
         <div class="flex items-center gap-1 self-stretch pe-2">

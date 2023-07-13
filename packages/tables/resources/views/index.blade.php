@@ -240,7 +240,7 @@
             @elseif ($heading || $description || $headerActions)
                 <div
                     @class([
-                        'fi-ta-header-hr-wrapper px-2 pt-2',
+                        'fi-ta-header-hr-container px-2 pt-2',
                         'hidden' => ! ($heading || $description) && $isReordering,
                     ])
                 >
@@ -322,7 +322,7 @@
                     >
                         @if ($isGlobalSearchVisible)
                             <div
-                                class="fi-ta-search-container flex flex-1 items-center justify-end"
+                                class="fi-ta-search-field-container flex flex-1 items-center justify-end"
                             >
                                 <x-filament-tables::search-field />
                             </div>
@@ -387,7 +387,7 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'fi-ta-table-container overflow-x-auto dark:border-gray-700',
+                'fi-ta-content overflow-x-auto dark:border-gray-700',
                 'overflow-x-auto' => $content || $hasColumnsLayout,
                 'rounded-t-xl' => ! $renderHeader,
                 'border-t' => $renderHeader,
