@@ -5,25 +5,30 @@
 @endphp
 
 <x-filament-widgets::widget class="fi-wi-chart-widget">
-    <x-filament::card>
-        @if ($heading || $filters)
-            <div class="flex items-center justify-between gap-x-4">
-                @if ($heading)
-                    <x-filament::card.heading>
-                        {{ $heading }}
-                    </x-filament::card.heading>
-                @endif
+    <x-filament::card class="grid gap-y-4">
+        @if ($heading || $description || $filters)
+            <div class="flex items-center gap-x-4">
+                @if ($heading || $description)
+                    <div class="grid gap-y-1">
+                        @if ($heading)
+                            <h3 class="text-base font-semibold leading-6">
+                                {{ $heading }}
+                            </h3>
+                        @endif
 
-                @if ($description)
-                    <x-filament::card.description>
-                        {{ $description }}
-                    </x-filament::card.description>
+                        @if ($description)
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ $description }}
+                            </p>
+                        @endif
+                    </div>
                 @endif
 
                 @if ($filters)
                     <x-filament-forms::affixes
-                        wire:target="filter"
                         inline-prefix
+                        wire:target="filter"
+                        class="ml-auto"
                     >
                         <x-filament::input.select wire:model.live="filter">
                             @foreach ($filters as $value => $label)
@@ -38,18 +43,20 @@
         @endif
 
         <div
-            @if ($pollingInterval = $this->getPollingInterval()) wire:poll.{{ $pollingInterval }}="updateChartData" @endif
+            @if ($pollingInterval = $this->getPollingInterval())
+                wire:poll.{{ $pollingInterval }}="updateChartData"
+            @endif
         >
             <div
-                x-ignore
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
+                wire:ignore
                 x-data="chart({
                             cachedData: @js($this->getCachedData()),
                             options: @js($this->getOptions()),
                             type: @js($this->getType()),
                         })"
-                wire:ignore
+                x-ignore
             >
                 <canvas
                     x-ref="canvas"
@@ -60,12 +67,12 @@
 
                 <span
                     x-ref="backgroundColorElement"
-                    class="text-gray-50 dark:text-gray-300"
+                    class="text-gray-700 dark:text-gray-200"
                 ></span>
 
                 <span
                     x-ref="borderColorElement"
-                    class="text-gray-500 dark:text-gray-200"
+                    class="text-gray-950/50 dark:text-white/60"
                 ></span>
             </div>
         </div>
