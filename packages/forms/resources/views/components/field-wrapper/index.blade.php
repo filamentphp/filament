@@ -42,7 +42,7 @@
     );
 @endphp
 
-<div {{ $attributes->class(['fi-fo-field-wrapper']) }}>
+<div {{ $attributes->class(['fi-fo-field-wrp']) }}>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
             {{ $label }}
