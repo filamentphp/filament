@@ -58,6 +58,6 @@ class Textarea extends Field implements Contracts\CanBeLengthConstrained
 
     public function shouldAutosize(): bool
     {
-        return $this->rows === null || ((bool) $this->evaluate($this->shouldAutosize));
+        return (bool) $this->evaluate($this->shouldAutosize);
     }
 }

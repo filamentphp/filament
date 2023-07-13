@@ -1,6 +1,6 @@
 @php
-    $chartColor = $getChartColor();
-    $descriptionColor = $getDescriptionColor();
+    $chartColor = $getChartColor() ?? 'gray';
+    $descriptionColor = $getDescriptionColor() ?? 'gray';
     $descriptionIcon = $getDescriptionIcon();
     $descriptionIconPosition = $getDescriptionIconPosition();
     $url = $getUrl();
