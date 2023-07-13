@@ -9,7 +9,7 @@
     :attributes="
         $attributes
             ->class([
-                'fi-no-notification-icon text-custom-400',
+                'fi-no-icon text-custom-400',
                 match ($size) {
                     'sm' => 'h-4 w-4',
                     'md' => 'h-5 w-5',
