@@ -58,7 +58,7 @@
             x-on:click="isCollapsed = ! isCollapsed"
         @endif
         @class([
-            'fi-section-header-container flex items-center overflow-hidden',
+            'fi-section-header-cnt flex items-center overflow-hidden',
             'cursor-pointer' => $collapsible,
             match ($compact) {
                 true => 'px-4 py-2.5',
@@ -68,7 +68,7 @@
     >
         <div class="fi-section-header flex-1">
             <div
-                class="fi-section-header-heading-and-icon-container flex items-center gap-x-2"
+                class="fi-section-header-heading-and-icon-cnt flex items-center gap-x-2"
             >
                 @if ($icon)
                     <x-filament::icon
@@ -123,7 +123,7 @@
             x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
         @endif
         @class([
-            'fi-section-content-container',
+            'fi-section-content-cnt',
             'md:col-span-2' => $aside,
             'border-t border-gray-100 dark:border-white/10' => ! $aside,
             'md:order-first' => $contentBefore,

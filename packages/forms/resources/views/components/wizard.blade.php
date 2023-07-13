@@ -146,7 +146,7 @@
                                     'border-gray-300 dark:border-gray-500':
                                         getStepIndex(step) < {{ $loop->index }},
                                 }"
-                                class="fi-fo-wizard-header-step-icon-container flex h-10 w-10 items-center justify-center rounded-full"
+                                class="fi-fo-wizard-header-step-icon-cnt flex h-10 w-10 items-center justify-center rounded-full"
                             >
                                 <x-filament::icon
                                     name="heroicon-m-check"

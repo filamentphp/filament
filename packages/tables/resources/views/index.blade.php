@@ -231,7 +231,7 @@
 >
     <x-filament-tables::container>
         <div
-            class="fi-ta-header-container"
+            class="fi-ta-header-cnt"
             x-show="hasHeader = @js($renderHeader = ($header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($bulkActions)))"
             @if (! $renderHeader) x-cloak @endif
         >
@@ -240,7 +240,7 @@
             @elseif ($heading || $description || $headerActions)
                 <div
                     @class([
-                        'fi-ta-header-hr-container px-2 pt-2',
+                        'fi-ta-header-hr-cnt px-2 pt-2',
                         'hidden' => ! ($heading || $description) && $isReordering,
                     ])
                 >
@@ -322,7 +322,7 @@
                     >
                         @if ($isGlobalSearchVisible)
                             <div
-                                class="fi-ta-search-field-container flex flex-1 items-center justify-end"
+                                class="fi-ta-search-field-cnt flex flex-1 items-center justify-end"
                             >
                                 <x-filament-tables::search-field />
                             </div>
@@ -1285,7 +1285,7 @@
         @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator &&
              ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total()))
             <div
-                class="fi-ta-pagination-container border-t p-2 dark:border-gray-700"
+                class="fi-ta-pagination-cnt border-t p-2 dark:border-gray-700"
             >
                 <x-filament-tables::pagination
                     :paginator="$records"
