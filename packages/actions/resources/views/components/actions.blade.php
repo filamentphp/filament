@@ -18,7 +18,7 @@
         <div
             {{
                 $attributes->class([
-                    'fi-ac-actions',
+                    'fi-ac',
                     'flex flex-wrap items-center gap-3' => ! $fullWidth,
                     match ($alignment) {
                         'center' => 'justify-center',

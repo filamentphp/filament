@@ -40,6 +40,22 @@ Occasionally, you may need to use the `!important` modifier to override existing
 }
 ```
 
+## Common hook class abbreviations
+
+We use a few common abbreviations in our hook classes to keep them short and readable:
+
+- `fi` is short for "Filament"
+- `fi-ac` is used to represent classes used in the Actions package
+- `fi-fo` is used to represent classes used in the Form Builder package
+- `fi-in` is used to represent classes used in the Infolist Builder package
+- `fi-no` is used to represent classes used in the Notifications package
+- `fi-ta` is used to represent classes used in the Table Builder package
+- `fi-wi` is used to represent classes used in the Widgets package
+- `btn` is short for "button"
+- `col` is short for "column"
+- `cnt` is short for "container"
+- `wrp` is short for "wrapper"
+
 ## Publishing Blade views
 
 You may be tempted to publish the internal Blade views to your application so that you can customize them. We don't recommend this, as it will introduce breaking changes into your application in future updates. Please use the [CSS hook classes](#applying-styles-to-hook-classes) wherever possible.

@@ -8,7 +8,7 @@
 ])
 
 <label
-    {{ $attributes->class(['fi-fo-field-wrapper-label inline-flex items-center gap-x-3']) }}
+    {{ $attributes->class(['fi-fo-field-wrp-label inline-flex items-center gap-x-3']) }}
 >
     {{ $prefix }}
 

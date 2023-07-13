@@ -4,7 +4,7 @@ title: Getting started
 
 ## Overview
 
-Filament infolists are not limited to just displaying entries. You can also use "layout components" to organize them into an infinitely nestable structure.
+Infolists are not limited to just displaying entries. You can also use "layout components" to organize them into an infinitely nestable structure.
 
 Layout component classes can be found in the `Filament\Infolists\Components` namespace. They reside within the schema of your infolist, alongside any [entries](entries).
 

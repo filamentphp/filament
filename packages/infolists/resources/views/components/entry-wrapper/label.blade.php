@@ -4,7 +4,7 @@
 ])
 
 <dt
-    {{ $attributes->class(['fi-in-entry-wrapper-label inline-flex items-center space-x-3 rtl:space-x-reverse']) }}
+    {{ $attributes->class(['fi-in-entry-wrp-label inline-flex items-center space-x-3 rtl:space-x-reverse']) }}
 >
     {{ $prefix }}
 

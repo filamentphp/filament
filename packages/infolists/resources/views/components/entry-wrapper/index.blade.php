@@ -44,7 +44,7 @@
     );
 @endphp
 
-<div {{ $attributes->class(['fi-in-entry-wrapper']) }}>
+<div {{ $attributes->class(['fi-in-entry-wrp']) }}>
     @if ($label && $labelSrOnly)
         <dt class="sr-only">
             {{ $label }}
