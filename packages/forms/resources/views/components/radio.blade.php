@@ -20,7 +20,7 @@
                 \Filament\Support\prepare_inherited_attributes($attributes)
                     ->merge($getExtraAttributes(), escape: false)
                     ->class([
-                        'fi-fo-radio-component flex flex-wrap gap-3',
+                        'fi-fo-radio flex flex-wrap gap-3',
                         'flex-col' => ! $isInline,
                     ])
             "

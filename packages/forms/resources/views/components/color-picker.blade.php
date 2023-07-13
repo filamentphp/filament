@@ -23,7 +23,7 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        class="fi-fo-color-picker-component"
+        class="fi-fo-color-picker"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <div

@@ -25,7 +25,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-builder-component grid gap-y-4'])
+                ->class(['fi-fo-builder grid gap-y-4'])
         }}
     >
         @if ((count($containers) > 1) && $isCollapsible)
@@ -87,7 +87,7 @@
                             )
                         "
                         x-sortable-item="{{ $uuid }}"
-                        class="fi-fo-builder-component-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+                        class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                     >
                         @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible)
                             <header class="flex items-center gap-x-3 px-4 py-2">

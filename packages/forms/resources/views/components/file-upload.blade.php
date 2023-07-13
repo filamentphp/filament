@@ -75,7 +75,7 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
-                    'fi-fo-file-upload-component flex',
+                    'fi-fo-file-upload flex',
                     match ($getAlignment()) {
                         'center' => 'justify-center',
                         'end' => 'justify-end',

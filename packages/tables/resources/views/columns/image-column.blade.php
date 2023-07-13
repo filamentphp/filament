@@ -3,7 +3,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-image-column',
+                'fi-ta-image',
                 'px-4 py-3' => ! $isInline(),
             ])
     }}

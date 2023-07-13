@@ -71,7 +71,7 @@
                     $attributes
                         ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class(['fi-fo-date-time-picker-component'])
+                        ->class(['fi-fo-date-time-picker'])
                 }}
             >
                 <input

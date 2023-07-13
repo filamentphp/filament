@@ -39,7 +39,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-fo-repeater-component space-y-6 rounded-xl'])
+                ->class(['fi-fo-repeater space-y-6 rounded-xl'])
         }}
     >
         @if (count($containers))
@@ -87,7 +87,7 @@
                                     200,
                                 )
                             "
-                            class="fi-fo-repeater-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+                            class="fi-fo-repeater-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                         >
                             @if ($reorderAction->isVisible() || $isReorderableWithButtons || $cloneAction->isVisible() || $deleteAction->isVisible() || $isCollapsible || $hasItemLabels)
                                 <header

@@ -28,7 +28,7 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        class="fi-fo-text-input-component"
+        class="fi-fo-text-input"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <x-filament::input

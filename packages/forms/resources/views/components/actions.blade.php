@@ -6,7 +6,7 @@
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-fo-actions-component flex h-full flex-col',
+                'fi-fo-actions flex h-full flex-col',
                 match ($verticalAlignment = $getVerticalAlignment()) {
                     'center' => 'justify-center',
                     'end' => 'justify-end',

@@ -9,7 +9,7 @@
     <div
         {{
             $attributes->merge($getExtraAttributes(), escape: false)->class([
-                'fi-in-image-entry flex',
+                'fi-in-image flex',
                 match ($getAlignment()) {
                     'center' => 'justify-center',
                     'end' => 'justify-end',

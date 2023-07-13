@@ -45,7 +45,7 @@
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
-                    ->class(['fi-fo-toggle-component relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-70'])
+                    ->class(['fi-fo-toggle relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-70'])
             }}
         >
             <span
@@ -67,7 +67,7 @@
                         <x-filament::icon
                             :name="$getOffIcon()"
                             @class([
-                                'fi-fo-toggle-component-off-icon h-3 w-3',
+                                'fi-fo-toggle-off-icon h-3 w-3',
                                 match ($offColor) {
                                     'gray' => 'text-gray-400 dark:text-gray-700',
                                     default => 'text-custom-600',
@@ -90,7 +90,7 @@
                             :name="$getOnIcon()"
                             x-cloak="x-cloak"
                             @class([
-                                'fi-fo-toggle-component-on-icon h-3 w-3',
+                                'fi-fo-toggle-on-icon h-3 w-3',
                                 match ($onColor) {
                                     'gray' => 'text-gray-400 dark:text-gray-700',
                                     default => 'text-custom-600',
