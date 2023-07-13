@@ -53,7 +53,7 @@ We use a few common abbreviations in our hook classes to keep them short and rea
 - `fi-wi` is used to represent classes used in the Widgets package
 - `btn` is short for "button"
 - `col` is short for "column"
-- `cnt` is short for "container"
+- `ctn` is short for "container"
 - `wrp` is short for "wrapper"
 
 ## Publishing Blade views
