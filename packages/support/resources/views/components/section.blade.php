@@ -45,7 +45,7 @@
     @endif
     {{
         $attributes->class([
-            'fi-section-component',
+            'fi-section',
             match ($aside) {
                 true => 'grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
                 false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
@@ -58,7 +58,7 @@
             x-on:click="isCollapsed = ! isCollapsed"
         @endif
         @class([
-            'fi-section-component-header-wrapper flex items-center overflow-hidden',
+            'fi-section-header-wrapper flex items-center overflow-hidden',
             'cursor-pointer' => $collapsible,
             match ($compact) {
                 true => 'px-4 py-2.5',
@@ -66,15 +66,15 @@
             } => ! $aside,
         ])
     >
-        <div class="fi-section-component-header flex-1">
+        <div class="fi-section-header flex-1">
             <div
-                class="fi-section-component-header-heading-and-icon-wrapper flex items-center gap-x-2"
+                class="fi-section-header-heading-and-icon-wrapper flex items-center gap-x-2"
             >
                 @if ($icon)
                     <x-filament::icon
                         :name="$icon"
                         @class([
-                            'fi-section-component-header-icon text-custom-400',
+                            'fi-section-header-icon text-custom-400',
                             match ($iconSize) {
                                 'sm' => 'h-4 w-4',
                                 'md' => 'h-5 w-5',
@@ -87,7 +87,7 @@
                 @endif
 
                 <h3
-                    class="fi-section-component-header-heading text-base font-semibold leading-6"
+                    class="fi-section-header-heading text-base font-semibold leading-6"
                 >
                     {{ $heading }}
                 </h3>
@@ -95,7 +95,7 @@
 
             @if (filled((string) $description))
                 <p
-                    class="fi-section-component-header-description mt-1 text-sm text-gray-500 dark:text-gray-400"
+                    class="fi-section-header-description mt-1 text-sm text-gray-500 dark:text-gray-400"
                 >
                     {{ $description }}
                 </p>
@@ -123,7 +123,7 @@
             x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
         @endif
         @class([
-            'fi-section-component-content-wrapper',
+            'fi-section-content-wrapper',
             'md:col-span-2' => $aside,
             'border-t border-gray-100 dark:border-white/10' => ! $aside,
             'md:order-first' => $contentBefore,
@@ -131,7 +131,7 @@
     >
         <div
             @class([
-                'fi-section-component-content',
+                'fi-section-content',
                 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $aside,
                 match ($compact) {
                     true => 'p-4',

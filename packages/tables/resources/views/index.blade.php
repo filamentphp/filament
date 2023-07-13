@@ -224,7 +224,7 @@
             this.collapsedGroups = []
         },
     }"
-    class="fi-ta-component"
+    class="fi-ta"
     @if (! $isLoaded)
         wire:init="loadTable"
     @endif
