@@ -49,6 +49,9 @@ trait InteractsWithPageTable
     #[Reactive]
     public ?string $tableSortDirection = null;
 
+    #[Reactive]
+    public ?string $activeTab = null;
+
     protected HasTable $tablePage;
 
     protected function getTablePage(): string
@@ -66,6 +69,7 @@ trait InteractsWithPageTable
         $page = app('livewire')->new($this->getTablePage());
         trigger('mount', $page, [], null, null);
 
+        $page->activeTab = $this->activeTab;
         $page->paginators = $this->paginators;
         $page->tableColumnSearches = $this->tableColumnSearches;
         $page->tableFilters = $this->tableFilters;

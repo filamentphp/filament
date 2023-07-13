@@ -7,6 +7,7 @@ trait ExposesTableToWidgets
     public function getWidgetData(): array
     {
         return [
+            'activeTab' => $this->activeTab,
             'paginators' => $this->paginators,
             'tableColumnSearches' => $this->tableColumnSearches,
             'tableFilters' => $this->tableFilters,
