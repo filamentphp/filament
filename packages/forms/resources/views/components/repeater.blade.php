@@ -182,7 +182,7 @@
                                 x-show="isCollapsed"
                                 x-cloak
                             >
-                                {{ __('fi-forms::components.repeater.collapsed') }}
+                                {{ __('filament-forms::components.repeater.collapsed') }}
                             </div>
                         </li>
                     @endforeach

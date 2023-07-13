@@ -1,4 +1,4 @@
-<x-filament-widgets::widget class="fi-stats-overview-widget">
+<x-filament-widgets::widget class="fi-wi-stats-overview-widget">
     <div
         @if ($pollingInterval = $this->getPollingInterval()) wire:poll.{{ $pollingInterval }} @endif
     >
@@ -8,7 +8,7 @@
 
         <div
             @class([
-                'fi-stats grid gap-4 lg:gap-8',
+                'fi-wi-stats-overview-widget-cards grid gap-4 lg:gap-8',
                 'md:grid-cols-3' => $columns === 3,
                 'md:grid-cols-1' => $columns === 1,
                 'md:grid-cols-2' => $columns === 2,

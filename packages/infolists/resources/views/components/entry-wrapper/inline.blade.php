@@ -1,16 +1,16 @@
 @props([
-    'entry' => null,
     'action' => null,
-    'id' => null,
-    'label' => null,
-    'labelPrefix' => null,
-    'labelSrOnly' => null,
-    'labelSuffix' => null,
+    'entry' => null,
     'helperText' => null,
     'hint' => null,
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'id' => null,
+    'label' => null,
+    'labelPrefix' => null,
+    'labelSrOnly' => null,
+    'labelSuffix' => null,
     'shouldOpenUrlInNewTab' => null,
     'statePath' => null,
     'tooltip' => null,
@@ -21,14 +21,14 @@
     if ($entry) {
         $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
-        $id ??= $entry->getId();
-        $label ??= $entry->getLabel();
-        $labelSrOnly ??= $entry->isLabelHidden();
         $helperText ??= $entry->getHelperText();
         $hint ??= $entry->getHint();
         $hintActions ??= $entry->getHintActions();
         $hintColor ??= $entry->getHintColor();
         $hintIcon ??= $entry->getHintIcon();
+        $id ??= $entry->getId();
+        $label ??= $entry->getLabel();
+        $labelSrOnly ??= $entry->isLabelHidden();
         $shouldOpenUrlInNewTab ??= $entry->shouldOpenUrlInNewTab();
         $statePath ??= $entry->getStatePath();
         $tooltip ??= $entry->getTooltip();
@@ -41,7 +41,7 @@
     );
 @endphp
 
-<div {{ $attributes->class(['fi-in-entry-wrapper']) }}>
+<div {{ $attributes->class(['fi-in-entry-wrapper-inline']) }}>
     @if ($label && $labelSrOnly)
         <dt class="sr-only">
             {{ $label }}
@@ -50,9 +50,7 @@
 
     <div class="grid gap-2 sm:grid-cols-3 sm:items-start sm:gap-4">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon)
-            <div
-                class="flex items-center justify-between gap-2 sm:flex-col sm:items-start sm:gap-1 sm:pt-1"
-            >
+            <div class="flex items-center justify-between gap-x-3">
                 @if ($label && (! $labelSrOnly))
                     <x-filament-infolists::entry-wrapper.label
                         :prefix="$labelPrefix"
@@ -78,7 +76,7 @@
             </div>
         @endif
 
-        <div class="space-y-2 sm:col-span-2 sm:space-y-1">
+        <div class="grid gap-y-2 sm:col-span-2">
             <dd
                 @if ($tooltip)
                     x-data="{}"

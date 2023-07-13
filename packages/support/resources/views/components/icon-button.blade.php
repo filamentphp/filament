@@ -24,7 +24,7 @@
     };
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-ic-btn relative flex items-center justify-center text-custom-500 outline-none transition disabled:pointer-events-none disabled:opacity-70',
+        'fi-icon-btn relative flex items-center justify-center text-custom-500 outline-none transition disabled:pointer-events-none disabled:opacity-70',
         'rounded-full hover:bg-gray-500/5 focus:bg-custom-500/10 dark:hover:bg-gray-300/5' => ! $inline,
         match ($size) {
             'sm' => 'h-8 w-8',
@@ -37,7 +37,7 @@
 
     $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [500]);
 
-    $iconClasses = 'fi-ic-btn-icon ' . match ($iconSize) {
+    $iconClasses = 'fi-icon-btn-icon ' . match ($iconSize) {
         'sm' => 'h-4 w-4',
         'sm md:md' => 'h-4 w-4 md:h-5 md:w-5',
         'md' => 'h-5 w-5',
@@ -45,7 +45,7 @@
         default => $iconSize,
     };
 
-    $indicatorClasses = 'fi-ic-btn-indicator absolute -end-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+    $indicatorClasses = 'fi-icon-btn-indicator absolute -end-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
 
     $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [600]);
 

@@ -1,17 +1,17 @@
 @props([
-    'entry' => null,
     'action' => null,
     'alignment' => null,
-    'id' => null,
-    'label' => null,
-    'labelPrefix' => null,
-    'labelSrOnly' => null,
-    'labelSuffix' => null,
+    'entry' => null,
     'helperText' => null,
     'hint' => null,
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'id' => null,
+    'label' => null,
+    'labelPrefix' => null,
+    'labelSrOnly' => null,
+    'labelSuffix' => null,
     'shouldOpenUrlInNewTab' => null,
     'statePath' => null,
     'tooltip' => null,
@@ -22,14 +22,14 @@
     if ($entry) {
         $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
-        $id ??= $entry->getId();
-        $label ??= $entry->getLabel();
-        $labelSrOnly ??= $entry->isLabelHidden();
         $helperText ??= $entry->getHelperText();
         $hint ??= $entry->getHint();
         $hintActions ??= $entry->getHintActions();
         $hintColor ??= $entry->getHintColor();
         $hintIcon ??= $entry->getHintIcon();
+        $id ??= $entry->getId();
+        $label ??= $entry->getLabel();
+        $labelSrOnly ??= $entry->isLabelHidden();
         $shouldOpenUrlInNewTab ??= $entry->shouldOpenUrlInNewTab();
         $statePath ??= $entry->getStatePath();
         $tooltip ??= $entry->getTooltip();
