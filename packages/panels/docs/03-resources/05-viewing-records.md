@@ -119,10 +119,8 @@ Here's a very simple example of what that view might contain:
     @else
         {{ $this->form }}
     @endif
-    
-    @if (count($relationManagers = $this->getRelationManagers()))
-        <x-filament::hr />
 
+    @if (count($relationManagers = $this->getRelationManagers()))
         <x-filament::resources.relation-managers
             :active-manager="$activeRelationManager"
             :managers="$relationManagers"

@@ -10,7 +10,6 @@
     'footerActionsAlignment' => 'start',
     'header' => null,
     'heading' => null,
-    'hrComponent' => 'filament::hr',
     'icon' => null,
     'iconColor' => 'primary',
     'id' => null,

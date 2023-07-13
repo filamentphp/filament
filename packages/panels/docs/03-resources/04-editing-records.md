@@ -200,7 +200,7 @@ protected function beforeSave(): void
                     ->url(route('subscribe'), shouldOpenInNewTab: true),
             ])
             ->send();
-    
+
         $this->halt();
     }
 }
@@ -294,10 +294,8 @@ Here's a very simple example of what that view might contain:
             :full-width="$this->hasFullWidthFormActions()"
         />
     </x-filament::form>
-    
-    @if (count($relationManagers = $this->getRelationManagers()))
-        <x-filament::hr />
 
+    @if (count($relationManagers = $this->getRelationManagers()))
         <x-filament::resources.relation-managers
             :active-manager="$activeRelationManager"
             :managers="$relationManagers"

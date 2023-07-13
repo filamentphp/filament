@@ -155,9 +155,7 @@
         getRecordsOnPage: function () {
             let keys = []
 
-            for (checkbox of $el.getElementsByClassName(
-                'fi-ta-record-checkbox',
-            )) {
+            for (checkbox of $el.getElementsByClassName('fi-ta-record-checkbox')) {
                 keys.push(checkbox.value)
             }
 
@@ -238,24 +236,16 @@
             @if ($header)
                 {{ $header }}
             @elseif ($heading || $description || $headerActions)
-                <div
+                <x-filament-tables::header
+                    :actions="$isReordering ? [] : $headerActions"
+                    :actions-position="$headerActionsPosition"
+                    :description="$description"
+                    :heading="$heading"
                     @class([
-                        'fi-ta-header-hr-ctn px-2 pt-2',
+                        'm-2',
                         'hidden' => ! ($heading || $description) && $isReordering,
                     ])
-                >
-                    <x-filament-tables::header
-                        :actions="$isReordering ? [] : $headerActions"
-                        :actions-position="$headerActionsPosition"
-                        class="mb-2"
-                        :heading="$heading"
-                        :description="$description"
-                    />
-
-                    <x-filament::hr
-                        :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible) . ' || (selectedRecords.length && ' . \Illuminate\Support\Js::from(count($bulkActions)) . ')'"
-                    />
-                </div>
+                />
             @endif
 
             @if ($hasFiltersAboveContent)
@@ -279,10 +269,6 @@
                             />
                         </div>
                     </div>
-
-                    <x-filament::hr
-                        :x-show="\Illuminate\Support\Js::from($isReorderable || count($groups) || $isGlobalSearchVisible || $isColumnToggleFormVisible) . ' || (selectedRecords.length && ' . \Illuminate\Support\Js::from(count($bulkActions)) . ')'"
-                    />
                 </div>
             @endif
 
@@ -1284,9 +1270,7 @@
 
         @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator &&
              ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total()))
-            <div
-                class="fi-ta-pagination-ctn border-t p-2 dark:border-gray-700"
-            >
+            <div class="fi-ta-pagination-ctn border-t p-2 dark:border-gray-700">
                 <x-filament-tables::pagination
                     :paginator="$records"
                     :page-options="$getPaginationPageOptions()"
@@ -1295,12 +1279,8 @@
         @endif
 
         @if ($hasFiltersBelowContent)
-            <div class="px-2 pb-2">
-                <x-filament::hr />
-
-                <div class="mt-2 p-4">
-                    <x-filament-tables::filters :form="$getFiltersForm()" />
-                </div>
+            <div class="mt-2 p-6">
+                <x-filament-tables::filters :form="$getFiltersForm()" />
             </div>
         @endif
     </x-filament-tables::container>

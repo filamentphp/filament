@@ -22,10 +22,6 @@
     @endif
 
     @if (count($relationManagers))
-        @if (! $this->hasCombinedRelationManagerTabsWithContent())
-            <x-filament::hr />
-        @endif
-
         <x-filament::resources.relation-managers
             :active-locale="isset($activeLocale) ? $activeLocale : null"
             :active-manager="$activeRelationManager"
