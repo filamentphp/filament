@@ -29,7 +29,6 @@
     :lgStart="$columnStart['lg'] ?? null"
     :xlStart="$columnStart['xl'] ?? null"
     :twoXlStart="$columnStart['2xl'] ?? null"
-    class="fi-wi-widget"
 >
     {{ $slot }}
 </x-filament::grid.column>

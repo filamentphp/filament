@@ -13,7 +13,7 @@
     :lg="$columns['lg'] ?? ($columns ? (is_array($columns) ? null : $columns) : 2)"
     :xl="$columns['xl'] ?? null"
     :two-xl="$columns['2xl'] ?? null"
-    class="fi-wi mb-6 gap-4 lg:gap-8"
+    class="fi-wi gap-6"
 >
     @foreach ($widgets as $key => $widget)
         @if ($widget::canView())
