@@ -4,5 +4,5 @@
 
 <x-filament::avatar
     :src="filament()->getTenantAvatarUrl($tenant)"
-    {{ $attributes }}
+    :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
 />
