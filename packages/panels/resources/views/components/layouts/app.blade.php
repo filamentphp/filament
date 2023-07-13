@@ -64,7 +64,7 @@
                 {{ filament()->renderHook('content.end') }}
             </div>
 
-            <div class="fi-main-footer shrink-0 py-4">
+            <div class="shrink-0 py-4">
                 <x-filament::footer />
             </div>
         </div>

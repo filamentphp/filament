@@ -128,7 +128,7 @@ The command will create a CSS file and Tailwind Configuration file in the `/reso
 By default, the topbar sticks to the top of the page. You may make the topbar scroll out of view with the following CSS:
 
 ```css
-.fi-main-topbar {
+.fi-topbar {
     position: relative;
 }
 ```

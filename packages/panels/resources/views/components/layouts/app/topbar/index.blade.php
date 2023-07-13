@@ -4,7 +4,7 @@
 ])
 
 <header
-    {{ $attributes->class(['fi-main-topbar sticky top-0 z-20 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)]']) }}
+    {{ $attributes->class(['fi-topbar sticky top-0 z-20 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)]']) }}
 >
     <div
         class="flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
