@@ -8,7 +8,7 @@
 <div
     {{
         $attributes->class([
-            'filament-tables-actions-container flex items-center gap-3',
+            'fi-ta-actions-container flex items-center gap-3',
             'flex-wrap' => $wrap,
             'md:flex-nowrap' => $wrap === '-md',
             match ($alignment) {

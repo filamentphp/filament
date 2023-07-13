@@ -1,4 +1,4 @@
-<div class="filament-global-search ms-4 flex items-center">
+<div class="fi-global-search ms-4 flex items-center">
     {{ filament()->renderHook('global-search.start') }}
 
     @if ($this->isEnabled())

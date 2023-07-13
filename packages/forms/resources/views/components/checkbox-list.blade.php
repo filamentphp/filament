@@ -13,7 +13,7 @@
 
             checkboxListOptions: Array.from(
                 $root.querySelectorAll(
-                    '.filament-forms-checkbox-list-component-option-label',
+                    '.fi-fo-checkbox-list-component-option-label',
                 ),
             ),
 
@@ -72,7 +72,7 @@
                     (checkboxListItem) => {
                         return checkboxListItem
                             .querySelector(
-                                '.filament-forms-checkbox-list-component-option-label-text',
+                                '.fi-fo-checkbox-list-component-option-label-text',
                             )
                             .innerText.toLowerCase()
                             .includes(this.search.toLowerCase())
@@ -140,7 +140,7 @@
             :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
             :attributes="
                 \Filament\Support\prepare_inherited_attributes($attributes)->class([
-                    'filament-forms-checkbox-list-component gap-2',
+                    'fi-fo-checkbox-list-component gap-2',
                     '-mt-2' => $gridDirection === 'column',
                 ])
             "
@@ -150,7 +150,7 @@
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}"
                     @if ($isSearchable)
                         x-show="
-                            $el.querySelector('.filament-forms-checkbox-list-component-option-label-text')
+                            $el.querySelector('.fi-fo-checkbox-list-component-option-label-text')
                                 .innerText.toLowerCase()
                                 .includes(search.toLowerCase())
                         "
@@ -160,7 +160,7 @@
                     ])
                 >
                     <label
-                        class="filament-forms-checkbox-list-component-option-label flex items-center gap-x-3"
+                        class="fi-fo-checkbox-list-component-option-label flex items-center gap-x-3"
                     >
                         <x-filament::input.checkbox
                             :errors="$errors"
@@ -179,7 +179,7 @@
                         />
 
                         <span
-                            class="filament-forms-checkbox-list-component-option-label-text text-sm font-medium text-gray-950 dark:text-white"
+                            class="fi-fo-checkbox-list-component-option-label-text text-sm font-medium text-gray-950 dark:text-white"
                         >
                             {{ $optionLabel }}
                         </span>
@@ -196,7 +196,7 @@
             <div
                 x-cloak
                 x-show="! visibleCheckboxListOptions.length"
-                class="filament-forms-checkbox-list-component-no-search-results-message text-sm text-gray-500 dark:text-gray-400"
+                class="fi-fo-checkbox-list-component-no-search-results-message text-sm text-gray-500 dark:text-gray-400"
             >
                 {{ $getNoSearchResultsMessage() }}
             </div>

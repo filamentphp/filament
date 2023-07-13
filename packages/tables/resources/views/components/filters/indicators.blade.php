@@ -4,7 +4,7 @@
 
 @if (count($indicators))
     <div
-        {{ $attributes->class(['filament-tables-filter-indicators flex gap-x-4 bg-gray-500/5 px-4 py-1 text-sm']) }}
+        {{ $attributes->class(['fi-ta-filter-indicators flex gap-x-4 bg-gray-500/5 px-4 py-1 text-sm']) }}
     >
         <div class="flex flex-1 flex-wrap items-center gap-x-2 gap-y-1">
             <span class="font-medium dark:text-gray-200">
@@ -13,7 +13,7 @@
 
             @foreach ($indicators as $wireClickHandler => $label)
                 <span
-                    class="filament-tables-filter-indicator min-h-6 inline-flex items-center justify-center whitespace-normal rounded-xl bg-gray-500/10 px-2 py-0.5 text-xs font-medium tracking-tight text-gray-700 dark:bg-gray-500/20 dark:text-gray-300"
+                    class="fi-ta-filter-indicator min-h-6 inline-flex items-center justify-center whitespace-normal rounded-xl bg-gray-500/10 px-2 py-0.5 text-xs font-medium tracking-tight text-gray-700 dark:bg-gray-500/20 dark:text-gray-300"
                 >
                     {{ $label }}
 

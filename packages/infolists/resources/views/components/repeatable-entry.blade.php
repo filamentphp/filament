@@ -10,7 +10,7 @@
                     'id' => $getId(),
                 ], escape: false)
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['filament-infolists-repeatable-entry'])
+                ->class(['fi-in-repeatable-entry'])
         }}
     >
         <x-filament::grid

@@ -20,8 +20,8 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "filament-button filament-button-size-{$size} relative grid-flow-col items-center justify-center rounded-lg font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
-            is_string($color) ? "filament-button-color-{$color}" : null,
+            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center rounded-lg font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            is_string($color) ? "fi-btn-color-{$color}" : null,
             match ($size) {
                 'xs' => 'gap-1 px-2 py-1.5 text-xs',
                 'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
@@ -42,7 +42,7 @@
         ...(
             $outlined
                 ? [
-                    'filament-button-outlined ring-1 ',
+                    'fi-btn-outlined ring-1 ',
                     match ($color) {
                         'gray' => 'ring-gray-600 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-gray-500/50 dark:ring-gray-300/70 dark:text-gray-200',
                         default => 'ring-custom-600 text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-300/70',
@@ -70,19 +70,19 @@
         default => 'md',
     };
 
-    $iconClasses = 'filament-button-icon ' . match ($iconSize) {
+    $iconClasses = 'fi-btn-icon ' . match ($iconSize) {
         'sm' => 'h-4 w-4',
         'md' => 'h-5 w-5',
         'lg' => 'h-6 w-6',
         default => $iconSize,
     };
 
-    $indicatorClasses = 'filament-button-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+    $indicatorClasses = 'fi-btn-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
 
     $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [600]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-label',
+        'fi-btn-label',
         'sr-only' => $labelSrOnly,
     ]);
 

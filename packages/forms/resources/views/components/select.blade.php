@@ -24,7 +24,7 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        class="filament-forms-select-component"
+        class="fi-fo-select-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @if (! ($isSearchable() || $isMultiple()))

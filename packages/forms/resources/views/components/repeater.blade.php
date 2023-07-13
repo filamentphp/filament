@@ -39,7 +39,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['filament-forms-repeater-component space-y-6 rounded-xl'])
+                ->class(['fi-fo-repeater-component space-y-6 rounded-xl'])
         }}
     >
         @if (count($containers))
@@ -87,7 +87,7 @@
                                     200,
                                 )
                             "
-                            class="filament-forms-repeater-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+                            class="fi-fo-repeater-component-item relative rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                         >
                             @if ($reorderAction->isVisible() || $isReorderableWithButtons || $cloneAction->isVisible() || $deleteAction->isVisible() || $isCollapsible || $hasItemLabels)
                                 <header
@@ -182,7 +182,7 @@
                                 x-show="isCollapsed"
                                 x-cloak
                             >
-                                {{ __('filament-forms::components.repeater.collapsed') }}
+                                {{ __('fi-forms::components.repeater.collapsed') }}
                             </div>
                         </li>
                     @endforeach

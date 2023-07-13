@@ -31,7 +31,7 @@
         $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
 
         $iconPosition = $getIconPosition();
-        $iconClasses = 'filament-infolists-text-entry-icon ' . ($isBadge ? 'h-3 w-3' : 'h-4 w-4');
+        $iconClasses = 'fi-in-text-entry-icon ' . ($isBadge ? 'h-3 w-3' : 'h-4 w-4');
 
         $url = $getUrl();
     @endphp
@@ -40,7 +40,7 @@
         :prefix-actions="$getPrefixActions()"
         :suffix-actions="$getSuffixActions()"
         @class([
-            'filament-infolists-text-entry',
+            'fi-in-text-entry',
             'text-primary-600 transition hover:underline hover:text-primary-500 focus:underline focus:text-primary-500' => $url && (! $isBadge),
         ])
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
@@ -137,7 +137,7 @@
                                     "
                                 @endif
                                 @class([
-                                    'filament-infolists-text-entry-content inline-block',
+                                    'fi-in-text-entry-content inline-block',
                                     '[&>*:first-child]:mt-0 [&>*:last-child]:mb-0' => $isProse,
                                     'pt-2' => $isProse && (! $isLabelHidden()),
                                     'cursor-pointer' => $itemIsCopyable,

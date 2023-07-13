@@ -5,7 +5,7 @@
 <fieldset
     {{
         $attributes->class([
-            'filament-fieldset-component rounded-xl p-6 ring-1 ring-gray-950/10 dark:ring-white/20',
+            'fi-fieldset-component rounded-xl p-6 ring-1 ring-gray-950/10 dark:ring-white/20',
         ])
     }}
 >

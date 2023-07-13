@@ -6,7 +6,7 @@
 ])
 
 <x-filament::dropdown
-    {{ $attributes->class(['filament-tables-column-toggling']) }}
+    {{ $attributes->class(['fi-ta-column-toggling']) }}
     :max-height="$maxHeight"
     placement="bottom-end"
     shift

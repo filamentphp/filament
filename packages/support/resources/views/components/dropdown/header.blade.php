@@ -8,8 +8,8 @@
     {{
         $attributes
             ->class([
-                'filament-dropdown-header flex w-full gap-2 p-3 text-sm',
-                is_string($color) ? "filament-dropdown-header-color-{$color}" : null,
+                'fi-dropdown-header flex w-full gap-2 p-3 text-sm',
+                is_string($color) ? "fi-dropdown-header-color-{$color}" : null,
                 match ($color) {
                     'gray' => 'text-gray-700 dark:text-gray-200',
                     default => 'text-custom-600 dark:text-custom-400',
@@ -23,11 +23,11 @@
     @if ($icon)
         <x-filament::icon
             :name="$icon"
-            class="filament-dropdown-header-icon h-5 w-5"
+            class="fi-dropdown-header-icon h-5 w-5"
         />
     @endif
 
-    <span class="filament-dropdown-header-label">
+    <span class="fi-dropdown-header-label">
         {{ $slot }}
     </span>
 </{{ $tag }}>

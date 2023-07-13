@@ -8,7 +8,7 @@
         x-cloak
         x-bind:class="
             $store.sidebar.isOpen
-                ? 'filament-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[--sidebar-width]'
+                ? 'fi-sidebar-open translate-x-0 max-w-[20em] lg:max-w-[--sidebar-width]'
                 : '-translate-x-full lg:translate-x-0 lg:max-w-[--collapsed-sidebar-width] rtl:lg:-translate-x-0 rtl:translate-x-full'
         "
     @else
@@ -19,18 +19,18 @@
         @endif
         x-bind:class="
             $store.sidebar.isOpen
-                ? 'filament-sidebar-open translate-x-0'
+                ? 'fi-sidebar-open translate-x-0'
                 : '-translate-x-full rtl:translate-x-full'
         "
     @endif
     @class([
-        'filament-sidebar fixed inset-y-0 start-0 z-20 flex h-screen w-[--sidebar-width] flex-col bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent dark:lg:bg-transparent',
+        'fi-sidebar fixed inset-y-0 start-0 z-20 flex h-screen w-[--sidebar-width] flex-col bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent dark:lg:bg-transparent',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
 >
     <header
-        class="filament-sidebar-header relative flex h-[4rem] shrink-0 items-center justify-center bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)]"
+        class="fi-sidebar-header relative flex h-[4rem] shrink-0 items-center justify-center bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)]"
     >
         <div
             @class([
@@ -45,7 +45,7 @@
             @if (filament()->isSidebarCollapsibleOnDesktop() && (! filament()->isSidebarFullyCollapsibleOnDesktop()))
                 <button
                     type="button"
-                    class="filament-sidebar-collapse-button hidden h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10 lg:flex"
+                    class="fi-sidebar-collapse-btn hidden h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10 lg:flex"
                     x-bind:aria-label="
                         $store.sidebar.isOpen
                             ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
@@ -100,7 +100,7 @@
         @if (filament()->isSidebarCollapsibleOnDesktop())
             <button
                 type="button"
-                class="filament-sidebar-close-button flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10"
+                class="fi-sidebar-close-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10"
                 x-bind:aria-label="
                     $store.sidebar.isOpen
                         ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
@@ -122,7 +122,7 @@
     </header>
 
     <nav
-        class="filament-sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-6 shadow-lg lg:shadow-none"
+        class="fi-sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-6 shadow-lg lg:shadow-none"
     >
         {{ filament()->renderHook('sidebar.start') }}
 

@@ -6,16 +6,16 @@
 ])
 
 <div
-    {{ $attributes->class(['filament-tables-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center dark:bg-gray-900']) }}
+    {{ $attributes->class(['fi-ta-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center dark:bg-gray-900']) }}
 >
     <div
-        class="filament-tables-empty-state-icon-wrapper flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500 dark:bg-gray-700"
+        class="fi-ta-empty-state-icon-wrapper flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500 dark:bg-gray-700"
     >
         <x-filament::icon
             :name="$icon"
             wire:loading.remove.delay=""
             :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
-            class="filament-tables-empty-state-icon h-6 w-6"
+            class="fi-ta-empty-state-icon h-6 w-6"
         />
 
         <x-filament::loading-indicator
@@ -26,7 +26,7 @@
     </div>
 
     <div
-        class="filament-tables-empty-state-textual-content-wrapper max-w-md space-y-1"
+        class="fi-ta-empty-state-textual-content-wrapper max-w-md space-y-1"
     >
         <x-filament-tables::empty-state.heading>
             {{ $heading }}

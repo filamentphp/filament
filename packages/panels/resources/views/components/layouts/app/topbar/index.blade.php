@@ -4,7 +4,7 @@
 ])
 
 <header
-    {{ $attributes->class(['filament-main-topbar sticky top-0 z-20 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)]']) }}
+    {{ $attributes->class(['fi-main-topbar sticky top-0 z-20 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)]']) }}
 >
     <div
         class="flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
@@ -22,7 +22,7 @@
                 "
                 x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 @class([
-                    'filament-sidebar-open-button flex h-10 w-10 shrink-0 items-center justify-center rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
+                    'fi-sidebar-open-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
                     'lg:me-4' => filament()->isSidebarFullyCollapsibleOnDesktop(),
                     'lg:hidden' => ! (filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])

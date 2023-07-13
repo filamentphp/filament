@@ -21,7 +21,7 @@
 <x-filament-tables::row
     {{
     $attributes->class([
-        'filament-tables-summary-row',
+        'fi-ta-summary-row',
         'bg-gray-500/5' => $strong,
     ])
 }}

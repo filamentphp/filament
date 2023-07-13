@@ -4,7 +4,7 @@
 
 <div
     x-id="['input']"
-    {{ $attributes->class(['filament-tables-search-field']) }}
+    {{ $attributes->class(['fi-ta-search-field']) }}
 >
     <label x-bind:for="$id('input')" class="sr-only">
         {{ __('filament-tables::table.fields.search.label') }}

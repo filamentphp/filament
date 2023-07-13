@@ -14,7 +14,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['filament-forms-placeholder-component sm:text-sm'])
+                ->class(['fi-fo-placeholder-component sm:text-sm'])
         }}
     >
         {{ $getContent() }}

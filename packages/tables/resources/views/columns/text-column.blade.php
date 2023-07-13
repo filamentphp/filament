@@ -22,7 +22,7 @@
     $descriptionBelow = $getDescriptionBelow();
 
     $iconPosition = $getIconPosition();
-    $iconClasses = 'filament-tables-text-column-icon ' . ($isBadge ? 'h-3 w-3' : 'h-4 w-4');
+    $iconClasses = 'fi-ta-text-column-icon ' . ($isBadge ? 'h-3 w-3' : 'h-4 w-4');
 
     $isClickable = $getAction() || $getUrl();
 @endphp
@@ -32,7 +32,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'filament-tables-text-column',
+                'fi-ta-text-column',
                 'px-4 py-3' => ! $isInline(),
                 'text-primary-600 transition hover:text-primary-500 hover:underline focus:text-primary-500 focus:underline' => $isClickable && (! $isBadge),
             ])
@@ -68,9 +68,9 @@
                     <div
                         @class([
                             'inline-flex items-center space-x-1 rtl:space-x-reverse',
-                            'filament-tables-text-column-badge min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
+                            'fi-ta-text-column-badge min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
                             'whitespace-normal' => $canWrap,
-                            "filament-tables-text-column-badge-color-{$color}" => $isBadge && is_string($color),
+                            "fi-ta-text-column-badge-color-{$color}" => $isBadge && is_string($color),
                             match ($color) {
                                 'gray' => 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
                                 default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
@@ -130,7 +130,7 @@
                                 "
                             @endif
                             @class([
-                                'filament-tables-text-column-content',
+                                'fi-ta-text-column-content',
                                 'cursor-pointer' => $itemIsCopyable,
                             ])
                         >

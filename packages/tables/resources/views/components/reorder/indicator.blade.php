@@ -9,7 +9,7 @@
             ->merge([
                 'wire:key' => "{$this->getId()}.table.reorder.indicator",
             ], escape: false)
-            ->class(['filament-tables-reorder-indicator whitespace-nowrap bg-primary-500/10 px-4 py-2 text-sm'])
+            ->class(['fi-ta-reorder-indicator whitespace-nowrap bg-primary-500/10 px-4 py-2 text-sm'])
     }}
 >
     <x-filament::loading-indicator

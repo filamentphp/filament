@@ -1,8 +1,8 @@
 <x-filament::page
     @class([
-        'filament-resources-edit-record-page',
-        'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
-        'filament-resources-record-' . $record->getKey(),
+        'fi-resources-edit-record-page',
+        'fi-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
+        'fi-resources-record-' . $record->getKey(),
     ])
 >
     @capture($form)

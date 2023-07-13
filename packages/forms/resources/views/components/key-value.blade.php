@@ -21,7 +21,7 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
-                ->class(['filament-forms-key-value-component'])
+                ->class(['fi-fo-key-value-component'])
         }}
     >
         <div

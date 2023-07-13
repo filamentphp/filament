@@ -90,7 +90,7 @@
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['filament-forms-wizard-component grid gap-y-6'])
+            ->class(['fi-fo-wizard-component grid gap-y-6'])
     }}
 >
     <input
@@ -108,11 +108,11 @@
     <ol
         @if ($label = $getLabel()) aria-label="{{ $label }}" @endif
         role="list"
-        class="filament-forms-wizard-component-header divide-y divide-gray-300 overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm dark:divide-gray-700 dark:border-gray-800 dark:bg-gray-900 md:flex md:divide-y-0"
+        class="fi-fo-wizard-component-header divide-y divide-gray-300 overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm dark:divide-gray-700 dark:border-gray-800 dark:bg-gray-900 md:flex md:divide-y-0"
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
             <li
-                class="filament-forms-wizard-component-header-step group relative overflow-hidden md:flex-1"
+                class="fi-fo-wizard-component-header-step group relative overflow-hidden md:flex-1"
             >
                 <button
                     type="button"
@@ -146,14 +146,14 @@
                                     'border-gray-300 dark:border-gray-500':
                                         getStepIndex(step) < {{ $loop->index }},
                                 }"
-                                class="filament-forms-wizard-component-header-step-icon-container flex h-10 w-10 items-center justify-center rounded-full"
+                                class="fi-fo-wizard-component-header-step-icon-container flex h-10 w-10 items-center justify-center rounded-full"
                             >
                                 <x-filament::icon
                                     name="heroicon-m-check"
                                     alias="forms::components.wizard.completed-step"
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
                                     x-cloak="x-cloak"
-                                    class="filament-forms-wizard-component-header-step-icon h-5 w-5 text-white"
+                                    class="fi-fo-wizard-component-header-step-icon h-5 w-5 text-white"
                                 />
 
                                 @if ($icon = $step->getIcon())
@@ -165,7 +165,7 @@
                                             'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
                                             'text-primary-500': getStepIndex(step) === {{ $loop->index }},
                                         }"
-                                        class="filament-forms-wizard-component-header-step-icon h-5 w-5"
+                                        class="fi-fo-wizard-component-header-step-icon h-5 w-5"
                                     />
                                 @else
                                     <span
@@ -184,14 +184,14 @@
 
                         <div class="flex flex-col items-start justify-center">
                             <div
-                                class="filament-forms-wizard-component-header-step-label text-sm font-medium"
+                                class="fi-fo-wizard-component-header-step-label text-sm font-medium"
                             >
                                 {{ $step->getLabel() }}
                             </div>
 
                             @if (filled($description = $step->getDescription()))
                                 <div
-                                    class="filament-forms-wizard-component-header-step-description text-sm font-medium leading-4 text-gray-500 dark:text-gray-400"
+                                    class="fi-fo-wizard-component-header-step-description text-sm font-medium leading-4 text-gray-500 dark:text-gray-400"
                                 >
                                     {{ $description }}
                                 </div>

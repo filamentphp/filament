@@ -1,7 +1,7 @@
 <x-filament::page
     @class([
-        'filament-resources-create-record-page',
-        'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
+        'fi-resources-create-record-page',
+        'fi-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
     ])
 >
     <x-filament::form

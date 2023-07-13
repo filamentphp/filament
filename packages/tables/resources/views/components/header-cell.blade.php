@@ -7,7 +7,7 @@
     'wrap' => false,
 ])
 
-<th {{ $attributes->class(['filament-tables-header-cell p-0']) }}>
+<th {{ $attributes->class(['fi-ta-header-cell p-0']) }}>
     <button
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"
@@ -43,7 +43,7 @@
                 :name="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 :alias="$activelySorted && $sortDirection === 'asc' ? 'tables::header-cell.sort-asc' : 'tables::header-cell.sort-desc'"
                 @class([
-                    'filament-tables-header-cell-sort-icon h-5 w-5 dark:text-gray-300',
+                    'fi-ta-header-cell-sort-icon h-5 w-5 dark:text-gray-300',
                     'opacity-25' => ! $activelySorted,
                 ])
             />

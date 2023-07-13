@@ -9,7 +9,7 @@
 <li
     x-data="{ label: @js($label) }"
     @class([
-        'filament-sidebar-group grid gap-y-1',
+        'fi-sidebar-group grid gap-y-1',
     ])
 >
     @if ($label)
@@ -31,7 +31,7 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    class="filament-sidebar-group-icon h-6 w-6 text-gray-600 dark:text-gray-400"
+                    class="fi-sidebar-group-icon h-6 w-6 text-gray-600 dark:text-gray-400"
                 />
             @endif
 

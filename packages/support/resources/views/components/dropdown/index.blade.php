@@ -9,7 +9,7 @@
 ])
 
 <div
-    {{ $attributes->class(['filament-dropdown']) }}
+    {{ $attributes->class(['fi-dropdown']) }}
     x-data="{
         toggle: function (event) {
             $refs.panel.toggle(event)
@@ -24,7 +24,7 @@
 >
     <div
         x-on:click="toggle"
-        {{ $trigger->attributes->class(['filament-dropdown-trigger cursor-pointer']) }}
+        {{ $trigger->attributes->class(['fi-dropdown-trigger cursor-pointer']) }}
     >
         {{ $trigger }}
     </div>
@@ -43,7 +43,7 @@
             style="max-height: {{ $maxHeight }}"
         @endif
         @class([
-            'filament-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-gray-800 dark:bg-gray-900 dark:ring-white/10',
+            'fi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-gray-800 dark:bg-gray-900 dark:ring-white/10',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'sm' => 'max-w-sm',

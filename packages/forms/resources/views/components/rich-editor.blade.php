@@ -44,7 +44,7 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
-                ->class(['filament-forms-rich-editor-component space-y-2'])
+                ->class(['fi-fo-rich-editor-component space-y-2'])
         }}
     >
         @unless ($isDisabled())

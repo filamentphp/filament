@@ -83,7 +83,7 @@
     </head>
 
     <body
-        class="filament-body min-h-screen overscroll-y-none bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white"
+        class="fi-body min-h-screen overscroll-y-none bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white"
     >
         {{ filament()->renderHook('body.start') }}
 

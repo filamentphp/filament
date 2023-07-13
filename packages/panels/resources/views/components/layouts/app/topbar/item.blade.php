@@ -14,8 +14,8 @@
 
 <li
     @class([
-        'filament-topbar-item overflow-hidden',
-        'filament-topbar-item-active' => $active,
+        'fi-topbar-item overflow-hidden',
+        'fi-topbar-item-active' => $active,
     ])
 >
     <{{ $tag }}
@@ -36,7 +36,7 @@
             <x-filament::icon
                 :name="($active && $activeIcon) ? $activeIcon : $icon"
                 :style="\Filament\Support\get_color_css_variables(($active ? 'primary' : 'gray'), shades: [400, 600])"
-                class="filament-topbar-item-icon h-6 w-6 text-custom-600 dark:text-custom-400"
+                class="fi-topbar-item-icon h-6 w-6 text-custom-600 dark:text-custom-400"
             />
         @endif
 

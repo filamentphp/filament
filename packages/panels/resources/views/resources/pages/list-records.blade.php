@@ -1,7 +1,7 @@
 <x-filament::page
     @class([
-        'filament-resources-list-records-page',
-        'filament-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
+        'fi-resources-list-records-page',
+        'fi-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
     ])
 >
     @if (count($tabs = $this->getTabs()))

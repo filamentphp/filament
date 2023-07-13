@@ -15,7 +15,7 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['filament-tables-toggle-column'])
+                ->class(['fi-ta-toggle-column'])
         }}
     >
         @php
@@ -81,7 +81,7 @@
                     <x-filament::icon
                         :name="$getOffIcon()"
                         @class([
-                            'filament-tables-toggle-column-off-icon h-3 w-3',
+                            'fi-ta-toggle-column-off-icon h-3 w-3',
                             match ($onColor) {
                                 'gray' => 'text-gray-400 dark:text-gray-700',
                                 default => 'text-custom-600',
@@ -104,7 +104,7 @@
                         :name="$getOnIcon()"
                         x-cloak="x-cloak"
                         @class([
-                            'filament-tables-toggle-column-on-icon h-3 w-3',
+                            'fi-ta-toggle-column-on-icon h-3 w-3',
                             match ($onColor) {
                                 'gray' => 'text-gray-400 dark:text-gray-700',
                                 default => 'text-custom-600',

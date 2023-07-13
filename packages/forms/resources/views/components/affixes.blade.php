@@ -26,9 +26,9 @@
 
     $affixActionsClasses = '-mx-1.5 flex';
 
-    $affixIconClasses = 'filament-input-affix-icon h-5 w-5 text-gray-400 dark:text-gray-500';
+    $affixIconClasses = 'fi-input-affix-icon h-5 w-5 text-gray-400 dark:text-gray-500';
 
-    $affixLabelClasses = 'filament-input-affix-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+    $affixLabelClasses = 'fi-input-affix-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -59,7 +59,7 @@
     @endif
     {{
         $attributes->class([
-            'filament-forms-affix-container flex rounded-lg shadow-sm ring-1 transition duration-75',
+            'fi-fo-affix-container flex rounded-lg shadow-sm ring-1 transition duration-75',
             $ringClasses => ! $statePath,
             'bg-gray-50 dark:bg-gray-950' => $disabled,
             'bg-white focus-within:ring-2 dark:bg-gray-900' => ! $disabled,

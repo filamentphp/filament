@@ -58,7 +58,7 @@
     role="dialog"
     aria-modal="true"
     wire:ignore.self
-    class="filament-modal {{ $displayClasses }}"
+    class="fi-modal {{ $displayClasses }}"
 >
     {{ $trigger }}
 
@@ -81,7 +81,7 @@
             @endif
             aria-hidden="true"
             @class([
-                'filament-modal-close-overlay fixed inset-0 h-full w-full bg-black/50',
+                'fi-modal-close-overlay fixed inset-0 h-full w-full bg-black/50',
                 'cursor-pointer' => $closeByClickingAway,
             ])
             style="will-change: transform"
@@ -126,9 +126,9 @@
                     x-transition:leave-end="translate-y-8"
                 @endif
                 @class([
-                    'filament-modal-window pointer-events-auto w-full cursor-default bg-white dark:bg-gray-900',
+                    'fi-modal-window pointer-events-auto w-full cursor-default bg-white dark:bg-gray-900',
                     'relative' => $width !== 'screen',
-                    'filament-modal-slide-over-window ms-auto h-screen overflow-y-auto' => $slideOver,
+                    'fi-modal-slide-over-window ms-auto h-screen overflow-y-auto' => $slideOver,
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
@@ -153,7 +153,7 @@
                     @if ($heading || $header)
                         <div
                             @class([
-                                'filament-modal-header flex px-6 pt-6',
+                                'fi-modal-header flex px-6 pt-6',
                                 'mb-6' => $slot->isEmpty(),
                                 match ($alignment) {
                                     'left', 'start' => 'gap-x-5',
@@ -183,7 +183,7 @@
                                             <x-filament::icon
                                                 :name="$icon"
                                                 :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 600])"
-                                                class="filament-modal-icon h-6 w-6 text-custom-600 dark:text-custom-400"
+                                                class="fi-modal-icon h-6 w-6 text-custom-600 dark:text-custom-400"
                                             />
                                         </div>
                                     </div>
@@ -200,7 +200,7 @@
 
                                     @if ($description)
                                         <p
-                                            class="filament-modal-description mt-2 text-sm text-gray-500 dark:text-gray-400"
+                                            class="fi-modal-description mt-2 text-sm text-gray-500 dark:text-gray-400"
                                         >
                                             {{ $description }}
                                         </p>
@@ -226,7 +226,7 @@
                                 :label="__('filament-support::components/modal.actions.close.label')"
                                 tabindex="-1"
                                 :x-on:click="filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()'"
-                                class="filament-modal-close-button -m-2"
+                                class="fi-modal-close-btn -m-2"
                             />
                         </div>
                     @endif
@@ -234,7 +234,7 @@
                     @if ($slot->isNotEmpty())
                         <div
                             @class([
-                                'filament-modal-content flex flex-col gap-y-4 py-6',
+                                'fi-modal-content flex flex-col gap-y-4 py-6',
                                 'flex-1' => ($width === 'screen') || $slideOver,
                                 'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start'),
                                 'px-6' => ! ($icon && ($alignment === 'start')),
@@ -246,7 +246,7 @@
 
                     <div
                         @class([
-                            'filament-modal-footer w-full',
+                            'fi-modal-footer w-full',
                             'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter),
                             'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
                             'sticky bottom-0 rounded-b-xl border-t border-gray-200 bg-white py-5 dark:border-gray-800 dark:bg-gray-900' => $stickyFooter,
@@ -260,7 +260,7 @@
                         @elseif (count($footerActions))
                             <div
                                 @class([
-                                    'filament-modal-footer-actions gap-3',
+                                    'fi-modal-footer-actions gap-3',
                                     match ($footerActionsAlignment) {
                                         'center' => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
                                         'end', 'right' => 'flex flex-row-reverse flex-wrap items-center',

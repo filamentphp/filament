@@ -15,7 +15,7 @@
             ->merge([
                 'wire:key' => "{$this->getId()}.table.selection.indicator",
             ], escape: false)
-            ->class(['filament-tables-selection-indicator flex flex-wrap items-center gap-1 whitespace-nowrap bg-primary-500/10 px-4 py-2 text-sm'])
+            ->class(['fi-ta-selection-indicator flex flex-wrap items-center gap-1 whitespace-nowrap bg-primary-500/10 px-4 py-2 text-sm'])
     }}
 >
     {{ $slot }}

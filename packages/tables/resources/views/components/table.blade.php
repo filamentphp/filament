@@ -5,7 +5,7 @@
 ])
 
 <table
-    {{ $attributes->class(['filament-tables-table w-full table-auto divide-y text-start dark:divide-gray-700']) }}
+    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y text-start dark:divide-gray-700']) }}
 >
     @if ($header)
         <thead>

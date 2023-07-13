@@ -28,7 +28,7 @@
 <x-filament::dropdown
     placement="bottom-start"
     teleport
-    class="filament-tenant-menu"
+    class="fi-tenant-menu"
 >
     <x-slot name="trigger">
         <div

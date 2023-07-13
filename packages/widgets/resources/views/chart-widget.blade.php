@@ -4,7 +4,7 @@
     $filters = $this->getFilters();
 @endphp
 
-<x-filament-widgets::widget class="filament-widgets-chart-widget">
+<x-filament-widgets::widget class="fi-wi-chart-widget">
     <x-filament::card>
         @if ($heading || $filters)
             <div class="flex items-center justify-between gap-8">

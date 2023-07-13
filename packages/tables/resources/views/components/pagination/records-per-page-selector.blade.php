@@ -3,7 +3,7 @@
 ])
 
 <div
-    class="filament-tables-pagination-records-per-page-selector flex items-center space-x-2 rtl:space-x-reverse"
+    class="fi-ta-pagination-records-per-page-selector flex items-center space-x-2 rtl:space-x-reverse"
 >
     <label>
         <select

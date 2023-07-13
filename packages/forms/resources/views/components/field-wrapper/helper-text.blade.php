@@ -1,5 +1,5 @@
 <div
-    {{ $attributes->class(['filament-forms-field-wrapper-helper-text text-sm text-gray-500']) }}
+    {{ $attributes->class(['fi-fo-field-wrapper-helper-text text-sm text-gray-500']) }}
 >
     {{ $slot }}
 </div>

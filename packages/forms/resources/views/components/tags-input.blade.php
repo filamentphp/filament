@@ -17,7 +17,7 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
-                ->class(['filament-forms-tags-input-component'])
+                ->class(['fi-fo-tags-input-component'])
         }}
     >
         <div x-show="state?.length || @js(! $isDisabled)">
@@ -110,7 +110,7 @@
                                         <x-filament::icon
                                             name="heroicon-m-x-mark"
                                             alias="forms::components.tags-input.delete-button"
-                                            class="filament-forms-tags-input-component-delete-button h-3 w-3 shrink-0"
+                                            class="fi-fo-tags-input-component-delete-btn h-3 w-3 shrink-0"
                                         />
                                     @endunless
                                 </button>

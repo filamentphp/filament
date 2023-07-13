@@ -11,11 +11,11 @@
 
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
-        is_string($color) ? "filament-dropdown-list-item-color-{$color}" : null,
+        'fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
+        is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
         match ($color) {
-            'gray' => 'filament-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
-            default => 'filament-dropdown-list-item-color-custom text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 dark:text-custom-400',
+            'gray' => 'fi-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
+            default => 'fi-dropdown-list-item-color-custom text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 dark:text-custom-400',
         },
     ]);
 
@@ -23,18 +23,18 @@
         \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
     ]);
 
-    $iconClasses = 'filament-dropdown-list-item-icon shrink-0 ' . match ($iconSize) {
+    $iconClasses = 'fi-dropdown-list-item-icon shrink-0 ' . match ($iconSize) {
         'sm' => 'h-4 w-4',
         'md' => 'h-5 w-5',
         'lg' => 'h-6 w-6',
         default => $iconSize,
     };
 
-    $imageClasses = 'filament-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
+    $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
 
-    $labelClasses = 'filament-dropdown-list-item-label w-full truncate text-start';
+    $labelClasses = 'fi-dropdown-list-item-label w-full truncate text-start';
 
-    $detailClasses = 'filament-dropdown-list-item-detail ms-auto text-xs';
+    $detailClasses = 'fi-dropdown-list-item-detail ms-auto text-xs';
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 

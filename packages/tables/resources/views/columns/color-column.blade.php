@@ -3,7 +3,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'filament-tables-color-column flex flex-wrap gap-1',
+                'fi-ta-color-column flex flex-wrap gap-1',
                 'px-4 py-3' => ! $isInline(),
             ])
     }}
@@ -27,7 +27,7 @@
                 @endif
             @endif
             @class([
-                'filament-tables-color-column-content relative flex h-6 w-6 rounded-md',
+                'fi-ta-color-column-content relative flex h-6 w-6 rounded-md',
                 'cursor-pointer' => $itemIsCopyable,
             ])
         ></div>

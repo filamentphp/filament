@@ -19,7 +19,7 @@
     @apply border-s border-gray-600;
 }
 
-trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
+trix-toolbar .fi-fo-rich-editor-component-toolbar-btn.trix-active {
     @apply bg-primary-600 text-white;
 }
 

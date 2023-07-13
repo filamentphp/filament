@@ -48,7 +48,7 @@
                         ->merge($getExtraAttributes(), escape: false)
                         ->merge($getExtraAlpineAttributes(), escape: false)
                         ->class([
-                            'filament-forms-markdown-editor-component overflow-hidden rounded-lg bg-white font-mono text-base text-gray-950 shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-gray-900 dark:text-white sm:text-sm',
+                            'fi-fo-markdown-editor-component overflow-hidden rounded-lg bg-white font-mono text-base text-gray-950 shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-gray-900 dark:text-white sm:text-sm',
                         ])
                 }}
             >

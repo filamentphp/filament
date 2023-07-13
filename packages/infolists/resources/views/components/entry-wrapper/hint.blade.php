@@ -8,7 +8,7 @@
     {{
         $attributes
             ->class([
-                'filament-infolists-entry-wrapper-hint flex items-center gap-x-3 text-sm',
+                'fi-in-entry-wrapper-hint flex items-center gap-x-3 text-sm',
                 match ($color) {
                     'gray' => 'text-gray-500',
                     default => 'text-custom-600 dark:text-custom-400',
@@ -27,7 +27,7 @@
         <x-filament::icon
             :name="$icon"
             @class([
-                'filament-infolists-entry-wrapper-hint-icon h-5 w-5',
+                'fi-in-entry-wrapper-hint-icon h-5 w-5',
                 match ($color) {
                     'gray' => 'text-gray-400 dark:text-gray-500',
                     default => 'text-custom-500 dark:text-custom-400',
@@ -38,7 +38,7 @@
 
     @if (count($actions))
         <div
-            class="filament-infolists-entry-wrapper-hint-action -mx-1.5 flex items-center"
+            class="fi-in-entry-wrapper-hint-action -mx-1.5 flex items-center"
         >
             @foreach ($actions as $action)
                 {{ $action }}

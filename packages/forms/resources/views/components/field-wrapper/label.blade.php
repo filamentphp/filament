@@ -8,7 +8,7 @@
 ])
 
 <label
-    {{ $attributes->class(['filament-forms-field-wrapper-label inline-flex items-center gap-x-3']) }}
+    {{ $attributes->class(['fi-fo-field-wrapper-label inline-flex items-center gap-x-3']) }}
 >
     {{ $prefix }}
 

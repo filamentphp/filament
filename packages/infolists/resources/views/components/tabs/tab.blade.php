@@ -16,7 +16,7 @@
                 'tabindex' => '0',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-infolists-tabs-component-tab outline-none'])
+            ->class(['fi-in-tabs-component-tab outline-none'])
     }}
 >
     {{ $getChildComponentContainer() }}

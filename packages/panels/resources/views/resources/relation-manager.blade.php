@@ -1,4 +1,4 @@
-<div class="filament-resource-relation-manager">
+<div class="fi-resource-relation-manager">
     {{ filament()->renderHook('resource.relation-manager.start') }}
 
     {{ $this->table }}

@@ -209,7 +209,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     public function getCloneAction(): Action
     {
         $action = Action::make($this->getCloneActionName())
-            ->label(__('filament-forms::components.builder.actions.clone.label'))
+            ->label(__('fi-forms::components.builder.actions.clone.label'))
             ->icon('heroicon-m-square-2-stack')
             ->color('gray')
             ->action(function (array $arguments, Builder $component): void {

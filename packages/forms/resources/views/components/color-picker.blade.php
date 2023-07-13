@@ -23,7 +23,7 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        class="filament-forms-color-picker-component"
+        class="fi-fo-color-picker-component"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         <div

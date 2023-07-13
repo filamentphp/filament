@@ -18,7 +18,7 @@
     $iconSize ??= $size;
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        "filament-link filament-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
+        "fi-link fi-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
         'pe-4' => $indicator,
         'pointer-events-none opacity-70' => $disabled,
         match ($size) {
@@ -43,14 +43,14 @@
         default => 'md',
     };
 
-    $iconClasses = 'filament-link-icon ' . match ($iconSize) {
+    $iconClasses = 'fi-link-icon ' . match ($iconSize) {
         'sm' => 'h-4 w-4',
         'md' => 'h-5 w-5',
         'lg' => 'h-6 w-6',
         default => $iconSize,
     };
 
-    $indicatorClasses = 'filament-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+    $indicatorClasses = 'fi-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
 
     $indicatorStyles = \Filament\Support\get_color_css_variables($color, shades: [600]);
 

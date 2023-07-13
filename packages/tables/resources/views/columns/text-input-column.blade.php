@@ -38,7 +38,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-tables-text-input-column'])
+            ->class(['fi-ta-text-input-column'])
     }}
 >
     <input

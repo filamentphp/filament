@@ -41,7 +41,7 @@
     );
 @endphp
 
-<div {{ $attributes->class(['filament-infolists-entry-wrapper']) }}>
+<div {{ $attributes->class(['fi-in-entry-wrapper']) }}>
     @if ($label && $labelSrOnly)
         <dt class="sr-only">
             {{ $label }}

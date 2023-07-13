@@ -7,7 +7,7 @@
 ])
 
 <x-filament::dropdown
-    {{ $attributes->class(['filament-tables-filters']) }}
+    {{ $attributes->class(['fi-ta-filters']) }}
     :max-height="$maxHeight"
     placement="bottom-end"
     shift

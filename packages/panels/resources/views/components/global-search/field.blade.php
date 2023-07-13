@@ -4,7 +4,7 @@
 
 <div
     x-id="['input']"
-    {{ $attributes->class(['filament-global-search-field']) }}
+    {{ $attributes->class(['fi-global-search-field']) }}
 >
     <label x-bind:for="$id('input')" class="sr-only">
         {{ __('filament::global-search.field.label') }}

@@ -4,7 +4,7 @@
 ])
 
 <ul
-    {{ $attributes->class(['filament-global-search-result-group divide-y dark:divide-gray-700']) }}
+    {{ $attributes->class(['fi-global-search-result-group divide-y dark:divide-gray-700']) }}
 >
     <li class="sticky top-0 z-10">
         <header

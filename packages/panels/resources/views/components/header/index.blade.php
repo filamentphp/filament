@@ -5,7 +5,7 @@
 ])
 
 <header
-    {{ $attributes->class(['filament-header items-start justify-between space-y-2 sm:flex sm:space-x-4 sm:space-y-0 sm:py-4 sm:rtl:space-x-reverse']) }}
+    {{ $attributes->class(['fi-header items-start justify-between space-y-2 sm:flex sm:space-x-4 sm:space-y-0 sm:py-4 sm:rtl:space-x-reverse']) }}
 >
     <div>
         <x-filament::header.heading>

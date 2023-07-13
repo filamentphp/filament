@@ -1,5 +1,5 @@
 <div
-    {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['filament-tables-range-summary px-4 py-3 text-sm']) }}
+    {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['fi-ta-range-summary px-4 py-3 text-sm']) }}
 >
     @php
         $state = $formatState($getState());

@@ -7,6 +7,6 @@
                 $applyStateBindingModifiers('wire:model') => $getStatePath(),
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-forms-hidden-component'])
+            ->class(['fi-fo-hidden-component'])
     }}
 />

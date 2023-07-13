@@ -3,7 +3,7 @@
     $isDisabled = $isDisabled();
 @endphp
 
-<div class="filament-actions-select-action">
+<div class="fi-ac-select-action">
     <label for="{{ $id }}" class="sr-only">
         {{ $getLabel() }}
     </label>

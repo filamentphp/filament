@@ -3,7 +3,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'filament-tables-image-column',
+                'fi-ta-image-column',
                 'px-4 py-3' => ! $isInline(),
             ])
     }}

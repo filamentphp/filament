@@ -33,7 +33,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-tables-select-column'])
+            ->class(['fi-ta-select-column'])
     }}
 >
     <input

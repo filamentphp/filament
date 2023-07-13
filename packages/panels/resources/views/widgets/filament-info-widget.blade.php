@@ -1,4 +1,4 @@
-<x-filament-widgets::widget class="filament-filament-info-widget">
+<x-filament-widgets::widget class="fi-filament-info-widget">
     <x-filament::card class="relative">
         <div
             class="relative flex h-12 flex-col items-center justify-center space-y-2"

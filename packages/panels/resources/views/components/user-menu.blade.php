@@ -14,7 +14,7 @@
 
 {{ filament()->renderHook('user-menu.start') }}
 
-<x-filament::dropdown placement="bottom-end" class="filament-user-menu">
+<x-filament::dropdown placement="bottom-end" class="fi-user-menu">
     <x-slot name="trigger" class="ms-4">
         <button
             class="block"
@@ -111,7 +111,7 @@
                     return window.matchMedia('(prefers-color-scheme: dark)').matches
                 },
             }"
-            class="filament-theme-switcher flex items-center divide-x divide-gray-100 dark:divide-gray-800"
+            class="fi-theme-switcher flex items-center divide-x divide-gray-100 dark:divide-gray-800"
         >
             <button
                 type="button"

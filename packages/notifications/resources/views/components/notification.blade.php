@@ -9,7 +9,7 @@
             ->merge([
                 'wire:key' => "{$this->getId()}.notifications.{$notification->getId()}",
             ], escape: false)
-            ->class(['filament-notifications-notification pointer-events-auto invisible'])
+            ->class(['fi-no-notification pointer-events-auto invisible'])
     }}
 >
     {{ $slot }}

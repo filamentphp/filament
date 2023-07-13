@@ -2,7 +2,7 @@
     'form',
 ])
 
-<div {{ $attributes->class(['filament-tables-filters-form space-y-6']) }}>
+<div {{ $attributes->class(['fi-ta-filters-form space-y-6']) }}>
     {{ $form }}
 
     <div class="flex items-center justify-between gap-3">

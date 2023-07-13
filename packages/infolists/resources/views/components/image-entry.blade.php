@@ -9,7 +9,7 @@
     <div
         {{
             $attributes->merge($getExtraAttributes(), escape: false)->class([
-                'filament-infolists-image-entry flex',
+                'fi-in-image-entry flex',
                 match ($getAlignment()) {
                     'center' => 'justify-center',
                     'end' => 'justify-end',

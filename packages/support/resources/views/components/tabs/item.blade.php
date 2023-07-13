@@ -38,7 +38,7 @@
                 'role' => 'tab',
             ])
             ->class([
-                'filament-tabs-item flex h-8 items-center gap-3 whitespace-nowrap rounded-md px-5 font-medium outline-none focus:ring-2 focus:ring-inset focus:ring-primary-600',
+                'fi-tabs-item flex h-8 items-center gap-3 whitespace-nowrap rounded-md px-5 font-medium outline-none focus:ring-2 focus:ring-inset focus:ring-primary-600',
                 'hover:text-gray-800 focus:text-primary-600 dark:text-gray-400 dark:hover:text-gray-300 dark:focus:text-gray-400' => (! $active) && (! $alpineActive),
                 'bg-white text-primary-600 shadow dark:bg-primary-600 dark:text-white' => $active && (! $alpineActive),
             ])
@@ -52,7 +52,7 @@
                 '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
             }"
             @class([
-                'filament-tabs-item-icon h-5 w-5',
+                'fi-tabs-item-icon h-5 w-5',
                 $iconColorClasses,
             ])
         />
@@ -70,7 +70,7 @@
                 '{{ $iconColorClasses }}': ! ({{ $alpineActive }}),
             }"
             @class([
-                'filament-tabs-item-icon h-5 w-5',
+                'fi-tabs-item-icon h-5 w-5',
                 $iconColorClasses,
             ])
         />
