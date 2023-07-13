@@ -1,35 +1,35 @@
 @props([
     'field' => null,
-    'id' => null,
-    'label' => null,
-    'labelPrefix' => null,
-    'labelSrOnly' => null,
-    'labelSuffix' => null,
     'hasNestedRecursiveValidationRules' => false,
     'helperText' => null,
     'hint' => null,
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'id' => null,
     'isDisabled' => null,
     'isMarkedAsRequired' => null,
+    'label' => null,
+    'labelPrefix' => null,
+    'labelSrOnly' => null,
+    'labelSuffix' => null,
     'required' => null,
     'statePath' => null,
 ])
 
 @php
     if ($field) {
-        $id ??= $field->getId();
-        $label ??= $field->getLabel();
-        $labelSrOnly ??= $field->isLabelHidden();
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
         $helperText ??= $field->getHelperText();
         $hint ??= $field->getHint();
         $hintActions ??= $field->getHintActions();
         $hintColor ??= $field->getHintColor();
         $hintIcon ??= $field->getHintIcon();
+        $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
         $isMarkedAsRequired ??= $field->isMarkedAsRequired();
+        $label ??= $field->getLabel();
+        $labelSrOnly ??= $field->isLabelHidden();
         $required ??= $field->isRequired();
         $statePath ??= $field->getStatePath();
     }
@@ -57,8 +57,8 @@
                         :is-disabled="$isDisabled"
                         :is-marked-as-required="$isMarkedAsRequired"
                         :prefix="$labelPrefix"
-                        :required="$required"
                         :suffix="$labelSuffix"
+                        :required="$required"
                     >
                         {{ $label }}
                     </x-filament-forms::field-wrapper.label>

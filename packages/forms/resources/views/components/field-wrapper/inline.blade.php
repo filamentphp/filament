@@ -1,35 +1,35 @@
 @props([
     'field' => null,
-    'id' => null,
-    'label' => null,
-    'labelPrefix' => null,
-    'labelSrOnly' => null,
-    'labelSuffix' => null,
     'hasNestedRecursiveValidationRules' => false,
     'helperText' => null,
     'hint' => null,
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'id' => null,
     'isDisabled' => null,
     'isMarkedAsRequired' => null,
+    'label' => null,
+    'labelPrefix' => null,
+    'labelSrOnly' => null,
+    'labelSuffix' => null,
     'required' => null,
     'statePath' => null,
 ])
 
 @php
     if ($field) {
-        $id ??= $field->getId();
-        $label ??= $field->getLabel();
-        $labelSrOnly ??= $field->isLabelHidden();
         $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
         $helperText ??= $field->getHelperText();
         $hint ??= $field->getHint();
         $hintActions ??= $field->getHintActions();
         $hintColor ??= $field->getHintColor();
         $hintIcon ??= $field->getHintIcon();
+        $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
         $isMarkedAsRequired ??= $field->isMarkedAsRequired();
+        $label ??= $field->getLabel();
+        $labelSrOnly ??= $field->isLabelHidden();
         $required ??= $field->isRequired();
         $statePath ??= $field->getStatePath();
     }
@@ -40,7 +40,7 @@
     );
 @endphp
 
-<div {{ $attributes->class(['fi-fo-field-wrapper']) }}>
+<div {{ $attributes->class(['fi-fo-field-wrapper-inline']) }}>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
             {{ $label }}
@@ -49,9 +49,7 @@
 
     <div class="grid gap-2 sm:grid-cols-3 sm:items-start sm:gap-4">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || count($hintActions))
-            <div
-                class="flex items-center justify-between gap-2 sm:flex-col sm:items-start sm:gap-1 sm:pt-2"
-            >
+            <div class="flex items-center justify-between gap-x-3 sm:pt-1.5">
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
@@ -59,8 +57,8 @@
                         :is-disabled="$isDisabled"
                         :is-marked-as-required="$isMarkedAsRequired"
                         :prefix="$labelPrefix"
-                        :required="$required"
                         :suffix="$labelSuffix"
+                        :required="$required"
                     >
                         {{ $label }}
                     </x-filament-forms::field-wrapper.label>
@@ -82,7 +80,7 @@
             </div>
         @endif
 
-        <div class="space-y-2 sm:col-span-2 sm:space-y-1">
+        <div class="grid gap-y-2 sm:col-span-2">
             {{ $slot }}
 
             @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
