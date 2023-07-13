@@ -7,43 +7,32 @@
 <x-filament-widgets::widget class="fi-wi-chart-widget">
     <x-filament::card>
         @if ($heading || $filters)
-            <div class="flex items-center justify-between gap-8">
-                <x-filament::card.header>
-                    @if ($heading)
-                        <x-filament::card.heading>
-                            {{ $heading }}
-                        </x-filament::card.heading>
-                    @endif
+            <div class="flex items-center justify-between gap-x-4">
+                @if ($heading)
+                    <x-filament::card.heading>
+                        {{ $heading }}
+                    </x-filament::card.heading>
+                @endif
 
-                    @if ($description)
-                        <x-filament::card.description>
-                            {{ $description }}
-                        </x-filament::card.description>
-                    @endif
-                </x-filament::card.header>
+                @if ($description)
+                    <x-filament::card.description>
+                        {{ $description }}
+                    </x-filament::card.description>
+                @endif
 
                 @if ($filters)
-                    <div class="flex items-center gap-3">
-                        @if ($hasFilterLoadingIndicator)
-                            <x-filament::loading-indicator
-                                class="h-8 w-8 text-gray-500"
-                                wire:loading
-                                wire:target="filter"
-                            />
-                        @endif
-
-                        <select
-                            class="block h-10 rounded-lg border-gray-300 text-gray-950 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 dark:focus:border-primary-500"
-                            wire:model.live="filter"
-                            wire:loading.class="animate-pulse"
-                        >
+                    <x-filament-forms::affixes
+                        wire:target="filter"
+                        inline-prefix
+                    >
+                        <x-filament::input.select wire:model.live="filter">
                             @foreach ($filters as $value => $label)
                                 <option value="{{ $value }}">
                                     {{ $label }}
                                 </option>
                             @endforeach
-                        </select>
-                    </div>
+                        </x-filament::input.select>
+                    </x-filament-forms::affixes>
                 @endif
             </div>
         @endif

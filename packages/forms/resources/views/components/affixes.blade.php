@@ -46,6 +46,8 @@
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
+        if ($wireTarget === 'filter') {
+        }
     }
 @endphp
 
@@ -66,8 +68,12 @@
         ])
     }}
 >
-    @if (count($prefixActions) || $prefixIcon || filled($prefix))
+    @if (count($prefixActions) || $prefixIcon || filled($prefix) || $hasLoadingIndicator)
         <div
+            @if (! (count($prefixActions) || $prefixIcon || filled($prefix)))
+                wire:loading.delay
+                wire:target="{{ $loadingIndicatorTarget }}"
+            @endif
             @class([
                 'flex items-center gap-x-3',
                 'ps-3' => $inlinePrefix,
@@ -92,14 +98,14 @@
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                     :class="$affixIconClasses"
                 />
+            @endif
 
-                @if ($hasLoadingIndicator)
-                    <x-filament::loading-indicator
-                        wire:loading.delay=""
-                        :wire:target="$loadingIndicatorTarget"
-                        :class="$affixIconClasses"
-                    />
-                @endif
+            @if ($hasLoadingIndicator)
+                <x-filament::loading-indicator
+                    wire:loading.delay=""
+                    :wire:target="$loadingIndicatorTarget"
+                    :class="$affixIconClasses"
+                />
             @endif
 
             @if (filled($prefix))
