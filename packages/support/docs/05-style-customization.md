@@ -44,7 +44,7 @@ You can even apply `!important` to only specific Tailwind classes, which is a li
 
 ```css
 .fi-sidebar {
-    @apply !bg-gray-50 dark:bg-gray-950;
+    @apply !bg-gray-50 dark:!bg-gray-950;
 }
 ```
 
