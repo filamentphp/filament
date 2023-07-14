@@ -24,7 +24,7 @@
     ]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-dropdown-list-item-icon shrink-0',
+        'fi-dropdown-list-item-icon',
         match ($iconSize) {
             'sm' => 'h-4 w-4',
             'md' => 'h-5 w-5',
@@ -37,12 +37,12 @@
         },
     ]);
 
-    $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-cover bg-center';
+    $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-dropdown-list-item-label w-full truncate text-start',
+        'fi-dropdown-list-item-label flex-1 truncate text-start',
         match ($color) {
-            'gray' => 'text-gray-700  dark:text-gray-200 ',
+            'gray' => 'text-gray-700 dark:text-gray-200',
             default => 'text-custom-600 dark:text-custom-400 ',
         },
     ]);
