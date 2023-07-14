@@ -25,9 +25,7 @@
         />
     </div>
 
-    <div
-        class="fi-ta-empty-state-textual-content-ctn max-w-md space-y-1"
-    >
+    <div class="fi-ta-empty-state-textual-content-ctn max-w-md space-y-1">
         <x-filament-tables::empty-state.heading>
             {{ $heading }}
         </x-filament-tables::empty-state.heading>

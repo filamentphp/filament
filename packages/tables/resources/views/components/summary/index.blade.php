@@ -19,9 +19,7 @@
 @endphp
 
 @if ($hasPageSummary)
-    <x-filament-tables::row
-        class="fi-ta-summary-header-row bg-gray-500/5"
-    >
+    <x-filament-tables::row class="fi-ta-summary-header-row bg-gray-500/5">
         @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
             <td></td>
         @endif

@@ -4,9 +4,7 @@
     'subheading' => null,
 ])
 
-<div
-    class="fi-card-layout flex min-h-screen items-center justify-center py-14"
->
+<div class="fi-card-layout flex min-h-screen items-center justify-center py-14">
     <div
         @class([
             'w-screen space-y-8 px-6 md:mt-0 md:px-2',

@@ -12,9 +12,7 @@
             areAllCheckboxesChecked: false,
 
             checkboxListOptions: Array.from(
-                $root.querySelectorAll(
-                    '.fi-fo-checkbox-list-option-label',
-                ),
+                $root.querySelectorAll('.fi-fo-checkbox-list-option-label'),
             ),
 
             search: '',
@@ -71,9 +69,7 @@
                 this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
                     (checkboxListItem) => {
                         return checkboxListItem
-                            .querySelector(
-                                '.fi-fo-checkbox-list-option-label-text',
-                            )
+                            .querySelector('.fi-fo-checkbox-list-option-label-text')
                             .innerText.toLowerCase()
                             .includes(this.search.toLowerCase())
                     },

@@ -6,9 +6,7 @@
     'trigger',
 ])
 
-<x-filament::dropdown
-    {{ $attributes->class(['fi-fo-builder-block-picker']) }}
->
+<x-filament::dropdown {{ $attributes->class(['fi-fo-builder-block-picker']) }}>
     <x-slot name="trigger">
         {{ $trigger }}
     </x-slot>
