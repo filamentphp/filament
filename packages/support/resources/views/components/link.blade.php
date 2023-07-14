@@ -29,13 +29,13 @@
             'xl' => 'gap-1.5 text-sm',
         },
         match ($color) {
-            'gray' => 'text-gray-600 hover:text-gray-500 dark:text-gray-300 dark:hover:text-gray-200',
-            default => 'text-custom-600 hover:text-custom-500 dark:text-custom-500 dark:hover:text-custom-400',
+            'gray' => 'text-gray-gray-950 dark:text-white',
+            default => 'text-custom-600 dark:text-custom-400',
         },
     ]);
 
     $linkStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables($color, shades: [300, 400, 500, 600]) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {
@@ -43,16 +43,27 @@
         default => 'md',
     };
 
-    $iconClasses = 'fi-link-icon ' . match ($iconSize) {
-        'sm' => 'h-4 w-4',
-        'md' => 'h-5 w-5',
-        'lg' => 'h-6 w-6',
-        default => $iconSize,
-    };
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-link-icon',
+        match ($iconSize) {
+            'sm' => 'h-4 w-4',
+            'md' => 'h-5 w-5',
+            'lg' => 'h-6 w-6',
+            default => $iconSize,
+        },
+        match ($color) {
+            'gray' => 'text-gray-500 dark:text-gray-400',
+            default => 'text-custom-500 dark:text-custom-400',
+        },
+    ]);
 
-    $indicatorClasses = 'fi-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+    $iconStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables($color, shades: [400, 500]) => $color !== 'gray',
+    ]);
 
-    $indicatorStyles = \Filament\Support\get_color_css_variables($color, shades: [600]);
+    $indicatorClasses = 'fi-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-xs font-medium tracking-tight text-white dark:bg-custom-500';
+
+    $indicatorStyles = \Filament\Support\get_color_css_variables($color, shades: [500, 600]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -81,13 +92,21 @@
         }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-filament::icon :name="$icon" :class="$iconClasses" />
+            <x-filament::icon
+                :name="$icon"
+                :class="$iconClasses"
+                :style="$iconStyles"
+            />
         @endif
 
         {{ $slot }}
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament::icon :name="$icon" :class="$iconClasses" />
+            <x-filament::icon
+                :name="$icon"
+                :class="$iconClasses"
+                :style="$iconStyles"
+            />
         @endif
 
         @if ($indicator)
@@ -124,9 +143,10 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
+                    :class="$iconClasses"
+                    :style="$iconStyles"
                 />
             @endif
 
@@ -134,7 +154,8 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $iconSize"
+                    :class="$iconClasses"
+                    :style="$iconStyles"
                 />
             @endif
         @endif
@@ -145,9 +166,10 @@
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
-                    :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
+                    :class="$iconClasses"
+                    :style="$iconStyles"
                 />
             @endif
 
@@ -155,7 +177,8 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $iconSize"
+                    :class="$iconClasses"
+                    :style="$iconStyles"
                 />
             @endif
         @endif
