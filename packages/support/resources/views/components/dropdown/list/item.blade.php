@@ -1,6 +1,5 @@
 @props([
     'color' => 'gray',
-    'detail' => null,
     'disabled' => false,
     'icon' => null,
     'iconSize' => 'md',
@@ -12,29 +11,41 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
+        'pointer-events-none opacity-70' => $disabled,
         is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
         match ($color) {
-            'gray' => 'fi-dropdown-list-item-color-gray text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 dark:text-gray-200',
-            default => 'fi-dropdown-list-item-color-custom text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 dark:text-custom-400',
+            'gray' => 'hover:bg-gray-950/5 focus:bg-gray-950/5  dark:hover:bg-white/5 dark:focus:bg-white/5',
+            default => 'hover:bg-custom-50 focus:bg-custom-50  dark:hover:bg-custom-400/10 dark:focus:bg-custom-400/10',
         },
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables($color, shades: [50, 400, 500, 600]) => $color !== 'gray',
     ]);
 
-    $iconClasses = 'fi-dropdown-list-item-icon shrink-0 ' . match ($iconSize) {
-        'sm' => 'h-4 w-4',
-        'md' => 'h-5 w-5',
-        'lg' => 'h-6 w-6',
-        default => $iconSize,
-    };
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-dropdown-list-item-icon shrink-0',
+        match ($iconSize) {
+            'sm' => 'h-4 w-4',
+            'md' => 'h-5 w-5',
+            'lg' => 'h-6 w-6',
+            default => $iconSize,
+        },
+        match ($color) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500 dark:text-custom-400',
+        },
+    ]);
 
-    $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900';
+    $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 shrink-0 rounded-full bg-cover bg-center';
 
-    $labelClasses = 'fi-dropdown-list-item-label w-full truncate text-start';
-
-    $detailClasses = 'fi-dropdown-list-item-detail ms-auto text-xs';
+    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-dropdown-list-item-label w-full truncate text-start',
+        match ($color) {
+            'gray' => 'text-gray-700  dark:text-gray-200 ',
+            default => 'text-custom-600 dark:text-custom-400 ',
+        },
+    ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -57,7 +68,7 @@
                     'disabled' => $disabled,
                     'type' => 'button',
                     'wire:loading.attr' => 'disabled',
-                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
                 ], escape: false)
                 ->class([$buttonClasses])
                 ->style([$buttonStyles])
@@ -66,9 +77,9 @@
         @if ($icon)
             <x-filament::icon
                 :name="$icon"
-                :class="$iconClasses"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
                 :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
+                :class="$iconClasses"
             />
         @endif
 
@@ -83,19 +94,13 @@
             <x-filament::loading-indicator
                 wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses . ' ' . $iconSize"
+                :class="$iconClasses"
             />
         @endif
 
         <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
-
-        @if ($detail)
-            <span class="{{ $detailClasses }}">
-                {{ $detail }}
-            </span>
-        @endif
     </button>
 @elseif ($tag === 'a')
     <a
@@ -123,12 +128,6 @@
         <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
-
-        @if ($detail)
-            <span class="{{ $detailClasses }}">
-                {{ $detail }}
-            </span>
-        @endif
     </a>
 @elseif ($tag === 'form')
     <form
@@ -156,12 +155,6 @@
             <span class="{{ $labelClasses }}">
                 {{ $slot }}
             </span>
-
-            @if ($detail)
-                <span class="{{ $detailClasses }}">
-                    {{ $detail }}
-                </span>
-            @endif
         </button>
     </form>
 @endif
