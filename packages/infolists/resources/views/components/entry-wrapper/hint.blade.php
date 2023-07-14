@@ -19,7 +19,7 @@
             ])
     }}
 >
-    @if ($slot->isNotEmpty())
+    @if (! \Filament\Support\is_slot_empty($slot))
         {{ $slot }}
     @endif
 

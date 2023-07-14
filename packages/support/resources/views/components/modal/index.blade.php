@@ -153,7 +153,7 @@
                         <div
                             @class([
                                 'fi-modal-header flex px-6 pt-6',
-                                'mb-6' => $slot->isEmpty(),
+                                'mb-6' => \Filament\Support\is_slot_empty($slot),
                                 match ($alignment) {
                                     'left', 'start' => 'gap-x-5',
                                     'center' => 'flex-col',
@@ -230,7 +230,7 @@
                         </div>
                     @endif
 
-                    @if ($slot->isNotEmpty())
+                    @if (! \Filament\Support\is_slot_empty($slot))
                         <div
                             @class([
                                 'fi-modal-content flex flex-col gap-y-4 py-6',
@@ -250,7 +250,7 @@
                             'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
                             'sticky bottom-0 rounded-b-xl border-t border-gray-200 bg-white py-5 dark:border-gray-800 dark:bg-gray-900' => $stickyFooter,
                             'pb-6' => ! $stickyFooter,
-                            'mt-6' => (! $stickyFooter) && $slot->isEmpty() && (! $slideOver),
+                            'mt-6' => (! $stickyFooter) && \Filament\Support\is_slot_empty($slot) && (! $slideOver),
                             'mt-auto' => $slideOver,
                         ])
                     >
