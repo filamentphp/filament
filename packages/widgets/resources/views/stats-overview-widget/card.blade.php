@@ -53,8 +53,8 @@
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
                         :name="$descriptionIcon"
-                        class="{{ $descriptionIconClasses }}"
-                        style="{{ $descriptionIconStyles }}"
+                        :class="$descriptionIconClasses"
+                        :style="$descriptionIconStyles"
                     />
                 @endif
 
@@ -76,8 +76,8 @@
                 @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
                     <x-filament::icon
                         :name="$descriptionIcon"
-                        class="{{ $descriptionIconClasses }}"
-                        style="{{ $descriptionIconStyles }}"
+                        :class="$descriptionIconClasses"
+                        :style="$descriptionIconStyles"
                     />
                 @endif
             </div>
