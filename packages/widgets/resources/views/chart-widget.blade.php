@@ -30,7 +30,10 @@
                         wire:target="filter"
                         class="ml-auto"
                     >
-                        <x-filament::input.select wire:model.live="filter">
+                        <x-filament::input.select
+                            inline-prefix
+                            wire:model.live="filter"
+                        >
                             @foreach ($filters as $value => $label)
                                 <option value="{{ $value }}">
                                     {{ $label }}

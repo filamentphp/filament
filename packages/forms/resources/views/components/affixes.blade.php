@@ -14,6 +14,9 @@
 ])
 
 @php
+    $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
+    $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
+
     $ringClasses = \Illuminate\Support\Arr::toCssClasses([
         'ring-gray-950/10 dark:ring-white/20',
         'focus-within:ring-primary-600 dark:focus-within:ring-primary-600' => ! $disabled,
@@ -58,27 +61,28 @@
         "
     @endif
     {{
-        $attributes->except('wire:target')->class([
-            'fi-fo-affixes flex rounded-lg shadow-sm ring-1 transition duration-75',
-            $ringClasses => ! $statePath,
-            'bg-gray-50 dark:bg-gray-950' => $disabled,
-            'bg-white focus-within:ring-2 dark:bg-gray-900' => ! $disabled,
-        ])
+        $attributes
+            ->except('wire:target')
+            ->class([
+                'fi-fo-affixes flex rounded-lg shadow-sm ring-1 transition duration-75',
+                $ringClasses => ! $statePath,
+                'bg-gray-50 dark:bg-gray-950' => $disabled,
+                'bg-white focus-within:ring-2 dark:bg-gray-900' => ! $disabled,
+            ])
     }}
 >
-    @if (count($prefixActions) || $prefixIcon || filled($prefix) || $hasLoadingIndicator)
+    @if ($hasPrefix || $hasLoadingIndicator)
         <div
-            @if (! (count($prefixActions) || $prefixIcon || filled($prefix)))
-                wire:loading.delay
+            @if (! $hasPrefix)
+                wire:loading.delay.flex
                 wire:target="{{ $loadingIndicatorTarget }}"
-                wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Prevents the loading indicator from disappearing when the prefix is empty. --}}
+                wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
             @endif
             @class([
-                'flex items-center gap-x-3',
-                'ps-3' => $inlinePrefix,
+                'flex items-center gap-x-3 ps-3',
                 'pe-1' => $inlinePrefix && filled($prefix),
                 'pe-2' => $inlinePrefix && blank($prefix),
-                'border-e border-gray-950/10 px-3 dark:border-white/20' => ! $inlinePrefix,
+                'border-e border-gray-950/10 pe-3 dark:border-white/20' => ! $inlinePrefix,
             ])
         >
             @if (count($prefixActions))
@@ -100,13 +104,17 @@
             @endif
 
             @if ($hasLoadingIndicator)
-                <div class="flex items-center h-full">
-                    <x-filament::loading-indicator
-                        wire:loading.delay
-                        :wire:target="$loadingIndicatorTarget"
-                        :class="$affixIconClasses"
-                    />
-                </div>
+                <x-filament::loading-indicator
+                    :attributes="
+                        \Filament\Support\prepare_inherited_attributes(
+                            new \Illuminate\View\ComponentAttributeBag([
+                                'wire:loading.delay' => $hasPrefix,
+                                'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
+                            ])
+                        )
+                    "
+                    :class="$affixIconClasses"
+                />
             @endif
 
             @if (filled($prefix))
@@ -117,18 +125,29 @@
         </div>
     @endif
 
-    <div class="min-w-0 flex-1">
+    <div
+        @if ($hasLoadingIndicator && (! $hasPrefix))
+            @if ($inlinePrefix)
+                wire:loading.delay.class.remove="ps-3"
+            @endif
+
+            wire:target="{{ $loadingIndicatorTarget }}"
+        @endif
+        @class([
+            'min-w-0 flex-1',
+            'ps-3' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,
+        ])
+    >
         {{ $slot }}
     </div>
 
-    @if (count($suffixActions) || $suffixIcon || filled($suffix))
+    @if ($hasSuffix)
         <div
             @class([
-                'flex items-center gap-x-3',
-                'pe-3' => $inlineSuffix,
+                'flex items-center gap-x-3 pe-3',
                 'ps-1' => $inlineSuffix && filled($suffix),
                 'ps-2' => $inlineSuffix && blank($suffix),
-                'border-s border-gray-950/10 px-3 dark:border-white/20' => ! $inlineSuffix,
+                'border-s border-gray-950/10 dark:border-white/20' => ! $inlineSuffix,
             ])
         >
             @if (filled($suffix))
