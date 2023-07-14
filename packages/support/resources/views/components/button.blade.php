@@ -3,6 +3,7 @@
     'disabled' => false,
     'form' => null,
     'icon' => null,
+    'iconAlias' => null,
     'iconPosition' => 'before',
     'iconSize' => null,
     'indicator' => null,
@@ -99,6 +100,7 @@
         :disabled="$disabled"
         :form="$form"
         :icon="$icon"
+        :icon-alias="$iconAlias"
         :icon-size="$iconSize"
         :indicator="$indicator"
         :indicator-color="$indicatorColor"
@@ -167,6 +169,7 @@
         @if ($iconPosition === 'before')
             @if ($icon)
                 <x-filament::icon
+                    :alias="$iconAlias"
                     :name="$icon"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -209,6 +212,7 @@
         @if ($iconPosition === 'after')
             @if ($icon)
                 <x-filament::icon
+                    :alias="$iconAlias"
                     :name="$icon"
                     :class="$iconClasses"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
@@ -260,7 +264,11 @@
         }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-filament::icon :name="$icon" :class="$iconClasses" />
+            <x-filament::icon
+                :alias="$iconAlias"
+                name="$icon"
+                :class="$iconClasses"
+            />
         @endif
 
         <span class="{{ $labelClasses }}">
@@ -268,7 +276,11 @@
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            <x-filament::icon :name="$icon" :class="$iconClasses" />
+            <x-filament::icon
+                :alias="$iconAlias"
+                :name="$icon"
+                :class="$iconClasses"
+            />
         @endif
 
         @if ($indicator)

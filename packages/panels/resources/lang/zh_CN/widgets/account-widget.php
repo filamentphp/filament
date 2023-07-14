@@ -10,6 +10,6 @@ return [
 
     ],
 
-    'welcome' => '欢迎，:user',
+    'welcome' => '欢迎',
 
 ];

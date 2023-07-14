@@ -66,7 +66,7 @@
             } => ! $aside,
         ])
     >
-        <div class="fi-section-header flex gap-x-2">
+        <div class="fi-section-header flex gap-x-3">
             @if ($icon)
                 <x-filament::icon
                     :name="$icon"
@@ -89,7 +89,7 @@
                 />
             @endif
 
-            <div>
+            <div class="flex-1">
                 <h3
                     class="fi-section-header-heading text-base font-semibold leading-6 text-gray-950 dark:text-white"
                 >

@@ -10,6 +10,6 @@ return [
 
     ],
 
-    'welcome' => 'Selamat datang, :user',
+    'welcome' => 'Selamat datang',
 
 ];

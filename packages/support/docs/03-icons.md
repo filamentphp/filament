@@ -65,6 +65,7 @@ If you have built a Filament plugin, your users may want to be able to customize
 - `panels::topbar.user-menu.theme-switcher.light-button` - Button in the user menu to switch to the light theme
 - `panels::topbar.user-menu.theme-switcher.dark-button` - Button in the user menu to switch to the dark theme
 - `panels::topbar.user-menu.theme-switcher.system-button` - Button in the user menu to switch to the system theme
+- `panels::widgets.account.logout-button` - Button to log out from the account widget
 
 ### Form Builder icon aliases
 
