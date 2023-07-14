@@ -119,7 +119,12 @@ Finally, create a new `resources/views/components/layouts/app.blade.php` layout 
 
         <title>{{ config('app.name') }}</title>
 
-        <style>[x-cloak] { display: none !important; }</style>
+        <style>
+            [x-cloak] {
+                display: none !important;
+            }
+        </style>
+
         @filamentStyles
         @vite('resources/css/app.css')
     </head>
@@ -131,7 +136,6 @@ Finally, create a new `resources/views/components/layouts/app.blade.php` layout 
 
         @filamentScripts
         @vite('resources/js/app.js')
-        <script src="//unpkg.com/alpinejs" defer></script>
     </body>
 </html>
 ```

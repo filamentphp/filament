@@ -14,6 +14,7 @@
                 display: none !important;
             }
         </style>
+
         @filamentStyles
         @vite('resources/css/app.css')
     </head>
@@ -23,6 +24,5 @@
 
         @filamentScripts
         @vite('resources/js/app.js')
-        <script src="//unpkg.com/alpinejs" defer></script>
     </body>
 </html>
