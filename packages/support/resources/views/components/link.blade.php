@@ -63,7 +63,7 @@
 
     $indicatorClasses = 'fi-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-xs font-medium tracking-tight text-white dark:bg-custom-500';
 
-    $indicatorStyles = \Filament\Support\get_color_css_variables($color, shades: [500, 600]);
+    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [500, 600]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
