@@ -41,28 +41,25 @@
         ],
         ...(
             $outlined
-                ? [
-                    'fi-btn-outlined ring-1 ',
-                    match ($color) {
-                        'gray' => 'ring-gray-600 text-gray-700 hover:bg-gray-500/10 focus:bg-gray-500/10 focus:ring-gray-500/50 dark:ring-gray-300/70 dark:text-gray-200',
-                        default => 'ring-custom-600 text-custom-600 hover:bg-custom-500/10 focus:bg-custom-500/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-300/70',
-                    },
-                ]
+            ? [
+                'fi-btn-outlined ring-1 ',
+                match ($color) {
+                    'gray' => 'ring-gray-300 text-gray-950 hover:bg-gray-400/10 focus:bg-gray-400/10 focus:ring-gray-400/40 dark:ring-gray-700 dark:text-white',
+                    default => 'ring-custom-600 text-custom-600 hover:bg-custom-400/10 focus:bg-custom-400/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-400/70',
+                },
+            ]
                 : [
                     'shadow',
                     match ($color) {
-                        'gray' => 'ring-gray-950/10 ring-1 bg-white text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:ring-2 dark:ring-white/20 dark:bg-gray-900 dark:text-gray-200 dark:hover:bg-gray-800 dark:focus:bg-gray-800',
-                        default => 'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 focus:ring-custom-500/50',
+                        'gray' => 'ring-gray-950/10 ring-1 bg-white text-gray-950 hover:bg-gray-50 focus:bg-gray-50 dark:ring-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:ring-white/30 dark:focus:bg-white/20 dark:focus:ring-white/30',
+                        default => 'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 focus:ring-custom-400/50 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus:bg-custom-400',
                     },
                 ]
         ),
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables(
-            $color,
-            shades: $outlined ? [300, 400, 500, 600] : [500, 600],
-        ) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {
@@ -77,9 +74,9 @@
         default => $iconSize,
     };
 
-    $indicatorClasses = 'fi-btn-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+    $indicatorClasses = 'fi-btn-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-xs font-medium tracking-tight text-white dark:bg-custom-500';
 
-    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [600]);
+    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [500, 600]);
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-label',
