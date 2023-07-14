@@ -22,3 +22,15 @@ ColorColumn::make('color')
     ->copyMessage('Color code copied')
     ->copyMessageDuration(1500)
 ```
+
+You can change or customize the text that gets copied.
+
+For instance, you may have a color in hex format and you want to copy it in RGB:
+
+```php
+use Filament\Tables\Columns\ColorColumn;
+
+ColorColumn::make('hex_color')
+    ->copyable()
+    ->copyableState(fn (Model $record): string => join(',', sscanf($record->hex_color, "#%02x%02x%02x")))
+```

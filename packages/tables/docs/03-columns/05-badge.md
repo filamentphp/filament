@@ -140,3 +140,13 @@ BadgeColumn::make('email')
 ```
 
 > Filament uses tooltips to display the copy message in the admin panel. If you want to use the copyable feature outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app.
+
+You can change or customize the text that gets copied.
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('name')
+    ->copyable()
+    ->copyableState(fn (Model $record): string => strtoupper($record->name))
+```
