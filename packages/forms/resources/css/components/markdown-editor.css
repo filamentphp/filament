@@ -119,7 +119,7 @@
 }
 
 .EasyMDEContainer .editor-toolbar {
-    @apply flex gap-x-1 rounded-none border-0 border-b border-gray-100 px-2.5 py-2 dark:border-white/10;
+    @apply flex flex-wrap gap-x-1 rounded-none border-0 border-b border-gray-100 px-2.5 py-2 dark:border-white/10;
 }
 
 .EasyMDEContainer .editor-toolbar button {

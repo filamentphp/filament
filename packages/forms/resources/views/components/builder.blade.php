@@ -153,17 +153,24 @@
 
                                         @if ($isCollapsible)
                                             <li
-                                                x-show="! isCollapsed"
-                                                x-on:click.stop="isCollapsed = true"
+                                                class="relative transition"
+                                                x-bind:class="{ '-rotate-180': isCollapsed }"
                                             >
-                                                {{ $getAction('collapse') }}
-                                            </li>
+                                                <div
+                                                    x-on:click.stop="isCollapsed = true"
+                                                    x-bind:class="{ 'opacity-0 pointer-events-none': isCollapsed }"
+                                                >
+                                                    {{ $getAction('collapse') }}
+                                                </div>
 
-                                            <li
-                                                x-show="isCollapsed"
-                                                x-on:click.stop="isCollapsed = false"
-                                            >
-                                                {{ $getAction('expand') }}
+                                                <div
+                                                    x-on:click.stop="isCollapsed = false"
+                                                    x-bind:class="{ 'opacity-0 pointer-events-none': ! isCollapsed }"
+                                                    class="absolute inset-0"
+                                                >
+                                                    {{ $getAction('expand') }}
+                                                </div>
+
                                             </li>
                                         @endif
                                     </ul>
