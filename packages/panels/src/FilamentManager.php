@@ -18,6 +18,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Widgets\Widget;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
@@ -463,7 +464,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget>>
      */
     public function getWidgets(): array
     {
