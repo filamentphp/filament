@@ -23,14 +23,25 @@ ColorColumn::make('color')
     ->copyMessageDuration(1500)
 ```
 
-You can change or customize the text that gets copied.
+### Customizing the text that is copied to the clipboard
 
-For instance, you may have a color in hex format and you want to copy it in RGB:
+You can customize the text that gets copied to the clipboard using the `copyableState() method:
 
 ```php
 use Filament\Tables\Columns\ColorColumn;
 
-ColorColumn::make('hex_color')
+ColorColumn::make('color')
     ->copyable()
-    ->copyableState(fn (Model $record): string => join(',', sscanf($record->hex_color, "#%02x%02x%02x")))
+    ->copyableState(fn (string $state): string => "Color: {$state}")
+```
+
+In this function, you can access the whole table row with `$record`:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Columns\ColorColumn;
+
+ColorColumn::make('color')
+    ->copyable()
+    ->copyableState(fn (Post $record): string => "Color: {$record->color}")
 ```
