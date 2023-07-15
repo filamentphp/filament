@@ -278,7 +278,6 @@ You can customize the text that gets copied to the clipboard using the `copyable
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('url')
-    ->limit(50)
     ->copyable()
     ->copyableState(fn (string $state): string => "URL: {$state}")
 ```
@@ -290,7 +289,6 @@ use App\Models\Post;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('url')
-    ->limit(50)
     ->copyable()
     ->copyableState(fn (Post $record): string => "URL: {$record->url}")
 ```
