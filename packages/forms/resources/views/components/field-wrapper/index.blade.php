@@ -40,6 +40,8 @@
         $hintActions ?? [],
         fn (\Filament\Forms\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
     );
+
+    $hasError = $errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*"));
 @endphp
 
 <div {{ $attributes->class(['fi-fo-field-wrp']) }}>
@@ -92,25 +94,27 @@
             </div>
         @endif
 
-        <div
-            @class([
-                'grid gap-y-2',
-                'sm:col-span-2' => $hasInlineLabel,
-            ])
-        >
-            {{ $slot }}
+        @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $helperText)
+            <div
+                @class([
+                    'grid gap-y-2',
+                    'sm:col-span-2' => $hasInlineLabel,
+                ])
+            >
+                {{ $slot }}
 
-            @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
-                <x-filament-forms::field-wrapper.error-message>
-                    {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
-                </x-filament-forms::field-wrapper.error-message>
-            @endif
+                @if ($hasError)
+                    <x-filament-forms::field-wrapper.error-message>
+                        {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
+                    </x-filament-forms::field-wrapper.error-message>
+                @endif
 
-            @if ($helperText)
-                <x-filament-forms::field-wrapper.helper-text>
-                    {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : str($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
-                </x-filament-forms::field-wrapper.helper-text>
-            @endif
-        </div>
+                @if ($helperText)
+                    <x-filament-forms::field-wrapper.helper-text>
+                        {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : str($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    </x-filament-forms::field-wrapper.helper-text>
+                @endif
+            </div>
+        @endif
     </div>
 </div>

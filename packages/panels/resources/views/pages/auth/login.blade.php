@@ -7,7 +7,7 @@
         </x-slot>
     @endif
 
-    <form wire:submit="authenticate" class="grid gap-y-8">
+    <form wire:submit="authenticate" class="grid gap-y-6">
         {{ $this->form }}
 
         {{ $this->authenticateAction }}

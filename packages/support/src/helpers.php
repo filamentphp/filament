@@ -2,6 +2,7 @@
 
 namespace Filament\Support;
 
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;
 use Illuminate\View\ComponentAttributeBag;
@@ -84,5 +85,21 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
         );
 
         return $attributes;
+    }
+}
+
+if (! function_exists('Filament\Support\is_slot_empty')) {
+    function is_slot_empty(Htmlable $slot): bool
+    {
+        return trim(
+            str_replace(
+                [
+                    '<!-- __BLOCK__ -->',
+                    '<!-- __ENDBLOCK__ -->',
+                ],
+                '',
+                $slot->toHtml()
+            ),
+        ) === '';
     }
 }
