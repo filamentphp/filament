@@ -29,3 +29,26 @@ ColorColumn::make('color')
 ```
 
 <AutoScreenshot name="tables/columns/color/copyable" alt="Color column with a button to copy it" version="3.x" />
+
+### Customizing the text that is copied to the clipboard
+
+You can customize the text that gets copied to the clipboard using the `copyableState() method:
+
+```php
+use Filament\Tables\Columns\ColorColumn;
+
+ColorColumn::make('color')
+    ->copyable()
+    ->copyableState(fn (string $state): string => "Color: {$state}")
+```
+
+In this function, you can access the whole table row with `$record`:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Columns\ColorColumn;
+
+ColorColumn::make('color')
+    ->copyable()
+    ->copyableState(fn (Post $record): string => "Color: {$record->color}")
+```
