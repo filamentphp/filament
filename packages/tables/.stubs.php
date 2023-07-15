@@ -1,11 +1,13 @@
 <?php
 
-namespace Livewire\Features\SupportTesting\Tests {
+namespace Livewire\Features\SupportTesting {
 
     use Illuminate\Support\Collection;
 
     class Testable {
         public function mountTableAction(string $name, $record = null): static {}
+
+        public function unmountTableAction(): static {}
 
         public function setTableActionData(array $data): static {}
 
@@ -34,6 +36,10 @@ namespace Livewire\Features\SupportTesting\Tests {
         public function assertTableActionEnabled(string $name, $record = null): static {}
 
         public function assertTableActionDisabled(string $name, $record = null): static {}
+
+        public function assertTableActionMounted(string $name): static {}
+
+        public function assertTableActionNotMounted(string $name): static {}
 
         public function assertTableActionHalted(string $name): static {}
 
@@ -96,6 +102,10 @@ namespace Livewire\Features\SupportTesting\Tests {
         public function assertTableActionShouldOpenUrlInNewTab(string $name): static {}
 
         public function assertTableActionShouldNotOpenUrlInNewTab(string $name): static {}
+
+        public function assertTableBulkActionMounted(string $name): static {}
+
+        public function assertTableBulkActionNotMounted(string $name): static {}
 
         public function assertTableBulkActionHalted(string $name): static {}
 

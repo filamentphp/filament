@@ -17,6 +17,7 @@ return new class() extends Migration
             $table->json('tags')->nullable();
             $table->string('title');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

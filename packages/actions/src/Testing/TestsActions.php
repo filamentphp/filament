@@ -28,9 +28,6 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
-            /** @phpstan-ignore-next-line */
-            $this->assertActionVisible($name);
-
             foreach ($name as $actionNestingIndex => $actionName) {
                 $this->call(
                     'mountAction',
@@ -52,6 +49,15 @@ class TestsActions
             $this->assertSet('mountedActions', $name);
 
             $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-action");
+
+            return $this;
+        };
+    }
+
+    public function unmountAction(): Closure
+    {
+        return function (): static {
+            $this->call('unmountAction');
 
             return $this;
         };
@@ -82,6 +88,9 @@ class TestsActions
     public function callAction(): Closure
     {
         return function (string | array $name, array $data = [], array $arguments = []): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertActionVisible($name);
+
             /** @phpstan-ignore-next-line */
             $this->mountAction($name, $arguments);
 
@@ -505,7 +514,7 @@ class TestsActions
         };
     }
 
-    public function assertActionHalted(): Closure
+    public function assertActionMounted(): Closure
     {
         return function (string | array $name): static {
             /** @var array<string> $name */
@@ -519,6 +528,27 @@ class TestsActions
 
             return $this;
         };
+    }
+
+    public function assertActionNotMounted(): Closure
+    {
+        return function (string | array $name): static {
+            /** @var array<string> $name */
+            /** @phpstan-ignore-next-line */
+            $name = $this->parseNestedActionName($name);
+
+            /** @phpstan-ignore-next-line */
+            $this->assertActionExists($name);
+
+            $this->assertNotSet('mountedActions', $name);
+
+            return $this;
+        };
+    }
+
+    public function assertActionHalted(): Closure
+    {
+        return $this->assertActionMounted();
     }
 
     /**

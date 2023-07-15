@@ -25,9 +25,6 @@ class TestsBulkActions
         return function (string $name, array | Collection $records): static {
             $name = $this->parseActionName($name);
 
-            /** @phpstan-ignore-next-line */
-            $this->assertTableBulkActionVisible($name);
-
             $records = array_map(
                 function ($record) {
                     if ($record instanceof Model) {
@@ -84,6 +81,9 @@ class TestsBulkActions
     public function callTableBulkAction(): Closure
     {
         return function (string $name, array | Collection $records, array $data = [], array $arguments = []): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionVisible($name);
+
             /** @phpstan-ignore-next-line */
             $this->mountTableBulkAction($name, $records);
 
@@ -390,7 +390,7 @@ class TestsBulkActions
         };
     }
 
-    public function assertTableBulkActionHalted(): Closure
+    public function assertTableBulkActionMounted(): Closure
     {
         return function (string $name): static {
             $name = $this->parseActionName($name);
@@ -402,6 +402,25 @@ class TestsBulkActions
 
             return $this;
         };
+    }
+
+    public function assertTableBulkActionNotMounted(): Closure
+    {
+        return function (string $name): static {
+            $name = $this->parseActionName($name);
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $this->assertNotSet('mountedTableBulkAction', $name);
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionHalted(): Closure
+    {
+        return $this->assertTableBulkActionMounted();
     }
 
     /**
