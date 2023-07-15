@@ -2,6 +2,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'grouped' => false,
     'icon' => null,
     'iconAlias' => null,
     'iconPosition' => 'before',
@@ -21,7 +22,9 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center rounded-lg font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            'flex-1' => $grouped,
+            'rounded-lg' => ! $grouped,
             is_string($color) ? "fi-btn-color-{$color}" : null,
             match ($size) {
                 'xs' => 'gap-1 px-2 py-1.5 text-xs',
@@ -41,19 +44,25 @@
             },
         ],
         ...(
-            $outlined
-            ? [
-                'fi-btn-outlined ring-1 ',
-                match ($color) {
-                    'gray' => 'ring-gray-300 text-gray-950 hover:bg-gray-400/10 focus:bg-gray-400/10 focus:ring-gray-400/40 dark:ring-gray-700 dark:text-white',
-                    default => 'ring-custom-600 text-custom-600 hover:bg-custom-400/10 focus:bg-custom-400/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-400/70',
-                },
-            ]
-                : [
-                    'shadow',
+            $outlined ?
+                [
+                    'fi-btn-outlined ring-1',
                     match ($color) {
-                        'gray' => 'ring-gray-950/10 ring-1 bg-white text-gray-950 hover:bg-gray-50 focus:bg-gray-50 dark:ring-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:ring-white/30 dark:focus:bg-white/20 dark:focus:ring-white/30',
-                        default => 'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 focus:ring-custom-400/50 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus:bg-custom-400',
+                        'gray' => 'ring-gray-300 text-gray-950 hover:bg-gray-400/10 focus:bg-gray-400/10 focus:ring-gray-400/40 dark:ring-gray-700 dark:text-white',
+                        default => 'ring-custom-600 text-custom-600 hover:bg-custom-400/10 focus:bg-custom-400/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-400/70',
+                    },
+                ] :
+                [
+                    'shadow' => ! $grouped,
+                    ...match ($color) {
+                        'gray' => [
+                            'bg-white text-gray-950 hover:bg-gray-50 focus:bg-gray-50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20',
+                            'ring-gray-950/10 ring-1 dark:ring-white/20 dark:hover:ring-white/30 dark:focus:ring-white/30' => ! $grouped,
+                        ],
+                        default => [
+                            'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus:bg-custom-400',
+                            'focus:ring-custom-400/50' => ! $grouped,
+                        ],
                     },
                 ]
         ),

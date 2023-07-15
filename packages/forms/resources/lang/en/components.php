@@ -96,14 +96,6 @@ return [
                     'label' => 'Flip image vertical',
                 ],
 
-                'free' => [
-                    'label' => 'Free',
-                ],
-
-                'height' => [
-                    'label' => 'Height',
-                ],
-
                 'move_down' => [
                     'label' => 'Move image down',
                 ],
@@ -116,24 +108,12 @@ return [
                     'label' => 'Move image to right',
                 ],
 
-                'move_top_left' => [
-                    'label' => 'Move image to top/left corner of the container',
-                ],
-
                 'move_up' => [
                     'label' => 'Move image up',
                 ],
 
                 'reset' => [
                     'label' => 'Reset',
-                ],
-
-                'rotate' => [
-                    'label' => 'Rotate',
-                ],
-
-                'rotate_180' => [
-                    'label' => 'Rotate image 180°',
                 ],
 
                 'rotate_left' => [
@@ -144,12 +124,12 @@ return [
                     'label' => 'Rotate image to right',
                 ],
 
-                'save' => [
-                    'label' => 'Save',
+                'set_aspect_ratio' => [
+                    'label' => 'Set aspect ratio to :ratio',
                 ],
 
-                'width' => [
-                    'label' => 'Width',
+                'save' => [
+                    'label' => 'Save',
                 ],
 
                 'zoom_100' => [
@@ -162,6 +142,45 @@ return [
 
                 'zoom_out' => [
                     'label' => 'Zoom out',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Height',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Rotation',
+                    'unit' => 'deg',
+                ],
+
+                'width' => [
+                    'label' => 'Width',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Aspect ratios',
+
+                'no_fixed' => [
+                    'label' => 'Free',
                 ],
 
             ],

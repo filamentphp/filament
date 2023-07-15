@@ -96,14 +96,6 @@ return [
                     'label' => 'Vänd bilden vertikalt',
                 ],
 
-                'free' => [
-                    'label' => 'Fritt',
-                ],
-
-                'height' => [
-                    'label' => 'Höjd',
-                ],
-
                 'move_down' => [
                     'label' => 'Flytta bilden nedåt',
                 ],
@@ -116,24 +108,12 @@ return [
                     'label' => 'Flytta bilden åt höger',
                 ],
 
-                'move_top_left' => [
-                    'label' => 'Flytta bilden till vänstra hörnet',
-                ],
-
                 'move_up' => [
                     'label' => 'Flytta bilden uppåt',
                 ],
 
                 'reset' => [
                     'label' => 'Reset',
-                ],
-
-                'rotate' => [
-                    'label' => 'Rotera',
-                ],
-
-                'rotate_180' => [
-                    'label' => 'Rotera bilden 180°',
                 ],
 
                 'rotate_left' => [
@@ -148,10 +128,6 @@ return [
                     'label' => 'Spara',
                 ],
 
-                'width' => [
-                    'label' => 'Bredd',
-                ],
-
                 'zoom_100' => [
                     'label' => 'Zooma bilden till 100%',
                 ],
@@ -162,6 +138,32 @@ return [
 
                 'zoom_out' => [
                     'label' => 'Zooma ut',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Höjd',
+                ],
+
+                'rotation' => [
+                    'label' => 'Rotera',
+                ],
+
+                'width' => [
+                    'label' => 'Bredd',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Aspect ratios',
+
+                'no_fixed' => [
+                    'label' => 'Fritt',
                 ],
 
             ],

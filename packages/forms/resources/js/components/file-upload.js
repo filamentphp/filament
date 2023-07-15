@@ -24,12 +24,12 @@ window.FilePond = FilePond
 
 export default function fileUploadFormComponent({
     acceptedFileTypes,
-    cropperEmptyFillColor,
-    cropperMode,
-    cropperViewportHeight,
-    cropperViewportWidth,
+    imageCropperEmptyFillColor,
+    imageCropperMode,
+    imageCropperViewportHeight,
+    imageCropperViewportWidth,
     deleteUploadedFileUsing,
-    disabled,
+    isDisabled,
     getUploadedFilesUsing,
     imageCropAspectRatio,
     imagePreviewHeight,
@@ -38,7 +38,7 @@ export default function fileUploadFormComponent({
     imageResizeTargetWidth,
     imageResizeUpscale,
     isAvatar,
-    isCroppable,
+    hasCroppableImages,
     isDownloadable,
     isOpenable,
     isPreviewable,
@@ -74,7 +74,7 @@ export default function fileUploadFormComponent({
 
         uploadedFileIndex: {},
 
-        showCropper: false,
+        isCropperOpen: false,
 
         editingFile: {},
 
@@ -174,12 +174,12 @@ export default function fileUploadFormComponent({
                         load()
                     },
                 },
-                allowImageEdit: isCroppable,
+                allowImageEdit: hasCroppableImages,
                 imageEditEditor: {
                     open: (file) => this.loadCropper(file),
                     onconfirm: () => {},
-                    oncancel: () => this.cancelCropper(),
-                    onclose: () => this.cancelCropper(),
+                    oncancel: () => this.closeCropper(),
+                    onclose: () => this.closeCropper(),
                 },
             })
 
@@ -413,46 +413,59 @@ export default function fileUploadFormComponent({
         },
 
         initCropper: function () {
-            if (disabled) return
+            if (isDisabled) {
+                return
+            }
 
-            if (!isCroppable) return
+            if (!hasCroppableImages) {
+                return
+            }
 
             this.cropper = new Cropper(this.$refs.cropper, {
-                aspectRatio: cropperViewportWidth / cropperViewportHeight,
+                aspectRatio:
+                    imageCropperViewportWidth / imageCropperViewportHeight,
                 autoCropArea: 1,
                 center: true,
                 crop: (event) => {
-                    this.$refs.inputX.value = Math.round(event.detail.x)
-                    this.$refs.inputY.value = Math.round(event.detail.y)
-                    this.$refs.inputHeight.value = Math.round(
+                    this.$refs.xPositionInput.value = Math.round(event.detail.x)
+                    this.$refs.yPositionInput.value = Math.round(event.detail.y)
+                    this.$refs.heightInput.value = Math.round(
                         event.detail.height,
                     )
-                    this.$refs.inputWidth.value = Math.round(event.detail.width)
-                    this.$refs.inputRotate.value = event.detail.rotate
+                    this.$refs.widthInput.value = Math.round(event.detail.width)
+                    this.$refs.rotationInput.value = event.detail.rotate
                 },
                 cropBoxResizable: true,
                 guides: true,
                 highlight: true,
                 responsive: true,
                 toggleDragModeOnDblclick: true,
-                viewMode: cropperMode,
+                viewMode: imageCropperMode,
                 wheelZoomRatio: 0.02,
             })
         },
 
-        cancelCropper: function () {
+        closeCropper: function () {
             this.editingFile = {}
-            this.showCropper = false
+
+            this.isCropperOpen = false
+
             this.cropper.destroy()
             this.cropper = null
         },
 
         loadCropper: function (file) {
-            if (disabled) return
+            if (isDisabled) {
+                return
+            }
 
-            if (!isCroppable) return
+            if (!hasCroppableImages) {
+                return
+            }
 
-            if (!file) return
+            if (!file) {
+                return
+            }
 
             this.editingFile = file
 
@@ -460,7 +473,7 @@ export default function fileUploadFormComponent({
 
             const reader = new FileReader()
             reader.onload = (event) => {
-                this.showCropper = true
+                this.isCropperOpen = true
 
                 setTimeout(() => this.cropper.replace(event.target.result), 200)
             }
@@ -469,13 +482,17 @@ export default function fileUploadFormComponent({
         },
 
         saveCropper: function () {
-            if (disabled) return
+            if (isDisabled) {
+                return
+            }
 
-            if (!isCroppable) return
+            if (!hasCroppableImages) {
+                return
+            }
 
             this.cropper
                 .getCroppedCanvas({
-                    fillColor: cropperEmptyFillColor,
+                    fillColor: imageCropperEmptyFillColor,
                     height: imageResizeTargetHeight,
                     imageSmoothingEnabled: true,
                     imageSmoothingQuality: 'high',
@@ -493,6 +510,8 @@ export default function fileUploadFormComponent({
                     )
 
                     this.$nextTick(() => {
+                        this.shouldUpdateState = false
+
                         this.pond
                             .addFile(
                                 new File(
@@ -509,7 +528,7 @@ export default function fileUploadFormComponent({
                                 ),
                             )
                             .then(() => {
-                                this.cancelCropper()
+                                this.closeCropper()
                             })
                     })
                 }, this.editingFile.type)

@@ -10,64 +10,69 @@
         $isAvatar = $isAvatar();
         $statePath = $getStatePath();
         $isDisabled = $isDisabled();
-        $isCroppable = $isCroppable();
+        $hasCroppableImages = $hasCroppableImages();
     @endphp
 
     <div
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
-            acceptedFileTypes: @js($getAcceptedFileTypes()),
-            deleteUploadedFileUsing: async (fileKey) => {
-                return await $wire.deleteUploadedFile(@js($statePath), fileKey)
-            },
-            getUploadedFilesUsing: async () => {
-                return await $wire.getFormUploadedFiles(@js($statePath))
-            },
-            imageCropAspectRatio: @js($imageCropAspectRatio),
-            imagePreviewHeight: @js($getImagePreviewHeight()),
-            imageResizeMode: @js($getImageResizeMode()),
-            imageResizeTargetHeight: @js($imageResizeTargetHeight),
-            imageResizeTargetWidth: @js($imageResizeTargetWidth),
-            imageResizeUpscale: @js($getImageResizeUpscale()),
-            isAvatar: {{ $isAvatar ? 'true' : 'false' }},
-            isCroppable: @js($isCroppable),
-            isDownloadable: @js($isDownloadable()),
-            isOpenable: @js($isOpenable()),
-            isPreviewable: @js($isPreviewable()),
-            isReorderable: @js($isReorderable()),
-            loadingIndicatorPosition: @js($getLoadingIndicatorPosition()),
-            locale: @js(app()->getLocale()),
-            panelAspectRatio: @js($getPanelAspectRatio()),
-            panelLayout: @js($getPanelLayout()),
-            placeholder: @js($getPlaceholder()),
-            maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
-            minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
-            removeUploadedFileUsing: async (fileKey) => {
-                return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
-            },
-            removeUploadedFileButtonPosition: @js($getRemoveUploadedFileButtonPosition()),
-            reorderUploadedFilesUsing: async (files) => {
-                return await $wire.reorderFormUploadedFiles(@js($statePath), files)
-            },
-            shouldAppendFiles: @js($shouldAppendFiles()),
-            shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
-            shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
-            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
-            uploadButtonPosition: @js($getUploadButtonPosition()),
-            uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
-            uploadUsing: (fileKey, file, success, error, progress) => {
-                $wire.upload(
-                    `{{ $statePath }}.${fileKey}`,
-                    file,
-                    () => {
-                        success(fileKey)
+                    acceptedFileTypes: @js($getAcceptedFileTypes()),
+                    imageCropperEmptyFillColor: '{{ $getImageCropperEmptyFillColor() }}',
+                    imageCropperMode: {{ $getImageCropperMode() }},
+                    imageCropperViewportHeight: @js($getImageCropperViewportHeight()),
+                    imageCropperViewportWidth: @js($getImageCropperViewportWidth()),
+                    deleteUploadedFileUsing: async (fileKey) => {
+                        return await $wire.deleteUploadedFile(@js($statePath), fileKey)
                     },
-                    error,
-                    progress,
-                )
-            },
-        })"
+                    getUploadedFilesUsing: async () => {
+                        return await $wire.getFormUploadedFiles(@js($statePath))
+                    },
+                    hasCroppableImages: @js($hasCroppableImages),
+                    imageCropAspectRatio: @js($imageCropAspectRatio),
+                    imagePreviewHeight: @js($getImagePreviewHeight()),
+                    imageResizeMode: @js($getImageResizeMode()),
+                    imageResizeTargetHeight: @js($imageResizeTargetHeight),
+                    imageResizeTargetWidth: @js($imageResizeTargetWidth),
+                    imageResizeUpscale: @js($getImageResizeUpscale()),
+                    isAvatar: @js($isAvatar),
+                    isDisabled: @js($isDisabled),
+                    isDownloadable: @js($isDownloadable()),
+                    isOpenable: @js($isOpenable()),
+                    isPreviewable: @js($isPreviewable()),
+                    isReorderable: @js($isReorderable()),
+                    loadingIndicatorPosition: @js($getLoadingIndicatorPosition()),
+                    locale: @js(app()->getLocale()),
+                    panelAspectRatio: @js($getPanelAspectRatio()),
+                    panelLayout: @js($getPanelLayout()),
+                    placeholder: @js($getPlaceholder()),
+                    maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
+                    minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
+                    removeUploadedFileUsing: async (fileKey) => {
+                        return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
+                    },
+                    removeUploadedFileButtonPosition: @js($getRemoveUploadedFileButtonPosition()),
+                    reorderUploadedFilesUsing: async (files) => {
+                        return await $wire.reorderFormUploadedFiles(@js($statePath), files)
+                    },
+                    shouldAppendFiles: @js($shouldAppendFiles()),
+                    shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
+                    shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
+                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    uploadButtonPosition: @js($getUploadButtonPosition()),
+                    uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
+                    uploadUsing: (fileKey, file, success, error, progress) => {
+                        $wire.upload(
+                            `{{ $statePath }}.${fileKey}`,
+                            file,
+                            () => {
+                                success(fileKey)
+                            },
+                            error,
+                            progress,
+                        )
+                    },
+                })"
         wire:ignore
         x-ignore
         {{
@@ -109,151 +114,163 @@
             />
         </div>
 
-        @if ($isCroppable && (! $isDisabled))
-
+        @if ($hasCroppableImages && (! $isDisabled))
             <div
-                x-show="showCropper"
+                x-show="isCropperOpen"
                 x-cloak
                 x-on:click.stop
-                x-trap.noscroll="showCropper"
-                x-on:keydown.escape.window="cancelCropper"
-                class="fixed inset-0 h-screen w-screen p-2 sm:p-10 md:p-20 z-50 isolate"
+                x-trap.noscroll="isCropperOpen"
+                x-on:keydown.escape.window="closeCropper"
+                class="fixed inset-0 isolate z-50 h-screen w-screen p-2 sm:p-10 md:p-20"
             >
                 <div
-                    x-on:click="cancelCropper"
                     aria-hidden="true"
-                    class="filament-modal-close-overlay fixed inset-0 w-full h-full bg-black/50 cursor-pointer"
-                    style="will-change: transform;"
+                    class="fixed inset-0 h-full w-full cursor-pointer bg-black/50"
+                    style="will-change: transform"
                 ></div>
-                <div class="w-full h-full flex justify-center items-center isolate z-10">
-                    <div class="mx-auto h-full w-full flex flex-col lg:flex-row overflow-hidden bg-white dark:bg-gray-800 dark:ring-gray-50/10 ring-1 ring-gray-900/10 rounded-xl">
-                        <div class="flex-1 w-full lg:h-full overflow-auto p-4">
+
+                <div
+                    class="isolate z-10 flex h-full w-full items-center justify-center"
+                >
+                    <div
+                        class="mx-auto flex h-full w-full flex-col overflow-hidden rounded-xl bg-white ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-gray-50/10 lg:flex-row"
+                    >
+                        <div class="w-full flex-1 overflow-auto p-4 lg:h-full">
                             <div class="h-full w-full">
-                                <img x-ref="cropper" src="" class="h-full w-auto"/>
+                                <img x-ref="cropper" class="h-full w-auto" />
                             </div>
                         </div>
 
-                        <div class="w-full h-96 lg:h-full lg:max-w-xs overflow-auto bg-gray-50 dark:bg-gray-900/30 flex flex-col shadow-top lg:shadow-none z-[1]">
+                        <div
+                            class="shadow-top z-[1] flex h-96 w-full flex-col overflow-auto bg-gray-50 dark:bg-gray-900/30 lg:h-full lg:max-w-xs lg:shadow-none"
+                        >
                             <div class="flex-1 overflow-hidden">
-                                <div class="flex flex-col h-full overflow-y-auto">
+                                <div
+                                    class="flex h-full flex-col overflow-y-auto"
+                                >
                                     <div class="flex-1 overflow-auto">
-                                        <div class="space-y-3 p-4">
-
-                                            <div class="w-full space-y-2">
+                                        <div class="space-y-6 p-4">
+                                            <div class="w-full space-y-3">
                                                 @foreach ([
                                                     [
-                                                        'label' => 'X',
-                                                        'name' => 'inputX',
-                                                        'placeholder' => 'x',
-                                                        'unit' => 'px',
-                                                        'onEnter' => 'cropper.setData({...cropper.getData(true), x: +$el.value})',
-
+                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.x_position.label'),
+                                                        'ref' => 'xPositionInput',
+                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.x_position.unit'),
+                                                        'alpineSaveHandler' => 'cropper.setData({...cropper.getData(true), x: +$el.value})',
                                                     ],
                                                     [
-                                                        'label' => 'Y',
-                                                        'name' => 'inputY',
-                                                        'placeholder' => 'y',
-                                                        'unit' => 'px',
-                                                        'onEnter' => 'cropper.setData({...cropper.getData(true), y: +$el.value})',
+                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.y_position.label'),
+                                                        'ref' => 'yPositionInput',
+                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.y_position.unit'),
+                                                        'alpineSaveHandler' => 'cropper.setData({...cropper.getData(true), y: +$el.value})',
                                                     ],
                                                     [
-                                                        'label' => __('filament-forms::components.file_upload.cropper.actions.width.label'),
-                                                        'name' => 'inputWidth',
-                                                        'placeholder' => 'width',
-                                                        'unit' => 'px',
-                                                        'onEnter' => 'cropper.setData({...cropper.getData(true), width: +$el.value})',
+                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.width.label'),
+                                                        'ref' => 'widthInput',
+                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.width.unit'),
+                                                        'alpineSaveHandler' => 'cropper.setData({...cropper.getData(true), width: +$el.value})',
                                                     ],
                                                     [
-                                                        'label' => __('filament-forms::components.file_upload.cropper.actions.height.label'),
-                                                        'name' => 'inputHeight',
-                                                        'placeholder' => 'height',
-                                                        'unit' => 'px',
-                                                        'onEnter' => 'cropper.setData({...cropper.getData(true), height: +$el.value})',
+                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.height.label'),
+                                                        'ref' => 'heightInput',
+                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.height.unit'),
+                                                        'alpineSaveHandler' => 'cropper.setData({...cropper.getData(true), height: +$el.value})',
                                                     ],
                                                     [
-                                                        'label' => __('filament-forms::components.file_upload.cropper.actions.rotate.label'),
-                                                        'name' => 'inputRotate',
-                                                        'placeholder' => 'rotate',
-                                                        'unit' => 'deg',
-                                                        'onEnter' => 'cropper.rotateTo(+$el.value)',
+                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.rotation.label'),
+                                                        'ref' => 'rotationInput',
+                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.rotation.unit'),
+                                                        'alpineSaveHandler' => 'cropper.rotateTo(+$el.value)',
                                                     ],
                                                 ] as $input)
-                                                    <label class="flex items-center w-full text-sm border border-gray-300 dark:border-gray-700 rounded-lg shadow-sm bg-gray-100 dark:bg-gray-800">
-                                                        <span class="w-20 flex-shrink-0 self-stretch flex items-center justify-center px-2 border-e border-gray-300 dark:border-gray-700">{{ $input['label'] }}</span>
+                                                    <label
+                                                        class="flex w-full items-center rounded-lg border border-gray-300 bg-gray-100 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-800"
+                                                    >
+                                                        <span
+                                                            class="flex w-20 flex-shrink-0 items-center justify-center self-stretch border-e border-gray-300 px-2 dark:border-gray-700"
+                                                        >
+                                                            {{ $input['label'] }}
+                                                        </span>
+
                                                         <input
                                                             @class([
-                                                                "text-sm block w-full transition duration-75 border-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500"
+                                                                'block w-full border-none text-sm transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
                                                             ])
-                                                            x-on:keyup.enter.stop.prevent="{{ $input['onEnter'] }}"
-                                                            x-on:blur="{{ $input['onEnter'] }}"
-                                                            x-ref="{{ $input['name'] }}"
-                                                            name="@js($statePath . $input['name'])"
-                                                            placeholder="{{ $input['placeholder'] }}"
+                                                            x-on:keyup.enter.stop.prevent="{{ $input['alpineSaveHandler'] }}"
+                                                            x-on:blur="{{ $input['alpineSaveHandler'] }}"
+                                                            x-ref="{{ $input['ref'] }}"
                                                             x-on:keydown.enter.prevent
                                                             type="text"
                                                         />
-                                                        <span class="w-16 self-stretch flex items-center justify-center px-2 border-s border-gray-300 dark:border-gray-700">{{ $input['unit'] }}</span>
-                                                    </label>
 
+                                                        <span
+                                                            class="flex w-16 items-center justify-center self-stretch border-s border-gray-300 px-2 dark:border-gray-700"
+                                                        >
+                                                            {{ $input['unit'] }}
+                                                        </span>
+                                                    </label>
                                                 @endforeach
                                             </div>
 
-                                            @foreach ($getCropperActions() as $buttonGroups)
-                                                <div class="flex items-center w-full isolate rounded-lg shadow">
-                                                    @foreach ($buttonGroups as $button)
-                                                        <x-filament::button
-                                                            type="button"
-                                                            x-tooltip.raw="{{ $button['tooltip'] }}"
-                                                            x-on:click.stop.prevent="{{ $button['click'] }}"
-                                                            color="gray"
-                                                            @class([
-                                                                '!rounded-none !shadow-none flex-1 focus:z-10 active:z-10',
-                                                                '!rounded-l-lg' => $loop->first,
-                                                                '!rounded-r-lg' => $loop->last,
-                                                                '-ml-px' => ! $loop->first,
-                                                            ])
-                                                        >
-                                                            {!! $button['icon'] !!}
-                                                        </x-filament::button>
-                                                    @endforeach
-                                                </div>
-                                            @endforeach
+                                            <div class="space-y-3">
+                                                @foreach ($getImageCropperActions(iconSizeClasses: 'h-5 w-5 mx-auto') as $groupedActions)
+                                                    <x-filament::button.group
+                                                        class="w-full"
+                                                    >
+                                                        @foreach ($groupedActions as $action)
+                                                            <x-filament::button
+                                                                x-tooltip.raw="{{ $action['label'] }}"
+                                                                x-on:click.stop.prevent="{{ $action['alpineClickHandler'] }}"
+                                                                color="gray"
+                                                                grouped
+                                                            >
+                                                                {!! $action['iconHtml'] !!}
 
-                                            @foreach (collect($getCropperAspectRatios())->chunk(5) as $chunk)
-                                                <div class="flex items-center w-full isolate rounded-lg shadow">
-                                                    @foreach ($chunk as $label => $ratio)
-                                                        <x-filament::button
-                                                            type="button"
-                                                            x-tooltip.raw="Set aspect ratio: {{ $label }}"
-                                                            x-on:click.stop.prevent="currentRatio = '{{ $label }}'; cropper.setAspectRatio({{ $ratio }})"
-                                                            color="gray"
-                                                            x-bind:class="{'!bg-gray-50 dark:!bg-gray-700': currentRatio === '{{ $label }}'}"
-                                                            @class([
-                                                                '!rounded-none !shadow-none flex-1 focus:z-10 active:z-10',
-                                                                '!rounded-l-lg !rounded-r-none' => $loop->first,
-                                                                '!rounded-r-lg !rounded-l-none' => $loop->last,
-                                                                '-ml-px' => ! $loop->first,
-                                                            ])
+                                                                <span
+                                                                    class="sr-only"
+                                                                >
+                                                                    {{ $action['label'] }}
+                                                                </span>
+                                                            </x-filament::button>
+                                                        @endforeach
+                                                    </x-filament::button.group>
+                                                @endforeach
+                                            </div>
+
+                                            @if (count($aspectRatios = $getImageCropperAspectRatiosForJs()))
+                                                <div class="space-y-3">
+                                                    <div
+                                                        class="text-xs text-gray-950 dark:text-white"
+                                                    >
+                                                        {{ __('filament-forms::components.file_upload.cropper.aspect_ratios.label') }}
+                                                    </div>
+
+                                                    @foreach (collect($aspectRatios)->chunk(5) as $ratiosChunk)
+                                                        <x-filament::button.group
+                                                            class="w-full"
                                                         >
-                                                            {{ $label }}
-                                                        </x-filament::button>
+                                                            @foreach ($ratiosChunk as $label => $ratio)
+                                                                <x-filament::button
+                                                                    :x-tooltip.raw="__('filament-forms::components.file_upload.cropper.actions.set_aspect_ratio.label', ['ratio' => $label])"
+                                                                    x-on:click.stop.prevent="currentRatio = '{{ $label }}'; cropper.setAspectRatio({{ $ratio }})"
+                                                                    color="gray"
+                                                                    x-bind:class="{'!bg-gray-50 dark:!bg-gray-700': currentRatio === '{{ $label }}'}"
+                                                                    grouped
+                                                                >
+                                                                    {{ $label }}
+                                                                </x-filament::button>
+                                                            @endforeach
+                                                        </x-filament::button.group>
                                                     @endforeach
                                                 </div>
-                                            @endforeach
+                                            @endif
                                         </div>
                                     </div>
 
-                                    <div class="flex items-center gap-3 py-3 px-4 border-t border-gray-200 dark:border-gray-800 bg-gray-200 dark:bg-black/10">
+                                    <div
+                                        class="flex items-center gap-3 px-4 py-3"
+                                    >
                                         <x-filament::button
-                                            size="sm"
-                                            color="warning"
-                                            x-on:click.stop.prevent="cropper.reset()"
-                                        >
-                                            {{ __('filament-forms::components.file_upload.cropper.actions.reset.label') }}
-                                        </x-filament::button>
-
-                                        <x-filament::button
-                                            size="sm"
                                             color="gray"
                                             x-on:click.prevent="pond.imageEditEditor.oncancel"
                                         >
@@ -261,10 +278,16 @@
                                         </x-filament::button>
 
                                         <x-filament::button
-                                            size="sm"
+                                            color="warning"
+                                            x-on:click.stop.prevent="cropper.reset()"
+                                            class="ml-auto"
+                                        >
+                                            {{ __('filament-forms::components.file_upload.cropper.actions.reset.label') }}
+                                        </x-filament::button>
+
+                                        <x-filament::button
                                             color="success"
                                             x-on:click.prevent="saveCropper"
-                                            class="ml-auto"
                                         >
                                             {{ __('filament-forms::components.file_upload.cropper.actions.save.label') }}
                                         </x-filament::button>
