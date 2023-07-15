@@ -53,8 +53,6 @@ new FilamentNotification()
     .send()
 ```
 
-Markdown text will automatically be rendered if passed to the title.
-
 ## Setting an icon
 
 Optionally, a notification can have an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) that's displayed in front of its content. You may also set a color for the icon, which is gray by default:

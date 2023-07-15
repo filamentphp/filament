@@ -57,7 +57,7 @@
             'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
         ])
     >
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon)
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon)
             <div class="flex items-center justify-between gap-x-3">
                 @if ($label && (! $labelSrOnly))
                     <x-filament-infolists::entry-wrapper.label
@@ -72,13 +72,13 @@
                     {{ $labelSuffix }}
                 @endif
 
-                @if ($hint || $hintIcon || count($hintActions))
+                @if (filled($hint) || $hintIcon || count($hintActions))
                     <x-filament-infolists::entry-wrapper.hint
                         :actions="$hintActions"
                         :color="$hintColor"
                         :icon="$hintIcon"
                     >
-                        {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
+                        {{ $hint }}
                     </x-filament-infolists::entry-wrapper.hint>
                 @endif
             </div>
@@ -136,9 +136,9 @@
                 @endif
             </dd>
 
-            @if ($helperText)
+            @if (filled($helperText))
                 <x-filament-infolists::entry-wrapper.helper-text>
-                    {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : str($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    {{ $helperText }}
                 </x-filament-infolists::entry-wrapper.helper-text>
             @endif
         </div>
