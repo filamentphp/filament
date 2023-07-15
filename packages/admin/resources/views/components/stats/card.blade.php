@@ -87,7 +87,7 @@
                 },
 
                 initChart: function () {
-                    return (new Chart(this.$refs.canvas, {
+                    return new Chart(this.$refs.canvas, {
                         type: 'line',
                         data: {
                             labels: this.labels,
@@ -129,7 +129,7 @@
                                 enabled: false,
                             },
                         },
-                    }))
+                    })
                 },
 
                 getChart: function () {
@@ -143,12 +143,16 @@
                     chart.update()
                 },
 
-                updateChartColors: function() {
+                updateChartColors: function () {
                     chart = this.getChart()
-                    chart.data.datasets[0].backgroundColor = getComputedStyle($refs.backgroundColorElement).color
-                    chart.data.datasets[0].borderColor = getComputedStyle($refs.borderColorElement).color
+                    chart.data.datasets[0].backgroundColor = getComputedStyle(
+                        $refs.backgroundColorElement,
+                    ).color
+                    chart.data.datasets[0].borderColor = getComputedStyle(
+                        $refs.borderColorElement,
+                    ).color
                     chart.update('none')
-                }
+                },
             }"
             x-on:dark-mode-toggled.window="updateChartColors()"
             class="absolute inset-x-0 bottom-0 overflow-hidden rounded-b-2xl"
