@@ -347,6 +347,29 @@ TextColumn::make('email')
 
 <AutoScreenshot name="tables/columns/text/copyable" alt="Text column with a button to copy it" version="3.x" />
 
+### Customizing the text that is copied to the clipboard
+
+You can customize the text that gets copied to the clipboard using the `copyableState() method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('url')
+    ->copyable()
+    ->copyableState(fn (string $state): string => "URL: {$state}")
+```
+
+In this function, you can access the whole table row with `$record`:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('url')
+    ->copyable()
+    ->copyableState(fn (Post $record): string => "URL: {$record->url}")
+```
+
 ## Displaying the row index
 
 You may want a column to contain the number of the current row in the table:
