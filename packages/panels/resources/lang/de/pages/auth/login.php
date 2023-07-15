@@ -6,11 +6,7 @@ return [
 
     'heading' => 'Melden Sie sich an.',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Anmelden',
-        ],
+    'actions' => [
 
         'register' => [
             'before' => 'oder',
@@ -20,9 +16,10 @@ return [
         'request_password_reset' => [
             'label' => 'Passwort vergessen?',
         ],
+
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-Mail-Adresse',
@@ -34,6 +31,14 @@ return [
 
         'remember' => [
             'label' => 'Angemeldet bleiben',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Anmelden',
+            ],
+
         ],
 
     ],

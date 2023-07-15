@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Entre a su cuenta',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Entrar',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Correo electrónico',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Recordarme',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Entrar',
+            ],
+
         ],
 
     ],

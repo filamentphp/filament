@@ -22,7 +22,15 @@
             return
         }
 
-        setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
+        setTimeout(
+            () =>
+                $el.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                    inline: 'start',
+                }),
+            200,
+        )
     "
     {{
         $attributes
@@ -33,7 +41,7 @@
                 'tabindex' => '0',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-forms-wizard-component-step outline-none'])
+            ->class(['fi-fo-wizard-step outline-none'])
     }}
 >
     {{ $getChildComponentContainer() }}

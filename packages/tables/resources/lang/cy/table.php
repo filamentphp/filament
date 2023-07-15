@@ -8,10 +8,6 @@ return [
             'more' => 'Ychwanegu :count arall',
         ],
 
-        'messages' => [
-            'copied' => 'Wedi Copïo',
-        ],
-
     ],
 
     'fields' => [
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Ewch i dudalen :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Gorffen ail archebu cofnodion',
@@ -101,7 +97,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Tynnu hidlydd',
@@ -148,7 +144,7 @@ return [
 
         'selected_count' => 'Dewiswyd 1 cofnod.|:count rcyfrif wedi`u dewis.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Dewiswch bob :count',

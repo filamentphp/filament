@@ -1,6 +1,7 @@
 ---
 title: Image column
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -9,10 +10,12 @@ Images can be easily displayed within your table:
 ```php
 use Filament\Tables\Columns\ImageColumn;
 
-ImageColumn::make('header_image')
+ImageColumn::make('avatar')
 ```
 
 The column in the database must contain the path to the image, relative to the root directory of its storage disk.
+
+<AutoScreenshot name="tables/columns/image/simple" alt="Image column" version="3.x" />
 
 ## Managing the image disk
 
@@ -43,9 +46,11 @@ You may display the image using a 1:1 aspect ratio:
 ```php
 use Filament\Tables\Columns\ImageColumn;
 
-ImageColumn::make('author.avatar')
+ImageColumn::make('avatar')
     ->square()
 ```
+
+<AutoScreenshot name="tables/columns/image/square" alt="Square image column" version="3.x" />
 
 ## Circular image
 
@@ -54,9 +59,11 @@ You may make the image fully rounded, which is useful for rendering avatars:
 ```php
 use Filament\Tables\Columns\ImageColumn;
 
-ImageColumn::make('author.avatar')
+ImageColumn::make('avatar')
     ->circular()
 ```
+
+<AutoScreenshot name="tables/columns/image/circular" alt="Circular image column" version="3.x" />
 
 ## Customizing the size
 

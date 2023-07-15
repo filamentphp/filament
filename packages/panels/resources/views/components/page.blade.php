@@ -2,7 +2,7 @@
     $widgetData = $this->getWidgetData();
 @endphp
 
-<div {{ $attributes->class(['filament-page']) }}>
+<div {{ $attributes->class(['fi-page']) }}>
     {{ filament()->renderHook('page.start') }}
 
     <div class="space-y-6">

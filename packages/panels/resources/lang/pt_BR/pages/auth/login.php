@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Faça login em sua conta',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Login',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mail',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Lembre de mim',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Login',
+            ],
+
         ],
 
     ],

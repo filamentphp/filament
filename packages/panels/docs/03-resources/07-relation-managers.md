@@ -305,7 +305,7 @@ protected bool $allowsDuplicates = true;
 
 ## Associating and dissociating records
 
-Filament is able to associate and dissociate records for `HasMany`, `HasManyThrough` and `MorphMany` relationships.
+Filament is able to associate and dissociate records for `HasMany` and `MorphMany` relationships.
 
 When generating your relation manager, you may pass the `--associate` flag to also add `AssociateAction`, `DissociateAction` and `DissociateBulkAction` to the table:
 
@@ -410,6 +410,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 public function table(Table $table): Table
 {
     return $table
+        ->modifyQueryUsing(fn (Builder $query) => $query->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]))
         ->columns([
             // ...
         ])
@@ -430,14 +433,6 @@ public function table(Table $table): Table
                 Tables\Actions\RestoreBulkAction::make(),
                 // ...
             ]),
-        ]);
-}
-
-protected function getTableQuery(): Builder
-{
-    return parent::getTableQuery()
-        ->withoutGlobalScopes([
-            SoftDeletingScope::class,
         ]);
 }
 ```
@@ -610,6 +605,24 @@ public function table(Table $table): Table
         ->headerActions([
             Tables\Actions\CreateAction::make(),
             Tables\Actions\AttachAction::make(),
+        ]);
+}
+```
+
+## Customizing the relation manager Eloquent query
+
+You can apply your own query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire relation manager. To do this, you can pass a function to the `modifyQueryUsing()` method of the table, inside which you can customize the query:
+
+```php
+use Filament\Tables;
+use Illuminate\Database\Eloquent\Builder;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->modifyQueryUsing(fn (Builder $query) => $query->where('is_active', true))
+        ->columns([
+            // ...
         ]);
 }
 ```

@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Notifikationer',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Ryd',

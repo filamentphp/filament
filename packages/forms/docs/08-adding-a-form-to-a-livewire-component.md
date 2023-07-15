@@ -19,7 +19,7 @@ Then, render your Livewire component on the page:
 Alternatively, you can use a full-page Livewire component:
 
 ```php
-use App\Http\Livewire\CreatePost;
+use App\Livewire\CreatePost;
 use Illuminate\Support\Facades\Route;
 
 Route::get('posts/create', CreatePost::class);
@@ -38,7 +38,7 @@ There are 5 main tasks when adding a form to a Livewire component class. Each on
 ```php
 <?php
 
-namespace App\Http\Livewire;
+namespace App\Livewire;
 
 use App\Models\Post;
 use Filament\Forms\Components\TextInput;
@@ -88,7 +88,7 @@ Finally, in your Livewire component's view, render the form:
 
 ```blade
 <div>
-    <form wire:submit.prevent="create">
+    <form wire:submit="create">
         {{ $this->form }}
         
         <button type="submit">
@@ -103,8 +103,6 @@ Finally, in your Livewire component's view, render the form:
 > Note: `<x-filament-actions::modals />` is used to render form component [action modals](actions). The code can be put anywhere outside of the `<form>` element, as long as it's within the Livewire component.
 
 Visit your Livewire component in the browser, and you should see the form components from `schema()`:
-
-![](https://user-images.githubusercontent.com/41773797/147614478-5b40c645-107e-40ac-ba41-f0feb99dd480.png)
 
 Submit the form with data, and you'll see the form's data dumped to the screen. You can save the data to a model instead of dumping it:
 
@@ -304,7 +302,7 @@ It's advised that you learn how to set up a Livewire component with the form bui
 php artisan make:livewire-form RegistrationForm
 ```
 
-This will generate a new `app/Http/Livewire/RegistrationForm.php` component, which you can customize.
+This will generate a new `app/Livewire/RegistrationForm.php` component, which you can customize.
 
 ### Generating a form for an Eloquent model
 

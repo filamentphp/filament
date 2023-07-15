@@ -1,3 +1,3 @@
-<td {{ $attributes->class(['filament-tables-cell dark:text-white']) }}>
+<td {{ $attributes->class(['fi-ta-cell dark:text-white']) }}>
     {{ $slot }}
 </td>

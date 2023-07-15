@@ -6,7 +6,7 @@ return [
 
     'heading' => 'E-Mail-Adresse bestätigen',
 
-    'buttons' => [
+    'actions' => [
 
         'resend_notification' => [
             'label' => 'Erneut senden',

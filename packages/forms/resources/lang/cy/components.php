@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Cynnwys wedi Cwympo',
-
         'actions' => [
 
             'clone' => [
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Dad ddewis popeth',
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Cynnwys wedi Cwympo',
 
         'actions' => [
 
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Yn ôl',

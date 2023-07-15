@@ -8,7 +8,7 @@ class BulkActionGroup extends ActionGroup
     {
         parent::setUp();
 
-        $this->label(__('filament-tables::table.buttons.open_bulk_actions.label'));
+        $this->label(__('filament-tables::table.actions.open_bulk_actions.label'));
 
         $this->icon('heroicon-m-ellipsis-vertical');
 

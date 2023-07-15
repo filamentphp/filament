@@ -4,14 +4,19 @@ namespace Filament\Actions;
 
 use Closure;
 use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Form;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class CreateAction extends Action
 {
     use CanCustomizeProcess;
 
     protected bool | Closure $canCreateAnother = true;
+
+    protected ?Closure $getRelationshipUsing = null;
 
     public static function getDefaultName(): ?string
     {
@@ -28,9 +33,9 @@ class CreateAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
-        $this->extraModalActions(function (): array {
+        $this->extraModalFooterActions(function (): array {
             return $this->canCreateAnother() ? [
-                $this->makeExtraModalAction('createAnother', ['another' => true])
+                $this->makeModalSubmitAction('createAnother', arguments: ['another' => true])
                     ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
             ] : [];
         });
@@ -39,10 +44,30 @@ class CreateAction extends Action
 
         $this->groupedIcon('heroicon-m-plus');
 
+        $this->record(null);
+
         $this->action(function (array $arguments, Form $form): void {
             $model = $this->getModel();
 
-            $record = $this->process(fn (array $data): Model => $model::create($data));
+            $record = $this->process(function (array $data, HasActions $livewire) use ($model): Model {
+                if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
+                    $record = $translatableContentDriver->makeRecord($model, $data);
+                } else {
+                    $record = new $model();
+                    $record->fill($data);
+                }
+
+                if ($relationship = $this->getRelationship()) {
+                    /** @phpstan-ignore-next-line */
+                    $relationship->save($record);
+
+                    return $record;
+                }
+
+                $record->save();
+
+                return $record;
+            });
 
             $this->record($record);
             $form->model($record)->saveRelationships();
@@ -65,6 +90,13 @@ class CreateAction extends Action
 
             $this->success();
         });
+    }
+
+    public function relationship(?Closure $relationship): static
+    {
+        $this->getRelationshipUsing = $relationship;
+
+        return $this;
     }
 
     public function createAnother(bool | Closure $condition = true): static
@@ -92,5 +124,10 @@ class CreateAction extends Action
     public function shouldClearRecordAfter(): bool
     {
         return true;
+    }
+
+    public function getRelationship(): Relation | Builder | null
+    {
+        return $this->evaluate($this->getRelationshipUsing);
     }
 }

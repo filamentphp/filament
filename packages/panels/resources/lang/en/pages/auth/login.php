@@ -6,11 +6,7 @@ return [
 
     'heading' => 'Sign in',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Sign in',
-        ],
+    'actions' => [
 
         'register' => [
             'before' => 'or',
@@ -23,7 +19,7 @@ return [
 
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Email address',
@@ -35,6 +31,14 @@ return [
 
         'remember' => [
             'label' => 'Remember me',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Sign in',
+            ],
+
         ],
 
     ],

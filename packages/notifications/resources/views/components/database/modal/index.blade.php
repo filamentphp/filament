@@ -11,30 +11,32 @@
 >
     @if ($notifications->count())
         <x-slot name="header">
-            <x-filament-notifications::database.modal.heading
-                :unread-notifications-count="$unreadNotificationsCount"
-            />
+            <div>
+                <x-filament-notifications::database.modal.heading
+                    :unread-notifications-count="$unreadNotificationsCount"
+                />
 
-            <x-filament-notifications::database.modal.actions
-                :notifications="$notifications"
-                :unread-notifications-count="$unreadNotificationsCount"
-            />
+                <x-filament-notifications::database.modal.actions
+                    :notifications="$notifications"
+                    :unread-notifications-count="$unreadNotificationsCount"
+                />
+            </div>
         </x-slot>
 
-        <div class="mt-[calc(-1rem-1px)] -mx-6 border-b divide-y dark:border-gray-700">
+        <div class="-mx-6 divide-y border-b dark:border-gray-700">
             @foreach ($notifications as $notification)
-                <div @class([
-                    'bg-primary-50 dark:bg-gray-700' => $notification->unread(),
-                ])>
+                <div
+                    @class([
+                        'bg-primary-50 dark:bg-gray-700' => $notification->unread(),
+                    ])
+                >
                     {{ $this->getNotification($notification)->inline() }}
                 </div>
             @endforeach
         </div>
 
-        @if (
-            $notifications instanceof \Illuminate\Contracts\Pagination\Paginator &&
-            $notifications->hasPages()
-        )
+        @if ($notifications instanceof \Illuminate\Contracts\Pagination\Paginator &&
+             $notifications->hasPages())
             <x-slot name="footer">
                 @php
                     $isRtl = __('filament::layout.direction') === 'rtl';
@@ -56,7 +58,7 @@
                                 size="sm"
                                 color="gray"
                             >
-                                {{ __('filament-notifications::database.modal.pagination.buttons.previous.label') }}
+                                {{ __('filament-notifications::database.modal.pagination.actions.previous.label') }}
                             </x-filament::button>
                         @endif
                     </div>
@@ -71,7 +73,7 @@
                                 size="sm"
                                 color="gray"
                             >
-                                {{ __('filament-notifications::database.modal.pagination.buttons.next.label') }}
+                                {{ __('filament-notifications::database.modal.pagination.actions.next.label') }}
                             </x-filament::button>
                         @endif
                     </div>

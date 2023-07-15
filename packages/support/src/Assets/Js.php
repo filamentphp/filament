@@ -9,7 +9,7 @@ class Js extends Asset
 {
     protected bool $isAsync = false;
 
-    protected bool $isDeferred = true;
+    protected bool $isDeferred = false;
 
     protected bool $isCore = false;
 
@@ -76,6 +76,7 @@ class Js extends Asset
                 src=\"{$html}\"
                 {$async}
                 {$defer}
+                data-navigate-track
             ></script>
         ");
     }

@@ -4,26 +4,30 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Perjungti tamsos režimą',
-        ],
-
-        'database_notifications' => [
-            'label' => 'Atidaryti pranešimus',
-        ],
-
-        'light_theme' => [
-            'label' => 'Perjungti šviesos režimą',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Atsijungti',
         ],
 
-        'user_menu' => [
+        'open_database_notifications' => [
+            'label' => 'Atidaryti pranešimus',
+        ],
+
+        'open_user_menu' => [
             'label' => 'Vartotojo meniu',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Perjungti tamsos režimą',
+            ],
+
+            'light' => [
+                'label' => 'Perjungti šviesos režimą',
+            ],
+
         ],
 
     ],

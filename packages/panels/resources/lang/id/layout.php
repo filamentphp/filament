@@ -4,22 +4,18 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Mode Gelap',
-        ],
-
-        'database_notifications' => [
-            'label' => 'Buka notifikasi',
-        ],
-
-        'light_theme' => [
-            'label' => 'Mode Terang',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Keluar',
+        ],
+
+        'open_database_notifications' => [
+            'label' => 'Buka notifikasi',
+        ],
+
+        'open_user_menu' => [
+            'label' => 'Menu pengguna',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'user_menu' => [
-            'label' => 'Menu pengguna',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Mode Gelap',
+            ],
+
+            'light' => [
+                'label' => 'Mode Terang',
+            ],
+
         ],
 
     ],

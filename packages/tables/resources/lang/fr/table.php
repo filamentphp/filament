@@ -8,10 +8,6 @@ return [
             'more_list_items' => ':count de plus',
         ],
 
-        'messages' => [
-            'copied' => 'Copié',
-        ],
-
     ],
 
     'fields' => [
@@ -50,7 +46,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Aller à la page :page',
@@ -68,7 +64,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Fin du classement des enregistrements',
@@ -100,7 +96,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Supprimer le filtre',
@@ -147,7 +143,7 @@ return [
 
         'selected_count' => '1 élément sélectionné.|:count éléments sélectionnés.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Sélectionner tout (:count)',

@@ -1,15 +1,15 @@
 <div
     x-data="{
-
         tab: null,
 
         init: function () {
             this.$watch('tab', () => this.updateQueryString())
 
             this.tab = @js(collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
-                ->get($getActiveTab() - 1)
-                ->getId())
+                        ->filter(static fn (\Filament\Infolists\Components\Tabs\Tab $tab): bool => $tab->isVisible())
+                        ->map(static fn (\Filament\Infolists\Components\Tabs\Tab $tab) => $tab->getId())
+                        ->values()
+                        ->get($getActiveTab() - 1))
         },
 
         updateQueryString: function () {
@@ -22,7 +22,6 @@
 
             history.pushState(null, document.title, url.toString())
         },
-
     }"
     x-cloak
     {{
@@ -32,7 +31,7 @@
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['filament-infolists-tabs-component rounded-xl shadow-sm bg-white ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20'])
+            ->class(['fi-in-tabs rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'])
     }}
 >
     <div class="p-1">

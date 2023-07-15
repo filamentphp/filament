@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Contenuto compresso',
-
         'actions' => [
 
             'add' => [
@@ -90,8 +88,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Contenuto compresso',
 
         'actions' => [
 

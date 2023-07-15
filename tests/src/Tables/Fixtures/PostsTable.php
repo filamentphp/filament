@@ -27,7 +27,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Columns\TextColumn::make('title')
                     ->sortable()
                     ->searchable()
-                    ->action(fn () => $this->emit('title-action-called')),
+                    ->action(fn () => $this->dispatch('title-action-called')),
                 Tables\Columns\TextColumn::make('content')
                     ->words(10)
                     ->searchable(isIndividual: true, isGlobal: false),
@@ -36,7 +36,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                     ->searchable()
                     ->action(
                         Tables\Actions\Action::make('column-action-object')
-                            ->action(fn () => $this->emit('column-action-object-called')),
+                            ->action(fn () => $this->dispatch('column-action-object-called')),
                     )
                     ->summarize([
                         Tables\Columns\Summarizers\Range::make('range'),
@@ -68,7 +68,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                 Tables\Columns\TextColumn::make('hidden')
                     ->hidden(),
                 Tables\Columns\TextColumn::make('with_state')
-                    ->getStateUsing(fn () => 'correct state'),
+                    ->state('correct state'),
                 Tables\Columns\TextColumn::make('formatted_state')
                     ->formatStateUsing(fn () => 'formatted state'),
                 Tables\Columns\TextColumn::make('extra_attributes')
@@ -95,6 +95,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                         false => 'Not Published',
                     ])
                     ->attribute('is_published'),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->persistFiltersInSession()
             ->headerActions([
@@ -104,17 +105,17 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                         TextInput::make('payload')->required(),
                     ])
                     ->action(function (array $data) {
-                        $this->emit('data-called', $data);
+                        $this->dispatch('data-called', data: $data);
                     }),
                 Tables\Actions\Action::make('arguments')
                     ->requiresConfirmation()
                     ->action(function (array $arguments) {
-                        $this->emit('arguments-called', $arguments);
+                        $this->dispatch('arguments-called', arguments: $arguments);
                     }),
                 Tables\Actions\Action::make('halt')
                     ->requiresConfirmation()
                     ->action(function (Tables\Actions\Action $action) {
-                        $this->emit('halt-called');
+                        $this->dispatch('halt-called');
 
                         $action->halt();
                     }),
@@ -142,6 +143,8 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
@@ -151,17 +154,17 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                         TextInput::make('payload')->required(),
                     ])
                     ->action(function (array $data) {
-                        $this->emit('data-called', $data);
+                        $this->dispatch('data-called', data: $data);
                     }),
                 Tables\Actions\BulkAction::make('arguments')
                     ->requiresConfirmation()
                     ->action(function (array $arguments) {
-                        $this->emit('arguments-called', $arguments);
+                        $this->dispatch('arguments-called', arguments: $arguments);
                     }),
                 Tables\Actions\BulkAction::make('halt')
                     ->requiresConfirmation()
                     ->action(function (Tables\Actions\BulkAction $action) {
-                        $this->emit('halt-called');
+                        $this->dispatch('halt-called');
 
                         $action->halt();
                     }),

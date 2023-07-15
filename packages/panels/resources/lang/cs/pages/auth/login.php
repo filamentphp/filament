@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Přihlašte se k Vašemu účtu',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Přihlásit se',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Emailová adresa',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Zapamatovat si mě',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Přihlásit se',
+            ],
+
         ],
 
     ],

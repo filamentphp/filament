@@ -36,21 +36,26 @@ trait HasAffixes
 
     protected string | Closure | null $suffixIcon = null;
 
-    public function prefix(string | Closure | null $label): static
+    protected bool | Closure $isPrefixInline = false;
+
+    protected bool | Closure $isSuffixInline = false;
+
+    public function prefix(string | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->prefixLabel = $label;
+        $this->inlinePrefix($isInline);
 
         return $this;
     }
 
-    public function postfix(string | Closure | null $label): static
+    public function postfix(string | Closure | null $label, bool | Closure $isInline = false): static
     {
-        return $this->suffix($label);
+        return $this->suffix($label, $isInline);
     }
 
-    public function prefixAction(Action | Closure $action): static
+    public function prefixAction(Action | Closure $action, bool | Closure $isInline = false): static
     {
-        $this->prefixActions([$action]);
+        $this->prefixActions([$action], $isInline);
 
         return $this;
     }
@@ -58,19 +63,20 @@ trait HasAffixes
     /**
      * @param  array<Action | Closure>  $actions
      */
-    public function prefixActions(array $actions): static
+    public function prefixActions(array $actions, bool | Closure $isInline = false): static
     {
         $this->prefixActions = [
             ...$this->prefixActions,
             ...$actions,
         ];
+        $this->inlinePrefix($isInline);
 
         return $this;
     }
 
-    public function suffixAction(Action | Closure $action): static
+    public function suffixAction(Action | Closure $action, bool | Closure $isInline = false): static
     {
-        $this->suffixActions([$action]);
+        $this->suffixActions([$action], $isInline);
 
         return $this;
     }
@@ -78,33 +84,51 @@ trait HasAffixes
     /**
      * @param  array<Action | Closure>  $actions
      */
-    public function suffixActions(array $actions): static
+    public function suffixActions(array $actions, bool | Closure $isInline = false): static
     {
         $this->suffixActions = [
             ...$this->suffixActions,
             ...$actions,
         ];
+        $this->inlineSuffix($isInline);
 
         return $this;
     }
 
-    public function suffix(string | Closure | null $label): static
+    public function suffix(string | Closure | null $label, bool | Closure $isInline = false): static
     {
         $this->suffixLabel = $label;
+        $this->inlineSuffix($isInline);
 
         return $this;
     }
 
-    public function prefixIcon(string | Closure | null $iconName): static
+    public function inlinePrefix(bool | Closure $isInline = true): static
+    {
+        $this->isPrefixInline = $isInline;
+
+        return $this;
+    }
+
+    public function inlineSuffix(bool | Closure $isInline = true): static
+    {
+        $this->isSuffixInline = $isInline;
+
+        return $this;
+    }
+
+    public function prefixIcon(string | Closure | null $iconName, bool | Closure $isInline = false): static
     {
         $this->prefixIcon = $iconName;
+        $this->inlinePrefix($isInline);
 
         return $this;
     }
 
-    public function suffixIcon(string | Closure | null $iconName): static
+    public function suffixIcon(string | Closure | null $iconName, bool | Closure $isInline = false): static
     {
         $this->suffixIcon = $iconName;
+        $this->inlineSuffix($isInline);
 
         return $this;
     }
@@ -126,7 +150,7 @@ trait HasAffixes
 
         foreach ($this->prefixActions as $prefixAction) {
             foreach (Arr::wrap($this->evaluate($prefixAction)) as $action) {
-                $this->cachedPrefixActions[$action->getName()] = $this->prepareAction($action);
+                $this->cachedPrefixActions[$action->getName()] = $this->prepareAction($action->defaultSize('sm'));
             }
         }
 
@@ -150,7 +174,7 @@ trait HasAffixes
 
         foreach ($this->suffixActions as $suffixAction) {
             foreach (Arr::wrap($this->evaluate($suffixAction)) as $action) {
-                $this->cachedSuffixActions[$action->getName()] = $this->prepareAction($action);
+                $this->cachedSuffixActions[$action->getName()] = $this->prepareAction($action->defaultSize('sm'));
             }
         }
 
@@ -175,5 +199,15 @@ trait HasAffixes
     public function getSuffixIcon(): ?string
     {
         return $this->evaluate($this->suffixIcon);
+    }
+
+    public function isPrefixInline(): bool
+    {
+        return (bool) $this->evaluate($this->isPrefixInline);
+    }
+
+    public function isSuffixInline(): bool
+    {
+        return (bool) $this->evaluate($this->isSuffixInline);
     }
 }

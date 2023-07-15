@@ -4,26 +4,30 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Geuza hali ya giza',
-        ],
-
-        'database_notifications' => [
-            'label' => 'Fungua arifa',
-        ],
-
-        'light_theme' => [
-            'label' => 'Geuza hali ya mwanga',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Toka',
         ],
 
-        'user_menu' => [
+        'open_database_notifications' => [
+            'label' => 'Fungua arifa',
+        ],
+
+        'open_user_menu' => [
             'label' => 'Menyu ya Mtumiaji',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Geuza hali ya giza',
+            ],
+
+            'light' => [
+                'label' => 'Geuza hali ya mwanga',
+            ],
+
         ],
 
     ],

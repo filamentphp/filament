@@ -1,17 +1,18 @@
 @props([
-    'entry' => null,
     'action' => null,
     'alignment' => null,
-    'id' => null,
-    'label' => null,
-    'labelPrefix' => null,
-    'labelSrOnly' => null,
-    'labelSuffix' => null,
+    'entry' => null,
+    'hasInlineLabel' => null,
     'helperText' => null,
     'hint' => null,
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'id' => null,
+    'label' => null,
+    'labelPrefix' => null,
+    'labelSrOnly' => null,
+    'labelSuffix' => null,
     'shouldOpenUrlInNewTab' => null,
     'statePath' => null,
     'tooltip' => null,
@@ -22,14 +23,15 @@
     if ($entry) {
         $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
-        $id ??= $entry->getId();
-        $label ??= $entry->getLabel();
-        $labelSrOnly ??= $entry->isLabelHidden();
+        $hasInlineLabel ??= $entry->hasInlineLabel();
         $helperText ??= $entry->getHelperText();
         $hint ??= $entry->getHint();
         $hintActions ??= $entry->getHintActions();
         $hintColor ??= $entry->getHintColor();
         $hintIcon ??= $entry->getHintIcon();
+        $id ??= $entry->getId();
+        $label ??= $entry->getLabel();
+        $labelSrOnly ??= $entry->isLabelHidden();
         $shouldOpenUrlInNewTab ??= $entry->shouldOpenUrlInNewTab();
         $statePath ??= $entry->getStatePath();
         $tooltip ??= $entry->getTooltip();
@@ -42,16 +44,21 @@
     );
 @endphp
 
-<div {{ $attributes->class(['filament-infolists-entry-wrapper']) }}>
+<div {{ $attributes->class(['fi-in-entry-wrp']) }}>
     @if ($label && $labelSrOnly)
         <dt class="sr-only">
             {{ $label }}
         </dt>
     @endif
 
-    <div class="space-y-2">
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon)
-            <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
+    <div
+        @class([
+            'grid gap-y-2',
+            'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
+        ])
+    >
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon)
+            <div class="flex items-center justify-between gap-x-3">
                 @if ($label && (! $labelSrOnly))
                     <x-filament-infolists::entry-wrapper.label
                         :prefix="$labelPrefix"
@@ -65,62 +72,75 @@
                     {{ $labelSuffix }}
                 @endif
 
-                @if ($hint || $hintIcon || count($hintActions))
-                    <x-filament-infolists::entry-wrapper.hint :actions="$hintActions" :color="$hintColor" :icon="$hintIcon">
-                        {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
+                @if (filled($hint) || $hintIcon || count($hintActions))
+                    <x-filament-infolists::entry-wrapper.hint
+                        :actions="$hintActions"
+                        :color="$hintColor"
+                        :icon="$hintIcon"
+                    >
+                        {{ $hint }}
                     </x-filament-infolists::entry-wrapper.hint>
                 @endif
             </div>
         @endif
 
-        <dd
-            @if ($tooltip)
-                x-data="{}"
-                x-tooltip.raw="{{ $tooltip }}"
-            @endif
+        <div
             @class([
-                match ($alignment) {
-                    'center' => 'text-center',
-                    'end' => 'text-end',
-                    'justify' => 'text-justify',
-                    'left' => 'text-left',
-                    'right' => 'text-right',
-                    'start' => 'text-start',
-                    default => null,
-                },
+                'grid gap-y-2',
+                'sm:col-span-2' => $hasInlineLabel,
             ])
         >
-            @if ($url)
-                <a
-                    href="{{ $url }}"
-                    @if ($shouldOpenUrlInNewTab) target="_blank" @endif
-                    class="block"
-                >
-                    {{ $slot }}
-                </a>
-            @elseif ($action)
-                @php
-                    $wireClickAction = $action->getLivewireClickHandler();
-                @endphp
+            <dd
+                @if ($tooltip)
+                    x-data="{}"
+                    x-tooltip.raw="{{ $tooltip }}"
+                @endif
+                @class([
+                    match ($alignment) {
+                        'center' => 'text-center',
+                        'end' => 'text-end',
+                        'justify' => 'text-justify',
+                        'left' => 'text-left',
+                        'right' => 'text-right',
+                        'start' => 'text-start',
+                        default => null,
+                    },
+                ])
+            >
+                @if ($url)
+                    <a
+                        href="{{ $url }}"
+                        @if ($shouldOpenUrlInNewTab)
+                            target="_blank"
+                        @endif
+                        class="block"
+                    >
+                        {{ $slot }}
+                    </a>
+                @elseif ($action)
+                    @php
+                        $wireClickAction = $action->getLivewireClickHandler();
+                    @endphp
 
-                <button
-                    wire:click="{{ $wireClickAction }}"
-                    wire:target="{{ $wireClickAction }}"
-                    wire:loading.attr="disabled"
-                    type="button"
-                    class="block"
-                >
+                    <button
+                        type="button"
+                        wire:click="{{ $wireClickAction }}"
+                        wire:loading.attr="disabled"
+                        wire:target="{{ $wireClickAction }}"
+                        class="block"
+                    >
+                        {{ $slot }}
+                    </button>
+                @else
                     {{ $slot }}
-                </button>
-            @else
-                {{ $slot }}
+                @endif
+            </dd>
+
+            @if (filled($helperText))
+                <x-filament-infolists::entry-wrapper.helper-text>
+                    {{ $helperText }}
+                </x-filament-infolists::entry-wrapper.helper-text>
             @endif
-        </dd>
-
-        @if ($helperText)
-            <x-filament-infolists::entry-wrapper.helper-text>
-                {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : str($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
-            </x-filament-infolists::entry-wrapper.helper-text>
-        @endif
+        </div>
     </div>
 </div>

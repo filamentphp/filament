@@ -1,5 +1,5 @@
 <div>
-    <form wire:submit.prevent="{{ submitAction }}">
+    <form wire:submit="{{ submitAction }}">
         {{ $this->form }}
 
         <button type="submit">

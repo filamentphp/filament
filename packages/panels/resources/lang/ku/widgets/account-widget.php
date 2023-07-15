@@ -2,7 +2,7 @@
 
 return [
 
-    'buttons' => [
+    'actions' => [
 
         'logout' => [
             'label' => 'چوونەدەرەوە',
@@ -10,6 +10,6 @@ return [
 
     ],
 
-    'welcome' => 'بەخێربێیت، :user',
+    'welcome' => 'بەخێربێیت',
 
 ];

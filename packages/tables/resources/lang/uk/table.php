@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'і :count ще',
         ],
 
-        'messages' => [
-            'copied' => 'Скопійовано',
-        ],
-
     ],
 
     'fields' => [
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Перейти до сторінки :page',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Зберегти порядок',
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Видалити фільтр',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => 'Вибрано 1 запис.|Вибрано :count записів.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Вибрати все :count',

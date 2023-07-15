@@ -2,17 +2,15 @@
 
 namespace Filament\Panel\Concerns;
 
-use Filament\Support\Icons\Icon;
-
 trait HasIcons
 {
     /**
-     * @var array<string, Icon>
+     * @var array<string, string>
      */
     protected array $icons = [];
 
     /**
-     * @param  array<string, Icon>  $icons
+     * @param  array<string, string>  $icons
      */
     public function icons(array $icons): static
     {

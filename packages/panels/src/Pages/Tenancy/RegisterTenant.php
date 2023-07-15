@@ -48,7 +48,10 @@ abstract class RegisterTenant extends CardPage
      */
     public static function getRouteMiddleware(Panel $panel): string | array
     {
-        return static::$routeMiddleware;
+        return [
+            ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
+            ...static::$routeMiddleware,
+        ];
     }
 
     public function mount(): void
@@ -139,5 +142,10 @@ abstract class RegisterTenant extends CardPage
     public static function getSlug(): string
     {
         return static::$slug ?? 'new';
+    }
+
+    public function hasLogo(): bool
+    {
+        return false;
     }
 }

@@ -4,8 +4,8 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
-use Filament\Forms\Components\TextInput\Mask;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\RawJs;
 
 class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState, Contracts\HasAffixActions
 {
@@ -26,7 +26,7 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
      */
     protected string $view = 'filament-forms::components.text-input';
 
-    protected ?Closure $configureMaskUsing = null;
+    protected string | RawJs | Closure | null $mask = null;
 
     protected bool | Closure $isEmail = false;
 
@@ -77,9 +77,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
-    public function mask(?Closure $configuration): static
+    public function mask(string | RawJs | Closure | null $mask): static
     {
-        $this->configureMaskUsing = $configuration;
+        $this->mask = $mask;
 
         return $this;
     }
@@ -166,20 +166,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
-    public function getMask(): ?Mask
+    public function getMask(): string | RawJs | null
     {
-        if (! $this->hasMask()) {
-            return null;
-        }
-
-        return $this->evaluate($this->configureMaskUsing, [
-            'mask' => app(TextInput\Mask::class),
-        ]);
-    }
-
-    public function getJsonMaskConfiguration(): ?string
-    {
-        return $this->getMask()?->toJson();
+        return $this->evaluate($this->mask);
     }
 
     /**
@@ -220,11 +209,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     public function getTelRegex(): string
     {
         return $this->evaluate($this->telRegex) ?? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/';
-    }
-
-    public function hasMask(): bool
-    {
-        return $this->configureMaskUsing !== null;
     }
 
     public function isEmail(): bool

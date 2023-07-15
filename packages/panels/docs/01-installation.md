@@ -29,8 +29,6 @@ php artisan make:filament-user
 
 Visit your app at `/admin` to sign in, and you're now ready to start [building your app](getting-started)!
 
-[![Filament panel demo dashboard](https://user-images.githubusercontent.com/41773797/147615302-daec5d1c-e3ac-428a-98c2-c3fb40d945b5.png)](https://demo.filamentphp.com)
-
 ## Deploying to production
 
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
@@ -74,10 +72,10 @@ composer update
 php artisan filament:upgrade
 ```
 
-We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-autoload-dump` to run it automatically:
 
 ```json
-"post-update-cmd": [
+"post-autoload-dump": [
     // ...
     "@php artisan filament:upgrade"
 ],

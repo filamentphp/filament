@@ -8,6 +8,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\JoinClause;
 
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
@@ -50,12 +52,12 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         $this->searchDebounce(0);
 
         $this->registerActions([
-            fn (CheckboxList $component): ?Action => $component->getSelectAllAction(),
-            fn (CheckboxList $component): ?Action => $component->getDeselectAllAction(),
+            fn (CheckboxList $component): Action => $component->getSelectAllAction(),
+            fn (CheckboxList $component): Action => $component->getDeselectAllAction(),
         ]);
     }
 
-    public function getSelectAllAction(): ?Action
+    public function getSelectAllAction(): Action
     {
         $action = Action::make($this->getSelectAllActionName())
             ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
@@ -84,7 +86,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'selectAll';
     }
 
-    public function getDeselectAllAction(): ?Action
+    public function getDeselectAllAction(): Action
     {
         $action = Action::make($this->getDeselectAllActionName())
             ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
@@ -113,37 +115,61 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'deselectAll';
     }
 
-    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
-        $this->relationship = $relationshipName ?? $this->getName();
+        $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
 
-        $this->options(static function (CheckboxList $component) use ($modifyOptionsQueryUsing): array {
-            $relationship = $component->getRelationship();
+        $this->options(static function (CheckboxList $component) use ($modifyQueryUsing): array {
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+            }
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($component->getRelationshipTitleAttribute());
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
+                        $record->{$relationship->getQualifiedRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
 
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
+            }
+
             return $relationshipQuery
-                ->pluck($component->getRelationshipTitleAttribute(), $relationship->getRelatedKeyName())
+                ->pluck($relationshipTitleAttribute, $relationship->getQualifiedRelatedKeyName())
                 ->toArray();
         });
 

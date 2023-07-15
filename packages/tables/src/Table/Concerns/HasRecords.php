@@ -114,17 +114,13 @@ trait HasRecords
             return $title;
         }
 
-        $titleAttribute = $this->evaluate(
-            $this->recordTitleAttribute,
-            namedInjections: [
-                'record' => $record,
-            ],
-            typedInjections: [
-                Model::class => $record,
-                $record::class => $record,
-            ],
-        );
+        $titleAttribute = $this->getRecordTitleAttribute();
 
         return $record->getAttributeValue($titleAttribute) ?? $this->getModelLabel();
+    }
+
+    public function getRecordTitleAttribute(): ?string
+    {
+        return $this->evaluate($this->recordTitleAttribute);
     }
 }

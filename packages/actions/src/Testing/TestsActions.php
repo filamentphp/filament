@@ -11,12 +11,13 @@ use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportTesting\Testable;
+use function Livewire\store;
 
 /**
  * @method HasActions instance()
  *
- * @mixin TestableLivewire
+ * @mixin Testable
  */
 class TestsActions
 {
@@ -27,9 +28,6 @@ class TestsActions
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
 
-            /** @phpstan-ignore-next-line */
-            $this->assertActionVisible($name);
-
             foreach ($name as $actionNestingIndex => $actionName) {
                 $this->call(
                     'mountAction',
@@ -38,21 +36,28 @@ class TestsActions
                 );
             }
 
-            if (filled($this->instance()->redirectTo)) {
+            if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
             if (! count($this->instance()->mountedActions)) {
-                $this->assertNotDispatchedBrowserEvent('open-modal');
+                $this->assertNotDispatched('open-modal');
 
                 return $this;
             }
 
             $this->assertSet('mountedActions', $name);
 
-            $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => "{$this->instance()->id}-action",
-            ]);
+            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-action");
+
+            return $this;
+        };
+    }
+
+    public function unmountAction(): Closure
+    {
+        return function (): static {
+            $this->call('unmountAction');
 
             return $this;
         };
@@ -61,7 +66,7 @@ class TestsActions
     public function setActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::prependKeysWith($data, 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -72,8 +77,8 @@ class TestsActions
     public function assertActionDataSet(): Closure
     {
         return function (array $data): static {
-            foreach ($data as $key => $value) {
-                $this->assertSet('mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.' . $key, $value);
+            foreach (Arr::dot($data, prepend: 'mountedActionsData.' . array_key_last($this->instance()->mountedActionsData) . '.') as $key => $value) {
+                $this->assertSet($key, $value);
             }
 
             return $this;
@@ -83,6 +88,9 @@ class TestsActions
     public function callAction(): Closure
     {
         return function (string | array $name, array $data = [], array $arguments = []): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertActionVisible($name);
+
             /** @phpstan-ignore-next-line */
             $this->mountAction($name, $arguments);
 
@@ -111,14 +119,12 @@ class TestsActions
 
             $this->call('callMountedAction', $arguments);
 
-            if (filled($this->instance()->redirectTo)) {
+            if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
             if (! count($this->instance()->mountedActions)) {
-                $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => "{$this->instance()->id}-action",
-                ]);
+                $this->assertDispatched('close-modal', id: "{$this->instance()->getId()}-action");
             }
 
             return $this;
@@ -366,7 +372,7 @@ class TestsActions
 
     public function assertActionHasColor(): Closure
     {
-        return function (string | array $name, string $color, $record = null): static {
+        return function (string | array $name, string | array $color, $record = null): static {
             /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
@@ -390,7 +396,7 @@ class TestsActions
 
     public function assertActionDoesNotHaveColor(): Closure
     {
-        return function (string | array $name, string $color, $record = null): static {
+        return function (string | array $name, string | array $color, $record = null): static {
             /** @var array<string> $name */
             /** @phpstan-ignore-next-line */
             $name = $this->parseNestedActionName($name);
@@ -508,7 +514,7 @@ class TestsActions
         };
     }
 
-    public function assertActionHalted(): Closure
+    public function assertActionMounted(): Closure
     {
         return function (string | array $name): static {
             /** @var array<string> $name */
@@ -524,8 +530,29 @@ class TestsActions
         };
     }
 
+    public function assertActionNotMounted(): Closure
+    {
+        return function (string | array $name): static {
+            /** @var array<string> $name */
+            /** @phpstan-ignore-next-line */
+            $name = $this->parseNestedActionName($name);
+
+            /** @phpstan-ignore-next-line */
+            $this->assertActionExists($name);
+
+            $this->assertNotSet('mountedActions', $name);
+
+            return $this;
+        };
+    }
+
+    public function assertActionHalted(): Closure
+    {
+        return $this->assertActionMounted();
+    }
+
     /**
-     * @deprecated Use `->assertActionHalted()` instead.
+     * @deprecated Use `assertActionHalted()` instead.
      */
     public function assertActionHeld(): Closure
     {

@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Connectez-vous à votre compte',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Connexion',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Adresse e-mail',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Se souvenir de moi',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Connexion',
+            ],
+
         ],
 
     ],

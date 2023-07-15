@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Wachtwoord opnieuw instellen',
 
-    'buttons' => [
-
-        'reset' => [
-            'label' => 'Wachtwoord opnieuw instellen',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mailadres',
@@ -25,8 +17,16 @@ return [
             'validation_attribute' => 'wachtwoord',
         ],
 
-        'passwordConfirmation' => [
+        'password_confirmation' => [
             'label' => 'Wachtwoord bevestigen',
+        ],
+
+        'actions' => [
+
+            'reset' => [
+                'label' => 'Wachtwoord opnieuw instellen',
+            ],
+
         ],
 
     ],

@@ -1,56 +1,37 @@
 .filepond--root {
-    @apply mb-0 overflow-hidden;
+    @apply mb-0 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-gray-900 dark:ring-white/20;
 }
 
 .filepond--panel-root {
-    @apply rounded-lg border border-gray-300 bg-white shadow-sm;
+    @apply bg-transparent;
 }
 
-.filepond--drip-blob {
-    @apply bg-gray-900;
+.filepond--root .filepond--drop-label {
+    min-height: theme(spacing.24);
 }
 
 .filepond--drop-label label {
-    @apply text-sm text-gray-500 dark:text-gray-400;
+    @apply !p-3 text-sm text-gray-600 dark:text-gray-400;
 }
 
-.filepond--panel-root {
-    @apply dark:border-gray-600 dark:bg-gray-700 dark:text-white;
+.filepond--label-action {
+    @apply font-medium text-primary-600 no-underline transition duration-75 hover:text-primary-500 dark:text-white dark:hover:text-primary-500;
 }
 
 .filepond--drip-blob {
-    @apply dark:bg-gray-100;
+    @apply bg-gray-400 dark:bg-gray-500;
 }
-
-/* Compact-only styles, excluding compact circle layouts */
-
-.filepond--root[data-style-panel-layout='compact'] .filepond--item {
-    @apply mb-0.5;
-}
-
-.filepond--root[data-style-panel-layout='compact'] .filepond--drop-label {
-    min-height: 2.625em;
-}
-
-.filepond--root[data-style-panel-layout='compact'] .filepond--file {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-}
-
-/* Grid styles */
 
 .filepond--root[data-style-panel-layout='grid'] .filepond--item {
-    width: calc(50% - 0.5em);
-    display: inline;
+    @apply inline;
+    width: calc(50% - 0.5rem);
 }
 
 @media screen(lg) {
     .filepond--root[data-style-panel-layout='grid'] .filepond--item {
-        width: calc(33.33% - 0.5em);
+        width: calc(33.33% - 0.5rem);
     }
 }
-
-/* Download button styles */
 
 .filepond--download-icon {
     @apply pointer-events-auto me-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;

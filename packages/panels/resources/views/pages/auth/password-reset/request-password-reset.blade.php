@@ -1,16 +1,13 @@
-<div>
+<x-filament::layouts.card>
     @if (filament()->hasLogin())
         <x-slot name="subheading">
             {{ $this->loginAction }}
         </x-slot>
     @endif
 
-    <form
-        wire:submit.prevent="request"
-        class="grid gap-y-8"
-    >
+    <form wire:submit="request" class="grid gap-y-6">
         {{ $this->form }}
 
         {{ $this->requestAction }}
     </form>
-</div>
+</x-filament::layouts.card>

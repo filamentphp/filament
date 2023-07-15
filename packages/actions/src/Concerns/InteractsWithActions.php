@@ -11,6 +11,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
+use function Livewire\store;
 
 /**
  * @property Forms\Form $mountedActionForm
@@ -63,6 +64,8 @@ trait InteractsWithActions
 
         $result = null;
 
+        $originallyMountedActions = $this->mountedActions;
+
         try {
             if ($this->mountedActionHasForm()) {
                 $action->callBeforeFormValidated();
@@ -79,6 +82,8 @@ trait InteractsWithActions
             ]);
 
             $result = $action->callAfter() ?? $result;
+
+            $this->afterActionCalled();
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
@@ -87,13 +92,25 @@ trait InteractsWithActions
         $action->resetArguments();
         $action->resetFormData();
 
-        if (filled($this->redirectTo)) {
+        // If the action was replaced while it was being called,
+        // we don't want to unmount it.
+        if ($originallyMountedActions !== $this->mountedActions) {
+            $action->clearRecordAfter();
+
+            return null;
+        }
+
+        if (store($this)->has('redirect')) {
             return $result;
         }
 
         $this->unmountAction();
 
         return $result;
+    }
+
+    protected function afterActionCalled(): void
+    {
     }
 
     /**
@@ -121,10 +138,7 @@ trait InteractsWithActions
 
         $action->arguments($arguments);
 
-        $this->cacheForm(
-            'mountedActionForm',
-            fn () => $this->getMountedActionForm(),
-        );
+        $this->cacheMountedActionForm();
 
         try {
             $hasForm = $this->mountedActionHasForm();
@@ -154,11 +168,18 @@ trait InteractsWithActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-action",
-        ]);
+        $this->openActionModal();
 
         return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $arguments
+     */
+    public function replaceMountedAction(string $name, array $arguments = []): void
+    {
+        $this->resetMountedActionProperties();
+        $this->mountAction($name, $arguments);
     }
 
     public function mountedActionShouldOpenModal(): bool
@@ -169,9 +190,9 @@ trait InteractsWithActions
             return false;
         }
 
-        return $action->getModalSubheading() ||
+        return $action->getModalDescription() ||
             $action->getModalContent() ||
-            $action->getModalFooter() ||
+            $action->getModalContentFooter() ||
             $action->getInfolist() ||
             $this->mountedActionHasForm();
     }
@@ -237,7 +258,7 @@ trait InteractsWithActions
         return $action->getForm(
             $this->makeForm()
                 ->statePath('mountedActionsData.' . array_key_last($this->mountedActionsData))
-                ->model($action->getModel() ?? $this->getMountedActionFormModel())
+                ->model($action->getRecord() ?? $action->getModel() ?? $this->getMountedActionFormModel())
                 ->operation(implode('.', $this->mountedActions)),
         );
     }
@@ -320,25 +341,36 @@ trait InteractsWithActions
         return $action;
     }
 
+    protected function popMountedAction(): ?string
+    {
+        try {
+            return array_pop($this->mountedActions);
+        } finally {
+            array_pop($this->mountedActionsArguments);
+            array_pop($this->mountedActionsData);
+        }
+    }
+
+    protected function resetMountedActionProperties(): void
+    {
+        $this->mountedActions = [];
+        $this->mountedActionsArguments = [];
+        $this->mountedActionsData = [];
+    }
+
     public function unmountAction(bool $shouldCloseParentActions = true): void
     {
         $action = $this->getMountedAction();
 
         if (! ($shouldCloseParentActions && $action)) {
-            array_pop($this->mountedActions);
-            array_pop($this->mountedActionsArguments);
-            array_pop($this->mountedActionsData);
+            $this->popMountedAction();
         } elseif ($action->shouldCloseAllParentActions()) {
-            $this->mountedActions = [];
-            $this->mountedActionsArguments = [];
-            $this->mountedActionsData = [];
+            $this->resetMountedActionProperties();
         } else {
             $parentActionToCloseTo = $action->getParentActionToCloseTo();
 
             while (true) {
-                $recentlyClosedParentAction = array_pop($this->mountedActions);
-                array_pop($this->mountedActionsArguments);
-                array_pop($this->mountedActionsData);
+                $recentlyClosedParentAction = $this->popMountedAction();
 
                 if (
                     blank($parentActionToCloseTo) ||
@@ -350,26 +382,40 @@ trait InteractsWithActions
         }
 
         if (! count($this->mountedActions)) {
-            $this->dispatchBrowserEvent('close-modal', [
-                'id' => "{$this->id}-action",
-            ]);
+            $this->closeActionModal();
 
-            if ($action?->shouldClearRecordAfter()) {
-                $action->record(null);
-            }
+            $action?->clearRecordAfter();
 
             return;
         }
 
+        $this->cacheMountedActionForm();
+
+        $this->resetErrorBag();
+
+        $this->openActionModal();
+    }
+
+    protected function cacheMountedActionForm(): void
+    {
         $this->cacheForm(
             'mountedActionForm',
             fn () => $this->getMountedActionForm(),
         );
+    }
 
-        $this->resetErrorBag();
+    protected function closeActionModal(): void
+    {
+        $this->dispatch('close-modal', id: "{$this->getId()}-action");
+    }
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-action",
-        ]);
+    protected function openActionModal(): void
+    {
+        $this->dispatch('open-modal', id: "{$this->getId()}-action");
+    }
+
+    public function getActiveActionsLocale(): ?string
+    {
+        return null;
     }
 }

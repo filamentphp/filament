@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Treść zwinięta',
-
         'actions' => [
 
             'clone' => [
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Odznacz wszystkie',
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Treść zwinięta',
 
         'actions' => [
 

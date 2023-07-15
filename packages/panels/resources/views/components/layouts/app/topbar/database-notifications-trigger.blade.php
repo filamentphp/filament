@@ -1,9 +1,9 @@
 <x-filament::icon-button
-    :label="__('filament::layout.buttons.database_notifications.label')"
+    :label="__('filament::layout.actions.open_database_notifications.label')"
     icon="heroicon-o-bell"
-    icon-alias="panels::layout.database-notifications.trigger"
+    icon-alias="panels::topbar.open-database-notifications-button"
     icon-size="lg"
     color="gray"
     :indicator="$unreadNotificationsCount"
-    class="ms-4 -me-1"
+    class="-me-1 ms-4"
 />

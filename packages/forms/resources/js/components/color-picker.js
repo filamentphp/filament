@@ -6,6 +6,7 @@ import 'vanilla-colorful/rgba-string-color-picker.js'
 export default function colorPickerFormComponent({
     isAutofocused,
     isDisabled,
+    isLiveOnPickerClose,
     state,
 }) {
     return {
@@ -27,6 +28,19 @@ export default function colorPickerFormComponent({
             this.$refs.panel.addEventListener('color-changed', (event) => {
                 this.setState(event.detail.value)
             })
+
+            if (isLiveOnPickerClose) {
+                new MutationObserver(() => {
+                    if (this.$refs.panel.style.display !== 'none') {
+                        return
+                    }
+
+                    this.$wire.call('$refresh')
+                }).observe(this.$refs.panel, {
+                    attributes: true,
+                    childList: true,
+                })
+            }
         },
 
         togglePanelVisibility: function () {

@@ -74,7 +74,7 @@ public static function getGlobalSearchResultUrl(Model $record): string
 
 ## Adding actions to global search results
 
-Global search supports actions, which are buttons that render below each search result. They can open a URL or emit a Livewire event. 
+Global search supports actions, which are buttons that render below each search result. They can open a URL or dispatch a Livewire event. 
 
 Actions can be defined as follows:
 
@@ -103,15 +103,15 @@ Action::make('view')
     ->url(static::getUrl('view', ['record' => $record]), shouldOpenInNewTab: true)
 ```
 
-### Emitting Livewire events from global search actions
+### Dispatching Livewire events from global search actions
 
-Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be emitted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
+Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be dispatchted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
 
 ```php
 use Filament\GlobalSearch\Actions\Action;
 
 Action::make('quickView')
-    ->emit('quickView', [$record->id])
+    ->dispatch('quickView', [$record->id])
 ```
 
 ## Limiting the number of global search results
@@ -141,7 +141,7 @@ public function panel(Panel $panel): Panel
 
 ## Registering global search keybindings
 
-The global search input can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](configuration):
+The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](configuration):
 
 ```php
 use Filament\Panel;

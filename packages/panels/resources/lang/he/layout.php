@@ -4,26 +4,30 @@ return [
 
     'direction' => 'rtl',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'הפעל מצב כהה',
-        ],
-
-        'database_notifications' => [
-            'label' => 'פתח התראות',
-        ],
-
-        'light_theme' => [
-            'label' => 'הפעל מצב מואר',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'התנתק',
         ],
 
-        'user_menu' => [
+        'open_database_notifications' => [
+            'label' => 'פתח התראות',
+        ],
+
+        'open_user_menu' => [
             'label' => 'תפריט משתמש',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'הפעל מצב כהה',
+            ],
+
+            'light' => [
+                'label' => 'הפעל מצב מואר',
+            ],
+
         ],
 
     ],

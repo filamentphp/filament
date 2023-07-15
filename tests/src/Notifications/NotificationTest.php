@@ -4,7 +4,7 @@ use BladeUI\Icons\Factory;
 use BladeUI\Icons\IconsManifest;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Collection;
-use Filament\Notifications\Http\Livewire\Notifications;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
@@ -15,7 +15,7 @@ uses(TestCase::class);
 
 it('can render', function () {
     livewire(Notifications::class)
-        ->assertSuccessful();
+        ->assertSeeHtml('notifications');
 });
 
 it('can send notifications', function () {
@@ -28,7 +28,6 @@ it('can send notifications', function () {
             'gray',
             'info',
             'primary',
-            'secondary',
             'success',
             'warning',
         ]);
@@ -47,7 +46,7 @@ it('can send notifications', function () {
                 ->close($shouldClose = (bool) rand(0, 1))
                 ->color($actionColor = $getRandomColor())
                 ->disabled($isActionDisabled = (bool) rand(0, 1))
-                ->emit($actionEvent = Str::random(), $actionEventData = [Str::random()])
+                ->dispatch($actionEvent = Str::random(), $actionEventData = [Str::random()])
                 ->extraAttributes($actionExtraAttributes = ['x' . Str::random(15) => Str::random()]) // Attributes must start with a letter
                 ->icon($actionIcon = $getRandomIcon())
                 ->iconPosition($actionIconPosition = Arr::random(['after', 'before']))
@@ -110,7 +109,7 @@ it('can send notifications', function () {
     $component = livewire(Notifications::class);
 
     $component
-        ->emit('notificationsSent');
+        ->dispatch('notificationsSent');
 
     expect($component->instance()->notifications)
         ->toBeInstanceOf(Collection::class)
@@ -161,8 +160,8 @@ it('can close notifications', function () {
     $component = livewire(Notifications::class);
 
     $component
-        ->emit('notificationsSent')
-        ->emit('notificationClosed', $notification->getId());
+        ->dispatch('notificationsSent')
+        ->dispatch('notificationClosed', id: $notification->getId());
 
     expect($component->instance()->notifications)
         ->toBeInstanceOf(Collection::class)
@@ -178,58 +177,44 @@ function getLastNotificationAction()
     return $notifications->first()->getActions()[0];
 }
 
-it('can emit an event', function () {
-    $action = Action::make('action')->emit('an_event');
-    expect($action->getLivewireClickHandler())->toBe("\$emit('an_event')");
+it('can dispatch an event', function () {
+    $action = Action::make('action')->dispatch('an_event');
+    expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event')");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$emit('an_event')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event')");
 
-    $action = Action::make('action')->emit('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$emit('an_event', 'data')");
+    $action = Action::make('action')->dispatch('an_event', ['data']);
+    expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event', 'data')");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$emit('an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event', 'data')");
 });
 
-it('can emit an event to itself', function () {
-    $action = Action::make('action')->emitSelf('an_event');
-    expect($action->getLivewireClickHandler())->toBe("\$emitSelf('an_event')");
+it('can dispatch an event to itself', function () {
+    $action = Action::make('action')->dispatchSelf('an_event');
+    expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event')");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$emitSelf('an_event')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event')");
 
-    $action = Action::make('action')->emitSelf('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$emitSelf('an_event', 'data')");
+    $action = Action::make('action')->dispatchSelf('an_event', ['data']);
+    expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', 'data')");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$emitSelf('an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', 'data')");
 });
 
-it('can emit an event up', function () {
-    $action = Action::make('action')->emitUp('an_event');
-    expect($action->getLivewireClickHandler())->toBe("\$emitUp('an_event')");
+it('can dispatch an event to a component', function () {
+    $action = Action::make('action')->dispatchTo('a_component', 'an_event');
+    expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event')");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$emitUp('an_event')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event')");
 
-    $action = Action::make('action')->emitUp('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$emitUp('an_event', 'data')");
-
-    $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$emitUp('an_event', 'data')");
-});
-
-it('can emit an event to a component', function () {
-    $action = Action::make('action')->emitTo('a_component', 'an_event');
-    expect($action->getLivewireClickHandler())->toBe("\$emitTo('a_component', 'an_event')");
+    $action = Action::make('action')->dispatchTo('a_component', 'an_event', ['data']);
+    expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', 'data')");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$emitTo('a_component', 'an_event')");
-
-    $action = Action::make('action')->emitTo('a_component', 'an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$emitTo('a_component', 'an_event', 'data')");
-
-    $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$emitTo('a_component', 'an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', 'data')");
 });

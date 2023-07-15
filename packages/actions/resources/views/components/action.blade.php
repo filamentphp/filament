@@ -23,11 +23,11 @@
     :tooltip="$action->getTooltip()"
     :disabled="$isDisabled"
     :icon="$icon ?? $action->getIcon()"
+    :icon-size="$action->getIconSize()"
     :indicator="$action->getIndicator()"
     :indicator-color="$action->getIndicatorColor()"
     :size="$action->getSize()"
     :label-sr-only="$action->isLabelHidden()"
-    dusk="filament.actions.action.{{ $action->getName() }}"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"
 >
     {{ $slot }}

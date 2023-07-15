@@ -6,15 +6,7 @@ return [
 
     'heading' => '登录您的账号',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => '登录',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => '邮箱地址',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => '记住我',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => '登录',
+            ],
+
         ],
 
     ],

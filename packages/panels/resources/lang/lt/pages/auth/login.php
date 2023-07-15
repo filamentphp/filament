@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Prisijunkite prie savo paskyros',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Prisijungti',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'El. paštas',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Prisiminti mane',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Prisijungti',
+            ],
+
         ],
 
     ],

@@ -15,9 +15,8 @@
         color-scheme: dark;
     }
 
-    [dir='rtl'] select {
-        background-position: left 0.5rem center !important;
-        padding-left: 2.5rem;
-        padding-right: 0.75rem;
+    /** Fix extra gap below form elements from default browser stylesheet. */
+    form {
+        margin-block-end: auto;
     }
 }

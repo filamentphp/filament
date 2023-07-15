@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Kirjaudu tilillesi',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Kirjaudu',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Sähköpostiosoite',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Muista minut',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Kirjaudu',
+            ],
+
         ],
 
     ],

@@ -6,7 +6,7 @@ return [
 
         'heading' => 'التنبيهات',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'مسح',

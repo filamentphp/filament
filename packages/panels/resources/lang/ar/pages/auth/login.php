@@ -6,15 +6,7 @@ return [
 
     'heading' => 'الدخول إلى حسابك',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'تسجيل الدخول',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'البريد الإلكتروني',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'تذكرني',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'تسجيل الدخول',
+            ],
+
         ],
 
     ],

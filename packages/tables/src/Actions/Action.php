@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
+use Filament\Actions\Concerns\HasMountableArguments;
 use Filament\Actions\Concerns\InteractsWithRecord;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\Contracts\HasRecord;
@@ -13,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
     use Concerns\BelongsToTable;
+    use HasMountableArguments;
     use InteractsWithRecord;
 
     public function getLivewireCallMountedActionName(): string
@@ -73,6 +75,11 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
         $record ??= $this->getRecord();
 
         return $this->getCustomRecordTitle($record) ?? $this->getTable()->getRecordTitle($record);
+    }
+
+    public function getRecordTitleAttribute(): ?string
+    {
+        return $this->getCustomRecordTitleAttribute() ?? $this->getTable()->getRecordTitleAttribute();
     }
 
     public function getModelLabel(): string

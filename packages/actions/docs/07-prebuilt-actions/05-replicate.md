@@ -38,6 +38,19 @@ ReplicateAction::make()
     ->excludeAttributes(['slug'])
 ```
 
+## Customizing data before filling the form
+
+You may wish to modify the data from a record before it is filled into the form. To do this, you may use the `mutateRecordDataUsing()` method to modify the `$data` array, and return the modified version before it is filled into the form:
+
+```php
+ReplicateAction::make()
+    ->mutateRecordDataUsing(function (array $data): array {
+        $data['user_id'] = auth()->id();
+
+        return $data;
+    })
+```
+
 ## Redirecting after replication
 
 You may set up a custom redirect when the form is submitted using the `successRedirectUrl()` method:

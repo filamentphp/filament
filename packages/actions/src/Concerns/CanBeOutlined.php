@@ -17,6 +17,6 @@ trait CanBeOutlined
 
     public function isOutlined(): bool
     {
-        return $this->evaluate($this->isOutlined);
+        return (bool) $this->evaluate($this->isOutlined);
     }
 }

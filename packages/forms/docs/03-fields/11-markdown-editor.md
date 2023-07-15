@@ -1,6 +1,7 @@
 ---
 title: Markdown editor
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,7 @@ use Filament\Forms\Components\MarkdownEditor;
 MarkdownEditor::make('content')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613631-0f9254aa-0abb-4a2e-b9d7-bda1a01b8d57.png)
+<AutoScreenshot name="forms/fields/markdown-editor/simple" alt="Markdown editor" version="3.x" />
 
 ## Customizing the toolbar buttons
 

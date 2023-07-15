@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'وە :count زیاتر',
         ],
 
-        'messages' => [
-            'copied' => 'لەبەرگیرا',
-        ],
-
     ],
 
     'fields' => [
@@ -40,7 +36,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'بڕۆ بۆ پەڕەی :page',
@@ -58,7 +54,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'کۆتایی بە ڕێکخستن ب‌هێنە',
@@ -88,7 +84,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'سرینەوەی فلتەر',
@@ -135,7 +131,7 @@ return [
 
         'selected_count' => '١ تۆمار دیاری کراوە.|:count تۆمار دیاری کراوە.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'دیاریکردنی هەموو :count تۆمارەکان',

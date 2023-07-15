@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'طيّ المحتوى',
-
         'actions' => [
 
             'clone' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'المحتوى مطوي',
 
         'actions' => [
 

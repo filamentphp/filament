@@ -8,40 +8,44 @@ In the [configuration](configuration), you can easily change the colors that are
 
 ```php
 use Filament\Panel;
-use Filament\Support\Color;
+use Filament\Support\Colors\Color;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->dangerColor(Color::Rose)
-        ->grayColor(Color::Gray)
-        ->infoColor(Color::Blue)
-        ->primaryColor(Color::Indigo)
-        ->secondaryColor(Color::Sky)
-        ->successColor(Color::Emerald)
-        ->warningColor(Color::Orange);
+        ->colors([
+            'danger' => Color::Rose,
+            'gray' => Color::Gray,
+            'info' => Color::Blue,
+            'primary' => Color::Indigo,
+            'success' => Color::Emerald,
+            'warning' => Color::Orange,
+        ]);
 }
 ```
 
-The `Filament\Support\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
+The `Filament\Support\Colors\Color` class contains color options for all [Tailwind CSS color palettes](https://tailwindcss.com/docs/customizing-colors).
 
 Alternatively, you may pass your own palette in as an array of RGB values:
 
 ```php
-$panel->primaryColor([
-    50 => '238, 242, 255',
-    100 => '224, 231, 255',
-    200 => '199, 210, 254',
-    300 => '165, 180, 252',
-    400 => '129, 140, 248',
-    500 => '99, 102, 241',
-    600 => '79, 70, 229',
-    700 => '67, 56, 202',
-    800 => '55, 48, 163',
-    900 => '49, 46, 129',
-    950 => '30, 27, 75',
-])
+$panel
+    ->colors([
+        'primary' => [
+            50 => '238, 242, 255',
+            100 => '224, 231, 255',
+            200 => '199, 210, 254',
+            300 => '165, 180, 252',
+            400 => '129, 140, 248',
+            500 => '99, 102, 241',
+            600 => '79, 70, 229',
+            700 => '67, 56, 202',
+            800 => '55, 48, 163',
+            900 => '49, 46, 129',
+            950 => '30, 27, 75',
+        ],
+    ])
 ```
 
 ### Generating a color palette
@@ -49,11 +53,15 @@ $panel->primaryColor([
 If you want us to attempt to generate a palette for you based on a singular hex or RGB value, you can pass that in:
 
 ```php
-use Filament\Support\Color;
+$panel
+    ->colors([
+        'primary' => '#6366f1',
+    ])
 
-$panel->primaryColor('#6366f1')
-
-$panel->primaryColor('rgb(99, 102, 241)')
+$panel
+    ->colors([
+        'primary' => 'rgb(99, 102, 241)',
+    ])
 ```
 
 ## Changing the font
@@ -97,92 +105,30 @@ $panel->font(
 
 ## Creating a custom theme
 
-Filament allows you to change the fonts and color scheme used in the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
+Filament allows you to change the CSS used to render the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
 
-Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin, [Autoprefixer](https://github.com/postcss/autoprefixer), and [Tippy.js](https://atomiks.github.io/tippyjs). You may install these through NPM:
+Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, and the Tailwind Typography plugin, [Autoprefixer](https://github.com/postcss/autoprefixer), and [Tippy.js](https://atomiks.github.io/tippyjs).
+
+To create a custom theme for a panel, you can use the `php artisan make:filament-theme` command:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer tippy.js --save-dev
+php artisan make:filament-theme
 ```
 
-To finish installing Tailwind, you must create a new `tailwind.config.js` file in the root of your project. The easiest way to do this is by running `npx tailwindcss init`.
+If you have more than one panel, you can specify the panel you want to create a theme for:
 
-In `tailwind.config.js`, require Filament's "preset", which gives you a working Tailwind configuration that you can override however you wish:
-
-```js
-const preset = require('./vendor/filament/filament/tailwind.config.preset')
-
-module.exports = {
-    presets: [preset],
-}
+```bash
+php artisan make:filament-theme admin
 ```
 
-If you use Vite to compile assets, in your `vite.config.js` file, register the `filament.css` theme file:
-
-```js
-import { defineConfig } from 'vite'
-import laravel from 'laravel-vite-plugin'
-
-export default defineConfig({
-    plugins: [
-        laravel({
-            input: [
-                // ...
-                'resources/css/filament.css',
-            ],
-            // ...
-        }),
-    ],
-})
-```
-
-And add Tailwind to the `postcss.config.cjs` file:
-
-```js
-module.exports = {
-    plugins: {
-        tailwindcss: {},
-        autoprefixer: {},
-    },
-}
-```
-
-Or if you're using Laravel Mix instead of Vite, in your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
-
-```js
-const mix = require('laravel-mix')
-
-mix.postCss('resources/css/filament.css', 'public/css', [
-    require('tailwindcss'),
-])
-```
-
-In `/resources/css/filament.css`, import Filament's base theme CSS:
-
-```css
-@import '../../vendor/filament/filament/resources/css/index.css';
-```
-
-Now, you may register the theme file in Filament's [configuration](configuration):
-
-```php
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->viteTheme('resources/css/filament.css') // Using Vite
-        ->theme(mix('css/filament.css')); // Using Laravel Mix
-}
-```
+The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also give you instructions on how to compile the theme and register it in Filament. **Please follow the instructions in the command to complete the setup process.**
 
 ## Non-sticky topbar
 
 By default, the topbar sticks to the top of the page. You may make the topbar scroll out of view with the following CSS:
 
 ```css
-.filament-main-topbar {
+.fi-topbar {
     position: relative;
 }
 ```

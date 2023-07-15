@@ -41,7 +41,7 @@ rm config/notifications.php
 
 #### New `@filamentScripts` and `@filamentStyles` Blade directives
 
-The `@filamentScripts` and `@filamentStyles` Blade directives must be added to your Blade layout file/s. You can insert `@filamentScripts` after `@livewireScripts` and `@filamentStyles` after `@livewireStyles`.
+The `@filamentScripts` and `@filamentStyles` Blade directives must be added to your Blade layout file/s. Since Livewire 3 no longer uses similar directives, you can replace `@livewireScripts` with `@filamentScripts`  and `@livewireStyles` with `@filamentStyles`.
 
 #### JavaScript assets
 
@@ -55,4 +55,8 @@ The Heroicons library has been updated to v2. This means that any icons you use 
 
 #### Secondary color
 
-Filament v2 had a `secondary` color for many components which was gray. Now, you can define a non-gray `secondary` color alongside `primary`. All references to `secondary` should be replaced with `gray` to preserve the same appearance.
+Filament v2 had a `secondary` color for many components which was gray. All references to `secondary` should be replaced with `gray` to preserve the same appearance. This frees `secondary` to be registered to a new custom color of your choice.
+
+#### Notification JS objects
+
+The `Notification` JavaScript object has been renamed to `FilamentNotification` to avoid conflicts with the native browser `Notification` object. The same has been done for `NotificationAction` (now `FilamentNotificationAction`) and `NotificationActionGroup` (now `FilamentNotificationActionGroup`) for consistency.

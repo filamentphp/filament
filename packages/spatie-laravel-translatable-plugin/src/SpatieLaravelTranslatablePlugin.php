@@ -10,7 +10,7 @@ class SpatieLaravelTranslatablePlugin implements Plugin
     /**
      * @var array<string>
      */
-    protected array $defaultLocales;
+    protected array $defaultLocales = [];
 
     protected ?Closure $getLocaleLabelUsing = null;
 

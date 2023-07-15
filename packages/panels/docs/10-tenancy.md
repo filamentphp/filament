@@ -6,6 +6,8 @@ title: Multi-tenancy
 
 Multi-tenancy is a concept where a single instance of an application serves multiple customers. Each customer has their own data and access rules that prevent them from viewing or modifying each other's data. This is a common pattern in SaaS applications. Users often belong to groups of users (often called teams or organizations). Records are owned by the group, and users can be members of multiple groups. This is suitable for applications where users need to collaborate on data.
 
+Multi-tenancy is a very sensitive topic. It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure. Please see the [security](#tenancy-security) section for more information.
+
 ## Setting up tenancy
 
 To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
@@ -54,9 +56,9 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
 In this example, users belong to many teams, so there is a `teams()` relationship. The `getTenants()` method returns the teams that the user belongs to. Filament uses this to list the tenants that the user has access to.
 
-You'll also want users to be able to [register new teams](#registration).
+You'll also want users to be able to [register new teams](#adding-a-tenant-registration-page).
 
-## Registration
+## Adding a tenant registration page
 
 A registration page will allow users to create a new tenant.
 
@@ -115,11 +117,61 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Customizing the registration page
+### Customizing the tenant registration page
 
-You can override anything you want on the registration page class to make it act as you want. Even the `$view` property can be overridden to use a custom view.
+You can override any method you want on the base registration page class to make it act as you want. Even the `$view` property can be overridden to use a custom view of your choice.
 
-Alternatively, you can pass any route action to the `tenantRegistration()` method. That could be a callback function that gets executed when you visit the page, or the name of a controller, or a Livewire component - anything that works when using `Route::get()` in Laravel normally.
+## Adding a tenant profile page
+
+A profile page will allow users to edit information about the tenant.
+
+To set up a profile page, you'll need to create a new page class that extends `Filament\Pages\Tenancy\EditTenantProfile`. This is a full-page Livewire component. You can put this anywhere you want, such as `app/Filament/Pages/Tenancy/EditTeamProfile.php`:
+
+```php
+namespace App\Filament\Pages\Tenancy;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Pages\Tenancy\EditTenantProfile;
+use Illuminate\Database\Eloquent\Model;
+
+class EditTeamProfile extends EditTenantProfile
+{
+    public static function getLabel(): string
+    {
+        return 'Team profile';
+    }
+    
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('name'),
+                // ...
+            ]);
+    }
+}
+```
+
+You may add any [form components](../forms/getting-started) to the `form()` method. They will get saved directly to the tenant model.
+
+Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
+
+```php
+use App\Filament\Pages\Tenancy\RegisterTeam;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantProfile(RegisterTeam::class);
+}
+```
+
+### Customizing the tenant profile page
+
+You can override any method you want on the base profile page class to make it act as you want. Even the `$view` property can be overridden to use a custom view of your choice.
 
 ## Accessing the current tenant
 
@@ -238,7 +290,7 @@ public function panel(Panel $panel): Panel
             MenuItem::make()
                 ->label('Settings')
                 ->url(route('filament.pages.settings'))
-                ->icon('heroicon-m-cog-6-tooth'),
+                ->icon('heroicon-m-cog-8-tooth'),
             // ...
         ]);
 }
@@ -310,9 +362,13 @@ The `getFilamentAvatarUrl()` method is used to retrieve the avatar of the curren
 
 You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider. [You can learn how to do this here.](users#using-a-different-avatar-provider)
 
-## Configuring the ownership relationship
+## Configuring the tenant relationships
 
-When creating a new [resource record](resources/creating-records), it will attempt to associate it with the current tenant. It will use the tenant's model to guess which relationship exists on the resource model. For example, if the tenant model is `App\Models\Team`, it will look for a `team()` relationship on the resource model. You can customize this relationship using the `ownershipRelationship` argument on the `tenant()` configuration method:
+When creating and listing records associated with a Tenant, Filament needs access to two Eloquent relationships for each resource - an "ownership" relationship that is defined on the resource model class, and a relationship on the tenant model class. By default, Filament will attempt to guess the names of these relationships based on standard Laravel conventions. For example, if the tenant model is `App\Models\Team`, it will look for a `team()` relationship on the resource model class. And if the resource model class is `App\Models\Post`, it will look for a `posts()` relationship on the tenant model class.
+
+### Customizing the ownership relationship name
+
+You can customize the name of the ownership relationship used across all resources at once, using the `ownershipRelationship` argument on the `tenant()` configuration method. In this example, resource model classes have an `owner` relationship defined:
 
 ```php
 use Filament\Panel;
@@ -325,19 +381,31 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Alternatively, you can override the `associateRecordWithTenant()` method on the [Create page class](resources/creating-records), which you can then use to customize how the record is associated with the tenant:
+Alternatively, you can set the `$tenantOwnershipRelationshipName` static property on the resource class, which you can then be used to customize the ownership relationship name that is just used for that resource. In this example, the `Post` model class has an `owner` relationship defined:
 
 ```php
-use Filament\Pages\CreateRecord;
+use Filament\Resources\Resource;
 
-class CreatePost extends CreateRecord
+class PostResource extends Resource
 {
+    protected static ?string $tenantOwnershipRelationshipName = 'owner';
+
     // ...
-    
-    protected function associateRecordWithTenant(Model $record, Model $tenant): void
-    {
-        $record->owner()->associate($tenant);
-    }
+}
+```
+
+### Customizing the resource relationship name
+
+You can set the `$tenantRelationshipName` static property on the resource class, which you can then be used to customize the relationship name that is used to fetch that resource. In this example, the tenant model class has an `blogPosts` relationship defined:
+
+```php
+use Filament\Resources\Resource;
+
+class PostResource extends Resource
+{
+    protected static ?string $tenantOwnershipRelationshipName = 'blogPosts';
+
+    // ...
 }
 ```
 
@@ -436,5 +504,111 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
     {
         return $this->belongsTo(Team::class, 'latest_team_id');
     }
+}
+```
+
+## Applying middleware to tenant-aware routes
+
+You can apply extra middleware to all tenant-aware routes by passing an array of middleware classes to the `tenantMiddleware()` method in the [panel configuration file](configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMiddleware([
+            // ...
+        ]);
+}
+```
+
+By default, middleware will be run when the page is first loaded, but not on subsequent Livewire AJAX requests. If you want to run middleware on every request, you can make it persistent by passing `true` as the second argument to the `tenantMiddleware()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMiddleware([
+            // ...
+        ], isPersistent: true);
+}
+```
+
+## Tenancy security
+
+It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure.
+
+Below is a list of features that Filament provides to help you implement multi-tenancy in your application:
+
+- Automatic scoping of resources to the current tenant. The base Eloquent query that is used to fetch records for a resource is automatically scoped to the current tenant. This query is used to render the resource's list table, and is also used to resolve records from the current URL when editing or viewing a record. This means that if a user attempts to view a record that does not belong to the current tenant, they will receive a 404 error.
+
+- Automatic association of new resource records to the current tenant.
+
+And here are the things that Filament does not currently provide:
+
+- Scoping of relation manager records to the current tenant. When using the relation manager, in the vast majority of cases the query will not need to be scoped to the current tenant, since it is already scoped to the parent record, which is itself scoped to the current tenant. For example, if a `Team` tenant model had an `Author` resource, and that resource had a `posts` relationship and relation manager set up, and posts only belong to one author, there is no need to scope the query. This is because the user will only be able to see authors that belong to the current team anyway, and thus will only be able to see posts that belong to those authors. You can [scope the Eloquent query](resources/relation-managers#customizing-the-relation-manager-eloquent-query) if you wish.
+
+- Form component and filter scoping. When using the `Select`, `CheckboxList` or `Repeater` form components, the `SelectFilter`, or any other similar Filament component which is able to automatically fetch "options" or other data from the database (usually using a `relationship()` method), this data is not scoped. The main reason for this is that these features often don't belong to the Filament panel builder package, and have no knowledge that they are being used within that context, and that a tenant even exists. And even if they did have access to the tenant, there is nowhere for the tenant relationship configuration to live. To scope these components, you need to pass in a query function that scopes the query to the current tenant. For example, if you were using the `Select` form component to select an `author` from a relationship, you could do this:
+
+```php
+use Filament\Facades\Filament;
+use Filament\Forms\Components\Select;
+use Illuminate\Database\Eloquent\Builder;
+
+Select::make('author_id')
+    ->relationship(
+        name: 'author',
+        titleAttribute: 'name',
+        modifyQueryUsing: fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant())),
+    );
+```
+
+### Using tenant-aware middleware to apply global scopes
+
+It might be useful to apply global scopes to your Eloquent models while they are being used in your panel. This would allow you to forget about scoping your queries to the current tenant, and instead have the scoping applied automatically. To do this, you can create a new middleware class like `ApplyTenantScopes`:
+
+```bash
+php artisan make:middleware ApplyTenantScopes
+```
+
+Inside the `handle()` method, you can apply any global scopes that you wish:
+
+```php
+use App\Models\Author;
+use Closure;
+use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\Request;
+
+class ApplyTenantScopes
+{
+    public function handle(Request $request, Closure $next)
+    {
+        Author::addGlobalScope(
+            fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
+        );
+        
+        return $next($request);
+    }
+}
+```
+
+You can now [register this middleware](#applying-middleware-to-tenant-aware-routes) for all tenant-aware routes, and ensure that it is used across all Livewire AJAX requests by making it persistent:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMiddleware([
+            ApplyTenantScopes::class,
+        ], isPersistent: true);
 }
 ```

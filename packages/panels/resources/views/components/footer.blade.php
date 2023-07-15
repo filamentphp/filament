@@ -1,6 +1,6 @@
 {{ filament()->renderHook('footer.before') }}
 
-<div class="filament-footer flex items-center justify-center">
+<div class="fi-footer flex items-center justify-center">
     {{ filament()->renderHook('footer') }}
 </div>
 

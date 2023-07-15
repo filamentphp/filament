@@ -2,47 +2,48 @@
 
 namespace Filament\Resources\Pages\EditRecord\Concerns;
 
-use Filament\Resources\Pages\Concerns\HasActiveLocaleSwitcher;
-use Filament\Resources\Pages\Concerns\HasTranslatableRecordTitle;
+use Filament\Resources\Concerns\HasActiveLocaleSwitcher;
+use Filament\Resources\Pages\Concerns\HasTranslatableFormWithExistingRecordData;
+use Filament\Resources\Pages\Concerns\HasTranslatableRecord;
+use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Validation\ValidationException;
 
 trait Translatable
 {
     use HasActiveLocaleSwitcher;
-    use HasTranslatableRecordTitle;
+    use HasTranslatableFormWithExistingRecordData;
+    use HasTranslatableRecord;
 
-    protected function fillForm(): void
+    protected ?string $oldActiveLocale = null;
+
+    public function getTranslatableLocales(): array
     {
-        $this->callHook('beforeFill');
-
-        if ($this->activeLocale === null) {
-            $this->setActiveLocale();
-        }
-
-        $data = $this->record->attributesToArray();
-
-        foreach (static::getResource()::getTranslatableAttributes() as $attribute) {
-            $data[$attribute] = $this->record->getTranslation($attribute, $this->activeLocale);
-        }
-
-        $data = $this->mutateFormDataBeforeFill($data);
-
-        $this->form->fill($data);
-
-        $this->callHook('afterFill');
+        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
     }
 
-    protected function setActiveLocale(): void
+    public function save(bool $shouldRedirect = true): void
     {
-        $resource = static::getResource();
+        $this->authorizeAccess();
 
-        $availableLocales = array_keys($this->record->getTranslations($resource::getTranslatableAttributes()[0]));
-        $resourceLocales = $this->getTranslatableLocales();
-        $defaultLocale = $resource::getDefaultTranslatableLocale();
+        $originalActiveLocale = $this->activeLocale;
 
-        $this->activeLocale = in_array($defaultLocale, $availableLocales) ? $defaultLocale : array_intersect($availableLocales, $resourceLocales)[0] ?? $defaultLocale;
-        $this->record->setLocale($this->activeLocale);
+        try {
+            foreach ($this->getTranslatableLocales() as $locale) {
+                $this->setActiveLocale($locale);
+
+                /** @internal Read the DocBlock above the following method. */
+                $this->validateFormAndUpdateRecordAndCallHooks();
+            }
+        } catch (Halt $exception) {
+            return;
+        }
+
+        $this->setActiveLocale($originalActiveLocale);
+
+        /** @internal Read the DocBlock above the following method. */
+        $this->sendSavedNotificationAndRedirect(shouldRedirect: $shouldRedirect);
     }
 
     protected function handleRecordUpdate(Model $record, array $data): Model
@@ -58,13 +59,27 @@ trait Translatable
         return $record;
     }
 
-    public function updatedActiveLocale(): void
-    {
-        $this->fillForm();
-    }
-
     public function updatingActiveLocale(): void
     {
-        $this->save(shouldRedirect: false);
+        $this->oldActiveLocale = $this->activeLocale;
+    }
+
+    public function updatedActiveLocale(string $newActiveLocale): void
+    {
+        if (blank($this->oldActiveLocale)) {
+            return;
+        }
+
+        $this->setActiveLocale($this->oldActiveLocale);
+
+        try {
+            $this->form->validate();
+        } catch (ValidationException $exception) {
+            $this->activeLocale = $this->oldActiveLocale;
+
+            throw $exception;
+        }
+
+        $this->setActiveLocale($newActiveLocale);
     }
 }

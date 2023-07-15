@@ -4,26 +4,30 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Sötét mód bekapcsolása',
-        ],
-
-        'database_notifications' => [
-            'label' => 'Értesítések',
-        ],
-
-        'light_theme' => [
-            'label' => 'Világos mód bekapcsolása',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Kijelentkezés',
         ],
 
-        'user_menu' => [
+        'open_database_notifications' => [
+            'label' => 'Értesítések',
+        ],
+
+        'open_user_menu' => [
             'label' => 'felhasználói menü',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Sötét mód bekapcsolása',
+            ],
+
+            'light' => [
+                'label' => 'Világos mód bekapcsolása',
+            ],
+
         ],
 
     ],

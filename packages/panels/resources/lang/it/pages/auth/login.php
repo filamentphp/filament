@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Accedi al tuo account',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Accedi',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Indirizzo Email',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Ricordami',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Accedi',
+            ],
+
         ],
 
     ],

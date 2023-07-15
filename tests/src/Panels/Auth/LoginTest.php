@@ -10,7 +10,8 @@ use function Pest\Livewire\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
-    $this->get(Filament::getLoginUrl())->assertSuccessful();
+    $this->get(Filament::getLoginUrl())
+        ->assertSuccessful();
 });
 
 it('can authenticate', function () {

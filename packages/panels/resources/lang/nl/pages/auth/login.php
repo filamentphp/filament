@@ -6,11 +6,7 @@ return [
 
     'heading' => 'Inloggen op je account',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Inloggen',
-        ],
+    'actions' => [
 
         'register' => [
             'before' => 'of',
@@ -23,7 +19,7 @@ return [
 
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mailadres',
@@ -35,6 +31,14 @@ return [
 
         'remember' => [
             'label' => 'Herinner mij',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Inloggen',
+            ],
+
         ],
 
     ],

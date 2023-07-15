@@ -4,26 +4,22 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
+    'actions' => [
 
         'billing' => [
             'label' => 'Abonnement beheren',
         ],
 
-        'dark_theme' => [
-            'label' => 'Donkere weergave inschakelen',
+        'logout' => [
+            'label' => 'Uitloggen',
         ],
 
-        'database_notifications' => [
+        'open_database_notifications' => [
             'label' => 'Meldingen openen',
         ],
 
-        'light_theme' => [
-            'label' => 'Lichte weergave inschakelen',
-        ],
-
-        'logout' => [
-            'label' => 'Uitloggen',
+        'open_user_menu' => [
+            'label' => 'Gebruikersmenu',
         ],
 
         'sidebar' => [
@@ -38,8 +34,16 @@ return [
 
         ],
 
-        'user_menu' => [
-            'label' => 'Gebruikersmenu',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Donkere weergave inschakelen',
+            ],
+
+            'light' => [
+                'label' => 'Lichte weergave inschakelen',
+            ],
+
         ],
 
     ],

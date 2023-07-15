@@ -3,7 +3,6 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Exception;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -12,6 +11,8 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 
 class AttachAction extends Action
@@ -25,8 +26,6 @@ class AttachAction extends Action
     protected bool | Closure $canAttachAnother = true;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
-
-    protected string | Closure | null $recordTitleAttribute = null;
 
     /**
      * @var array<string> | Closure | null
@@ -50,9 +49,9 @@ class AttachAction extends Action
 
         $this->modalWidth('lg');
 
-        $this->extraModalActions(function (): array {
+        $this->extraModalFooterActions(function (): array {
             return $this->canAttachAnother() ? [
-                $this->makeExtraModalAction('attachAnother', ['another' => true])
+                $this->makeModalSubmitAction('attachAnother', ['another' => true])
                     ->label(__('filament-actions::attach.single.modal.actions.attach_another.label')),
             ] : [];
         });
@@ -65,9 +64,25 @@ class AttachAction extends Action
 
         $this->action(function (array $arguments, array $data, Form $form, Table $table): void {
             /** @var BelongsToMany $relationship */
-            $relationship = $table->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $record = $relationship->getRelated()->query()
+            $relationshipQuery = $relationship->getQuery();
+
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+            }
+
+            $record = $relationshipQuery
                 ->{is_array($data['recordId']) ? 'whereIn' : 'where'}($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
                 ->first();
 
@@ -113,13 +128,6 @@ class AttachAction extends Action
         return $this;
     }
 
-    public function recordTitleAttribute(string | Closure | null $attribute): static
-    {
-        $this->recordTitleAttribute = $attribute;
-
-        return $this;
-    }
-
     public function attachAnother(bool | Closure $condition = true): static
     {
         $this->canAttachAnother = $condition;
@@ -154,17 +162,6 @@ class AttachAction extends Action
         return (bool) $this->evaluate($this->isRecordSelectPreloaded);
     }
 
-    public function getRecordTitleAttribute(): string
-    {
-        $attribute = $this->evaluate($this->recordTitleAttribute);
-
-        if (blank($attribute)) {
-            throw new Exception('Attach table action must have a `recordTitleAttribute()` defined, which is used to identify records to attach.');
-        }
-
-        return $attribute;
-    }
-
     /**
      * @param  array<string> | Closure | null  $columns
      */
@@ -189,11 +186,27 @@ class AttachAction extends Action
 
         $getOptions = function (?string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var BelongsToMany $relationship */
-            $relationship = $table->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $titleAttribute = $this->getRecordTitleAttribute();
+            $relationshipQuery = $relationship->getQuery();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleAttribute);
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+            }
+
+            $titleAttribute = $relationshipQuery->qualifyColumn($this->getRecordTitleAttribute());
+
+            $relationshipQuery->orderBy($titleAttribute);
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
@@ -239,7 +252,7 @@ class AttachAction extends Action
                     fn (Builder $query): Builder => $query->whereDoesntHave(
                         $table->getInverseRelationship(),
                         fn (Builder $query): Builder => $query->where(
-                            $query->qualifyColumn($table->getRelationship()->getParent()->getKeyName()),
+                            $table->getRelationship()->getParent()->getQualifiedKeyName(),
                             $table->getRelationship()->getParent()->getKey(),
                         ),
                     ),
@@ -254,7 +267,27 @@ class AttachAction extends Action
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($table->getRelationship()->getRelated()->query()->find($value)))
+            ->getOptionLabelUsing(function ($value) use ($table): string {
+                $relationship = Relation::noConstraints(fn () => $table->getRelationship());
+
+                $relationshipQuery = $relationship->getQuery();
+
+                // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+                // those that are attached in the pivot table. We need to change this to a left join so
+                // that we can still get results when the relationship is not attached to the record.
+                if ($relationship instanceof BelongsToMany) {
+                    /** @var ?JoinClause $firstRelationshipJoinClause */
+                    $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                    if ($firstRelationshipJoinClause) {
+                        $firstRelationshipJoinClause->type = 'left';
+                    }
+
+                    $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                }
+
+                return $this->getRecordTitle($relationshipQuery->find($value));
+            })
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
             ->hiddenLabel();
 

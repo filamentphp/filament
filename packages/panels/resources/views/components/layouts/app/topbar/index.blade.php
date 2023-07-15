@@ -3,37 +3,41 @@
     'navigation',
 ])
 
-<header {{ $attributes->class(['filament-main-topbar sticky top-0 z-10 border-b bg-white dark:bg-gray-800 dark:border-gray-700']) }}>
-    <div class="flex items-center justify-between h-16 -mt-px px-2 sm:px-4 md:px-6 lg:px-8">
-        <div class="flex items-center flex-1">
+<header
+    {{ $attributes->class(['fi-topbar sticky top-0 z-20 bg-white shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)]']) }}
+>
+    <div
+        class="flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
+    >
+        <div class="flex flex-1 items-center">
             {{ filament()->renderHook('topbar.start') }}
 
             <button
                 x-cloak
                 x-data="{}"
-                x-bind:aria-label="$store.sidebar.isOpen ? '{{ __('filament::layout.buttons.sidebar.collapse.label') }}' : '{{ __('filament::layout.buttons.sidebar.expand.label') }}'"
+                x-bind:aria-label="
+                    $store.sidebar.isOpen
+                        ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
+                        : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
+                "
                 x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 @class([
-                    'filament-sidebar-open-button shrink-0 flex items-center justify-center w-10 h-10 rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
+                    'fi-sidebar-open-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
                     'lg:me-4' => filament()->isSidebarFullyCollapsibleOnDesktop(),
                     'lg:hidden' => ! (filament()->isSidebarFullyCollapsibleOnDesktop()),
                 ])
             >
                 <x-filament::icon
                     name="heroicon-o-bars-3"
-                    alias="panels::topbar.buttons.toggle-sidebar"
-                    color="text-primary-500"
-                    size="h-6 w-6"
+                    alias="panels::topbar.open-mobile-sidebar-button"
+                    class="h-6 w-6 text-primary-500"
                 />
             </button>
 
             @if (filament()->hasTopNavigation())
-                <div class="hidden me-12 lg:flex">
+                <div class="me-12 hidden lg:flex">
                     @if ($homeUrl = filament()->getHomeUrl())
-                        <a
-                            href="{{ $homeUrl }}"
-                            data-turbo="false"
-                        >
+                        <a href="{{ $homeUrl }}" data-turbo="false">
                             <x-filament::logo />
                         </a>
                     @else
@@ -42,7 +46,7 @@
                 </div>
 
                 @if (filament()->hasNavigation())
-                    <ul class="hidden items-center flex-wrap gap-3 lg:flex">
+                    <ul class="hidden flex-wrap items-center gap-x-1 lg:flex">
                         @foreach ($navigation as $group)
                             @if ($groupLabel = $group->getLabel())
                                 <x-filament::dropdown placement="bottom-start">
@@ -87,28 +91,36 @@
                     </ul>
                 @endif
             @elseif (count($breadcrumbs))
-                <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
+                <x-filament::layouts.app.topbar.breadcrumbs
+                    :breadcrumbs="$breadcrumbs"
+                />
             @endif
         </div>
 
-        <div class="flex items-center">
-            @if (filament()->getGlobalSearchProvider() !== null)
-                @livewire('filament.core.global-search')
-            @endif
+        @persist('topbar.end')
+            <div class="flex items-center">
+                @if (filament()->getGlobalSearchProvider() !== null)
+                    @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
+                @endif
 
-            @if (filament()->hasDatabaseNotifications())
-                @livewire('filament.core.database-notifications')
-            @endif
+                @if (filament()->hasDatabaseNotifications())
+                    @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
+                @endif
 
-            <x-filament::user-menu />
+                <x-filament::user-menu />
 
-            {{ filament()->renderHook('topbar.end') }}
-        </div>
+                {{ filament()->renderHook('topbar.end') }}
+            </div>
+        @endpersist
     </div>
 
     @if (filament()->hasTopNavigation() && count($breadcrumbs))
-        <div class="hidden border-t items-center h-12 px-8 lg:flex dark:border-gray-700">
-            <x-filament::layouts.app.topbar.breadcrumbs :breadcrumbs="$breadcrumbs" />
+        <div
+            class="hidden h-12 items-center border-t px-8 dark:border-gray-700 lg:flex"
+        >
+            <x-filament::layouts.app.topbar.breadcrumbs
+                :breadcrumbs="$breadcrumbs"
+            />
         </div>
     @endif
 </header>

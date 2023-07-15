@@ -4,22 +4,26 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Միացնել մութ ռեժիմը',
-        ],
-
-        'light_theme' => [
-            'label' => 'Միացնել լուսային ռեժիմը',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Դուրս գալ',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'Օգտագործողի ընտրացանկ',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Միացնել մութ ռեժիմը',
+            ],
+
+            'light' => [
+                'label' => 'Միացնել լուսային ռեժիմը',
+            ],
+
         ],
 
     ],

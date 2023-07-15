@@ -168,16 +168,16 @@ trait CanBeValidated
         return $this;
     }
 
-    public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $callback = null): static
+    public function exists(string | Closure | null $table = null, string | Closure | null $column = null, ?Closure $modifyRuleUsing = null): static
     {
-        $this->rule(static function (Field $component, ?string $model) use ($callback, $column, $table) {
+        $this->rule(static function (Field $component, ?string $model) use ($column, $modifyRuleUsing, $table) {
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
 
             $rule = Rule::exists($table, $column);
 
-            if ($callback) {
-                $rule = $component->evaluate($callback, [
+            if ($modifyRuleUsing) {
+                $rule = $component->evaluate($modifyRuleUsing, [
                     'rule' => $rule,
                 ]) ?? $rule;
             }
@@ -501,9 +501,9 @@ trait CanBeValidated
         return $this->fieldComparisonRule('same', $statePath, $isStatePathAbsolute);
     }
 
-    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, ?Closure $callback = null, bool $ignoreRecord = false): static
+    public function unique(string | Closure | null $table = null, string | Closure | null $column = null, Model | Closure $ignorable = null, bool $ignoreRecord = false, ?Closure $modifyRuleUsing = null): static
     {
-        $this->rule(static function (Field $component, ?string $model) use ($callback, $column, $ignorable, $table, $ignoreRecord) {
+        $this->rule(static function (Field $component, ?string $model) use ($column, $ignorable, $ignoreRecord, $modifyRuleUsing, $table) {
             $table = $component->evaluate($table) ?? $model;
             $column = $component->evaluate($column) ?? $component->getName();
             $ignorable = ($ignoreRecord && ! $ignorable) ?
@@ -519,8 +519,8 @@ trait CanBeValidated
                     ),
                 );
 
-            if ($callback) {
-                $rule = $component->evaluate($callback, [
+            if ($modifyRuleUsing) {
+                $rule = $component->evaluate($modifyRuleUsing, [
                     'rule' => $rule,
                 ]) ?? $rule;
             }

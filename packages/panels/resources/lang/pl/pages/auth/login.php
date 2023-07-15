@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Zaloguj się',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Zaloguj się',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Adres e-mail',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Zapamiętaj mnie',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Zaloguj się',
+            ],
+
         ],
 
     ],

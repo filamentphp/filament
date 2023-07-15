@@ -2,7 +2,7 @@
 
 return [
 
-    'buttons' => [
+    'actions' => [
 
         'logout' => [
             'label' => 'Log keluar',
@@ -10,6 +10,6 @@ return [
 
     ],
 
-    'welcome' => 'Selamat datang, :user',
+    'welcome' => 'Selamat datang',
 
 ];

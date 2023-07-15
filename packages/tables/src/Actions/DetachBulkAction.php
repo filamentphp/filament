@@ -35,6 +35,8 @@ class DetachBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-x-mark');
+
         $this->action(function (): void {
             $this->process(function (Collection $records, Table $table): void {
                 /** @var BelongsToMany $relationship */

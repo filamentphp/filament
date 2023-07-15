@@ -17,7 +17,8 @@ it('can render page', function () {
 
     $this->actingAs($userToVerify);
 
-    $this->get(Filament::getEmailVerificationPromptUrl())->assertSuccessful();
+    $this->get(Filament::getEmailVerificationPromptUrl())
+        ->assertSuccessful();
 });
 
 it('can resend notification', function () {

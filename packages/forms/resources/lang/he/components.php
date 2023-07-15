@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'ערכים מצומצמים',
-
         'actions' => [
 
             'clone' => [
@@ -98,8 +96,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'ערכים מצומצים',
 
         'actions' => [
 

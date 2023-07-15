@@ -8,7 +8,6 @@ export default function selectFormComponent({
     getOptionsUsing,
     getSearchResultsUsing,
     isAutofocused,
-    isDisabled,
     isMultiple,
     hasDynamicOptions,
     hasDynamicSearchResults,
@@ -180,6 +179,8 @@ export default function selectFormComponent({
 
             this.select.clearStore()
 
+            this.refreshPlaceholder()
+
             this.setChoices(choices)
 
             if (![null, undefined, ''].includes(this.state)) {
@@ -212,10 +213,6 @@ export default function selectFormComponent({
         },
 
         refreshPlaceholder: function () {
-            if (isDisabled) {
-                return
-            }
-
             if (isMultiple) {
                 return
             }
@@ -228,7 +225,9 @@ export default function selectFormComponent({
 
             this.$el.querySelector(
                 '.choices__list--single',
-            ).innerHTML = `<div class="choices__placeholder choices__item">${placeholder}</div>`
+            ).innerHTML = `<div class="choices__placeholder choices__item">${
+                placeholder ?? ''
+            }</div>`
         },
 
         formatState: function (state) {

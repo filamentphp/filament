@@ -1,15 +1,18 @@
-<x-dynamic-component
-    :component="$getEntryWrapperView()"
-    :entry="$entry"
->
-    <ul {{
-        $attributes
-            ->merge([
-                'id' => $getId(),
-            ], escape: false)
-            ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-infolists-repeatable-entry'])
-    }}>
+<x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
+    @php
+        $isWrappedInCard = $isWrappedInCard();
+    @endphp
+
+    <ul
+        {{
+            $attributes
+                ->merge([
+                    'id' => $getId(),
+                ], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+                ->class(['fi-in-repeatable'])
+        }}
+    >
         <x-filament::grid
             :default="$getGridColumns('default')"
             :sm="$getGridColumns('sm')"
@@ -17,10 +20,15 @@
             :lg="$getGridColumns('lg')"
             :xl="$getGridColumns('xl')"
             :two-xl="$getGridColumns('2xl')"
-            class="gap-6"
+            class="gap-2"
         >
             @foreach ($getChildComponentContainers() as $container)
-                <li class="block p-6 rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20">
+                <li
+                    @class([
+                        'block',
+                        'rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isWrappedInCard,
+                    ])
+                >
                     {{ $container }}
                 </li>
             @endforeach

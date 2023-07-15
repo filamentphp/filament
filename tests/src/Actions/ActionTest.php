@@ -11,7 +11,7 @@ uses(TestCase::class);
 it('can call an action', function () {
     livewire(Actions::class)
         ->callAction('simple')
-        ->assertEmitted('simple-called');
+        ->assertDispatched('simple-called');
 });
 
 it('can call an action with data', function () {
@@ -20,7 +20,7 @@ it('can call an action with data', function () {
             'payload' => $payload = Str::random(),
         ])
         ->assertHasNoActionErrors()
-        ->assertEmitted('data-called', [
+        ->assertDispatched('data-called', data: [
             'payload' => $payload,
         ]);
 });
@@ -31,7 +31,7 @@ it('can validate an action\'s data', function () {
             'payload' => null,
         ])
         ->assertHasActionErrors(['payload' => ['required']])
-        ->assertNotEmitted('data-called');
+        ->assertNotDispatched('data-called');
 });
 
 it('can set default action data when mounted', function () {
@@ -48,7 +48,7 @@ it('can mount an action with arguments', function () {
             'payload' => $payload = Str::random(),
         ])
         ->callMountedAction()
-        ->assertEmitted('arguments-called', [
+        ->assertDispatched('arguments-called', arguments: [
             'payload' => $payload,
         ]);
 });
@@ -58,7 +58,7 @@ it('can call an action with arguments', function () {
         ->callAction('arguments', arguments: [
             'payload' => $payload = Str::random(),
         ])
-        ->assertEmitted('arguments-called', [
+        ->assertDispatched('arguments-called', arguments: [
             'payload' => $payload,
         ]);
 });
@@ -66,7 +66,7 @@ it('can call an action with arguments', function () {
 it('can call an action and halt', function () {
     livewire(Actions::class)
         ->callAction('halt')
-        ->assertEmitted('halt-called')
+        ->assertDispatched('halt-called')
         ->assertActionHalted('halt');
 });
 

@@ -1,6 +1,6 @@
-const preset = require('./tailwind.config.preset')
+import preset from './tailwind.config.preset'
 
-module.exports = {
+export default {
     presets: [preset],
     content: ['./packages/**/*.blade.php'],
 }

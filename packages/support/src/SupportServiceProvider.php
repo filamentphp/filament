@@ -5,20 +5,22 @@ namespace Filament\Support;
 use Composer\InstalledVersions;
 use Filament\Support\Assets\AssetManager;
 use Filament\Support\Assets\Js;
+use Filament\Support\Colors\ColorManager;
 use Filament\Support\Commands\AssetsCommand;
 use Filament\Support\Commands\CheckTranslationsCommand;
 use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
-use HtmlSanitizer\Sanitizer;
-use HtmlSanitizer\SanitizerInterface;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizer;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerConfig;
+use Symfony\Component\HtmlSanitizer\HtmlSanitizerInterface;
 
 class SupportServiceProvider extends PackageServiceProvider
 {
@@ -41,23 +43,27 @@ class SupportServiceProvider extends PackageServiceProvider
     {
         $this->app->scoped(
             AssetManager::class,
-            function () {
-                return new AssetManager();
-            },
+            fn () => new AssetManager(),
+        );
+
+        $this->app->scoped(
+            ColorManager::class,
+            fn () => new ColorManager(),
         );
 
         $this->app->scoped(
             IconManager::class,
-            function () {
-                return new IconManager();
-            },
+            fn () => new IconManager(),
         );
 
         $this->app->scoped(
-            SanitizerInterface::class,
-            function () {
-                return Sanitizer::create(require __DIR__ . '/../config/html-sanitizer.php');
-            },
+            HtmlSanitizerInterface::class,
+            fn (): HtmlSanitizer => new HtmlSanitizer(
+                (new HtmlSanitizerConfig())
+                    ->allowSafeElements()
+                    ->allowAttribute('class', allowedElements: '*')
+                    ->allowAttribute('style', allowedElements: '*'),
+            ),
         );
     }
 
@@ -81,7 +87,7 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         Str::macro('sanitizeHtml', function (string $html): string {
-            return app(SanitizerInterface::class)->sanitize($html);
+            return app(HtmlSanitizerInterface::class)->sanitize($html);
         });
 
         Stringable::macro('sanitizeHtml', function (): Stringable {

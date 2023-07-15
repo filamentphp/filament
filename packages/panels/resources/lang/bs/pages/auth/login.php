@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Prijavite se na svoj račun',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Prijavite se',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mail adresa',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Zapamti me',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Prijavite se',
+            ],
+
         ],
 
     ],

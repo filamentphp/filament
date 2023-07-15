@@ -4,10 +4,11 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\Contracts\HasAffixActions;
+use Filament\Support\Concerns\CanBeCopied;
 
 class TextEntry extends Entry implements HasAffixActions
 {
-    use Concerns\CanBeCopied;
+    use CanBeCopied;
     use Concerns\CanFormatState;
     use Concerns\HasAffixes;
     use Concerns\HasColor;
@@ -20,8 +21,6 @@ class TextEntry extends Entry implements HasAffixActions
      * @var view-string
      */
     protected string $view = 'filament-infolists::components.text-entry';
-
-    protected bool | Closure $canWrap = false;
 
     protected bool | Closure $isBadge = false;
 
@@ -61,23 +60,11 @@ class TextEntry extends Entry implements HasAffixActions
         return $this;
     }
 
-    public function wrap(bool | Closure $condition = true): static
-    {
-        $this->canWrap = $condition;
-
-        return $this;
-    }
-
     public function prose(bool | Closure $condition = true): static
     {
         $this->isProse = $condition;
 
         return $this;
-    }
-
-    public function canWrap(): bool
-    {
-        return (bool) $this->evaluate($this->canWrap);
     }
 
     public function isBadge(): bool

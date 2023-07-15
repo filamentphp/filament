@@ -60,7 +60,7 @@ public static function getNavigationBadge(): ?string
 }
 ```
 
-If a badge value is returned by `getNavigationBadge()`, it will display using the primary color by default. To style the badge contextually, return either `danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning` from the `getNavigationBadgeColor()` method:
+If a badge value is returned by `getNavigationBadge()`, it will display using the primary color by default. To style the badge contextually, return either `danger`, `gray`, `info`, `primary`, `success` or `warning` from the `getNavigationBadgeColor()` method:
 
 ```php
 public static function getNavigationBadgeColor(): ?string
@@ -199,6 +199,19 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Conditionally hiding navigation items
+
+You can also conditionally hide a navigation item by using the `visible()` or `hidden()` methods, passing in a condition to check:
+
+```php
+use Filament\Navigation\NavigationItem;
+
+NavigationItem::make('Analytics')
+    ->visible(auth()->user()->can('view-analytics'))
+    // or
+    ->hidden(! auth()->user()->can('view-analytics')),
+```
+
 ## Disabling resource or page navigation items
 
 To prevent resources or pages from showing up in navigation, you may use:
@@ -308,9 +321,9 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Customizing the account link
+### Customizing the profile link
 
-To customize the user account link at the start of the user menu, register a new item with the `account` array key:
+To customize the user profile link at the start of the user menu, register a new item with the `profile` array key:
 
 ```php
 use Filament\Navigation\MenuItem;
@@ -321,15 +334,17 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->userMenuItems([
-            'account' => MenuItem::make()->url(route('filament.pages.account')),
+            'profile' => MenuItem::make()->label('Edit profile'),
             // ...
         ]);
 }
 ```
 
+For more information on creating a profile page, check out the [authentication features documentation](users#authentication-features).
+
 ### Customizing the logout link
 
-To customize the user account link at the end of the user menu, register a new item with the `logout` array key:
+To customize the user logout link at the end of the user menu, register a new item with the `logout` array key:
 
 ```php
 use Filament\Navigation\MenuItem;

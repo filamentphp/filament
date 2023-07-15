@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Iniciar sessão',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Login',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mail',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Manter sessão',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Login',
+            ],
+
         ],
 
     ],

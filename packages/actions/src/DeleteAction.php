@@ -32,6 +32,8 @@ class DeleteAction extends Action
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-trash');
+
         $this->keyBindings(['mod+d']);
 
         $this->hidden(static function (Model $record): bool {

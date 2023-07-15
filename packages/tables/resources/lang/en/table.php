@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'and :count more',
         ],
 
-        'messages' => [
-            'copied' => 'Copied',
-        ],
-
     ],
 
     'fields' => [
@@ -52,7 +48,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Go to page :page',
@@ -98,7 +94,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Finish reordering records',
@@ -134,7 +130,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Remove filter',
@@ -205,7 +201,7 @@ return [
 
         'selected_count' => '1 record selected.|:count records selected.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Select all :count',

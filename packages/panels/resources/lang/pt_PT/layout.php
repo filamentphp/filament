@@ -4,19 +4,28 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-        'dark_theme' => [
-            'label' => 'Alternar para o modo escuro',
-        ],
-        'light_theme' => [
-            'label' => 'Alternar para o modo claro',
-        ],
+    'actions' => [
+
         'logout' => [
             'label' => 'Terminar Sessão',
         ],
-        'user_menu' => [
+
+        'open_user_menu' => [
             'label' => 'menu do usuário',
         ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Alternar para o modo escuro',
+            ],
+
+            'light' => [
+                'label' => 'Alternar para o modo claro',
+            ],
+
+        ],
+
     ],
 
 ];

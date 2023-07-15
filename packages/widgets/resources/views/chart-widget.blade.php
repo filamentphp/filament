@@ -1,64 +1,65 @@
 @php
     $heading = $this->getHeading();
-    $subheading = $this->getSubheading();
+    $description = $this->getDescription();
     $filters = $this->getFilters();
 @endphp
 
-<x-filament-widgets::widget class="filament-widgets-chart-widget">
-    <x-filament::card>
-        @if ($heading || $filters)
-            <div class="flex items-center justify-between gap-8">
-                <x-filament::card.header>
-                    @if ($heading)
-                        <x-filament::card.heading>
-                            {{ $heading }}
-                        </x-filament::card.heading>
-                    @endif
-
-                    @if ($subheading)
-                        <x-filament::card.subheading>
-                            {{ $subheading }}
-                        </x-filament::card.subheading>
-                    @endif
-                </x-filament::card.header>
-
-                @if ($filters)
-                    <div class="flex items-center gap-3">
-                        @if ($hasFilterLoadingIndicator)
-                            <x-filament::loading-indicator
-                                class="h-8 w-8 text-gray-500"
-                                wire:loading
-                                wire:target="filter"
-                            />
+<x-filament-widgets::widget>
+    <x-filament::card class="fi-wi-chart grid gap-y-4">
+        @if ($heading || $description || $filters)
+            <div class="flex items-center gap-x-4">
+                @if ($heading || $description)
+                    <div class="grid gap-y-1">
+                        @if ($heading)
+                            <h3 class="text-base font-semibold leading-6">
+                                {{ $heading }}
+                            </h3>
                         @endif
 
-                        <select
-                            class="text-gray-900 border-gray-300 block h-10 transition duration-75 rounded-lg shadow-sm outline-none focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:text-gray-200 dark:focus:border-primary-500"
-                            wire:model="filter"
-                            wire:loading.class="animate-pulse"
+                        @if ($description)
+                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                {{ $description }}
+                            </p>
+                        @endif
+                    </div>
+                @endif
+
+                @if ($filters)
+                    <x-filament-forms::affixes
+                        inline-prefix
+                        wire:target="filter"
+                        class="ml-auto"
+                    >
+                        <x-filament::input.select
+                            inline-prefix
+                            wire:model.live="filter"
                         >
                             @foreach ($filters as $value => $label)
                                 <option value="{{ $value }}">
                                     {{ $label }}
                                 </option>
                             @endforeach
-                        </select>
-                    </div>
+                        </x-filament::input.select>
+                    </x-filament-forms::affixes>
                 @endif
             </div>
         @endif
 
-        <div @if ($pollingInterval = $this->getPollingInterval()) wire:poll.{{ $pollingInterval }}="updateChartData" @endif>
+        <div
+            @if ($pollingInterval = $this->getPollingInterval())
+                wire:poll.{{ $pollingInterval }}="updateChartData"
+            @endif
+        >
             <div
-                x-ignore
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
-                x-data="chart({
-                    cachedData: @js($this->getCachedData()),
-                    options: @js($this->getOptions()),
-                    type: @js($this->getType()),
-                })"
                 wire:ignore
+                x-data="chart({
+                            cachedData: @js($this->getCachedData()),
+                            options: @js($this->getOptions()),
+                            type: @js($this->getType()),
+                        })"
+                x-ignore
             >
                 <canvas
                     x-ref="canvas"
@@ -69,12 +70,12 @@
 
                 <span
                     x-ref="backgroundColorElement"
-                    class="text-gray-50 dark:text-gray-300"
+                    class="text-gray-700 dark:text-gray-200"
                 ></span>
 
                 <span
                     x-ref="borderColorElement"
-                    class="text-gray-500 dark:text-gray-200"
+                    class="text-gray-950/50 dark:text-white/60"
                 ></span>
             </div>
         </div>

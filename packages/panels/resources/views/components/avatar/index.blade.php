@@ -1,18 +1,20 @@
 @props([
-    'size' => 'md',
+    'size' => null,
     'src',
 ])
 
 <div
-    {{ $attributes->class([
-        'rounded-full bg-gray-200 bg-cover bg-center dark:bg-gray-900',
-        match ($size) {
-            'xs' => 'w-6 h-6',
-            'sm' => 'w-8 h-8',
-            'md' => 'w-10 h-10',
-            'lg' => 'w-12 h-12',
-            default => $size,
-        },
-    ]) }}
-    style="background-image: url('{{ $src }}')"
+    {{
+        $attributes
+            ->class([
+                'rounded-full bg-cover bg-center ring-1 ring-inset ring-gray-950/10 dark:ring-white/20',
+                match ($size) {
+                    null => 'h-9 w-9',
+                    default => $size,
+                },
+            ])
+            ->style([
+                "background-image: url('{$src}')",
+            ])
+    }}
 ></div>

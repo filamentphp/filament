@@ -2,9 +2,11 @@
 
 namespace Filament\Infolists\Components;
 
+use Filament\Support\Concerns\CanBeCopied;
+
 class ColorEntry extends Entry
 {
-    use Concerns\CanBeCopied;
+    use CanBeCopied;
 
     /**
      * @var view-string

@@ -4,27 +4,32 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Attiva modalità scura',
-        ],
-
-        'database_notifications' => [
-            'label' => 'Apri notifiche',
-        ],
-
-        'light_theme' => [
-            'label' => 'Attiva modalità chiara',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Disconnetti',
         ],
 
-        'user_menu' => [
+        'open_database_notifications' => [
+            'label' => 'Apri notifiche',
+        ],
+
+        'open_user_menu' => [
             'label' => 'Menu utente',
         ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Attiva modalità scura',
+            ],
+
+            'light' => [
+                'label' => 'Attiva modalità chiara',
+            ],
+
+        ],
+
     ],
 
 ];

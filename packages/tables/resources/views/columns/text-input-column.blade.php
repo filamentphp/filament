@@ -8,30 +8,37 @@
         error: undefined,
         state: @js($state),
         isLoading: false,
+        isEditing: false,
     }"
     x-init="
-        Livewire.hook('message.processed', (component) => {
-            if (component.component.id !== @js($this->id)) {
-                return
-            }
+        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+            succeed(({ snapshot, effect }) => {
+                if (component.id !== @js($this->getId())) {
+                    return
+                }
 
-            if (! $refs.newState) {
-                return
-            }
+                if (isEditing) {
+                    return
+                }
 
-            let newState = $refs.newState.value
+                if (! $refs.newState) {
+                    return
+                }
 
-            if (state === newState) {
-                return
-            }
+                let newState = $refs.newState.value
 
-            state = newState
+                if (state === newState) {
+                    return
+                }
+
+                state = newState
+            })
         })
     "
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-tables-text-input-column'])
+            ->class(['fi-ta-text-input'])
     }}
 >
     <input
@@ -42,9 +49,15 @@
 
     <input
         x-model="state"
+        x-on:focus="isEditing = true"
+        x-on:blur="isEditing = false"
         x-on:change{{ $type === 'number' ? '.debounce.1s' : null }}="
             isLoading = true
-            response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), $event.target.value)
+            response = await $wire.updateTableColumnState(
+                @js($getName()),
+                @js($recordKey),
+                $event.target.value,
+            )
             error = response?.error ?? undefined
             if (! error) state = response
             isLoading = false
@@ -54,7 +67,8 @@
         x-tooltip="error"
         x-bind:class="{
             'border-gray-300 dark:border-gray-600': ! error,
-            'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400': error,
+            'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400':
+                error,
         }"
         {{
             $attributes
@@ -68,7 +82,7 @@
                     'type' => $type,
                 ])
                 ->class([
-                    'ms-0.5 text-gray-900 inline-block transition duration-75 rounded-lg shadow-sm outline-none sm:text-sm focus:ring-primary-500 focus:ring-1 focus:ring-inset focus:border-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500',
+                    'ms-0.5 inline-block rounded-lg text-gray-950 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-1 focus:ring-inset focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 sm:text-sm',
                     match ($getAlignment()) {
                         'center' => 'text-center',
                         'end' => 'text-end',

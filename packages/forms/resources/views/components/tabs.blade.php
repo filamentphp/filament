@@ -1,6 +1,5 @@
 <div
     x-data="{
-
         tab: null,
 
         init: function () {
@@ -23,29 +22,29 @@
 
             history.pushState(null, document.title, url.toString())
         },
-
     }"
     x-cloak
+    wire:ignore.self
     {{
         $attributes
             ->merge([
                 'id' => $getId(),
-                'wire:key' => "{$this->id}.{$getStatePath()}." . \Filament\Forms\Components\Tabs::class . '.container',
+                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \Filament\Forms\Components\Tabs::class . '.container',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['filament-forms-tabs-component rounded-xl shadow-sm bg-white ring-1 ring-gray-950/5 dark:bg-gray-800 dark:ring-white/20'])
+            ->class(['fi-fo-tabs rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'])
     }}
 >
     <input
         type="hidden"
-        value='{{
+        value="{{
             collect($getChildComponentContainer()->getComponents())
                 ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => $tab->isVisible())
                 ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
                 ->values()
                 ->toJson()
-        }}'
+        }}"
         x-ref="tabsData"
     />
 

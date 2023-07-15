@@ -1,6 +1,7 @@
 ---
 title: Advanced
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Pagination
 
@@ -103,6 +104,8 @@ If you're using mass assignment protection on your model, you will also need to 
 
 When making the table reorderable, a new button will be available on the table to toggle reordering.
 
+<AutoScreenshot name="tables/reordering" alt="Table with reorderable rows" version="3.x" />
+
 The `reorderable()` method accepts the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may use this instead:
 
 ```php
@@ -128,6 +131,27 @@ public function table(Table $table): Table
         ->paginatedWhileReordering();
 }
 ```
+
+### Customizing the reordering trigger action
+
+To customize the reordering trigger button, you may use the `reorderRecordsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->reorderRecordsTriggerAction(
+            fn (Action $action, bool $isReordering) => $action
+                ->button()
+                ->label($isReordering ? 'Disable reordering' : 'Enable reordering'),
+        );
+}
+```
+
+<AutoScreenshot name="tables/reordering/custom-trigger-action" alt="Table with reorderable rows and a custom trigger action" version="3.x" />
 
 ## Polling table content
 
@@ -188,14 +212,34 @@ With Filament, this allows you to store your table's filters, sort, search and p
 To store the filters, sorting, and search state of your table in the query string:
 
 ```php
-protected $queryString = [
-    'isTableReordering' => ['except' => false],
-    'tableFilters',
-    'tableSortColumn' => ['except' => ''],
-    'tableSortDirection' => ['except' => ''],
-    'tableSearch' => ['except' => ''],
-    'tableColumnSearches',
-];
+use Livewire\Attributes\Url;
+
+#[Url]
+public bool $isTableReordering = false;
+
+/**
+ * @var array<string, mixed> | null
+ */
+#[Url]
+public ?array $tableFilters = null;
+
+#[Url]
+public ?string $tableGrouping = null;
+
+#[Url]
+public ?string $tableGroupingDirection = null;
+
+/**
+ * @var ?string
+ */
+#[Url]
+public $tableSearch = '';
+
+#[Url]
+public ?string $tableSortColumn = null;
+
+#[Url]
+public ?string $tableSortDirection = null;
 ```
 
 ## Styling table rows
@@ -213,6 +257,8 @@ public function table(Table $table): Table
         ->striped();
 }
 ```
+
+<AutoScreenshot name="tables/striped" alt="Table with striped rows" version="3.x" />
 
 ### Custom row classes
 

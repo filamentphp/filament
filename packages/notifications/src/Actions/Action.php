@@ -49,8 +49,8 @@ class Action extends StaticAction implements Arrayable, Groupable
             'color' => $this->getColor(),
             'event' => $this->getEvent(),
             'eventData' => $this->getEventData(),
-            'emitDirection' => $this->getEmitDirection(),
-            'emitToComponent' => $this->getEmitToComponent(),
+            'dispatchDirection' => $this->getDispatchDirection(),
+            'dispatchToComponent' => $this->getDispatchToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
@@ -89,11 +89,10 @@ class Action extends StaticAction implements Arrayable, Groupable
         $static->color($data['color'] ?? null);
         $static->disabled($data['isDisabled'] ?? false);
 
-        match ($data['emitDirection'] ?? null) {
-            'self' => $static->emitSelf($data['event'] ?? null, $data['eventData'] ?? []),
-            'up' => $static->emitUp($data['event'] ?? null, $data['eventData'] ?? []),
-            'to' => $static->emitTo($data['emitToComponent'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
-            default => $static->emit($data['event'] ?? null, $data['eventData'] ?? [])
+        match ($data['dispatchDirection'] ?? null) {
+            'self' => $static->dispatchSelf($data['event'] ?? null, $data['eventData'] ?? []),
+            'to' => $static->dispatchTo($data['dispatchToComponent'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
+            default => $static->dispatch($data['event'] ?? null, $data['eventData'] ?? [])
         };
 
         $static->extraAttributes($data['extraAttributes'] ?? []);

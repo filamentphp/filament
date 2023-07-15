@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'og :count flere',
         ],
 
-        'messages' => [
-            'copied' => 'Kopieret',
-        ],
-
     ],
 
     'fields' => [
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Gå til side :page',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => 'Filtrer',
@@ -79,7 +75,7 @@ return [
 
     'selection_indicator' => [
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Vælg alle :count',

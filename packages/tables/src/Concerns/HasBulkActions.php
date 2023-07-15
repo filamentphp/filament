@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use function Livewire\store;
 
 /**
  * @property Form $mountedTableBulkActionForm
@@ -78,7 +79,7 @@ trait HasBulkActions
         } catch (Cancel $exception) {
         }
 
-        if (filled($this->redirectTo)) {
+        if (store($this)->has('redirect')) {
             return $result;
         }
 
@@ -88,9 +89,7 @@ trait HasBulkActions
         $action->resetArguments();
         $action->resetFormData();
 
-        $this->dispatchBrowserEvent('close-modal', [
-            'id' => "{$this->id}-table-bulk-action",
-        ]);
+        $this->closeTableBulkActionModal();
 
         return $result;
     }
@@ -113,10 +112,7 @@ trait HasBulkActions
             return null;
         }
 
-        $this->cacheForm(
-            'mountedTableBulkActionForm',
-            fn () => $this->getMountedTableBulkActionForm(),
-        );
+        $this->cacheMountedTableBulkActionForm();
 
         try {
             $hasForm = $this->mountedTableBulkActionHasForm();
@@ -135,8 +131,7 @@ trait HasBulkActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->mountedTableBulkAction = null;
-            $this->selectedTableRecords = [];
+            $this->resetMountedTableBulkActionProperties();
 
             return null;
         }
@@ -147,11 +142,23 @@ trait HasBulkActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-table-bulk-action",
-        ]);
+        $this->openTableBulkActionModal();
 
         return null;
+    }
+
+    protected function cacheMountedTableBulkActionForm(): void
+    {
+        $this->cacheForm(
+            'mountedTableBulkActionForm',
+            fn () => $this->getMountedTableBulkActionForm(),
+        );
+    }
+
+    protected function resetMountedTableBulkActionProperties(): void
+    {
+        $this->mountedTableBulkAction = null;
+        $this->selectedTableRecords = [];
     }
 
     public function mountedTableBulkActionShouldOpenModal(): bool
@@ -162,9 +169,9 @@ trait HasBulkActions
             return false;
         }
 
-        return $action->getModalSubheading() ||
+        return $action->getModalDescription() ||
             $action->getModalContent() ||
-            $action->getModalFooter() ||
+            $action->getModalContentFooter() ||
             $action->getInfolist() ||
             $this->mountedTableBulkActionHasForm();
     }
@@ -176,7 +183,7 @@ trait HasBulkActions
 
     public function deselectAllTableRecords(): void
     {
-        $this->emitSelf('deselectAllTableRecords');
+        $this->dispatch('deselectAllTableRecords');
     }
 
     public function getAllSelectableTableRecordKeys(): array
@@ -245,7 +252,7 @@ trait HasBulkActions
         $table = $this->getTable();
 
         if (! ($table->getRelationship() instanceof BelongsToMany && $table->allowsDuplicates())) {
-            $query = $table->getQuery()->whereIn(app($table->getModel())->getQualifiedKeyName(), $this->selectedTableRecords);
+            $query = $table->getQuery()->whereKey($this->selectedTableRecords);
             $this->applySortingToTableQuery($query);
 
             foreach ($this->getTable()->getColumns() as $column) {
@@ -272,6 +279,16 @@ trait HasBulkActions
         return $this->cachedSelectedTableRecords = $this->hydratePivotRelationForTableRecords(
             $table->selectPivotDataInQuery($relationship)->get(),
         );
+    }
+
+    protected function closeTableBulkActionModal(): void
+    {
+        $this->dispatch('close-modal', id: "{$this->getId()}-table-bulk-action");
+    }
+
+    protected function openTableBulkActionModal(): void
+    {
+        $this->dispatch('open-modal', id: "{$this->getId()}-table-bulk-action");
     }
 
     /**

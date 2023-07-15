@@ -1,6 +1,7 @@
 ---
 title: Placeholder
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -9,9 +10,11 @@ Placeholders can be used to render text-only "fields" within your forms. Each pl
 ```php
 use Filament\Forms\Components\Placeholder;
 
-Placeholder::make('label')
-    ->content('Content, displayed underneath the label')
+Placeholder::make('created')
+    ->content($this->getRecord()->created_at->toFormattedDateString())
 ```
+
+<AutoScreenshot name="forms/layout/placeholder/simple" alt="Placeholder" version="3.x" />
 
 > **Important:** All form fields require a unique name. That also applies to Placeholders!
 

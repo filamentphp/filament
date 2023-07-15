@@ -35,6 +35,8 @@ class DeleteBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-trash');
+
         $this->action(function (): void {
             $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()));
 

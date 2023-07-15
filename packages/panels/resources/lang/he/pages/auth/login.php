@@ -6,15 +6,7 @@ return [
 
     'heading' => 'התחבר לחשבון שלך',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'התחבר',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'כתובת דואר אלקטרוני',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'זכור אותי',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'התחבר',
+            ],
+
         ],
 
     ],

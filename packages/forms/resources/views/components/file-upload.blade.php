@@ -14,19 +14,13 @@
     @endphp
 
     <div
-        x-ignore
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
             acceptedFileTypes: @js($getAcceptedFileTypes()),
-            cropperEmptyFillColor: '{{ $getCropperEmptyFillColor() }}',
-            cropperMode: {{ $getCropperMode() }},
-            cropperViewportHeight: @js($getCropperViewportHeight()),
-            cropperViewportWidth: @js($getCropperViewportWidth()),
             deleteUploadedFileUsing: async (fileKey) => {
                 return await $wire.deleteUploadedFile(@js($statePath), fileKey)
             },
-            disabled: @js($isDisabled),
             getUploadedFilesUsing: async () => {
                 return await $wire.getFormUploadedFiles(@js($statePath))
             },
@@ -36,7 +30,7 @@
             imageResizeTargetHeight: @js($imageResizeTargetHeight),
             imageResizeTargetWidth: @js($imageResizeTargetWidth),
             imageResizeUpscale: @js($getImageResizeUpscale()),
-            isAvatar: @js($isAvatar),
+            isAvatar: {{ $isAvatar ? 'true' : 'false' }},
             isCroppable: @js($isCroppable),
             isDownloadable: @js($isDownloadable()),
             isOpenable: @js($isOpenable()),
@@ -63,12 +57,19 @@
             uploadButtonPosition: @js($getUploadButtonPosition()),
             uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
             uploadUsing: (fileKey, file, success, error, progress) => {
-                $wire.upload(`{{ $statePath }}.${fileKey}`, file, () => {
-                    success(fileKey)
-                }, error, progress)
+                $wire.upload(
+                    `{{ $statePath }}.${fileKey}`,
+                    file,
+                    () => {
+                        success(fileKey)
+                    },
+                    error,
+                    progress,
+                )
             },
         })"
         wire:ignore
+        x-ignore
         {{
             $attributes
                 ->merge([
@@ -77,7 +78,7 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
-                    'filament-forms-file-upload-component flex',
+                    'fi-fo-file-upload flex',
                     match ($getAlignment()) {
                         'center' => 'justify-center',
                         'end' => 'justify-end',
@@ -89,8 +90,8 @@
         }}
     >
         <div
-            style="min-height: {{ $isAvatar ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }}"
             @class([
+                'h-full',
                 'w-32' => $isAvatar,
                 'w-full' => ! $isAvatar,
             ])
@@ -101,7 +102,6 @@
                     $getExtraInputAttributeBag()
                         ->merge([
                             'disabled' => $isDisabled,
-                            'dusk' => "filament.forms.{$statePath}",
                             'multiple' => $isMultiple(),
                             'type' => 'file',
                         ], escape: false)

@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Log masuk ke akaun anda',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Log masuk',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Emel',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Ingat saya',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Log masuk',
+            ],
+
         ],
 
     ],

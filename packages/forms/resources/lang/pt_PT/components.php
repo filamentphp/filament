@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Conteúdo recolhido',
-
         'actions' => [
 
             'add' => [
@@ -94,8 +92,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Conteúdo recolhido',
 
         'actions' => [
 

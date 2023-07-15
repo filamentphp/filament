@@ -36,13 +36,6 @@ class ViewRecord extends Page implements HasInfolists
      */
     public ?array $data = [];
 
-    /**
-     * @var array<int | string, string | array<mixed>>
-     */
-    protected $queryString = [
-        'activeRelationManager',
-    ];
-
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament::resources/pages/view-record.breadcrumb');
@@ -59,11 +52,9 @@ class ViewRecord extends Page implements HasInfolists
 
         $this->authorizeAccess();
 
-        if ($this->hasInfolist()) {
-            return;
+        if (! $this->hasInfolist()) {
+            $this->fillForm();
         }
-
-        $this->fillForm();
     }
 
     protected function authorizeAccess(): void
@@ -80,9 +71,20 @@ class ViewRecord extends Page implements HasInfolists
 
     protected function fillForm(): void
     {
-        $this->callHook('beforeFill');
-
         $data = $this->getRecord()->attributesToArray();
+
+        /** @internal Read the DocBlock above the following method. */
+        $this->fillFormWithDataAndCallHooks($data);
+    }
+
+    /**
+     * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function fillFormWithDataAndCallHooks(array $data): void
+    {
+        $this->callHook('beforeFill');
 
         $data = $this->mutateFormDataBeforeFill($data);
 
@@ -188,10 +190,15 @@ class ViewRecord extends Page implements HasInfolists
                 ->operation('view')
                 ->disabled()
                 ->model($this->getRecord())
-                ->statePath('data')
+                ->statePath($this->getFormStatePath())
                 ->columns($this->hasInlineLabels() ? 1 : 2)
                 ->inlineLabel($this->hasInlineLabels()),
         );
+    }
+
+    public function getFormStatePath(): ?string
+    {
+        return 'data';
     }
 
     public function infolist(Infolist $infolist): Infolist

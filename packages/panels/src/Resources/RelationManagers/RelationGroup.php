@@ -4,15 +4,12 @@ namespace Filament\Resources\RelationManagers;
 
 use Closure;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\HasIcon;
 use Illuminate\Database\Eloquent\Model;
 
 class RelationGroup extends Component
 {
-    protected string | Closure | null $icon = null;
-
-    protected string | Closure | null $iconPosition = null;
-
-    protected string | Closure | null $iconColor = null;
+    use HasIcon;
 
     protected string | Closure | null $badge = null;
 
@@ -21,7 +18,7 @@ class RelationGroup extends Component
     protected ?string $pageClass = null;
 
     /**
-     * @param  array<class-string>  $managers
+     * @param  array<class-string<RelationManager> | RelationManagerConfiguration>  $managers
      */
     public function __construct(
         protected string | Closure $label,
@@ -30,7 +27,7 @@ class RelationGroup extends Component
     }
 
     /**
-     * @param  array<class-string>  $managers
+     * @param  array<class-string<RelationManager> | RelationManagerConfiguration>  $managers
      */
     public static function make(string | Closure $label, array | Closure $managers): static
     {
@@ -61,34 +58,13 @@ class RelationGroup extends Component
         return $this;
     }
 
-    public function icon(string | Closure | null $icon): static
-    {
-        $this->icon = $icon;
-
-        return $this;
-    }
-
-    public function iconPosition(string | Closure | null $position): static
-    {
-        $this->iconPosition = $position;
-
-        return $this;
-    }
-
-    public function iconColor(string | Closure | null $color): static
-    {
-        $this->iconColor = $color;
-
-        return $this;
-    }
-
     public function getLabel(): string
     {
         return $this->evaluate($this->label);
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<RelationManager> | RelationManagerConfiguration>
      */
     public function getManagers(): array
     {
@@ -101,28 +77,26 @@ class RelationGroup extends Component
 
         return array_filter(
             $this->managers,
-            fn (string $manager): bool => $manager::canViewForRecord($ownerRecord, $pageClass),
+            fn (string | RelationManagerConfiguration $manager): bool => $this->normalizeRelationManagerClass($manager)::canViewForRecord($ownerRecord, $pageClass),
         );
+    }
+
+    /**
+     * @param  class-string<RelationManager> | RelationManagerConfiguration  $manager
+     * @return class-string<RelationManager>
+     */
+    protected function normalizeRelationManagerClass(string | RelationManagerConfiguration $manager): string
+    {
+        if ($manager instanceof RelationManagerConfiguration) {
+            return $manager->relationManager;
+        }
+
+        return $manager;
     }
 
     public function getBadge(): ?string
     {
         return $this->evaluate($this->badge);
-    }
-
-    public function getIcon(): ?string
-    {
-        return $this->evaluate($this->icon);
-    }
-
-    public function getIconPosition(): ?string
-    {
-        return $this->evaluate($this->iconPosition) ?? 'before';
-    }
-
-    public function getIconColor(): ?string
-    {
-        return $this->evaluate($this->iconColor);
     }
 
     public function getOwnerRecord(): ?Model

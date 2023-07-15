@@ -27,8 +27,9 @@ trait HasFilters
         return $this->makeForm()
             ->schema($this->getTableFiltersFormSchema())
             ->columns($this->getTable()->getFiltersFormColumns())
+            ->model($this->getTable()->getModel())
             ->statePath('tableFilters')
-            ->reactive();
+            ->live();
     }
 
     public function updatedTableFilters(): void
@@ -64,7 +65,7 @@ trait HasFilters
 
             $field->state($filterResetState[$fieldName] ?? match (true) {
                 is_array($state) => [],
-                $state === true => false,
+                is_bool($state) => false,
                 default => null,
             });
         }

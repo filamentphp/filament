@@ -3,7 +3,10 @@
 @endphp
 
 <div
-    x-bind:class="{ 'invisible h-0 p-0 overflow-y-hidden': tab !== '{{ $id }}', 'p-6': tab === '{{ $id }}' }"
+    x-bind:class="{
+        'invisible h-0 p-0 overflow-y-hidden': tab !== '{{ $id }}',
+        'p-6': tab === '{{ $id }}',
+    }"
     x-on:expand-concealing-component.window="
         error = $el.querySelector('[data-validation-error]')
 
@@ -17,7 +20,15 @@
             return
         }
 
-        setTimeout(() => $el.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' }), 200)
+        setTimeout(
+            () =>
+                $el.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start',
+                    inline: 'start',
+                }),
+            200,
+        )
     "
     {{
         $attributes
@@ -26,10 +37,10 @@
                 'id' => $id,
                 'role' => 'tabpanel',
                 'tabindex' => '0',
-                'wire:key' => "{$this->id}.{$getStatePath()}." . \Filament\Forms\Components\Tab::class . ".tabs.{$id}",
+                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \Filament\Forms\Components\Tab::class . ".tabs.{$id}",
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['filament-forms-tabs-component-tab outline-none'])
+            ->class(['fi-fo-tabs-tab outline-none'])
     }}
 >
     {{ $getChildComponentContainer() }}

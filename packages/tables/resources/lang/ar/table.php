@@ -51,7 +51,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'انتقل إلى صفحة :page',
@@ -69,7 +69,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'إنهاء إعادة ترتيب السجلات',
@@ -101,7 +101,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'إلغاء الفلاتر',
@@ -148,7 +148,7 @@ return [
 
         'selected_count' => '{1} تم تحديد سجل واحد|[3,10] تم تحديد :count سجلات |[2,*] تم تحديد :count سجل',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'تحديد كل السجلات :count',

@@ -1,6 +1,7 @@
 ---
 title: Select
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -17,7 +18,7 @@ Select::make('status')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147612885-888dfd64-6256-482d-b4bc-840191306d2d.png)
+<AutoScreenshot name="forms/fields/select/simple" alt="Select" version="3.x" />
 
 ## Searching options
 
@@ -32,7 +33,7 @@ Select::make('author_id')
     ->searchable()
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613023-cb7d1907-e4d3-4a33-aa86-1c25d780c861.png)
+<AutoScreenshot name="forms/fields/select/searchable" alt="Searchable select" version="3.x" />
 
 ### Returning custom search results
 
@@ -68,7 +69,7 @@ Select::make('technologies')
     ])
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613070-cd82703a-fa05-4f29-b0ac-3eb03b542077.png)
+<AutoScreenshot name="forms/fields/select/multiple" alt="Multi-select" version="3.x" />
 
 These options are returned in JSON format. If you're saving them using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -105,10 +106,10 @@ You may employ the `relationship()` method of the `Select` to configure a `Belon
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
 ```
 
-The `multiple()` method may be used in combination with `relationship()` to use a `BelongsToMany` relationship. Filament will load the options from the relationship, and save them back to the relationship's pivot table when the form is submitted. If a `relationshipName` is not provided, Filament will use the field name as the relationship name:
+The `multiple()` method may be used in combination with `relationship()` to use a `BelongsToMany` relationship. Filament will load the options from the relationship, and save them back to the relationship's pivot table when the form is submitted. If a `name` is not provided, Filament will use the field name as the relationship name:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -126,7 +127,7 @@ By default, if the select is also searchable, Filament will return search result
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->searchable(['name', 'email'])
 ```
 
@@ -138,7 +139,7 @@ If you'd like to populate the searchable options from the database when the page
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->searchable()
     ->preload()
 ```
@@ -153,9 +154,9 @@ use Illuminate\Database\Eloquent\Builder;
 
 Select::make('author_id')
     ->relationship(
-        relationshipName: 'author',
+        name: 'author',
         titleAttribute: 'name',
-        modifyOptionsQueryUsing: fn (Builder $query) => $query->withTrashed(),
+        modifyQueryUsing: fn (Builder $query) => $query->withTrashed(),
     )
 ```
 
@@ -171,7 +172,7 @@ $table->string('full_name')->virtualAs('concat(first_name, \' \', last_name)');
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'full_name')
+    ->relationship(name: 'author', titleAttribute: 'full_name')
 ```
 
 Alternatively, you can use the `getOptionLabelFromRecordUsing()` method to transform an option's Eloquent model into a label:
@@ -183,8 +184,8 @@ use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
     ->relationship(
-        relationshipName: 'author',
-        modifyOptionsQueryUsing: fn (Builder $query) => $query->orderBy('first_name')->orderBy('last_name'),
+        name: 'author',
+        modifyQueryUsing: fn (Builder $query) => $query->orderBy('first_name')->orderBy('last_name'),
     )
     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->first_name} {$record->last_name}")
     ->searchable(['first_name', 'last_name'])
@@ -199,7 +200,7 @@ use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->createOptionForm([
         Forms\Components\TextInput::make('name')
             ->required(),
@@ -209,7 +210,11 @@ Select::make('author_id')
     ]),
 ```
 
+<AutoScreenshot name="forms/fields/select/create-option" alt="Select with create option button" version="3.x" />
+
 The form opens in a modal, where the user can fill it with data. Upon form submission, the new record is selected by the field.
+
+<AutoScreenshot name="forms/fields/select/create-option-modal" alt="Select with create option modal" version="3.x" />
 
 ### Editing the selected option in a modal
 
@@ -220,7 +225,7 @@ use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->editOptionAction([
         Forms\Components\TextInput::make('name')
             ->required(),
@@ -230,7 +235,11 @@ Select::make('author_id')
     ]),
 ```
 
+<AutoScreenshot name="forms/fields/select/edit-option" alt="Select with edit option button" version="3.x" />
+
 The form opens in a modal, where the user can fill it with data. Upon form submission, the data from the form is saved back to the record.
+
+<AutoScreenshot name="forms/fields/select/edit-option-modal" alt="Select with edit option modal" version="3.x" />
 
 ### Handling `MorphTo` relationships
 
@@ -369,6 +378,8 @@ Select::make('domain')
     ->suffix('.com')
 ```
 
+<AutoScreenshot name="forms/fields/select/affix" alt="Select with affixes" version="3.x" />
+
 ### Using icons as affixes
 
 You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) before and after the input using the `prefixIcon()` and `suffixIcon()` methods:
@@ -377,9 +388,10 @@ You may place an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) befor
 use Filament\Forms\Components\Select;
 
 Select::make('domain')
-    ->prefixIcon('heroicon-m-arrow-top-right-on-square')
-    ->suffixIcon('heroicon-m-arrow-top-right-on-square')
+    ->suffixIcon('heroicon-m-globe-alt')
 ```
+
+<AutoScreenshot name="forms/fields/select/suffix-icon" alt="Select with suffix icon" version="3.x" />
 
 ## Setting a custom loading message
 
@@ -389,7 +401,7 @@ When you're using a searchable select or multi-select, you may want to display a
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->searchable()
     ->loadingMessage('Loading authors...')
 ```
@@ -402,7 +414,7 @@ When you're using a searchable select or multi-select, you may want to display a
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->searchable()
     ->noSearchResultsMessage('No authors found.')
 ```
@@ -415,7 +427,7 @@ When you're using a searchable select or multi-select, you may want to display a
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->searchable(['name', 'email'])
     ->searchPrompt('Search authors by their name or email address')
 ```
@@ -428,7 +440,7 @@ When you're using a searchable select or multi-select, you may want to display a
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->searchable()
     ->searchingMessage('Searching authors...')
 ```
@@ -441,7 +453,7 @@ By default, Filament will wait 1000 milliseconds (1 second) before searching for
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->searchable()
     ->searchDebounce(500)
 ```
@@ -456,7 +468,7 @@ You can limit the number of options that are displayed in a searchable select or
 use Filament\Forms\Components\Select;
 
 Select::make('author_id')
-    ->relationship(relationshipName: 'author', titleAttribute: 'name')
+    ->relationship(name: 'author', titleAttribute: 'name')
     ->searchable()
     ->optionsLimit(20)
 ```

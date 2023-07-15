@@ -1,6 +1,7 @@
 ---
 title: Grouping rows
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -21,6 +22,8 @@ public function table(Table $table): Table
         ->defaultGroup('status');
 }
 ```
+
+<AutoScreenshot name="tables/grouping" alt="Table with grouping" version="3.x" />
 
 ## Allowing users to choose between groupings
 
@@ -125,6 +128,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/grouping-descriptions" alt="Table with group descriptions" version="3.x" />
+
 ## Collapsible groups
 
 You can allow rows inside a group to be collapsed underneath their group title. To enable this, use a `Group` object with the `collapsible()` method:
@@ -222,5 +227,44 @@ public function table(Table $table): Table
             Group::make('status')
                 ->groupQueryUsing(fn (Builder $query) => $query->groupBy('status')),
         ]);
+}
+```
+
+## Customizing the groups dropdown trigger action
+
+To customize the groups dropdown trigger button, you may use the `groupRecordsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            // ...
+        ])
+        ->groupRecordsTriggerAction(
+            fn (Action $action) => $action
+                ->button()
+                ->label('Group records'),
+        );
+}
+```
+
+## Enabling the groups dropdown on desktop
+
+By default, the groups dropdown will only be shown on mobile devices. On desktop devices, the group select field is in the header of the time. You can enable the dropdown on desktop devices too by using the `groupsInDropdownOnDesktop()` method:
+
+```php
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            // ...
+        ])
+        ->groupsInDropdownOnDesktop();
 }
 ```

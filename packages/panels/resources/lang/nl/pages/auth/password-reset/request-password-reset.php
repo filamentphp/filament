@@ -6,22 +6,26 @@ return [
 
     'heading' => 'Wachtwoord vergeten?',
 
-    'buttons' => [
+    'actions' => [
 
         'login' => [
             'label' => 'terug naar inloggen',
         ],
 
-        'request' => [
-            'label' => 'E-mail verzenden',
-        ],
-
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mailadres',
+        ],
+
+        'actions' => [
+
+            'request' => [
+                'label' => 'E-mail verzenden',
+            ],
+
         ],
 
     ],

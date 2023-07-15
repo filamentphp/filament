@@ -2,10 +2,9 @@
 
 namespace Filament\Infolists\Contracts;
 
-use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Infolist;
 
-interface HasInfolists extends HasForms
+interface HasInfolists
 {
     public function getInfolist(string $name): ?Infolist;
 }

@@ -34,7 +34,7 @@
         x-data="{}"
         x-tooltip.raw="{{ $tooltip }}"
     @endif
-    {{ $attributes->class(['filament-tables-column-wrapper']) }}
+    {{ $attributes->class(['fi-ta-col-wrp']) }}
 >
     @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
         <a

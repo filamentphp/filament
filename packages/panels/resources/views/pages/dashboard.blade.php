@@ -1,6 +1,6 @@
-<x-filament::page class="filament-dashboard-page">
+<x-filament::page class="fi-dashboard-page">
     <x-filament-widgets::widgets
-        :widgets="$this->getWidgets()"
+        :widgets="$this->getVisibleWidgets()"
         :columns="$this->getColumns()"
     />
 </x-filament::page>

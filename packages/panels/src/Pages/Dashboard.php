@@ -5,6 +5,8 @@ namespace Filament\Pages;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Route;
 
@@ -24,11 +26,9 @@ class Dashboard extends Page
             __('filament::pages/dashboard.title');
     }
 
-    public static function getNavigationIcon(): string
+    public static function getNavigationIcon(): ?string
     {
-        return static::$navigationIcon ??
-            FilamentIcon::resolve('panels::pages.dashboard.navigation')?->name ??
-            'heroicon-o-home';
+        return static::$navigationIcon ?? FilamentIcon::resolve('panels::pages.dashboard.navigation-item') ?? 'heroicon-o-home';
     }
 
     public static function routes(Panel $panel): void
@@ -39,11 +39,19 @@ class Dashboard extends Page
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     public function getWidgets(): array
     {
         return Filament::getWidgets();
+    }
+
+    /**
+     * @return array<class-string<Widget> | WidgetConfiguration>
+     */
+    public function getVisibleWidgets(): array
+    {
+        return $this->filterVisibleWidgets($this->getWidgets());
     }
 
     /**

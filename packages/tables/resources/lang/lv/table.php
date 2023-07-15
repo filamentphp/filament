@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'un :count vēl',
         ],
 
-        'messages' => [
-            'copied' => 'Kopēts',
-        ],
-
     ],
 
     'fields' => [
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Doties uz lapu :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Pabeigt ierakstu kārtošanu',
@@ -99,7 +95,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Noņemt filtru',
@@ -146,7 +142,7 @@ return [
 
         'selected_count' => 'Izvēlēts 1 ieraksts.|:count ieraksti izvēlēti.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Atlasīt visus :count',

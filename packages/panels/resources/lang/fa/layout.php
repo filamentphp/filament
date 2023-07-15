@@ -4,22 +4,18 @@ return [
 
     'direction' => 'rtl',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'حالت تیره',
-        ],
-
-        'database_notifications' => [
-            'label' => 'نمایش اعلانات',
-        ],
-
-        'light_theme' => [
-            'label' => 'حالت روشن',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'خروج',
+        ],
+
+        'open_database_notifications' => [
+            'label' => 'نمایش اعلانات',
+        ],
+
+        'open_user_menu' => [
+            'label' => 'منو کاربر',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'user_menu' => [
-            'label' => 'منو کاربر',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'حالت تیره',
+            ],
+
+            'light' => [
+                'label' => 'حالت روشن',
+            ],
+
         ],
 
     ],

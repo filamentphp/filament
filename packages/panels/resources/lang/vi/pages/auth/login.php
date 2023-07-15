@@ -6,11 +6,7 @@ return [
 
     'heading' => 'Đăng nhập vào tài khoản của bạn',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Đăng nhập',
-        ],
+    'actions' => [
 
         'register' => [
             'before' => 'hoặc',
@@ -23,7 +19,7 @@ return [
 
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mail',
@@ -35,6 +31,14 @@ return [
 
         'remember' => [
             'label' => 'Ghi nhớ đăng nhập',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Đăng nhập',
+            ],
+
         ],
 
     ],

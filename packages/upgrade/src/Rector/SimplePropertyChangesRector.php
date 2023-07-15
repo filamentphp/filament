@@ -4,6 +4,7 @@ namespace Filament\Upgrade\Rector;
 
 use Closure;
 use PhpParser\Node;
+use PhpParser\Node\Identifier;
 use PhpParser\Node\Name;
 use PhpParser\Node\Stmt\Class_;
 use PhpParser\Node\Stmt\Property;
@@ -42,6 +43,18 @@ class SimplePropertyChangesRector extends AbstractRector
                 'changes' => [
                     'middlewares' => function (Property $node) {
                         $node->props[0]->name = new VarLikeIdentifier('$routeMiddleware');
+                    },
+                ],
+            ],
+            [
+                'class' => [
+                    'Filament\\Resources\\Resource',
+                    'Filament\\Resources\\RelationManagers\\RelationManager',
+                ],
+                'classIdentifier' => 'extends',
+                'changes' => [
+                    'shouldIgnorePolicies' => function (Property $node) {
+                        $node->props[0] = new Identifier('shouldSkipAuthorization');
                     },
                 ],
             ],

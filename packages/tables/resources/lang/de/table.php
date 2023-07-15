@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'und :count weitere',
         ],
 
-        'messages' => [
-            'copied' => 'Kopiert',
-        ],
-
     ],
 
     'fields' => [
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Weiter zur Seite :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Sortieren beenden',
@@ -101,7 +97,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Filter löschen',
@@ -148,7 +144,7 @@ return [
 
         'selected_count' => '1 Datensatz ausgewählt.|:count Datensätze ausgewählt.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Alle :count Datensätze auswählen',

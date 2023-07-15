@@ -4,6 +4,7 @@ namespace Filament\Resources\Pages;
 
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
@@ -14,7 +15,9 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
+use Livewire\Features\SupportQueryString\Url;
 
 class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
@@ -28,20 +31,34 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
      */
     protected static string $view = 'filament::resources.pages.list-records';
 
-    /**
-     * @var array<int | string, string | array<mixed>>
-     */
-    protected $queryString = [
-        'activeTab' => ['except' => ''],
-        'isTableReordering' => ['except' => false],
-        'tableFilters',
-        'tableGrouping' => ['except' => ''],
-        'tableGroupingDirection' => ['except' => ''],
-        'tableSortColumn' => ['except' => ''],
-        'tableSortDirection' => ['except' => ''],
-        'tableSearch' => ['except' => ''],
-    ];
+    #[Url]
+    public bool $isTableReordering = false;
 
+    /**
+     * @var array<string, mixed> | null
+     */
+    #[Url]
+    public ?array $tableFilters = null;
+
+    #[Url]
+    public ?string $tableGrouping = null;
+
+    #[Url]
+    public ?string $tableGroupingDirection = null;
+
+    /**
+     * @var ?string
+     */
+    #[Url]
+    public $tableSearch = '';
+
+    #[Url]
+    public ?string $tableSortColumn = null;
+
+    #[Url]
+    public ?string $tableSortDirection = null;
+
+    #[Url]
     public ?string $activeTab = null;
 
     public function mount(): void
@@ -97,7 +114,8 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
             ->authorize($resource::canCreate())
             ->model($this->getModel())
             ->modelLabel($this->getModelLabel())
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)))
+            ->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
 
         if ($resource::hasPage('create')) {
             $action->url(fn (): string => $resource::getUrl('create'));

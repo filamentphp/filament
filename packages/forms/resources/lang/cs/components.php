@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Obsah je skrytý',
-
         'actions' => [
 
             'clone' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Obsah je zavřený',
 
         'actions' => [
 

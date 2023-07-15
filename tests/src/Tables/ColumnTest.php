@@ -111,7 +111,7 @@ it('can call a column action', function () {
 
     livewire(PostsTable::class)
         ->callTableColumnAction('title', $post)
-        ->assertEmitted('title-action-called');
+        ->assertDispatched('title-action-called');
 });
 
 it('can call a column action object', function () {
@@ -119,7 +119,7 @@ it('can call a column action object', function () {
 
     livewire(PostsTable::class)
         ->callTableAction('column-action-object', $post)
-        ->assertEmitted('column-action-object-called');
+        ->assertDispatched('column-action-object-called');
 });
 
 it('can state whether a column has the correct value', function () {

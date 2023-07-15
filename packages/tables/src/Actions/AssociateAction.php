@@ -3,7 +3,6 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Exception;
 use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -14,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AssociateAction extends Action
 {
@@ -26,8 +26,6 @@ class AssociateAction extends Action
     protected bool | Closure $canAssociateAnother = true;
 
     protected bool | Closure $isRecordSelectPreloaded = false;
-
-    protected string | Closure | null $recordTitleAttribute = null;
 
     /**
      * @var array<string> | Closure | null
@@ -51,9 +49,9 @@ class AssociateAction extends Action
 
         $this->modalWidth('lg');
 
-        $this->extraModalActions(function (): array {
+        $this->extraModalFooterActions(function (): array {
             return $this->canAssociateAnother ? [
-                $this->makeExtraModalAction('associateAnother', ['another' => true])
+                $this->makeModalSubmitAction('associateAnother', arguments: ['another' => true])
                     ->label(__('filament-actions::associate.single.modal.actions.associate_another.label')),
             ] : [];
         });
@@ -66,9 +64,9 @@ class AssociateAction extends Action
 
         $this->action(function (array $arguments, array $data, Form $form, Table $table): void {
             /** @var HasMany | MorphMany $relationship */
-            $relationship = $table->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $record = $relationship->getRelated()->query()->find($data['recordId']);
+            $record = $relationship->getQuery()->find($data['recordId']);
 
             /** @var BelongsTo $inverseRelationship */
             $inverseRelationship = $table->getInverseRelationshipFor($record);
@@ -113,13 +111,6 @@ class AssociateAction extends Action
         return $this;
     }
 
-    public function recordTitleAttribute(string | Closure | null $attribute): static
-    {
-        $this->recordTitleAttribute = $attribute;
-
-        return $this;
-    }
-
     public function associateAnother(bool | Closure $condition = true): static
     {
         $this->canAssociateAnother = $condition;
@@ -154,17 +145,6 @@ class AssociateAction extends Action
         return (bool) $this->evaluate($this->isRecordSelectPreloaded);
     }
 
-    public function getRecordTitleAttribute(): string
-    {
-        $attribute = $this->evaluate($this->recordTitleAttribute);
-
-        if (blank($attribute)) {
-            throw new Exception('Associate table action must have a `recordTitleAttribute()` defined, which is used to identify records to associate.');
-        }
-
-        return $attribute;
-    }
-
     /**
      * @param  array<string> | Closure | null  $columns
      */
@@ -189,11 +169,13 @@ class AssociateAction extends Action
 
         $getOptions = function (?string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var HasMany | MorphMany $relationship */
-            $relationship = $table->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $titleAttribute = $this->getRecordTitleAttribute();
+            $relationshipQuery = $relationship->getQuery();
 
-            $relationshipQuery = $relationship->getRelated()->query()->orderBy($titleAttribute);
+            $titleAttribute = $relationshipQuery->qualifyColumn($this->getRecordTitleAttribute());
+
+            $relationshipQuery->orderBy($titleAttribute);
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
@@ -246,7 +228,7 @@ class AssociateAction extends Action
                     }
 
                     return $query->where(
-                        $query->qualifyColumn($relationship->getParent()->getKeyName()),
+                        $relationship->getParent()->getQualifiedKeyName(),
                         $relationship->getParent()->getKey(),
                     );
                 })
@@ -260,7 +242,7 @@ class AssociateAction extends Action
             ->required()
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
-            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($table->getRelationship()->getRelated()->query()->find($value)))
+            ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle(Relation::noConstraints(fn () => $table->getRelationship())->getQuery()->find($value)))
             ->options(fn (): array => $this->isRecordSelectPreloaded() ? $getOptions() : [])
             ->hiddenLabel();
 

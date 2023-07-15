@@ -60,7 +60,7 @@ protected function getCards(): array
 
 ## Changing the color of the card
 
-You may also give cards a `color()` (`danger`, `gray`, `info`, `primary`, `secondary`, `success` or `warning`):
+You may also give cards a `color()` (`danger`, `gray`, `info`, `primary`, `success` or `warning`):
 
 ```php
 protected function getCards(): array
@@ -94,7 +94,7 @@ protected function getCards(): array
             ->color('success')
             ->extraAttributes([
                 'class' => 'cursor-pointer',
-                'wire:click' => '$emitUp("setStatusFilter", "processed")',
+                'wire:click' => '$dispatch("setStatusFilter", "processed")',
             ]),
         // ...
     ];

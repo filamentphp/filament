@@ -46,37 +46,20 @@ First, use NPM to install Tailwind CSS and its `forms` and `typography` plugins:
 npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss --save-dev
 ```
 
-Create a new `tailwind.config.js` file. Ensure that you add Filament's `content` path, custom `colors`, and the `plugins` you installed:
+Create a new `tailwind.config.js` file. Ensure that you add Filament's `preset` which configures colors and the plugins you installed:
 
 ```js
-const colors = require('tailwindcss/colors')
+import preset from './vendor/filament/support/tailwind.config.preset'
 
-module.exports = {
+export default {
+    presets: [preset],
     content: [
-        './resources/**/*.blade.php',
+        './app/Filament/**/*.php',
+        './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-    ],
-    darkMode: 'class',
-    theme: {
-        extend: {
-            colors: {
-                danger: colors.red,
-                info: colors.blue,
-                primary: colors.amber,
-                secondary: colors.gray,
-                success: colors.green,
-                warning: colors.amber,
-            },
-        },
-    },
-    plugins: [
-        require('@tailwindcss/forms'),
-        require('@tailwindcss/typography'),
     ],
 }
 ```
-
-Of course, you may specify your own custom `danger`, `gray`, `info`, `primary`, `secondary`, `success` and `warning` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 950 variants specified - a single hex code or RGB value won't work here.
 
 ### Configuring styles
 
@@ -90,14 +73,10 @@ In `resources/css/app.css`, import Tailwind CSS, and the form components CSS:
 @tailwind utilities;
 ```
 
-Most Laravel projects use Vite for bundling assets by default. However, your project may still use Laravel Mix. Read the steps below for the bundler used in your project.
-
-#### Vite
-
-Create a `postcss.config.cjs` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
+Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
 
 ```js
-module.exports = {
+export default {
     plugins: {
         tailwindcss: {},
         autoprefixer: {},
@@ -117,7 +96,7 @@ export default defineConfig({
             input: ['resources/css/app.css', 'resources/js/app.js'],
             refresh: [
                 ...refreshPaths,
-                'app/Http/Livewire/**',
+                'app/Livewire/**',
             ],
         }),
     ],
@@ -126,24 +105,9 @@ export default defineConfig({
 
 Compile your new CSS and JS assets using `npm run dev`.
 
-#### Laravel Mix
-
-In your `webpack.mix.js` file, register Tailwind CSS as a PostCSS plugin:
-
-```js
-const mix = require('laravel-mix')
-
-mix.js('resources/js/app.js', 'public/js')
-    .postCss('resources/css/app.css', 'public/css', [
-        require('tailwindcss'),
-    ])
-```
-
-Compile your new CSS and JS assets using `npm run dev`.
-
 ### Configuring layout
 
-Finally, create a new `resources/views/layouts/app.blade.php` layout file for Livewire components:
+Finally, create a new `resources/views/components/layouts/app.blade.php` layout file for Livewire components:
 
 ```blade
 <!DOCTYPE html>
@@ -157,8 +121,12 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
 
         <title>{{ config('app.name') }}</title>
 
-        <style>[x-cloak] { display: none !important; }</style>
-        @livewireStyles
+        <style>
+            [x-cloak] {
+                display: none !important;
+            }
+        </style>
+
         @filamentStyles
         @vite('resources/css/app.css')
     </head>
@@ -166,10 +134,8 @@ Finally, create a new `resources/views/layouts/app.blade.php` layout file for Li
     <body class="antialiased">
         {{ $slot }}
 
-        @livewireScripts
         @filamentScripts
         @vite('resources/js/app.js')
-        <script src="//unpkg.com/alpinejs" defer></script>
     </body>
 </html>
 ```
@@ -191,10 +157,10 @@ composer update
 php artisan filament:upgrade
 ```
 
-We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-update-cmd` to run it automatically:
+We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-autoload-dump` to run it automatically:
 
 ```json
-"post-update-cmd": [
+"post-autoload-dump": [
     // ...
     "@php artisan filament:upgrade"
 ],

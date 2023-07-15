@@ -6,15 +6,7 @@ return [
 
     'heading' => 'ចូលទៅក្នុងគណនីរបស់អ្នក',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'ចុះឈ្មោះចូល',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'អាស័យ​ដ្ឋាន​អ៊ី​ម៉េ​ល',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'ចងចាំក្នុងប្រព័ន្ធនេះ',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'ចុះឈ្មោះចូល',
+            ],
+
         ],
 
     ],

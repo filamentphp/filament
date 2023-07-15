@@ -191,12 +191,12 @@ For authorization, Filament will observe any [model policies](https://laravel.co
 - `restore()` is used to prevent a single soft-deleted record from being restored. `restoreAny()` is used to prevent records from being bulk restored. Filament uses the `restoreAny()` method because iterating through multiple records and checking the `restore()` policy is not very performant.
 - `reorder()` is used to control [reordering a record](listing-records#reordering-records).
 
-### Ignoring authorization policies
+### Skipping authorization
 
-If you'd like to ignore policies for a resource, you may set the `$shouldIgnorePolicies` property to `false`:
+If you'd like to skip authorization for a resource, you may set the `$shouldSkipAuthorization` property to `true`:
 
 ```php
-protected static bool $shouldIgnorePolicies = true;
+protected static bool $shouldSkipAuthorization = true;
 ```
 
 ## Customizing the model label
@@ -267,7 +267,7 @@ protected static ?string $navigationIcon = 'heroicon-o-user-group';
 Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
 
 ```php
-public static function getNavigationIcon(): string
+public static function getNavigationIcon(): ?string
 {
     return 'heroicon-o-user-group';
 }
@@ -341,7 +341,14 @@ In this example, `$customer` can be an Eloquent model object, or an ID.
 
 Within Filament, every query to your resource model will start with the `getEloquentQuery()` method.
 
-Because of this, it's very easy to apply your own [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire resource. You can use this to implement [multi-tenancy](#multi-tenancy) easily within the app.
+Because of this, it's very easy to apply your own query constraints or [model scopes](https://laravel.com/docs/eloquent#query-scopes) that affect the entire resource:
+
+```php
+public static function getEloquentQuery(): Builder
+{
+    return parent::getEloquentQuery()->where('is_active', true);
+}
+```
 
 ### Disabling global scopes
 

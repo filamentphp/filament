@@ -3,20 +3,20 @@
 namespace Filament\Tables\Testing;
 
 use Closure;
-use Filament\Actions\Testing\TestsActions as BaseTestsActions;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\Assert;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportTesting\Testable;
+use function Livewire\store;
 
 /**
  * @method HasTable instance()
  *
- * @mixin TestableLivewire
- * @mixin BaseTestsActions
+ * @mixin Testable
+ * @mixin Testable
  */
 class TestsBulkActions
 {
@@ -24,9 +24,6 @@ class TestsBulkActions
     {
         return function (string $name, array | Collection $records): static {
             $name = $this->parseActionName($name);
-
-            /** @phpstan-ignore-next-line */
-            $this->assertTableBulkActionVisible($name);
 
             $records = array_map(
                 function ($record) {
@@ -41,21 +38,19 @@ class TestsBulkActions
 
             $this->call('mountTableBulkAction', $name, $records);
 
-            if (filled($this->instance()->redirectTo)) {
+            if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
             if ($this->instance()->mountedTableBulkAction === null) {
-                $this->assertNotDispatchedBrowserEvent('open-modal');
+                $this->assertNotDispatched('open-modal');
 
                 return $this;
             }
 
             $this->assertSet('mountedTableBulkAction', $name);
 
-            $this->assertDispatchedBrowserEvent('open-modal', [
-                'id' => "{$this->instance()->id}-table-bulk-action",
-            ]);
+            $this->assertDispatched('open-modal', id: "{$this->instance()->getId()}-table-bulk-action");
 
             return $this;
         };
@@ -64,7 +59,7 @@ class TestsBulkActions
     public function setTableBulkActionData(): Closure
     {
         return function (array $data): static {
-            foreach (Arr::prependKeysWith($data, 'mountedTableBulkActionData.') as $key => $value) {
+            foreach (Arr::dot($data, prepend: 'mountedTableBulkActionData.') as $key => $value) {
                 $this->set($key, $value);
             }
 
@@ -75,8 +70,8 @@ class TestsBulkActions
     public function assertTableBulkActionDataSet(): Closure
     {
         return function (array $data): static {
-            foreach ($data as $key => $value) {
-                $this->assertSet("mountedTableBulkActionData.{$key}", $value);
+            foreach (Arr::dot($data, prepend: 'mountedTableBulkActionData.') as $key => $value) {
+                $this->assertSet($key, $value);
             }
 
             return $this;
@@ -86,6 +81,9 @@ class TestsBulkActions
     public function callTableBulkAction(): Closure
     {
         return function (string $name, array | Collection $records, array $data = [], array $arguments = []): static {
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionVisible($name);
+
             /** @phpstan-ignore-next-line */
             $this->mountTableBulkAction($name, $records);
 
@@ -114,14 +112,12 @@ class TestsBulkActions
 
             $this->call('callMountedTableBulkAction', $arguments);
 
-            if (filled($this->instance()->redirectTo)) {
+            if (store($this->instance())->has('redirect')) {
                 return $this;
             }
 
             if ($this->get('mountedTableBulkAction') !== $action->getName()) {
-                $this->assertDispatchedBrowserEvent('close-modal', [
-                    'id' => "{$this->instance()->id}-table-bulk-action",
-                ]);
+                $this->assertDispatched('close-modal', id: "{$this->instance()->getId()}-table-bulk-action");
             }
 
             return $this;
@@ -350,7 +346,7 @@ class TestsBulkActions
 
     public function assertTableBulkActionHasColor(): Closure
     {
-        return function (string $name, string $color, $record = null): static {
+        return function (string $name, string | array $color, $record = null): static {
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
@@ -360,9 +356,11 @@ class TestsBulkActions
 
             $livewireClass = $this->instance()::class;
 
+            $colorName = is_string($color) ? $color : 'custom';
+
             Assert::assertTrue(
                 $action->getColor() === $color,
-                "Failed asserting that a table bulk action with name [{$name}] has color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
+                "Failed asserting that a table bulk action with name [{$name}] has [{$colorName}] color on the [{$livewireClass}] component for record [{$record}]."
             );
 
             return $this;
@@ -371,7 +369,7 @@ class TestsBulkActions
 
     public function assertTableBulkActionDoesNotHaveColor(): Closure
     {
-        return function (string $name, string $color, $record = null): static {
+        return function (string $name, string | array $color, $record = null): static {
             $name = $this->parseActionName($name);
 
             /** @phpstan-ignore-next-line */
@@ -381,16 +379,18 @@ class TestsBulkActions
 
             $livewireClass = $this->instance()::class;
 
+            $colorName = is_string($color) ? $color : 'custom';
+
             Assert::assertFalse(
                 $action->getColor() === $color,
-                "Failed asserting that a table bulk action with name [{$name}] does not have color [{$color}] on the [{$livewireClass}] component for record [{$record}]."
+                "Failed asserting that a table bulk action with name [{$name}] does not have [{$colorName}] color on the [{$livewireClass}] component for record [{$record}]."
             );
 
             return $this;
         };
     }
 
-    public function assertTableBulkActionHalted(): Closure
+    public function assertTableBulkActionMounted(): Closure
     {
         return function (string $name): static {
             $name = $this->parseActionName($name);
@@ -404,8 +404,27 @@ class TestsBulkActions
         };
     }
 
+    public function assertTableBulkActionNotMounted(): Closure
+    {
+        return function (string $name): static {
+            $name = $this->parseActionName($name);
+
+            /** @phpstan-ignore-next-line */
+            $this->assertTableBulkActionExists($name);
+
+            $this->assertNotSet('mountedTableBulkAction', $name);
+
+            return $this;
+        };
+    }
+
+    public function assertTableBulkActionHalted(): Closure
+    {
+        return $this->assertTableBulkActionMounted();
+    }
+
     /**
-     * @deprecated Use `->assertTableBulkActionHalted()` instead.
+     * @deprecated Use `assertTableBulkActionHalted()` instead.
      */
     public function assertTableBulkActionHeld(): Closure
     {

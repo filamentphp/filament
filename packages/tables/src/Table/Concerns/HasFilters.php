@@ -124,10 +124,11 @@ trait HasFilters
     public function getFiltersTriggerAction(): Action
     {
         $action = Action::make('openFilters')
-            ->label(__('filament-tables::table.buttons.filter.label'))
+            ->label(__('filament-tables::table.actions.filter.label'))
             ->iconButton()
             ->icon('heroicon-m-funnel')
             ->color('gray')
+            ->livewireClickHandlerEnabled(false)
             ->table($this);
 
         if ($this->modifyFiltersTriggerActionUsing) {

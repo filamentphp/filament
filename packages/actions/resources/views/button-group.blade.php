@@ -5,7 +5,7 @@
     :labeled-from="$getLabeledFromBreakpoint()"
     :icon-position="$getIconPosition()"
     :icon-size="$getIconSize()"
-    class="filament-actions-button-group"
+    class="fi-ac-btn-group"
 >
     {{ $getLabel() }}
 </x-filament-actions::group>

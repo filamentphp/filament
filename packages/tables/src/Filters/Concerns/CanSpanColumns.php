@@ -14,7 +14,7 @@ trait CanSpanColumns
     /**
      * @var array<string, int | string | Closure | null> | int | string | Closure | null
      */
-    protected array | int | string | Closure | null $columnStart = 1;
+    protected array | int | string | Closure | null $columnStart = null;
 
     /**
      * @param  array<string, int | string | Closure | null> | int | string | Closure | null  $span

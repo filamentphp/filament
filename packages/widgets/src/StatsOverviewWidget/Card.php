@@ -16,9 +16,15 @@ class Card extends Component implements Htmlable
      */
     protected ?array $chart = null;
 
-    protected ?string $chartColor = null;
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    protected string | array | null $chartColor = null;
 
-    protected ?string $color = null;
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    protected string | array | null $color = null;
 
     protected ?string $icon = null;
 
@@ -28,7 +34,10 @@ class Card extends Component implements Htmlable
 
     protected ?string $descriptionIconPosition = null;
 
-    protected ?string $descriptionColor = null;
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    protected string | array | null $descriptionColor = null;
 
     /**
      * @var array<string, scalar>
@@ -65,14 +74,20 @@ class Card extends Component implements Htmlable
         return app(static::class, ['label' => $label, 'value' => $value]);
     }
 
-    public function chartColor(?string $color): static
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     */
+    public function chartColor(string | array | null $color): static
     {
         $this->chartColor = $color;
 
         return $this;
     }
 
-    public function color(?string $color): static
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     */
+    public function color(string | array | null $color): static
     {
         $this->color = $color;
 
@@ -93,7 +108,10 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
-    public function descriptionColor(?string $color): static
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null  $color
+     */
+    public function descriptionColor(string | array | null $color): static
     {
         $this->descriptionColor = $color;
 
@@ -175,12 +193,18 @@ class Card extends Component implements Htmlable
         return $this->chart;
     }
 
-    public function getChartColor(): ?string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getChartColor(): string | array | null
     {
         return $this->chartColor ?? $this->color;
     }
 
-    public function getColor(): ?string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getColor(): string | array | null
     {
         return $this->color;
     }
@@ -195,7 +219,10 @@ class Card extends Component implements Htmlable
         return $this->description;
     }
 
-    public function getDescriptionColor(): ?string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getDescriptionColor(): string | array | null
     {
         return $this->descriptionColor ?? $this->color;
     }

@@ -9,6 +9,7 @@ use Filament\Infolists\Components\Component;
 use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+use function Livewire\store;
 
 trait InteractsWithInfolists
 {
@@ -115,7 +116,7 @@ trait InteractsWithInfolists
         $action->resetArguments();
         $action->resetFormData();
 
-        if (filled($this->redirectTo)) {
+        if (store($this)->has('redirect')) {
             return $result;
         }
 
@@ -184,9 +185,7 @@ trait InteractsWithInfolists
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-infolist-action",
-        ]);
+        $this->dispatch('open-modal', id: "{$this->getId()}-infolist-action");
 
         return null;
     }
@@ -199,9 +198,9 @@ trait InteractsWithInfolists
             return false;
         }
 
-        return $action->getModalSubheading() ||
+        return $action->getModalDescription() ||
             $action->getModalContent() ||
-            $action->getModalFooter() ||
+            $action->getModalContentFooter() ||
             $action->getInfolist() ||
             $this->mountedInfolistActionHasForm();
     }
@@ -281,9 +280,7 @@ trait InteractsWithInfolists
             $this->mountedInfolistActionsComponent = null;
             $this->mountedInfolistActionsInfolist = null;
 
-            $this->dispatchBrowserEvent('close-modal', [
-                'id' => "{$this->id}-infolist-action",
-            ]);
+            $this->dispatch('close-modal', id: "{$this->getId()}-infolist-action");
 
             return;
         }
@@ -295,9 +292,7 @@ trait InteractsWithInfolists
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-infolist-action",
-        ]);
+        $this->dispatch('open-modal', id: "{$this->getId()}-infolist-action");
     }
 
     protected function makeInfolist(): Infolist

@@ -6,15 +6,7 @@ return [
 
     'heading' => 'ورود به حساب کاربری شما',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'ورود',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'آدرس ایمیل',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'مرا به خاطر بسپار',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'ورود',
+            ],
+
         ],
 
     ],

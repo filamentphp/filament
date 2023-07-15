@@ -8,6 +8,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
+use function Livewire\store;
 
 /**
  * @property Form $mountedTableActionForm
@@ -83,7 +84,7 @@ trait HasActions
         $action->resetArguments();
         $action->resetFormData();
 
-        if (filled($this->redirectTo)) {
+        if (store($this)->has('redirect')) {
             return $result;
         }
 
@@ -126,10 +127,7 @@ trait HasActions
             return null;
         }
 
-        $this->cacheForm(
-            'mountedTableActionForm',
-            fn () => $this->getMountedTableActionForm(),
-        );
+        $this->cacheMountedTableActionForm();
 
         try {
             $hasForm = $this->mountedTableActionHasForm();
@@ -159,9 +157,7 @@ trait HasActions
 
         $this->resetErrorBag();
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-table-action",
-        ]);
+        $this->openTableActionModal();
 
         return null;
     }
@@ -174,9 +170,9 @@ trait HasActions
             return false;
         }
 
-        return $action->getModalSubheading() ||
+        return $action->getModalDescription() ||
             $action->getModalContent() ||
-            $action->getModalFooter() ||
+            $action->getModalContentFooter() ||
             $action->getInfolist() ||
             $this->mountedTableActionHasForm();
     }
@@ -233,22 +229,34 @@ trait HasActions
         return $this->cachedMountedTableActionRecord = $this->getTableRecord($recordKey);
     }
 
+    protected function popMountedTableAction(): ?string
+    {
+        try {
+            return array_pop($this->mountedTableActions);
+        } finally {
+            array_pop($this->mountedTableActionsData);
+        }
+    }
+
+    protected function resetMountedTableActionProperties(): void
+    {
+        $this->mountedTableActions = [];
+        $this->mountedTableActionsData = [];
+    }
+
     public function unmountTableAction(bool $shouldCloseParentActions = true): void
     {
         $action = $this->getMountedTableAction();
 
         if (! ($shouldCloseParentActions && $action)) {
-            array_pop($this->mountedTableActions);
-            array_pop($this->mountedTableActionsData);
+            $this->popMountedTableAction();
         } elseif ($action->shouldCloseAllParentActions()) {
-            $this->mountedTableActions = [];
-            $this->mountedTableActionsData = [];
+            $this->resetMountedTableActionProperties();
         } else {
             $parentActionToCloseTo = $action->getParentActionToCloseTo();
 
             while (true) {
-                $recentlyClosedParentAction = array_pop($this->mountedTableActions);
-                array_pop($this->mountedTableActionsData);
+                $recentlyClosedParentAction = $this->popMountedTableAction();
 
                 if (
                     blank($parentActionToCloseTo) ||
@@ -260,9 +268,7 @@ trait HasActions
         }
 
         if (! count($this->mountedTableActions)) {
-            $this->dispatchBrowserEvent('close-modal', [
-                'id' => "{$this->id}-table-action",
-            ]);
+            $this->closeTableActionModal();
 
             $action?->record(null);
             $this->mountedTableActionRecord(null);
@@ -270,16 +276,29 @@ trait HasActions
             return;
         }
 
+        $this->cacheMountedTableActionForm();
+
+        $this->resetErrorBag();
+
+        $this->openTableActionModal();
+    }
+
+    protected function cacheMountedTableActionForm(): void
+    {
         $this->cacheForm(
             'mountedTableActionForm',
             fn () => $this->getMountedTableActionForm(),
         );
+    }
 
-        $this->resetErrorBag();
+    protected function closeTableActionModal(): void
+    {
+        $this->dispatch('close-modal', id: "{$this->getId()}-table-action");
+    }
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => "{$this->id}-table-action",
-        ]);
+    protected function openTableActionModal(): void
+    {
+        $this->dispatch('open-modal', id: "{$this->getId()}-table-action");
     }
 
     /**

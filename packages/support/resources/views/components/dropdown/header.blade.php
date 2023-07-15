@@ -1,32 +1,54 @@
 @props([
-    'color' => 'primary',
+    'color' => 'gray',
     'icon' => null,
+    'iconSize' => 'md',
     'tag' => 'div',
 ])
 
-<{{ $tag }} {{ $attributes->class([
-    'filament-dropdown-header flex w-full gap-2 p-3 text-sm',
-    match ($color) {
-        'danger' => 'filament-dropdown-header-color-danger text-danger-600 dark:text-danger-400',
-        'gray' => 'filament-dropdown-header-color-gray text-gray-700 dark:text-gray-200',
-        'info' => 'filament-dropdown-header-color-info text-info-600 dark:text-info-400',
-        'primary' => 'filament-dropdown-header-color-primary text-primary-600 dark:text-primary-400',
-        'secondary' => 'filament-dropdown-header-color-secondary text-secondary-600 dark:text-secondary-400',
-        'success' => 'filament-dropdown-header-color-success text-success-600 dark:text-success-400',
-        'warning' => 'filament-dropdown-header-color-warning text-warning-600 dark:text-warning-400',
-        default => $color,
-    },
-]) }}>
+<{{ $tag }}
+    {{
+        $attributes
+            ->class([
+                'fi-dropdown-header flex w-full gap-2 p-3 text-sm',
+                is_string($color) ? "fi-dropdown-header-color-{$color}" : null,
+                match ($color) {
+                    'gray' => 'text-gray-700 dark:text-gray-200',
+                    default => 'text-custom-600 dark:text-custom-400',
+                },
+            ])
+            ->style([
+                \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+            ])
+    }}
+>
     @if ($icon)
         <x-filament::icon
             :name="$icon"
-            alias="support::dropdown.header"
-            size="h-5 w-5"
-            class="filament-dropdown-header-icon"
+            @class([
+                'fi-dropdown-header-icon',
+                match ($iconSize) {
+                    'sm' => 'h-4 w-4',
+                    'md' => 'h-5 w-5',
+                    'lg' => 'h-6 w-6',
+                    default => $iconSize,
+                },
+                match ($color) {
+                    'gray' => 'text-gray-400 dark:text-gray-500',
+                    default => 'text-custom-500 dark:text-custom-400',
+                },
+            ])
         />
     @endif
 
-    <span class="filament-dropdown-header-label">
+    <span
+        @class([
+            'fi-dropdown-header-label flex-1 truncate text-start',
+            match ($color) {
+                'gray' => 'text-gray-700 dark:text-gray-200',
+                default => 'text-custom-600 dark:text-custom-400',
+            },
+        ])
+    >
         {{ $slot }}
     </span>
 </{{ $tag }}>

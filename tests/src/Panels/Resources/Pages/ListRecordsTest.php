@@ -6,16 +6,19 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
+use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
 it('can render posts page', function () {
-    $this->get(PostResource::getUrl('index'))->assertSuccessful();
+    $this->get(PostResource::getUrl('index'))
+        ->assertSuccessful();
 });
 
 it('can render users page', function () {
-    $this->get(UserResource::getUrl('index'))->assertSuccessful();
+    $this->get(UserResource::getUrl('index'))
+        ->assertSuccessful();
 });
 
 it('can list posts', function () {
@@ -97,7 +100,7 @@ it('can delete posts', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->callTableAction(DeleteAction::class, $post);
 
-    $this->assertModelMissing($post);
+    assertSoftDeleted($post);
 });
 
 it('can bulk delete posts', function () {
@@ -107,6 +110,6 @@ it('can bulk delete posts', function () {
         ->callTableBulkAction(DeleteBulkAction::class, $posts);
 
     foreach ($posts as $post) {
-        $this->assertModelMissing($post);
+        assertSoftDeleted($post);
     }
 });

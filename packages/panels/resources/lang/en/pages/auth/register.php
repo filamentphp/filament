@@ -6,20 +6,16 @@ return [
 
     'heading' => 'Sign up',
 
-    'buttons' => [
+    'actions' => [
 
         'login' => [
             'before' => 'or',
             'label' => 'sign in to your account',
         ],
 
-        'register' => [
-            'label' => 'Sign up',
-        ],
-
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Email address',
@@ -36,6 +32,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Confirm password',
+        ],
+
+        'actions' => [
+
+            'register' => [
+                'label' => 'Sign up',
+            ],
+
         ],
 
     ],

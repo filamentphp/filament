@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'és további :count',
         ],
 
-        'messages' => [
-            'copied' => 'Kimásolva',
-        ],
-
     ],
 
     'fields' => [
@@ -42,7 +38,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Ugrás az oldalra: :page',
@@ -60,7 +56,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Sorba rendezés befejezése',
@@ -90,7 +86,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Szűrés megszűntetése',
@@ -137,7 +133,7 @@ return [
 
         'selected_count' => '1 elem kiválasztva .|:count elem kiválasztva.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Kijelöli mind a(z) :count elemet',

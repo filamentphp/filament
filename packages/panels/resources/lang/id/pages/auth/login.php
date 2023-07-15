@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Masuk ke akun Anda',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Masuk',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Alamat Email',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Ingat saya',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Masuk',
+            ],
+
         ],
 
     ],

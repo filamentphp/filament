@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Verify your email address',
 
-    'buttons' => [
+    'actions' => [
 
         'resend_notification' => [
             'label' => 'Resend it',

@@ -1,61 +1,50 @@
 @php
     $datalistOptions = $getDatalistOptions();
-    $hasMask = $hasMask();
+    $extraAlpineAttributes = $getExtraAlpineAttributes();
     $id = $getId();
     $isConcealed = $isConcealed();
-    $statePath = $getStatePath();
+    $isDisabled = $isDisabled();
+    $isPrefixInline = $isPrefixInline();
+    $isSuffixInline = $isSuffixInline();
+    $mask = $getMask();
+    $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
+    $suffixActions = $getSuffixActions();
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
+    $statePath = $getStatePath();
 @endphp
 
-<x-dynamic-component
-    :component="$getFieldWrapperView()"
-    :field="$field"
->
+<x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
         :state-path="$statePath"
+        :disabled="$isDisabled"
+        :inline-prefix="$isPrefixInline"
+        :inline-suffix="$isSuffixInline"
         :prefix="$prefixLabel"
-        :prefix-actions="$getPrefixActions()"
+        :prefix-actions="$prefixActions"
         :prefix-icon="$prefixIcon"
         :suffix="$suffixLabel"
-        :suffix-actions="$getSuffixActions()"
+        :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
-        class="filament-forms-text-input-component"
+        class="fi-fo-text-input"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        <input
-            @if ($hasMask)
-                x-ignore
-                ax-load
-                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('text-input', 'filament/forms') }}"
-                x-data="textInputFormComponent({
-                    getMaskOptionsUsing: (IMask) => ({{ $getJsonMaskConfiguration() }}),
-                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", lazilyEntangledModifiers: ['defer']) }},
-                })"
-                wire:ignore
-                @if ($isDebounced()) x-on:input.debounce.{{ $getDebounce() }}="$wire.$refresh" @endif
-                @if ($isLazy()) x-on:blur="$wire.$refresh" @endif
-            @else
-                x-data="{}"
-            @endif
-            x-bind:class="{
-                'border-gray-300 focus:border-primary-500 focus:ring-primary-500 dark:border-gray-600 dark:focus:border-primary-500': ! (@js($statePath) in $wire.__instance.serverMemo.errors),
-                'border-danger-600 ring-danger-600 dark:border-danger-400 dark:ring-danger-400': (@js($statePath) in $wire.__instance.serverMemo.errors),
-            }"
-            {{
+        <x-filament::input
+            :attributes="
                 $getExtraInputAttributeBag()
-                    ->merge($getExtraAlpineAttributes(), escape: false)
+                    ->merge($extraAlpineAttributes, escape: false)
                     ->merge([
                         'autocapitalize' => $getAutocapitalize(),
                         'autocomplete' => $getAutocomplete(),
                         'autofocus' => $isAutofocused(),
-                        'disabled' => $isDisabled(),
-                        'dusk' => "filament.forms.{$statePath}",
+                        'disabled' => $isDisabled,
                         'id' => $id,
+                        'inlinePrefix' => $isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel)),
+                        'inlineSuffix' => $isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel)),
                         'inputmode' => $getInputMode(),
-                        'list' => $datalistOptions ? "{$id}-list" : null,
+                        'list' => $datalistOptions ? $id . '-list' : null,
                         'max' => (! $isConcealed) ? $getMaxValue() : null,
                         'maxlength' => (! $isConcealed) ? $getMaxLength() : null,
                         'min' => (! $isConcealed) ? $getMinValue() : null,
@@ -64,15 +53,12 @@
                         'readonly' => $isReadOnly(),
                         'required' => $isRequired() && (! $isConcealed),
                         'step' => $getStep(),
-                        'type' => $hasMask ? 'text' : $getType(),
-                        $applyStateBindingModifiers('wire:model') => (! $hasMask) ? $statePath : null,
+                        'type' => blank($mask) ? $getType() : 'text',
+                        $applyStateBindingModifiers('wire:model') => $statePath,
+                        'x-data' => (count($extraAlpineAttributes) || filled($mask)) ? '{}' : null,
+                        'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
                     ], escape: false)
-                    ->class([
-                        'filament-forms-input block w-full transition duration-75 shadow-sm outline-none sm:text-sm focus:relative focus:z-[1] focus:ring-1 focus:ring-inset disabled:opacity-70 dark:bg-gray-700 dark:text-white',
-                        'rounded-s-lg' => ! ($prefixLabel || $prefixIcon),
-                        'rounded-e-lg' => ! ($suffixLabel || $suffixIcon),
-                    ])
-            }}
+            "
         />
     </x-filament-forms::affixes>
 

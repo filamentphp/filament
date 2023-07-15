@@ -10,7 +10,7 @@ use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
-use Livewire\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
 trait InteractsWithForms
@@ -34,6 +34,11 @@ trait InteractsWithForms
     protected bool $isCachingForms = false;
 
     protected bool $hasFormsModalRendered = false;
+
+    /**
+     * @var array<string, mixed>
+     */
+    protected array $oldFormState = [];
 
     public function dispatchFormEvent(mixed ...$args): void
     {
@@ -171,7 +176,7 @@ trait InteractsWithForms
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
-            $this->dispatchBrowserEvent('expand-concealing-component');
+            $this->dispatch('expand-concealing-component');
 
             throw $exception;
         }
@@ -186,16 +191,17 @@ trait InteractsWithForms
      * @param  array<string, array<mixed>>  $rules
      * @param  array<string, string>  $messages
      * @param  array<string, string>  $attributes
+     * @param  array<string, string>  $dataOverrides
      * @return array<string, mixed>
      */
-    public function validateOnly($field, $rules = null, $messages = [], $attributes = [])
+    public function validateOnly($field, $rules = null, $messages = [], $attributes = [], $dataOverrides = [])
     {
         try {
-            return parent::validateOnly($field, $rules, $messages, $attributes);
+            return parent::validateOnly($field, $rules, $messages, $attributes, $dataOverrides);
         } catch (ValidationException $exception) {
             $this->onValidationError($exception);
 
-            $this->dispatchBrowserEvent('expand-concealing-component');
+            $this->dispatch('expand-concealing-component');
 
             throw $exception;
         }
@@ -204,38 +210,41 @@ trait InteractsWithForms
     /**
      * @return class-string<TranslatableContentDriver> | null
      */
-    public function getFormTranslatableContentDriver(): ?string
+    public function getFilamentTranslatableContentDriver(): ?string
     {
         return null;
     }
 
-    public function makeFormTranslatableContentDriver(): ?TranslatableContentDriver
+    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver
     {
-        $driver = $this->getFormTranslatableContentDriver();
+        $driver = $this->getFilamentTranslatableContentDriver();
 
         if (! $driver) {
             return null;
         }
 
-        return app($driver, ['locale' => $this->getActiveFormLocale() ?? app()->getLocale()]);
+        return app($driver, ['activeLocale' => $this->getActiveFormsLocale() ?? app()->getLocale()]);
     }
 
-    public function getActiveFormLocale(): ?string
+    public function getActiveFormsLocale(): ?string
     {
         return null;
     }
 
-    /**
-     * @param  string  $name
-     * @param  mixed  $value
-     * @param  Closure  $callback
-     */
-    protected function callBeforeAndAfterSyncHooks($name, $value, $callback): void
+    public function updatingInteractsWithForms(string $statePath): void
     {
-        parent::callBeforeAndAfterSyncHooks($name, $value, $callback);
+        $this->oldFormState[$statePath] = data_get($this, $statePath);
+    }
 
+    public function getOldFormState(string $statePath): mixed
+    {
+        return $this->oldFormState[$statePath] ?? null;
+    }
+
+    public function updatedInteractsWithForms(string $statePath): void
+    {
         foreach ($this->getCachedForms() as $form) {
-            $form->callAfterStateUpdated($name);
+            $form->callAfterStateUpdated($statePath);
         }
     }
 
@@ -396,7 +405,7 @@ trait InteractsWithForms
     /**
      * @return array<string, array<mixed>>
      */
-    protected function getRules(): array
+    public function getRules(): array
     {
         $rules = parent::getRules();
 

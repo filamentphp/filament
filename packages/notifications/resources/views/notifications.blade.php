@@ -1,7 +1,7 @@
 <div>
     <div
         @class([
-            'filament-notifications pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3',
+            'fi-no pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3',
             match (static::$horizontalAlignment) {
                 'left' => 'items-start',
                 'center' => 'items-center',

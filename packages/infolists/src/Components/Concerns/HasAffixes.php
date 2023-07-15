@@ -85,7 +85,7 @@ trait HasAffixes
 
         foreach ($this->prefixActions as $prefixAction) {
             foreach (Arr::wrap($this->evaluate($prefixAction)) as $action) {
-                $this->cachedPrefixActions[$action->getName()] = $this->prepareAction($action);
+                $this->cachedPrefixActions[$action->getName()] = $this->prepareAction($action->defaultSize('sm'));
             }
         }
 
@@ -109,7 +109,7 @@ trait HasAffixes
 
         foreach ($this->suffixActions as $suffixAction) {
             foreach (Arr::wrap($this->evaluate($suffixAction)) as $action) {
-                $this->cachedSuffixActions[$action->getName()] = $this->prepareAction($action);
+                $this->cachedSuffixActions[$action->getName()] = $this->prepareAction($action->defaultSize('sm'));
             }
         }
 

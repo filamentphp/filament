@@ -34,8 +34,12 @@ class EditAction extends Action
 
         $this->icon('heroicon-m-pencil-square');
 
-        $this->fillForm(function (Model $record): array {
-            $data = $record->attributesToArray();
+        $this->fillForm(function (Model $record, Table $table): array {
+            if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
+                $data = $translatableContentDriver->getRecordAttributesToArray($record);
+            } else {
+                $data = $record->attributesToArray();
+            }
 
             if ($this->mutateRecordDataUsing) {
                 $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
@@ -48,6 +52,8 @@ class EditAction extends Action
             $this->process(function (array $data, Model $record, Table $table) {
                 $relationship = $table->getRelationship();
 
+                $translatableContentDriver = $table->makeTranslatableContentDriver();
+
                 if ($relationship instanceof BelongsToMany) {
                     $pivotColumns = $relationship->getPivotColumns();
                     $pivotData = Arr::only($data, $pivotColumns);
@@ -59,7 +65,11 @@ class EditAction extends Action
                     $data = Arr::except($data, $pivotColumns);
                 }
 
-                $record->update($data);
+                if ($translatableContentDriver) {
+                    $translatableContentDriver->updateRecord($record, $data);
+                } else {
+                    $record->update($data);
+                }
             });
 
             $this->success();

@@ -108,8 +108,8 @@ The available hooks are as follows:
 - `scripts.end` - after scripts are defined
 - `styles.start` - before styles are defined
 - `styles.end` - after styles are defined
-- `global-search.start` - before [global search](resources/global-search) input
-- `global-search.end` - after [global search](resources/global-search) input
+- `global-search.start` - before [global search](resources/global-search) field
+- `global-search.end` - after [global search](resources/global-search) field
 - `page.header-widgets.start` - before page header widgets
 - `page.header-widgets.end` - after page header widgets
 - `page.footer-widgets.start` - before page footer widgets
@@ -124,8 +124,8 @@ The available hooks are as follows:
 - `tenant-menu.end` - after tenant menu
 - `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)
 - `user-menu.end` - after [user menu](navigation#customizing-the-user-menu)
-- `user-menu.account.before` - before the account item in the [user menu](navigation#customizing-the-user-menu)
-- `user-menu.account.after` - after the account item in the [user menu](navigation#customizing-the-user-menu)
+- `user-menu.profile.before` - before the profile item in the [user menu](navigation#customizing-the-user-menu)
+- `user-menu.profile.after` - after the profile item in the [user menu](navigation#customizing-the-user-menu)
 
 ## Setting a domain
 

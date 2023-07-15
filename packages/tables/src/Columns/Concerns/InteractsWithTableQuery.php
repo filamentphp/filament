@@ -83,7 +83,7 @@ trait InteractsWithTableQuery
 
         $model = $query->getModel();
 
-        $translatableContentDriver = $this->getLivewire()->makeTableTranslatableContentDriver();
+        $translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver();
 
         foreach ($this->getSearchColumns() as $searchColumn) {
             $whereClause = $isFirst ? 'where' : 'orWhere';

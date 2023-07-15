@@ -40,7 +40,7 @@ class EmailVerificationPrompt extends CardPage
     {
         return Action::make('resendNotification')
             ->link()
-            ->label(__('filament::pages/auth/email-verification/email-verification-prompt.buttons.resend_notification.label') . '.')
+            ->label(__('filament::pages/auth/email-verification/email-verification-prompt.actions.resend_notification.label') . '.')
             ->action(function (): void {
                 try {
                     $this->rateLimit(2);
@@ -74,11 +74,6 @@ class EmailVerificationPrompt extends CardPage
                     ->success()
                     ->send();
             });
-    }
-
-    public static function getName(): string
-    {
-        return 'filament.core.auth.email-verification.email-verification-prompt';
     }
 
     public function getTitle(): string | Htmlable

@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Συνδεθείτε στο λογαριασμό σας',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Συνδεθείτε',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Διεύθυνση ηλεκτρονικού ταχυδρομείου',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Θυμήσου με',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Συνδεθείτε',
+            ],
+
         ],
 
     ],

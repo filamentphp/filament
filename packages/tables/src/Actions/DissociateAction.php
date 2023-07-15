@@ -34,6 +34,8 @@ class DissociateAction extends Action
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-x-mark');
+
         $this->action(function (): void {
             $this->process(function (Model $record, Table $table): void {
                 /** @var BelongsTo $inverseRelationship */

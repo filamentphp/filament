@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'dan :count lagi',
         ],
 
-        'messages' => [
-            'copied' => 'Disalin',
-        ],
-
     ],
 
     'fields' => [
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Pergi ke halaman :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Selesai menyusun semula rekod',
@@ -101,7 +97,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Buang penapis',
@@ -148,7 +144,7 @@ return [
 
         'selected_count' => '{1} 1 rekod dipilih.|[2,*] :count rekod yang dipilih.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Pilih semua :count',

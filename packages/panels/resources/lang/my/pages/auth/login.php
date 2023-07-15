@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Sign in to your account',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => '၀င်မည်',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'မိမိ၏အီးမေးလ်',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'မှတ်ထားပေးပါ',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => '၀င်မည်',
+            ],
+
         ],
 
     ],

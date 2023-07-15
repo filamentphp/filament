@@ -1,6 +1,7 @@
 ---
 title: Key-value
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,7 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147614182-52756a59-a9c4-4371-ac61-cd77c977808e.png)
+<AutoScreenshot name="forms/fields/key-value/simple" alt="Key-value" version="3.x" />
 
 ## Adding rows
 
@@ -135,3 +136,5 @@ use Filament\Forms\Components\KeyValue;
 KeyValue::make('meta')
     ->reorderable()
 ```
+
+<AutoScreenshot name="forms/fields/key-value/reorderable" alt="Key-value with reorderable rows" version="3.x" />

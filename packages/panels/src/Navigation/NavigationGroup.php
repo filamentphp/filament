@@ -2,22 +2,25 @@
 
 namespace Filament\Navigation;
 
+use Closure;
+use Exception;
+use Filament\Support\Components\Component;
 use Illuminate\Contracts\Support\Arrayable;
 
-class NavigationGroup
+class NavigationGroup extends Component
 {
-    protected bool $isCollapsed = false;
+    protected bool | Closure $isCollapsed = false;
 
-    protected ?bool $isCollapsible = null;
+    protected bool | Closure | null $isCollapsible = null;
 
-    protected ?string $icon = null;
+    protected string | Closure | null $icon = null;
 
     /**
-     * @var array<NavigationItem | NavigationGroup> | Arrayable
+     * @var array<NavigationItem> | Arrayable
      */
     protected array | Arrayable $items = [];
 
-    protected ?string $label = null;
+    protected string | Closure | null $label = null;
 
     final public function __construct(?string $label = null)
     {
@@ -29,23 +32,23 @@ class NavigationGroup
         return app(static::class, ['label' => $label]);
     }
 
-    public function collapsed(bool $condition = true): static
+    public function collapsed(bool | Closure $condition = true): static
     {
         $this->isCollapsed = $condition;
 
-        $this->collapsible();
+        $this->collapsible($condition);
 
         return $this;
     }
 
-    public function collapsible(?bool $condition = true): static
+    public function collapsible(bool | Closure | null $condition = true): static
     {
         $this->isCollapsible = $condition;
 
         return $this;
     }
 
-    public function icon(?string $icon): static
+    public function icon(string | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -53,16 +56,25 @@ class NavigationGroup
     }
 
     /**
-     * @param  array<NavigationItem | NavigationGroup> | Arrayable  $items
+     * @param  array<NavigationItem> | Arrayable  $items
      */
     public function items(array | Arrayable $items): static
     {
+        foreach ($items as $item) {
+            if ($item instanceof NavigationItem) {
+                continue;
+            }
+
+            /** @phpstan-ignore-next-line */
+            throw new Exception("Navigation group [{$this->getLabel()}] has a nested group, which is not supported in the sidebar design at the moment.");
+        }
+
         $this->items = $items;
 
         return $this;
     }
 
-    public function label(?string $label): static
+    public function label(string | Closure | null $label): static
     {
         $this->label = $label;
 
@@ -71,11 +83,17 @@ class NavigationGroup
 
     public function getIcon(): ?string
     {
-        return $this->icon;
+        $icon = $this->evaluate($this->icon);
+
+        if (filled($icon) && $this->hasItemIcons()) {
+            throw new Exception("Navigation group [{$this->getLabel()}] has an icon but one or more of its items also have icons. Either the group or its items can have icons, but not both. This is to ensure a proper user experience.");
+        }
+
+        return $icon;
     }
 
     /**
-     * @return array<NavigationItem | NavigationGroup> | Arrayable
+     * @return array<NavigationItem> | Arrayable
      */
     public function getItems(): array | Arrayable
     {
@@ -84,17 +102,17 @@ class NavigationGroup
 
     public function getLabel(): ?string
     {
-        return $this->label;
+        return $this->evaluate($this->label);
     }
 
     public function isCollapsed(): bool
     {
-        return $this->isCollapsed;
+        return (bool) $this->evaluate($this->isCollapsed);
     }
 
     public function isCollapsible(): bool
     {
-        return $this->isCollapsible ?? filament()->hasCollapsibleNavigationGroups();
+        return (bool) ($this->evaluate($this->isCollapsible) ?? filament()->hasCollapsibleNavigationGroups());
     }
 
     public function isActive(): bool
@@ -108,5 +126,31 @@ class NavigationGroup
         }
 
         return false;
+    }
+
+    public function hasItemIcons(): bool
+    {
+        $hasIconCount = 0;
+        $hasNoIconCount = 0;
+
+        foreach ($this->getItems() as $item) {
+            if (! $item instanceof NavigationItem) {
+                continue;
+            }
+
+            if (blank($item->getIcon())) {
+                $hasNoIconCount++;
+
+                continue;
+            }
+
+            $hasIconCount++;
+        }
+
+        if (($hasIconCount > 0) && ($hasNoIconCount > 0) && filled($label = $this->getLabel())) {
+            throw new Exception("Navigation group [{$label}] has items with and without icons. All items must have icons or none of them can have icons. This is to ensure a proper user experience.");
+        }
+
+        return $hasIconCount > 0;
     }
 }

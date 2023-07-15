@@ -6,20 +6,16 @@ return [
 
     'heading' => 'Registrieren',
 
-    'buttons' => [
+    'actions' => [
 
         'login' => [
             'before' => 'oder',
             'label' => 'mit Konto anmelden',
         ],
 
-        'register' => [
-            'label' => 'Registrieren',
-        ],
-
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-Mail-Adresse',
@@ -36,6 +32,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Passwort bestätigen',
+        ],
+
+        'actions' => [
+
+            'register' => [
+                'label' => 'Registrieren',
+            ],
+
         ],
 
     ],

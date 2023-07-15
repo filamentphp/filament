@@ -3,7 +3,6 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Str;
 
 trait HasName
 {
@@ -23,7 +22,7 @@ trait HasName
 
     public function getLabel(): string | Htmlable | null
     {
-        $label = parent::getLabel() ?? (string) Str::of($this->getName())
+        $label = parent::getLabel() ?? (string) str($this->getName())
             ->afterLast('.')
             ->kebab()
             ->replace(['-', '_'], ' ')

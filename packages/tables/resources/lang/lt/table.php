@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'ir :count daugiau',
         ],
 
-        'messages' => [
-            'copied' => 'Nukopijuota',
-        ],
-
     ],
 
     'fields' => [
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Eiti į puslapį :page',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Finish reordering records',
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Pašalinti filtrą',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => '1 įrašas pasirinktas.|:count įrašai pasirinkti.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Pažymėti visus :count',

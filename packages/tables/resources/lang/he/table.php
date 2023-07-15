@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'ו :count נוספים',
         ],
 
-        'messages' => [
-            'copied' => 'הועתק',
-        ],
-
     ],
 
     'fields' => [
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'נווט לעמוד :page',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'סיים סידור רשומות',
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'מחק סנן',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => 'רשומה אחת נבחרה.|:count רשומות נבחרו.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'בחר את כל ה :count',

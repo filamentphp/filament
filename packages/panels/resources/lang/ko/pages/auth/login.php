@@ -6,15 +6,7 @@ return [
 
     'heading' => '로그인하세요',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => '로그인',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => '이메일',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => '기억하기',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => '로그인',
+            ],
+
         ],
 
     ],

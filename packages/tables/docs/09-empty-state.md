@@ -1,10 +1,13 @@
 ---
 title: Empty state
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
 The table's "empty state" is rendered when there are no rows in the table.
+
+<AutoScreenshot name="tables/empty-state" alt="Table with empty state" version="3.x" />
 
 ## Setting the empty state heading
 
@@ -20,6 +23,8 @@ public function table(Table $table): Table
 }
 ```
 
+<AutoScreenshot name="tables/empty-state-heading" alt="Table with customized empty state heading" version="3.x" />
+
 ## Setting the empty state description
 
 To customize the description of the empty state, use the `emptyStateDescription()` method:
@@ -30,9 +35,11 @@ use Filament\Tables\Table;
 public function table(Table $table): Table
 {
     return $table
-        ->emptyStateDescription('No posts yet');
+        ->emptyStateDescription('Once you write your first post, it will appear here.');
 }
 ```
+
+<AutoScreenshot name="tables/empty-state-description" alt="Table with empty state description" version="3.x" />
 
 ## Setting the empty state icon
 
@@ -47,6 +54,8 @@ public function table(Table $table): Table
         ->emptyStateIcon('heroicon-o-bookmark');
 }
 ```
+
+<AutoScreenshot name="tables/empty-state-icon" alt="Table with customized empty state icon" version="3.x" />
 
 ## Adding empty state actions
 
@@ -68,6 +77,8 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+<AutoScreenshot name="tables/empty-state-actions" alt="Table with empty state actions" version="3.x" />
 
 ## Using a custom empty state view
 

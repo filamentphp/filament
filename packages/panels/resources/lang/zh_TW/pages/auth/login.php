@@ -6,15 +6,7 @@ return [
 
     'heading' => '登入帳號',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => '登入',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-Mail 位址',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => '記住我',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => '登入',
+            ],
+
         ],
 
     ],

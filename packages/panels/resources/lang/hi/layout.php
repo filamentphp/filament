@@ -4,22 +4,26 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'डार्क मोड टॉगल करें',
-        ],
-
-        'light_theme' => [
-            'label' => 'लाइट मोड टॉगल करें',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'साइन आउट',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'उपयोगकर्ता विकल्प सूची',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'डार्क मोड टॉगल करें',
+            ],
+
+            'light' => [
+                'label' => 'लाइट मोड टॉगल करें',
+            ],
+
         ],
 
     ],

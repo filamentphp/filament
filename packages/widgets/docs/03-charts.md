@@ -64,7 +64,7 @@ Below is a list of available chart widget classes which you may extend, and thei
 
 ## Generating chart data from an Eloquent model
 
-To generate chart data from an Eloquent model, Filament recommends that you install the `flowframe/laravel-trend` package. You can view the documentation on the [Flowframe website](https://docs.flowfra.me/docs/laravel-trend/installation-and-setup).
+To generate chart data from an Eloquent model, Filament recommends that you install the `flowframe/laravel-trend` package. You can view the [documentation](https://github.com/Flowframe/laravel-trend).
 
 Here is an example of generating chart data from a model using the `laravel-trend` package:
 
@@ -189,24 +189,26 @@ use Filament\Support\RawJs;
 
 protected function getOptions(): RawJs
 {
-    return new RawJs("{
-        scales: {
-            y: {
-                ticks: {
-                    callback: (value) => '$' + value,
+    return RawJs::make(<<<JS
+        {
+            scales: {
+                y: {
+                    ticks: {
+                        callback: (value) => '$' + value,
+                    },
                 },
             },
-        },
-    }");
+        }
+    JS);
 }
 ```
 
-## Adding a subheading
+## Adding a description
 
-You may add a subheading, below the heading of the chart, using the `getSubheading()` method:
+You may add a description, below the heading of the chart, using the `getDescription()` method:
 
 ```php
-public function getSubheading(): ?string
+public function getDescription(): ?string
 {
     return 'The number of blog posts published per month.';
 }

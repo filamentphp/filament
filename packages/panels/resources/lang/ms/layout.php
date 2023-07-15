@@ -4,22 +4,18 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Tukar mod gelap',
-        ],
-
-        'database_notifications' => [
-            'label' => 'Buka pemberitahuan',
-        ],
-
-        'light_theme' => [
-            'label' => 'Tukar mod terang',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Log keluar',
+        ],
+
+        'open_database_notifications' => [
+            'label' => 'Buka pemberitahuan',
+        ],
+
+        'open_user_menu' => [
+            'label' => 'Menu Pengguna',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'user_menu' => [
-            'label' => 'Menu Pengguna',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Tukar mod gelap',
+            ],
+
+            'light' => [
+                'label' => 'Tukar mod terang',
+            ],
+
         ],
 
     ],

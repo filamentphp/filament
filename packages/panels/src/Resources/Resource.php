@@ -2,6 +2,8 @@
 
 namespace Filament\Resources;
 
+use Exception;
+use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
@@ -11,16 +13,22 @@ use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManagerConfiguration;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Table;
+use Filament\Widgets\Widget;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
@@ -72,16 +80,25 @@ abstract class Resource
 
     protected static ?string $slug = null;
 
+    protected static ?string $tenantOwnershipRelationshipName = null;
+
+    protected static ?string $tenantRelationshipName = null;
+
     /**
      * @var string | array<string>
      */
     protected static string | array $routeMiddleware = [];
 
+    /**
+     * @var string | array<string>
+     */
+    protected static string | array $withoutRouteMiddleware = [];
+
     protected static int $globalSearchResultsLimit = 50;
 
-    protected static bool $shouldAuthorizeWithGate = false;
+    protected static bool $shouldCheckPolicyExistence = true;
 
-    protected static bool $shouldIgnorePolicies = false;
+    protected static bool $shouldSkipAuthorization = false;
 
     public static function form(Form $form): Form
     {
@@ -140,47 +157,55 @@ abstract class Resource
 
     public static function can(string $action, ?Model $record = null): bool
     {
-        $user = Filament::auth()->user();
+        if (static::shouldSkipAuthorization()) {
+            return true;
+        }
+
         $model = static::getModel();
 
-        if (static::shouldAuthorizeWithGate()) {
-            return Gate::forUser($user)->check($action, $record ?? $model);
+        try {
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
         }
-
-        if (static::shouldIgnorePolicies()) {
-            return true;
-        }
-
-        $policy = Gate::getPolicyFor($model);
-        if ($policy === null) {
-            return true;
-        }
-
-        if (! method_exists($policy, $action)) {
-            return true;
-        }
-
-        return Gate::forUser($user)->check($action, $record ?? $model);
     }
 
-    public static function authorizeWithGate(bool $condition = true): void
+    /**
+     * @throws AuthorizationException
+     */
+    public static function authorize(string $action, ?Model $record = null): ?Response
     {
-        static::$shouldAuthorizeWithGate = $condition;
+        if (static::shouldSkipAuthorization()) {
+            return null;
+        }
+
+        $model = static::getModel();
+
+        try {
+            return authorize($action, $record ?? $model, static::shouldCheckPolicyExistence());
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse();
+        }
     }
 
-    public static function ignorePolicies(bool $condition = true): void
+    public static function checkPolicyExistence(bool $condition = true): void
     {
-        static::$shouldIgnorePolicies = $condition;
+        static::$shouldCheckPolicyExistence = $condition;
     }
 
-    public static function shouldAuthorizeWithGate(): bool
+    public static function skipAuthorization(bool $condition = true): void
     {
-        return static::$shouldAuthorizeWithGate;
+        static::$shouldSkipAuthorization = $condition;
     }
 
-    public static function shouldIgnorePolicies(): bool
+    public static function shouldCheckPolicyExistence(): bool
     {
-        return static::$shouldIgnorePolicies;
+        return static::$shouldCheckPolicyExistence;
+    }
+
+    public static function shouldSkipAuthorization(): bool
+    {
+        return static::$shouldSkipAuthorization;
     }
 
     public static function canViewAny(): bool
@@ -238,14 +263,34 @@ abstract class Resource
         return static::can('restoreAny');
     }
 
-    public static function canGloballySearch(): bool
-    {
-        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
-    }
-
     public static function canView(Model $record): bool
     {
         return static::can('view', $record);
+    }
+
+    public static function authorizeViewAny(): void
+    {
+        static::authorize('viewAny');
+    }
+
+    public static function authorizeCreate(): void
+    {
+        static::authorize('create');
+    }
+
+    public static function authorizeEdit(Model $record): void
+    {
+        static::authorize('update', $record);
+    }
+
+    public static function authorizeView(Model $record): void
+    {
+        static::authorize('view', $record);
+    }
+
+    public static function canGloballySearch(): bool
+    {
+        return static::$isGloballySearchable && count(static::getGloballySearchableAttributes()) && static::canViewAny();
     }
 
     public static function getBreadcrumb(): string
@@ -264,9 +309,23 @@ abstract class Resource
         return $query;
     }
 
-    public static function scopeEloquentQueryToTenant(Builder $query, Model $tenant): Builder
+    public static function scopeEloquentQueryToTenant(Builder $query, ?Model $tenant): Builder
     {
-        return $query->whereBelongsTo($tenant);
+        $tenant ??= Filament::getTenant();
+
+        $tenantOwnershipRelationship = static::getTenantOwnershipRelationship($query->getModel());
+        $tenantOwnershipRelationshipName = static::getTenantOwnershipRelationshipName();
+
+        return match (true) {
+            $tenantOwnershipRelationship instanceof BelongsTo => $query->whereBelongsTo(
+                $tenant,
+                $tenantOwnershipRelationshipName,
+            ),
+            default => $query->whereHas(
+                $tenantOwnershipRelationshipName,
+                fn (Builder $query) => $query->whereKey($tenant->getKey()),
+            ),
+        };
     }
 
     /**
@@ -423,7 +482,7 @@ abstract class Resource
     }
 
     /**
-     * @return array<class-string | RelationGroup>
+     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
     public static function getRelations(): array
     {
@@ -431,7 +490,7 @@ abstract class Resource
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget>>
      */
     public static function getWidgets(): array
     {
@@ -463,6 +522,7 @@ abstract class Resource
         )
             ->prefix($slug)
             ->middleware(static::getRouteMiddleware($panel))
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->group(function () use ($panel) {
                 foreach (static::getPages() as $name => $page) {
                     $page->registerRoute($panel)?->name($name);
@@ -476,6 +536,14 @@ abstract class Resource
     public static function getRouteMiddleware(Panel $panel): string | array
     {
         return static::$routeMiddleware;
+    }
+
+    /**
+     * @return string | array<string>
+     */
+    public static function getWithoutRouteMiddleware(Panel $panel): string | array
+    {
+        return static::$withoutRouteMiddleware;
     }
 
     public static function getEmailVerifiedMiddleware(Panel $panel): string
@@ -562,7 +630,7 @@ abstract class Resource
                 function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $search, $whereClause): Builder {
                     $searchColumn = match ($databaseConnection->getDriverName()) {
                         'pgsql' => "{$searchAttribute}::text",
-                        default => "json_extract({$searchAttribute}, '$')",
+                        default => $searchAttribute,
                     };
 
                     return $query->{"{$whereClause}Raw"}(
@@ -609,8 +677,7 @@ abstract class Resource
 
     public static function getNavigationIcon(): ?string
     {
-        return static::$navigationIcon ??
-            (filament()->hasTopNavigation() ? null : 'heroicon-o-rectangle-stack');
+        return static::$navigationIcon;
     }
 
     public static function navigationIcon(?string $icon): void
@@ -618,7 +685,7 @@ abstract class Resource
         static::$navigationIcon = $icon;
     }
 
-    public static function getActiveNavigationIcon(): string
+    public static function getActiveNavigationIcon(): ?string
     {
         return static::$activeNavigationIcon ?? static::getNavigationIcon();
     }
@@ -633,7 +700,10 @@ abstract class Resource
         return null;
     }
 
-    public static function getNavigationBadgeColor(): ?string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public static function getNavigationBadgeColor(): string | array | null
     {
         return null;
     }
@@ -661,5 +731,46 @@ abstract class Resource
     public static function isDiscovered(): bool
     {
         return static::$isDiscovered;
+    }
+
+    public static function getTenantOwnershipRelationshipName(): string
+    {
+        return static::$tenantOwnershipRelationshipName ?? Filament::getTenantOwnershipRelationshipName();
+    }
+
+    public static function getTenantOwnershipRelationship(Model $record): Relation
+    {
+        $relationshipName = static::getTenantOwnershipRelationshipName();
+
+        if (! $record->isRelation($relationshipName)) {
+            $resourceClass = static::class;
+            $recordClass = $record::class;
+
+            throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. You can change the relationship being used per-resource by setting it as the [\$tenantOwnershipRelationshipName] static property on the [{$resourceClass}] resource class.");
+        }
+
+        return $record->{$relationshipName}();
+    }
+
+    public static function getTenantRelationshipName(): string
+    {
+        return static::$tenantRelationshipName ?? (string) str(static::getModel())
+            ->classBasename()
+            ->pluralStudly()
+            ->camel();
+    }
+
+    public static function getTenantRelationship(Model $tenant): Relation
+    {
+        $relationshipName = static::getTenantRelationshipName();
+
+        if (! $tenant->isRelation($relationshipName)) {
+            $resourceClass = static::class;
+            $tenantClass = $tenant::class;
+
+            throw new Exception("The model [{$tenantClass}] does not have a relationship named [{$relationshipName}]. You can change the relationship being used by setting it as the [\$tenantRelationshipName] static property on the [{$resourceClass}] resource class.");
+        }
+
+        return $tenant->{$relationshipName}();
     }
 }

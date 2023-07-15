@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'এবং আরো :count',
         ],
 
-        'messages' => [
-            'copied' => 'অনুকৃত',
-        ],
-
     ],
 
     'fields' => [
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => ':page পৃষ্টায় যান',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'রেকর্ড পুনর্বিন্যাস সম্পন্ন করুন',
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'অনুসন্ধান সরান',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => '১ টি রেকর্ড নির্বাচিত। | :count টি রেকর্ড নির্বাচিত।',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'সব নির্বাচিত করুন',

@@ -2,7 +2,7 @@
 
 return [
 
-    'buttons' => [
+    'actions' => [
 
         'logout' => [
             'label' => 'Toka',
@@ -10,6 +10,6 @@ return [
 
     ],
 
-    'welcome' => 'Karibu, :user',
+    'welcome' => 'Karibu',
 
 ];

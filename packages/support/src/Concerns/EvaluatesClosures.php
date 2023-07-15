@@ -92,7 +92,7 @@ trait EvaluatesClosures
 
         $staticClass = static::class;
 
-        throw new BindingResolutionException("An attempt was made to evaluate a closure for [{$staticClass}], but [${$parameterName}] was unresolvable.");
+        throw new BindingResolutionException("An attempt was made to evaluate a closure for [{$staticClass}], but [\${$parameterName}] was unresolvable.");
     }
 
     /**

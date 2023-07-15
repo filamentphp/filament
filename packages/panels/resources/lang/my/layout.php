@@ -4,22 +4,26 @@ return [
 
     'direction' => 'ဘယ်မှညာ',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'အနက်နောက်ခံပုံစံ',
-        ],
-
-        'light_theme' => [
-            'label' => 'အဖြူနောက်ခံပုံစံ',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'ထွက်မည်',
         ],
 
-        'user_menu' => [
+        'open_user_menu' => [
             'label' => 'အသုံးပြုသူမီနူး',
+        ],
+
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'အနက်နောက်ခံပုံစံ',
+            ],
+
+            'light' => [
+                'label' => 'အဖြူနောက်ခံပုံစံ',
+            ],
+
         ],
 
     ],

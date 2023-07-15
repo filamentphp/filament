@@ -32,9 +32,9 @@ class CreateAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
-        $this->extraModalActions(function (): array {
+        $this->extraModalFooterActions(function (): array {
             return $this->canCreateAnother() ? [
-                $this->makeExtraModalAction('createAnother', ['another' => true])
+                $this->makeModalSubmitAction('createAnother', ['another' => true])
                     ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
             ] : [];
         });
@@ -47,20 +47,38 @@ class CreateAction extends Action
             $record = $this->process(function (array $data, Table $table) use ($model): Model {
                 $relationship = $table->getRelationship();
 
-                if (! $relationship) {
-                    return $model::create($data);
-                }
+                $pivotData = [];
 
                 if ($relationship instanceof BelongsToMany) {
                     $pivotColumns = $relationship->getPivotColumns();
 
-                    return $relationship->create(
-                        Arr::except($data, $pivotColumns),
-                        Arr::only($data, $pivotColumns),
-                    );
+                    $pivotData = Arr::only($data, $pivotColumns);
+                    $data = Arr::except($data, $pivotColumns);
                 }
 
-                return $relationship->create($data);
+                if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
+                    $record = $translatableContentDriver->makeRecord($model, $data);
+                } else {
+                    $record = new $model();
+                    $record->fill($data);
+                }
+
+                if (! $relationship) {
+                    $record->save();
+
+                    return $record;
+                }
+
+                if ($relationship instanceof BelongsToMany) {
+                    $relationship->save($record, $pivotData);
+
+                    return $record;
+                }
+
+                /** @phpstan-ignore-next-line */
+                $relationship->save($record);
+
+                return $record;
             });
 
             $this->record($record);

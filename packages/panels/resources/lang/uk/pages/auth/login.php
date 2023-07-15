@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Увійдіть у свій акаунт',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Увійти',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Електронна пошта',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Запам’ятай мене',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Увійти',
+            ],
+
         ],
 
     ],

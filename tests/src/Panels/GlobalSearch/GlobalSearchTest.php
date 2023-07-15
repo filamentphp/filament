@@ -4,7 +4,7 @@ use Filament\Facades\Filament;
 use Filament\GlobalSearch\Contracts\GlobalSearchProvider;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\GlobalSearch\GlobalSearchResults;
-use Filament\Http\Livewire\GlobalSearch;
+use Filament\Livewire\GlobalSearch;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\GlobalSearch\TestCase;
 use Illuminate\Database\Eloquent\Factories\Sequence;
@@ -13,9 +13,9 @@ use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
-it('can be mounted', function () {
+it('can render', function () {
     livewire(GlobalSearch::class)
-        ->assertOk();
+        ->assertSeeHtml('search');
 });
 
 it('can retrieve search results', function () {
@@ -23,7 +23,7 @@ it('can retrieve search results', function () {
 
     livewire(GlobalSearch::class)
         ->set('search', $post->title)
-        ->assertDispatchedBrowserEvent('open-global-search-results')
+        ->assertDispatched('open-global-search-results')
         ->assertSee($post->title);
 });
 
@@ -42,7 +42,7 @@ it('can retrieve limited search results', function () {
 
     livewire(GlobalSearch::class)
         ->set('search', $title)
-        ->assertDispatchedBrowserEvent('open-global-search-results')
+        ->assertDispatched('open-global-search-results')
         ->assertSee($posts[0]->title)
         ->assertSee($posts[1]->title)
         ->assertSee($posts[2]->title)
@@ -54,7 +54,7 @@ it('can retrieve results via custom search provider', function () {
 
     livewire(GlobalSearch::class)
         ->set('search', 'foo')
-        ->assertDispatchedBrowserEvent('open-global-search-results')
+        ->assertDispatched('open-global-search-results')
         ->assertSee(['foo', 'bar', 'baz']);
 });
 

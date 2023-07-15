@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Բովանդակությունը ծալվեց',
-
         'actions' => [
 
             'add' => [
@@ -90,8 +88,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Բովանդակությունը ծալվեց',
 
         'actions' => [
 

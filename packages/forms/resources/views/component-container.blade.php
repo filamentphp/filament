@@ -5,25 +5,25 @@
     :lg="$getColumns('lg')"
     :xl="$getColumns('xl')"
     :two-xl="$getColumns('2xl')"
-    class="filament-forms-component-container gap-6"
+    class="fi-fo-component-ctn gap-6"
 >
     @foreach ($getComponents(withHidden: true) as $formComponent)
         @php
             /**
-            * Instead of only rendering the hidden components, we should
-            * render the `<div>` wrappers for all fields, regardless of
-            * if they are hidden or not. This is to solve Livewire DOM
-            * diffing issues.
-            *
-            * Additionally, any `<div>` elements that wrap hidden
-            * components need to have `class="hidden"`, so that they
-            * don't consume grid space.
-            */
+             * Instead of only rendering the hidden components, we should
+             * render the `<div>` wrappers for all fields, regardless of
+             * if they are hidden or not. This is to solve Livewire DOM
+             * diffing issues.
+             *
+             * Additionally, any `<div>` elements that wrap hidden
+             * components need to have `class="hidden"`, so that they
+             * don't consume grid space.
+             */
             $isHidden = $formComponent->isHidden();
         @endphp
 
         <x-filament::grid.column
-            :wire:key="$formComponent instanceof \Filament\Forms\Components\Field ? $this->id . '.' . $formComponent->getStatePath() . '.' . $formComponent::class : null"
+            :wire:key="$formComponent instanceof \Filament\Forms\Components\Field ? $this->getId() . '.' . $formComponent->getStatePath() . '.' . $formComponent::class : null"
             :hidden="$isHidden"
             :default="$formComponent->getColumnSpan('default')"
             :sm="$formComponent->getColumnSpan('sm')"

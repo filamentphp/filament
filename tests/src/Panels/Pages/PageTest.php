@@ -5,13 +5,13 @@ use Filament\Pages\Page;
 use Filament\Tests\Panels\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Validation\ValidationException;
-use Livewire\LivewireManager;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
 it('can render page', function () {
-    $this->get(Settings::getUrl())->assertSuccessful();
+    $this->get(Settings::getUrl())
+        ->assertSuccessful();
 });
 
 it('can generate a slug based on the page name', function () {
@@ -28,8 +28,6 @@ it('can report validation errors', function () {
     };
 
     $component = livewire(Settings::class);
-
-    LivewireManager::$isLivewireRequestTestingOverride = true;
 
     $component
         ->call('save')

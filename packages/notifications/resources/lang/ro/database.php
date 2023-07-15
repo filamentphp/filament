@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Notificări',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Ștergere',

@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Sisältö kutistettu',
-
         'actions' => [
 
             'clone' => [
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Sisältö suljettu',
 
         'actions' => [
 

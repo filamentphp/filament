@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Log ind på din konto',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Log ind',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mail',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Husk mig',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Log ind',
+            ],
+
         ],
 
     ],

@@ -11,7 +11,8 @@ use function Pest\Livewire\livewire;
 uses(TestCase::class);
 
 it('can render page', function () {
-    $this->get(Filament::getRequestPasswordResetUrl())->assertSuccessful();
+    $this->get(Filament::getRequestPasswordResetUrl())
+        ->assertSuccessful();
 });
 
 it('can request password reset', function () {
@@ -22,7 +23,9 @@ it('can request password reset', function () {
     $userToResetPassword = User::factory()->create();
 
     livewire(RequestPasswordReset::class)
-        ->set('email', $userToResetPassword->email)
+        ->fillForm([
+            'email' => $userToResetPassword->email,
+        ])
         ->call('request')
         ->assertNotified();
 
@@ -38,7 +41,9 @@ it('can throttle requests', function () {
         $userToResetPassword = User::factory()->create();
 
         livewire(RequestPasswordReset::class)
-            ->set('email', $userToResetPassword->email)
+            ->fillForm([
+                'email' => $userToResetPassword->email,
+            ])
             ->call('request')
             ->assertNotified();
 
@@ -48,7 +53,9 @@ it('can throttle requests', function () {
     $userToResetPassword = User::factory()->create();
 
     livewire(RequestPasswordReset::class)
-        ->set('email', $userToResetPassword->email)
+        ->fillForm([
+            'email' => $userToResetPassword->email,
+        ])
         ->call('request')
         ->assertNotified();
 
@@ -57,14 +64,18 @@ it('can throttle requests', function () {
 
 it('can validate `email` is required', function () {
     livewire(RequestPasswordReset::class)
-        ->set('email', '')
+        ->fillForm([
+            'email' => '',
+        ])
         ->call('request')
-        ->assertHasErrors(['email' => ['required']]);
+        ->assertHasFormErrors(['email' => ['required']]);
 });
 
 it('can validate `email` is valid email', function () {
     livewire(RequestPasswordReset::class)
-        ->set('email', 'invalid-email')
+        ->fillForm([
+            'email' => 'invalid-email',
+        ])
         ->call('request')
-        ->assertHasErrors(['email' => ['email']]);
+        ->assertHasFormErrors(['email' => ['email']]);
 });

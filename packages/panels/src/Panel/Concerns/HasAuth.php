@@ -3,6 +3,7 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Pages\Auth\EditProfile;
 use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use Filament\Pages\Auth\Login;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
@@ -43,6 +44,8 @@ trait HasAuth
      * @var string | Closure | array<class-string, string> | null
      */
     protected string | Closure | array | null $resetPasswordRouteAction = null;
+
+    protected ?string $profilePage = null;
 
     protected string $authGuard = 'web';
 
@@ -96,9 +99,16 @@ trait HasAuth
         return $this;
     }
 
+    public function profile(?string $page = EditProfile::class): static
+    {
+        $this->profilePage = $page;
+
+        return $this;
+    }
+
     public function auth(): Guard
     {
-        return auth()->guard($this->authGuard);
+        return auth()->guard($this->getAuthGuard());
     }
 
     public function authGuard(string $guard): static
@@ -111,6 +121,16 @@ trait HasAuth
     public function isEmailVerificationRequired(): bool
     {
         return $this->isEmailVerificationRequired;
+    }
+
+    public function hasProfile(): bool
+    {
+        return filled($this->getProfilePage());
+    }
+
+    public function getProfilePage(): ?string
+    {
+        return $this->profilePage;
     }
 
     /**
@@ -205,6 +225,18 @@ trait HasAuth
     /**
      * @param  array<mixed>  $parameters
      */
+    public function getProfileUrl(array $parameters = []): ?string
+    {
+        if (! $this->hasProfile()) {
+            return null;
+        }
+
+        return route("filament.{$this->getId()}.auth.profile", $parameters);
+    }
+
+    /**
+     * @param  array<mixed>  $parameters
+     */
     public function getLogoutUrl(array $parameters = []): string
     {
         return route("filament.{$this->getId()}.auth.logout", $parameters);
@@ -270,7 +302,7 @@ trait HasAuth
         return filled($this->getRegistrationRouteAction());
     }
 
-    public function getAuthGuard(): ?string
+    public function getAuthGuard(): string
     {
         return $this->authGuard;
     }

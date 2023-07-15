@@ -19,8 +19,6 @@ class BulkAction extends MountableAction implements Groupable, HasTable
     {
         parent::setUp();
 
-        $this->grouped();
-
         $this->extraAttributes([
             'x-bind:disabled' => '! selectedRecords.length',
         ]);

@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Ingia kwenye akaunti yako',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Ingia',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Barua pepe',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Nikumbuke',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Ingia',
+            ],
+
         ],
 
     ],

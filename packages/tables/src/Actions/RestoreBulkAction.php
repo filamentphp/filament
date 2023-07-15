@@ -35,6 +35,8 @@ class RestoreBulkAction extends BulkAction
 
         $this->requiresConfirmation();
 
+        $this->modalIcon('heroicon-o-arrow-uturn-left');
+
         $this->action(function (): void {
             $this->process(static function (Collection $records): void {
                 $records->each(function (Model $record): void {

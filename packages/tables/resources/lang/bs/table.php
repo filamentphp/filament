@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'i :count više',
         ],
 
-        'messages' => [
-            'copied' => 'Kopirano',
-        ],
-
     ],
 
     'fields' => [
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Idite na stranicu :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Završi preuređivanje zapisa',
@@ -99,7 +95,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Skloni filter',
@@ -146,7 +142,7 @@ return [
 
         'selected_count' => '1 izabran zapis.|:count izabrani zapisi.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Izaberite sve :count',

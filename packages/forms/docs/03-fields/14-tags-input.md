@@ -1,6 +1,7 @@
 ---
 title: Tags input
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -14,7 +15,7 @@ use Filament\Forms\Components\TagsInput;
 TagsInput::make('tags')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147614098-14d6eecb-2674-49b6-a5ee-e963c4d88a6e.png)
+<AutoScreenshot name="forms/fields/tags-input/simple" alt="Tags input" version="3.x" />
 
 If you're saving the JSON tags using Eloquent, you should be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
 
@@ -59,8 +60,6 @@ TagsInput::make('tags')
         'livewire',
     ])
 ```
-
-![](https://user-images.githubusercontent.com/41773797/147614115-7570a6cb-dd91-4912-8adf-e54a51f1c567.png)
 
 ## Defining split keys
 

@@ -17,7 +17,7 @@ class Actions extends Page
         return [
             Action::make('simple')
                 ->action(function () {
-                    $this->emit('simple-called');
+                    $this->dispatch('simple-called');
                 }),
             Action::make('data')
                 ->mountUsing(fn (ComponentContainer $form) => $form->fill(['foo' => 'bar']))
@@ -25,17 +25,17 @@ class Actions extends Page
                     TextInput::make('payload')->required(),
                 ])
                 ->action(function (array $data) {
-                    $this->emit('data-called', $data);
+                    $this->dispatch('data-called', data: $data);
                 }),
             Action::make('arguments')
                 ->requiresConfirmation()
                 ->action(function (array $arguments) {
-                    $this->emit('arguments-called', $arguments);
+                    $this->dispatch('arguments-called', arguments: $arguments);
                 }),
             Action::make('halt')
                 ->requiresConfirmation()
                 ->action(function (Action $action) {
-                    $this->emit('halt-called');
+                    $this->dispatch('halt-called');
 
                     $action->halt();
                 }),

@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Innehåll komprimerat',
-
         'actions' => [
 
             'clone' => [
@@ -222,8 +220,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Innehåll komprimerat',
 
         'actions' => [
 

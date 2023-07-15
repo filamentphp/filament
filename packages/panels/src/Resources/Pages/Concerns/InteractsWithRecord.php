@@ -5,10 +5,12 @@ namespace Filament\Resources\Pages\Concerns;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Str;
+use Livewire\Attributes\Locked;
 
 trait InteractsWithRecord
 {
-    public Model | int | string $record;
+    #[Locked]
+    public Model | int | string | null $record;
 
     protected function resolveRecord(int | string $key): Model
     {
@@ -67,5 +69,16 @@ trait InteractsWithRecord
         $breadcrumbs[] = $this->getBreadcrumb();
 
         return $breadcrumbs;
+    }
+
+    protected function afterActionCalled(): void
+    {
+        if ($this->getRecord()->exists) {
+            return;
+        }
+
+        // Ensure that Livewire does not attempt to dehydrate
+        // a record that does not exist.
+        $this->record = null;
     }
 }

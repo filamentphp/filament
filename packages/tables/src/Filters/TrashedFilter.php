@@ -30,6 +30,10 @@ class TrashedFilter extends TernaryFilter
             blank: fn ($query) => $query->withoutTrashed(),
         );
 
+        $this->baseQuery(fn (Builder $query) => $query->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]));
+
         $this->indicateUsing(function (array $state): array {
             if ($state['value'] ?? null) {
                 return [$this->getTrueLabel()];
@@ -41,17 +45,5 @@ class TrashedFilter extends TernaryFilter
 
             return [$this->getFalseLabel()];
         });
-    }
-
-    /**
-     * @param  array<string, mixed>  $data
-     */
-    public function applyToBaseQuery(Builder $query, array $data = []): Builder
-    {
-        $query->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
-
-        return $query;
     }
 }

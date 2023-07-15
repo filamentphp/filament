@@ -6,7 +6,7 @@ return [
 
     'heading' => 'E-mailadres verifiëren',
 
-    'buttons' => [
+    'actions' => [
 
         'resend_notification' => [
             'label' => 'Opnieuw verzenden',

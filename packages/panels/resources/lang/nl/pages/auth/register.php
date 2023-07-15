@@ -6,20 +6,16 @@ return [
 
     'heading' => 'Registreren',
 
-    'buttons' => [
+    'actions' => [
 
         'login' => [
             'before' => 'of',
             'label' => 'inloggen op je account',
         ],
 
-        'register' => [
-            'label' => 'Registreren',
-        ],
-
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-mailadres',
@@ -36,6 +32,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Wachtwoord bevestigen',
+        ],
+
+        'actions' => [
+
+            'register' => [
+                'label' => 'Registreren',
+            ],
+
         ],
 
     ],

@@ -1,6 +1,7 @@
 ---
 title: File upload
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
@@ -12,7 +13,7 @@ use Filament\Forms\Components\FileUpload;
 FileUpload::make('attachment')
 ```
 
-![](https://user-images.githubusercontent.com/41773797/147613556-62c62153-4d21-4801-8a71-040d528d5757.png)
+<AutoScreenshot name="forms/fields/file-upload/simple" alt="File upload" version="3.x" />
 
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/spatie-media-library) for more information.
 
@@ -81,7 +82,7 @@ FileUpload::make('attachment')
 You may completely customize how file names are generated using the `getUploadedFileNameForStorageUsing()` method, and returning a string from the closure based on the `$file` that was uploaded:
 
 ```php
-use Livewire\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
 FileUpload::make('attachment')
     ->getUploadedFileNameForStorageUsing(
@@ -135,8 +136,6 @@ FileUpload::make('attachment')
     ->uploadButtonPosition('left')
     ->uploadProgressIndicatorPosition('left')
 ```
-
-![](https://user-images.githubusercontent.com/41773797/147613590-9ee07ce7-a43e-46a0-bb40-7a21a3692aea.png)
 
 ## Reordering files
 

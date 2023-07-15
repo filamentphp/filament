@@ -3,13 +3,17 @@
 namespace Filament\Resources\Pages\Concerns;
 
 use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManagerConfiguration;
+use Livewire\Features\SupportQueryString\Url;
 
 trait HasRelationManagers
 {
+    #[Url]
     public ?string $activeRelationManager = null;
 
     /**
-     * @return array<string | RelationGroup>
+     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
     public function getRelationManagers(): array
     {
@@ -17,14 +21,27 @@ trait HasRelationManagers
 
         return array_filter(
             $managers,
-            function (string | RelationGroup $manager): bool {
+            function (string | RelationGroup | RelationManagerConfiguration $manager): bool {
                 if ($manager instanceof RelationGroup) {
                     return (bool) count($manager->ownerRecord($this->getRecord())->pageClass(static::class)->getManagers());
                 }
 
-                return $manager::canViewForRecord($this->getRecord(), static::class);
+                return $this->normalizeRelationManagerClass($manager)::canViewForRecord($this->getRecord(), static::class);
             },
         );
+    }
+
+    /**
+     * @param  class-string<RelationManager> | RelationManagerConfiguration  $manager
+     * @return class-string<RelationManager>
+     */
+    protected function normalizeRelationManagerClass(string | RelationManagerConfiguration $manager): string
+    {
+        if ($manager instanceof RelationManagerConfiguration) {
+            return $manager->relationManager;
+        }
+
+        return $manager;
     }
 
     public function mountHasRelationManagers(): void

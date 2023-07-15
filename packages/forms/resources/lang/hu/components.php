@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Tartalom becsukva',
-
         'actions' => [
 
             'clone' => [
@@ -102,8 +100,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Tartalom becsukva',
 
         'actions' => [
 

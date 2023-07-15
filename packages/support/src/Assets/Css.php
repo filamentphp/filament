@@ -36,7 +36,11 @@ class Css extends Asset
 
         $html ??= $this->getHref();
 
-        return new HtmlString("<link href=\"{$html}\" rel=\"stylesheet\" />");
+        return new HtmlString("<link
+            href=\"{$html}\"
+            rel=\"stylesheet\"
+            data-navigate-track
+        />");
     }
 
     public function getRelativePublicPath(): string

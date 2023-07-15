@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Reset your password',
 
-    'buttons' => [
-
-        'reset' => [
-            'label' => 'Reset password',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Email address',
@@ -27,6 +19,14 @@ return [
 
         'password_confirmation' => [
             'label' => 'Confirm password',
+        ],
+
+        'actions' => [
+
+            'reset' => [
+                'label' => 'Reset password',
+            ],
+
         ],
 
     ],

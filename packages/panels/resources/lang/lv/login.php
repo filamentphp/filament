@@ -6,7 +6,7 @@ return [
 
     'heading' => 'Pierakstīties savā kontā',
 
-    'buttons' => [
+    'actions' => [
 
         'submit' => [
             'label' => 'Pierakstīties',
@@ -14,7 +14,7 @@ return [
 
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-pasta adrese',

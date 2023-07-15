@@ -10,20 +10,34 @@
         <title>{{ config('app.name') }}</title>
 
         <style>[x-cloak] { display: none !important; }</style>
-        @livewireStyles
         @filamentStyles
         @vite('resources/css/app.css')
 
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=be-vietnam-pro:400,500,700&amp;display=swap" rel="stylesheet">
+
+        <script>
+            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark')
+            }
+
+            window
+                .matchMedia('(prefers-color-scheme: dark)')
+                .addEventListener('change', (event) => {
+                    if (event.matches) {
+                        document.documentElement.classList.add('dark')
+                    } else {
+                        document.documentElement.classList.remove('dark')
+                    }
+                })
+        </script>
     </head>
 
-    <body class="antialiased bg-gray-50 text-gray-900 dark:text-white dark:bg-gray-900">
+    <body class="antialiased bg-gray-50 text-gray-950 dark:text-white dark:bg-gray-950">
         {{ $slot }}
 
         @livewire('notifications')
 
-        @livewireScripts
         @filamentScripts
         @vite('resources/js/app.js')
         <script src="//unpkg.com/alpinejs" defer></script>

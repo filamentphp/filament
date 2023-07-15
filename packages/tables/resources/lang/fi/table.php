@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'ja :count lisää',
         ],
 
-        'messages' => [
-            'copied' => 'Kopioitu',
-        ],
-
     ],
 
     'fields' => [
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Mene sivulle :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Viimeistele tietueiden järjestely',
@@ -101,7 +97,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Poista suodatin',
@@ -148,7 +144,7 @@ return [
 
         'selected_count' => '1 tietue valittu.|:count tietuetta valittu.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Valitse kaikki :count tietuetta',

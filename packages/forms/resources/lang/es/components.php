@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Contenido contraido',
-
         'actions' => [
 
             'clone' => [
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Deseleccionar todos',
@@ -122,8 +120,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Contenido contraido',
 
         'actions' => [
 

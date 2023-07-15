@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Bildirimler',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Temizle',

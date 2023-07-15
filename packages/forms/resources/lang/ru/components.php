@@ -4,8 +4,6 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Содержимое свернуто',
-
         'actions' => [
 
             'clone' => [
@@ -121,8 +119,6 @@ return [
     ],
 
     'repeater' => [
-
-        'collapsed' => 'Содержимое свернуто',
 
         'actions' => [
 

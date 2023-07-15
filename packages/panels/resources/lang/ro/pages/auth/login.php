@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Logheaza-te în contul tau',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Autentificare',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Email',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Ține-mă minte',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Autentificare',
+            ],
+
         ],
 
     ],

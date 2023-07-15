@@ -1,4 +1,5 @@
 @props([
+    'activeLocale' => null,
     'activeManager',
     'content' => null,
     'contentTabLabel' => null,
@@ -7,7 +8,17 @@
     'pageClass',
 ])
 
-<div class="filament-resources-relation-managers-container space-y-2">
+<div class="fi-resources-relation-managers space-y-2">
+    @php
+        $normalizeRelationManagerClass = function (string | Filament\Resources\RelationManagers\RelationManagerConfiguration $manager): string {
+            if ($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) {
+                return $manager->relationManager;
+            }
+
+            return $manager;
+        };
+    @endphp
+
     @if ((count($managers) > 1) || $content)
         <div class="flex justify-center">
             <x-filament::tabs>
@@ -28,6 +39,8 @@
                         if ($isGroup) {
                             $manager->ownerRecord($ownerRecord);
                             $manager->pageClass($pageClass);
+                        } else {
+                            $manager = $normalizeRelationManagerClass($manager);
                         }
                     @endphp
 
@@ -59,16 +72,37 @@
             @endif
             class="space-y-4 outline-none"
         >
+            @php
+                $managerLivewireProperties = ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass];
+
+                if (filled($activeLocale)) {
+                    $managerLivewireProperties['activeLocale'] = $activeLocale;
+                }
+            @endphp
+
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
-                @foreach($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManager)
-                    @livewire(\Livewire\Livewire::getAlias($groupedManager, $groupedManager::getName()), ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($groupedManager))
+                @foreach ($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManager)
+                    @php
+                        $normalizedGroupedManagerClass = $normalizeRelationManagerClass($groupedManager);
+                    @endphp
+
+                    @livewire(
+                        $normalizedGroupedManagerClass,
+                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $groupedManager->props : [])],
+                        key($normalizedGroupedManagerClass),
+                    )
                 @endforeach
             @else
                 @php
                     $manager = $managers[$activeManager];
+                    $normalizedManagerClass = $normalizeRelationManagerClass($manager);
                 @endphp
 
-                @livewire(\Livewire\Livewire::getAlias($manager, $manager::getName()), ['ownerRecord' => $ownerRecord, 'pageClass' => $pageClass], key($manager))
+                @livewire(
+                    $normalizedManagerClass,
+                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $manager->props : [])],
+                    key($normalizedManagerClass),
+                )
             @endif
         </div>
     @elseif ($content)

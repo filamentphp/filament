@@ -12,9 +12,13 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
@@ -133,7 +137,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $labels;
         });
 
-        $this->placeholder(__('filament-forms::components.select.placeholder'));
+        $this->placeholder(fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
 
         $this->suffixActions([
             fn (Select $component): ?Action => $component->getCreateOptionAction(),
@@ -251,12 +255,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
                 $action->halt();
             })
+            ->color('gray')
             ->icon('heroicon-m-plus')
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
-            ->extraModalActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
-                $action->makeExtraModalAction('createAnother', ['another' => true])
+            ->extraModalFooterActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
+                $action->makeModalSubmitAction('createAnother', arguments: ['another' => true])
                     ->label(__('filament-forms::components.select.actions.create_option.modal.actions.create_another.label')),
             ] : []);
 
@@ -328,7 +333,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function editOptionForm(array | Closure | null $schema): static
     {
         $this->editOptionActionForm = $schema;
-        $this->reactive();
+        $this->live();
 
         return $this;
     }
@@ -389,11 +394,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
                 /** @var LivewireComponent $livewire */
                 $livewire = $component->getLivewire();
-                $livewire->dispatchBrowserEvent('filament-forms::select.refreshSelectedOptionLabel', [
-                    'livewireId' => $livewire->id,
-                    'statePath' => $statePath,
-                ]);
+                $livewire->dispatch('filament-forms::select.refreshSelectedOptionLabel', livewireId: $livewire->getId(), statePath: $statePath);
             })
+            ->color('gray')
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
@@ -621,24 +624,40 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure | null $relationshipName, string | Closure | null $titleAttribute, ?Closure $modifyOptionsQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
-        $this->relationship = $relationshipName ?? $this->getName();
+        $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
 
-        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyOptionsQueryUsing): array {
-            $relationship = $component->getRelationship();
+        $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyQueryUsing): array {
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+            }
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($component->getRelationshipTitleAttribute());
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             $component->applySearchConstraint(
@@ -655,27 +674,26 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $keyName = $relationship->getRelated()->getKeyName();
+                $keyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
-                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$keyName} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::beforeLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
 
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (
-                str_contains($relationshipTitleAttribute, '->') &&
-                (! str_contains($relationshipTitleAttribute, ' as '))
-            ) {
-                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery
@@ -683,47 +701,62 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ->toArray();
         });
 
-        $this->options(static function (Select $component) use ($modifyOptionsQueryUsing): ?array {
+        $this->options(static function (Select $component) use ($modifyQueryUsing): ?array {
             if (($component->isSearchable()) && ! $component->isPreloaded()) {
                 return null;
             }
 
-            $relationship = $component->getRelationship();
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query();
+            $relationshipQuery = $relationship->getQuery();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+            }
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
 
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
             if (empty($relationshipQuery->getQuery()->orders)) {
-                $relationshipQuery->orderBy($component->getRelationshipTitleAttribute());
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
-                $keyName = $relationship->getRelated()->getKeyName();
+                $keyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
-                $keyName = $component->isMultiple() ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName();
+                $keyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$keyName} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::beforeLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
 
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (
-                str_contains($relationshipTitleAttribute, '->') &&
-                (! str_contains($relationshipTitleAttribute, ' as '))
-            ) {
-                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery
@@ -738,7 +771,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationship = $component->getRelationship();
 
-            if ($component->isMultiple()) {
+            if ($relationship instanceof BelongsToMany) {
+                /** @var Collection $relatedModels */
                 $relatedModels = $relationship->getResults();
 
                 $component->state(
@@ -783,13 +817,32 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $record->getAttributeValue($component->getRelationshipTitleAttribute());
         });
 
-        $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyOptionsQueryUsing): ?Model {
-            $relationship = $component->getRelationship();
+        $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query()->where($relationship->getOwnerKeyName(), $state);
+            $relationshipQuery = $relationship->getQuery();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+            }
+
+            $relationshipQuery->where(
+                $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName(),
+                $state,
+            );
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -797,15 +850,31 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $relationshipQuery->first();
         });
 
-        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyOptionsQueryUsing): array {
-            $relationship = $component->getRelationship();
-            $relatedKeyName = $relationship->getRelatedKeyName();
+        $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
+            $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getRelated()->query()
-                ->whereIn($relatedKeyName, $values);
+            $relationshipQuery = $relationship->getQuery();
 
-            if ($modifyOptionsQueryUsing) {
-                $relationshipQuery = $component->evaluate($modifyOptionsQueryUsing, [
+            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
+            // those that are attached in the pivot table. We need to change this to a left join so
+            // that we can still get results when the relationship is not attached to the record.
+            if ($relationship instanceof BelongsToMany) {
+                /** @var ?JoinClause $firstRelationshipJoinClause */
+                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
+
+                if ($firstRelationshipJoinClause) {
+                    $firstRelationshipJoinClause->type = 'left';
+                }
+
+                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+            }
+
+            $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
+
+            $relationshipQuery->whereIn($relatedKeyName, $values);
+
+            if ($modifyQueryUsing) {
+                $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
@@ -814,18 +883,19 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relatedKeyName} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::beforeLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (
-                str_contains($relationshipTitleAttribute, '->') &&
-                (! str_contains($relationshipTitleAttribute, ' as '))
-            ) {
-                $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+            if (str_contains($relationshipTitleAttribute, '->')) {
+                if (! str_contains($relationshipTitleAttribute, ' as ')) {
+                    $relationshipTitleAttribute .= " as {$relationshipTitleAttribute}";
+                }
+            } else {
+                $relationshipTitleAttribute = $relationshipQuery->qualifyColumn($relationshipTitleAttribute);
             }
 
             return $relationshipQuery
@@ -846,17 +916,30 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $column,
                 );
             },
-            static fn (Select $component): bool => ! $component->isMultiple(),
+            static function (Select $component): bool {
+                $relationship = $component->getRelationship();
+
+                if (! (
+                    $relationship instanceof BelongsTo ||
+                    $relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough
+                )) {
+                    return false;
+                }
+
+                return ! $component->isMultiple();
+            },
         );
 
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
-            if ($component->isMultiple()) {
-                $component->getRelationship()->sync($state ?? []);
+            $relationship = $component->getRelationship();
+
+            if ($relationship instanceof BelongsToMany) {
+                $relationship->sync($state ?? []);
 
                 return;
             }
 
-            $component->getRelationship()->associate($state);
+            $relationship->associate($state);
             $record->save();
         });
 

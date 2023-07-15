@@ -56,8 +56,8 @@ class Wizard extends Component
         parent::setUp();
 
         $this->registerActions([
-            fn (Wizard $component): ?Action => $component->getNextAction(),
-            fn (Wizard $component): ?Action => $component->getPreviousAction(),
+            fn (Wizard $component): Action => $component->getNextAction(),
+            fn (Wizard $component): Action => $component->getPreviousAction(),
         ]);
 
         $this->registerListeners([
@@ -69,7 +69,7 @@ class Wizard extends Component
 
                     if (! $component->isSkippable()) {
                         /** @var Step $currentStep */
-                        $currentStep = $component->getChildComponentContainer()->getComponents()[$currentStep];
+                        $currentStep = $component->getChildComponentContainer()->getComponents(withHidden: true)[$currentStep];
 
                         $currentStep->callBeforeValidation();
                         $currentStep->getChildComponentContainer()->validate();
@@ -78,15 +78,13 @@ class Wizard extends Component
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
-                    $livewire->dispatchBrowserEvent('next-wizard-step', [
-                        'statePath' => $statePath,
-                    ]);
+                    $livewire->dispatch('next-wizard-step', statePath: $statePath);
                 },
             ],
         ]);
     }
 
-    public function getNextAction(): ?Action
+    public function getNextAction(): Action
     {
         $action = Action::make($this->getNextActionName())
             ->label(__('filament-forms::components.wizard.actions.next_step.label'))
@@ -118,7 +116,7 @@ class Wizard extends Component
         return 'next';
     }
 
-    public function getPreviousAction(): ?Action
+    public function getPreviousAction(): Action
     {
         $action = Action::make($this->getPreviousActionName())
             ->label(__('filament-forms::components.wizard.actions.previous_step.label'))

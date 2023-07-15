@@ -8,10 +8,6 @@ return [
             'more_list_items' => 'و :count تا بیشتر',
         ],
 
-        'messages' => [
-            'copied' => 'کپی شد',
-        ],
-
     ],
 
     'fields' => [
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'برو به صفحه :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'اتمام بازچینش رکوردها',
@@ -99,7 +95,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'حذف فیلتر',
@@ -146,7 +142,7 @@ return [
 
         'selected_count' => '1 آیتم انتخاب شده.|:count آیتم انتخاب شده.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'انتخاب همه‌ی :count آیتم',

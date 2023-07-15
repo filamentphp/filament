@@ -58,7 +58,7 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Color;
+use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -77,7 +77,9 @@ class {$className} extends PanelProvider
             ->id('{$id}')
             ->path({$pathPhp}){$domainPhp}
             ->login(){$authGuardPhp}
-            ->primaryColor(Color::Amber)
+            ->colors([
+                'primary' => Color::Amber,
+            ])
             ->discoverResources(in: {$resourcesPathPhp}, for: {$resourcesNamespacePhp})
             ->discoverPages(in: {$pagesPathPhp}, for: {$pagesNamespacePhp})
             ->pages([

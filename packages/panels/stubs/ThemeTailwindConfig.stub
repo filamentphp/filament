@@ -1,6 +1,6 @@
-const preset = require('../../../../vendor/filament/filament/tailwind.config.preset')
+import preset from '../../../../vendor/filament/filament/tailwind.config.preset'
 
-module.exports = {
+export default {
     presets: [preset],
     content: [
         './app/Filament/{{ classPathPrefix }}**/*.php',

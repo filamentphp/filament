@@ -19,7 +19,7 @@ Then, render your Livewire component on the page:
 Alternatively, you can use a full-page Livewire component:
 
 ```php
-use App\Http\Livewire\ViewProduct;
+use App\Livewire\ViewProduct;
 use Illuminate\Support\Facades\Route;
 
 Route::get('products/{product}', ViewProduct::class);
@@ -34,7 +34,7 @@ use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Livewire\Component;
 
-class ViewProduct extends Component implements HasInfolists, HasForms
+class ViewProduct extends Component implements HasForms, HasInfolists
 {
     use InteractsWithInfolists;
     use InteractsWithForms;

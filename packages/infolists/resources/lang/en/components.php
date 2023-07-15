@@ -2,12 +2,8 @@
 
 return [
 
-    'text' => [
+    'text_entry' => [
         'more_list_items' => 'and :count more',
-    ],
-
-    'messages' => [
-        'copied' => 'Copied',
     ],
 
 ];

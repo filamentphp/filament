@@ -4,22 +4,18 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Включить темный режим',
-        ],
-
-        'database_notifications' => [
-            'label' => 'Открыть уведомления',
-        ],
-
-        'light_theme' => [
-            'label' => 'Включить светлый режим',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Выйти',
+        ],
+
+        'open_database_notifications' => [
+            'label' => 'Открыть уведомления',
+        ],
+
+        'open_user_menu' => [
+            'label' => 'Меню пользователя',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'user_menu' => [
-            'label' => 'Меню пользователя',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Включить темный режим',
+            ],
+
+            'light' => [
+                'label' => 'Включить светлый режим',
+            ],
+
         ],
 
     ],

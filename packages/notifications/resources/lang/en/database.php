@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Notifications',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Clear',
@@ -27,7 +27,7 @@ return [
 
             'label' => 'Pagination navigation',
 
-            'buttons' => [
+            'actions' => [
 
                 'next' => [
                     'label' => 'Next',

@@ -21,8 +21,11 @@ trait HasRecords
 
     public function getFilteredTableQuery(): Builder
     {
-        $query = $this->getTable()->getQuery();
+        return $this->filterTableQuery($this->getTable()->getQuery());
+    }
 
+    public function filterTableQuery(Builder $query): Builder
+    {
         $this->applyFiltersToTableQuery($query);
 
         $this->applySearchToTableQuery($query);
@@ -69,8 +72,18 @@ trait HasRecords
 
     public function getTableRecords(): Collection | Paginator
     {
+        if ($translatableContentDriver = $this->makeFilamentTranslatableContentDriver()) {
+            $setRecordLocales = function (Collection | Paginator $records) use ($translatableContentDriver): Collection | Paginator {
+                $records->transform(fn (Model $record) => $translatableContentDriver->setRecordLocale($record));
+
+                return $records;
+            };
+        } else {
+            $setRecordLocales = fn (Collection | Paginator $records): Collection | Paginator => $records;
+        }
+
         if ($this->records) {
-            return $this->records;
+            return $setRecordLocales($this->records);
         }
 
         $query = $this->getFilteredSortedTableQuery();
@@ -79,10 +92,10 @@ trait HasRecords
             (! $this->getTable()->isPaginated()) ||
             ($this->isTableReordering() && (! $this->getTable()->isPaginatedWhileReordering()))
         ) {
-            return $this->records = $this->hydratePivotRelationForTableRecords($query->get());
+            return $setRecordLocales($this->records = $this->hydratePivotRelationForTableRecords($query->get()));
         }
 
-        return $this->records = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query));
+        return $setRecordLocales($this->records = $this->hydratePivotRelationForTableRecords($this->paginateTableQuery($query)));
     }
 
     protected function resolveTableRecord(?string $key): ?Model
@@ -92,7 +105,7 @@ trait HasRecords
         }
 
         if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
-            return $this->getTable()->getQuery()->find($key);
+            return $this->getFilteredTableQuery()->find($key);
         }
 
         /** @var BelongsToMany $relationship */
@@ -102,6 +115,8 @@ trait HasRecords
         $pivotKeyName = app($pivotClass)->getKeyName();
 
         $table = $this->getTable();
+
+        $this->applyFiltersToTableQuery($relationship->getQuery());
 
         $query = $table->allowsDuplicates() ?
             $relationship->wherePivot($pivotKeyName, $key) :
@@ -114,7 +129,13 @@ trait HasRecords
 
     public function getTableRecord(?string $key): ?Model
     {
-        return $this->resolveTableRecord($key);
+        $record = $this->resolveTableRecord($key);
+
+        if ($record && filled($this->getActiveTableLocale())) {
+            $this->makeFilamentTranslatableContentDriver()->setRecordLocale($record);
+        }
+
+        return $record;
     }
 
     public function getTableRecordKey(Model $record): string

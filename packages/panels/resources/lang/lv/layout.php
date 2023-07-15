@@ -4,22 +4,18 @@ return [
 
     'direction' => 'ltr',
 
-    'buttons' => [
-
-        'dark_theme' => [
-            'label' => 'Pārslēgt uz tumšo režīmu',
-        ],
-
-        'database_notifications' => [
-            'label' => 'Atvērt paziņojumus',
-        ],
-
-        'light_theme' => [
-            'label' => 'Pārslēgt uz gaišo režīmu',
-        ],
+    'actions' => [
 
         'logout' => [
             'label' => 'Iziet',
+        ],
+
+        'open_database_notifications' => [
+            'label' => 'Atvērt paziņojumus',
+        ],
+
+        'open_user_menu' => [
+            'label' => 'Lietotāja izvēlne',
         ],
 
         'sidebar' => [
@@ -34,8 +30,16 @@ return [
 
         ],
 
-        'user_menu' => [
-            'label' => 'Lietotāja izvēlne',
+        'theme_switcher' => [
+
+            'dark' => [
+                'label' => 'Pārslēgt uz tumšo režīmu',
+            ],
+
+            'light' => [
+                'label' => 'Pārslēgt uz gaišo režīmu',
+            ],
+
         ],
 
     ],

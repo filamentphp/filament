@@ -6,15 +6,7 @@ return [
 
     'heading' => 'Hesabınıza giriş yapın',
 
-    'buttons' => [
-
-        'authenticate' => [
-            'label' => 'Giriş yap',
-        ],
-
-    ],
-
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'E-posta adresi',
@@ -26,6 +18,14 @@ return [
 
         'remember' => [
             'label' => 'Beni hatırla',
+        ],
+
+        'actions' => [
+
+            'authenticate' => [
+                'label' => 'Giriş yap',
+            ],
+
         ],
 
     ],

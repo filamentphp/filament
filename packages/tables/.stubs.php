@@ -1,11 +1,13 @@
 <?php
 
-namespace Livewire\Testing {
+namespace Livewire\Features\SupportTesting {
 
     use Illuminate\Support\Collection;
 
-    class TestableLivewire {
+    class Testable {
         public function mountTableAction(string $name, $record = null): static {}
+
+        public function unmountTableAction(): static {}
 
         public function setTableActionData(array $data): static {}
 
@@ -34,6 +36,10 @@ namespace Livewire\Testing {
         public function assertTableActionEnabled(string $name, $record = null): static {}
 
         public function assertTableActionDisabled(string $name, $record = null): static {}
+
+        public function assertTableActionMounted(string $name): static {}
+
+        public function assertTableActionNotMounted(string $name): static {}
 
         public function assertTableActionHalted(string $name): static {}
 
@@ -73,9 +79,9 @@ namespace Livewire\Testing {
 
         public function assertTableActionDoesNotHaveLabel(string $name, string $label): static {}
 
-        public function assertTableActionHasColor(string $name, string $color): static {}
+        public function assertTableActionHasColor(string $name, string | array $color): static {}
 
-        public function assertTableActionDoesNotHaveColor(string $name, string $color): static {}
+        public function assertTableActionDoesNotHaveColor(string $name, string | array $color): static {}
 
         public function assertTableBulkActionHasIcon(string $name, string $icon): static {}
 
@@ -85,9 +91,9 @@ namespace Livewire\Testing {
 
         public function assertTableBulkActionDoesNotHaveLabel(string $name, string $label): static {}
 
-        public function assertTableBulkActionHasColor(string $name, string $color): static {}
+        public function assertTableBulkActionHasColor(string $name, string | array $color): static {}
 
-        public function assertTableBulkActionDoesNotHaveColor(string $name, string $color): static {}
+        public function assertTableBulkActionDoesNotHaveColor(string $name, string | array $color): static {}
 
         public function assertTableActionHasUrl(string $name, string $url): static {}
 
@@ -96,6 +102,10 @@ namespace Livewire\Testing {
         public function assertTableActionShouldOpenUrlInNewTab(string $name): static {}
 
         public function assertTableActionShouldNotOpenUrlInNewTab(string $name): static {}
+
+        public function assertTableBulkActionMounted(string $name): static {}
+
+        public function assertTableBulkActionNotMounted(string $name): static {}
 
         public function assertTableBulkActionHalted(string $name): static {}
 

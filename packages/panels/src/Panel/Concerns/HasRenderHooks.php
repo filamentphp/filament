@@ -13,9 +13,9 @@ trait HasRenderHooks
      */
     protected array $renderHooks = [];
 
-    public function renderHook(string $name, Closure $callback): static
+    public function renderHook(string $name, Closure $hook): static
     {
-        $this->renderHooks[$name][] = $callback;
+        $this->renderHooks[$name][] = $hook;
 
         return $this;
     }

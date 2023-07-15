@@ -1,10 +1,10 @@
 <?php
 
-namespace Livewire\Testing {
+namespace Livewire\Features\SupportTesting {
 
     use Filament\Notifications\Notification;
 
-    class TestableLivewire {
+    class Testable {
         public function assertNotified(Notification | string $notification = null): static {}
     }
 

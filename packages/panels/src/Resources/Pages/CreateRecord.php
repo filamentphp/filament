@@ -2,7 +2,6 @@
 
 namespace Filament\Resources\Pages;
 
-use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
@@ -60,6 +59,15 @@ class CreateRecord extends Page
 
     protected function fillForm(): void
     {
+        /** @internal Read the DocBlock above the following method. */
+        $this->fillFormWithDefaultsAndCallHooks();
+    }
+
+    /**
+     * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
+     */
+    protected function fillFormWithDefaultsAndCallHooks(): void
+    {
         $this->callHook('beforeFill');
 
         $this->form->fill();
@@ -80,22 +88,42 @@ class CreateRecord extends Page
 
             $data = $this->mutateFormDataBeforeCreate($data);
 
-            $this->callHook('beforeCreate');
-
-            $this->record = $this->handleRecordCreation($data);
-
-            $this->form->model($this->record)->saveRelationships();
-
-            $this->callHook('afterCreate');
+            /** @internal Read the DocBlock above the following method. */
+            $this->createRecordAndCallHooks($data);
         } catch (Halt $exception) {
             return;
         }
 
+        /** @internal Read the DocBlock above the following method. */
+        $this->sendCreatedNotificationAndRedirect(shouldCreateAnotherInsteadOfRedirecting: $another);
+    }
+
+    /**
+     * @internal Never override or call this method. If you completely override `create()`, copy the contents of this method into your override.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function createRecordAndCallHooks(array $data): void
+    {
+        $this->callHook('beforeCreate');
+
+        $this->record = $this->handleRecordCreation($data);
+
+        $this->form->model($this->getRecord())->saveRelationships();
+
+        $this->callHook('afterCreate');
+    }
+
+    /**
+     * @internal Never override or call this method. If you completely override `create()`, copy the contents of this method into your override.
+     */
+    protected function sendCreatedNotificationAndRedirect(bool $shouldCreateAnotherInsteadOfRedirecting = true): void
+    {
         $this->getCreatedNotification()?->send();
 
-        if ($another) {
+        if ($shouldCreateAnotherInsteadOfRedirecting) {
             // Ensure that the form record is anonymized so that relationships aren't loaded.
-            $this->form->model($this->record::class);
+            $this->form->model($this->getRecord()::class);
             $this->record = null;
 
             $this->fillForm();
@@ -145,7 +173,7 @@ class CreateRecord extends Page
         $record = new ($this->getModel())($data);
 
         if ($tenant = Filament::getTenant()) {
-            $this->associateRecordWithTenant($record, $tenant);
+            return $this->associateRecordWithTenant($record, $tenant);
         }
 
         $record->save();
@@ -153,18 +181,9 @@ class CreateRecord extends Page
         return $record;
     }
 
-    protected function associateRecordWithTenant(Model $record, Model $tenant): void
+    protected function associateRecordWithTenant(Model $record, Model $tenant): Model
     {
-        $relationshipName = Filament::getTenantOwnershipRelationshipName();
-
-        if (! $record->isRelation($relationshipName)) {
-            $pageClass = static::class;
-            $recordClass = $record::class;
-
-            throw new Exception("The model [{$recordClass}] does not have a relationship named [{$relationshipName}]. This relationship is required to associate the record with the tenant. You can change the relationship being used by passing it to the [ownershipRelationship] argument of the [tenant()] method in configuration. Alternatively, you can override the [associateRecordWithTenant()] method on the [{$pageClass}] class to associate the record with the tenant in a different way.");
-        }
-
-        $record->{$relationshipName}()->associate($tenant);
+        return static::getResource()::getTenantRelationship($tenant)->save($record);
     }
 
     /**
@@ -235,7 +254,7 @@ class CreateRecord extends Page
             $form
                 ->operation('create')
                 ->model($this->getModel())
-                ->statePath('data')
+                ->statePath($this->getFormStatePath())
                 ->columns($this->hasInlineLabels() ? 1 : 2)
                 ->inlineLabel($this->hasInlineLabels()),
         );
@@ -245,12 +264,12 @@ class CreateRecord extends Page
     {
         $resource = static::getResource();
 
-        if ($resource::hasPage('view') && $resource::canView($this->record)) {
-            return $resource::getUrl('view', ['record' => $this->record]);
+        if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
+            return $resource::getUrl('view', ['record' => $this->getRecord()]);
         }
 
-        if ($resource::hasPage('edit') && $resource::canEdit($this->record)) {
-            return $resource::getUrl('edit', ['record' => $this->record]);
+        if ($resource::hasPage('edit') && $resource::canEdit($this->getRecord())) {
+            return $resource::getUrl('edit', ['record' => $this->getRecord()]);
         }
 
         return $resource::getUrl('index');
@@ -269,5 +288,15 @@ class CreateRecord extends Page
     public static function disableCreateAnother(): void
     {
         static::$canCreateAnother = false;
+    }
+
+    public function getFormStatePath(): ?string
+    {
+        return 'data';
+    }
+
+    public function getRecord(): ?Model
+    {
+        return $this->record;
     }
 }
