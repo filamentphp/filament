@@ -17,7 +17,6 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use Livewire\Attributes\Reactive;
 use Livewire\Features\SupportQueryString\Url;
 
 class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
