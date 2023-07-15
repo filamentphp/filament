@@ -150,3 +150,26 @@ BadgeColumn::make('name')
     ->copyable()
     ->copyableState(fn (Model $record): string => strtoupper($record->name))
 ```
+
+### Customizing the text that is copied to the clipboard
+
+You can customize the text that gets copied to the clipboard using the `copyableState() method:
+
+```php
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('name')
+    ->copyable()
+    ->copyableState(fn (string $state): string => "Name: {$state}")
+```
+
+In this function, you can access the whole table row with `$record`:
+
+```php
+use App\Models\User;
+use Filament\Tables\Columns\BadgeColumn;
+
+BadgeColumn::make('name')
+    ->copyable()
+    ->copyableState(fn (User $record): string => "Name: {$record->name}")
+```
