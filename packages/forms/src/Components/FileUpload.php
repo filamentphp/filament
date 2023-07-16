@@ -51,20 +51,20 @@ class FileUpload extends BaseFileUpload
 
     protected string | Closure $uploadProgressIndicatorPosition = 'right';
 
-    protected bool | Closure $hasCroppableImages = false;
+    protected bool | Closure $hasImageEditor = false;
 
-    protected int | Closure | null $imageCropperViewportWidth = null;
+    protected int | Closure | null $imageEditorViewportWidth = null;
 
-    protected int | Closure | null $imageCropperViewportHeight = null;
+    protected int | Closure | null $imageEditorViewportHeight = null;
 
-    protected int $imageCropperMode = 1;
+    protected int $imageEditorMode = 1;
 
-    protected string | Closure $imageCropperEmptyFillColor = 'transparent';
+    protected string | Closure $imageEditorEmptyFillColor = 'transparent';
 
     /**
      * @var array<?string> | Closure
      */
-    protected array | Closure $imageCropperAspectRatios = [];
+    protected array | Closure $imageEditorAspectRatios = [];
 
     public function appendFiles(bool | Closure $condition = true): static
     {
@@ -285,56 +285,56 @@ class FileUpload extends BaseFileUpload
         return (bool) $this->evaluate($this->shouldOrientImagesFromExif);
     }
 
-    public function croppableImages(bool | Closure $condition = true): static
+    public function imageEditor(bool | Closure $condition = true): static
     {
-        $this->hasCroppableImages = $condition;
+        $this->hasImageEditor = $condition;
 
         return $this;
     }
 
-    public function imageCropperViewportWidth(int | Closure | null $width): static
+    public function imageEditorViewportWidth(int | Closure | null $width): static
     {
-        $this->imageCropperViewportWidth = $width;
+        $this->imageEditorViewportWidth = $width;
 
         return $this;
     }
 
-    public function imageCropperViewportHeight(int | Closure | null $height): static
+    public function imageEditorViewportHeight(int | Closure | null $height): static
     {
-        $this->imageCropperViewportHeight = $height;
+        $this->imageEditorViewportHeight = $height;
 
         return $this;
     }
 
-    public function imageCropperMode(int $mode): static
+    public function imageEditorMode(int $mode): static
     {
         if (! in_array($mode, [1, 2, 3])) {
-            throw new Exception("The file upload cropper mode must be either 1, 2 or 3. [{$mode}] given, which is unsupported. See https://github.com/fengyuanchen/cropperjs#viewmode for more information on the available modes. Mode 0 is not supported, as it does not allow configuration via manual inputs.");
+            throw new Exception("The file upload editor mode must be either 1, 2 or 3. [{$mode}] given, which is unsupported. See https://github.com/fengyuanchen/cropperjs#viewmode for more information on the available modes. Mode 0 is not supported, as it does not allow configuration via manual inputs.");
         }
 
-        $this->imageCropperMode = $mode;
+        $this->imageEditorMode = $mode;
 
         return $this;
     }
 
-    public function imageCropperEmptyFillColor(string | Closure $color): static
+    public function imageEditorEmptyFillColor(string | Closure $color): static
     {
-        $this->imageCropperEmptyFillColor = $color;
+        $this->imageEditorEmptyFillColor = $color;
 
         return $this;
     }
 
     /**
-     * @param array<?string> | Closure $ratios
+     * @param  array<?string> | Closure  $ratios
      */
-    public function imageCropperAspectRatios(array | Closure $ratios): static
+    public function imageEditorAspectRatios(array | Closure $ratios): static
     {
-        $this->imageCropperAspectRatios = $ratios;
+        $this->imageEditorAspectRatios = $ratios;
 
         return $this;
     }
 
-    public function getImageCropperViewportHeight(): ?int
+    public function getImageEditorViewportHeight(): ?int
     {
         if (($targetHeight = (int) $this->getImageResizeTargetHeight()) > 1) {
             return (int) round($targetHeight * $this->getParentTargetSizes($targetHeight), precision: 0);
@@ -346,10 +346,10 @@ class FileUpload extends BaseFileUpload
             return (int) $denominator;
         }
 
-        return $this->evaluate($this->imageCropperViewportHeight);
+        return $this->evaluate($this->imageEditorViewportHeight);
     }
 
-    public function getImageCropperViewportWidth(): ?int
+    public function getImageEditorViewportWidth(): ?int
     {
         if (($targetWidth = (int) $this->getImageResizeTargetWidth()) > 1) {
             return (int) round($targetWidth * $this->getParentTargetSizes($targetWidth), precision: 0);
@@ -361,7 +361,7 @@ class FileUpload extends BaseFileUpload
             return (int) $numerator;
         }
 
-        return $this->evaluate($this->imageCropperViewportWidth);
+        return $this->evaluate($this->imageEditorViewportWidth);
     }
 
     protected function getParentTargetSizes(int $withOrHeight): float
@@ -369,34 +369,34 @@ class FileUpload extends BaseFileUpload
         return $withOrHeight > 1 ? 360 / (int) $this->getImageResizeTargetWidth() : 1;
     }
 
-    public function getImageCropperMode(): int
+    public function getImageEditorMode(): int
     {
-        return $this->imageCropperMode;
+        return $this->imageEditorMode;
     }
 
-    public function getImageCropperEmptyFillColor(): string
+    public function getImageEditorEmptyFillColor(): string
     {
-        return $this->evaluate($this->imageCropperEmptyFillColor);
+        return $this->evaluate($this->imageEditorEmptyFillColor);
     }
 
-    public function hasCroppableImages(): bool
+    public function hasImageEditor(): bool
     {
-        return (bool) $this->evaluate($this->hasCroppableImages);
+        return (bool) $this->evaluate($this->hasImageEditor);
     }
 
     /**
      * @return array<string, float | string>
      */
-    public function getImageCropperAspectRatiosForJs(): array
+    public function getImageEditorAspectRatiosForJs(): array
     {
-        return collect($this->evaluate($this->imageCropperAspectRatios) ?? [])
+        return collect($this->evaluate($this->imageEditorAspectRatios) ?? [])
             ->when(
                 filled($imageCropAspectRatio = $this->getImageCropAspectRatio()),
                 fn (Collection $ratios): Collection => $ratios->push($imageCropAspectRatio),
             )
             ->unique()
             ->mapWithKeys(fn (?string $ratio): array => [
-                $ratio ?? __('filament-forms::components.file_upload.cropper.aspect_ratios.no_fixed.label') => $this->normalizeImageCroppingRatioForJs($ratio),
+                $ratio ?? __('filament-forms::components.file_upload.editor.aspect_ratios.no_fixed.label') => $this->normalizeImageCroppingRatioForJs($ratio),
             ])
             ->filter(fn (float | string | false $ratio): bool => $ratio !== false)
             ->when(
@@ -438,78 +438,78 @@ class FileUpload extends BaseFileUpload
     /**
      * @return array<array<array<string, mixed>>>
      */
-    public function getImageCropperActions(string $iconSizeClasses): array
+    public function getImageEditorActions(string $iconSizeClasses): array
     {
         return [
             'zoom' => [
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.drag_move.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.drag_move.label'),
                     'iconHtml' => new HtmlString('<svg class="' . $iconSizeClasses . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M13 6v5h5V7.75L22.25 12L18 16.25V13h-5v5h3.25L12 22.25L7.75 18H11v-5H6v3.25L1.75 12L6 7.75V11h5V6H7.75L12 1.75L16.25 6H13Z"/></svg>'),
-                    'alpineClickHandler' => "cropper.setDragMode('move')",
+                    'alpineClickHandler' => "editor.setDragMode('move')",
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.drag_crop.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.drag_crop.label'),
                     'iconHtml' => new HtmlString('<svg class="' . $iconSizeClasses . '" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M17 23v-4H7q-.825 0-1.412-.587Q5 17.825 5 17V7H1V5h4V1h2v16h16v2h-4v4Zm0-8V7H9V5h8q.825 0 1.413.588Q19 6.175 19 7v8Z"/></svg>'),
-                    'alpineClickHandler' => "cropper.setDragMode('crop')",
+                    'alpineClickHandler' => "editor.setDragMode('crop')",
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.zoom_in.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.zoom_in.label'),
                     'iconHtml' => svg('heroicon-o-magnifying-glass-plus', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.zoom(0.1)',
+                    'alpineClickHandler' => 'editor.zoom(0.1)',
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.zoom_out.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.zoom_out.label'),
                     'iconHtml' => svg('heroicon-o-magnifying-glass-minus', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.zoom(-0.1)',
+                    'alpineClickHandler' => 'editor.zoom(-0.1)',
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.zoom_100.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.zoom_100.label'),
                     'iconHtml' => svg('heroicon-o-arrows-pointing-out', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.zoomTo(1)',
+                    'alpineClickHandler' => 'editor.zoomTo(1)',
                 ],
             ],
             'move' => [
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.move_left.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.move_left.label'),
                     'iconHtml' => svg('heroicon-o-arrow-left-circle', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.move(-10, 0)',
+                    'alpineClickHandler' => 'editor.move(-10, 0)',
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.move_right.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.move_right.label'),
                     'iconHtml' => svg('heroicon-o-arrow-right-circle', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.move(10, 0)',
+                    'alpineClickHandler' => 'editor.move(10, 0)',
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.move_up.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.move_up.label'),
                     'iconHtml' => svg('heroicon-o-arrow-up-circle', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.move(0, -10)',
+                    'alpineClickHandler' => 'editor.move(0, -10)',
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.move_down.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.move_down.label'),
                     'iconHtml' => svg('heroicon-o-arrow-down-circle', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.move(0, 10)',
+                    'alpineClickHandler' => 'editor.move(0, 10)',
                 ],
             ],
             'transform' => [
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.rotate_left.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.rotate_left.label'),
                     'iconHtml' => svg('heroicon-o-arrow-uturn-left', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.rotate(-90)',
+                    'alpineClickHandler' => 'editor.rotate(-90)',
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.rotate_right.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.rotate_right.label'),
                     'iconHtml' => svg('heroicon-o-arrow-uturn-right', $iconSizeClasses)->toHtml(),
-                    'alpineClickHandler' => 'cropper.rotate(90)',
+                    'alpineClickHandler' => 'editor.rotate(90)',
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.flip_horizontal.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.flip_horizontal.label'),
                     'iconHtml' => new HtmlString('<svg class="' . $iconSizeClasses . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m17 3l-5 5l-5-5h10m0 18l-5-5l-5 5h10M4 12H2m8 0H8m8 0h-2m8 0h-2"/></svg>'),
-                    'alpineClickHandler' => 'cropper.scaleX(-cropper.getData().scaleX || -1)',
+                    'alpineClickHandler' => 'editor.scaleX(-editor.getData().scaleX || -1)',
                 ],
                 [
-                    'label' => __('filament-forms::components.file_upload.cropper.actions.flip_vertical.label'),
+                    'label' => __('filament-forms::components.file_upload.editor.actions.flip_vertical.label'),
                     'iconHtml' => new HtmlString('<svg class="' . $iconSizeClasses . '" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m3 7l5 5l-5 5V7m18 0l-5 5l5 5V7m-9 13v2m0-8v2m0-8v2m0-8v2"/></svg>'),
-                    'alpineClickHandler' => 'cropper.scaleY(-cropper.getData().scaleY || -1)',
+                    'alpineClickHandler' => 'editor.scaleY(-editor.getData().scaleY || -1)',
                 ],
             ],
         ];

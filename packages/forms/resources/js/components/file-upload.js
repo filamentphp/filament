@@ -24,10 +24,10 @@ window.FilePond = FilePond
 
 export default function fileUploadFormComponent({
     acceptedFileTypes,
-    imageCropperEmptyFillColor,
-    imageCropperMode,
-    imageCropperViewportHeight,
-    imageCropperViewportWidth,
+    imageEditorEmptyFillColor,
+    imageEditorMode,
+    imageEditorViewportHeight,
+    imageEditorViewportWidth,
     deleteUploadedFileUsing,
     isDisabled,
     getUploadedFilesUsing,
@@ -38,7 +38,7 @@ export default function fileUploadFormComponent({
     imageResizeTargetWidth,
     imageResizeUpscale,
     isAvatar,
-    hasCroppableImages,
+    hasImageEditor,
     isDownloadable,
     isOpenable,
     isPreviewable,
@@ -74,13 +74,13 @@ export default function fileUploadFormComponent({
 
         uploadedFileIndex: {},
 
-        isCropperOpen: false,
+        isEditorOpen: false,
 
         editingFile: {},
 
         currentRatio: '',
 
-        cropper: {},
+        editor: {},
 
         init: async function () {
             FilePond.setOptions(locales[locale] ?? locales['en'])
@@ -174,12 +174,12 @@ export default function fileUploadFormComponent({
                         load()
                     },
                 },
-                allowImageEdit: hasCroppableImages,
+                allowImageEdit: hasImageEditor,
                 imageEditEditor: {
-                    open: (file) => this.loadCropper(file),
+                    open: (file) => this.loadEditor(file),
                     onconfirm: () => {},
-                    oncancel: () => this.closeCropper(),
-                    onclose: () => this.closeCropper(),
+                    oncancel: () => this.closeEditor(),
+                    onclose: () => this.closeEditor(),
                 },
             })
 
@@ -288,8 +288,8 @@ export default function fileUploadFormComponent({
         },
 
         destroy: function () {
-            this.cropper.destroy()
-            this.cropper = null
+            this.editor.destroy()
+            this.editor = null
 
             FilePond.destroy(this.$refs.input)
             this.pond = null
@@ -412,18 +412,18 @@ export default function fileUploadFormComponent({
             return anchor
         },
 
-        initCropper: function () {
+        initEditor: function () {
             if (isDisabled) {
                 return
             }
 
-            if (!hasCroppableImages) {
+            if (!hasImageEditor) {
                 return
             }
 
-            this.cropper = new Cropper(this.$refs.cropper, {
+            this.editor = new Cropper(this.$refs.editor, {
                 aspectRatio:
-                    imageCropperViewportWidth / imageCropperViewportHeight,
+                    imageEditorViewportWidth / imageEditorViewportHeight,
                 autoCropArea: 1,
                 center: true,
                 crop: (event) => {
@@ -440,26 +440,26 @@ export default function fileUploadFormComponent({
                 highlight: true,
                 responsive: true,
                 toggleDragModeOnDblclick: true,
-                viewMode: imageCropperMode,
+                viewMode: imageEditorMode,
                 wheelZoomRatio: 0.02,
             })
         },
 
-        closeCropper: function () {
+        closeEditor: function () {
             this.editingFile = {}
 
-            this.isCropperOpen = false
+            this.isEditorOpen = false
 
-            this.cropper.destroy()
-            this.cropper = null
+            this.editor.destroy()
+            this.editor = null
         },
 
-        loadCropper: function (file) {
+        loadEditor: function (file) {
             if (isDisabled) {
                 return
             }
 
-            if (!hasCroppableImages) {
+            if (!hasImageEditor) {
                 return
             }
 
@@ -469,30 +469,30 @@ export default function fileUploadFormComponent({
 
             this.editingFile = file
 
-            this.initCropper()
+            this.initEditor()
 
             const reader = new FileReader()
             reader.onload = (event) => {
-                this.isCropperOpen = true
+                this.isEditorOpen = true
 
-                setTimeout(() => this.cropper.replace(event.target.result), 200)
+                setTimeout(() => this.editor.replace(event.target.result), 200)
             }
 
             reader.readAsDataURL(file)
         },
 
-        saveCropper: function () {
+        saveEditor: function () {
             if (isDisabled) {
                 return
             }
 
-            if (!hasCroppableImages) {
+            if (!hasImageEditor) {
                 return
             }
 
-            this.cropper
+            this.editor
                 .getCroppedCanvas({
-                    fillColor: imageCropperEmptyFillColor,
+                    fillColor: imageEditorEmptyFillColor,
                     height: imageResizeTargetHeight,
                     imageSmoothingEnabled: true,
                     imageSmoothingQuality: 'high',
@@ -528,7 +528,7 @@ export default function fileUploadFormComponent({
                                 ),
                             )
                             .then(() => {
-                                this.closeCropper()
+                                this.closeEditor()
                             })
                     })
                 }, this.editingFile.type)

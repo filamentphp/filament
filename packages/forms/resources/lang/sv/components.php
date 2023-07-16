@@ -72,7 +72,7 @@ return [
 
     'file_upload' => [
 
-        'cropper' => [
+        'editor' => [
 
             'actions' => [
 

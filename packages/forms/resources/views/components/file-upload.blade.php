@@ -10,7 +10,7 @@
         $isAvatar = $isAvatar();
         $statePath = $getStatePath();
         $isDisabled = $isDisabled();
-        $hasCroppableImages = $hasCroppableImages();
+        $hasImageEditor = $hasImageEditor();
     @endphp
 
     <div
@@ -18,17 +18,17 @@
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
-                    imageCropperEmptyFillColor: '{{ $getImageCropperEmptyFillColor() }}',
-                    imageCropperMode: {{ $getImageCropperMode() }},
-                    imageCropperViewportHeight: @js($getImageCropperViewportHeight()),
-                    imageCropperViewportWidth: @js($getImageCropperViewportWidth()),
+                    imageEditorEmptyFillColor: '{{ $getImageEditorEmptyFillColor() }}',
+                    imageEditorMode: {{ $getImageEditorMode() }},
+                    imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
+                    imageEditorViewportWidth: @js($getImageEditorViewportWidth()),
                     deleteUploadedFileUsing: async (fileKey) => {
                         return await $wire.deleteUploadedFile(@js($statePath), fileKey)
                     },
                     getUploadedFilesUsing: async () => {
                         return await $wire.getFormUploadedFiles(@js($statePath))
                     },
-                    hasCroppableImages: @js($hasCroppableImages),
+                    hasImageEditor: @js($hasImageEditor),
                     imageCropAspectRatio: @js($imageCropAspectRatio),
                     imagePreviewHeight: @js($getImagePreviewHeight()),
                     imageResizeMode: @js($getImageResizeMode()),
@@ -114,13 +114,13 @@
             />
         </div>
 
-        @if ($hasCroppableImages && (! $isDisabled))
+        @if ($hasImageEditor && (! $isDisabled))
             <div
-                x-show="isCropperOpen"
+                x-show="isEditorOpen"
                 x-cloak
                 x-on:click.stop
-                x-trap.noscroll="isCropperOpen"
-                x-on:keydown.escape.window="closeCropper"
+                x-trap.noscroll="isEditorOpen"
+                x-on:keydown.escape.window="closeEditor"
                 class="fixed inset-0 isolate z-50 h-screen w-screen p-2 sm:p-10 md:p-20"
             >
                 <div
@@ -137,7 +137,7 @@
                     >
                         <div class="w-full flex-1 overflow-auto p-4 lg:h-full">
                             <div class="h-full w-full">
-                                <img x-ref="cropper" class="h-full w-auto" />
+                                <img x-ref="editor" class="h-full w-auto" />
                             </div>
                         </div>
 
@@ -153,34 +153,34 @@
                                             <div class="w-full space-y-3">
                                                 @foreach ([
                                                     [
-                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.x_position.label'),
+                                                        'label' => __('filament-forms::components.file_upload.editor.fields.x_position.label'),
                                                         'ref' => 'xPositionInput',
-                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.x_position.unit'),
-                                                        'alpineSaveHandler' => 'cropper.setData({...cropper.getData(true), x: +$el.value})',
+                                                        'unit' => __('filament-forms::components.file_upload.editor.fields.x_position.unit'),
+                                                        'alpineSaveHandler' => 'editor.setData({...editor.getData(true), x: +$el.value})',
                                                     ],
                                                     [
-                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.y_position.label'),
+                                                        'label' => __('filament-forms::components.file_upload.editor.fields.y_position.label'),
                                                         'ref' => 'yPositionInput',
-                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.y_position.unit'),
-                                                        'alpineSaveHandler' => 'cropper.setData({...cropper.getData(true), y: +$el.value})',
+                                                        'unit' => __('filament-forms::components.file_upload.editor.fields.y_position.unit'),
+                                                        'alpineSaveHandler' => 'editor.setData({...editor.getData(true), y: +$el.value})',
                                                     ],
                                                     [
-                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.width.label'),
+                                                        'label' => __('filament-forms::components.file_upload.editor.fields.width.label'),
                                                         'ref' => 'widthInput',
-                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.width.unit'),
-                                                        'alpineSaveHandler' => 'cropper.setData({...cropper.getData(true), width: +$el.value})',
+                                                        'unit' => __('filament-forms::components.file_upload.editor.fields.width.unit'),
+                                                        'alpineSaveHandler' => 'editor.setData({...editor.getData(true), width: +$el.value})',
                                                     ],
                                                     [
-                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.height.label'),
+                                                        'label' => __('filament-forms::components.file_upload.editor.fields.height.label'),
                                                         'ref' => 'heightInput',
-                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.height.unit'),
-                                                        'alpineSaveHandler' => 'cropper.setData({...cropper.getData(true), height: +$el.value})',
+                                                        'unit' => __('filament-forms::components.file_upload.editor.fields.height.unit'),
+                                                        'alpineSaveHandler' => 'editor.setData({...editor.getData(true), height: +$el.value})',
                                                     ],
                                                     [
-                                                        'label' => __('filament-forms::components.file_upload.cropper.fields.rotation.label'),
+                                                        'label' => __('filament-forms::components.file_upload.editor.fields.rotation.label'),
                                                         'ref' => 'rotationInput',
-                                                        'unit' => __('filament-forms::components.file_upload.cropper.fields.rotation.unit'),
-                                                        'alpineSaveHandler' => 'cropper.rotateTo(+$el.value)',
+                                                        'unit' => __('filament-forms::components.file_upload.editor.fields.rotation.unit'),
+                                                        'alpineSaveHandler' => 'editor.rotateTo(+$el.value)',
                                                     ],
                                                 ] as $input)
                                                     <label
@@ -213,7 +213,7 @@
                                             </div>
 
                                             <div class="space-y-3">
-                                                @foreach ($getImageCropperActions(iconSizeClasses: 'h-5 w-5 mx-auto') as $groupedActions)
+                                                @foreach ($getImageEditorActions(iconSizeClasses: 'h-5 w-5 mx-auto') as $groupedActions)
                                                     <x-filament::button.group
                                                         class="w-full"
                                                     >
@@ -237,12 +237,12 @@
                                                 @endforeach
                                             </div>
 
-                                            @if (count($aspectRatios = $getImageCropperAspectRatiosForJs()))
+                                            @if (count($aspectRatios = $getImageEditorAspectRatiosForJs()))
                                                 <div class="space-y-3">
                                                     <div
                                                         class="text-xs text-gray-950 dark:text-white"
                                                     >
-                                                        {{ __('filament-forms::components.file_upload.cropper.aspect_ratios.label') }}
+                                                        {{ __('filament-forms::components.file_upload.editor.aspect_ratios.label') }}
                                                     </div>
 
                                                     @foreach (collect($aspectRatios)->chunk(5) as $ratiosChunk)
@@ -251,8 +251,8 @@
                                                         >
                                                             @foreach ($ratiosChunk as $label => $ratio)
                                                                 <x-filament::button
-                                                                    :x-tooltip.raw="__('filament-forms::components.file_upload.cropper.actions.set_aspect_ratio.label', ['ratio' => $label])"
-                                                                    x-on:click.stop.prevent="currentRatio = '{{ $label }}'; cropper.setAspectRatio({{ $ratio }})"
+                                                                    :x-tooltip.raw="__('filament-forms::components.file_upload.editor.actions.set_aspect_ratio.label', ['ratio' => $label])"
+                                                                    x-on:click.stop.prevent="currentRatio = '{{ $label }}'; editor.setAspectRatio({{ $ratio }})"
                                                                     color="gray"
                                                                     x-bind:class="{'!bg-gray-50 dark:!bg-gray-700': currentRatio === '{{ $label }}'}"
                                                                     grouped
@@ -274,22 +274,22 @@
                                             color="gray"
                                             x-on:click.prevent="pond.imageEditEditor.oncancel"
                                         >
-                                            {{ __('filament-forms::components.file_upload.cropper.actions.cancel.label') }}
+                                            {{ __('filament-forms::components.file_upload.editor.actions.cancel.label') }}
                                         </x-filament::button>
 
                                         <x-filament::button
                                             color="warning"
-                                            x-on:click.stop.prevent="cropper.reset()"
+                                            x-on:click.stop.prevent="editor.reset()"
                                             class="ml-auto"
                                         >
-                                            {{ __('filament-forms::components.file_upload.cropper.actions.reset.label') }}
+                                            {{ __('filament-forms::components.file_upload.editor.actions.reset.label') }}
                                         </x-filament::button>
 
                                         <x-filament::button
                                             color="success"
-                                            x-on:click.prevent="saveCropper"
+                                            x-on:click.prevent="saveEditor"
                                         >
-                                            {{ __('filament-forms::components.file_upload.cropper.actions.save.label') }}
+                                            {{ __('filament-forms::components.file_upload.editor.actions.save.label') }}
                                         </x-filament::button>
                                     </div>
                                 </div>
