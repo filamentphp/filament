@@ -151,26 +151,26 @@ export default (Alpine) => {
                             return
                         }
 
-                        const choices = await this.getChoices({
+                        await this.refreshChoices({
                             withInitialOptions: !hasDynamicOptions,
                         })
-
-                        this.select.clearStore()
-
-                        this.refreshPlaceholder()
-
-                        this.setChoices(choices)
-
-                        if (![null, undefined, ''].includes(this.state)) {
-                            this.select.setChoiceByValue(
-                                this.formatState(this.state),
-                            )
-                        }
                     })
                 },
 
                 refreshChoices: async function (config = {}) {
-                    this.setChoices(await this.getChoices(config))
+                    const choices = await this.getChoices(config)
+
+                    this.select.clearStore()
+
+                    this.refreshPlaceholder()
+
+                    this.setChoices(choices)
+
+                    if (![null, undefined, ''].includes(this.state)) {
+                        this.select.setChoiceByValue(
+                            this.formatState(this.state),
+                        )
+                    }
                 },
 
                 setChoices: function (choices) {
@@ -190,15 +190,19 @@ export default (Alpine) => {
                         return options
                     }
 
-                    if (
-                        search !== '' &&
-                        search !== null &&
-                        search !== undefined
-                    ) {
-                        return await getSearchResultsUsing(search)
+                    let results = []
+
+                    if (search !== '' && search !== null && search !== undefined) {
+                        results = await getSearchResultsUsing(search)
+                    } else {
+                        results = await getOptionsUsing()
                     }
 
-                    return await getOptionsUsing()
+                    return results.map((option) => this.state.includes(option.value) ? ((option) => {
+                        option.selected = true
+
+                        return option
+                    })(option) : option)
                 },
 
                 refreshPlaceholder: function () {
@@ -258,6 +262,7 @@ export default (Alpine) => {
                         {
                             label: await getOptionLabelUsing(),
                             value: state,
+                            selected: true,
                         },
                     ]
                 },
