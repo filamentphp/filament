@@ -212,11 +212,15 @@ export default function selectFormComponent({
                 results = await getOptionsUsing()
             }
 
-            return results.map((option) => this.state.includes(option.value) ? ((option) => {
-                option.selected = true
+            return results.map((option) =>
+                this.state.includes(option.value)
+                    ? ((option) => {
+                          option.selected = true
 
-                return option
-            })(option) : option)
+                          return option
+                      })(option)
+                    : option,
+            )
         },
 
         refreshPlaceholder: function () {
