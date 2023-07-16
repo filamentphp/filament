@@ -28,9 +28,9 @@
         </div>
     @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.start') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.start', scope: static::class) }}
 
     {{ $this->table }}
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.end') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.end', scope: static::class) }}
 </x-filament::page>

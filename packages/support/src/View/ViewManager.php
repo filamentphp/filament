@@ -9,21 +9,33 @@ use Illuminate\Support\HtmlString;
 class ViewManager
 {
     /**
-     * @var array<string, array<Closure>>
+     * @var array<string, array<string, array<Closure>>>
      */
     protected array $renderHooks = [];
 
-    public function registerRenderHook(string $name, Closure $hook): void
+    public function registerRenderHook(string $name, Closure $hook, ?string $scope = null): void
     {
-        $this->renderHooks[$name][] = $hook;
+        $this->renderHooks[$name][$scope][] = $hook;
     }
 
-    public function renderHook(string $name): Htmlable
+    public function renderHook(string $name, ?string $scope = null): Htmlable
     {
+        $renderHook = fn (callable $hook): string => (string) app()->call($hook);
+
         $hooks = array_map(
-            fn (callable $hook): string => (string) app()->call($hook),
-            $this->renderHooks[$name] ?? [],
+            $renderHook,
+            $this->renderHooks[$name][null] ?? [],
         );
+
+        if (filled($scope)) {
+            $hooks = [
+                ...$hooks,
+                ...array_map(
+                    $renderHook,
+                    $this->renderHooks[$name][$scope] ?? [],
+                ),
+            ];
+        }
 
         return new HtmlString(implode('', $hooks));
     }

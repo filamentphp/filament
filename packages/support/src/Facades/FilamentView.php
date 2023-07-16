@@ -8,8 +8,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static void registerRenderHook(string $name, Closure $hook)
- * @method static Htmlable renderHook(string $name)
+ * @method static void registerRenderHook(string $name, Closure $hook, ?string $scope = null)
+ * @method static Htmlable renderHook(string $name, ?string $scope = null)
  *
  * @see ViewManager
  */

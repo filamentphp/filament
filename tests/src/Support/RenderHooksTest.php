@@ -27,3 +27,17 @@ test('render hooks can render view files', function () {
         ->toBeInstanceOf(HtmlString::class)
         ->toHtml()->toContain('bar');
 });
+
+test('render hooks can be scoped', function () {
+    FilamentView::registerRenderHook('foo', function (): string {
+        return Blade::render('bar');
+    });
+
+    FilamentView::registerRenderHook('foo', function (): string {
+        return Blade::render('bar');
+    }, 'baz');
+
+    expect(FilamentView::renderHook('foo', scope: 'baz'))
+        ->toBeInstanceOf(HtmlString::class)
+        ->toHtml()->toBe('barbar');
+});
