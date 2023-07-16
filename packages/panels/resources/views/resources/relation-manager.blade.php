@@ -1,7 +1,7 @@
 <div class="fi-resource-relation-manager">
-    {{ filament()->renderHook('resource.relation-manager.start') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('resource.relation-manager.start') }}
 
     {{ $this->table }}
 
-    {{ filament()->renderHook('resource.relation-manager.end') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('resource.relation-manager.end') }}
 </div>
