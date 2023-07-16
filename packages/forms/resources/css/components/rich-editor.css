@@ -1,3 +1,5 @@
+@import 'trix/dist/trix.css';
+
 .dark .trix-button {
     @apply border-gray-600 bg-gray-700 text-gray-200;
 }

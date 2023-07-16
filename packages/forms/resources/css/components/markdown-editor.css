@@ -1,3 +1,5 @@
+@import 'easymde/dist/easymde.min.css';
+
 .EasyMDEContainer .cm-s-easymde .cm-header-1 {
     @apply text-3xl;
 }
