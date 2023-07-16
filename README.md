@@ -15,7 +15,7 @@ Filament is a collection of full-stack components for accelerated Laravel develo
 
 ### Panel Builder • [Documentation](https://filamentphp.com/docs/panels) • [Demo](https://demo.filamentphp.com)
 
-The panel builder is the foundation of Filament. Combining all the packages together, it allows you to quickly scaffold admin panels, customer-facing apps, Software-as-a-Service platforms, and more. Filament makes custom CRUD-driven interfaces feel like a breeze to build and deploy.
+The panel builder is the foundation of Filament. Combining all the packages together, it allows you to quickly build a Laravel admin panels, customer-facing apps, Software-as-a-Service platforms, and more. Filament makes custom CRUD-driven interfaces feel like a breeze to build and deploy.
 
 ```bash
 composer require filament/filament
@@ -23,7 +23,7 @@ composer require filament/filament
 
 ### Form Builder • [Documentation](https://filamentphp.com/docs/forms)
 
-Rendering interactive forms in a Livewire component has never been easier than with our form builder. It's designed to be flexible, so you can use it to build forms for any purpose. It's also fully extensible, so you can add your own custom fields and actions. As well as the panel builder, it is seamlessly integrated with action modals, and is used by the table builder to render filters.
+Rendering interactive forms in a Livewire component has never been easier than with our form builder. Easily build stunning forms with over 25 components out of the box. It's also fully extensible, so you can add your own custom fields and actions. As well as the panel builder, it is seamlessly integrated into action modals, and is used by the table builder to filter rows.
 
 ```bash
 composer require filament/forms
@@ -31,7 +31,7 @@ composer require filament/forms
 
 ### Table Builder • [Documentation](https://filamentphp.com/docs/tables)
 
-Datatables are the core of many applications, and our table builder allows you to render them in any Livewire component. It's also fully extensible, so you can add your own custom columns, filters and actions.
+Craft beautiful, optimized, and interactive datatables for any situation. Drop in to a Livewire component, and you're ready to go. It's also fully extensible, so you can add your own custom columns, filters and actions.
 
 ```bash
 composer require filament/tables
@@ -39,7 +39,7 @@ composer require filament/tables
 
 ### Notifications • [Documentation](https://filamentphp.com/docs/notifications)
 
-An important part of any application is the ability to notify users of important events. Our notifications package allows you to easily send flash notifications to users from any Livewire request, or even from your JavaScript frontend. In addition, it can fetch notifications from the database and render them in a beautiful slide-over modal, or even receive live notifications from a websockets server.
+An important part of any application is the ability to notify your users of important events. Our notifications package allows you to deliver flash notifications to users from any Livewire request, or even from your JavaScript frontend. In addition, it can fetch notifications from the database and render them in a beautiful slide-over modal, or even receive live notifications from a websockets server.
 
 ```bash
 composer require filament/notifications
