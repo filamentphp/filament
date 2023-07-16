@@ -23,12 +23,14 @@
         },
     }"
 >
-    <div
-        x-on:click="toggle"
-        {{ $trigger->attributes->class(['filament-dropdown-trigger cursor-pointer']) }}
-    >
-        {{ $trigger }}
-    </div>
+    @if ($trigger)
+        <div
+            x-on:click="toggle"
+            {{ $trigger->attributes->class(['filament-dropdown-trigger cursor-pointer']) }}
+        >
+            {{ $trigger }}
+        </div>
+    @endif
 
     <div
         x-ref="panel"
