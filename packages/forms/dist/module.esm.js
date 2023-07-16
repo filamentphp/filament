@@ -396,7 +396,7 @@ var require_dayjs_min = __commonJS((exports, module) => {
     typeof exports == "object" && typeof module != "undefined" ? module.exports = e2() : typeof define == "function" && define.amd ? define(e2) : (t2 = typeof globalThis != "undefined" ? globalThis : t2 || self).dayjs = e2();
   }(exports, function() {
     "use strict";
-    var t2 = 1e3, e2 = 6e4, n2 = 36e5, r2 = "millisecond", i = "second", s2 = "minute", u = "hour", a2 = "day", o2 = "week", c2 = "month", f = "quarter", h = "year", d = "date", l = "Invalid Date", $ = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M2 = {name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
+    var t2 = 1e3, e2 = 6e4, n2 = 36e5, r2 = "millisecond", i = "second", s2 = "minute", u = "hour", a2 = "day", o2 = "week", f = "month", h = "quarter", c2 = "year", d = "date", l = "Invalid Date", $ = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M2 = {name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t3) {
       var e3 = ["th", "st", "nd", "rd"], n3 = t3 % 100;
       return "[" + t3 + (e3[(n3 - 20) % 10] || e3[n3] || e3[0]) + "]";
     }}, m = function(t3, e3, n3) {
@@ -408,18 +408,18 @@ var require_dayjs_min = __commonJS((exports, module) => {
     }, m: function t3(e3, n3) {
       if (e3.date() < n3.date())
         return -t3(n3, e3);
-      var r3 = 12 * (n3.year() - e3.year()) + (n3.month() - e3.month()), i2 = e3.clone().add(r3, c2), s3 = n3 - i2 < 0, u2 = e3.clone().add(r3 + (s3 ? -1 : 1), c2);
+      var r3 = 12 * (n3.year() - e3.year()) + (n3.month() - e3.month()), i2 = e3.clone().add(r3, f), s3 = n3 - i2 < 0, u2 = e3.clone().add(r3 + (s3 ? -1 : 1), f);
       return +(-(r3 + (n3 - i2) / (s3 ? i2 - u2 : u2 - i2)) || 0);
     }, a: function(t3) {
       return t3 < 0 ? Math.ceil(t3) || 0 : Math.floor(t3);
     }, p: function(t3) {
-      return {M: c2, y: h, w: o2, d: a2, D: d, h: u, m: s2, s: i, ms: r2, Q: f}[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
+      return {M: f, y: c2, w: o2, d: a2, D: d, h: u, m: s2, s: i, ms: r2, Q: h}[t3] || String(t3 || "").toLowerCase().replace(/s$/, "");
     }, u: function(t3) {
       return t3 === void 0;
     }}, g = "en", D2 = {};
     D2[g] = M2;
     var p2 = function(t3) {
-      return t3 instanceof b;
+      return t3 instanceof _;
     }, S2 = function t3(e3, n3, r3) {
       var i2;
       if (!e3)
@@ -439,12 +439,12 @@ var require_dayjs_min = __commonJS((exports, module) => {
       if (p2(t3))
         return t3.clone();
       var n3 = typeof e3 == "object" ? e3 : {};
-      return n3.date = t3, n3.args = arguments, new b(n3);
+      return n3.date = t3, n3.args = arguments, new _(n3);
     }, O = v;
     O.l = S2, O.i = p2, O.w = function(t3, e3) {
       return w(t3, {locale: e3.$L, utc: e3.$u, x: e3.$x, $offset: e3.$offset});
     };
-    var b = function() {
+    var _ = function() {
       function M3(t3) {
         this.$L = S2(t3.locale, null, true), this.parse(t3);
       }
@@ -488,16 +488,16 @@ var require_dayjs_min = __commonJS((exports, module) => {
       }, m2.valueOf = function() {
         return this.$d.getTime();
       }, m2.startOf = function(t3, e3) {
-        var n3 = this, r3 = !!O.u(e3) || e3, f2 = O.p(t3), l2 = function(t4, e4) {
+        var n3 = this, r3 = !!O.u(e3) || e3, h2 = O.p(t3), l2 = function(t4, e4) {
           var i2 = O.w(n3.$u ? Date.UTC(n3.$y, e4, t4) : new Date(n3.$y, e4, t4), n3);
           return r3 ? i2 : i2.endOf(a2);
         }, $2 = function(t4, e4) {
           return O.w(n3.toDate()[t4].apply(n3.toDate("s"), (r3 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e4)), n3);
         }, y2 = this.$W, M4 = this.$M, m3 = this.$D, v2 = "set" + (this.$u ? "UTC" : "");
-        switch (f2) {
-          case h:
-            return r3 ? l2(1, 0) : l2(31, 11);
+        switch (h2) {
           case c2:
+            return r3 ? l2(1, 0) : l2(31, 11);
+          case f:
             return r3 ? l2(1, M4) : l2(0, M4 + 1);
           case o2:
             var g2 = this.$locale().weekStart || 0, D3 = (y2 < g2 ? y2 + 7 : y2) - g2;
@@ -517,8 +517,8 @@ var require_dayjs_min = __commonJS((exports, module) => {
       }, m2.endOf = function(t3) {
         return this.startOf(t3, false);
       }, m2.$set = function(t3, e3) {
-        var n3, o3 = O.p(t3), f2 = "set" + (this.$u ? "UTC" : ""), l2 = (n3 = {}, n3[a2] = f2 + "Date", n3[d] = f2 + "Date", n3[c2] = f2 + "Month", n3[h] = f2 + "FullYear", n3[u] = f2 + "Hours", n3[s2] = f2 + "Minutes", n3[i] = f2 + "Seconds", n3[r2] = f2 + "Milliseconds", n3)[o3], $2 = o3 === a2 ? this.$D + (e3 - this.$W) : e3;
-        if (o3 === c2 || o3 === h) {
+        var n3, o3 = O.p(t3), h2 = "set" + (this.$u ? "UTC" : ""), l2 = (n3 = {}, n3[a2] = h2 + "Date", n3[d] = h2 + "Date", n3[f] = h2 + "Month", n3[c2] = h2 + "FullYear", n3[u] = h2 + "Hours", n3[s2] = h2 + "Minutes", n3[i] = h2 + "Seconds", n3[r2] = h2 + "Milliseconds", n3)[o3], $2 = o3 === a2 ? this.$D + (e3 - this.$W) : e3;
+        if (o3 === f || o3 === c2) {
           var y2 = this.clone().set(d, 1);
           y2.$d[l2]($2), y2.init(), this.$d = y2.set(d, Math.min(this.$D, y2.daysInMonth())).$d;
         } else
@@ -528,17 +528,17 @@ var require_dayjs_min = __commonJS((exports, module) => {
         return this.clone().$set(t3, e3);
       }, m2.get = function(t3) {
         return this[O.p(t3)]();
-      }, m2.add = function(r3, f2) {
+      }, m2.add = function(r3, h2) {
         var d2, l2 = this;
         r3 = Number(r3);
-        var $2 = O.p(f2), y2 = function(t3) {
+        var $2 = O.p(h2), y2 = function(t3) {
           var e3 = w(l2);
           return O.w(e3.date(e3.date() + Math.round(t3 * r3)), l2);
         };
+        if ($2 === f)
+          return this.set(f, this.$M + r3);
         if ($2 === c2)
-          return this.set(c2, this.$M + r3);
-        if ($2 === h)
-          return this.set(h, this.$y + r3);
+          return this.set(c2, this.$y + r3);
         if ($2 === a2)
           return y2(1);
         if ($2 === o2)
@@ -551,106 +551,24 @@ var require_dayjs_min = __commonJS((exports, module) => {
         var e3 = this, n3 = this.$locale();
         if (!this.isValid())
           return n3.invalidDate || l;
-        var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i2 = O.z(this), s3 = this.$H, u2 = this.$m, a3 = this.$M, o3 = n3.weekdays, c3 = n3.months, f2 = n3.meridiem, h2 = function(t4, n4, i3, s4) {
+        var r3 = t3 || "YYYY-MM-DDTHH:mm:ssZ", i2 = O.z(this), s3 = this.$H, u2 = this.$m, a3 = this.$M, o3 = n3.weekdays, f2 = n3.months, h2 = function(t4, n4, i3, s4) {
           return t4 && (t4[n4] || t4(e3, r3)) || i3[n4].slice(0, s4);
-        }, d2 = function(t4) {
+        }, c3 = function(t4) {
           return O.s(s3 % 12 || 12, t4, "0");
-        }, $2 = f2 || function(t4, e4, n4) {
+        }, d2 = n3.meridiem || function(t4, e4, n4) {
           var r4 = t4 < 12 ? "AM" : "PM";
           return n4 ? r4.toLowerCase() : r4;
-        };
-        return r3.replace(y, function(t4, r4) {
-          return r4 || function(t5) {
-            switch (t5) {
-              case "YY":
-                return String(e3.$y).slice(-2);
-              case "YYYY":
-                return O.s(e3.$y, 4, "0");
-              case "M":
-                return a3 + 1;
-              case "MM":
-                return O.s(a3 + 1, 2, "0");
-              case "MMM":
-                return h2(n3.monthsShort, a3, c3, 3);
-              case "MMMM":
-                return h2(c3, a3);
-              case "D":
-                return e3.$D;
-              case "DD":
-                return O.s(e3.$D, 2, "0");
-              case "d":
-                return String(e3.$W);
-              case "dd":
-                return h2(n3.weekdaysMin, e3.$W, o3, 2);
-              case "ddd":
-                return h2(n3.weekdaysShort, e3.$W, o3, 3);
-              case "dddd":
-                return o3[e3.$W];
-              case "H":
-                return String(s3);
-              case "HH":
-                return O.s(s3, 2, "0");
-              case "h":
-                return d2(1);
-              case "hh":
-                return d2(2);
-              case "a":
-                return $2(s3, u2, true);
-              case "A":
-                return $2(s3, u2, false);
-              case "m":
-                return String(u2);
-              case "mm":
-                return O.s(u2, 2, "0");
-              case "s":
-                return String(e3.$s);
-              case "ss":
-                return O.s(e3.$s, 2, "0");
-              case "SSS":
-                return O.s(e3.$ms, 3, "0");
-              case "Z":
-                return i2;
-            }
-            return null;
-          }(t4) || i2.replace(":", "");
+        }, $2 = {YY: String(this.$y).slice(-2), YYYY: O.s(this.$y, 4, "0"), M: a3 + 1, MM: O.s(a3 + 1, 2, "0"), MMM: h2(n3.monthsShort, a3, f2, 3), MMMM: h2(f2, a3), D: this.$D, DD: O.s(this.$D, 2, "0"), d: String(this.$W), dd: h2(n3.weekdaysMin, this.$W, o3, 2), ddd: h2(n3.weekdaysShort, this.$W, o3, 3), dddd: o3[this.$W], H: String(s3), HH: O.s(s3, 2, "0"), h: c3(1), hh: c3(2), a: d2(s3, u2, true), A: d2(s3, u2, false), m: String(u2), mm: O.s(u2, 2, "0"), s: String(this.$s), ss: O.s(this.$s, 2, "0"), SSS: O.s(this.$ms, 3, "0"), Z: i2};
+        return r3.replace(y, function(t4, e4) {
+          return e4 || $2[t4] || i2.replace(":", "");
         });
       }, m2.utcOffset = function() {
         return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
       }, m2.diff = function(r3, d2, l2) {
-        var $2, y2 = this, M4 = O.p(d2), m3 = w(r3), v2 = (m3.utcOffset() - this.utcOffset()) * e2, g2 = this - m3, D3 = function() {
-          return O.m(y2, m3);
-        };
-        switch (M4) {
-          case h:
-            $2 = D3() / 12;
-            break;
-          case c2:
-            $2 = D3();
-            break;
-          case f:
-            $2 = D3() / 3;
-            break;
-          case o2:
-            $2 = (g2 - v2) / 6048e5;
-            break;
-          case a2:
-            $2 = (g2 - v2) / 864e5;
-            break;
-          case u:
-            $2 = g2 / n2;
-            break;
-          case s2:
-            $2 = g2 / e2;
-            break;
-          case i:
-            $2 = g2 / t2;
-            break;
-          default:
-            $2 = g2;
-        }
-        return l2 ? $2 : O.a($2);
+        var $2, y2 = O.p(d2), M4 = w(r3), m3 = (M4.utcOffset() - this.utcOffset()) * e2, v2 = this - M4, g2 = O.m(this, M4);
+        return g2 = ($2 = {}, $2[c2] = g2 / 12, $2[f] = g2, $2[h] = g2 / 3, $2[o2] = (v2 - m3) / 6048e5, $2[a2] = (v2 - m3) / 864e5, $2[u] = v2 / n2, $2[s2] = v2 / e2, $2[i] = v2 / t2, $2)[y2] || v2, l2 ? g2 : O.a(g2);
       }, m2.daysInMonth = function() {
-        return this.endOf(c2).$D;
+        return this.endOf(f).$D;
       }, m2.$locale = function() {
         return D2[this.$L];
       }, m2.locale = function(t3, e3) {
@@ -669,13 +587,13 @@ var require_dayjs_min = __commonJS((exports, module) => {
       }, m2.toString = function() {
         return this.$d.toUTCString();
       }, M3;
-    }(), _ = b.prototype;
-    return w.prototype = _, [["$ms", r2], ["$s", i], ["$m", s2], ["$H", u], ["$W", a2], ["$M", c2], ["$y", h], ["$D", d]].forEach(function(t3) {
-      _[t3[1]] = function(e3) {
+    }(), T = _.prototype;
+    return w.prototype = T, [["$ms", r2], ["$s", i], ["$m", s2], ["$H", u], ["$W", a2], ["$M", f], ["$y", c2], ["$D", d]].forEach(function(t3) {
+      T[t3[1]] = function(e3) {
         return this.$g(e3, t3[0], t3[1]);
       };
     }), w.extend = function(t3, e3) {
-      return t3.$i || (t3(e3, b, w), t3.$i = true), w;
+      return t3.$i || (t3(e3, _, w), t3.$i = true), w;
     }, w.locale = S2, w.isDayjs = p2, w.unix = function(t3) {
       return w(1e3 * t3);
     }, w.en = D2[g], w.Ls = D2, w.p = {}, w;
@@ -12782,107 +12700,47 @@ var Dayjs = /* @__PURE__ */ function() {
       var m = hour < 12 ? "AM" : "PM";
       return isLowercase ? m.toLowerCase() : m;
     };
-    var matches2 = function matches3(match) {
-      switch (match) {
-        case "YY":
-          return String(_this3.$y).slice(-2);
-        case "YYYY":
-          return Utils.s(_this3.$y, 4, "0");
-        case "M":
-          return $M + 1;
-        case "MM":
-          return Utils.s($M + 1, 2, "0");
-        case "MMM":
-          return getShort(locale.monthsShort, $M, months, 3);
-        case "MMMM":
-          return getShort(months, $M);
-        case "D":
-          return _this3.$D;
-        case "DD":
-          return Utils.s(_this3.$D, 2, "0");
-        case "d":
-          return String(_this3.$W);
-        case "dd":
-          return getShort(locale.weekdaysMin, _this3.$W, weekdays, 2);
-        case "ddd":
-          return getShort(locale.weekdaysShort, _this3.$W, weekdays, 3);
-        case "dddd":
-          return weekdays[_this3.$W];
-        case "H":
-          return String($H);
-        case "HH":
-          return Utils.s($H, 2, "0");
-        case "h":
-          return get$H(1);
-        case "hh":
-          return get$H(2);
-        case "a":
-          return meridiemFunc($H, $m, true);
-        case "A":
-          return meridiemFunc($H, $m, false);
-        case "m":
-          return String($m);
-        case "mm":
-          return Utils.s($m, 2, "0");
-        case "s":
-          return String(_this3.$s);
-        case "ss":
-          return Utils.s(_this3.$s, 2, "0");
-        case "SSS":
-          return Utils.s(_this3.$ms, 3, "0");
-        case "Z":
-          return zoneStr;
-        default:
-          break;
-      }
-      return null;
+    var matches2 = {
+      YY: String(this.$y).slice(-2),
+      YYYY: Utils.s(this.$y, 4, "0"),
+      M: $M + 1,
+      MM: Utils.s($M + 1, 2, "0"),
+      MMM: getShort(locale.monthsShort, $M, months, 3),
+      MMMM: getShort(months, $M),
+      D: this.$D,
+      DD: Utils.s(this.$D, 2, "0"),
+      d: String(this.$W),
+      dd: getShort(locale.weekdaysMin, this.$W, weekdays, 2),
+      ddd: getShort(locale.weekdaysShort, this.$W, weekdays, 3),
+      dddd: weekdays[this.$W],
+      H: String($H),
+      HH: Utils.s($H, 2, "0"),
+      h: get$H(1),
+      hh: get$H(2),
+      a: meridiemFunc($H, $m, true),
+      A: meridiemFunc($H, $m, false),
+      m: String($m),
+      mm: Utils.s($m, 2, "0"),
+      s: String(this.$s),
+      ss: Utils.s(this.$s, 2, "0"),
+      SSS: Utils.s(this.$ms, 3, "0"),
+      Z: zoneStr
     };
     return str.replace(REGEX_FORMAT, function(match, $1) {
-      return $1 || matches2(match) || zoneStr.replace(":", "");
+      return $1 || matches2[match] || zoneStr.replace(":", "");
     });
   };
   _proto.utcOffset = function utcOffset() {
     return -Math.round(this.$d.getTimezoneOffset() / 15) * 15;
   };
   _proto.diff = function diff(input, units, _float) {
-    var _this4 = this;
+    var _C$Y$C$M$C$Q$C$W$C$D$;
     var unit = Utils.p(units);
     var that = dayjs(input);
     var zoneDelta = (that.utcOffset() - this.utcOffset()) * MILLISECONDS_A_MINUTE;
     var diff2 = this - that;
-    var getMonth = function getMonth2() {
-      return Utils.m(_this4, that);
-    };
-    var result;
-    switch (unit) {
-      case Y:
-        result = getMonth() / 12;
-        break;
-      case M:
-        result = getMonth();
-        break;
-      case Q:
-        result = getMonth() / 3;
-        break;
-      case W:
-        result = (diff2 - zoneDelta) / MILLISECONDS_A_WEEK;
-        break;
-      case D:
-        result = (diff2 - zoneDelta) / MILLISECONDS_A_DAY;
-        break;
-      case H:
-        result = diff2 / MILLISECONDS_A_HOUR;
-        break;
-      case MIN:
-        result = diff2 / MILLISECONDS_A_MINUTE;
-        break;
-      case S:
-        result = diff2 / MILLISECONDS_A_SECOND;
-        break;
-      default:
-        result = diff2;
-        break;
-    }
+    var result = Utils.m(this, that);
+    result = (_C$Y$C$M$C$Q$C$W$C$D$ = {}, _C$Y$C$M$C$Q$C$W$C$D$[Y] = result / 12, _C$Y$C$M$C$Q$C$W$C$D$[M] = result, _C$Y$C$M$C$Q$C$W$C$D$[Q] = result / 3, _C$Y$C$M$C$Q$C$W$C$D$[W] = (diff2 - zoneDelta) / MILLISECONDS_A_WEEK, _C$Y$C$M$C$Q$C$W$C$D$[D] = (diff2 - zoneDelta) / MILLISECONDS_A_DAY, _C$Y$C$M$C$Q$C$W$C$D$[H] = diff2 / MILLISECONDS_A_HOUR, _C$Y$C$M$C$Q$C$W$C$D$[MIN] = diff2 / MILLISECONDS_A_MINUTE, _C$Y$C$M$C$Q$C$W$C$D$[S] = diff2 / MILLISECONDS_A_SECOND, _C$Y$C$M$C$Q$C$W$C$D$)[unit] || diff2;
     return _float ? result : Utils.a(result);
   };
   _proto.daysInMonth = function daysInMonth() {
@@ -25097,7 +24955,7 @@ function applyStyle(button, stylesToApply) {
 }
 
 // node_modules/dompurify/dist/purify.es.js
-/*! @license DOMPurify 2.4.7 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.7/LICENSE */
+/*! @license DOMPurify 2.4.5 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.4.5/LICENSE */
 function _typeof(obj) {
   "@babel/helpers - typeof";
   return _typeof = typeof Symbol == "function" && typeof Symbol.iterator == "symbol" ? function(obj2) {
@@ -25237,8 +25095,7 @@ function unconstruct(func) {
   };
 }
 function addToSet(set, array, transformCaseFunc) {
-  var _transformCaseFunc;
-  transformCaseFunc = (_transformCaseFunc = transformCaseFunc) !== null && _transformCaseFunc !== void 0 ? _transformCaseFunc : stringToLowerCase;
+  transformCaseFunc = transformCaseFunc ? transformCaseFunc : stringToLowerCase;
   if (setPrototypeOf) {
     setPrototypeOf(set, null);
   }
@@ -25339,7 +25196,7 @@ function createDOMPurify() {
   var DOMPurify = function DOMPurify2(root2) {
     return createDOMPurify(root2);
   };
-  DOMPurify.version = "2.4.7";
+  DOMPurify.version = "2.4.5";
   DOMPurify.removed = [];
   if (!window2 || !window2.document || window2.document.nodeType !== 9) {
     DOMPurify.isSupported = false;
@@ -25369,7 +25226,7 @@ function createDOMPurify() {
   } catch (_) {
   }
   var hooks = {};
-  DOMPurify.isSupported = typeof getParentNode2 === "function" && implementation && implementation.createHTMLDocument !== void 0 && documentMode !== 9;
+  DOMPurify.isSupported = typeof getParentNode2 === "function" && implementation && typeof implementation.createHTMLDocument !== "undefined" && documentMode !== 9;
   var MUSTACHE_EXPR$1 = MUSTACHE_EXPR, ERB_EXPR$1 = ERB_EXPR, TMPLIT_EXPR$1 = TMPLIT_EXPR, DATA_ATTR$1 = DATA_ATTR, ARIA_ATTR$1 = ARIA_ATTR, IS_SCRIPT_OR_DATA$1 = IS_SCRIPT_OR_DATA, ATTR_WHITESPACE$1 = ATTR_WHITESPACE;
   var IS_ALLOWED_URI$1 = IS_ALLOWED_URI;
   var ALLOWED_TAGS = null;
@@ -25741,7 +25598,7 @@ function createDOMPurify() {
       _forceRemove(currentNode);
       return true;
     }
-    if ((tagName === "noscript" || tagName === "noembed" || tagName === "noframes") && regExpTest(/<\/no(script|embed|frames)/i, currentNode.innerHTML)) {
+    if ((tagName === "noscript" || tagName === "noembed") && regExpTest(/<\/no(script|embed)/i, currentNode.innerHTML)) {
       _forceRemove(currentNode);
       return true;
     }
@@ -25782,10 +25639,11 @@ function createDOMPurify() {
       ;
     else if (ALLOW_UNKNOWN_PROTOCOLS && !regExpTest(IS_SCRIPT_OR_DATA$1, stringReplace(value, ATTR_WHITESPACE$1, "")))
       ;
-    else if (value) {
-      return false;
-    } else
+    else if (!value)
       ;
+    else {
+      return false;
+    }
     return true;
   };
   var _basicCustomElementTest = function _basicCustomElementTest2(tagName) {
@@ -25848,14 +25706,12 @@ function createDOMPurify() {
           ;
         else {
           switch (trustedTypes.getAttributeType(lcTag, lcName)) {
-            case "TrustedHTML": {
+            case "TrustedHTML":
               value = trustedTypesPolicy.createHTML(value);
               break;
-            }
-            case "TrustedScriptURL": {
+            case "TrustedScriptURL":
               value = trustedTypesPolicy.createScriptURL(value);
               break;
-            }
           }
         }
       }
@@ -25899,13 +25755,13 @@ function createDOMPurify() {
       dirty = "<!-->";
     }
     if (typeof dirty !== "string" && !_isNode(dirty)) {
-      if (typeof dirty.toString === "function") {
+      if (typeof dirty.toString !== "function") {
+        throw typeErrorCreate("toString is not a function");
+      } else {
         dirty = dirty.toString();
         if (typeof dirty !== "string") {
           throw typeErrorCreate("dirty is not a string, aborting");
         }
-      } else {
-        throw typeErrorCreate("toString is not a function");
       }
     }
     if (!DOMPurify.isSupported) {
@@ -28393,19 +28249,19 @@ var select_default = (Alpine) => {
           if (this.isStateBeingUpdated) {
             return;
           }
-          await this.refreshChoices({
+          const choices = await this.getChoices({
             withInitialOptions: !hasDynamicOptions
           });
+          this.select.clearStore();
+          this.refreshPlaceholder();
+          this.setChoices(choices);
+          if (![null, void 0, ""].includes(this.state)) {
+            this.select.setChoiceByValue(this.formatState(this.state));
+          }
         });
       },
       refreshChoices: async function(config = {}) {
-        const choices = await this.getChoices(config);
-        this.select.clearStore();
-        this.refreshPlaceholder();
-        this.setChoices(choices);
-        if (![null, void 0, ""].includes(this.state)) {
-          this.select.setChoiceByValue(this.formatState(this.state));
-        }
+        this.setChoices(await this.getChoices(config));
       },
       setChoices: function(choices) {
         this.select.setChoices(choices, "value", "label", true);
@@ -28418,16 +28274,10 @@ var select_default = (Alpine) => {
         if (withInitialOptions) {
           return options2;
         }
-        let results = [];
         if (search !== "" && search !== null && search !== void 0) {
-          results = await getSearchResultsUsing(search);
-        } else {
-          results = await getOptionsUsing();
+          return await getSearchResultsUsing(search);
         }
-        return results.map((option3) => this.state.includes(option3.value) ? ((option4) => {
-          option4.selected = true;
-          return option4;
-        })(option3) : option3);
+        return await getOptionsUsing();
       },
       refreshPlaceholder: function() {
         if (isMultiple) {
@@ -28463,8 +28313,7 @@ var select_default = (Alpine) => {
         return [
           {
             label: await getOptionLabelUsing(),
-            value: state3,
-            selected: true
+            value: state3
           }
         ];
       }
