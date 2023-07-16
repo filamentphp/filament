@@ -144,7 +144,9 @@ export default function selectFormComponent({
                             return
                         }
 
-                        await this.refreshSelectedOption()
+                        await this.refreshChoices({
+                            withInitialOptions: !hasDynamicOptions,
+                        })
                     },
                 )
             }
@@ -160,7 +162,9 @@ export default function selectFormComponent({
                     return
                 }
 
-                await this.refreshSelectedOption()
+                await this.refreshChoices({
+                    withInitialOptions: !hasDynamicOptions,
+                })
             })
         },
 
@@ -170,13 +174,7 @@ export default function selectFormComponent({
         },
 
         refreshChoices: async function (config = {}) {
-            this.setChoices(await this.getChoices(config))
-        },
-
-        refreshSelectedOption: async function () {
-            const choices = await this.getChoices({
-                withInitialOptions: !hasDynamicOptions,
-            })
+            const choices = await this.getChoices(config)
 
             this.select.clearStore()
 
@@ -194,23 +192,31 @@ export default function selectFormComponent({
         },
 
         getChoices: async function (config = {}) {
-            const existingOptions = await this.getOptions(config)
+            const existingOptions = await this.getExistingOptions(config)
 
             return existingOptions.concat(
                 await this.getMissingOptions(existingOptions),
             )
         },
 
-        getOptions: async function ({ search, withInitialOptions }) {
+        getExistingOptions: async function ({ search, withInitialOptions }) {
             if (withInitialOptions) {
                 return options
             }
 
+            let results = []
+
             if (search !== '' && search !== null && search !== undefined) {
-                return await getSearchResultsUsing(search)
+                results = await getSearchResultsUsing(search)
+            } else {
+                results = await getOptionsUsing()
             }
 
-            return await getOptionsUsing()
+            return results.map((option) => this.state.includes(option.value) ? ((option) => {
+                option.selected = true
+
+                return option
+            })(option) : option)
         },
 
         refreshPlaceholder: function () {
@@ -270,6 +276,7 @@ export default function selectFormComponent({
                 {
                     label: await getOptionLabelUsing(),
                     value: state,
+                    selected: true,
                 },
             ]
         },
