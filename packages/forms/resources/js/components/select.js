@@ -192,17 +192,25 @@ export default (Alpine) => {
 
                     let results = []
 
-                    if (search !== '' && search !== null && search !== undefined) {
+                    if (
+                        search !== '' &&
+                        search !== null &&
+                        search !== undefined
+                    ) {
                         results = await getSearchResultsUsing(search)
                     } else {
                         results = await getOptionsUsing()
                     }
 
-                    return results.map((option) => this.state.includes(option.value) ? ((option) => {
-                        option.selected = true
+                    return results.map((option) =>
+                        this.state.includes(option.value)
+                            ? ((option) => {
+                                  option.selected = true
 
-                        return option
-                    })(option) : option)
+                                  return option
+                              })(option)
+                            : option,
+                    )
                 },
 
                 refreshPlaceholder: function () {
