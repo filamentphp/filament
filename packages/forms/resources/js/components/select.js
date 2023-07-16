@@ -266,7 +266,13 @@ export default function selectFormComponent({
                     return {}
                 }
 
-                return await getOptionLabelsUsing()
+                return (await getOptionLabelsUsing())
+                    .filter((option) => ! existingOptionValues.has(option.value))
+                    .map((option) => {
+                        option.selected = true
+
+                        return option
+                    })
             }
 
             if (existingOptionValues.has(state)) {
