@@ -77,6 +77,11 @@
                     x-ref="borderColorElement"
                     class="text-gray-950/50 dark:text-white/60"
                 ></span>
+
+                <span
+                    x-ref="colorElement"
+                    class="text-gray-500 dark:text-gray-400"
+                ></span>
             </div>
         </div>
     </x-filament::card>

@@ -103,7 +103,7 @@
                             }
                         }
 
-                        $dispatch('theme-changed', this.theme)
+                        Alpine.store('theme', this.theme)
                     })
                 },
 

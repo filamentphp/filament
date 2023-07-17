@@ -106,12 +106,6 @@ abstract class ChartWidget extends Widget
 
     public function updatedFilter(): void
     {
-        $newDataChecksum = $this->generateDataChecksum();
-
-        if ($newDataChecksum !== $this->dataChecksum) {
-            $this->dataChecksum = $newDataChecksum;
-
-            $this->dispatch('filterChartData', data: $this->getCachedData());
-        }
+        $this->updateChartData();
     }
 }

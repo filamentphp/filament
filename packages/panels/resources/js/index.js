@@ -36,21 +36,4 @@ document.addEventListener('alpine:init', () => {
             this.isOpen = true
         },
     })
-
-    window.Alpine.store(
-        'theme',
-        window.matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light',
-    )
-
-    window.addEventListener('theme-changed', (event) => {
-        window.Alpine.store('theme', event.detail)
-    })
-
-    window
-        .matchMedia('(prefers-color-scheme: dark)')
-        .addEventListener('change', (event) => {
-            window.Alpine.store('theme', event.matches ? 'dark' : 'light')
-        })
 })
