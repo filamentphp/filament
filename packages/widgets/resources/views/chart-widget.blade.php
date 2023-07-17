@@ -28,7 +28,7 @@
                     <x-filament-forms::affixes
                         inline-prefix
                         wire:target="filter"
-                        class="ml-auto"
+                        class="ms-auto"
                     >
                         <x-filament::input.select
                             inline-prefix

@@ -431,7 +431,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
     {
         $action = Action::make($this->getExpandActionName())
             ->label(__('filament-forms::components.builder.actions.expand.label'))
-            ->icon('heroicon-m-chevron-up')
+            ->icon('heroicon-m-chevron-down')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()

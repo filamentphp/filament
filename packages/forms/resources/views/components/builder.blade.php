@@ -138,7 +138,7 @@
                                 @endif
 
                                 @if ($isCloneable || $isDeletable || $isCollapsible)
-                                    <ul class="ml-auto flex">
+                                    <ul class="-me-1.5 ms-auto flex">
                                         @if ($isCloneable)
                                             <li>
                                                 {{ $cloneAction(['item' => $uuid]) }}
@@ -154,23 +154,22 @@
                                         @if ($isCollapsible)
                                             <li
                                                 class="relative transition"
+                                                x-on:click.stop="isCollapsed = !isCollapsed"
                                                 x-bind:class="{ '-rotate-180': isCollapsed }"
                                             >
                                                 <div
-                                                    x-on:click.stop="isCollapsed = true"
+                                                    class="transition"
                                                     x-bind:class="{ 'opacity-0 pointer-events-none': isCollapsed }"
                                                 >
                                                     {{ $getAction('collapse') }}
                                                 </div>
 
                                                 <div
-                                                    x-on:click.stop="isCollapsed = false"
+                                                    class="absolute inset-0 rotate-180 transition"
                                                     x-bind:class="{ 'opacity-0 pointer-events-none': ! isCollapsed }"
-                                                    class="absolute inset-0"
                                                 >
                                                     {{ $getAction('expand') }}
                                                 </div>
-
                                             </li>
                                         @endif
                                     </ul>
