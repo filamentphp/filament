@@ -48,7 +48,7 @@
             <ul
                 x-sortable
                 wire:end.stop="{{ 'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })' }}"
-                class="space-y-6"
+                class="space-y-4"
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
@@ -186,20 +186,24 @@
                     </li>
 
                     @if ((! $loop->last) && $isAddable)
-                        <li class="relative top-0.5 !mt-0 h-0">
+                        <li class="relative -top-2 !mt-0 h-0">
                             <div
                                 class="flex w-full justify-center opacity-0 transition duration-75 hover:opacity-100"
                             >
-                                <x-filament-forms::builder.block-picker
-                                    :action="$addBetweenAction"
-                                    :after-item="$uuid"
-                                    :blocks="$getBlocks()"
-                                    :state-path="$statePath"
+                                <div
+                                    class="rounded-lg bg-white dark:bg-gray-900"
                                 >
-                                    <x-slot name="trigger">
-                                        {{ $addBetweenAction }}
-                                    </x-slot>
-                                </x-filament-forms::builder.block-picker>
+                                    <x-filament-forms::builder.block-picker
+                                        :action="$addBetweenAction"
+                                        :after-item="$uuid"
+                                        :blocks="$getBlocks()"
+                                        :state-path="$statePath"
+                                    >
+                                        <x-slot name="trigger">
+                                            {{ $addBetweenAction }}
+                                        </x-slot>
+                                    </x-filament-forms::builder.block-picker>
+                                </div>
                             </div>
                         </li>
                     @endif
