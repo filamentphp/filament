@@ -18,7 +18,7 @@
 
     <div>
         @if ((count($containers) > 1) && $isCollapsible)
-            <div class="space-x-2 rtl:space-x-reverse" x-data="{}">
+            <div class="flex gap-x-2" x-data="{}">
                 <span
                     x-on:click="$dispatch('repeater-collapse', '{{ $statePath }}')"
                 >

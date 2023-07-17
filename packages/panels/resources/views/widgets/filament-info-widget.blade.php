@@ -8,7 +8,7 @@
                     href="https://filamentphp.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    class="flex items-end space-x-2 text-gray-800 transition hover:text-primary-500 rtl:space-x-reverse dark:text-primary-500 dark:hover:text-primary-400"
+                    class="flex items-end gap-x-2 text-gray-800 transition hover:text-primary-500 dark:text-primary-500 dark:hover:text-primary-400"
                 >
                     <svg
                         role="img"
@@ -34,7 +34,7 @@
                 </a>
             </div>
 
-            <div class="flex space-x-2 text-sm rtl:space-x-reverse">
+            <div class="flex gap-x-2 text-sm">
                 <a
                     href="https://filamentphp.com/docs"
                     target="_blank"

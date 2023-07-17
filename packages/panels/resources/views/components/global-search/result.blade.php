@@ -15,7 +15,7 @@
             </p>
 
             <p
-                class="space-x-2 text-sm font-medium text-gray-500 rtl:space-x-reverse dark:text-gray-400"
+                class="gap-x-2 text-sm font-medium text-gray-500 dark:text-gray-400"
             >
                 @foreach ($details as $label => $value)
                     <span>

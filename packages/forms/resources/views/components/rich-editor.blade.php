@@ -57,15 +57,13 @@
                 ])
             >
                 <div
-                    class="flex items-stretch justify-between space-x-4 overflow-x-auto overflow-y-hidden rtl:space-x-reverse"
+                    class="flex items-stretch justify-between gap-x-4 overflow-x-auto overflow-y-hidden"
                 >
-                    <div
-                        class="flex items-stretch space-x-4 outline-none rtl:space-x-reverse"
-                    >
+                    <div class="flex items-stretch gap-x-4 outline-none">
                         @if ($hasToolbarButton(['bold', 'italic', 'underline', 'strike', 'link']))
                             <div
                                 data-trix-button-group="text-tools"
-                                class="flex items-stretch space-x-1 rtl:space-x-reverse"
+                                class="flex items-stretch gap-x-1"
                             >
                                 @if ($hasToolbarButton('bold'))
                                     <x-filament-forms::rich-editor.toolbar-button
@@ -197,7 +195,7 @@
                         @if ($hasToolbarButton(['h1', 'h2', 'h3']))
                             <div
                                 data-trix-button-group="heading-tools"
-                                class="flex items-stretch space-x-1 rtl:space-x-reverse"
+                                class="flex items-stretch gap-x-1"
                             >
                                 @if ($hasToolbarButton('h1'))
                                     <x-filament-forms::rich-editor.toolbar-button
@@ -234,7 +232,7 @@
                         @if ($hasToolbarButton(['blockquote', 'codeBlock', 'bulletList', 'orderedList']))
                             <div
                                 data-trix-button-group="block-tools"
-                                class="flex items-stretch space-x-1 rtl:space-x-reverse"
+                                class="flex items-stretch gap-x-1"
                             >
                                 @if ($hasToolbarButton('blockquote'))
                                     <x-filament-forms::rich-editor.toolbar-button
@@ -337,7 +335,7 @@
                         @if ($hasToolbarButton('attachFiles'))
                             <div
                                 data-trix-button-group="file-tools"
-                                class="flex items-stretch space-x-1 rtl:space-x-reverse"
+                                class="flex items-stretch gap-x-1"
                             >
                                 <x-filament-forms::rich-editor.toolbar-button
                                     data-trix-action="attachFiles"
@@ -367,7 +365,7 @@
                     @if ($hasToolbarButton(['undo', 'redo']))
                         <div
                             data-trix-button-group="history-tools"
-                            class="flex items-center space-x-1 rtl:space-x-reverse"
+                            class="flex items-center gap-x-1"
                         >
                             @if ($hasToolbarButton('undo'))
                                 <x-filament-forms::rich-editor.toolbar-button

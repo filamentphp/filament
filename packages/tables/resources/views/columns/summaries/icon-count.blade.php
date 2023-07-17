@@ -8,7 +8,7 @@
     @foreach ($getState() as $color => $icons)
         @foreach ($icons as $icon => $count)
             @if ($icon)
-                <div class="flex items-center space-x-1">
+                <div class="flex items-center gap-x-1">
                     <span>
                         {{ $count }}
                     </span>

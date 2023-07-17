@@ -68,7 +68,7 @@
                     <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                         <div
                             @class([
-                                'inline-flex items-center space-x-1 rtl:space-x-reverse',
+                                'inline-flex items-center gap-x-1',
                                 'min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
                                 'prose max-w-none dark:prose-invert' => $isProse,
                                 match ($color) {
