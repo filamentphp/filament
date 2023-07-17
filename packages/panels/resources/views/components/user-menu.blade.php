@@ -15,7 +15,7 @@
 {{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.start') }}
 
 <x-filament::dropdown placement="bottom-end" class="fi-user-menu">
-    <x-slot name="trigger" class="ms-4">
+    <x-slot name="trigger">
         <button
             class="block"
             aria-label="{{ __('filament::layout.actions.open_user_menu.label') }}"

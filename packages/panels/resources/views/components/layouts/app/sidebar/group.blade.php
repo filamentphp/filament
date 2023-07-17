@@ -48,7 +48,7 @@
                     icon-alias="panels::sidebar.group.collapse-button"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
                     x-bind:class="{ 'rotate-180': ! $store.sidebar.groupIsCollapsed(label) }"
-                    class="-my-2.5 -me-2.5"
+                    class="-my-2 -me-2"
                 />
             @endif
         </div>

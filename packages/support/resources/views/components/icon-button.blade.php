@@ -7,7 +7,6 @@
     'iconSize' => null,
     'indicator' => null,
     'indicatorColor' => 'primary',
-    'inline' => false,
     'keyBindings' => null,
     'label' => null,
     'size' => 'md',
@@ -18,36 +17,42 @@
 
 @php
     $iconSize ??= match ($size) {
-        'sm' => 'md',
-        'md' => 'md',
-        'lg' => 'lg',
+        'xs' => 'sm',
+        'sm', 'md' => 'md',
+        'lg', 'xl' => 'lg',
     };
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-icon-btn relative flex items-center justify-center text-custom-500 outline-none transition disabled:pointer-events-none disabled:opacity-70',
-        'rounded-full hover:bg-gray-500/5 focus:bg-custom-500/10 dark:hover:bg-gray-300/5' => ! $inline,
+        'fi-icon-btn relative flex items-center justify-center outline-none transition duration-75 disabled:pointer-events-none disabled:opacity-70 rounded-lg',
         match ($size) {
+            'xs' => 'h-7 w-7',
             'sm' => 'h-8 w-8',
-            'sm md:md' => 'h-8 w-8 md:h-10 md:w-10',
-            'md' => 'h-10 w-10',
-            'lg' => 'h-12 w-12',
+            'md' => 'h-9 w-9',
+            'lg' => 'h-10 w-10',
+            'xl' => 'h-11 w-11',
             default => $size,
+        },
+        match ($color) {
+            'gray' => 'text-gray-400 hover:text-gray-500 focus:bg-gray-950/5 focus:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus:bg-white/5 dark:focus:text-gray-400',
+            default => 'text-custom-500 hover:text-custom-600 focus:bg-custom-50 focus:text-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus:bg-custom-400/10 dark:focus:text-custom-300',
         },
     ]);
 
-    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [500]);
+    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [50, 300, 400, 500, 600]);
 
-    $iconClasses = 'fi-icon-btn-icon ' . match ($iconSize) {
-        'sm' => 'h-4 w-4',
-        'sm md:md' => 'h-4 w-4 md:h-5 md:w-5',
-        'md' => 'h-5 w-5',
-        'lg' => 'h-6 w-6',
-        default => $iconSize,
-    };
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-icon-btn-icon',
+        match ($iconSize) {
+            'sm' => 'h-4 w-4',
+            'md' => 'h-5 w-5',
+            'lg' => 'h-6 w-6',
+            default => $iconSize,
+        },
+    ]);
 
-    $indicatorClasses = 'fi-icon-btn-indicator absolute -end-0.5 -top-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-[0.5rem] font-medium text-white';
+    $indicatorClasses = 'fi-icon-btn-indicator absolute end-0 top-0 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-xs font-medium tracking-tight text-white dark:bg-custom-500';
 
-    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [600]);
+    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [500, 600]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -89,16 +94,16 @@
         <x-filament::icon
             :alias="$iconAlias"
             :name="$icon"
-            :class="$iconClasses"
             :wire:loading.remove.delay="$hasLoadingIndicator"
             :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
+            :class="$iconClasses"
         />
 
         @if ($hasLoadingIndicator)
             <x-filament::loading-indicator
                 wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
-                :class="$iconClasses . ' ' . $iconSize"
+                :class="$iconClasses"
             />
         @endif
 

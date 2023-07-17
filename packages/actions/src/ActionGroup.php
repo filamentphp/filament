@@ -14,7 +14,6 @@ class ActionGroup extends ViewComponent implements HasLivewire
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
     }
-    use Concerns\CanBeInline;
     use Concerns\CanBeLabeledFrom;
     use Concerns\CanBeOutlined;
     use Concerns\HasDropdown;

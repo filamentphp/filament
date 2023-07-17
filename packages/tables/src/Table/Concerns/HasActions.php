@@ -190,8 +190,6 @@ trait HasActions
         $firstAction = Arr::first($actions);
 
         if ($firstAction instanceof ActionGroup) {
-            $firstAction->size('sm md:md');
-
             return Position::BottomCorner;
         }
 

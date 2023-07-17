@@ -14,7 +14,6 @@ class StaticAction extends ViewComponent
 {
     use Concerns\CanBeDisabled;
     use Concerns\CanBeHidden;
-    use Concerns\CanBeInline;
     use Concerns\CanBeLabeledFrom;
     use Concerns\CanBeOutlined;
     use Concerns\CanCallParentAction;
