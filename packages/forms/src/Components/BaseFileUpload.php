@@ -203,6 +203,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function chunkSize(int | Closure | null $size): static
+    {
+        $this->chunkSize = $size;
+
+        return $this;
+    }
+
     public function directory(string | Closure | null $directory): static
     {
         $this->directory = $directory;
