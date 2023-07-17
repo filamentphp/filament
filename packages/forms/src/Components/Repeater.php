@@ -170,7 +170,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
             })
             ->iconButton()
-            ->inline()
             ->size('sm')
             ->visible(fn (): bool => $this->isCloneable());
 
@@ -208,7 +207,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->inline()
             ->size('sm')
             ->visible(fn (): bool => $this->isDeletable());
 
@@ -245,7 +243,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->inline()
             ->size('sm')
             ->visible(fn (): bool => $this->isReorderable());
 
@@ -282,7 +279,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->inline()
             ->size('sm')
             ->visible(fn (): bool => $this->isReorderable());
 
@@ -323,7 +319,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->inline()
             ->size('sm')
             ->visible(fn (): bool => $this->isReorderableWithDragAndDrop());
 
@@ -356,7 +351,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->inline()
             ->size('sm');
 
         if ($this->modifyCollapseActionUsing) {
@@ -388,7 +382,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->inline()
             ->size('sm');
 
         if ($this->modifyExpandActionUsing) {
