@@ -550,7 +550,7 @@ class BaseFileUpload extends Field
         
         $file = TemporaryUploadedFile::createFromLivewire("/{$fileName}");
 
-        $this->state($file);
+        $this->state([$fileKey => $file]);
 
         return $file;
     }
