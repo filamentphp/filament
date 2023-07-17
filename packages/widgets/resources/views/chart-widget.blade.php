@@ -61,23 +61,23 @@
                         })"
                 x-ignore
             >
-                    <canvas
-                        x-ref="canvas"
-                        @if ($maxHeight = $this->getMaxHeight())
-                            style="max-height: {{ $maxHeight }}"
-                        @endif
-                    ></canvas>
+                <canvas
+                    x-ref="canvas"
+                    @if ($maxHeight = $this->getMaxHeight())
+                        style="max-height: {{ $maxHeight }}"
+                    @endif
+                ></canvas>
 
-                    <span
-                        x-ref="backgroundColorElement"
-                        class="text-gray-700 dark:text-gray-200"
-                    ></span>
+                <span
+                    x-ref="backgroundColorElement"
+                    class="text-gray-700 dark:text-gray-200"
+                ></span>
 
-                    <span
-                        x-ref="borderColorElement"
-                        class="text-gray-900/50 dark:text-white/60"
-                    ></span>
-                </div>
+                <span
+                    x-ref="borderColorElement"
+                    class="text-gray-900/50 dark:text-white/60"
+                ></span>
+            </div>
         </div>
     </x-filament::card>
 </x-filament-widgets::widget>
