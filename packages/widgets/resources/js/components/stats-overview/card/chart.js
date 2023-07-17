@@ -2,26 +2,46 @@ import Chart from 'chart.js/auto'
 
 export default function statsOverviewCardChart({ labels, values }) {
     return {
-        chart: null,
-
         init: function () {
             this.initChart()
+
+            Alpine.effect(() => {
+                Alpine.store('theme')
+
+                this.getChart().destroy()
+                this.initChart()
+            })
+
+            window
+                .matchMedia('(prefers-color-scheme: dark)')
+                .addEventListener('change', () => {
+                    if (Alpine.store('theme') !== 'system') {
+                        return
+                    }
+
+                    this.$nextTick(() => {
+                        this.getChart().destroy()
+                        this.initChart()
+                    })
+                })
         },
 
         initChart: function () {
-            return (this.chart = new Chart(this.$refs.canvas, {
+            Chart.defaults.backgroundColor = getComputedStyle(
+                this.$refs.backgroundColorElement,
+            ).color
+
+            Chart.defaults.borderColor = getComputedStyle(
+                this.$refs.borderColorElement,
+            ).color
+
+            return new Chart(this.$refs.canvas, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [
                         {
                             data: values,
-                            backgroundColor: getComputedStyle(
-                                this.$refs.backgroundColorElement,
-                            ).color,
-                            borderColor: getComputedStyle(
-                                this.$refs.borderColorElement,
-                            ).color,
                             borderWidth: 2,
                             fill: 'start',
                             tension: 0.5,
@@ -29,6 +49,9 @@ export default function statsOverviewCardChart({ labels, values }) {
                     ],
                 },
                 options: {
+                    animation: {
+                        duration: 0,
+                    },
                     elements: {
                         point: {
                             radius: 0,
@@ -52,7 +75,11 @@ export default function statsOverviewCardChart({ labels, values }) {
                         enabled: false,
                     },
                 },
-            }))
+            })
+        },
+
+        getChart: function () {
+            return Chart.getChart(this.$refs.canvas)
         },
     }
 }

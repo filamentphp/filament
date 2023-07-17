@@ -94,10 +94,6 @@
                         values: @js(array_values($chart)),
                     })"
             x-ignore
-            x-on:theme-changed.window="
-                chart.destroy()
-                initChart()
-            "
             @class([
                 'absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl',
             ])
