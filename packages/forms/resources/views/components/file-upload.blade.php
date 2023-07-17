@@ -28,7 +28,7 @@
                     canPreview: {{ $canPreview() ? 'true' : 'false' }},
                     canReorder: {{ $canReorder() ? 'true' : 'false' }},
                     chunkUploads: {{ $chunkUploads() ? 'true' : 'false' }},
-                    chunkSize: {{ $chunkUploads() ? "'$getChunkSize()'" : 'null' }},
+                    chunkSize: {{ $chunkUploads() ? "'{$getChunkSize()}'" : 'null' }},
                     deleteUploadedFileUsing: async (fileKey) => {
                         return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
                     },
