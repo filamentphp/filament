@@ -167,6 +167,13 @@ trait InteractsWithForms
         }
     }
 
+    public function processChunks(string $statePath, string $fileKey, string $fileName, int $fileSize): void
+    {
+        foreach ($this->getCachedForms() as $form) {
+            $form->processChunks($statePath, $fileKey, $fileName, $fileSize);
+        }
+    }
+
     public function validate($rules = null, $messages = [], $attributes = [])
     {
         try {
