@@ -15,7 +15,7 @@
     ]);
 
     $descriptionIconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($descriptionColor, shades: [400, 500]) => $descriptionColor !== 'gray',
+        \Filament\Support\get_color_css_variables($descriptionColor, shades: [500]) => $descriptionColor !== 'gray',
     ]);
 @endphp
 
