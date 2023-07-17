@@ -203,21 +203,6 @@ Action::make('edit')
 
 <AutoScreenshot name="actions/trigger-button/outlined" alt="Outlined trigger button" version="3.x" />
 
-## Inline icon button style
-
-When you're using the "icon button" trigger style, you might wish to make it fit inline with other content. You can do this with the `inline()` method, which removes the background color when it the button is hovered over:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('edit')
-    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-    ->iconButton()
-    ->inline()
-```
-
-<AutoScreenshot name="actions/trigger-button/inline-icon" alt="Inline icon button" version="3.x" />
-
 ## Adding extra HTML attributes
 
 You can pass extra HTML attributes to the button which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:

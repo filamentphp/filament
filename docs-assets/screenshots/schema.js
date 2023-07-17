@@ -98,15 +98,6 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'actions/trigger-button/inline-icon': {
-        url: 'actions',
-        selector: '#inlineIconAction',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'actions/modal/confirmation': {
         url: 'actions',
         viewport: {
