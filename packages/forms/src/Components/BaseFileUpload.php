@@ -544,13 +544,15 @@ class BaseFileUpload extends Field
             unlink($chunkPath);
         }
 
-        if ($fileSize == Storage::size("{$tmp}/{$fileName}")) {
-            $file = TemporaryUploadedFile::createFromLivewire("/{$fileName}");
-    
-            $this->state($file);
-
-            return $file;
+        if ($fileSize != Storage::size("{$tmp}/{$fileName}")) {
+            return null;
         }
+        
+        $file = TemporaryUploadedFile::createFromLivewire("/{$fileName}");
+
+        $this->state($file);
+
+        return $file;
     }
 
     public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
