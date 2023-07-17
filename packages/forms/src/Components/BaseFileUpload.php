@@ -526,7 +526,7 @@ class BaseFileUpload extends Field
 
     public function processChunks(string $fileKey, string $fileName, int $fileSize): ?TemporaryUploadedFile
     {
-        $tmp = config('livewire.temporary_file_upload.directory', 'livewire-tmp');
+        $tmp = config('livewire.temporary_file_upload.directory') ?? 'livewire-tmp';
 
         // at the time this function called by javascript,
         // the state should have contained an array of chunks
