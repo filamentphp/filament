@@ -45,7 +45,7 @@ The `TABLES_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILES
 
 #### New `@filamentScripts` and `@filamentStyles` Blade directives
 
-The `@filamentScripts` and `@filamentStyles` Blade directives must be added to your Blade layout file/s. You can insert `@filamentScripts` after `@livewireScripts` and `@filamentStyles` after `@livewireStyles`.
+The `@filamentScripts` and `@filamentStyles` Blade directives must be added to your Blade layout file/s. Since Livewire 3 no longer uses similar directives, you can replace `@livewireScripts` with `@filamentScripts`  and `@livewireStyles` with `@filamentStyles`.
 
 #### CSS file renamed
 

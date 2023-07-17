@@ -1,6 +1,6 @@
 {
     "name": "filament/widgets",
-    "description": "Effortlessly build TALL-powered dashboard widgets.",
+    "description": "Easily add beautiful dashboard widgets to any Livewire component.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

@@ -100,13 +100,29 @@ TextEntry::make('title')
 
 Sometimes, you may wish to provide extra information for the user of the infolist. For this purpose, you may add helper text below the entry.
 
-The `helperText()` method is used to add helper text, and supports Markdown formatting:
+The `helperText()` method is used to add helper text:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('name')
-    ->helperText('Your **full name** here, including any middle names.')
+    ->helperText('Your full name here, including any middle names.')
+```
+
+This method accepts a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even markdown, in the helper text:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+use Illuminate\Support\HtmlString;
+
+TextEntry::make('name')
+    ->helperText(new HtmlString('Your <strong>full name</strong> here, including any middle names.'))
+
+TextEntry::make('name')
+    ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString())
+
+TextEntry::make('name')
+    ->helperText(view('name-helper-text'))
 ```
 
 <AutoScreenshot name="infolists/entries/helper-text" alt="Entry with helper text" version="3.x" />
@@ -115,14 +131,32 @@ TextEntry::make('name')
 
 As well as [helper text](#adding-helper-text-below-the-entry) below the entry, you may also add a "hint" next to the label of the entry. This is useful for displaying additional information about the entry, such as a link to a help page.
 
-The `hint()` method is used to add a hint, and supports Markdown formatting:
+The `hint()` method is used to add a hint:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->hint('[Documentation](/documentation)')
+    ->hint('Documentation? What documentation?!')
+```
+
+This method accepts a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even markdown, in the helper text:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('apiKey')
+    ->label('API key')
+    ->hint(new HtmlString('<a href="/documentation">Documentation</a>'))
+
+TextEntry::make('apiKey')
+    ->label('API key')
+    ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
+
+TextEntry::make('apiKey')
+    ->label('API key')
+    ->hint(view('api-key-hint'))
 ```
 
 <AutoScreenshot name="infolists/entries/hint" alt="Entry with hint" version="3.x" />

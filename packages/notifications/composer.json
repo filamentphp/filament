@@ -1,6 +1,6 @@
 {
     "name": "filament/notifications",
-    "description": "Effortlessly build TALL-powered notifications.",
+    "description": "Easily add beautiful notifications to any Livewire app.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

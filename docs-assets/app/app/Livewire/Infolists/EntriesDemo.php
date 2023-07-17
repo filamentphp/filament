@@ -42,7 +42,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ->schema([
                         TextEntry::make('name')
                             ->state('Dan Harrin')
-                            ->helperText('Your **full name** here, including any middle names.'),
+                            ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hint')
@@ -53,7 +53,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint('[Documentation](/documentation)'),
+                            ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hintColor')

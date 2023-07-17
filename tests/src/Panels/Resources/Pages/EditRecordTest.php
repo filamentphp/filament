@@ -5,6 +5,7 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Resources\TestCase;
 use Illuminate\Support\Str;
+use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
@@ -75,7 +76,7 @@ it('can delete', function () {
     ])
         ->callAction(DeleteAction::class);
 
-    $this->assertModelMissing($post);
+    assertSoftDeleted($post);
 });
 
 it('can refresh data', function () {

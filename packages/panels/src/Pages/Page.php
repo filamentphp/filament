@@ -4,6 +4,8 @@ namespace Filament\Pages;
 
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
 
@@ -138,7 +140,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     protected function getHeaderWidgets(): array
     {
@@ -146,7 +148,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     public function getVisibleHeaderWidgets(): array
     {
@@ -162,7 +164,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     protected function getFooterWidgets(): array
     {
@@ -170,7 +172,7 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     public function getVisibleFooterWidgets(): array
     {
@@ -178,12 +180,25 @@ abstract class Page extends BasePage
     }
 
     /**
-     * @param  array<class-string>  $widgets
-     * @return array<class-string>
+     * @param  array<class-string<Widget> | WidgetConfiguration>  $widgets
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     protected function filterVisibleWidgets(array $widgets): array
     {
-        return array_filter($widgets, fn (string $widget): bool => $widget::canView());
+        return array_filter($widgets, fn (string | WidgetConfiguration $widget): bool => $this->normalizeWidgetClass($widget)::canView());
+    }
+
+    /**
+     * @param  class-string<Widget> | WidgetConfiguration  $widget
+     * @return class-string<Widget>
+     */
+    protected function normalizeWidgetClass(string | WidgetConfiguration $widget): string
+    {
+        if ($widget instanceof WidgetConfiguration) {
+            return $widget->widget;
+        }
+
+        return $widget;
     }
 
     /**

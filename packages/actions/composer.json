@@ -1,6 +1,6 @@
 {
     "name": "filament/actions",
-    "description": "Effortlessly build TALL-powered modals and slide-overs.",
+    "description": "Easily add beautiful action modals to any Livewire component.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

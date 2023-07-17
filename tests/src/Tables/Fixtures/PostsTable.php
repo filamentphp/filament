@@ -95,6 +95,7 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
                         false => 'Not Published',
                     ])
                     ->attribute('is_published'),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->persistFiltersInSession()
             ->headerActions([
@@ -142,6 +143,8 @@ class PostsTable extends Component implements HasForms, Tables\Contracts\HasTabl
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+                Tables\Actions\ForceDeleteAction::make(),
+                Tables\Actions\RestoreAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

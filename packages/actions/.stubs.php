@@ -1,9 +1,11 @@
 <?php
 
-namespace Livewire\Features\SupportTesting\Tests {
+namespace Livewire\Features\SupportTesting {
 
     class Testable {
         public function mountAction(string $name, array $arguments = []): static {}
+
+        public function unmountAction(): static {}
 
         public function setActionData(array $data): static {}
 
@@ -44,6 +46,10 @@ namespace Livewire\Features\SupportTesting\Tests {
         public function assertActionShouldNotOpenUrlInNewTab(string $name): static {}
 
         public function assertActionDoesNotHaveLabel(string $name, string $label): static {}
+
+        public function assertActionMounted(string $name): static {}
+
+        public function assertActionNotMounted(string $name): static {}
 
         public function assertActionHalted(string $name): static {}
 

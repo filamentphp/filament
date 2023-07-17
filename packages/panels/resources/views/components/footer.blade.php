@@ -1,7 +1,7 @@
-{{ filament()->renderHook('footer.before') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('footer.before') }}
 
 <div class="fi-footer flex items-center justify-center">
-    {{ filament()->renderHook('footer') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('footer') }}
 </div>
 
-{{ filament()->renderHook('footer.after') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('footer.after') }}

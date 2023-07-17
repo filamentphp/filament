@@ -5,6 +5,8 @@ namespace Filament\Pages;
 use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Widgets\Widget;
+use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Route;
 
@@ -37,11 +39,19 @@ class Dashboard extends Page
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget> | WidgetConfiguration>
      */
     public function getWidgets(): array
     {
         return Filament::getWidgets();
+    }
+
+    /**
+     * @return array<class-string<Widget> | WidgetConfiguration>
+     */
+    public function getVisibleWidgets(): array
+    {
+        return $this->filterVisibleWidgets($this->getWidgets());
     }
 
     /**

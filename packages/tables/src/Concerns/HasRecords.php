@@ -21,8 +21,11 @@ trait HasRecords
 
     public function getFilteredTableQuery(): Builder
     {
-        $query = $this->getTable()->getQuery();
+        return $this->filterTableQuery($this->getTable()->getQuery());
+    }
 
+    public function filterTableQuery(Builder $query): Builder
+    {
         $this->applyFiltersToTableQuery($query);
 
         $this->applySearchToTableQuery($query);
@@ -102,7 +105,7 @@ trait HasRecords
         }
 
         if (! ($this->getTable()->getRelationship() instanceof BelongsToMany)) {
-            return $this->getTable()->getQuery()->find($key);
+            return $this->getFilteredTableQuery()->find($key);
         }
 
         /** @var BelongsToMany $relationship */
@@ -112,6 +115,8 @@ trait HasRecords
         $pivotKeyName = app($pivotClass)->getKeyName();
 
         $table = $this->getTable();
+
+        $this->applyFiltersToTableQuery($relationship->getQuery());
 
         $query = $table->allowsDuplicates() ?
             $relationship->wherePivot($pivotKeyName, $key) :

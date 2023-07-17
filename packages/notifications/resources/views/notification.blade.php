@@ -66,21 +66,21 @@
         @endif
 
         <div class="mt-0.5 grid flex-1">
-            @if ($title = $getTitle())
+            @if (filled($title = $getTitle()))
                 <x-filament-notifications::title>
-                    {{ str($title)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    {{ str($title)->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::title>
             @endif
 
-            @if ($date = $getDate())
+            @if (filled($date = $getDate()))
                 <x-filament-notifications::date>
                     {{ $date }}
                 </x-filament-notifications::date>
             @endif
 
-            @if ($body = $getBody())
+            @if (filled($body = $getBody()))
                 <x-filament-notifications::body class="mt-1">
-                    {{ str($body)->markdown()->sanitizeHtml()->toHtmlString() }}
+                    {{ str($body)->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::body>
             @endif
 

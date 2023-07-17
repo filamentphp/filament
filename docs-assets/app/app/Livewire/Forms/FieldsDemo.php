@@ -61,7 +61,7 @@ class FieldsDemo extends Component implements HasForms
                         TextInput::make('helperText')
                             ->label('Name')
                             ->default('Dan Harrin')
-                            ->helperText('Your **full name** here, including any middle names.'),
+                            ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hint')
@@ -73,7 +73,7 @@ class FieldsDemo extends Component implements HasForms
                             ->label('Password')
                             ->password()
                             ->default('password')
-                            ->hint('[Forgotten your password?](forgotten-password)'),
+                            ->hint(str('[Forgotten your password?](forgotten-password)')->markdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hintColor')

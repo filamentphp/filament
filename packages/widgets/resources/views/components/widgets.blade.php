@@ -15,9 +15,17 @@
     :two-xl="$columns['2xl'] ?? null"
     class="fi-wi gap-6"
 >
+    @php
+        $normalizeWidgetClass = function (string | Filament\Widgets\WidgetConfiguration $widget): string {
+            if ($widget instanceof \Filament\Widgets\WidgetConfiguration) {
+                return $widget->widget;
+            }
+
+            return $widget;
+        };
+    @endphp
+
     @foreach ($widgets as $key => $widget)
-        @if ($widget::canView())
-            @livewire($widget, ['lazy' => true, ...$data], $key)
-        @endif
+        @livewire($normalizeWidgetClass($widget), [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? $widget->props : $widget::getDefaultProps()), ...$data], $key)
     @endforeach
 </x-filament::grid>

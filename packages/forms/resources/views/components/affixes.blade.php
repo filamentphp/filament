@@ -82,11 +82,11 @@
                 'flex items-center gap-x-3 ps-3',
                 'pe-1' => $inlinePrefix && filled($prefix),
                 'pe-2' => $inlinePrefix && blank($prefix),
-                'border-e border-gray-950/10 pe-3 dark:border-white/20' => ! $inlinePrefix,
+                'border-e border-gray-950/10 pe-3 ps-3 dark:border-white/20' => ! $inlinePrefix,
             ])
         >
             @if (count($prefixActions))
-                <div @class([$affixActionsClasses])>
+                <div class="{{ $affixActionsClasses }}">
                     @foreach ($prefixActions as $prefixAction)
                         {{ $prefixAction }}
                     @endforeach
@@ -147,7 +147,7 @@
                 'flex items-center gap-x-3 pe-3',
                 'ps-1' => $inlineSuffix && filled($suffix),
                 'ps-2' => $inlineSuffix && blank($suffix),
-                'border-s border-gray-950/10 dark:border-white/20' => ! $inlineSuffix,
+                'border-s border-gray-950/10 ps-3 dark:border-white/20' => ! $inlineSuffix,
             ])
         >
             @if (filled($suffix))
@@ -165,7 +165,7 @@
             @endif
 
             @if (count($suffixActions))
-                <div @class([$affixActionsClasses])>
+                <div class="{{ $affixActionsClasses }}">
                     @foreach ($suffixActions as $suffixAction)
                         {{ $suffixAction }}
                     @endforeach

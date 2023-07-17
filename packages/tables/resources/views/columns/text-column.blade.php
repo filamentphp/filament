@@ -40,7 +40,7 @@
 >
     @if (filled($descriptionAbove))
         <div class="text-sm text-gray-500 dark:text-gray-400">
-            {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : str($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
+            {{ $descriptionAbove }}
         </div>
     @endif
 
@@ -162,7 +162,7 @@
 
     @if (filled($descriptionBelow))
         <div class="text-sm text-gray-500 dark:text-gray-400">
-            {{ $descriptionBelow instanceof \Illuminate\Support\HtmlString ? $descriptionBelow : str($descriptionBelow)->markdown()->sanitizeHtml()->toHtmlString() }}
+            {{ $descriptionBelow }}
         </div>
     @endif
 </div>

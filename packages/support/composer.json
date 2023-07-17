@@ -1,6 +1,6 @@
 {
     "name": "filament/support",
-    "description": "Associated helper methods and foundation code for Filament packages.",
+    "description": "Core helper methods and foundation code for all Filament packages.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

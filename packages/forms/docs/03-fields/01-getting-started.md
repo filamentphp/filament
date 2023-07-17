@@ -91,13 +91,29 @@ Note that these defaults are only used when the form is loaded without existing 
 
 Sometimes, you may wish to provide extra information for the user of the form. For this purpose, you may add helper text below the field.
 
-The `helperText()` method is used to add helper text, and supports Markdown formatting:
+The `helperText()` method is used to add helper text:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
-    ->helperText('Your **full name** here, including any middle names.')
+    ->helperText('Your full name here, including any middle names.')
+```
+
+This method accepts a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even markdown, in the helper text:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\HtmlString;
+
+TextInput::make('name')
+    ->helperText(new HtmlString('Your <strong>full name</strong> here, including any middle names.'))
+
+TextInput::make('name')
+    ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString())
+
+TextInput::make('name')
+    ->helperText(view('name-helper-text'))
 ```
 
 <AutoScreenshot name="forms/fields/helper-text" alt="Form field with helper text" version="3.x" />
@@ -106,13 +122,29 @@ TextInput::make('name')
 
 As well as [helper text](#adding-helper-text-below-the-field) below the field, you may also add a "hint" next to the label of the field. This is useful for displaying additional information about the field, such as a link to a help page.
 
-The `hint()` method is used to add a hint, and supports Markdown formatting:
+The `hint()` method is used to add a hint:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('password')
-    ->hint('[Forgotten your password?](forgotten-password)')
+    ->hint('Forgotten your password? Bad luck.')
+```
+
+This method accepts a plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even markdown, in the helper text:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\HtmlString;
+
+TextInput::make('password')
+    ->hint(str(new HtmlString('<a href="/forgotten-password">Forgotten your password?</a>'))
+
+TextInput::make('password')
+    ->hint(str('[Forgotten your password?](/forgotten-password)')->markdown()->toHtmlString())
+
+TextInput::make('password')
+    ->hint(view('forgotten-password-hint'))
 ```
 
 <AutoScreenshot name="forms/fields/hint" alt="Form field with hint" version="3.x" />

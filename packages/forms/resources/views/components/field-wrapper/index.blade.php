@@ -57,7 +57,7 @@
             'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
         ])
     >
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || count($hintActions))
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
             <div
                 @class([
                     'flex items-center justify-between gap-x-3',
@@ -82,19 +82,19 @@
                     {{ $labelSuffix }}
                 @endif
 
-                @if ($hint || $hintIcon || count($hintActions))
+                @if (filled($hint) || $hintIcon || count($hintActions))
                     <x-filament-forms::field-wrapper.hint
                         :actions="$hintActions"
                         :color="$hintColor"
                         :icon="$hintIcon"
                     >
-                        {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : str($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
+                        {{ $hint }}
                     </x-filament-forms::field-wrapper.hint>
                 @endif
             </div>
         @endif
 
-        @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || $helperText)
+        @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || filled($helperText))
             <div
                 @class([
                     'grid gap-y-2',
@@ -109,9 +109,9 @@
                     </x-filament-forms::field-wrapper.error-message>
                 @endif
 
-                @if ($helperText)
+                @if (filled($helperText))
                     <x-filament-forms::field-wrapper.helper-text>
-                        {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : str($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
+                        {{ $helperText }}
                     </x-filament-forms::field-wrapper.helper-text>
                 @endif
             </div>

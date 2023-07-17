@@ -1,6 +1,6 @@
 <?php
 
-namespace Livewire\Features\SupportTesting\Tests {
+namespace Livewire\Features\SupportTesting {
 
     use Filament\Notifications\Notification;
 
