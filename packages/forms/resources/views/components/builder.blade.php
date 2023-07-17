@@ -138,7 +138,7 @@
                                 @endif
 
                                 @if ($isCloneable || $isDeletable || $isCollapsible)
-                                    <ul class="ml-auto flex">
+                                    <ul class="-me-1.5 ms-auto flex">
                                         @if ($isCloneable)
                                             <li>
                                                 {{ $cloneAction(['item' => $uuid]) }}
@@ -153,17 +153,23 @@
 
                                         @if ($isCollapsible)
                                             <li
-                                                x-show="! isCollapsed"
-                                                x-on:click.stop="isCollapsed = true"
+                                                class="relative transition"
+                                                x-on:click.stop="isCollapsed = !isCollapsed"
+                                                x-bind:class="{ '-rotate-180': isCollapsed }"
                                             >
-                                                {{ $getAction('collapse') }}
-                                            </li>
+                                                <div
+                                                    class="transition"
+                                                    x-bind:class="{ 'opacity-0 pointer-events-none': isCollapsed }"
+                                                >
+                                                    {{ $getAction('collapse') }}
+                                                </div>
 
-                                            <li
-                                                x-show="isCollapsed"
-                                                x-on:click.stop="isCollapsed = false"
-                                            >
-                                                {{ $getAction('expand') }}
+                                                <div
+                                                    class="absolute inset-0 rotate-180 transition"
+                                                    x-bind:class="{ 'opacity-0 pointer-events-none': ! isCollapsed }"
+                                                >
+                                                    {{ $getAction('expand') }}
+                                                </div>
                                             </li>
                                         @endif
                                     </ul>
