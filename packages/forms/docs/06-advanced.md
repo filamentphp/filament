@@ -151,7 +151,7 @@ TextInput::make('newPassword')
 
 TextInput::make('newPasswordConfirmation')
     ->password()
-    ->hidden(fn (Closure $get) => $get('newPassword') !== null)
+    ->hidden(fn (Closure $get) => $get('newPassword') === null)
 ```
 
 The field/s you're depending on should be `reactive()`, to ensure the Livewire component is reloaded when they are updated.
