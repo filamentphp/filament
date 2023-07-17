@@ -93,5 +93,6 @@ If you have built a Filament plugin, your users may want to be able to customize
 
 ### UI components icon aliases
 
+- `badge.delete-button` - Button to delete a badge
 - `modal.close-button` - Button to close a modal
 - `section.collapse-button` - Button to collapse a section

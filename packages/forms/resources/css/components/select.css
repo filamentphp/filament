@@ -54,7 +54,7 @@ select:not(.choices) {
 }
 
 .choices__list--multiple:not(:empty) {
-    @apply py-2;
+    @apply -mx-1 mb-1 py-0.5;
 }
 
 .choices__list--multiple .choices__item {
