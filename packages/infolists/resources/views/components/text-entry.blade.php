@@ -92,7 +92,7 @@
                                 window.navigator.clipboard.writeText(@js($copyableState))
                                 $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                             "
-                            class="cursor-pointer"
+                            class="cursor-pointer max-w-max"
                         @endif
                     >
                         @if ($isBadge)
@@ -110,7 +110,7 @@
                                     'transition duration-75 hover:underline focus:underline' => $url,
                                     match ($size) {
                                         'xs' => 'text-xs',
-                                        'sm', null => 'text-sm',
+                                        'sm', null => 'text-sm leading-6',
                                         'base', 'md' => 'text-base',
                                         'lg' => 'text-lg',
                                         default => $size,
