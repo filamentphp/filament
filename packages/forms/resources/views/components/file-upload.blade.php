@@ -84,7 +84,7 @@
                                 `{{ $getStatePath() }}.${fileKey}`, 
                                 chunks, 
                                 () => {
-                                    $wire.processChunks(`{{ $getStatePath() }}.${fileKey}`, file.name, file.size)
+                                    $wire.processChunks(`{{ $getStatePath() }}.${fileKey}`, fileKey, file.name, file.size)
                                         .then(() => success(fileKey))
                                 }, 
                                 error,
