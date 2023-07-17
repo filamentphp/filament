@@ -13,13 +13,20 @@
         $suffixActions,
         fn (\Filament\Infolists\Components\Actions\Action $suffixAction): bool => $suffixAction->isVisible(),
     );
+
+    $affixActionsClasses = '-mx-1.5 flex items-center self-stretch';
 @endphp
 
 <div
-    {{ $attributes->class(['fi-in-affixes group flex rtl:space-x-reverse']) }}
+    {{ $attributes->class(['fi-in-affixes flex']) }}
 >
     @if (count($prefixActions))
-        <div class="flex items-center gap-1 self-stretch pe-2">
+        <div
+            @class([
+                $affixActionsClasses,
+                'pe-2',
+            ])
+        >
             @foreach ($prefixActions as $prefixAction)
                 {{ $prefixAction }}
             @endforeach
@@ -31,7 +38,12 @@
     </div>
 
     @if (count($suffixActions))
-        <div class="flex items-center gap-1 self-stretch ps-2">
+        <div
+            @class([
+                $affixActionsClasses,
+                'ps-2',
+            ])
+        >
             @foreach ($suffixActions as $suffixAction)
                 {{ $suffixAction }}
             @endforeach
