@@ -1,4 +1,6 @@
 <div
+    wire:ignore.self
+    x-cloak
     x-data="{
         tab: null,
 
@@ -23,8 +25,6 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
-    x-cloak
-    wire:ignore.self
     {{
         $attributes
             ->merge([
@@ -56,12 +56,12 @@
                 @endphp
 
                 <x-filament::tabs.item
-                    :x-on:click="'tab = \'' . $tabId . '\''"
                     :alpine-active="'tab === \'' . $tabId . '\''"
                     :badge="$tab->getBadge()"
                     :icon="$tab->getIcon()"
                     :icon-color="$tab->getIconColor()"
                     :icon-position="$tab->getIconPosition()"
+                    :x-on:click="'tab = \'' . $tabId . '\''"
                 >
                     {{ $tab->getLabel() }}
                 </x-filament::tabs.item>
