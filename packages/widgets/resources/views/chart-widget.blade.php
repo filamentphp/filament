@@ -75,7 +75,7 @@
 
                 <span
                     x-ref="borderColorElement"
-                    class="text-gray-900/50 dark:text-white/60"
+                    class="text-gray-950/50 dark:text-white/60"
                 ></span>
             </div>
         </div>
