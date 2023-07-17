@@ -26,6 +26,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $canReorder = false;
 
+    protected int | Closure | null $chunkSize = null;
+
     protected string | Closure | null $directory = null;
 
     protected string | Closure | null $diskName = null;
@@ -39,6 +41,8 @@ class BaseFileUpload extends Field
     protected int | Closure | null $maxFiles = null;
 
     protected int | Closure | null $minFiles = null;
+
+    protected bool | Closure $shouldChunkUploads = false;
 
     protected bool | Closure $shouldPreserveFilenames = false;
 
@@ -199,6 +203,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function chunkSize(int | Closure | null $size): static
+    {
+        $this->chunkSize = $size;
+
+        return $this;
+    }
+
     public function directory(string | Closure | null $directory): static
     {
         $this->directory = $directory;
@@ -209,6 +220,15 @@ class BaseFileUpload extends Field
     public function disk($name): static
     {
         $this->diskName = $name;
+
+        return $this;
+    }
+
+    public function enableChunkUpload(bool | Closure $condition = true, int | Closure $chunkSize = 5_000_000): static
+    {
+        $this->shouldChunkUploads = $condition;
+
+        $this->chunkSize = $chunkSize;
 
         return $this;
     }
@@ -371,6 +391,11 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->canReorder);
     }
 
+    public function chunkUploads(): bool
+    {
+        return $this->evaluate($this->shouldChunkUploads);
+    }
+
     public function getAcceptedFileTypes(): ?array
     {
         $types = $this->evaluate($this->acceptedFileTypes);
@@ -380,6 +405,11 @@ class BaseFileUpload extends Field
         }
 
         return $types;
+    }
+
+    public function getChunkSize(): ?int
+    {
+        return $this->evaluate($this->chunkSize);
     }
 
     public function getDirectory(): ?string
@@ -492,6 +522,37 @@ class BaseFileUpload extends Field
         ]);
 
         return $this;
+    }
+
+    public function processChunks(string $fileKey, string $fileName, int $fileSize): ?TemporaryUploadedFile
+    {
+        $tmp = config('livewire.temporary_file_upload.directory') ?? 'livewire-tmp';
+
+        // at the time this function called by javascript,
+        // the state should have contained an array of chunks
+        $chunks = $this->getState()[$fileKey] ?? [];
+
+        foreach ($chunks as $chunk) {
+            $chunkPath = Storage::path("{$tmp}/{$chunk->getFileName()}");
+            $chunkFile = fopen($chunkPath, 'rb');
+            $buff = fread($chunkFile, $this->getChunkSize());
+            fclose($chunkFile);
+
+            $final = fopen(Storage::path("{$tmp}/{$fileName}"), 'ab');
+            fwrite($final, $buff);
+            fclose($final);
+            unlink($chunkPath);
+        }
+
+        if ($fileSize != Storage::size("{$tmp}/{$fileName}")) {
+            return null;
+        }
+        
+        $file = TemporaryUploadedFile::createFromLivewire("/{$fileName}");
+
+        $this->state([$fileKey => $file]);
+
+        return $file;
     }
 
     public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null

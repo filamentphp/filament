@@ -27,6 +27,8 @@
                     canOpen: {{ $canOpen() ? 'true' : 'false' }},
                     canPreview: {{ $canPreview() ? 'true' : 'false' }},
                     canReorder: {{ $canReorder() ? 'true' : 'false' }},
+                    chunkUploads: {{ $chunkUploads() ? 'true' : 'false' }},
+                    chunkSize: {{ $chunkUploads() ? "'{$getChunkSize()}'" : 'null' }},
                     deleteUploadedFileUsing: async (fileKey) => {
                         return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
                     },
@@ -68,7 +70,29 @@
                     uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
                     uploadProgressIndicatorPosition:
                         '{{ $getUploadProgressIndicatorPosition() }}',
-                    uploadUsing: (fileKey, file, success, error, progress) => {
+                    uploadUsing: (fileKey, file, success, error, progress, abort, transfer, options) => {
+                        if (options.chunkUploads) {
+                            const chunksCount = Math.ceil(file.size / options.chunkSize);
+                            let chunks = []
+                            for (i = 0; i < chunksCount; i++) {
+                                let chunkStart = i * options.chunkSize;
+                                let chunkEnd = Math.min(chunkStart + options.chunkSize, file.size)
+                                chunks = [...chunks, file.slice(chunkStart, chunkEnd)]
+                            }
+
+                            $wire.uploadMultiple(
+                                `{{ $getStatePath() }}.${fileKey}`, 
+                                chunks, 
+                                () => {
+                                    $wire.processChunks(`{{ $getStatePath() }}`, fileKey, file.name, file.size)
+                                        .then(() => success(fileKey))
+                                }, 
+                                error,
+                                progress,
+                            )
+                            return;
+                        }
+                        
                         $wire.upload(
                             `{{ $getStatePath() }}.${fileKey}`,
                             file,
