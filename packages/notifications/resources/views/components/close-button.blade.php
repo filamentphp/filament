@@ -1,6 +1,7 @@
-<x-filament::icon
-    alias="notifications::notification.close-button"
-    name="heroicon-m-x-mark"
+<x-filament::icon-button
+    color="gray"
+    icon="heroicon-m-x-mark"
+    icon-alias="notifications::notification.close-button"
     x-on:click="close"
-    class="fi-no-notification-close-btn h-5 w-5 cursor-pointer text-gray-400 dark:text-gray-500"
+    class="fi-no-notification-close-btn -m-2"
 />
