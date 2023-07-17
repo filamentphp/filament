@@ -76,20 +76,6 @@ class InstallCommand extends Command
         $filesystem->delete(resource_path('js/bootstrap.js'));
         $filesystem->copyDirectory(__DIR__ . '/../../stubs/scaffolding', base_path());
 
-        // Uninstall the filament/forms CSS
-        if (
-            (! $this->option('actions')) &&
-            (! $this->option('forms')) &&
-            (! $this->option('infolists')) &&
-            (! $this->option('tables'))
-        ) {
-            $css = $filesystem->get(resource_path('css/app.css'));
-            $css = (string) str($css)
-                ->replace('@import \'../../vendor/filament/forms/dist/index.css\';', '')
-                ->trim();
-            $filesystem->put(resource_path('css/app.css'), $css);
-        }
-
         // Install filament/notifications into the layout Blade file
         if (
             $this->option('actions') ||

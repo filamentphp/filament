@@ -63,11 +63,9 @@ export default {
 
 ### Configuring styles
 
-In `resources/css/app.css`, import Tailwind CSS, and the Filament forms CSS, which is used for action modal forms:
+In `resources/css/app.css`, import Tailwind CSS:
 
 ```css
-@import '../../vendor/filament/forms/dist/index.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

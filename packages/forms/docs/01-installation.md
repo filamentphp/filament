@@ -63,11 +63,9 @@ export default {
 
 ### Configuring styles
 
-In `resources/css/app.css`, import Tailwind CSS, and the form components CSS:
+In `resources/css/app.css`, import Tailwind CSS:
 
 ```css
-@import '../../vendor/filament/forms/dist/index.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
