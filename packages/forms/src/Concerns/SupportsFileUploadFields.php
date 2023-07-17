@@ -110,7 +110,7 @@ trait SupportsFileUploadFields
                     continue;
                 }
 
-                if ($container->processChunks($fileKey, $fileName, $fileSize)) {
+                if ($container->processChunks($statePath, $fileKey, $fileName, $fileSize)) {
                     return true;
                 }
             }
