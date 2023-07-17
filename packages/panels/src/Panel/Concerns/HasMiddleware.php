@@ -121,7 +121,7 @@ trait HasMiddleware
         ];
     }
 
-    public function registerLivewirePersistentMiddleware(): void
+    protected function registerLivewirePersistentMiddleware(): void
     {
         Livewire::addPersistentMiddleware($this->livewirePersistentMiddleware);
 

@@ -13,9 +13,12 @@ use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManagerConfiguration;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Table;
+use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\Access\Response;
 use Illuminate\Contracts\Support\Htmlable;
@@ -479,7 +482,7 @@ abstract class Resource
     }
 
     /**
-     * @return array<class-string | RelationGroup>
+     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
      */
     public static function getRelations(): array
     {
@@ -487,7 +490,7 @@ abstract class Resource
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget>>
      */
     public static function getWidgets(): array
     {

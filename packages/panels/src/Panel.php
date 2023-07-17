@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
+use Filament\Support\Facades\FilamentView;
 
 class Panel extends Component
 {
@@ -50,6 +51,8 @@ class Panel extends Component
         FilamentColor::register($this->colors);
 
         FilamentIcon::register($this->icons);
+
+        $this->registerRenderHooks();
 
         $this->registerLivewireComponents();
         $this->registerLivewirePersistentMiddleware();

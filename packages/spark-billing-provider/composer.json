@@ -1,6 +1,6 @@
 {
     "name": "filament/spark-billing-provider",
-    "description": "Laravel Spark support for `filament/filament` billing.",
+    "description": "Filament support for Laravel Spark.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

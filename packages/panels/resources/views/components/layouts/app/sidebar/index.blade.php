@@ -124,7 +124,7 @@
     <nav
         class="fi-sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-6 shadow-lg lg:shadow-none"
     >
-        {{ filament()->renderHook('sidebar.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.start') }}
 
         @if (filament()->hasTenancy())
             <div class="mb-6 space-y-6 px-6">
@@ -167,8 +167,8 @@
             </ul>
         @endif
 
-        {{ filament()->renderHook('sidebar.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.end') }}
     </nav>
 
-    {{ filament()->renderHook('sidebar.footer') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.footer') }}
 </aside>

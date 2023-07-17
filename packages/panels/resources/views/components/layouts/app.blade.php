@@ -57,11 +57,11 @@
                     },
                 ])
             >
-                {{ filament()->renderHook('content.start') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('content.start') }}
 
                 {{ $slot }}
 
-                {{ filament()->renderHook('content.end') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('content.end') }}
             </div>
 
             <div class="shrink-0 py-4">

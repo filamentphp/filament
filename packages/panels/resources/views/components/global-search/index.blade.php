@@ -1,5 +1,5 @@
 <div class="fi-global-search ms-4 flex items-center">
-    {{ filament()->renderHook('global-search.start') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('global-search.start') }}
 
     @if ($this->isEnabled())
         <div class="relative">
@@ -13,5 +13,5 @@
         </div>
     @endif
 
-    {{ filament()->renderHook('global-search.end') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('global-search.end') }}
 </div>

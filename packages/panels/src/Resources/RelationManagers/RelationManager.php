@@ -548,4 +548,12 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
     {
         return [];
     }
+
+    /**
+     * @param  array<string, mixed>  $props
+     */
+    public static function make(array $props = []): RelationManagerConfiguration
+    {
+        return app(RelationManagerConfiguration::class, ['relationManager' => static::class, 'props' => $props]);
+    }
 }

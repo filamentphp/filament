@@ -12,6 +12,7 @@ use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
+use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
@@ -54,6 +55,11 @@ class SupportServiceProvider extends PackageServiceProvider
         $this->app->scoped(
             IconManager::class,
             fn () => new IconManager(),
+        );
+
+        $this->app->scoped(
+            ViewManager::class,
+            fn () => new ViewManager(),
         );
 
         $this->app->scoped(

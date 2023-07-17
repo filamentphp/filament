@@ -18,6 +18,8 @@ use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Support\Assets\Theme;
 use Filament\Support\Facades\FilamentAsset;
+use Filament\Support\Facades\FilamentView;
+use Filament\Widgets\Widget;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Auth\Guard;
@@ -463,7 +465,7 @@ class FilamentManager
     }
 
     /**
-     * @return array<class-string>
+     * @return array<class-string<Widget>>
      */
     public function getWidgets(): array
     {
@@ -579,9 +581,12 @@ class FilamentManager
         }
     }
 
+    /**
+     * @deprecated Use the `\Filament\Support\Facades\FilamentView::renderHook()` method instead.
+     */
     public function renderHook(string $name): Htmlable
     {
-        return $this->getCurrentPanel()->getRenderHook($name);
+        return FilamentView::renderHook($name);
     }
 
     public function serving(Closure $callback): void
@@ -650,13 +655,12 @@ class FilamentManager
         }
     }
 
+    /**
+     * @deprecated Use the `renderHook()` method on the panel configuration instead.
+     */
     public function registerRenderHook(string $name, Closure $hook): void
     {
-        try {
-            $this->getDefaultPanel()->renderHook($name, $hook);
-        } catch (NoDefaultPanelSetException $exception) {
-            throw new Exception('Please use the `renderHook()` method on the panel configuration to register render hooks. See the documentation - https://filamentphp.com/docs/panels/configuration#render-hooks');
-        }
+        FilamentView::registerRenderHook($name, $hook);
     }
 
     /**

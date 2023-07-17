@@ -9,6 +9,8 @@ abstract class Widget extends Component
 {
     protected static bool $isDiscovered = true;
 
+    protected static bool $isLazy = true;
+
     protected static ?int $sort = null;
 
     /**
@@ -65,8 +67,36 @@ abstract class Widget extends Component
         return static::$isDiscovered;
     }
 
+    public static function isLazy(): bool
+    {
+        return static::$isLazy;
+    }
+
     public function render(): View
     {
         return view(static::$view, $this->getViewData());
+    }
+
+    /**
+     * @param  array<string, mixed>  $props
+     */
+    public static function make(array $props = []): WidgetConfiguration
+    {
+
+        return app(WidgetConfiguration::class, ['widget' => static::class, 'props' => $props]);
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public static function getDefaultProps(): array
+    {
+        $props = [];
+
+        if (static::isLazy()) {
+            $props['lazy'] = true;
+        }
+
+        return $props;
     }
 }

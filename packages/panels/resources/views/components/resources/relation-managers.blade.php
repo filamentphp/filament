@@ -9,6 +9,16 @@
 ])
 
 <div class="fi-resources-relation-managers space-y-2">
+    @php
+        $normalizeRelationManagerClass = function (string | Filament\Resources\RelationManagers\RelationManagerConfiguration $manager): string {
+            if ($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) {
+                return $manager->relationManager;
+            }
+
+            return $manager;
+        };
+    @endphp
+
     @if ((count($managers) > 1) || $content)
         <div class="flex justify-center">
             <x-filament::tabs>
@@ -29,6 +39,8 @@
                         if ($isGroup) {
                             $manager->ownerRecord($ownerRecord);
                             $manager->pageClass($pageClass);
+                        } else {
+                            $manager = $normalizeRelationManagerClass($manager);
                         }
                     @endphp
 
@@ -70,14 +82,27 @@
 
             @if ($managers[$activeManager] instanceof \Filament\Resources\RelationManagers\RelationGroup)
                 @foreach ($managers[$activeManager]->ownerRecord($ownerRecord)->pageClass($pageClass)->getManagers() as $groupedManager)
-                    @livewire($manager, $managerLivewireProperties, key($groupedManager))
+                    @php
+                        $normalizedGroupedManagerClass = $normalizeRelationManagerClass($groupedManager);
+                    @endphp
+
+                    @livewire(
+                        $normalizedGroupedManagerClass,
+                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $groupedManager->props : [])],
+                        key($normalizedGroupedManagerClass),
+                    )
                 @endforeach
             @else
                 @php
                     $manager = $managers[$activeManager];
+                    $normalizedManagerClass = $normalizeRelationManagerClass($manager);
                 @endphp
 
-                @livewire($manager, $managerLivewireProperties, key($manager))
+                @livewire(
+                    $normalizedManagerClass,
+                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $manager->props : [])],
+                    key($normalizedManagerClass),
+                )
             @endif
         </div>
     @elseif ($content)

@@ -102,7 +102,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool isSidebarFullyCollapsibleOnDesktop()
  * @method static void mountNavigation()
  * @method static void registerPanel(Panel $panel)
- * @method static Htmlable renderHook(string $name)
  * @method static void serving(Closure $callback)
  * @method static void setCurrentPanel(Panel | null $panel = null)
  * @method static void setServingStatus(bool $condition = true)
