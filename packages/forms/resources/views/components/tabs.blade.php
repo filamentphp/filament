@@ -48,7 +48,7 @@
         x-ref="tabsData"
     />
 
-    <div class="p-1">
+    <div class="border-b border-gray-100 px-3 py-2.5 dark:border-white/10">
         <x-filament::tabs :label="$getLabel()">
             @foreach ($getChildComponentContainer()->getComponents() as $tab)
                 @php

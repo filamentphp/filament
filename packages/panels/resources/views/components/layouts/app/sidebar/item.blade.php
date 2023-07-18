@@ -92,11 +92,13 @@
         </span>
 
         @if (filled($badge))
-            <x-filament::layouts.app.sidebar.badge
-                :badge="$badge"
-                :badge-color="$badgeColor"
-                :active="$active"
-            />
+            <x-filament::badge
+                :color="$badgeColor"
+                size="sm"
+                :x-show="filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : null"
+            >
+                {{ $badge }}
+            </x-filament::badge>
         @endif
     </a>
 </li>

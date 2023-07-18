@@ -5,6 +5,7 @@
     'deleteButton' => null,
     'icon' => null,
     'iconPosition' => null,
+    'size' => 'md',
 ])
 
 @php
@@ -21,21 +22,25 @@
     {{
         $attributes
             ->class([
-                'fi-badge flex items-center gap-x-1 whitespace-nowrap rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset',
+                'fi-badge flex items-center gap-x-1 whitespace-nowrap rounded-md  text-xs font-medium ring-1 ring-inset',
+                match ($size) {
+                    'sm' => 'px-1.5 py-0.5 tracking-tighter',
+                    'md' => 'px-2 py-1 tracking-tight',
+                },
                 match ($color) {
-                    'gray' => 'bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
-                    default => 'bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
+                    'gray' => 'bg-gray-300/10 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
+                    default => 'bg-custom-300/10 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
                 },
             ])
             ->style([
                 \Filament\Support\get_color_css_variables(
                     $color,
                     shades: [
-                        50,
+                        300,
                         400,
-                        500,
+                        ...$icon ? [500] : [],
                         600,
-                        ...$deletable ? [300, 700] : [],
+                        ...$deletable ? [700] : [],
                     ]
                 ) => $color !== 'gray',
             ])
