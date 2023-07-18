@@ -12,6 +12,16 @@ return [
             'label' => 'Entrar',
         ],
 
+        'register' => [
+            'before' => 'o',
+            'label' => 'registre una cuenta',
+        ],
+
+        'request_password_reset' => [
+            'label' => '¿Olvidó su contraseña?',
+        ],
+
+
     ],
 
     'fields' => [

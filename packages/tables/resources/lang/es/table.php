@@ -23,6 +23,7 @@ return [
         'search' => [
             'label' => 'Búsqueda',
             'placeholder' => 'Buscar',
+            'indicator' => 'Buscar'
         ],
 
     ],
@@ -59,6 +60,34 @@ return [
 
             'previous' => [
                 'label' => 'Anterior',
+            ],
+
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Resumen',
+
+        'subheadings' => [
+            'all' => 'Todos los registros de :label',
+            'group' => ':group resumen',
+            'page' => 'Esta página',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Promedio',
+            ],
+
+            'count' => [
+                'label' => 'Cuenta',
+            ],
+
+            'sum' => [
+                'label' => 'Suma',
             ],
 
         ],
@@ -137,6 +166,31 @@ return [
         ],
 
     ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Agrupar por',
+                'placeholder' => 'Agrupar por',
+            ],
+
+            'direction' => [
+
+                'label' => 'Dirección del grupo',
+
+                'options' => [
+                    'asc' => 'Ascendente',
+                    'desc' => 'Descendente',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
 
     'reorder_indicator' => 'Arrastrar los registros en el orden.',
 

@@ -23,6 +23,24 @@ return [
             'description' => 'Por favor, compruebe más tarde',
         ],
 
+        'pagination' => [
+
+            'label' => 'Navegación en la Paginación',
+
+            'buttons' => [
+
+                'next' => [
+                    'label' => 'Siguiente',
+                ],
+
+                'previous' => [
+                    'label' => 'Anterior',
+                ],
+
+            ],
+
+        ],
+
     ],
 
 ];
