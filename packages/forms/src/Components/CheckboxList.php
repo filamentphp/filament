@@ -30,6 +30,9 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 
     protected string | Closure | null $relationship = null;
 
+    /**
+     * @var array<string> | Arrayable | Closure
+     */
     protected array | Arrayable | Closure $descriptions = [];
 
     protected bool | Closure $isBulkToggleable = false;
@@ -277,6 +280,9 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return (bool) $this->evaluate($this->isBulkToggleable);
     }
 
+    /**
+     * @param  array<string> | Arrayable | Closure  $descriptions
+     */
     public function descriptions(array | Arrayable | Closure $descriptions): static
     {
         $this->descriptions = $descriptions;
@@ -284,16 +290,25 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return $this;
     }
 
+    /**
+     * @param  array-key  $value
+     */
     public function hasDescription($value): bool
     {
         return array_key_exists($value, $this->getDescriptions());
     }
 
+    /**
+     * @param  array-key  $value
+     */
     public function getDescription($value): ?string
     {
         return $this->getDescriptions()[$value] ?? null;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getDescriptions(): array
     {
         $descriptions = $this->evaluate($this->descriptions);

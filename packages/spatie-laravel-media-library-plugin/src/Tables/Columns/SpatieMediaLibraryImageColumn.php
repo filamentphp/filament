@@ -48,8 +48,8 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             $record = $record->getRelationValue($this->getRelationshipName());
         }
 
-        /** @var Media $media */
-        $media = $record->media->first(fn (Media $media) => $media->uuid === $state);
+        /** @var ?Media $media */
+        $media = $record->media->first(fn (Media $media): bool => $media->uuid === $state);
 
         if (! $media) {
             return null;
@@ -69,12 +69,15 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         return $media->getUrl($this->getConversion());
     }
 
+    /**
+     * @return array<string>
+     */
     public function getState(): array
     {
         $collection = $this->getCollection();
 
-        return $this->getRecord()->media
-            ->filter(fn (Media $media): bool => blank($collection) || ($media->collection_name === $collection))
+        return $this->getRecord()->getRelationValue('media')
+            ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
             ->map(fn (Media $media): string => $media->uuid)
             ->all();
     }
@@ -97,10 +100,5 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
         }
 
         return $query->with(['media']);
-    }
-
-    public function getRecord(): Model&HasMedia
-    {
-        return parent::getRecord();
     }
 }

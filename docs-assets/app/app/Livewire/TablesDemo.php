@@ -498,6 +498,55 @@ class TablesDemo extends Component implements HasForms, HasTable
             ]);
     }
 
+    public function imageColumnStacked(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('colleagues')
+                    ->circular()
+                    ->stacked(),
+            ]);
+    }
+
+    public function imageColumnLimited(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('avatars')
+                    ->circular()
+                    ->stacked()
+                    ->limit(3),
+            ]);
+    }
+
+    public function imageColumnLimitedRemainingText(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('avatars')
+                    ->circular()
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText(),
+            ]);
+    }
+
+    public function imageColumnLimitedRemainingTextSeparately(Table $table): Table
+    {
+        return $this->usersTable($table)
+            ->columns([
+                TextColumn::make('name'),
+                ImageColumn::make('avatars')
+                    ->circular()
+                    ->stacked()
+                    ->limit(3)
+                    ->limitedRemainingText(isSeparate: true),
+            ]);
+    }
+
     public function colorColumn(Table $table): Table
     {
         return $this->postsTable($table)
@@ -1338,6 +1387,13 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'avatar' => 'https://avatars.githubusercontent.com/u/41773797?v=4',
                 'phone' => '+1 (555) 555-5555',
                 'job' => 'Developer',
+                'colleagues' => json_encode([
+                    'https://avatars.githubusercontent.com/u/41837763?v=4',
+                    'https://avatars.githubusercontent.com/u/44533235?v=4',
+                    'https://avatars.githubusercontent.com/u/22632550?v=4',
+                    'https://avatars.githubusercontent.com/u/3596800?v=4',
+                    'https://avatars.githubusercontent.com/u/881938?v=4',
+                ]),
             ],
             [
                 'name' => 'Ryan Chandler',
@@ -1347,6 +1403,13 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'avatar' => 'https://avatars.githubusercontent.com/u/41837763?v=4',
                 'phone' => '+1 (555) 555-5555',
                 'job' => 'Developer',
+                'colleagues' => json_encode([
+                    'https://avatars.githubusercontent.com/u/41773797?v=4',
+                    'https://avatars.githubusercontent.com/u/44533235?v=4',
+                    'https://avatars.githubusercontent.com/u/22632550?v=4',
+                    'https://avatars.githubusercontent.com/u/3596800?v=4',
+                    'https://avatars.githubusercontent.com/u/881938?v=4',
+                ]),
             ],
             [
                 'name' => 'Zep Fietje',
@@ -1356,6 +1419,12 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'avatar' => 'https://avatars.githubusercontent.com/u/44533235?v=4',
                 'phone' => '+1 (555) 555-5555',
                 'job' => 'Developer',
+                'colleagues' => json_encode([
+                    'https://avatars.githubusercontent.com/u/41773797?v=4',
+                    'https://avatars.githubusercontent.com/u/41837763?v=4',
+                    'https://avatars.githubusercontent.com/u/22632550?v=4',
+                    'https://avatars.githubusercontent.com/u/3596800?v=4',
+                ]),
             ],
             [
                 'name' => 'Dennis Koch',
@@ -1365,6 +1434,12 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'avatar' => 'https://avatars.githubusercontent.com/u/22632550?v=4',
                 'phone' => '+1 (555) 555-5555',
                 'job' => 'Developer',
+                'colleagues' => json_encode([
+                    'https://avatars.githubusercontent.com/u/41773797?v=4',
+                    'https://avatars.githubusercontent.com/u/41837763?v=4',
+                    'https://avatars.githubusercontent.com/u/44533235?v=4',
+                    'https://avatars.githubusercontent.com/u/3596800?v=4',
+                ]),
             ],
             [
                 'name' => 'Adam Weston',
@@ -1374,6 +1449,12 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'avatar' => 'https://avatars.githubusercontent.com/u/3596800?v=4',
                 'phone' => '+1 (555) 555-5555',
                 'job' => 'Developer',
+                'colleagues' => json_encode([
+                    'https://avatars.githubusercontent.com/u/41773797?v=4',
+                    'https://avatars.githubusercontent.com/u/41837763?v=4',
+                    'https://avatars.githubusercontent.com/u/44533235?v=4',
+                    'https://avatars.githubusercontent.com/u/22632550?v=4',
+                ]),
             ],
             [
                 'name' => 'Ryan Scherler',
@@ -1383,6 +1464,10 @@ class TablesDemo extends Component implements HasForms, HasTable
                 'avatar' => 'https://avatars.githubusercontent.com/u/881938?v=4',
                 'phone' => '+1 (555) 555-5555',
                 'job' => 'Developer',
+                'colleagues' => json_encode([
+                    'https://avatars.githubusercontent.com/u/41773797?v=4',
+                    'https://avatars.githubusercontent.com/u/41837763?v=4',
+                ]),
             ],
         ]);
         User::factory()->count(45)->create();

@@ -328,6 +328,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ])
                     ->schema([
                         ImageEntry::make('author.avatar')
+                            ->height(40)
                             ->state('https://picsum.photos/id/177/1200/800')
                             ->square(),
                     ]),
@@ -338,8 +339,86 @@ class EntriesDemo extends Component implements HasInfolists
                     ])
                     ->schema([
                         ImageEntry::make('author.avatar')
+                            ->height(40)
                             ->state('https://picsum.photos/id/433/1200/800')
                             ->circular(),
+                    ]),
+                Group::make()
+                    ->id('imageStacked')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('colleagues')
+                            ->height(40)
+                            ->state([
+                                'https://avatars.githubusercontent.com/u/41837763?v=4',
+                                'https://avatars.githubusercontent.com/u/44533235?v=4',
+                                'https://avatars.githubusercontent.com/u/22632550?v=4',
+                                'https://avatars.githubusercontent.com/u/3596800?v=4',
+                                'https://avatars.githubusercontent.com/u/881938?v=4',
+                            ])
+                            ->circular()
+                            ->stacked(),
+                    ]),
+                Group::make()
+                    ->id('imageLimited')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('colleagues')
+                            ->height(40)
+                            ->state([
+                                'https://avatars.githubusercontent.com/u/41837763?v=4',
+                                'https://avatars.githubusercontent.com/u/44533235?v=4',
+                                'https://avatars.githubusercontent.com/u/22632550?v=4',
+                                'https://avatars.githubusercontent.com/u/3596800?v=4',
+                                'https://avatars.githubusercontent.com/u/881938?v=4',
+                            ])
+                            ->circular()
+                            ->stacked()
+                            ->limit(3),
+                    ]),
+                Group::make()
+                    ->id('imageLimitedRemainingText')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('colleagues')
+                            ->height(40)
+                            ->state([
+                                'https://avatars.githubusercontent.com/u/41837763?v=4',
+                                'https://avatars.githubusercontent.com/u/44533235?v=4',
+                                'https://avatars.githubusercontent.com/u/22632550?v=4',
+                                'https://avatars.githubusercontent.com/u/3596800?v=4',
+                                'https://avatars.githubusercontent.com/u/881938?v=4',
+                            ])
+                            ->circular()
+                            ->stacked()
+                            ->limit(3)
+                            ->limitedRemainingText(),
+                    ]),
+                Group::make()
+                    ->id('imageLimitedRemainingTextSeparately')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-3xl',
+                    ])
+                    ->schema([
+                        ImageEntry::make('colleagues')
+                            ->height(40)
+                            ->state([
+                                'https://avatars.githubusercontent.com/u/41837763?v=4',
+                                'https://avatars.githubusercontent.com/u/44533235?v=4',
+                                'https://avatars.githubusercontent.com/u/22632550?v=4',
+                                'https://avatars.githubusercontent.com/u/3596800?v=4',
+                                'https://avatars.githubusercontent.com/u/881938?v=4',
+                            ])
+                            ->circular()
+                            ->stacked()
+                            ->limit(3)
+                            ->limitedRemainingText(isSeparate: true),
                     ]),
                 Group::make()
                     ->id('color')

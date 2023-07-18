@@ -39,7 +39,7 @@
         $isLimitedRemainingTextSeparate = $isLimitedRemainingTextSeparate();
         $limitedRemainingTextSizeClasses = match ($getLimitedRemainingTextSize()) {
             'xs' => 'text-xs',
-            'md' => 'text-md',
+            'base', 'md' => 'text-base',
             'lg' => 'text-lg',
             default => 'text-sm',
         };
@@ -99,7 +99,7 @@
                 @endif
             </div>
 
-            @if ($hasLimitedRemainingText && ($loop->iteration < count($state)) && ($isLimitedRemainingTextSeparate || $isCircular))
+            @if ($hasLimitedRemainingText && ($loop->iteration < count($state)) && ($isLimitedRemainingTextSeparate || (! $isCircular)))
                 <div
                     @class([
                         'text-gray-600 dark:text-gray-300',
