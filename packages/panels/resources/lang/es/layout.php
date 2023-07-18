@@ -6,6 +6,10 @@ return [
 
     'buttons' => [
 
+        'billing' => [
+            'label' => 'Administrar suscripción',
+        ],
+
         'dark_theme' => [
             'label' => 'A modo oscuro',
         ],
@@ -32,6 +36,10 @@ return [
                 'label' => 'Expandir barra lateral',
             ],
 
+        ],
+
+        'system_theme' => [
+            'label' => 'Usar el modo del sistema',
         ],
 
         'user_menu' => [
