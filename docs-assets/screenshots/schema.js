@@ -65,28 +65,28 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'actions/trigger-button/indicator': {
+    'actions/trigger-button/badge': {
         url: 'actions',
-        selector: '#indicatorAction',
+        selector: '#badgeAction',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#indicatorAction button')
+            await page.hover('#badgeAction button')
         },
     },
-    'actions/trigger-button/success-indicator': {
+    'actions/trigger-button/success-badge': {
         url: 'actions',
-        selector: '#successIndicatorAction',
+        selector: '#successBadgeAction',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#successIndicatorAction button')
+            await page.hover('#successBadgeAction button')
         },
     },
     'actions/trigger-button/outlined': {

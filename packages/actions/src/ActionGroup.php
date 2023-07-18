@@ -14,11 +14,11 @@ class ActionGroup extends ViewComponent implements HasLivewire
     use Concerns\CanBeHidden {
         isHidden as baseIsHidden;
     }
+    use Concerns\HasBadge;
     use Concerns\CanBeLabeledFrom;
     use Concerns\CanBeOutlined;
     use Concerns\HasDropdown;
     use Concerns\HasGroupedIcon;
-    use Concerns\HasIndicator;
     use Concerns\HasLabel;
     use Concerns\HasSize;
     use Concerns\HasTooltip;

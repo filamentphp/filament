@@ -22,10 +22,11 @@
     {{
         $attributes
             ->class([
-                'fi-badge flex items-center gap-x-1 whitespace-nowrap rounded-md  text-xs font-medium ring-1 ring-inset',
+                'fi-badge flex items-center justify-center gap-x-1 whitespace-nowrap rounded-md  text-xs font-medium ring-1 ring-inset',
                 match ($size) {
-                    'sm' => 'px-1.5 py-0.5 tracking-tighter',
-                    'md' => 'px-2 py-1 tracking-tight',
+                    'xs' => 'px-0.5 min-w-[theme(spacing.4)] tracking-tighter',
+                    'sm' => 'px-1.5 min-w-[theme(spacing.5)] py-0.5 tracking-tight',
+                    'md' => 'px-2 min-w-[theme(spacing.6)] py-1',
                 },
                 match ($color) {
                     'gray' => 'bg-gray-300/10 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',

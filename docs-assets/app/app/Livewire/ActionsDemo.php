@@ -67,21 +67,21 @@ class ActionsDemo extends Component implements HasActions, HasForms
             ->iconPosition('after');
     }
 
-    public function indicatorAction(): Action
+    public function badgeAction(): Action
     {
-        return Action::make('indicator')
+        return Action::make('badge')
             ->iconButton()
             ->icon('heroicon-m-funnel')
-            ->indicator(5);
+            ->badge(5);
     }
 
-    public function successIndicatorAction(): Action
+    public function successBadgeAction(): Action
     {
-        return Action::make('successIndicator')
+        return Action::make('successBadge')
             ->iconButton()
             ->icon('heroicon-m-funnel')
-            ->indicator(5)
-            ->indicatorColor('success');
+            ->badge(5)
+            ->badgeColor('success');
     }
 
     public function outlinedAction(): Action

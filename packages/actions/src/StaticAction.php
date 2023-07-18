@@ -23,8 +23,8 @@ class StaticAction extends ViewComponent
     use Concerns\CanSubmitForm;
     use Concerns\HasAction;
     use Concerns\HasArguments;
+    use Concerns\HasBadge;
     use Concerns\HasGroupedIcon;
-    use Concerns\HasIndicator;
     use Concerns\HasKeyBindings;
     use Concerns\HasLabel;
     use Concerns\HasName;

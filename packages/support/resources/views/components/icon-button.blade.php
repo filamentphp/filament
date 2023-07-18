@@ -1,12 +1,12 @@
 @props([
+    'badge' => null,
+    'badgeColor' => 'primary',
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
     'icon' => null,
     'iconAlias' => null,
     'iconSize' => null,
-    'indicator' => null,
-    'indicatorColor' => 'primary',
     'keyBindings' => null,
     'label' => null,
     'size' => 'md',
@@ -50,9 +50,7 @@
         },
     ]);
 
-    $indicatorClasses = 'fi-icon-btn-indicator absolute end-0 top-0 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-xs font-medium tracking-tight text-white dark:bg-custom-500';
-
-    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [500, 600]);
+    $badgeClasses = 'absolute start-full top-0 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -107,13 +105,12 @@
             />
         @endif
 
-        @if ($indicator)
-            <span
-                class="{{ $indicatorClasses }}"
-                style="{{ $indicatorStyles }}"
-            >
-                {{ $indicator }}
-            </span>
+        @if ($badge)
+            <div class="{{ $badgeClasses }}">
+                <x-filament::badge :color="$badgeColor" size="xs">
+                    {{ $badge }}
+                </x-filament::badge>
+            </div>
         @endif
     </button>
 @elseif ($tag === 'a')
@@ -148,13 +145,12 @@
             :class="$iconClasses"
         />
 
-        @if ($indicator)
-            <span
-                class="{{ $indicatorClasses }}"
-                style="{{ $indicatorStyles }}"
-            >
-                {{ $indicator }}
-            </span>
+        @if ($badge)
+            <div class="{{ $badgeClasses }}">
+                <x-filament::badge :color="$badgeColor" size="xs">
+                    {{ $badge }}
+                </x-filament::badge>
+            </div>
         @endif
     </a>
 @endif
