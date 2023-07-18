@@ -579,6 +579,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/checkbox-list/option-descriptions': {
+        url: 'forms/fields',
+        selector: '#checkboxListOptionDescriptions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/checkbox-list/columns': {
         url: 'forms/fields',
         selector: '#checkboxListColumns',

@@ -68,10 +68,11 @@
             updateVisibleCheckboxListOptions: function () {
                 this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
                     (checkboxListItem) => {
-                        return checkboxListItem
-                            .querySelector('.fi-fo-checkbox-list-option-label-text')
-                            .innerText.toLowerCase()
-                            .includes(this.search.toLowerCase())
+                        if (checkboxListItem.querySelector('.fi-fo-checkbox-list-option-label-text')?.innerText.toLowerCase().includes(this.search.toLowerCase())) {
+                            return true
+                        }
+
+                        return checkboxListItem.querySelector('.fi-fo-checkbox-list-option-description-text')?.innerText.toLowerCase().includes(this.search.toLowerCase())
                     },
                 )
             },
@@ -156,7 +157,7 @@
                     ])
                 >
                     <label
-                        class="fi-fo-checkbox-list-option-label flex items-center gap-x-3"
+                        class="fi-fo-checkbox-list-option-label flex items-start gap-x-3"
                     >
                         <x-filament::input.checkbox
                             :errors="$errors"
@@ -172,13 +173,22 @@
                                         'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)
                             "
+                            class="mt-0.5"
                         />
 
-                        <span
-                            class="fi-fo-checkbox-list-option-label-text text-sm font-medium text-gray-950 dark:text-white"
-                        >
-                            {{ $optionLabel }}
-                        </span>
+                        <div class="text-sm">
+                            <span
+                                class="fi-fo-checkbox-list-option-label-text font-medium text-gray-950 dark:text-white"
+                            >
+                                {{ $optionLabel }}
+                            </span>
+
+                            @if ($hasDescription($optionValue))
+                                <p class="fi-fo-checkbox-list-option-description-text text-gray-500 dark:text-gray-400">
+                                    {{ $getDescription($optionValue) }}
+                                </p>
+                            @endif
+                        </div>
                     </label>
                 </div>
             @empty

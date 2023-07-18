@@ -61,6 +61,14 @@
         {
             "type": "path",
             "url": "../../packages/*"
+        },
+        {
+            "type": "path",
+            "url": "../../../../livewire3"
+        },
+        {
+            "type": "path",
+            "url": "../../../../pest-plugin-livewire"
         }
     ],
     "config": {
