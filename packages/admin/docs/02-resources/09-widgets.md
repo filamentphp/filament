@@ -24,7 +24,7 @@ You must register the new widget in your resource's `getWidgets()` method:
 public static function getWidgets(): array
 {
     return [
-        Widgets\CustomerOverview::class,
+        CustomerResource\Widgets\CustomerOverview::class,
     ];
 }
 ```
