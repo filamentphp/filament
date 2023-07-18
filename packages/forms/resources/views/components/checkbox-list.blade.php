@@ -156,7 +156,7 @@
                     ])
                 >
                     <label
-                        class="fi-fo-checkbox-list-option-label flex items-center gap-x-3"
+                        class="fi-fo-checkbox-list-option-label flex items-start gap-x-3"
                     >
                         <x-filament::input.checkbox
                             :errors="$errors"
@@ -172,19 +172,22 @@
                                         'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)
                             "
+                            class="mt-0.5"
                         />
 
-                        <span
-                            class="fi-fo-checkbox-list-option-label-text text-sm font-medium text-gray-950 dark:text-white"
-                        >
-                            {{ $optionLabel }}
-                        </span>
+                        <div class="text-sm">
+                            <span
+                                class="font-medium text-gray-950 dark:text-white"
+                            >
+                                {{ $optionLabel }}
+                            </span>
 
-                        @if ($hasDescription($optionValue))
-                            <p class="text-gray-500 dark:text-gray-400">
-                                {{ $getDescription($optionValue) }}
-                            </p>
-                        @endif
+                            @if ($hasDescription($optionValue))
+                                <p class="text-gray-500 dark:text-gray-400">
+                                    {{ $getDescription($optionValue) }}
+                                </p>
+                            @endif
+                        </div>
                     </label>
                 </div>
             @empty
