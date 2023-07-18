@@ -2,9 +2,10 @@
 
 namespace Filament\Forms\Components;
 
-class Field extends Component implements Contracts\HasValidationRules
+class Field extends Component implements Contracts\HasHintActions, Contracts\HasValidationRules
 {
     use Concerns\CanBeAutofocused;
+    use Concerns\CanBeMarkedAsRequired;
     use Concerns\CanBeValidated;
     use Concerns\HasHelperText;
     use Concerns\HasHint;
@@ -29,5 +30,10 @@ class Field extends Component implements Contracts\HasValidationRules
     public function getId(): string
     {
         return parent::getId() ?? $this->getStatePath();
+    }
+
+    public function getKey(): string
+    {
+        return parent::getKey() ?? $this->getStatePath();
     }
 }

@@ -2,25 +2,46 @@
 
 namespace Filament\Notifications\Actions;
 
-use Filament\Notifications\Actions\Concerns\CanCloseNotification;
-use Filament\Support\Actions\BaseAction;
-use Filament\Support\Actions\Concerns\CanBeOutlined;
-use Filament\Support\Actions\Concerns\CanEmitEvent;
-use Filament\Support\Actions\Concerns\CanOpenUrl;
+use Closure;
+use Filament\Actions\Contracts\Groupable;
+use Filament\Actions\StaticAction;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
 
-class Action extends BaseAction implements Arrayable
+class Action extends StaticAction implements Arrayable, Groupable
 {
-    use CanBeOutlined;
-    use CanCloseNotification;
-    use CanEmitEvent;
-    use CanOpenUrl;
-
-    protected string $view = 'notifications::actions.link-action';
-
     protected string $viewIdentifier = 'action';
 
+    protected bool | Closure $shouldMarkAsRead = false;
+
+    protected bool | Closure $shouldMarkAsUnread = false;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->defaultView(static::LINK_VIEW);
+
+        $this->defaultSize('sm');
+    }
+
+    public function markAsRead(bool | Closure $condition = true): static
+    {
+        $this->shouldMarkAsRead = $condition;
+
+        return $this;
+    }
+
+    public function markAsUnread(bool | Closure $condition = true): static
+    {
+        $this->shouldMarkAsUnread = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -28,15 +49,18 @@ class Action extends BaseAction implements Arrayable
             'color' => $this->getColor(),
             'event' => $this->getEvent(),
             'eventData' => $this->getEventData(),
-            'emitDirection' => $this->getEmitDirection(),
-            'emitToComponent' => $this->getEmitToComponent(),
+            'dispatchDirection' => $this->getDispatchDirection(),
+            'dispatchToComponent' => $this->getDispatchToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
+            'iconSize' => $this->getIconSize(),
             'isOutlined' => $this->isOutlined(),
             'isDisabled' => $this->isDisabled(),
             'label' => $this->getLabel(),
-            'shouldCloseNotification' => $this->shouldCloseNotification(),
+            'shouldClose' => $this->shouldClose(),
+            'shouldMarkAsRead' => $this->shouldMarkAsRead(),
+            'shouldMarkAsUnread' => $this->shouldMarkAsUnread(),
             'shouldOpenUrlInNewTab' => $this->shouldOpenUrlInNewTab(),
             'size' => $this->getSize(),
             'url' => $this->getUrl(),
@@ -44,6 +68,9 @@ class Action extends BaseAction implements Arrayable
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): static
     {
         $static = static::make($data['name']);
@@ -51,54 +78,64 @@ class Action extends BaseAction implements Arrayable
         $view = $data['view'] ?? null;
 
         if (filled($view) && ($static->getView() !== $view) && static::isViewSafe($view)) {
-            $static->view($data['view']);
+            $static->view($view);
         }
 
-        $static->close($data['shouldCloseNotification'] ?? false);
+        if (filled($size = $data['size'] ?? null)) {
+            $static->size($size);
+        }
+
+        $static->close($data['shouldClose'] ?? false);
         $static->color($data['color'] ?? null);
         $static->disabled($data['isDisabled'] ?? false);
 
-        match ($data['emitDirection'] ?? null) {
-            'self' => $static->emitSelf($data['event'] ?? null, $data['eventData'] ?? []),
-            'up' => $static->emitUp($data['event'] ?? null, $data['eventData'] ?? []),
-            'to' => $static->emitTo($data['emitToComponent'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
-            default => $static->emit($data['event'] ?? null, $data['eventData'] ?? [])
+        match ($data['dispatchDirection'] ?? null) {
+            'self' => $static->dispatchSelf($data['event'] ?? null, $data['eventData'] ?? []),
+            'to' => $static->dispatchTo($data['dispatchToComponent'] ?? null, $data['event'] ?? null, $data['eventData'] ?? []),
+            default => $static->dispatch($data['event'] ?? null, $data['eventData'] ?? [])
         };
 
         $static->extraAttributes($data['extraAttributes'] ?? []);
         $static->icon($data['icon'] ?? null);
         $static->iconPosition($data['iconPosition'] ?? null);
+        $static->iconSize($data['iconSize'] ?? null);
         $static->label($data['label'] ?? null);
+        $static->markAsRead($data['shouldMarkAsRead'] ?? false);
+        $static->markAsUnread($data['shouldMarkAsUnread'] ?? false);
         $static->outlined($data['isOutlined'] ?? false);
-        $static->size($data['size'] ?? null);
         $static->url($data['url'] ?? null, $data['shouldOpenUrlInNewTab'] ?? false);
 
         return $static;
     }
 
+    public function getAlpineClickHandler(): ?string
+    {
+        if ($this->shouldMarkAsRead()) {
+            return 'markAsRead()';
+        }
+
+        if ($this->shouldMarkAsUnread()) {
+            return 'markAsUnread()';
+        }
+
+        return parent::getAlpineClickHandler();
+    }
+
+    /**
+     * @param  view-string  $view
+     */
     protected static function isViewSafe(string $view): bool
     {
-        return Str::startsWith($view, 'notifications::actions.');
+        return Str::startsWith($view, 'filament-actions::');
     }
 
-    public function button(): static
+    public function shouldMarkAsRead(): bool
     {
-        $this->view('notifications::actions.button-action');
-
-        return $this;
+        return (bool) $this->evaluate($this->shouldMarkAsRead);
     }
 
-    public function grouped(): static
+    public function shouldMarkAsUnread(): bool
     {
-        $this->view('notifications::actions.grouped-action');
-
-        return $this;
-    }
-
-    public function link(): static
-    {
-        $this->view('notifications::actions.link-action');
-
-        return $this;
+        return (bool) $this->evaluate($this->shouldMarkAsUnread);
     }
 }

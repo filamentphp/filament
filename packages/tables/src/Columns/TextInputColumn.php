@@ -18,7 +18,10 @@ class TextInputColumn extends Column implements Editable
     use HasPlaceholder;
     use HasStep;
 
-    protected string $view = 'tables::columns.text-input-column';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-tables::columns.text-input-column';
 
     protected string | Closure | null $type = null;
 
@@ -26,7 +29,7 @@ class TextInputColumn extends Column implements Editable
     {
         parent::setUp();
 
-        $this->disableClick();
+        $this->disabledClick();
     }
 
     public function type(string | Closure | null $type): static

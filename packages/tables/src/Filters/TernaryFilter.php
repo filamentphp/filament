@@ -16,8 +16,8 @@ class TernaryFilter extends SelectFilter
     {
         parent::setUp();
 
-        $this->trueLabel(__('forms::components.select.boolean.true'));
-        $this->falseLabel(__('forms::components.select.boolean.false'));
+        $this->trueLabel(__('filament-forms::components.select.boolean.true'));
+        $this->falseLabel(__('filament-forms::components.select.boolean.false'));
         $this->placeholder('-');
 
         $this->boolean();
@@ -59,7 +59,7 @@ class TernaryFilter extends SelectFilter
         return $this->falseLabel;
     }
 
-    protected function getFormField(): Select
+    public function getFormField(): Select
     {
         return parent::getFormField()
             ->boolean(
@@ -76,7 +76,7 @@ class TernaryFilter extends SelectFilter
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
-                        $this->getRelationshipTitleColumnName(),
+                        $this->getRelationshipTitleAttribute(),
                         '!=',
                         null,
                     );
@@ -88,7 +88,7 @@ class TernaryFilter extends SelectFilter
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
-                        $this->getRelationshipTitleColumnName(),
+                        $this->getRelationshipTitleAttribute(),
                         null,
                     );
                 }
@@ -107,7 +107,7 @@ class TernaryFilter extends SelectFilter
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
-                        $this->getRelationshipTitleColumnName(),
+                        $this->getRelationshipTitleAttribute(),
                         true,
                     );
                 }
@@ -118,7 +118,7 @@ class TernaryFilter extends SelectFilter
                 if ($this->queriesRelationships()) {
                     return $query->whereRelation(
                         $this->getRelationshipName(),
-                        $this->getRelationshipTitleColumnName(),
+                        $this->getRelationshipTitleAttribute(),
                         false,
                     );
                 }
@@ -143,5 +143,18 @@ class TernaryFilter extends SelectFilter
         });
 
         return $this;
+    }
+
+    public function getDefaultState(): mixed
+    {
+        $defaultState = $this->evaluate($this->defaultState);
+
+        // Ensure that the default state is cast to an integer
+        // so that it matches the value of a select option.
+        if (is_bool($defaultState)) {
+            $defaultState = $defaultState ? 1 : 0;
+        }
+
+        return $defaultState;
     }
 }

@@ -5,12 +5,12 @@ namespace Filament\Notifications\Testing;
 use Closure;
 use Filament\Notifications\Notification;
 use Livewire\Component;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportTesting\Testable;
 
 /**
  * @method Component instance()
  *
- * @mixin TestableLivewire
+ * @mixin Testable
  */
 class TestsNotifications
 {

@@ -3,24 +3,28 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class Tabs extends Component
 {
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.tabs';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.tabs';
 
     public int | Closure $activeTab = 1;
 
     protected string | Closure | null $tabQueryStringKey = null;
 
-    final public function __construct(string $label)
+    final public function __construct(?string $label = null)
     {
         $this->label($label);
     }
 
-    public static function make(string $label): static
+    public static function make(?string $label = null): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();
@@ -28,6 +32,9 @@ class Tabs extends Component
         return $static;
     }
 
+    /**
+     * @param  array<Tab> | Closure  $tabs
+     */
     public function tabs(array | Closure $tabs): static
     {
         $this->childComponents($tabs);
@@ -38,6 +45,13 @@ class Tabs extends Component
     public function activeTab(int | Closure $activeTab): static
     {
         $this->activeTab = $activeTab;
+
+        return $this;
+    }
+
+    public function persistTabInQueryString(string | Closure | null $key = 'tab'): static
+    {
+        $this->tabQueryStringKey = $key;
 
         return $this;
     }
@@ -67,12 +81,5 @@ class Tabs extends Component
     public function isTabPersistedInQueryString(): bool
     {
         return filled($this->getTabQueryStringKey());
-    }
-
-    public function persistTabInQueryString(string | Closure | null $key = 'tab'): static
-    {
-        $this->tabQueryStringKey = $key;
-
-        return $this;
     }
 }

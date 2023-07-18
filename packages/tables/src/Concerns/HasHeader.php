@@ -2,90 +2,47 @@
 
 namespace Filament\Tables\Concerns;
 
-use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 
+/**
+ * @deprecated Override the `table()` method to configure the table.
+ */
 trait HasHeader
 {
-    protected array $cachedTableHeaderActions;
-
-    public function cacheTableHeaderActions(): void
-    {
-        $actions = Action::configureUsing(
-            Closure::fromCallable([$this, 'configureTableAction']),
-            fn (): array => $this->getTableHeaderActions(),
-        );
-
-        $this->cachedTableHeaderActions = [];
-
-        foreach ($actions as $index => $action) {
-            if ($action instanceof ActionGroup) {
-                foreach ($action->getActions() as $groupedAction) {
-                    $groupedAction->table($this->getCachedTable());
-                }
-
-                $this->cachedTableHeaderActions[$index] = $action;
-
-                continue;
-            }
-
-            $action->table($this->getCachedTable());
-
-            $this->cachedTableHeaderActions[$action->getName()] = $action;
-        }
-    }
-
-    public function getCachedTableHeaderActions(): array
-    {
-        return $this->cachedTableHeaderActions;
-    }
-
-    public function getCachedTableHeaderAction(string $name): ?Action
-    {
-        $actions = $this->getCachedTableHeaderActions();
-
-        $action = $actions[$name] ?? null;
-
-        if ($action) {
-            return $action;
-        }
-
-        foreach ($actions as $action) {
-            if (! $action instanceof ActionGroup) {
-                continue;
-            }
-
-            $groupedAction = $action->getActions()[$name] ?? null;
-
-            if (! $groupedAction) {
-                continue;
-            }
-
-            return $groupedAction;
-        }
-
-        return null;
-    }
-
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableDescription(): string | Htmlable | null
     {
         return null;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableHeader(): View | Htmlable | null
     {
         return null;
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<Action | BulkAction | ActionGroup>
+     */
     protected function getTableHeaderActions(): array
     {
         return [];
     }
 
-    protected function getTableHeading(): string | Htmlable | Closure | null
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableHeading(): string | Htmlable | null
     {
         return null;
     }

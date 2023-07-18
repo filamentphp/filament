@@ -2,105 +2,111 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Support\Actions\Action as BaseAction;
-use Filament\Support\Actions\Concerns\CanBeDisabled;
-use Filament\Support\Actions\Concerns\CanBeOutlined;
-use Filament\Support\Actions\Concerns\CanOpenUrl;
-use Filament\Support\Actions\Concerns\HasGroupedIcon;
-use Filament\Support\Actions\Concerns\HasTooltip;
-use Filament\Support\Actions\Concerns\InteractsWithRecord;
-use Filament\Support\Actions\Contracts\Groupable;
-use Filament\Support\Actions\Contracts\HasRecord;
-use Filament\Tables\Actions\Modal\Actions\Action as ModalAction;
+use Filament\Actions\Concerns\HasMountableArguments;
+use Filament\Actions\Concerns\InteractsWithRecord;
+use Filament\Actions\Contracts\Groupable;
+use Filament\Actions\Contracts\HasRecord;
+use Filament\Actions\MountableAction;
+use Filament\Actions\StaticAction;
+use Filament\Tables\Actions\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 
-class Action extends BaseAction implements Groupable, HasRecord
+class Action extends MountableAction implements Groupable, HasRecord, HasTable
 {
-    use CanBeDisabled;
-    use CanBeOutlined;
-    use CanOpenUrl;
     use Concerns\BelongsToTable;
-    use HasGroupedIcon;
-    use HasTooltip;
+    use HasMountableArguments;
     use InteractsWithRecord;
 
-    protected string $view = 'tables::actions.link-action';
-
-    public function button(): static
-    {
-        $this->view('tables::actions.button-action');
-
-        return $this;
-    }
-
-    public function grouped(): static
-    {
-        $this->view('tables::actions.grouped-action');
-
-        return $this;
-    }
-
-    public function link(): static
-    {
-        $this->view('tables::actions.link-action');
-
-        return $this;
-    }
-
-    public function iconButton(): static
-    {
-        $this->view('tables::actions.icon-button-action');
-
-        return $this;
-    }
-
-    protected function getLivewireCallActionName(): string
+    public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedTableAction';
     }
 
-    protected static function getModalActionClass(): string
+    public function getLivewireClickHandler(): ?string
     {
-        return ModalAction::class;
+        if (! $this->isLivewireClickHandlerEnabled()) {
+            return null;
+        }
+
+        if (is_string($this->action)) {
+            return $this->action;
+        }
+
+        if ($record = $this->getRecord()) {
+            $recordKey = $this->getLivewire()->getTableRecordKey($record);
+
+            return "mountTableAction('{$this->getName()}', '{$recordKey}')";
+        }
+
+        return "mountTableAction('{$this->getName()}')";
     }
 
-    public static function makeModalAction(string $name): ModalAction
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        /** @var ModalAction $action */
-        $action = parent::makeModalAction($name);
-
-        return $action;
+        return match ($parameterName) {
+            'record' => [$this->getRecord()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 
-    protected function getDefaultEvaluationParameters(): array
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'record' => $this->resolveEvaluationParameter(
-                'record',
-                fn (): ?Model => $this->getRecord(),
-            ),
-        ]);
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 
     public function getRecordTitle(?Model $record = null): string
     {
         $record ??= $this->getRecord();
 
-        return $this->getCustomRecordTitle($record) ?? $this->getLivewire()->getTableRecordTitle($record);
+        return $this->getCustomRecordTitle($record) ?? $this->getTable()->getRecordTitle($record);
+    }
+
+    public function getRecordTitleAttribute(): ?string
+    {
+        return $this->getCustomRecordTitleAttribute() ?? $this->getTable()->getRecordTitleAttribute();
     }
 
     public function getModelLabel(): string
     {
-        return $this->getCustomModelLabel() ?? $this->getLivewire()->getTableModelLabel();
+        return $this->getCustomModelLabel() ?? $this->getTable()->getModelLabel();
     }
 
     public function getPluralModelLabel(): string
     {
-        return $this->getCustomPluralModelLabel() ?? $this->getLivewire()->getTablePluralModelLabel();
+        return $this->getCustomPluralModelLabel() ?? $this->getTable()->getPluralModelLabel();
     }
 
     public function getModel(): string
     {
-        return $this->getCustomModel() ?? $this->getLivewire()->getTableModel();
+        return $this->getCustomModel() ?? $this->getTable()->getModel();
+    }
+
+    public function prepareModalAction(StaticAction $action): StaticAction
+    {
+        $action = parent::prepareModalAction($action);
+
+        if (! $action instanceof Action) {
+            return $action;
+        }
+
+        return $action
+            ->table($this->getTable())
+            ->record($this->getRecord());
     }
 }

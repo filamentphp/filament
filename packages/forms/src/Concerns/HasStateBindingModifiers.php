@@ -3,35 +3,53 @@
 namespace Filament\Forms\Concerns;
 
 use Filament\Forms\Components\Component;
-use Illuminate\Support\Str;
 
 trait HasStateBindingModifiers
 {
-    protected $stateBindingModifiers = null;
+    /**
+     * @var array<string> | null
+     */
+    protected ?array $stateBindingModifiers = null;
 
-    protected string | int | null $debounce = null;
+    protected int | string | null $liveDebounce = null;
+
+    protected bool $isLive = false;
+
+    protected bool $isLiveOnBlur = false;
+
+    public function live(bool $onBlur = false, int | string | null $debounce = null): static
+    {
+        $this->isLive = true;
+        $this->isLiveOnBlur = $onBlur;
+        $this->liveDebounce = $debounce;
+
+        return $this;
+    }
 
     public function reactive(): static
     {
-        $this->stateBindingModifiers([]);
+        $this->live();
 
         return $this;
     }
 
     public function lazy(): static
     {
-        $this->stateBindingModifiers(['lazy']);
+        $this->live(onBlur: true);
 
         return $this;
     }
 
-    public function debounce(string | int | null $delay = '500ms'): static
+    public function debounce(int | string | null $delay = 500): static
     {
-        $this->debounce = $delay;
+        $this->live(debounce: $delay);
 
         return $this;
     }
 
+    /**
+     * @param  array<string> | null  $modifiers
+     */
     public function stateBindingModifiers(?array $modifiers): static
     {
         $this->stateBindingModifiers = $modifiers;
@@ -39,25 +57,45 @@ trait HasStateBindingModifiers
         return $this;
     }
 
-    public function applyStateBindingModifiers(string $expression, array $lazilyEntangledModifiers = []): string
+    public function applyStateBindingModifiers(string $expression, bool $isOptimisticallyLive = true): string
     {
-        $modifiers = $this->getStateBindingModifiers();
+        $entangled = str($expression)->contains('entangle');
 
-        if (Str::of($expression)->contains('entangle') && ($this->isLazy() || $this->getDebounce())) {
-            $modifiers = $lazilyEntangledModifiers;
-        }
+        $modifiers = $this->getStateBindingModifiers(withBlur: ! $entangled, withDebounce: ! $entangled, isOptimisticallyLive: $isOptimisticallyLive);
 
-        return implode('.', array_merge([$expression], $modifiers));
+        return implode('.', [
+            $expression,
+            ...$modifiers,
+        ]);
     }
 
-    public function getStateBindingModifiers(): array
+    /**
+     * @return array<string>
+     */
+    public function getStateBindingModifiers(bool $withBlur = true, bool $withDebounce = true, bool $isOptimisticallyLive = true): array
     {
         if ($this->stateBindingModifiers !== null) {
             return $this->stateBindingModifiers;
         }
 
-        if ($debounce = $this->getDebounce()) {
-            return ['debounce', $debounce];
+        if ($this->isLiveOnBlur()) {
+            if (! $withBlur) {
+                return $isOptimisticallyLive ? ['live'] : [];
+            }
+
+            return ['blur'];
+        }
+
+        if ($this->isLiveDebounced()) {
+            if (! $withDebounce) {
+                return $isOptimisticallyLive ? ['live'] : [];
+            }
+
+            return ['live', 'debounce', $this->getLiveDebounce()];
+        }
+
+        if ($this->isLive()) {
+            return ['live'];
         }
 
         if ($this instanceof Component) {
@@ -68,26 +106,58 @@ trait HasStateBindingModifiers
             return $this->getParentComponent()->getStateBindingModifiers();
         }
 
-        return ['defer'];
+        return [];
     }
 
-    public function isReactive(): bool
+    public function isLive(): bool
     {
-        return empty($this->getStateBindingModifiers());
+        return $this->isLive;
+    }
+
+    public function isLiveOnBlur(): bool
+    {
+        return $this->isLiveOnBlur;
     }
 
     public function isLazy(): bool
     {
-        return in_array('lazy', $this->getStateBindingModifiers());
+        return $this->isLiveOnBlur();
     }
 
-    public function isDebounced(): bool
+    public function isLiveDebounced(): bool
     {
-        return in_array('debounce', $this->getStateBindingModifiers());
+        if ($this->isLiveOnBlur()) {
+            return false;
+        }
+
+        return filled($this->liveDebounce);
     }
 
-    public function getDebounce(): string | int | null
+    public function getLiveDebounce(): int | string | null
     {
-        return $this->debounce;
+        return $this->liveDebounce;
+    }
+
+    public function getNormalizedLiveDebounce(): ?int
+    {
+        $debounce = $this->getLiveDebounce();
+
+        if (! $debounce) {
+            return null;
+        }
+
+        if (is_numeric($debounce)) {
+            return (int) $debounce;
+        }
+
+        if (str($debounce)->endsWith('ms')) {
+            return (int) (string) str($debounce)->beforeLast('ms');
+        }
+
+        if (str($debounce)->endsWith('s')) {
+            return ((int) (string) str($debounce)->beforeLast('s')) * 1000;
+        }
+
+        return preg_replace('/[^0-9]/', '', $debounce) ?: 0;
     }
 }

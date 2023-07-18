@@ -29,12 +29,3 @@ it('sets its fallback label from its name', function () {
                 ->ucfirst(),
         );
 });
-
-it('has state binding modifiers', function () {
-    $field = (new Field(Str::random()))
-        ->container(ComponentContainer::make(Livewire::make()))
-        ->stateBindingModifiers($modifiers = [Str::random(), Str::random()]);
-
-    expect($field)
-        ->applyStateBindingModifiers($expression = Str::random())->toBe(implode('.', array_merge([$expression], $modifiers)));
-});

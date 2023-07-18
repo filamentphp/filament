@@ -10,26 +10,24 @@ use Filament\Tables\Filters\TernaryFilter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Illuminate\Testing\Assert;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportTesting\Testable;
 
 /**
  * @method HasTable instance()
  *
- * @mixin TestableLivewire
+ * @mixin Testable
  */
 class TestsFilters
 {
     public function filterTable(): Closure
     {
         return function (string $name, $data = null): static {
-            $livewire = $this->instance();
-
-            $name = $livewire->parseFilterName($name);
+            $name = $this->instance()->parseTableFilterName($name);
 
             /** @phpstan-ignore-next-line */
             $this->assertTableFilterExists($name);
 
-            $filter = $livewire->getCachedTableFilter($name);
+            $filter = $this->instance()->getTable()->getFilter($name);
 
             if ($filter instanceof TernaryFilter) {
                 if ($data === true || ($data === null && func_num_args() === 1)) {
@@ -68,7 +66,7 @@ class TestsFilters
     public function removeTableFilter(): Closure
     {
         return function (string $filter, ?string $field = null): static {
-            $this->call('removeTableFilter', $this->instance()->parseFilterName($filter), $field);
+            $this->call('removeTableFilter', $this->instance()->parseTableFilterName($filter), $field);
 
             return $this;
         };
@@ -86,12 +84,11 @@ class TestsFilters
     public function assertTableFilterExists(): Closure
     {
         return function (string $name): static {
-            $livewire = $this->instance();
-            $livewireClass = $livewire::class;
+            $name = $this->instance()->parseTableFilterName($name);
 
-            $name = $livewire->parseFilterName($name);
+            $filter = $this->instance()->getTable()->getFilter($name);
 
-            $filter = $livewire->getCachedTableFilter($name);
+            $livewireClass = $this->instance()::class;
 
             Assert::assertInstanceOf(
                 BaseFilter::class,

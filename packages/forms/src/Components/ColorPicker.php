@@ -5,14 +5,17 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
-class ColorPicker extends Field
+class ColorPicker extends Field implements Contracts\HasAffixActions
 {
     use Concerns\HasAffixes;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.color-picker';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.color-picker';
 
     protected string | Closure $format = 'hex';
 

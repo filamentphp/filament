@@ -4,6 +4,7 @@ namespace Filament\Forms;
 
 use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Components\ViewComponent;
+use Illuminate\Database\Eloquent\Model;
 
 class ComponentContainer extends ViewComponent
 {
@@ -16,9 +17,9 @@ class ComponentContainer extends ViewComponent
     use Concerns\Cloneable;
     use Concerns\HasColumns;
     use Concerns\HasComponents;
-    use Concerns\HasContext;
     use Concerns\HasFieldWrapper;
     use Concerns\HasInlineLabels;
+    use Concerns\HasOperation;
     use Concerns\HasState;
     use Concerns\HasStateBindingModifiers;
     use Concerns\ListensToEvents;
@@ -26,9 +27,7 @@ class ComponentContainer extends ViewComponent
     use Concerns\SupportsFileUploadFields;
     use Concerns\SupportsSelectFields;
 
-    protected array $meta = [];
-
-    protected string $view = 'forms::component-container';
+    protected string $view = 'filament-forms::component-container';
 
     protected string $evaluationIdentifier = 'container';
 
@@ -44,12 +43,33 @@ class ComponentContainer extends ViewComponent
         return app(static::class, ['livewire' => $livewire]);
     }
 
-    protected function getDefaultEvaluationParameters(): array
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-            'model' => $this->getModel(),
-            'record' => $this->getRecord(),
-        ]);
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'model' => [$this->getModel()],
+            'record' => [$this->getRecord()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

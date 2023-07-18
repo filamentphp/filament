@@ -11,6 +11,7 @@ class BaseFilter extends Component
     use Concerns\BelongsToTable;
     use Concerns\CanBeHidden;
     use Concerns\CanSpanColumns;
+    use Concerns\CanResetState;
     use Concerns\HasColumns;
     use Concerns\HasDefaultState;
     use Concerns\HasFormSchema;
@@ -48,10 +49,15 @@ class BaseFilter extends Component
         return null;
     }
 
-    protected function getDefaultEvaluationParameters(): array
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-        ]);
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 }

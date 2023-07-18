@@ -16,19 +16,23 @@ class TrashedFilter extends TernaryFilter
     {
         parent::setUp();
 
-        $this->label(__('tables::table.filters.trashed.label'));
+        $this->label(__('filament-tables::table.filters.trashed.label'));
 
-        $this->placeholder(__('tables::table.filters.trashed.without_trashed'));
+        $this->placeholder(__('filament-tables::table.filters.trashed.without_trashed'));
 
-        $this->trueLabel(__('tables::table.filters.trashed.with_trashed'));
+        $this->trueLabel(__('filament-tables::table.filters.trashed.with_trashed'));
 
-        $this->falseLabel(__('tables::table.filters.trashed.only_trashed'));
+        $this->falseLabel(__('filament-tables::table.filters.trashed.only_trashed'));
 
         $this->queries(
             true: fn ($query) => $query->withTrashed(),
             false: fn ($query) => $query->onlyTrashed(),
             blank: fn ($query) => $query->withoutTrashed(),
         );
+
+        $this->baseQuery(fn (Builder $query) => $query->withoutGlobalScopes([
+            SoftDeletingScope::class,
+        ]));
 
         $this->indicateUsing(function (array $state): array {
             if ($state['value'] ?? null) {
@@ -41,14 +45,5 @@ class TrashedFilter extends TernaryFilter
 
             return [$this->getFalseLabel()];
         });
-    }
-
-    public function applyToBaseQuery(Builder $query, array $data = []): Builder
-    {
-        $query->withoutGlobalScopes([
-            SoftDeletingScope::class,
-        ]);
-
-        return $query;
     }
 }

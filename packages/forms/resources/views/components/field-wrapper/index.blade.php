@@ -1,65 +1,120 @@
 @props([
-    'id',
-    'label' => null,
-    'labelPrefix' => null,
-    'labelSrOnly' => false,
-    'labelSuffix' => null,
+    'field' => null,
+    'hasInlineLabel' => null,
     'hasNestedRecursiveValidationRules' => false,
     'helperText' => null,
     'hint' => null,
+    'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
-    'hintAction' => null,
-    'required' => false,
-    'statePath',
+    'id' => null,
+    'isDisabled' => null,
+    'isMarkedAsRequired' => null,
+    'label' => null,
+    'labelPrefix' => null,
+    'labelSrOnly' => null,
+    'labelSuffix' => null,
+    'required' => null,
+    'statePath' => null,
 ])
 
-<div {{ $attributes->class(['filament-forms-field-wrapper']) }}>
+@php
+    if ($field) {
+        $hasInlineLabel ??= $field->hasInlineLabel();
+        $hasNestedRecursiveValidationRules ??= $field instanceof \Filament\Forms\Components\Contracts\HasNestedRecursiveValidationRules;
+        $helperText ??= $field->getHelperText();
+        $hint ??= $field->getHint();
+        $hintActions ??= $field->getHintActions();
+        $hintColor ??= $field->getHintColor();
+        $hintIcon ??= $field->getHintIcon();
+        $id ??= $field->getId();
+        $isDisabled ??= $field->isDisabled();
+        $isMarkedAsRequired ??= $field->isMarkedAsRequired();
+        $label ??= $field->getLabel();
+        $labelSrOnly ??= $field->isLabelHidden();
+        $required ??= $field->isRequired();
+        $statePath ??= $field->getStatePath();
+    }
+
+    $hintActions = array_filter(
+        $hintActions ?? [],
+        fn (\Filament\Forms\Components\Actions\Action $hintAction): bool => $hintAction->isVisible(),
+    );
+
+    $hasError = $errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*"));
+@endphp
+
+<div {{ $attributes->class(['fi-fo-field-wrp']) }}>
     @if ($label && $labelSrOnly)
         <label for="{{ $id }}" class="sr-only">
             {{ $label }}
         </label>
     @endif
 
-    <div class="space-y-2">
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hint || $hintIcon || $hintAction)
-            <div class="flex items-center justify-between space-x-2 rtl:space-x-reverse">
+    <div
+        @class([
+            'grid gap-y-2',
+            'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
+        ])
+    >
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
+            <div
+                @class([
+                    'flex items-center justify-between gap-x-3',
+                    'sm:pt-1.5' => $hasInlineLabel,
+                ])
+            >
                 @if ($label && (! $labelSrOnly))
-                    <x-forms::field-wrapper.label
+                    <x-filament-forms::field-wrapper.label
                         :for="$id"
                         :error="$errors->has($statePath)"
+                        :is-disabled="$isDisabled"
+                        :is-marked-as-required="$isMarkedAsRequired"
                         :prefix="$labelPrefix"
-                        :required="$required"
                         :suffix="$labelSuffix"
+                        :required="$required"
                     >
                         {{ $label }}
-                    </x-forms::field-wrapper.label>
+                    </x-filament-forms::field-wrapper.label>
                 @elseif ($labelPrefix)
                     {{ $labelPrefix }}
                 @elseif ($labelSuffix)
                     {{ $labelSuffix }}
                 @endif
 
-                @if ($hint || $hintIcon || $hintAction)
-                    <x-forms::field-wrapper.hint :action="$hintAction" :color="$hintColor" :icon="$hintIcon">
-                        {{ filled($hint) ? ($hint instanceof \Illuminate\Support\HtmlString ? $hint : \Illuminate\Support\Str::of($hint)->markdown()->sanitizeHtml()->toHtmlString()) : null }}
-                    </x-forms::field-wrapper.hint>
+                @if (filled($hint) || $hintIcon || count($hintActions))
+                    <x-filament-forms::field-wrapper.hint
+                        :actions="$hintActions"
+                        :color="$hintColor"
+                        :icon="$hintIcon"
+                    >
+                        {{ $hint }}
+                    </x-filament-forms::field-wrapper.hint>
                 @endif
             </div>
         @endif
 
-        {{ $slot }}
+        @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || filled($helperText))
+            <div
+                @class([
+                    'grid gap-y-2',
+                    'sm:col-span-2' => $hasInlineLabel,
+                ])
+            >
+                {{ $slot }}
 
-            @if ($errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*")))
-                <x-forms::field-wrapper.error-message>
-                    {{ $errors->first($statePath) ?: ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
-                </x-forms::field-wrapper.error-message>
-            @endif
+                @if ($hasError)
+                    <x-filament-forms::field-wrapper.error-message>
+                        {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
+                    </x-filament-forms::field-wrapper.error-message>
+                @endif
 
-        @if ($helperText)
-            <x-forms::field-wrapper.helper-text>
-                {{ $helperText instanceof \Illuminate\Support\HtmlString ? $helperText : \Illuminate\Support\Str::of($helperText)->markdown()->sanitizeHtml()->toHtmlString() }}
-            </x-forms::field-wrapper.helper-text>
+                @if (filled($helperText))
+                    <x-filament-forms::field-wrapper.helper-text>
+                        {{ $helperText }}
+                    </x-filament-forms::field-wrapper.helper-text>
+                @endif
+            </div>
         @endif
     </div>
 </div>

@@ -4,39 +4,37 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Tartalom becsukva',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Másolás',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Új :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Törlés',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mozgatás',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Mozgatás lefelé',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Mozgatás felfelé',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Becsuk',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Kibont',
             ],
 
@@ -54,7 +52,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Sor hozzáadása',
@@ -103,39 +101,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Tartalom becsukva',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Új :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Törlés',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Másolás',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mozgatás',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Mozgatás lefelé',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Mozgatás felfelé',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Becsuk',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Kibont',
             ],
 
@@ -157,7 +153,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Hivatkozás',
                     'unlink' => 'Hivatkozás törlése',
                 ],
@@ -238,7 +234,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Előző lépés',

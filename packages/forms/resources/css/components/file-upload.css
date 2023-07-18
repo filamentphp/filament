@@ -1,63 +1,40 @@
 .filepond--root {
-    @apply mb-0 overflow-hidden;
+    @apply mb-0 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-gray-900 dark:ring-white/20;
 }
 
 .filepond--panel-root {
-    @apply rounded-lg border border-gray-300 bg-white shadow-sm;
+    @apply bg-transparent;
+}
+
+.filepond--root .filepond--drop-label {
+    min-height: theme(spacing.24);
+}
+
+.filepond--drop-label label {
+    @apply !p-3 text-sm text-gray-600 dark:text-gray-400;
+}
+
+.filepond--label-action {
+    @apply font-medium text-primary-600 no-underline transition duration-75 hover:text-primary-500 dark:text-white dark:hover:text-primary-500;
 }
 
 .filepond--drip-blob {
-    @apply bg-gray-900;
+    @apply bg-gray-400 dark:bg-gray-500;
 }
-
-.dark .filepond--drop-label {
-    @apply text-gray-200;
-}
-
-.dark .filepond--panel-root {
-    @apply border-gray-600 bg-gray-700 text-white;
-}
-
-.dark .filepond--drip-blob {
-    @apply bg-gray-100;
-}
-
-/* Compact-only styles, excluding compact circle layouts */
-
-.filepond--root[data-style-panel-layout='compact'] .filepond--item {
-    @apply mb-0.5;
-}
-
-.filepond--root[data-style-panel-layout='compact'] .filepond--drop-label label {
-    @apply text-sm;
-}
-
-.filepond--root[data-style-panel-layout='compact'] .filepond--drop-label {
-    min-height: 2.625em;
-}
-
-.filepond--root[data-style-panel-layout='compact'] .filepond--file {
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-}
-
-/* Grid styles */
 
 .filepond--root[data-style-panel-layout='grid'] .filepond--item {
-    width: calc(50% - 0.5em);
-    display: inline;
+    @apply inline;
+    width: calc(50% - 0.5rem);
 }
 
 @media screen(lg) {
     .filepond--root[data-style-panel-layout='grid'] .filepond--item {
-        width: calc(33.33% - 0.5em);
+        width: calc(33.33% - 0.5rem);
     }
 }
 
-/* Download button styles */
-
 .filepond--download-icon {
-    @apply pointer-events-auto mr-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;
+    @apply pointer-events-auto me-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;
     -webkit-mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItZG93bmxvYWQiPjxwYXRoIGQ9Ik0yMSAxNXY0YTIgMiAwIDAgMS0yIDJINWEyIDIgMCAwIDEtMi0ydi00Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iNyAxMCAxMiAxNSAxNyAxMCI+PC9wb2x5bGluZT48bGluZSB4MT0iMTIiIHkxPSIxNSIgeDI9IjEyIiB5Mj0iMyI+PC9saW5lPjwvc3ZnPg==');
     mask-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJmZWF0aGVyIGZlYXRoZXItZG93bmxvYWQiPjxwYXRoIGQ9Ik0yMSAxNXY0YTIgMiAwIDAgMS0yIDJINWEyIDIgMCAwIDEtMi0ydi00Ij48L3BhdGg+PHBvbHlsaW5lIHBvaW50cz0iNyAxMCAxMiAxNSAxNyAxMCI+PC9wb2x5bGluZT48bGluZSB4MT0iMTIiIHkxPSIxNSIgeDI9IjEyIiB5Mj0iMyI+PC9saW5lPjwvc3ZnPg==');
     -webkit-mask-repeat: no-repeat;
@@ -67,7 +44,7 @@
 }
 
 .filepond--open-icon {
-    @apply pointer-events-auto mr-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;
+    @apply pointer-events-auto me-1 inline-block h-4 w-4 bg-white align-bottom hover:bg-white/70;
     -webkit-mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTYgdy02IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTEwIDZINmEyIDIgMCAwMC0yIDJ2MTBhMiAyIDAgMDAyIDJoMTBhMiAyIDAgMDAyLTJ2LTRNMTQgNGg2bTAgMHY2bTAtNkwxMCAxNCIgLz4KPC9zdmc+Cg==);
     mask-image: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJoLTYgdy02IiBmaWxsPSJub25lIiB2aWV3Qm94PSIwIDAgMjQgMjQiIHN0cm9rZT0iY3VycmVudENvbG9yIiBzdHJva2Utd2lkdGg9IjIiPgogIDxwYXRoIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIgZD0iTTEwIDZINmEyIDIgMCAwMC0yIDJ2MTBhMiAyIDAgMDAyIDJoMTBhMiAyIDAgMDAyLTJ2LTRNMTQgNGg2bTAgMHY2bTAtNkwxMCAxNCIgLz4KPC9zdmc+Cg==);
     -webkit-mask-repeat: no-repeat;

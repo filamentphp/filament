@@ -2,12 +2,13 @@
 
 namespace Filament\Tables\Columns;
 
+/**
+ * @deprecated Use `TextColumn` with the `badge()` method instead.
+ */
 class BadgeColumn extends TextColumn
 {
-    use Concerns\CanBeCopied;
-    use Concerns\CanFormatState;
-    use Concerns\HasColors;
-    use Concerns\HasIcons;
-
-    protected string $view = 'tables::columns.badge-column';
+    public function isBadge(): bool
+    {
+        return true;
+    }
 }

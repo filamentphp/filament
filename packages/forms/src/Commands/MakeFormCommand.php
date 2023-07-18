@@ -18,32 +18,35 @@ class MakeFormCommand extends Command
     use CanReadModelSchemas;
     use CanValidateInput;
 
-    protected $description = 'Creates a Livewire component containing a Filament form.';
+    protected $description = 'Create a new Livewire component containing a Filament form';
 
     protected $signature = 'make:livewire-form {name?} {model?} {--E|edit} {--G|generate} {--F|force}';
 
     public function handle(): int
     {
-        $component = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Products/CreateProduct`)', 'name'))
+        $component = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Products/CreateProduct`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $componentClass = (string) Str::of($component)->afterLast('\\');
-        $componentNamespace = Str::of($component)->contains('\\') ?
-            (string) Str::of($component)->beforeLast('\\') :
+        $componentClass = (string) str($component)->afterLast('\\');
+        $componentNamespace = str($component)->contains('\\') ?
+            (string) str($component)->beforeLast('\\') :
             '';
 
-        $view = Str::of($component)
+        $view = str($component)
             ->replace('\\', '/')
             ->prepend('Livewire/')
             ->explode('/')
             ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $model = (string) Str::of($this->argument('model') ?? $this->ask('(Optional) Model (e.g. `Product`)'))
-            ->replace('/', '\\');
-        $modelClass = (string) Str::of($model)->afterLast('\\');
+        $model = (string) str($this->argument('model') ?? (
+            $this->option('edit') ?
+            $this->askRequired('Model (e.g. `Product`)', 'model') :
+            $this->ask('(Optional) Model (e.g. `Product`)')
+        ))->replace('/', '\\');
+        $modelClass = (string) str($model)->afterLast('\\');
 
         if ($this->option('edit')) {
             $isEditForm = true;
@@ -56,15 +59,15 @@ class MakeFormCommand extends Command
             $isEditForm = false;
         }
 
-        $path = (string) Str::of($component)
+        $path = (string) str($component)
             ->prepend('/')
-            ->prepend(app_path('Http/Livewire/'))
+            ->prepend(app_path('Livewire/'))
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');
 
         $viewPath = resource_path(
-            (string) Str::of($view)
+            (string) str($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
@@ -81,7 +84,7 @@ class MakeFormCommand extends Command
             'namespace' => 'App\\Http\\Livewire' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
             'schema' => $this->indentString((filled($model) && $this->option('generate')) ? $this->getResourceFormSchema(
                 'App\\Models\\' . $model,
-            ) : '//', 3),
+            ) : '//', 4),
             'view' => $view,
         ]);
 
@@ -89,7 +92,7 @@ class MakeFormCommand extends Command
             'submitAction' => filled($model) ? ($isEditForm ? 'save' : 'create') : 'submit',
         ]);
 
-        $this->info("Successfully created {$component}!");
+        $this->components->info("Successfully created {$component}!");
 
         return static::SUCCESS;
     }

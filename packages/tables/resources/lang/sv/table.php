@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'och :count till',
-        ],
-
-        'messages' => [
-            'copied' => 'Kopierad',
+        'text' => [
+            'more_list_items' => 'och :count till',
         ],
 
     ],
@@ -24,9 +20,10 @@ return [
             'label' => 'Markera/avmarkera rad :key för massåtgärder.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Sök',
             'placeholder' => 'Sök',
+            'indicator' => 'Sök',
         ],
 
     ],
@@ -51,7 +48,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Gå till sida :page',
@@ -69,7 +66,35 @@ return [
 
     ],
 
-    'buttons' => [
+    'summary' => [
+
+        'heading' => 'Sammanfattning',
+
+        'subheadings' => [
+            'all' => 'Alla :label',
+            'group' => ':group sammanfattning',
+            'page' => 'Denna sida',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Medelvärde',
+            ],
+
+            'count' => [
+                'label' => 'Antal',
+            ],
+
+            'sum' => [
+                'label' => 'Summa',
+            ],
+
+        ],
+
+    ],
+
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Sluta ändra ordning på rader',
@@ -83,7 +108,11 @@ return [
             'label' => 'Filter',
         ],
 
-        'open_actions' => [
+        'group' => [
+            'label' => 'Gruppera',
+        ],
+
+        'open_bulk_actions' => [
             'label' => 'Öppna åtgärder',
         ],
 
@@ -99,7 +128,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Ta bort filter',
@@ -140,13 +169,37 @@ return [
 
     ],
 
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Gruppera',
+                'placeholder' => 'Välj ett fält för gruppering',
+            ],
+
+            'direction' => [
+
+                'label' => 'Riktning',
+
+                'options' => [
+                    'asc' => 'Stigande',
+                    'desc' => 'Fallande',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'reorder_indicator' => 'Dra och släpp raderna i önskad ordning.',
 
     'selection_indicator' => [
 
         'selected_count' => '1 rad vald.|:count rader valda.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Markera alla :count',

@@ -1,27 +1,25 @@
-<div {{ $attributes->class([
-    'flex flex-col items-center justify-center mx-auto my-6 space-y-4 text-center bg-white',
-    'dark:bg-gray-800' => config('notifications.dark_mode'),
-]) }}>
-    <div @class([
-        'flex items-center justify-center w-12 h-12 text-primary-500 rounded-full bg-primary-50',
-        'dark:bg-gray-700' => config('notifications.dark_mode'),
-    ])>
-        <x-heroicon-o-bell class="w-5 h-5" />
+<div
+    {{ $attributes->class(['mx-auto my-6 flex flex-col items-center justify-center space-y-4 bg-white text-center dark:bg-gray-900']) }}
+>
+    <div
+        class="flex h-12 w-12 items-center justify-center rounded-full bg-primary-50 dark:bg-gray-700"
+    >
+        <x-filament::icon
+            name="heroicon-o-bell"
+            alias="notifications::database.modal.empty-state"
+            class="h-6 w-6 text-primary-500"
+        />
     </div>
 
     <div class="max-w-md space-y-1">
-        <h2 @class([
-            'text-lg font-bold tracking-tight',
-            'dark:text-white' => config('notifications.dark_mode'),
-        ])>
-            {{ __('notifications::database.modal.empty.heading') }}
+        <h2 class="text-lg font-medium tracking-tight dark:text-white">
+            {{ __('filament-notifications::database.modal.empty.heading') }}
         </h2>
 
-        <p @class([
-            'whitespace-normal text-sm font-medium text-gray-500',
-            'dark:text-gray-400' => config('notifications.dark_mode'),
-        ])>
-            {{ __('notifications::database.modal.empty.description') }}
+        <p
+            class="whitespace-normal text-sm font-medium text-gray-500 dark:text-gray-400"
+        >
+            {{ __('filament-notifications::database.modal.empty.description') }}
         </p>
     </div>
 </div>

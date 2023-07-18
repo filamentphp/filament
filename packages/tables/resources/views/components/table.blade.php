@@ -1,12 +1,12 @@
 @props([
     'footer' => null,
     'header' => null,
+    'reorderable' => false,
 ])
 
-<table {{ $attributes->class([
-    'filament-tables-table w-full text-start divide-y table-auto',
-    'dark:divide-gray-700' => config('tables.dark_mode'),
-]) }}>
+<table
+    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y text-start dark:divide-gray-700']) }}
+>
     @if ($header)
         <thead>
             <tr class="bg-gray-500/5">
@@ -16,13 +16,11 @@
     @endif
 
     <tbody
-        wire:sortable
-        wire:end.stop="reorderTable($event.target.sortable.toArray())"
-        wire:sortable.options="{ animation: 100 }"
-        @class([
-            'divide-y whitespace-nowrap',
-            'dark:divide-gray-700' => config('tables.dark_mode'),
-        ])
+        @if ($reorderable)
+            x-sortable
+            x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+        @endif
+        class="divide-y whitespace-nowrap dark:divide-gray-700"
     >
         {{ $slot }}
     </tbody>

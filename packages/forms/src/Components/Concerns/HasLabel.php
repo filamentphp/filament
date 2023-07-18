@@ -13,7 +13,17 @@ trait HasLabel
 
     protected bool $shouldTranslateLabel = false;
 
+    /**
+     * @deprecated Use `hiddenLabel()` instead.
+     */
     public function disableLabel(bool | Closure $condition = true): static
+    {
+        $this->hiddenLabel($condition);
+
+        return $this;
+    }
+
+    public function hiddenLabel(bool | Closure $condition = true): static
     {
         $this->isLabelHidden = $condition;
 
@@ -45,6 +55,6 @@ trait HasLabel
 
     public function isLabelHidden(): bool
     {
-        return $this->evaluate($this->isLabelHidden);
+        return (bool) $this->evaluate($this->isLabelHidden);
     }
 }

@@ -13,6 +13,7 @@ use Filament\Tables\Columns\Concerns\CanGrow;
 use Filament\Tables\Columns\Concerns\CanSpanColumns;
 use Filament\Tables\Columns\Concerns\HasRecord;
 use Filament\Tables\Columns\Concerns\HasRowLoopObject;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Traits\Conditionable;
 
 class Component extends ViewComponent
@@ -31,12 +32,18 @@ class Component extends ViewComponent
 
     protected string $viewIdentifier = 'layout';
 
+    /**
+     * @var array<Column | Component> | Closure
+     */
     protected array | Closure $components = [];
 
     protected bool $isCollapsible = false;
 
     protected bool | Closure $isCollapsed = true;
 
+    /**
+     * @param  array<Column | Component> | Closure  $schema
+     */
     public function schema(array | Closure $schema): static
     {
         $this->components($schema);
@@ -44,6 +51,9 @@ class Component extends ViewComponent
         return $this;
     }
 
+    /**
+     * @param  array<Column | Component> | Closure  $components
+     */
     public function components(array | Closure $components): static
     {
         $this->components = $components;
@@ -71,6 +81,9 @@ class Component extends ViewComponent
         return (bool) $this->evaluate($this->isCollapsed);
     }
 
+    /**
+     * @return array<string, Column>
+     */
     public function getColumns(): array
     {
         $columns = [];
@@ -82,12 +95,18 @@ class Component extends ViewComponent
                 continue;
             }
 
-            $columns = array_merge($columns, $component->getColumns());
+            $columns = [
+                ...$columns,
+                ...$component->getColumns(),
+            ];
         }
 
         return $columns;
     }
 
+    /**
+     * @return array<Column | Component>
+     */
     public function getComponents(): array
     {
         return array_map(function (Component | Column $component): Component | Column {
@@ -100,12 +119,34 @@ class Component extends ViewComponent
         return $this->isCollapsible;
     }
 
-    protected function getDefaultEvaluationParameters(): array
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'livewire' => $this->getLivewire(),
-            'record' => $this->getRecord(),
-            'rowLoop' => $this->getRowLoop(),
-        ]);
+        return match ($parameterName) {
+            'livewire' => [$this->getLivewire()],
+            'record' => [$this->getRecord()],
+            'rowLoop' => [$this->getRowLoop()],
+            'table' => [$this->getTable()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

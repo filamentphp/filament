@@ -4,19 +4,15 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'і :count ще',
-        ],
-
-        'messages' => [
-            'copied' => 'Скопійовано',
+        'text' => [
+            'more_list_items' => 'і :count ще',
         ],
 
     ],
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Пошук',
             'placeholder' => 'Пошук',
         ],
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Перейти до сторінки :page',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Зберегти порядок',
@@ -75,7 +71,7 @@ return [
             'label' => 'Фільтр',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Відкрити дії',
         ],
 
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Видалити фільтр',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => 'Вибрано 1 запис.|Вибрано :count записів.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Вибрати все :count',

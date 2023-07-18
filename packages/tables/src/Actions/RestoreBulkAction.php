@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,19 +21,21 @@ class RestoreBulkAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/restore.multiple.label'));
+        $this->label(__('filament-actions::restore.multiple.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/restore.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::restore.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/restore.multiple.modal.actions.restore.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::restore.multiple.modal.actions.restore.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/restore.multiple.messages.restored'));
+        $this->successNotificationTitle(__('filament-actions::restore.multiple.messages.restored'));
 
-        $this->color('secondary');
+        $this->color('gray');
 
-        $this->icon('heroicon-s-reply');
+        $this->icon('heroicon-m-arrow-uturn-left');
 
         $this->requiresConfirmation();
+
+        $this->modalIcon('heroicon-o-arrow-uturn-left');
 
         $this->action(function (): void {
             $this->process(static function (Collection $records): void {

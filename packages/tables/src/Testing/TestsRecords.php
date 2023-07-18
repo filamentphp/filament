@@ -7,27 +7,25 @@ use Filament\Tables\Contracts\HasTable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Testing\Assert;
-use Livewire\Testing\TestableLivewire;
+use Livewire\Features\SupportTesting\Testable;
 
 /**
  * @method HasTable instance()
  *
- * @mixin TestableLivewire
+ * @mixin Testable
  */
 class TestsRecords
 {
     public function assertCanSeeTableRecords(): Closure
     {
         return function (array | Collection $records, bool $inOrder = false): static {
-            $livewire = $this->instance();
-
             $html = array_map(
-                function ($record) use ($livewire) {
+                function ($record) {
                     if ($record instanceof Model) {
-                        $record = $livewire->getTableRecordKey($record);
+                        $record = $this->instance()->getTableRecordKey($record);
                     }
 
-                    return "{$livewire->id}.table.records.{$record}";
+                    return "{$this->instance()->getId()}.table.records.{$record}";
                 },
                 $records instanceof Collection ? $records->all() : $records,
             );
@@ -45,15 +43,13 @@ class TestsRecords
     public function assertCanNotSeeTableRecords(): Closure
     {
         return function (array | Collection $records): static {
-            $livewire = $this->instance();
-
             $html = array_map(
-                function ($record) use ($livewire) {
+                function ($record) {
                     if ($record instanceof Model) {
-                        $record = $livewire->getTableRecordKey($record);
+                        $record = $this->instance()->getTableRecordKey($record);
                     }
 
-                    return "wire:key=\"{$livewire->id}.table.records.{$record}\"";
+                    return "wire:key=\"{$this->instance()->getId()}.table.records.{$record}\"";
                 },
                 $records instanceof Collection ? $records->all() : $records,
             );

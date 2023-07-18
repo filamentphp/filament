@@ -15,7 +15,7 @@
     $url = $column->getUrl();
 
     $columnClasses = \Illuminate\Support\Arr::toCssClasses([
-        'flex w-full',
+        'flex w-full disabled:opacity-70 disabled:pointer-events-none',
         match ($column->getAlignment()) {
             'center' => 'justify-center text-center',
             'end' => 'justify-end text-end',
@@ -34,12 +34,12 @@
         x-data="{}"
         x-tooltip.raw="{{ $tooltip }}"
     @endif
-    {{ $attributes->class(['filament-tables-column-wrapper']) }}
+    {{ $attributes->class(['fi-ta-col-wrp']) }}
 >
     @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
         <a
             href="{{ $url ?: $recordUrl }}"
-            {!! $shouldOpenUrlInNewTab ? 'target="_blank"' : null !!}
+            @if ($shouldOpenUrlInNewTab) target="_blank" @endif
             class="{{ $columnClasses }}"
         >
             {{ $slot }}
@@ -51,7 +51,7 @@
             } elseif ($action) {
                 $wireClickAction = "callTableColumnAction('{$name}', '{$recordKey}')";
             } else {
-                if ($this->getCachedTableAction($recordAction)) {
+                if ($this->getTable()->getAction($recordAction)) {
                     $wireClickAction = "mountTableAction('{$recordAction}', '{$recordKey}')";
                 } else {
                     $wireClickAction = "{$recordAction}('{$recordKey}')";
@@ -63,7 +63,6 @@
             wire:click="{{ $wireClickAction }}"
             wire:target="{{ $wireClickAction }}"
             wire:loading.attr="disabled"
-            wire:loading.class="cursor-wait opacity-70"
             type="button"
             class="{{ $columnClasses }}"
         >

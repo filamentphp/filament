@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Sisältö kutistettu',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kloonaa',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Lisää :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Sijoita',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Poista',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Siirrä',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Siirrä alas',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Siirrä ylös',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sulje',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Avaa',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Poista valinta kaikista',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Lisää rivi',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Sisältö suljettu',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Lisää :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Poista',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Siirrä',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kloonaa',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Siirrä alas',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Siirrä ylös',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sulje',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Avaa',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Linkitä',
                     'unlink' => 'Poista linkki',
                 ],
@@ -204,6 +200,7 @@ return [
             'ordered_list' => 'Luettelo',
             'redo' => 'Toista',
             'strike' => 'Yliviivaus',
+            'underline' => 'Alleviivaus',
             'undo' => 'Peruuta',
         ],
 
@@ -258,7 +255,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Edellinen',

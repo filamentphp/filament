@@ -13,10 +13,21 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
     use Concerns\HasPlaceholder;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.tags-input';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.tags-input';
 
     protected string | Closure | null $separator = null;
 
+    /**
+     * @var array<string> | Closure
+     */
+    protected array | Closure $splitKeys = [];
+
+    /**
+     * @var array<string> | Arrayable | Closure | null
+     */
     protected array | Arrayable | Closure | null $suggestions = null;
 
     protected function setUp(): void
@@ -53,7 +64,7 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
             return $state;
         });
 
-        $this->placeholder(__('forms::components.tags_input.placeholder'));
+        $this->placeholder(__('filament-forms::components.tags_input.placeholder'));
     }
 
     public function separator(string | Closure | null $separator = ','): static
@@ -63,6 +74,19 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         return $this;
     }
 
+    /**
+     * @param  array<string> | Closure  $keys
+     */
+    public function splitKeys(array | Closure $keys): static
+    {
+        $this->splitKeys = $keys;
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string> | Arrayable | Closure  $suggestions
+     */
     public function suggestions(array | Arrayable | Closure $suggestions): static
     {
         $this->suggestions = $suggestions;
@@ -75,6 +99,17 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         return $this->evaluate($this->separator);
     }
 
+    /**
+     * @return array<string>
+     */
+    public function getSplitKeys(): array
+    {
+        return $this->evaluate($this->splitKeys) ?? [];
+    }
+
+    /**
+     * @return array<string>
+     */
     public function getSuggestions(): array
     {
         $suggestions = $this->evaluate($this->suggestions ?? []);

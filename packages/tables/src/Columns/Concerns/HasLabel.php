@@ -4,7 +4,6 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Str;
 
 trait HasLabel
 {
@@ -28,7 +27,7 @@ trait HasLabel
 
     public function getLabel(): string | Htmlable
     {
-        $label = $this->evaluate($this->label) ?? (string) Str::of($this->getName())
+        $label = $this->evaluate($this->label) ?? (string) str($this->getName())
             ->beforeLast('.')
             ->afterLast('.')
             ->kebab()

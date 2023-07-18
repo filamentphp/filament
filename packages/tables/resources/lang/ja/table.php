@@ -4,19 +4,15 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'あと:count個あります',
-        ],
-
-        'messages' => [
-            'copied' => 'コピーしました',
+        'text' => [
+            'more_list_items' => 'あと:count個あります',
         ],
 
     ],
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => '検索',
             'placeholder' => '検索',
         ],
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => ':pageページへ移動',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'レコードの並び替えを終了',
@@ -75,7 +71,7 @@ return [
             'label' => '絞り込み',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => '操作を開く',
         ],
 
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => '絞り込みを解除',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => '1件選択済み|:count件選択済み',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => ':count件全て選択',

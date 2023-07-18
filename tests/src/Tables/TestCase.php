@@ -8,8 +8,9 @@ class TestCase extends BaseTestCase
 {
     protected function getPackageProviders($app): array
     {
-        return array_merge(parent::getPackageProviders($app), [
+        return [
+            ...parent::getPackageProviders($app),
             TablesServiceProvider::class,
-        ]);
+        ];
     }
 }

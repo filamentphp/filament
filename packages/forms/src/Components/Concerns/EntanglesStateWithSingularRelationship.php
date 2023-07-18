@@ -24,10 +24,10 @@ trait EntanglesStateWithSingularRelationship
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
-    public function relationship(string $relationshipName): static
+    public function relationship(string $name, bool | Closure $condition = true): static
     {
-        $this->relationship = $relationshipName;
-        $this->statePath($relationshipName);
+        $this->relationship = $name;
+        $this->statePath($name);
 
         $this->loadStateFromRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component) {
             $component->clearCachedExistingRecord();
@@ -35,16 +35,22 @@ trait EntanglesStateWithSingularRelationship
             $component->fillFromRelationship();
         });
 
-        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
-            $relationship = $component->getRelationship();
+        $this->saveRelationshipsBeforeChildrenUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire) use ($condition): void {
+            $record = $component->getCachedExistingRecord();
 
-            if ($relationship instanceof BelongsTo) {
+            if (! $component->evaluate($condition)) {
+                $record?->delete();
+
                 return;
             }
 
-            $record = $component->getCachedExistingRecord();
-
             if ($record) {
+                return;
+            }
+
+            $relationship = $component->getRelationship();
+
+            if ($relationship instanceof BelongsTo) {
                 return;
             }
 
@@ -53,33 +59,37 @@ trait EntanglesStateWithSingularRelationship
 
             $relatedModel = $component->getRelatedModel();
 
-            $record = new $relatedModel();
+            $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
 
-            $activeLocale = $livewire->getActiveFormLocale();
-
-            if ($activeLocale && method_exists($record, 'setLocale')) {
-                $record->setLocale($activeLocale);
+            if ($translatableContentDriver) {
+                $record = $translatableContentDriver->makeRecord($relatedModel, $data);
+            } else {
+                $record = new $relatedModel();
+                $record->fill($data);
             }
 
-            $record->fill($data);
             $relationship->save($record);
 
             $component->cachedExistingRecord($record);
         });
 
-        $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire): void {
+        $this->saveRelationshipsUsing(static function (Component | CanEntangleWithSingularRelationships $component, HasForms $livewire) use ($condition): void {
+            if (! $component->evaluate($condition)) {
+                return;
+            }
+
             $data = $component->getChildComponentContainer()->getState(shouldCallHooksBefore: false);
 
             $record = $component->getCachedExistingRecord();
 
-            $activeLocale = $livewire->getActiveFormLocale();
+            $translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver();
 
             if ($record) {
                 $data = $component->mutateRelationshipDataBeforeSave($data);
 
-                $activeLocale && method_exists($record, 'setLocale') && $record->setLocale($activeLocale);
-
-                $record->fill($data)->save();
+                $translatableContentDriver ?
+                    $translatableContentDriver->updateRecord($record, $data) :
+                    $record->fill($data)->save();
 
                 return;
             }
@@ -94,13 +104,16 @@ trait EntanglesStateWithSingularRelationship
 
             $relatedModel = $component->getRelatedModel();
 
-            $record = new $relatedModel();
-
-            if ($activeLocale && method_exists($record, 'setLocale')) {
-                $record->setLocale($activeLocale);
+            if ($translatableContentDriver) {
+                $record = $translatableContentDriver->makeRecord($relatedModel, $data);
+            } else {
+                $record = new $relatedModel();
+                $record->fill($data);
             }
 
-            $relationship->associate($record->create($data));
+            $record->save();
+
+            $relationship->associate($record);
             $relationship->getParent()->save();
 
             $component->cachedExistingRecord($record);
@@ -128,23 +141,21 @@ trait EntanglesStateWithSingularRelationship
         $this->getChildComponentContainer()->fill($data);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getStateFromRelatedRecord(Model $record): array
     {
-        $state = $record->attributesToArray();
-
-        if (
-            ($activeLocale = $this->getLivewire()->getActiveFormLocale()) &&
-            method_exists($record, 'getTranslatableAttributes') &&
-            method_exists($record, 'getTranslation')
-        ) {
-            foreach ($record->getTranslatableAttributes() as $attribute) {
-                $state[$attribute] = $record->getTranslation($attribute, $activeLocale);
-            }
+        if ($translatableContentDriver = $this->getLivewire()->makeFilamentTranslatableContentDriver()) {
+            return $translatableContentDriver->getRecordAttributesToArray($record);
         }
 
-        return $state;
+        return $record->attributesToArray();
     }
 
+    /**
+     * @param  array-key  $key
+     */
     public function getChildComponentContainer($key = null): ComponentContainer
     {
         $container = parent::getChildComponentContainer($key);
@@ -213,6 +224,10 @@ trait EntanglesStateWithSingularRelationship
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeCreate(array $data): array
     {
         if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
@@ -231,6 +246,10 @@ trait EntanglesStateWithSingularRelationship
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeFill(array $data): array
     {
         if ($this->mutateRelationshipDataBeforeFillUsing instanceof Closure) {
@@ -249,6 +268,10 @@ trait EntanglesStateWithSingularRelationship
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
     public function mutateRelationshipDataBeforeSave(array $data): array
     {
         if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {

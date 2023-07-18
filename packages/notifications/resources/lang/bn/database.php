@@ -6,7 +6,7 @@ return [
 
         'heading' => 'বিজ্ঞপ্তি',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'পরিষ্কার',

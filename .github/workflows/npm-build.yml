@@ -3,8 +3,9 @@ name: npm-build
 on:
   pull_request:
     branches:
-      - 2.x
-    types: [closed]
+      - 3.x
+    types:
+      - closed
 
 jobs:
   npm-build:
@@ -12,9 +13,9 @@ jobs:
     if: github.event.pull_request.merged == true
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
-          ref: 2.x
+          ref: 3.x
       - name: Setup Node
         uses: actions/setup-node@v2
       - name: Install dependencies
@@ -26,6 +27,6 @@ jobs:
       - name: Commit changes
         uses: stefanzweifel/git-auto-commit-action@v4
         with:
-          branch: 2.x
+          branch: 3.x
           commit_message: >
             chore: build assets

@@ -4,19 +4,15 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'এবং আরো :count',
-        ],
-
-        'messages' => [
-            'copied' => 'অনুকৃত',
+        'text' => [
+            'more_list_items' => 'এবং আরো :count',
         ],
 
     ],
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'খুঁজুন',
             'placeholder' => 'খুঁজুন',
         ],
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => ':page পৃষ্টায় যান',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'রেকর্ড পুনর্বিন্যাস সম্পন্ন করুন',
@@ -75,7 +71,7 @@ return [
             'label' => 'অনুসন্ধান করুন',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'কার্যক্রম গুলো দেখুন',
         ],
 
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'অনুসন্ধান সরান',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => '১ টি রেকর্ড নির্বাচিত। | :count টি রেকর্ড নির্বাচিত।',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'সব নির্বাচিত করুন',

@@ -4,6 +4,8 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\MorphToSelect\Type;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class MorphToSelect extends Component
@@ -14,12 +16,18 @@ class MorphToSelect extends Component
     use Concerns\HasLoadingMessage;
     use Concerns\HasName;
 
-    protected string $view = 'forms::components.fieldset';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.fieldset';
 
     public bool | Closure $isRequired = false;
 
     protected int | Closure $optionsLimit = 50;
 
+    /**
+     * @var array<Type> | Closure
+     */
     public array | Closure $types = [];
 
     final public function __construct(string $name)
@@ -35,6 +43,9 @@ class MorphToSelect extends Component
         return $static;
     }
 
+    /**
+     * @return array<Component>
+     */
     public function getChildComponents(): array
     {
         $relationship = $this->getRelationship();
@@ -45,22 +56,22 @@ class MorphToSelect extends Component
         $isRequired = $this->isRequired();
 
         /** @var ?Type $selectedType */
-        $selectedType = $types[$this->evaluate(fn (Closure $get): ?string => $get($typeColumn))] ?? null;
+        $selectedType = $types[$this->evaluate(fn (Get $get): ?string => $get($typeColumn))] ?? null;
 
         return [
             Select::make($typeColumn)
                 ->label($this->getLabel())
-                ->disableLabel()
+                ->hiddenLabel()
                 ->options(array_map(
                     fn (Type $type): string => $type->getLabel(),
                     $types,
                 ))
                 ->required($isRequired)
-                ->reactive()
-                ->afterStateUpdated(fn (Closure $set) => $set($keyColumn, null)),
+                ->live()
+                ->afterStateUpdated(fn (Set $set) => $set($keyColumn, null)),
             Select::make($keyColumn)
                 ->label($selectedType?->getLabel())
-                ->disableLabel()
+                ->hiddenLabel()
                 ->options($selectedType?->getOptionsUsing)
                 ->getSearchResultsUsing($selectedType?->getSearchResultsUsing)
                 ->getOptionLabelUsing($selectedType?->getOptionLabelUsing)
@@ -92,6 +103,9 @@ class MorphToSelect extends Component
         return $this;
     }
 
+    /**
+     * @param  array<Type> | Closure  $types
+     */
     public function types(array | Closure $types): static
     {
         $this->types = $types;
@@ -104,6 +118,9 @@ class MorphToSelect extends Component
         return $this->getModelInstance()->{$this->getName()}();
     }
 
+    /**
+     * @return array<string, Type>
+     */
     public function getTypes(): array
     {
         $types = [];

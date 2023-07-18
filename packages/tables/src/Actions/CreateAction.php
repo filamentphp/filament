@@ -3,9 +3,10 @@
 namespace Filament\Tables\Actions;
 
 use Closure;
-use Filament\Forms\ComponentContainer;
-use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Forms\Form;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Arr;
@@ -13,9 +14,8 @@ use Illuminate\Support\Arr;
 class CreateAction extends Action
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
-    protected bool | Closure $isCreateAnotherDisabled = false;
+    protected bool | Closure $canCreateAnother = true;
 
     public static function getDefaultName(): ?string
     {
@@ -26,43 +26,59 @@ class CreateAction extends Action
     {
         parent::setUp();
 
-        $this->label(fn (): string => __('filament-support::actions/create.single.label', ['label' => $this->getModelLabel()]));
+        $this->label(fn (): string => __('filament-actions::create.single.label', ['label' => $this->getModelLabel()]));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/create.single.modal.heading', ['label' => $this->getModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::create.single.modal.heading', ['label' => $this->getModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/create.single.modal.actions.create.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
-        $this->extraModalActions(function (): array {
-            return $this->isCreateAnotherDisabled() ? [] : [
-                $this->makeExtraModalAction('createAnother', ['another' => true])
-                    ->label(__('filament-support::actions/create.single.modal.actions.create_another.label')),
-            ];
+        $this->extraModalFooterActions(function (): array {
+            return $this->canCreateAnother() ? [
+                $this->makeModalSubmitAction('createAnother', ['another' => true])
+                    ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
+            ] : [];
         });
 
-        $this->successNotificationTitle(__('filament-support::actions/create.single.messages.created'));
+        $this->successNotificationTitle(__('filament-actions::create.single.messages.created'));
 
-        $this->button();
-
-        $this->action(function (array $arguments, ComponentContainer $form, HasTable $livewire): void {
+        $this->action(function (array $arguments, Form $form, HasTable $livewire): void {
             $model = $this->getModel();
 
-            $record = $this->process(function (array $data) use ($model): Model {
-                $relationship = $this->getRelationship();
+            $record = $this->process(function (array $data, Table $table) use ($model): Model {
+                $relationship = $table->getRelationship();
 
-                if (! $relationship) {
-                    return $model::create($data);
-                }
+                $pivotData = [];
 
                 if ($relationship instanceof BelongsToMany) {
                     $pivotColumns = $relationship->getPivotColumns();
 
-                    return $relationship->create(
-                        Arr::except($data, $pivotColumns),
-                        Arr::only($data, $pivotColumns),
-                    );
+                    $pivotData = Arr::only($data, $pivotColumns);
+                    $data = Arr::except($data, $pivotColumns);
                 }
 
-                return $relationship->create($data);
+                if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
+                    $record = $translatableContentDriver->makeRecord($model, $data);
+                } else {
+                    $record = new $model();
+                    $record->fill($data);
+                }
+
+                if (! $relationship) {
+                    $record->save();
+
+                    return $record;
+                }
+
+                if ($relationship instanceof BelongsToMany) {
+                    $relationship->save($record, $pivotData);
+
+                    return $record;
+                }
+
+                /** @phpstan-ignore-next-line */
+                $relationship->save($record);
+
+                return $record;
             });
 
             $this->record($record);
@@ -91,15 +107,25 @@ class CreateAction extends Action
         });
     }
 
-    public function disableCreateAnother(bool | Closure $condition = true): static
+    public function createAnother(bool | Closure $condition = true): static
     {
-        $this->isCreateAnotherDisabled = $condition;
+        $this->canCreateAnother = $condition;
 
         return $this;
     }
 
-    public function isCreateAnotherDisabled(): bool
+    /**
+     * @deprecated Use `createAnother()` instead.
+     */
+    public function disableCreateAnother(bool | Closure $condition = true): static
     {
-        return $this->evaluate($this->isCreateAnotherDisabled);
+        $this->createAnother(fn (CreateAction $action): bool => ! $action->evaluate($condition));
+
+        return $this;
+    }
+
+    public function canCreateAnother(): bool
+    {
+        return (bool) $this->evaluate($this->canCreateAnother);
     }
 }

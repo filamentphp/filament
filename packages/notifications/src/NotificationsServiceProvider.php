@@ -2,12 +2,16 @@
 
 namespace Filament\Notifications;
 
-use Filament\Notifications\Http\Livewire\Notifications;
+use Filament\Notifications\Livewire\DatabaseNotifications;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Testing\TestsNotifications;
+use Filament\Support\Assets\Js;
+use Filament\Support\Facades\FilamentAsset;
 use Livewire\Component;
+use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
-use Livewire\Response;
-use Livewire\Testing\TestableLivewire;
+use function Livewire\on;
+use function Livewire\store;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -16,33 +20,37 @@ class NotificationsServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('notifications')
-            ->hasCommands(Commands\InstallCommand::class)
-            ->hasConfigFile()
+            ->name('filament-notifications')
             ->hasTranslations()
             ->hasViews();
     }
 
     public function packageBooted(): void
     {
+        FilamentAsset::register([
+            Js::make('notifications', __DIR__ . '/../dist/index.js'),
+        ], 'filament/notifications');
+
+        Livewire::component('database-notifications', DatabaseNotifications::class);
+
         Livewire::component('notifications', Notifications::class);
 
-        Livewire::listen('component.dehydrate', function (Component $component, Response $response): Response {
+        on('dehydrate', function (Component $component) {
             if (! Livewire::isLivewireRequest()) {
-                return $response;
+                return;
             }
 
-            if ($component->redirectTo !== null) {
-                return $response;
+            if (store($component)->has('redirect')) {
+                return;
             }
 
-            if (count(session()->get('filament.notifications') ?? []) > 0) {
-                $component->emit('notificationsSent');
+            if (count(session()->get('filament.notifications') ?? []) <= 0) {
+                return;
             }
 
-            return $response;
+            $component->dispatch('notificationsSent');
         });
 
-        TestableLivewire::mixin(new TestsNotifications());
+        Testable::mixin(new TestsNotifications());
     }
 }

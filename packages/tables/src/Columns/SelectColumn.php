@@ -3,7 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Filament\Forms\Components\Concerns\CanDisableOptions;
-use Filament\Forms\Components\Concerns\CanDisablePlaceholderSelection;
+use Filament\Forms\Components\Concerns\CanSelectPlaceholder;
 use Filament\Forms\Components\Concerns\HasExtraInputAttributes;
 use Filament\Forms\Components\Concerns\HasOptions;
 use Filament\Forms\Components\Concerns\HasPlaceholder;
@@ -16,28 +16,34 @@ class SelectColumn extends Column implements Editable
         getRules as baseGetRules;
     }
     use CanDisableOptions;
-    use CanDisablePlaceholderSelection;
+    use CanSelectPlaceholder;
     use Concerns\CanUpdateState;
     use HasExtraInputAttributes;
     use HasOptions;
     use HasPlaceholder;
 
-    protected string $view = 'tables::columns.select-column';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-tables::columns.select-column';
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->disableClick();
+        $this->disabledClick();
 
-        $this->placeholder(__('forms::components.select.placeholder'));
+        $this->placeholder(__('filament-forms::components.select.placeholder'));
     }
 
+    /**
+     * @return array<array-key>
+     */
     public function getRules(): array
     {
-        return array_merge(
-            $this->baseGetRules(),
-            [Rule::in(array_keys($this->getOptions()))],
-        );
+        return [
+            ...$this->baseGetRules(),
+            Rule::in(array_keys($this->getOptions())),
+        ];
     }
 }

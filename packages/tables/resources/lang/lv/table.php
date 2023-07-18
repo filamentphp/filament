@@ -4,17 +4,21 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'un :count vēl',
-        ],
-
-        'messages' => [
-            'copied' => 'Kopēts',
+        'text' => [
+            'more_list_items' => 'un :count vēl',
         ],
 
     ],
 
     'fields' => [
+
+        'bulk_select_page' => [
+            'label' => 'Atlasīt/noņemt atlasi visām lielapjoma darbībām.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Atlasīt/noņemt atlasi priekš :key lielapjoma darbībām.',
+        ],
 
         'search_query' => [
             'label' => 'Meklēt',
@@ -27,7 +31,7 @@ return [
 
         'label' => 'Lapdales navigācija',
 
-        'overview' => 'Rāda :first līdz :last no :total rezultātiem',
+        'overview' => '{1} Rāda 1 rezultātu|[2,*] Rāda :first līdz :last no :total rezultātiem',
 
         'fields' => [
 
@@ -43,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Doties uz lapu :page',
@@ -61,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Pabeigt ierakstu kārtošanu',
@@ -91,7 +95,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Noņemt filtru',
@@ -138,7 +142,7 @@ return [
 
         'selected_count' => 'Izvēlēts 1 ieraksts.|:count ieraksti izvēlēti.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Atlasīt visus :count',

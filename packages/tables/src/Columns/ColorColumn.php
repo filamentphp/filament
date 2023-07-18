@@ -6,5 +6,8 @@ class ColorColumn extends Column
 {
     use Concerns\CanBeCopied;
 
-    protected string $view = 'tables::columns.color-column';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-tables::columns.color-column';
 }

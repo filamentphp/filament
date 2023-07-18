@@ -4,6 +4,7 @@ namespace Filament\Support\Commands\Concerns;
 
 use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
@@ -32,7 +33,7 @@ trait CanReadModelSchemas
                 ->getDoctrineSchemaManager()
                 ->listTableDetails($model->getTable());
         } catch (Throwable $exception) {
-            $this->warn("Unable to read table schema for model [{$modelClass}]: {$exception->getMessage()}");
+            $this->components->warn("Unable to read table schema for model [{$modelClass}]: {$exception->getMessage()}");
 
             return null;
         }
@@ -40,13 +41,15 @@ trait CanReadModelSchemas
 
     protected function guessBelongsToRelationshipName(AbstractAsset $column, string $model): ?string
     {
-        $modelReflection = invade(app($model));
-        $guessedRelationshipName = Str::of($column->getName())->beforeLast('_id');
-        $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+        /** @var Model $modelInstance */
+        $modelInstance = app($model);
+        $modelInstanceReflection = invade($modelInstance);
+        $guessedRelationshipName = str($column->getName())->beforeLast('_id');
+        $hasRelationship = $modelInstanceReflection->reflected->hasMethod($guessedRelationshipName);
 
         if (! $hasRelationship) {
             $guessedRelationshipName = $guessedRelationshipName->camel();
-            $hasRelationship = $modelReflection->reflected->hasMethod($guessedRelationshipName);
+            $hasRelationship = $modelInstanceReflection->reflected->hasMethod($guessedRelationshipName);
         }
 
         if (! $hasRelationship) {
@@ -54,7 +57,7 @@ trait CanReadModelSchemas
         }
 
         try {
-            $type = $modelReflection->reflected->getMethod($guessedRelationshipName)->getReturnType();
+            $type = $modelInstanceReflection->reflected->getMethod($guessedRelationshipName)->getReturnType();
 
             if (
                 (! $type) ||
@@ -72,7 +75,7 @@ trait CanReadModelSchemas
 
     protected function guessBelongsToRelationshipTableName(AbstractAsset $column): ?string
     {
-        $tableName = Str::of($column->getName())->beforeLast('_id');
+        $tableName = str($column->getName())->beforeLast('_id');
 
         if (Schema::hasTable(Str::plural($tableName))) {
             return Str::plural($tableName);

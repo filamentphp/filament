@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'und :count weitere',
-        ],
-
-        'messages' => [
-            'copied' => 'Kopiert',
+        'text' => [
+            'more_list_items' => 'und :count weitere',
         ],
 
     ],
@@ -24,7 +20,7 @@ return [
             'label' => 'Eintrag :key für Massenaktion auswählen/abwählen.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Suche',
             'placeholder' => 'Suche',
         ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Weiter zur Seite :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Sortieren beenden',
@@ -83,7 +79,7 @@ return [
             'label' => 'Filtern',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Aktionen öffnen',
         ],
 
@@ -97,19 +93,11 @@ return [
 
         'heading' => 'Keine Datensätze gefunden',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Suche zurücksetzen',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Filter löschen',
@@ -156,7 +144,7 @@ return [
 
         'selected_count' => '1 Datensatz ausgewählt.|:count Datensätze ausgewählt.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Alle :count Datensätze auswählen',

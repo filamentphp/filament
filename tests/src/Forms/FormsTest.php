@@ -1,6 +1,7 @@
 <?php
 
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 use Filament\Tests\Forms\Fixtures\Livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
@@ -89,23 +90,24 @@ it('can have visible fields on multiple forms', function () {
 
 class TestComponentWithForm extends Livewire
 {
-    public function getFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
-            TextInput::make('title'),
+        return $form
+            ->schema([
+                TextInput::make('title'),
 
-            TextInput::make('nested.input'),
+                TextInput::make('nested.input'),
 
-            TextInput::make('disabled')
-                ->disabled(),
+                TextInput::make('disabled')
+                    ->disabled(),
 
-            TextInput::make('enabled'),
+                TextInput::make('enabled'),
 
-            TextInput::make('hidden')
-                ->hidden(),
+                TextInput::make('hidden')
+                    ->hidden(),
 
-            TextInput::make('visible'),
-        ];
+                TextInput::make('visible'),
+            ]);
     }
 
     public function render(): View
@@ -116,20 +118,35 @@ class TestComponentWithForm extends Livewire
 
 class TestComponentWithMultipleForms extends Livewire
 {
+    public function mount(): void
+    {
+        $this->fooForm->fill();
+        $this->barForm->fill();
+    }
+
     protected function getForms(): array
     {
         return [
-            'fooForm' => $this->makeForm()
-                ->schema($this->getSchemaForForms())
-                ->statePath('data'),
-
-            'barForm' => $this->makeForm()
-                ->schema($this->getSchemaForForms())
-                ->statePath('data'),
+            'fooForm',
+            'barForm',
         ];
     }
 
-    private function getSchemaForForms(): array
+    public function fooForm(Form $form): Form
+    {
+        return $form
+            ->schema($this->getSchemaForForms())
+            ->statePath('data');
+    }
+
+    public function barForm(Form $form): Form
+    {
+        return $form
+            ->schema($this->getSchemaForForms())
+            ->statePath('data');
+    }
+
+    protected function getSchemaForForms(): array
     {
         return [
             TextInput::make('title'),

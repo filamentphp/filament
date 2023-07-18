@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanCustomizeProcess;
 use Illuminate\Database\Eloquent\Model;
 
 class RestoreAction extends Action
@@ -18,19 +18,21 @@ class RestoreAction extends Action
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/restore.single.label'));
+        $this->label(__('filament-actions::restore.single.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/restore.single.modal.heading', ['label' => $this->getRecordTitle()]));
+        $this->modalHeading(fn (): string => __('filament-actions::restore.single.modal.heading', ['label' => $this->getRecordTitle()]));
 
-        $this->modalButton(__('filament-support::actions/restore.single.modal.actions.restore.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::restore.single.modal.actions.restore.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/restore.single.messages.restored'));
+        $this->successNotificationTitle(__('filament-actions::restore.single.messages.restored'));
 
-        $this->color('secondary');
+        $this->color('gray');
 
-        $this->icon('heroicon-s-reply');
+        $this->icon('heroicon-m-arrow-uturn-left');
 
         $this->requiresConfirmation();
+
+        $this->modalIcon('heroicon-o-arrow-uturn-left');
 
         $this->action(function (Model $record): void {
             if (! method_exists($record, 'restore')) {

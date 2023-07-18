@@ -4,19 +4,15 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'وە :count زیاتر',
-        ],
-
-        'messages' => [
-            'copied' => 'لەبەرگیرا',
+        'text' => [
+            'more_list_items' => 'وە :count زیاتر',
         ],
 
     ],
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'گەڕان',
             'placeholder' => 'گەڕان',
         ],
@@ -40,7 +36,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'بڕۆ بۆ پەڕەی :page',
@@ -58,7 +54,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'کۆتایی بە ڕێکخستن ب‌هێنە',
@@ -72,7 +68,7 @@ return [
             'label' => 'فلتەر',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'کردنەوەی کارەکان',
         ],
 
@@ -88,7 +84,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'سرینەوەی فلتەر',
@@ -135,7 +131,7 @@ return [
 
         'selected_count' => '١ تۆمار دیاری کراوە.|:count تۆمار دیاری کراوە.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'دیاریکردنی هەموو :count تۆمارەکان',

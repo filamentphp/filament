@@ -1,7 +1,13 @@
-<div {{ $attributes->merge($getExtraAttributes(), escape: false)->class([
-    'filament-tables-image-column',
-    'px-4 py-3' => ! $isInline(),
-]) }}>
+<div
+    {{
+        $attributes
+            ->merge($getExtraAttributes(), escape: false)
+            ->class([
+                'fi-ta-image',
+                'px-4 py-3' => ! $isInline(),
+            ])
+    }}
+>
     @php
         $images = $getImages();
         $isCircular = $isCircular();
@@ -30,7 +36,7 @@
 
     @if ($images)
         <div class="flex items-center space-x-2">
-            <div 
+            <div
                 @class([
                     'flex',
                     match ($overlap) {
@@ -47,7 +53,7 @@
                     @php
                         $imageCount ++;
                     @endphp
-                    
+
                     <img
                         src="{{ $path }}"
                         style="
@@ -55,8 +61,7 @@
                             @if ($width) width: {{ $width }}; @endif
                         "
                         {{ $getExtraImgAttributeBag()->class([
-                            'max-w-none ring-white object-cover object-center',
-                            'dark:ring-gray-800' => config('tables.dark_mode'),
+                            'max-w-none ring-white object-cover object-center dark:ring-gray-800',
                             'rounded-full' => $isCircular,
                             $ring,
                         ]) }}
@@ -64,14 +69,13 @@
                 @endforeach
 
                 @if ($shouldShowRemaining() && (! $shouldShowRemainingAfterStack()) && ($imageCount < count($images)))
-                    <div 
+                    <div
                         style="
                             @if ($height) height: {{ $height }}; @endif
                             @if ($width) width: {{ $width }}; @endif
                         "
                         @class([
-                            'flex items-center justify-center bg-gray-100 text-gray-500 ring-white',
-                            'dark:bg-gray-600 dark:text-gray-300 dark:ring-gray-800' => config('tables.dark_mode'),
+                            'flex items-center justify-center bg-gray-100 text-gray-500 ring-white dark:bg-gray-600 dark:text-gray-300 dark:ring-gray-800',
                             'rounded-full' => $isCircular(),
                             $remainingTextSize,
                             $ring,
@@ -84,12 +88,11 @@
                 @endif
 
             </div>
-            
+
             @if ($shouldShowRemaining() && $shouldShowRemainingAfterStack() && ($imageCount < count($images)))
-                <div 
+                <div
                     @class([
-                        'text-gray-500',
-                        'dark:text-gray-300' => config('tables.dark_mode'),
+                        'text-gray-500 dark:text-gray-300',
                         $remainingTextSize,
                     ])
                 >
@@ -120,7 +123,7 @@
                         'object-cover object-center' => $isCircular || $isSquare,
                     ]) }}
                 >
-        @endif
+           @endif
         </div>
     @endif
 </div>

@@ -29,11 +29,14 @@ trait SupportsFileUploadFields
         return false;
     }
 
-    public function getUploadedFileUrls(string $statePath): ?array
+    /**
+     * @return array<array{name: string, size: int, type: string, url: string} | null> | null
+     */
+    public function getUploadedFiles(string $statePath): ?array
     {
         foreach ($this->getComponents() as $component) {
             if ($component instanceof BaseFileUpload && $component->getStatePath() === $statePath) {
-                return $component->getUploadedFileUrls();
+                return $component->getUploadedFiles();
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
@@ -41,8 +44,8 @@ trait SupportsFileUploadFields
                     continue;
                 }
 
-                if ($url = $container->getUploadedFileUrls($statePath)) {
-                    return $url;
+                if ($files = $container->getUploadedFiles($statePath)) {
+                    return $files;
                 }
             }
         }
@@ -73,6 +76,9 @@ trait SupportsFileUploadFields
         return false;
     }
 
+    /**
+     * @param  array<array-key>  $fileKeys
+     */
     public function reorderUploadedFiles(string $statePath, array $fileKeys): bool
     {
         foreach ($this->getComponents() as $component) {

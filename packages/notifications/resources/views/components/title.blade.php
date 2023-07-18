@@ -1,8 +1,5 @@
 <div
-    @class([
-        'filament-notifications-title flex h-6 items-center text-sm font-medium text-gray-900',
-        'dark:text-gray-100' => config('notifications.dark_mode'),
-    ])
+    {{ $attributes->class(['fi-no-notification-title text-sm font-medium text-gray-950 dark:text-white']) }}
 >
     {{ $slot }}
 </div>

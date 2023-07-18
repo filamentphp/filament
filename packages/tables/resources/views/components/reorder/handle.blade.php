@@ -1,9 +1,15 @@
 <button
-    type="button"
-    {{ $attributes->class([
-        'filament-tables-reorder-handle text-gray-500 cursor-move transition group-hover:text-primary-500',
-        'dark:text-gray-400 dark:group-hover:text-primary-400' => config('tables.dark_mode'),
-    ]) }}
+    {{
+        $attributes
+            ->merge([
+                'type' => 'button',
+            ], escape: false)
+            ->class(['fi-ta-reorder-handle cursor-move text-gray-500 transition group-hover:text-primary-500 dark:text-gray-400 dark:group-hover:text-primary-400'])
+    }}
 >
-    <x-heroicon-s-menu class="block h-4 w-4" />
+    <x-filament::icon
+        name="heroicon-o-bars-3"
+        alias="tables::reorder.handle"
+        class="block h-4 w-4"
+    />
 </button>

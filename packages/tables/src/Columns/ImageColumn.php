@@ -41,7 +41,7 @@ class ImageColumn extends Column
     protected int | Closure | null $overlap = null;
 
     protected int | Closure | null $ring = null;
-    
+
     protected int | Closure | null $limit = null;
 
     protected bool | Closure $shouldShowRemaining = false;
@@ -270,7 +270,7 @@ class ImageColumn extends Column
     }
 
     public function getImages(): array
-    {        
+    {
         return collect($this->getState())
             ->filter(fn ($image) => $this->getImagePath($image) !== null)
             ->take($this->getLimit())

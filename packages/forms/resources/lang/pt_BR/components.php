@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Conteúdo recolhido',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonar',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Adicionar em :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Inserir',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Excluir',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mover',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Mover para baixo',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Mover para cima',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Recolher',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandir',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Desmarcar todos',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Adicionar linha',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Conteúdo recolhido',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Adicionar em :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Excluir',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonar',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mover',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Mover para baixo',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Mover para cima',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Recolher',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandir',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Voltar',

@@ -1,24 +1,16 @@
 ---
 title: Getting started
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-Column classes can be found in the `Filament\Tables\Columns` namespace.
+## Overview
 
-If you're using the columns in a Livewire component, you can put them in the `getTableColumns()` method:
-
-```php
-protected function getTableColumns(): array
-{
-    return [
-        // ...
-    ];
-}
-```
-
-If you're using them in admin panel resources or relation managers, you must put them in the `$table->columns()` method:
+Column classes can be found in the `Filament\Tables\Columns` namespace. You can put them inside the `$table->columns()` method:
 
 ```php
-public static function table(Table $table): Table
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
     return $table
         ->columns([
@@ -27,7 +19,7 @@ public static function table(Table $table): Table
 }
 ```
 
-Columns may be created using the static `make()` method, passing its name. The name of the column should correspond to a column or accessor on your model. You may use "dot syntax" to access columns within relationships.
+Columns may be created using the static `make()` method, passing its unique name. The name of the column should correspond to a column or accessor on your model. You may use "dot notation" to access columns within relationships.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -46,8 +38,6 @@ Static columns display data to the user:
 - [Text column](text)
 - [Icon column](icon)
 - [Image column](image)
-- [Badge column](badge)
-- [Tags column](tags)
 - [Color column](color)
 
 Editable columns allow the user to update data in the database without leaving the table:
@@ -66,15 +56,17 @@ By default, the label of the column, which is displayed in the header of the tab
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->label('Post title')
+TextColumn::make('title')
+    ->label('Post title')
 ```
 
-Optionally, you can have the label automatically translated by using the `translateLabel()` method:
+Optionally, you can have the label automatically translated [using Laravel's localization features](https://laravel.com/docs/localization) with the `translateLabel()` method:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->translateLabel() // Equivalent to `label(__('Title'))`
+TextColumn::make('title')
+    ->translateLabel() // Equivalent to `label(__('Title'))`
 ```
 
 ## Sorting
@@ -84,15 +76,19 @@ Columns may be sortable, by clicking on the column label. To make a column sorta
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->sortable()
+TextColumn::make('name')
+    ->sortable()
 ```
+
+<AutoScreenshot name="tables/columns/sortable" alt="Table with sortable column" version="3.x" />
 
 If you're using an accessor column, you may pass `sortable()` an array of database columns to sort by:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('full_name')->sortable(['first_name', 'last_name'])
+TextColumn::make('full_name')
+    ->sortable(['first_name', 'last_name'])
 ```
 
 You may customize how the sorting is applied to the Eloquent query using a callback:
@@ -109,47 +105,60 @@ TextColumn::make('full_name')
     })
 ```
 
-If a column is `sortable()`, you may choose to sort it by default using the `getDefaultTableSortColumn()` and `getDefaultTableSortDirection()` methods:
+## Sorting by default
+
+You may choose to sort a table by default if no other sort is applied. You can use the `defaultSort()` method for this:
 
 ```php
-protected function getDefaultTableSortColumn(): ?string
-{
-    return 'full_name';
-}
+use Filament\Tables\Table;
 
-protected function getDefaultTableSortDirection(): ?string
+public function table(Table $table): Table
 {
-    return 'asc';
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->defaultSort('stock', 'desc');
 }
 ```
 
 ### Persist sort in session
 
-To persist the sort in the user's session, override the `shouldPersistTableSortInSession()` method on the Livewire component:
+To persist the sorting in the user's session, use the `persistSortInSession()` method:
 
 ```php
-protected function shouldPersistTableSortInSession(): bool
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
 {
-    return true;
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistSortInSession();
 }
 ```
 
 ## Searching
 
-Columns may be searchable, by using the text input in the top right of the table. To make a column searchable, you must use the `searchable()` method:
+Columns may be searchable, by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->searchable()
+TextColumn::make('name')
+    ->searchable()
 ```
+
+<AutoScreenshot name="tables/columns/searchable" alt="Table with searchable column" version="3.x" />
 
 If you're using an accessor column, you may pass `searchable()` an array of database columns to search within:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('full_name')->searchable(['first_name', 'last_name'])
+TextColumn::make('full_name')
+    ->searchable(['first_name', 'last_name'])
 ```
 
 You may customize how the search is applied to the Eloquent query using a callback:
@@ -168,50 +177,59 @@ TextColumn::make('full_name')
 
 ### Searching individually
 
-You can choose to enable a per-column search input using the `isIndividual` parameter:
+You can choose to enable a per-column search input field using the `isIndividual` parameter:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->searchable(isIndividual: true)
+TextColumn::make('name')
+    ->searchable(isIndividual: true)
 ```
 
-If you use the `isIndividual` parameter, you may still search that column using the main "global" search input for the entire table.
+<AutoScreenshot name="tables/columns/individually-searchable" alt="Table with individually searchable column" version="3.x" />
+
+If you use the `isIndividual` parameter, you may still search that column using the main "global" search input field for the entire table.
 
 To disable that functionality while still preserving the individual search functionality, you need the `isGlobal` parameter:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->searchable(isIndividual: true, isGlobal: false)
+TextColumn::make('title')
+    ->searchable(isIndividual: true, isGlobal: false)
 ```
 
 You may optionally persist the searches in the query string:
 
 ```php
-protected $queryString = [
-    // ...
-    'tableColumnSearchQueries',
-];
+use Livewire\Attributes\Url;
+
+/**
+ * @var array<string, string | array<string, string | null> | null>
+ */
+#[Url]
+public array $tableColumnSearches = [];
 ```
 
 ### Persist search in session
 
-To persist the table or individual column search in the user's session, override the `shouldPersistTableSearchInSession()` or `shouldPersistTableColumnSearchInSession()` method on the Livewire component:
+To persist the table or individual column search in the user's session, use the `persistSearchInSession()` or `persistColumnSearchInSession()` method:
 
 ```php
-protected function shouldPersistTableSearchInSession(): bool
-{
-    return true;
-}
+use Filament\Tables\Table;
 
-protected function shouldPersistTableColumnSearchInSession(): bool
+public function table(Table $table): Table
 {
-    return true;
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->persistSearchInSession()
+        ->persistColumnSearchesInSession();
 }
 ```
 
-## Cell actions and URLs
+## Column actions and URLs
 
 When a cell is clicked, you may run an "action", or open a URL.
 
@@ -224,9 +242,7 @@ use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
     ->action(function (Post $record): void {
-        $this->dispatchBrowserEvent('open-post-edit-modal', [
-            'post' => $record->getKey(),
-        ]);
+        $this->dispatch('open-post-edit-modal', post: $record->getKey());
     })
 ```
 
@@ -243,9 +259,7 @@ TextColumn::make('title')
         Action::make('select')
             ->requiresConfirmation()
             ->action(function (Post $record): void {
-                $this->dispatchBrowserEvent('select-post', [
-                    'post' => $record->getKey(),
-                ]);
+                $this->dispatch('select-post', post: $record->getKey());
             }),
     )
 ```
@@ -280,7 +294,8 @@ To set a default value for fields with a `null` state, you may use the `default(
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')->default('Untitled')
+TextColumn::make('title')
+    ->default('Untitled')
 ```
 
 ## Hiding columns
@@ -290,9 +305,11 @@ To hide a column conditionally, you may use the `hidden()` and `visible()` metho
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('role')->hidden(! auth()->user()->isAdmin())
+TextColumn::make('role')
+    ->hidden(! auth()->user()->isAdmin())
 // or
-TextColumn::make('role')->visible(auth()->user()->isAdmin())
+TextColumn::make('role')
+    ->visible(auth()->user()->isAdmin())
 ```
 
 ### Toggling column visibility
@@ -302,33 +319,59 @@ Users may hide or show columns themselves in the table. To make a column togglea
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('id')->toggleable()
+TextColumn::make('email')
+    ->toggleable()
 ```
+
+<AutoScreenshot name="tables/columns/toggleable" alt="Table with toggleable column" version="3.x" />
+
+#### Making toggleable columns hidden by default
 
 By default, toggleable columns are visible. To make them hidden instead:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('id')->toggleable(isToggledHiddenByDefault: true)
+TextColumn::make('id')
+    ->toggleable(isToggledHiddenByDefault: true)
+```
+
+#### Customizing the toggle columns dropdown trigger action
+
+To customize the toggle dropdown trigger button, you may use the `toggleColumnsTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+
+```php
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->filters([
+            // ...
+        ])
+        ->toggleColumnsTriggerAction(
+            fn (Action $action) => $action
+                ->button()
+                ->label('Toggle columns'),
+        );
+}
 ```
 
 ## Calculated state
 
 Sometimes you need to calculate the state of a column, instead of directly reading it from a database column.
 
-By passing a callback function to the `getStateUsing()` method, you can customize the returned state for that column based on the `$record`:
+By passing a callback function to the `state()` method, you can customize the returned state for that column based on the `$record`:
 
 ```php
 Tables\Columns\TextColumn::make('amount_including_vat')
-    ->getStateUsing(function (Model $record): float {
+    ->state(function (Model $record): float {
         return $record->amount * (1 + $record->vat_rate);
     })
 ```
 
 ## Tooltips
-
-> If you want to use tooltips outside of the admin panel, make sure you have [`@ryangjchandler/alpine-tooltip` installed](https://github.com/ryangjchandler/alpine-tooltip#installation) in your app, including [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager). You'll also need to install [`tippy.css`](https://atomiks.github.io/tippyjs/v6/getting-started/#1-package-manager) if you're using a [custom admin theme](/docs/admin/appearance#building-themes).
 
 You may specify a tooltip to display when you hover over a cell:
 
@@ -338,6 +381,8 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::make('title')
     ->tooltip('Title')
 ```
+
+<AutoScreenshot name="tables/columns/tooltips" alt="Table with column triggering a tooltip" version="3.x" />
 
 This method also accepts a closure that can access the current table record:
 
@@ -349,6 +394,28 @@ TextColumn::make('title')
     ->tooltip(fn (Model $record): string => "By {$record->author->name}")
 ```
 
+## Aligning column content
+
+Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `start`, `center`, `end`, `left`, `right` or `justify` options:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignment('end')
+```
+
+<AutoScreenshot name="tables/columns/alignment" alt="Table with column aligned to the right" version="3.x" />
+
+Alternatively, you may use shorthand methods like `alignEnd()`:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('name')
+    ->alignEnd()
+```
+
 ## Custom attributes
 
 The HTML of columns can be customized, by passing an array of `extraAttributes()`:
@@ -356,14 +423,15 @@ The HTML of columns can be customized, by passing an array of `extraAttributes()
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('slug')->extraAttributes(['class' => 'bg-gray-200'])
+TextColumn::make('slug')
+    ->extraAttributes(['class' => 'bg-gray-200'])
 ```
 
 These get merged onto the outer `<div>` element of each cell in that column.
 
 ## Global settings
 
-If you wish to change the default behaviour of all columns globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the columns using. For example, if you wish to make all columns [`sortable()`](#sorting) and [`toggleable()`](#toggling-column-visibility), you can do it like so:
+If you wish to change the default behaviour of all columns globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the columns using. For example, if you wish to make all columns [`searchable()`](#searching) and [`toggleable()`](#toggling-column-visibility), you can do it like so:
 
 ```php
 use Filament\Tables\Columns\Column;
@@ -371,7 +439,7 @@ use Filament\Tables\Columns\Column;
 Column::configureUsing(function (Column $column): void {
     $column
         ->toggleable()
-        ->sortable();
+        ->searchable();
 });
 ```
 
@@ -383,7 +451,7 @@ use Filament\Tables\Columns\TextColumn;
 TextColumn::configureUsing(function (TextColumn $column): void {
     $column
         ->toggleable()
-        ->sortable();
+        ->searchable();
 });
 ```
 
@@ -392,5 +460,6 @@ Of course, you are still able to overwrite this on each column individually:
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('name')->toggleable(false)
+TextColumn::make('name')
+    ->toggleable(false)
 ```

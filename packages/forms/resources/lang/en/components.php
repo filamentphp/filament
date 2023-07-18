@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Content collapsed',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clone',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Add to :label',
             ],
 
-            'create_item_between' => [
-                'label' => 'Insert',
+            'add_between' => [
+                'label' => 'Insert between blocks',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Delete',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Move',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Move down',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Move up',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Collapse',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expand',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Deselect all',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Add row',
@@ -108,54 +106,55 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Attach files',
+            'blockquote' => 'Blockquote',
             'bold' => 'Bold',
             'bullet_list' => 'Bullet list',
             'code_block' => 'Code block',
-            'edit' => 'Edit',
+            'heading' => 'Heading',
             'italic' => 'Italic',
             'link' => 'Link',
             'ordered_list' => 'Numbered list',
-            'preview' => 'Preview',
+            'redo' => 'Redo',
             'strike' => 'Strikethrough',
+            'table' => 'Table',
+            'undo' => 'Undo',
         ],
 
     ],
 
     'repeater' => [
 
-        'collapsed' => 'Content collapsed',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Add to :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Delete',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clone',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Move',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Move down',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Move up',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Collapse',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expand',
             ],
 
@@ -177,7 +176,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -204,6 +203,7 @@ return [
             'ordered_list' => 'Numbered list',
             'redo' => 'Redo',
             'strike' => 'Strikethrough',
+            'underline' => 'Underline',
             'undo' => 'Undo',
         ],
 
@@ -223,6 +223,28 @@ return [
 
                         'create' => [
                             'label' => 'Create',
+                        ],
+
+                        'create_another' => [
+                            'label' => 'Create & create another',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Edit',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Save',
                         ],
 
                     ],
@@ -258,7 +280,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Back',

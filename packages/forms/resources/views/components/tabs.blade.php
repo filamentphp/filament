@@ -1,6 +1,7 @@
 <div
+    wire:ignore.self
+    x-cloak
     x-data="{
-
         tab: null,
 
         init: function () {
@@ -23,73 +24,49 @@
 
             history.pushState(null, document.title, url.toString())
         },
-
     }"
-    x-cloak
-    {!! $getId() ? "id=\"{$getId()}\"" : null !!}
-    {{ $attributes->merge($getExtraAttributes())->class([
-        'filament-forms-tabs-component rounded-xl shadow-sm border border-gray-300 bg-white',
-        'dark:bg-gray-800 dark:border-gray-700' => config('forms.dark_mode'),
-    ]) }}
-    {{ $getExtraAlpineAttributeBag() }}
-    wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ \Filament\Forms\Components\Tabs::class }}.container"
+    {{
+        $attributes
+            ->merge([
+                'id' => $getId(),
+                'wire:key' => "{$this->getId()}.{$getStatePath()}." . \Filament\Forms\Components\Tabs::class . '.container',
+            ], escape: false)
+            ->merge($getExtraAttributes(), escape: false)
+            ->merge($getExtraAlpineAttributes(), escape: false)
+            ->class(['fi-fo-tabs rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'])
+    }}
 >
     <input
         type="hidden"
-        value='{{
+        value="{{
             collect($getChildComponentContainer()->getComponents())
-                ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => ! $tab->isHidden())
+                ->filter(static fn (\Filament\Forms\Components\Tabs\Tab $tab): bool => $tab->isVisible())
                 ->map(static fn (\Filament\Forms\Components\Tabs\Tab $tab) => $tab->getId())
                 ->values()
                 ->toJson()
-        }}'
+        }}"
         x-ref="tabsData"
     />
 
-    <div
-        {!! $getLabel() ? 'aria-label="' . $getLabel() . '"' : null !!}
-        role="tablist"
-        @class([
-            'filament-forms-tabs-component-header rounded-t-xl flex overflow-y-auto bg-gray-100',
-            'dark:bg-gray-700' => config('forms.dark_mode'),
-        ])
-    >
-        @foreach ($getChildComponentContainer()->getComponents() as $tab)
-            <button
-                type="button"
-                aria-controls="{{ $tab->getId() }}"
-                x-bind:aria-selected="tab === '{{ $tab->getId() }}'"
-                x-on:click="tab = '{{ $tab->getId() }}'"
-                role="tab"
-                x-bind:tabindex="tab === '{{ $tab->getId() }}' ? 0 : -1"
-                class="filament-forms-tabs-component-button flex items-center gap-2 shrink-0 p-3 text-sm font-medium"
-                x-bind:class="{
-                    'text-gray-500 @if (config('forms.dark_mode')) dark:text-gray-400 @endif': tab !== '{{ $tab->getId() }}',
-                    'filament-forms-tabs-component-button-active bg-white text-primary-600 @if (config('forms.dark_mode')) dark:bg-gray-800 @endif': tab === '{{ $tab->getId() }}',
-                }"
-            >
-                @if ($icon = $tab->getIcon())
-                    <x-dynamic-component
-                        :component="$icon"
-                        class="h-5 w-5"
-                    />
-                @endif
+    <div class="p-1">
+        <x-filament::tabs :label="$getLabel()">
+            @foreach ($getChildComponentContainer()->getComponents() as $tab)
+                @php
+                    $tabId = $tab->getId();
+                @endphp
 
-                <span>{{ $tab->getLabel() }}</span>
-
-                @if ($badge = $tab->getBadge())
-                    <span
-                        class="inline-flex items-center justify-center ml-auto rtl:ml-0 rtl:mr-auto min-h-4 px-2 py-0.5 text-xs font-medium tracking-tight rounded-xl whitespace-normal"
-                        x-bind:class="{
-                            'bg-gray-200 @if (config('forms.dark_mode')) dark:bg-gray-600 @endif': tab !== '{{ $tab->getId() }}',
-                            'bg-primary-500/10 font-medium': tab === '{{ $tab->getId() }}',
-                        }"
-                    >
-                        {{ $badge }}
-                    </span>
-                @endif
-            </button>
-        @endforeach
+                <x-filament::tabs.item
+                    :alpine-active="'tab === \'' . $tabId . '\''"
+                    :badge="$tab->getBadge()"
+                    :icon="$tab->getIcon()"
+                    :icon-color="$tab->getIconColor()"
+                    :icon-position="$tab->getIconPosition()"
+                    :x-on:click="'tab = \'' . $tabId . '\''"
+                >
+                    {{ $tab->getLabel() }}
+                </x-filament::tabs.item>
+            @endforeach
+        </x-filament::tabs>
     </div>
 
     @foreach ($getChildComponentContainer()->getComponents() as $tab)

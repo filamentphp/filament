@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Jakinarazpenak',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Ezabatu',

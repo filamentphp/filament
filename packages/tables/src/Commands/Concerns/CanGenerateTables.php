@@ -4,7 +4,6 @@ namespace Filament\Tables\Commands\Concerns;
 
 use Doctrine\DBAL\Types;
 use Filament\Tables;
-use Illuminate\Support\Str;
 
 trait CanGenerateTables
 {
@@ -29,38 +28,28 @@ trait CanGenerateTables
                 continue;
             }
 
+            if (in_array($column->getType()::class, [
+                Types\JsonType::class,
+                Types\TextType::class,
+            ])) {
+                continue;
+            }
+
             $columnName = $column->getName();
 
-            if (Str::of($columnName)->endsWith([
+            if (str($columnName)->endsWith([
                 '_token',
             ])) {
                 continue;
             }
 
-            if (Str::of($columnName)->contains([
+            if (str($columnName)->contains([
                 'password',
             ])) {
                 continue;
             }
 
-            $columnData = [];
-
-            if ($column->getType() instanceof Types\BooleanType) {
-                $columnData['type'] = Tables\Columns\IconColumn::class;
-                $columnData['boolean'] = [];
-            } else {
-                $columnData['type'] = Tables\Columns\TextColumn::class;
-
-                if ($column->getType()::class === Types\DateType::class) {
-                    $columnData['date'] = [];
-                }
-
-                if ($column->getType()::class === Types\DateTimeType::class) {
-                    $columnData['dateTime'] = [];
-                }
-            }
-
-            if (Str::of($columnName)->endsWith('_id')) {
+            if (str($columnName)->endsWith('_id')) {
                 $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
 
                 if (filled($guessedRelationshipName)) {
@@ -70,6 +59,71 @@ trait CanGenerateTables
                 }
             }
 
+            $columnData = [];
+
+            if (in_array($columnName, [
+                'sku',
+                'uuid',
+            ])) {
+                $columnData['label'] = [strtoupper($columnName)];
+            }
+
+            if ($column->getType() instanceof Types\BooleanType) {
+                $columnData['type'] = Tables\Columns\IconColumn::class;
+                $columnData['boolean'] = [];
+            } else {
+                $columnData['type'] = match (true) {
+                    $columnName === 'image', str($columnName)->startsWith('image_'), str($columnName)->contains('_image_'), str($columnName)->endsWith('_image') => Tables\Columns\ImageColumn::class,
+                    default => Tables\Columns\TextColumn::class,
+                };
+
+                if (in_array($column->getType()::class, [
+                    Types\StringType::class,
+                ]) && ($columnData['type'] === Tables\Columns\TextColumn::class)) {
+                    $columnData['searchable'] = [];
+                }
+
+                if (in_array($column->getType()::class, [
+                    Types\DateImmutableType::class,
+                    Types\DateType::class,
+                ])) {
+                    $columnData['date'] = [];
+                    $columnData['sortable'] = [];
+                }
+
+                if (in_array($column->getType()::class, [
+                    Types\DateTimeImmutableType::class,
+                    Types\DateTimeType::class,
+                    Types\DateTimeTzImmutableType::class,
+                    Types\DateTimeTzType::class,
+                ])) {
+                    $columnData['dateTime'] = [];
+                    $columnData['sortable'] = [];
+                }
+
+                if (in_array($column->getType()::class, [
+                    Types\BigIntType::class,
+                    Types\DecimalType::class,
+                    Types\FloatType::class,
+                    Types\IntegerType::class,
+                    Types\SmallIntType::class,
+                ])) {
+                    $columnData[in_array($columnName, [
+                        'cost',
+                        'money',
+                        'price',
+                    ]) ? 'money' : 'numeric'] = [];
+                    $columnData['sortable'] = [];
+                }
+            }
+
+            if (in_array($columnName, [
+                'created_at',
+                'updated_at',
+            ])) {
+                $columnData['toggleable'] = ['isToggledHiddenByDefault' => true];
+            }
+
             $columns[$columnName] = $columnData;
         }
 
@@ -77,7 +131,7 @@ trait CanGenerateTables
 
         foreach ($columns as $columnName => $columnData) {
             // Constructor
-            $output .= (string) Str::of($columnData['type'])->after('Filament\\');
+            $output .= (string) str($columnData['type'])->after('Filament\\');
             $output .= '::make(\'';
             $output .= $columnName;
             $output .= '\')';
@@ -90,7 +144,24 @@ trait CanGenerateTables
                 $output .= '    ->';
                 $output .= $methodName;
                 $output .= '(';
-                $output .= implode('\', \'', $parameters);
+                $output .= collect($parameters)
+                    ->map(function (mixed $parameterValue, int | string $parameterName): string {
+                        $parameterValue = match (true) {
+                            /** @phpstan-ignore-next-line */
+                            is_bool($parameterValue) => $parameterValue ? 'true' : 'false',
+                            /** @phpstan-ignore-next-line */
+                            is_null($parameterValue) => 'null',
+                            is_numeric($parameterValue) => $parameterValue,
+                            default => "'{$parameterValue}'",
+                        };
+
+                        if (is_numeric($parameterName)) {
+                            return $parameterValue;
+                        }
+
+                        return "{$parameterName}: {$parameterValue}";
+                    })
+                    ->implode(', ');
                 $output .= ')';
             }
 

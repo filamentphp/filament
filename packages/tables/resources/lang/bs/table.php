@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'i :count više',
-        ],
-
-        'messages' => [
-            'copied' => 'Kopirano',
+        'text' => [
+            'more_list_items' => 'i :count više',
         ],
 
     ],
@@ -24,7 +20,7 @@ return [
             'label' => 'Odaberi/poništi odabir stavke :key za grupne radnje.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Pretraga',
             'placeholder' => 'Tražite',
         ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Idite na stranicu :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Završi preuređivanje zapisa',
@@ -83,7 +79,7 @@ return [
             'label' => 'Filter',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Otvorene akcije',
         ],
 
@@ -99,7 +95,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Skloni filter',
@@ -146,7 +142,7 @@ return [
 
         'selected_count' => '1 izabran zapis.|:count izabrani zapisi.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Izaberite sve :count',

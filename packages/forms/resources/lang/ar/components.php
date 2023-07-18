@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'طيّ المحتوى',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'نسخ',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'إضافة إلى :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'إدراج',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'حذف',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'نقل',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'تحريك لأسفل',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'تحريك لأعلى',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'طيّ',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'توسيع',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'إلغاء تحديد الكل',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'إضافة صف',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'المحتوى مطوي',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'إضافة إلى :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'حذف',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'نسخ',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'نقل',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'تحريك لأسفل',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'تحريك لأعلى',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'طيّ',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'توسيع',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'ربط',
                     'unlink' => 'فصل',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'الخطوة السابقة',

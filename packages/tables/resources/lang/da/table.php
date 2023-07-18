@@ -4,19 +4,15 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'og :count flere',
-        ],
-
-        'messages' => [
-            'copied' => 'Kopieret',
+        'text' => [
+            'more_list_items' => 'og :count flere',
         ],
 
     ],
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Søg',
             'placeholder' => 'Søg',
         ],
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Gå til side :page',
@@ -61,13 +57,13 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => 'Filtrer',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Åbn handlinger',
         ],
 
@@ -79,7 +75,7 @@ return [
 
     'selection_indicator' => [
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Vælg alle :count',

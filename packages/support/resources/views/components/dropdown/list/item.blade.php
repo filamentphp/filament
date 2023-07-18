@@ -1,43 +1,50 @@
 @props([
-    'color' => 'primary',
-    'darkMode' => false,
-    'detail' => null,
+    'color' => 'gray',
+    'disabled' => false,
     'icon' => null,
+    'iconSize' => 'md',
+    'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
-    'type' => 'button',
 ])
 
 @php
-    $hasHoverAndFocusState = ($tag !== 'a' || filled($attributes->get('href')));
-
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item filament-dropdown-item group flex w-full items-center whitespace-nowrap rounded-md p-2 text-sm outline-none',
-        'hover:text-white focus:text-white' => $hasHoverAndFocusState,
-        'hover:bg-primary-500 focus:bg-primary-500' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
-        'hover:bg-danger-500 focus:bg-danger-500' => $color === 'danger' && $hasHoverAndFocusState,
-        'hover:bg-success-500 focus:bg-success-500' => $color === 'success' && $hasHoverAndFocusState,
-        'hover:bg-warning-500 focus:bg-warning-500' => $color === 'warning' && $hasHoverAndFocusState,
+        'fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
+        'pointer-events-none opacity-70' => $disabled,
+        is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
+        match ($color) {
+            'gray' => 'hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            default => 'hover:bg-custom-50 focus:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus:bg-custom-400/10',
+        },
     ]);
 
-    $detailClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-detail ml-auto text-xs text-gray-500',
-        'group-hover:text-primary-100 group-focus:text-primary-100' => ($color === 'primary' || $color === 'secondary') && $hasHoverAndFocusState,
-        'group-hover:text-danger-100 group-focus:text-danger-100' => $color === 'danger' && $hasHoverAndFocusState,
-        'group-hover:text-success-100 group-focus:text-success-100' => $color === 'success' && $hasHoverAndFocusState,
-        'group-hover:text-warning-100 group-focus:text-warning-100' => $color === 'warning' && $hasHoverAndFocusState,
+    $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables($color, shades: [50, 400, 500, 600]) => $color !== 'gray',
     ]);
-
-    $labelClasses = 'filament-dropdown-list-item-label truncate w-full text-start';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-dropdown-list-item-icon mr-2 h-5 w-5 rtl:ml-2 rtl:mr-0',
-        'group-hover:text-white group-focus:text-white' => $hasHoverAndFocusState,
-        'text-primary-500' => $color === 'primary',
-        'text-danger-500' => $color === 'danger',
-        'text-gray-500' => $color === 'secondary',
-        'text-success-500' => $color === 'success',
-        'text-warning-500' => $color === 'warning',
+        'fi-dropdown-list-item-icon',
+        match ($iconSize) {
+            'sm' => 'h-4 w-4',
+            'md' => 'h-5 w-5',
+            'lg' => 'h-6 w-6',
+            default => $iconSize,
+        },
+        match ($color) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500 dark:text-custom-400',
+        },
+    ]);
+
+    $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';
+
+    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-dropdown-list-item-label flex-1 truncate text-start',
+        match ($color) {
+            'gray' => 'text-gray-700 dark:text-gray-200',
+            default => 'text-custom-600 dark:text-custom-400 ',
+        },
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
@@ -51,25 +58,41 @@
 
 @if ($tag === 'button')
     <button
-        type="{{ $type }}"
-        wire:loading.attr="disabled"
-        {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
-        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
-        {{ $attributes->class([$buttonClasses]) }}
+        @if ($keyBindings)
+            x-data="{}"
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+        @endif
+        {{
+            $attributes
+                ->merge([
+                    'disabled' => $disabled,
+                    'type' => 'button',
+                    'wire:loading.attr' => 'disabled',
+                    'wire:target' => $hasLoadingIndicator ? $loadingIndicatorTarget : null,
+                ], escape: false)
+                ->class([$buttonClasses])
+                ->style([$buttonStyles])
+        }}
     >
         @if ($icon)
-            <x-dynamic-component
-                :component="$icon"
+            <x-filament::icon
+                :name="$icon"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
-                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                 :class="$iconClasses"
             />
         @endif
 
+        @if ($image)
+            <div
+                class="{{ $imageClasses }}"
+                style="background-image: url('{{ $image }}')"
+            ></div>
+        @endif
+
         @if ($hasLoadingIndicator)
-            <x-filament-support::loading-indicator
-                x-cloak
-                wire:loading.delay
+            <x-filament::loading-indicator
+                wire:loading.delay=""
                 :wire:target="$loadingIndicatorTarget"
                 :class="$iconClasses"
             />
@@ -78,50 +101,60 @@
         <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
-
-        @if ($detail)
-            <span class="{{ $detailClasses }}">
-                {{ $detail }}
-            </span>
-        @endif
     </button>
 @elseif ($tag === 'a')
-    <a {{ $attributes->class([$buttonClasses]) }}>
+    <a
+        @if ($keyBindings)
+            x-data="{}"
+            x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+        @endif
+        {{
+            $attributes
+                ->class([$buttonClasses])
+                ->style([$buttonStyles])
+        }}
+    >
         @if ($icon)
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+            <x-filament::icon :name="$icon" :class="$iconClasses" />
+        @endif
+
+        @if ($image)
+            <div
+                class="{{ $imageClasses }}"
+                style="background-image: url('{{ $image }}')"
+            ></div>
         @endif
 
         <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
-
-        @if ($detail)
-            <span class="{{ $detailClasses }}">
-                {{ $detail }}
-            </span>
-        @endif
     </a>
 @elseif ($tag === 'form')
-    <form {{ $attributes->only(['action', 'class', 'method', 'wire:submit.prevent']) }}>
+    <form
+        {{ $attributes->only(['action', 'class', 'method', 'wire:submit']) }}
+    >
         @csrf
 
         <button
+            @if ($keyBindings)
+                x-data="{}"
+                x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
+            @endif
             type="submit"
-            {{ $attributes->except(['action', 'class', 'method', 'wire:submit.prevent'])->class([$buttonClasses]) }}
+            {{
+                $attributes
+                    ->except(['action', 'class', 'method', 'wire:submit'])
+                    ->class([$buttonClasses])
+                    ->style([$buttonStyles])
+            }}
         >
             @if ($icon)
-                <x-dynamic-component :component="$icon" :class="$iconClasses" />
+                <x-filament::icon :name="$icon" :class="$iconClasses" />
             @endif
 
             <span class="{{ $labelClasses }}">
                 {{ $slot }}
             </span>
-
-            @if ($detail)
-                <span class="{{ $detailClasses }}">
-                    {{ $detail }}
-                </span>
-            @endif
         </button>
     </form>
 @endif

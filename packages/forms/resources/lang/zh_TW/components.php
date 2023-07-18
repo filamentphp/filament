@@ -4,31 +4,29 @@ return [
 
     'builder' => [
 
-        'collapsed' => '已收起內容',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => '加至 :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => '刪除',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => '上移',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => '下移',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => '收起',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => '展開項目',
             ],
 
@@ -46,7 +44,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => '新增橫列',
@@ -91,31 +89,29 @@ return [
 
     'repeater' => [
 
-        'collapsed' => '已收起內容',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => '加至 :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => '刪除',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => '下移',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => '上移',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => '收起',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => '展開',
             ],
 
@@ -137,7 +133,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => '連結',
                     'unlink' => '取消連結',
                 ],
@@ -216,7 +212,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => '返回',

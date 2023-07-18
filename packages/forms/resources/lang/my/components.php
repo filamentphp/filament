@@ -4,29 +4,29 @@ return [
 
     'builder' => [
 
-        'buttons' => [
+        'actions' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'ထည့်သွင်း :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'ထည့်သွင်းပါ',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'ဖျက်ပါ',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'ရွှေ့ပါ',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'အောက်သို့ရွှေ့ပါ',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'အပေါ်ကိုရွှေ့ပါ',
             ],
 
@@ -36,7 +36,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'လိုင်းထည့်ပါ',
@@ -81,21 +81,21 @@ return [
 
     'repeater' => [
 
-        'buttons' => [
+        'actions' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => 'ထည့်သွင်း :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'ဖျက်ပါ',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'အောက်သို့ရွှေ့ပါ',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'အပေါ်ကိုရွှေ့ပါ',
             ],
 
@@ -109,7 +109,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'ချိတ်ပါ',
                     'unlink' => 'မချိတ်ပါ',
                 ],

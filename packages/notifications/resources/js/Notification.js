@@ -33,6 +33,16 @@ class Notification {
 
     status(status) {
         switch (status) {
+            case 'danger':
+                this.danger()
+
+                break
+
+            case 'info':
+                this.info()
+
+                break
+
             case 'success':
                 this.success()
 
@@ -42,12 +52,13 @@ class Notification {
                 this.warning()
 
                 break
-
-            case 'danger':
-                this.danger()
-
-                break
         }
+
+        return this
+    }
+
+    color(color) {
+        this.color = color
 
         return this
     }
@@ -82,6 +93,20 @@ class Notification {
         return this
     }
 
+    danger() {
+        this.icon('heroicon-o-x-circle')
+        this.iconColor('danger')
+
+        return this
+    }
+
+    info() {
+        this.icon('heroicon-o-information-circle')
+        this.iconColor('info')
+
+        return this
+    }
+
     success() {
         this.icon('heroicon-o-check-circle')
         this.iconColor('success')
@@ -92,13 +117,6 @@ class Notification {
     warning() {
         this.icon('heroicon-o-exclamation-circle')
         this.iconColor('warning')
-
-        return this
-    }
-
-    danger() {
-        this.icon('heroicon-o-x-circle')
-        this.iconColor('danger')
 
         return this
     }
@@ -116,7 +134,13 @@ class Notification {
     }
 
     send() {
-        Livewire.emit('notificationSent', this)
+        window.dispatchEvent(
+            new CustomEvent('notificationSent', {
+                detail: {
+                    notification: this,
+                },
+            }),
+        )
 
         return this
     }
@@ -141,43 +165,63 @@ class Action {
         return this
     }
 
-    emit(event, data) {
+    dispatch(event, data) {
         this.event(event)
         this.eventData(data)
 
         return this
     }
 
+    dispatchSelf(event, data) {
+        this.dispatch(event, data)
+        this.dispatchDirection = 'self'
+
+        return this
+    }
+
+    dispatchTo(component, event, data) {
+        this.dispatch(event, data)
+        this.dispatchDirection = 'to'
+        this.dispatchToComponent = component
+
+        return this
+    }
+
+    /**
+     * @deprecated Use `dispatch()` instead.
+     */
+    emit(event, data) {
+        this.dispatch(event, data)
+
+        return this
+    }
+
+    /**
+     * @deprecated Use `dispatchSelf()` instead.
+     */
     emitSelf(event, data) {
-        this.emit(event, data)
-        this.emitDirection = 'self'
+        this.dispatchSelf(event, data)
 
         return this
     }
 
+    /**
+     * @deprecated Use `dispatchTo()` instead.
+     */
     emitTo(component, event, data) {
-        this.emit(event, data)
-        this.emitDirection = 'to'
-        this.emitToComponent = component
+        this.dispatchTo(component, event, data)
 
         return this
     }
 
-    emitUp(event, data) {
-        this.emit(event, data)
-        this.emitDirection = 'up'
+    dispatchDirection(dispatchDirection) {
+        this.dispatchDirection = dispatchDirection
 
         return this
     }
 
-    emitDirection(emitDirection) {
-        this.emitDirection = emitDirection
-
-        return this
-    }
-
-    emitToComponent(component) {
-        this.emitToComponent = component
+    dispatchToComponent(component) {
+        this.dispatchToComponent = component
 
         return this
     }
@@ -231,7 +275,7 @@ class Action {
     }
 
     close(condition = true) {
-        this.shouldCloseNotification = condition
+        this.shouldClose = condition
 
         return this
     }
@@ -261,19 +305,19 @@ class Action {
     }
 
     button() {
-        this.view('notifications::actions.button-action')
+        this.view('filament-notifications::actions.button-action')
 
         return this
     }
 
     grouped() {
-        this.view('notifications::actions.grouped-action')
+        this.view('filament-notifications::actions.grouped-action')
 
         return this
     }
 
     link() {
-        this.view('notifications::actions.link-action')
+        this.view('filament-notifications::actions.link-action')
 
         return this
     }

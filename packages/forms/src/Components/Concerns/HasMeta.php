@@ -6,16 +6,22 @@ use Illuminate\Support\Arr;
 
 trait HasMeta
 {
+    /**
+     * @var array<string, mixed>
+     */
     protected array $meta = [];
 
-    public function meta(string $key, $value): static
+    public function meta(string $key, mixed $value): static
     {
         $this->meta[$key] = $value;
 
         return $this;
     }
 
-    public function getMeta(string | array | null $keys = null)
+    /**
+     * @param  string | array<string> | null  $keys
+     */
+    public function getMeta(string | array | null $keys = null): mixed
     {
         if (is_array($keys)) {
             return Arr::only($this->meta, $keys);
@@ -28,6 +34,9 @@ trait HasMeta
         return $this->meta;
     }
 
+    /**
+     * @param  string | array<string>  $keys
+     */
     public function hasMeta(string | array $keys): bool
     {
         return Arr::has($this->meta, $keys);

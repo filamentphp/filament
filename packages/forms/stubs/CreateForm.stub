@@ -6,6 +6,7 @@ use App\Models\{{ model }};
 use Filament\Forms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
 use Livewire\Component;
 use Illuminate\Contracts\View\View;
 
@@ -20,11 +21,14 @@ class {{ class }} extends Component implements HasForms
         $this->form->fill();
     }
 
-    protected function getFormSchema(): array
+    public function form(Form $form): Form
     {
-        return [
+        return $form
+            ->schema([
 {{ schema }}
-        ];
+            ])
+            ->statePath('data')
+            ->model({{ modelClass }}::class);
     }
 
     public function create(): void
@@ -34,16 +38,6 @@ class {{ class }} extends Component implements HasForms
         $record = {{ modelClass }}::create($data);
 
         $this->form->model($record)->saveRelationships();
-    }
-
-    protected function getFormModel(): string
-    {
-        return {{ modelClass }}::class;
-    }
-
-    protected function getFormStatePath(): string
-    {
-        return 'data';
     }
 
     public function render(): View

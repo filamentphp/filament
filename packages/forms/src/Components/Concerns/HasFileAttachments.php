@@ -7,7 +7,8 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use League\Flysystem\UnableToCheckFileExistence;
-use Livewire\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use SplFileInfo;
 use Throwable;
 
 trait HasFileAttachments
@@ -88,7 +89,7 @@ trait HasFileAttachments
 
     public function getFileAttachmentsDiskName(): string
     {
-        return $this->evaluate($this->fileAttachmentsDiskName) ?? config('forms.default_filesystem_disk');
+        return $this->evaluate($this->fileAttachmentsDiskName) ?? config('filament.default_filesystem_disk');
     }
 
     public function getFileAttachmentsVisibility(): string
@@ -96,14 +97,14 @@ trait HasFileAttachments
         return $this->evaluate($this->fileAttachmentsVisibility);
     }
 
-    protected function handleFileAttachmentUpload($file)
+    protected function handleFileAttachmentUpload(SplFileInfo $file): mixed
     {
         $storeMethod = $this->getFileAttachmentsVisibility() === 'public' ? 'storePublicly' : 'store';
 
         return $file->{$storeMethod}($this->getFileAttachmentsDirectory(), $this->getFileAttachmentsDiskName());
     }
 
-    protected function handleUploadedAttachmentUrlRetrieval($file): ?string
+    protected function handleUploadedAttachmentUrlRetrieval(mixed $file): ?string
     {
         /** @var FilesystemAdapter $storage */
         $storage = $this->getFileAttachmentsDisk();

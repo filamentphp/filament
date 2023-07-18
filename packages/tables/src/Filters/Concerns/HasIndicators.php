@@ -25,6 +25,9 @@ trait HasIndicators
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getIndicators(): array
     {
         $state = $this->getState();

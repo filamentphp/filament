@@ -2,20 +2,30 @@
 
 namespace Filament\Forms\Components;
 
+use Closure;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 
 class Group extends Component implements CanEntangleWithSingularRelationships
 {
     use Concerns\EntanglesStateWithSingularRelationship;
 
-    protected string $view = 'forms::components.group';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.group';
 
-    final public function __construct(array $schema = [])
+    /**
+     * @param  array<Component> | Closure  $schema
+     */
+    final public function __construct(array | Closure $schema = [])
     {
         $this->schema($schema);
     }
 
-    public static function make(array $schema = []): static
+    /**
+     * @param  array<Component> | Closure  $schema
+     */
+    public static function make(array | Closure $schema = []): static
     {
         $static = app(static::class, ['schema' => $schema]);
         $static->configure();

@@ -2,8 +2,8 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Support\Actions\Concerns\CanCustomizeProcess;
-use Filament\Tables\Contracts\HasTable;
+use Filament\Actions\Concerns\CanCustomizeProcess;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class DetachBulkAction extends BulkAction
 {
     use CanCustomizeProcess;
-    use Concerns\InteractsWithRelationship;
 
     public static function getDefaultName(): ?string
     {
@@ -22,26 +21,28 @@ class DetachBulkAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/detach.multiple.label'));
+        $this->label(__('filament-actions::detach.multiple.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/detach.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::detach.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/detach.multiple.modal.actions.detach.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::detach.multiple.modal.actions.detach.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/detach.multiple.messages.detached'));
+        $this->successNotificationTitle(__('filament-actions::detach.multiple.messages.detached'));
 
         $this->color('danger');
 
-        $this->icon('heroicon-s-x');
+        $this->icon('heroicon-m-x-mark');
 
         $this->requiresConfirmation();
 
-        $this->action(function (): void {
-            $this->process(function (HasTable $livewire, Collection $records): void {
-                /** @var BelongsToMany $relationship */
-                $relationship = $this->getRelationship();
+        $this->modalIcon('heroicon-o-x-mark');
 
-                if ($livewire->allowsDuplicates()) {
+        $this->action(function (): void {
+            $this->process(function (Collection $records, Table $table): void {
+                /** @var BelongsToMany $relationship */
+                $relationship = $table->getRelationship();
+
+                if ($table->allowsDuplicates()) {
                     $records->each(
                         fn (Model $record) => $record->{$relationship->getPivotAccessor()}->delete(),
                     );

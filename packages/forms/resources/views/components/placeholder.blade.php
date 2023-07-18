@@ -5,12 +5,18 @@
     :label-sr-only="$isLabelHidden()"
     :helper-text="$getHelperText()"
     :hint="$getHint()"
-    :hint-action="$getHintAction()"
+    :hint-actions="$getHintActions()"
     :hint-color="$getHintColor()"
     :hint-icon="$getHintIcon()"
     :state-path="$getStatePath()"
 >
-    <div {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-placeholder-component']) }}>
+    <div
+        {{
+            $attributes
+                ->merge($getExtraAttributes(), escape: false)
+                ->class(['fi-fo-placeholder sm:text-sm'])
+        }}
+    >
         {{ $getContent() }}
     </div>
 </x-dynamic-component>

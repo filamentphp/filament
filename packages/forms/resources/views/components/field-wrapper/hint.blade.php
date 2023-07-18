@@ -1,47 +1,46 @@
 @props([
-    'action' => null,
-    'color' => null,
+    'actions' => [],
+    'color' => 'gray',
     'icon' => null,
 ])
 
-<div {{ $attributes->class(array_merge(
-    ['filament-forms-field-wrapper-hint flex items-center space-x-2 rtl:space-x-reverse'],
-    match ($color) {
-        'danger' => [
-            'text-danger-500',
-            'dark:text-danger-300' => config('tables.dark_mode'),
-        ],
-        'success' => [
-            'text-success-500',
-            'dark:text-success-300' => config('tables.dark_mode'),
-        ],
-        'warning' => [
-            'text-warning-500',
-            'dark:text-warning-300' => config('filament.dark_mode'),
-        ],
-        'primary' => [
-            'text-primary-500',
-            'dark:text-primary-300' => config('tables.dark_mode'),
-        ],
-        default => [
-            'text-gray-500',
-            'dark:text-gray-300' => config('tables.dark_mode'),
-        ],
-    },
-)) }}>
-    @if ($slot->isNotEmpty())
-        <span class="text-xs leading-tight">
-            {{ $slot }}
-        </span>
+<div
+    {{
+        $attributes
+            ->class([
+                'fi-fo-field-wrp-hint flex items-center gap-x-3 text-sm',
+                match ($color) {
+                    'gray' => 'text-gray-500',
+                    default => 'text-custom-600 dark:text-custom-400',
+                },
+            ])
+            ->style([
+                \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]),
+            ])
+    }}
+>
+    @if (! \Filament\Support\is_slot_empty($slot))
+        {{ $slot }}
     @endif
 
     @if ($icon)
-        <x-dynamic-component :component="$icon" class="h-4 w-4" />
+        <x-filament::icon
+            :name="$icon"
+            @class([
+                'fi-fo-field-wrp-hint-icon h-5 w-5',
+                match ($color) {
+                    'gray' => 'text-gray-400 dark:text-gray-500',
+                    default => 'text-custom-500 dark:text-custom-400',
+                },
+            ])
+        />
     @endif
 
-    @if ($action && (! $action->isHidden()))
-        <div class="filament-forms-field-wrapper-hint-action">
-            {{ $action }}
+    @if (count($actions))
+        <div class="fi-fo-field-wrp-hint-action -m-1.5 flex items-center">
+            @foreach ($actions as $action)
+                {{ $action }}
+            @endforeach
         </div>
     @endif
 </div>

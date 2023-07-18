@@ -17,16 +17,26 @@ trait CanBeDisabled
         return $this;
     }
 
-    public function disableClick(bool | Closure $condition = true): static
+    public function disabledClick(bool | Closure $condition = true): static
     {
         $this->isClickDisabled = $condition;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `disabledClick()` instead.
+     */
+    public function disableClick(bool | Closure $condition = true): static
+    {
+        $this->disabledClick($condition);
+
+        return $this;
+    }
+
     public function isDisabled(): bool
     {
-        return $this->evaluate($this->isDisabled);
+        return (bool) $this->evaluate($this->isDisabled);
     }
 
     public function isEnabled(): bool
@@ -36,6 +46,6 @@ trait CanBeDisabled
 
     public function isClickDisabled(): bool
     {
-        return $this->evaluate($this->isClickDisabled);
+        return (bool) $this->evaluate($this->isClickDisabled);
     }
 }

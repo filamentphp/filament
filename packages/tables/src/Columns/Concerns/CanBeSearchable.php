@@ -3,7 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
-use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 
 trait CanBeSearchable
 {
@@ -13,22 +13,28 @@ trait CanBeSearchable
 
     protected bool $isSearchable = false;
 
+    /**
+     * @var array<string> | null
+     */
     protected ?array $searchColumns = null;
 
     protected ?Closure $searchQuery = null;
 
+    /**
+     * @param  bool | array<string> | string  $condition
+     */
     public function searchable(
-        bool | array $condition = true,
+        bool | array | string $condition = true,
         ?Closure $query = null,
         bool $isIndividual = false,
         bool $isGlobal = true,
     ): static {
-        if (is_array($condition)) {
-            $this->isSearchable = true;
-            $this->searchColumns = $condition;
-        } else {
+        if (is_bool($condition)) {
             $this->isSearchable = $condition;
             $this->searchColumns = null;
+        } else {
+            $this->isSearchable = true;
+            $this->searchColumns = Arr::wrap($condition);
         }
 
         $this->isGloballySearchable = $isGlobal;
@@ -38,6 +44,9 @@ trait CanBeSearchable
         return $this;
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSearchColumns(): array
     {
         return $this->searchColumns ?? $this->getDefaultSearchColumns();
@@ -58,8 +67,11 @@ trait CanBeSearchable
         return $this->isSearchable() && $this->isIndividuallySearchable;
     }
 
-    protected function getDefaultSearchColumns(): array
+    /**
+     * @return array{0: string}
+     */
+    public function getDefaultSearchColumns(): array
     {
-        return [Str::of($this->getName())->afterLast('.')];
+        return [str($this->getName())->afterLast('.')];
     }
 }

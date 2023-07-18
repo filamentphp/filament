@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Htmlable;
@@ -20,15 +21,28 @@ class Wizard extends Component
 
     protected string | Htmlable | null $submitAction = null;
 
+    protected ?Closure $modifyNextActionUsing = null;
+
+    protected ?Closure $modifyPreviousActionUsing = null;
+
     public int | Closure $startStep = 1;
 
-    protected string $view = 'forms::components.wizard';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.wizard';
 
+    /**
+     * @param  array<Step> | Closure  $steps
+     */
     final public function __construct(array | Closure $steps = [])
     {
         $this->steps($steps);
     }
 
+    /**
+     * @param  array<Step> | Closure  $steps
+     */
     public static function make(array | Closure $steps = []): static
     {
         $static = app(static::class, ['steps' => $steps]);
@@ -41,6 +55,11 @@ class Wizard extends Component
     {
         parent::setUp();
 
+        $this->registerActions([
+            fn (Wizard $component): Action => $component->getNextAction(),
+            fn (Wizard $component): Action => $component->getPreviousAction(),
+        ]);
+
         $this->registerListeners([
             'wizard::nextStep' => [
                 function (Wizard $component, string $statePath, string $currentStep): void {
@@ -50,7 +69,7 @@ class Wizard extends Component
 
                     if (! $component->isSkippable()) {
                         /** @var Step $currentStep */
-                        $currentStep = $component->getChildComponentContainer()->getComponents()[$currentStep];
+                        $currentStep = $component->getChildComponentContainer()->getComponents(withHidden: true)[$currentStep];
 
                         $currentStep->callBeforeValidation();
                         $currentStep->getChildComponentContainer()->validate();
@@ -59,14 +78,78 @@ class Wizard extends Component
 
                     /** @var LivewireComponent $livewire */
                     $livewire = $component->getLivewire();
-                    $livewire->dispatchBrowserEvent('next-wizard-step', [
-                        'statePath' => $statePath,
-                    ]);
+                    $livewire->dispatch('next-wizard-step', statePath: $statePath);
                 },
             ],
         ]);
     }
 
+    public function getNextAction(): Action
+    {
+        $action = Action::make($this->getNextActionName())
+            ->label(__('filament-forms::components.wizard.actions.next_step.label'))
+            ->icon((__('filament::layout.direction') === 'rtl') ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right')
+            ->iconPosition('after')
+            ->livewireClickHandlerEnabled(false)
+            ->button()
+            ->outlined()
+            ->size('sm');
+
+        if ($this->modifyNextActionUsing) {
+            $action = $this->evaluate($this->modifyNextActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function nextAction(?Closure $callback): static
+    {
+        $this->modifyNextActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getNextActionName(): string
+    {
+        return 'next';
+    }
+
+    public function getPreviousAction(): Action
+    {
+        $action = Action::make($this->getPreviousActionName())
+            ->label(__('filament-forms::components.wizard.actions.previous_step.label'))
+            ->icon((__('filament::layout.direction') === 'rtl') ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left')
+            ->color('gray')
+            ->livewireClickHandlerEnabled(false)
+            ->button()
+            ->size('sm');
+
+        if ($this->modifyPreviousActionUsing) {
+            $action = $this->evaluate($this->modifyPreviousActionUsing, [
+                'action' => $action,
+            ]) ?? $action;
+        }
+
+        return $action;
+    }
+
+    public function previousAction(?Closure $callback): static
+    {
+        $this->modifyPreviousActionUsing = $callback;
+
+        return $this;
+    }
+
+    public function getPreviousActionName(): string
+    {
+        return 'previous';
+    }
+
+    /**
+     * @param  array<Step> | Closure  $steps
+     */
     public function steps(array | Closure $steps): static
     {
         $this->childComponents($steps);
@@ -143,7 +226,7 @@ class Wizard extends Component
 
     public function isSkippable(): bool
     {
-        return $this->evaluate($this->skippable);
+        return (bool) $this->evaluate($this->skippable);
     }
 
     public function isStepPersistedInQueryString(): bool

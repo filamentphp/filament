@@ -3,16 +3,18 @@
 namespace Filament\Support\Commands\Concerns;
 
 use Illuminate\Filesystem\Filesystem;
-use Illuminate\Support\Str;
 use ReflectionClass;
 
 trait CanManipulateFiles
 {
+    /**
+     * @param  array<string>  $paths
+     */
     protected function checkForCollision(array $paths): bool
     {
         foreach ($paths as $path) {
             if ($this->fileExists($path)) {
-                $this->error("{$path} already exists, aborting.");
+                $this->components->error("{$path} already exists, aborting.");
 
                 return true;
             }
@@ -21,6 +23,9 @@ trait CanManipulateFiles
         return false;
     }
 
+    /**
+     * @param  array<string, string>  $replacements
+     */
     protected function copyStubToApp(string $stub, string $targetPath, array $replacements = []): void
     {
         $filesystem = app(Filesystem::class);
@@ -29,7 +34,7 @@ trait CanManipulateFiles
             $stubPath = $this->getDefaultStubPath() . "/{$stub}.stub";
         }
 
-        $stub = Str::of($filesystem->get($stubPath));
+        $stub = str($filesystem->get($stubPath));
 
         foreach ($replacements as $key => $replacement) {
             $stub = $stub->replace("{{ {$key} }}", $replacement);
@@ -52,7 +57,7 @@ trait CanManipulateFiles
         $filesystem = app(Filesystem::class);
 
         $filesystem->ensureDirectoryExists(
-            (string) Str::of($path)
+            (string) str($path)
                 ->beforeLast('/'),
         );
 
@@ -63,7 +68,7 @@ trait CanManipulateFiles
     {
         $reflectionClass = new ReflectionClass($this);
 
-        return (string) Str::of($reflectionClass->getFileName())
+        return (string) str($reflectionClass->getFileName())
             ->beforeLast('Commands')
             ->append('../stubs');
     }

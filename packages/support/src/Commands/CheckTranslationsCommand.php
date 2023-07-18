@@ -16,20 +16,29 @@ class CheckTranslationsCommand extends Command
                             {locales* : The locales to check.}
                             {--source=vendor : The directory containing the translations to check - either \'vendor\' or \'app\'.}';
 
-    protected $description = 'Checks for missing and removed translations.';
+    protected $description = 'Check for missing and removed translations';
 
-    public function handle()
+    public function handle(): int
     {
         $this->scan('filament');
+        $this->scan('actions');
         $this->scan('forms');
+        $this->scan('infolists');
         $this->scan('notifications');
+        $this->scan('spark-billing-provider');
+        $this->scan('spatie-laravel-google-fonts-plugin');
+        $this->scan('spatie-laravel-media-library-plugin');
+        $this->scan('spatie-laravel-settings-plugin');
+        $this->scan('spatie-laravel-tags-plugin');
+        $this->scan('spatie-laravel-translatable-plugin');
         $this->scan('support');
         $this->scan('tables');
+        $this->scan('widgets');
 
         return self::SUCCESS;
     }
 
-    protected function scan(string $package)
+    protected function scan(string $package): void
     {
         $localeRootDirectory = match ($source = $this->option('source')) {
             'app' => lang_path("vendor/{$package}"),
@@ -44,7 +53,7 @@ class CheckTranslationsCommand extends Command
         }
 
         collect($filesystem->directories($localeRootDirectory))
-            ->mapWithKeys(static fn (string $directory): array => [$directory => (string) Str::of($directory)->afterLast(DIRECTORY_SEPARATOR)])
+            ->mapWithKeys(static fn (string $directory): array => [$directory => (string) str($directory)->afterLast(DIRECTORY_SEPARATOR)])
             ->when(
                 $locales = $this->argument('locales'),
                 fn (Collection $availableLocales): Collection => $availableLocales->filter(fn (string $locale): bool => in_array($locale, $locales))
@@ -58,7 +67,7 @@ class CheckTranslationsCommand extends Command
                         $actualKeys = require $file->getPathname();
 
                         return [
-                            (string) Str::of($file->getPathname())->after("{$localeDir}/") => [
+                            (string) str($file->getPathname())->after("{$localeDir}/") => [
                                 'missing' => array_keys(array_diff_key(
                                     Arr::dot($expectedKeys),
                                     Arr::dot($actualKeys)
@@ -92,10 +101,10 @@ class CheckTranslationsCommand extends Command
                     ->each(function ($keys, string $file) {
                         $this->table(
                             [$file, ''],
-                            array_merge(
-                                array_map(fn (string $key) => [$key, 'Missing'], $keys['missing']),
-                                array_map(fn (string $key) => [$key, 'Removed'], $keys['removed']),
-                            ),
+                            [
+                                ...array_map(fn (string $key): array => [$key, 'Missing'], $keys['missing']),
+                                ...array_map(fn (string $key): array => [$key, 'Removed'], $keys['removed']),
+                            ],
                             'box',
                         );
 

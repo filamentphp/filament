@@ -13,10 +13,11 @@ return new class() extends Migration
             $table->foreignId('author_id');
             $table->text('content')->nullable();
             $table->boolean('is_published')->default(true);
+            $table->unsignedTinyInteger('rating')->default(0);
             $table->json('tags')->nullable();
             $table->string('title');
-            $table->unsignedTinyInteger('rating')->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

@@ -6,9 +6,9 @@ use Closure;
 use Exception;
 use Filament\Support\Concerns\Configurable;
 use Filament\Support\Concerns\EvaluatesClosures;
+use Filament\Support\Concerns\Macroable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Macroable;
 use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\ComponentAttributeBag;
 use ReflectionClass;
@@ -22,31 +22,71 @@ abstract class ViewComponent extends Component implements Htmlable
     use Macroable;
     use Tappable;
 
+    /**
+     * @var view-string
+     */
     protected string $view;
 
+    /**
+     * @var view-string | Closure | null
+     */
+    protected string | Closure | null $defaultView = null;
+
+    /**
+     * @var array<string, mixed>
+     */
     protected array $viewData = [];
 
     protected string $viewIdentifier;
 
+    /**
+     * @var array<string, array<string>>
+     */
     protected static array $propertyCache = [];
 
+    /**
+     * @var array<string, array<string>>
+     */
     protected static array $methodCache = [];
 
-    public function view(string $view): static
+    /**
+     * @param  view-string | null  $view
+     * @param  array<string, mixed>  $viewData
+     */
+    public function view(?string $view, array $viewData = []): static
     {
+        if ($view === null) {
+            return $this;
+        }
+
         $this->view = $view;
+
+        if ($viewData !== []) {
+            $this->viewData($viewData);
+        }
 
         return $this;
     }
 
+    /**
+     * @param  view-string | Closure | null  $view
+     */
+    public function defaultView(string | Closure | null $view): static
+    {
+        $this->defaultView = $view;
+
+        return $this;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
     protected function extractPublicProperties(): array
     {
-        $class = get_class($this);
-
-        if (! isset(static::$propertyCache[$class])) {
+        if (! isset(static::$propertyCache[static::class])) {
             $reflection = new ReflectionClass($this);
 
-            static::$propertyCache[$class] = collect($reflection->getProperties(ReflectionProperty::IS_PUBLIC))
+            static::$propertyCache[static::class] = collect($reflection->getProperties(ReflectionProperty::IS_PUBLIC))
                 ->filter(fn (ReflectionProperty $property): bool => ! $property->isStatic())
                 ->map(fn (ReflectionProperty $property): string => $property->getName())
                 ->all();
@@ -54,21 +94,22 @@ abstract class ViewComponent extends Component implements Htmlable
 
         $values = [];
 
-        foreach (static::$propertyCache[$class] as $property) {
+        foreach (static::$propertyCache[static::class] as $property) {
             $values[$property] = $this->{$property};
         }
 
         return $values;
     }
 
+    /**
+     * @return array<string, Closure>
+     */
     protected function extractPublicMethods(): array
     {
-        $class = get_class($this);
-
-        if (! isset(static::$methodCache[$class])) {
+        if (! isset(static::$methodCache[static::class])) {
             $reflection = new ReflectionClass($this);
 
-            static::$methodCache[$class] = array_map(
+            static::$methodCache[static::class] = array_map(
                 fn (ReflectionMethod $method): string => $method->getName(),
                 $reflection->getMethods(ReflectionMethod::IS_PUBLIC),
             );
@@ -76,27 +117,48 @@ abstract class ViewComponent extends Component implements Htmlable
 
         $values = [];
 
-        foreach (static::$methodCache[$class] as $method) {
+        foreach (static::$methodCache[static::class] as $method) {
             $values[$method] = Closure::fromCallable([$this, $method]);
         }
 
         return $values;
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public function viewData(array $data): static
     {
-        $this->viewData = array_merge($this->viewData, $data);
+        $this->viewData = [
+            ...$this->viewData,
+            ...$data,
+        ];
 
         return $this;
     }
 
+    /**
+     * @return view-string
+     */
     public function getView(): string
     {
-        if (! isset($this->view)) {
-            throw new Exception('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
+        if (isset($this->view)) {
+            return $this->view;
         }
 
-        return $this->view;
+        if (filled($defaultView = $this->getDefaultView())) {
+            return $defaultView;
+        }
+
+        throw new Exception('Class [' . static::class . '] extends [' . ViewComponent::class . '] but does not have a [$view] property defined.');
+    }
+
+    /**
+     * @return view-string | null
+     */
+    public function getDefaultView(): ?string
+    {
+        return $this->evaluate($this->defaultView);
     }
 
     public function toHtml(): string
@@ -108,13 +170,13 @@ abstract class ViewComponent extends Component implements Htmlable
     {
         return view(
             $this->getView(),
-            array_merge(
-                ['attributes' => new ComponentAttributeBag()],
-                $this->extractPublicProperties(),
-                $this->extractPublicMethods(),
-                isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : [],
-                $this->viewData,
-            ),
+            [
+                'attributes' => new ComponentAttributeBag(),
+                ...$this->extractPublicProperties(),
+                ...$this->extractPublicMethods(),
+                ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
+                ...$this->viewData,
+            ],
         );
     }
 }

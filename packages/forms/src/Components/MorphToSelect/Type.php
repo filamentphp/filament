@@ -23,9 +23,12 @@ class Type
 
     protected ?Closure $modifyOptionsQueryUsing = null;
 
+    /**
+     * @var array<string> | null
+     */
     protected ?array $searchColumns = null;
 
-    protected ?string $titleColumnName = null;
+    protected ?string $titleAttribute = null;
 
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
@@ -57,7 +60,7 @@ class Type
             }
 
             if (empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleColumnName());
+                $query->orderBy($this->getTitleAttribute());
             }
 
             $search = strtolower($search);
@@ -73,11 +76,11 @@ class Type
             $isFirst = true;
 
             $query->where(function (Builder $query) use ($isFirst, $searchOperator, $search): Builder {
-                foreach ($this->getSearchColumns() as $searchColumnName) {
+                foreach ($this->getSearchColumns() as $searchColumn) {
                     $whereClause = $isFirst ? 'where' : 'orWhere';
 
                     $query->{$whereClause}(
-                        $searchColumnName,
+                        $searchColumn,
                         $searchOperator,
                         "%{$search}%",
                     );
@@ -108,7 +111,7 @@ class Type
             }
 
             return $query
-                ->pluck($this->getTitleColumnName(), $keyName)
+                ->pluck($this->getTitleAttribute(), $keyName)
                 ->toArray();
         });
 
@@ -126,7 +129,7 @@ class Type
             }
 
             if (empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleColumnName());
+                $query->orderBy($this->getTitleAttribute());
             }
 
             $keyName = $query->getModel()->getKeyName();
@@ -141,7 +144,7 @@ class Type
             }
 
             return $query
-                ->pluck($this->getTitleColumnName(), $keyName)
+                ->pluck($this->getTitleAttribute(), $keyName)
                 ->toArray();
         });
 
@@ -166,7 +169,7 @@ class Type
                 return $this->getOptionLabelFromRecord($record);
             }
 
-            return $record->getAttributeValue($this->getTitleColumnName());
+            return $record->getAttributeValue($this->getTitleAttribute());
         });
     }
 
@@ -184,13 +187,26 @@ class Type
         return $this;
     }
 
-    public function titleColumnName(?string $name): static
+    public function titleAttribute(?string $name): static
     {
-        $this->titleColumnName = $name;
+        $this->titleAttribute = $name;
 
         return $this;
     }
 
+    /**
+     * @deprecated Use `titleAttribute()` instead.
+     */
+    public function titleColumnName(?string $name): static
+    {
+        $this->titleAttribute($name);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<string> | null  $columns
+     */
     public function searchColumns(?array $columns): static
     {
         $this->searchColumns = $columns;
@@ -258,18 +274,21 @@ class Type
         return app($this->getModel())->getMorphClass();
     }
 
+    /**
+     * @return array<string>
+     */
     public function getSearchColumns(): ?array
     {
-        return $this->searchColumns ?? [$this->getTitleColumnName()];
+        return $this->searchColumns ?? [$this->getTitleAttribute()];
     }
 
-    public function getTitleColumnName(): string
+    public function getTitleAttribute(): string
     {
-        if (blank($this->titleColumnName)) {
-            throw new Exception("MorphToSelect type [{$this->getModel()}] must have a [titleColumnName()] set.");
+        if (blank($this->titleAttribute)) {
+            throw new Exception("MorphToSelect type [{$this->getModel()}] must have a [titleAttribute()] set.");
         }
 
-        return $this->titleColumnName;
+        return $this->titleAttribute;
     }
 
     public function getOptionsLimit(): int

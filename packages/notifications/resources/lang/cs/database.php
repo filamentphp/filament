@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Moje aktualizace',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Odstranit',

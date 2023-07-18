@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Сповіщення',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Видалити',

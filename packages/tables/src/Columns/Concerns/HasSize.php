@@ -15,8 +15,10 @@ trait HasSize
         return $this;
     }
 
-    public function getSize(): ?string
+    public function getSize(mixed $state): ?string
     {
-        return $this->evaluate($this->size);
+        return $this->evaluate($this->size, [
+            'state' => $state,
+        ]);
     }
 }

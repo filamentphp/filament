@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Saturs sakļauts',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonēt',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Izveidot :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Ievietot',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Dzēst',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pārkārtot',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Pārvietot uz leju',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Pārvietot uz augšu',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sakļaut',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Izplest',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Noņemt atlasi visiem',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Pievienot rindu',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Saturs sakļauts',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Pievienot :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Dzēst',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonēt',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pārvietot',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Pārvietot uz leju',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Pārvietot uz augšu',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sakļaut',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Izplest',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Saistīt',
                     'unlink' => 'Noņemt saiti',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Iepriekšējais',

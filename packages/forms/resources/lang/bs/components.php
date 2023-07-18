@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Sadržaj je sažet',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kloniraj',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Dodaj :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Ubaci',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Izbriši',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pomjeri',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Dolje',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Gore',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sažimanje',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Proširivanje',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Odznači sve',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Dodaj red',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Sadržaj je sažet',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Dodaj :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Izbriši',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kloniraj',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pomjeriti',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Dolje',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Gore',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sažimanje',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Proširivanje',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Otkačite link',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Nazad',

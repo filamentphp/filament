@@ -12,36 +12,36 @@ class MakeFieldCommand extends Command
     use CanManipulateFiles;
     use CanValidateInput;
 
-    protected $description = 'Creates a form field class and view.';
+    protected $description = 'Create a new form field class and view';
 
     protected $signature = 'make:form-field {name?} {--F|force}';
 
     public function handle(): int
     {
-        $field = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `RangeSlider`)', 'name'))
+        $field = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `RangeSlider`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $fieldClass = (string) Str::of($field)->afterLast('\\');
-        $fieldNamespace = Str::of($field)->contains('\\') ?
-            (string) Str::of($field)->beforeLast('\\') :
+        $fieldClass = (string) str($field)->afterLast('\\');
+        $fieldNamespace = str($field)->contains('\\') ?
+            (string) str($field)->beforeLast('\\') :
             '';
 
-        $view = Str::of($field)
+        $view = str($field)
             ->prepend('forms\\components\\')
             ->explode('\\')
             ->map(static fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
-            (string) Str::of($field)
+            (string) str($field)
                 ->prepend('Forms\\Components\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
         $viewPath = resource_path(
-            (string) Str::of($view)
+            (string) str($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
@@ -63,7 +63,7 @@ class MakeFieldCommand extends Command
             $this->copyStubToApp('FieldView', $viewPath);
         }
 
-        $this->info("Successfully created {$field}!");
+        $this->components->info("Successfully created {$field}!");
 
         return static::SUCCESS;
     }
