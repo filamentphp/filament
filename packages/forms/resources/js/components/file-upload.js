@@ -33,6 +33,9 @@ export default (Alpine) => {
             canOpen,
             canPreview,
             canReorder,
+            chunkForce,
+            chunkSize,
+            chunkUploads,
             deleteUploadedFileUsing,
             getUploadedFileUrlsUsing,
             imageCropAspectRatio,
@@ -85,6 +88,9 @@ export default (Alpine) => {
                         allowVideoPreview: canPreview,
                         allowAudioPreview: canPreview,
                         allowImageTransform: shouldTransformImage,
+                        chunkForce,
+                        chunkSize,
+                        chunkUploads,
                         credits: false,
                         files: await this.getFiles(),
                         imageCropAspectRatio,
@@ -123,6 +129,9 @@ export default (Alpine) => {
                                 load,
                                 error,
                                 progress,
+                                abort,
+                                transfer,
+                                options,
                             ) => {
                                 this.shouldUpdateState = false
 
@@ -152,6 +161,7 @@ export default (Alpine) => {
                                     },
                                     error,
                                     progress,
+                                    options,
                                 )
                             },
                             remove: async (source, load) => {

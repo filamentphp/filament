@@ -23799,6 +23799,9 @@ var file_upload_default = (Alpine) => {
     canOpen,
     canPreview,
     canReorder,
+    chunkForce,
+    chunkSize,
+    chunkUploads,
     deleteUploadedFileUsing,
     getUploadedFileUrlsUsing,
     imageCropAspectRatio,
@@ -23844,6 +23847,9 @@ var file_upload_default = (Alpine) => {
           allowVideoPreview: canPreview,
           allowAudioPreview: canPreview,
           allowImageTransform: shouldTransformImage,
+          chunkForce,
+          chunkSize,
+          chunkUploads,
           credits: false,
           files: await this.getFiles(),
           imageCropAspectRatio,
@@ -23870,13 +23876,13 @@ var file_upload_default = (Alpine) => {
               let blob2 = await response.blob();
               load(blob2);
             },
-            process: (fieldName, file2, metadata, load, error2, progress) => {
+            process: (fieldName, file2, metadata, load, error2, progress, abort, transfer, options2) => {
               this.shouldUpdateState = false;
               let fileKey = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c2) => (c2 ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c2 / 4).toString(16));
               uploadUsing(fileKey, file2, (fileKey2) => {
                 this.shouldUpdateState = true;
                 load(fileKey2);
-              }, error2, progress);
+              }, error2, progress, options2);
             },
             remove: async (source, load) => {
               let fileKey = this.uploadedFileUrlIndex[source] ?? null;

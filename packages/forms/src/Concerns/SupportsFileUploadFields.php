@@ -95,4 +95,27 @@ trait SupportsFileUploadFields
 
         return false;
     }
+
+    public function processChunks(string $statePath, string $fileKey, string $fileName): bool
+    {
+        foreach ($this->getComponents() as $component) {
+            if ($component instanceof BaseFileUpload && $component->getStatePath() === $statePath) {
+                $component->processChunks($fileKey, $fileName);
+
+                return true;
+            }
+
+            foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
+                if ($container->processChunks($statePath, $fileKey, $fileName)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 }

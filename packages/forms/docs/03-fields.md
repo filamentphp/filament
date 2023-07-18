@@ -1353,6 +1353,17 @@ FileUpload::make('attachments')
     ->enableDownload()
 ```
 
+
+If you require your users to upload files bigger than your server's capacity limit, you can use the `enableChunkUploads()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachments')
+    ->enableChunkUploads()
+    ->chunkSize(2_000_000) // 2MB
+```
+
 > Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/docs/spatie-laravel-media-library-plugin) for more information.
 
 ## Rich editor

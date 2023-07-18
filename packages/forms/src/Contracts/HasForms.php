@@ -28,5 +28,7 @@ interface HasForms
 
     public function reorderUploadedFiles(string $statePath, array $fileKeys): void;
 
+    public function processChunks(string $statePath, string $fileKey, string $fileName): void;
+
     public function validate(?array $rules = null, array $messages = [], array $attributes = []);
 }

@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use League\Flysystem\UnableToCheckFileExistence;
+use Livewire\FileUploadConfiguration;
 use Livewire\TemporaryUploadedFile;
 use Throwable;
 
@@ -26,6 +27,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $canReorder = false;
 
+    protected int | Closure | null $chunkSize = null;
+
     protected string | Closure | null $directory = null;
 
     protected string | Closure | null $diskName = null;
@@ -39,6 +42,10 @@ class BaseFileUpload extends Field
     protected int | Closure | null $maxFiles = null;
 
     protected int | Closure | null $minFiles = null;
+
+    protected bool | Closure $shouldChunkUploads = false;
+
+    protected bool | Closure $shouldForceChunk = false;
 
     protected bool | Closure $shouldPreserveFilenames = false;
 
@@ -199,6 +206,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function chunkSize(int | Closure $size): static
+    {
+        $this->chunkSize = $size;
+
+        return $this;
+    }
+
     public function directory(string | Closure | null $directory): static
     {
         $this->directory = $directory;
@@ -209,6 +223,15 @@ class BaseFileUpload extends Field
     public function disk($name): static
     {
         $this->diskName = $name;
+
+        return $this;
+    }
+
+    public function enableChunkUpload(bool | Closure $condition = true, int | Closure $chunkSize = 5_000_000): static
+    {
+        $this->shouldChunkUploads = $condition;
+
+        $this->chunkSize = $chunkSize;
 
         return $this;
     }
@@ -371,6 +394,16 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->canReorder);
     }
 
+    public function chunkForce(): bool
+    {
+        return $this->evaluate($this->shouldForceChunk);
+    }
+
+    public function chunkUploads(): bool
+    {
+        return $this->evaluate($this->shouldChunkUploads);
+    }
+
     public function getAcceptedFileTypes(): ?array
     {
         $types = $this->evaluate($this->acceptedFileTypes);
@@ -385,6 +418,11 @@ class BaseFileUpload extends Field
     public function getDirectory(): ?string
     {
         return $this->evaluate($this->directory);
+    }
+
+    public function getChunkSize(): int
+    {
+        return $this->evaluate($this->chunkSize);
     }
 
     public function getDisk(): Filesystem
@@ -492,6 +530,52 @@ class BaseFileUpload extends Field
         ]);
 
         return $this;
+    }
+
+    public function processChunks(string $fileKey, string $fileName): ?TemporaryUploadedFile
+    {
+        $tmp = FileUploadConfiguration::directory();
+
+        $chunks = $this->getState()[$fileKey] ?? [];
+
+        if (empty($chunks)) {
+            return null;
+        }
+
+        if (! $this->shouldPreserveFilenames()) {
+            // first chunk contains the original extension
+            $fileName = $chunks[0]->getFileName();
+        }
+
+        // there will be files with duplicated names.
+        // In this case, make the fileName unique
+        if (FileUploadConfiguration::storage()->exists("{$tmp}/{$fileName}")) {
+            $pathinfo = pathinfo(FileUploadConfiguration::storage()->path("{$tmp}/{$fileName}"));
+            $fileName = $pathinfo['filename']
+                . '-' . count(glob(FileUploadConfiguration::storage()->path("{$tmp}/{$fileName}")))
+                . '.' . $pathinfo['extension'];
+        }
+
+        foreach ($chunks as $chunk) {
+            $chunkPath = FileUploadConfiguration::storage()->path("{$tmp}/{$chunk->getFileName()}");
+            $chunkFile = fopen($chunkPath, 'rb');
+            $buff = fread($chunkFile, $this->getChunkSize());
+            fclose($chunkFile);
+
+            $final = fopen(FileUploadConfiguration::storage()->path("{$tmp}/{$fileName}"), 'ab');
+            fwrite($final, $buff);
+            fclose($final);
+            unlink($chunkPath);
+        }
+
+        $file = TemporaryUploadedFile::createFromLivewire("/{$fileName}");
+
+        $this->state(array_replace(
+            $this->getState(),
+            [$fileKey => $file]
+        ));
+
+        return $file;
     }
 
     public function removeUploadedFile(string $fileKey): string | TemporaryUploadedFile | null
