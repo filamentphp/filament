@@ -21,6 +21,7 @@ public static function getPages(): array
     ];
 }
 ```
+Note: Ensure that the new route you define in `getPages()` is defined before any routes with wildcards that will match your new url.
 
 Any [parameters](https://laravel.com/docs/routing#route-parameters) defined in the route's path will be available to the page class, in an identical way to [Livewire](https://laravel-livewire.com/docs/rendering-components#route-params).
 
