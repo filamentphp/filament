@@ -44,11 +44,11 @@ class ImageColumn extends Column
 
     protected int | Closure | null $limit = null;
 
-    protected bool | Closure $shouldShowRemaining = false;
+    protected bool | Closure $hasLimitedRemainingText = false;
 
-    protected bool | Closure $shouldShowRemainingAfterStack = false;
+    protected bool | Closure $isLimitedRemainingTextSeparate = false;
 
-    protected string | Closure | null $remainingTextSize = null;
+    protected string | Closure | null $limitedRemainingTextSize = null;
 
     public function disk(string | Closure | null $disk): static
     {
@@ -140,18 +140,8 @@ class ImageColumn extends Column
         return $this;
     }
 
-    public function getImagePath(string | null $image = null): ?string
+    public function getImageUrl(?string $state = null): ?string
     {
-        $state = $image ?? $this->getState();
-
-        if (! $state && count($this->getImages())) {
-            return null;
-        }
-
-        if (! $state) {
-            return $this->getDefaultImageUrl();
-        }
-
         if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
             return $state;
         }
@@ -269,14 +259,6 @@ class ImageColumn extends Column
         return (bool) $this->evaluate($this->isStacked);
     }
 
-    public function getImages(): array
-    {
-        return collect($this->getState())
-            ->filter(fn ($image) => $this->getImagePath($image) !== null)
-            ->take($this->getLimit())
-            ->toArray();
-    }
-
     public function overlap(int | Closure | null $overlap): static
     {
         $this->overlap = $overlap;
@@ -313,41 +295,41 @@ class ImageColumn extends Column
         return $this->evaluate($this->limit);
     }
 
-    public function showRemaining(bool | Closure $condition = true, bool | Closure $showRemainingAfterStack = false, string | Closure | null $remainingTextSize = null): static
+    public function limitedRemainingText(bool | Closure $condition = true, bool | Closure $isSeparate = false, string | Closure | null $size = null): static
     {
-        $this->shouldShowRemaining = $condition;
-        $this->showRemainingAfterStack($showRemainingAfterStack);
-        $this->remainingTextSize($remainingTextSize);
+        $this->hasLimitedRemainingText = $condition;
+        $this->limitedRemainingTextSeparate($isSeparate);
+        $this->limitedRemainingTextSize($size);
 
         return $this;
     }
 
-    public function showRemainingAfterStack(bool | Closure $condition = true): static
+    public function limitedRemainingTextSeparate(bool | Closure $condition = true): static
     {
-        $this->shouldShowRemainingAfterStack = $condition;
+        $this->isLimitedRemainingTextSeparate = $condition;
 
         return $this;
     }
 
-    public function shouldShowRemaining(): bool
+    public function hasLimitedRemainingText(): bool
     {
-        return (bool) $this->evaluate($this->shouldShowRemaining);
+        return (bool) $this->evaluate($this->hasLimitedRemainingText);
     }
 
-    public function shouldShowRemainingAfterStack(): bool
+    public function isLimitedRemainingTextSeparate(): bool
     {
-        return (bool) $this->evaluate($this->shouldShowRemainingAfterStack);
+        return (bool) $this->evaluate($this->isLimitedRemainingTextSeparate);
     }
 
-    public function remainingTextSize(string | Closure | null $remainingTextSize): static
+    public function limitedRemainingTextSize(string | Closure | null $size): static
     {
-        $this->remainingTextSize = $remainingTextSize;
+        $this->limitedRemainingTextSize = $size;
 
         return $this;
     }
 
-    public function getRemainingTextSize(): ?string
+    public function getLimitedRemainingTextSize(): ?string
     {
-        return $this->evaluate($this->remainingTextSize);
+        return $this->evaluate($this->limitedRemainingTextSize);
     }
 }
