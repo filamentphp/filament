@@ -362,6 +362,27 @@ class FieldsDemo extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('checkboxListOptionDescriptions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        CheckboxList::make('checkboxListOptionDescriptions')
+                            ->label('Technologies')
+                            ->options([
+                                'tailwind' => 'Tailwind CSS',
+                                'alpine' => 'Alpine.js',
+                                'laravel' => 'Laravel',
+                                'livewire' => 'Laravel Livewire',
+                            ])
+                            ->descriptions([
+                                'tailwind' => 'A utility-first CSS framework for rapidly building modern websites without ever leaving your HTML.',
+                                'alpine' => 'A rugged, minimal tool for composing behavior directly in your markup.',
+                                'laravel' => 'A web application framework with expressive, elegant syntax.',
+                                'livewire' => 'A full-stack framework that makes building dynamic interfaces simple, without leaving the comfort of Laravel.',
+                            ]),
+                    ]),
+                Group::make()
                     ->id('checkboxListColumns')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
