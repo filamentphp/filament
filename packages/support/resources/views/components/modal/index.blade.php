@@ -128,7 +128,7 @@
                     x-transition:leave-end="scale-100"
                 @endif
                 @class([
-                    'fi-modal-window pointer-events-auto w-full cursor-default bg-white dark:bg-gray-900',
+                    'fi-modal-window pointer-events-auto w-full cursor-default bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     'relative' => $width !== 'screen',
                     'fi-modal-slide-over-window ms-auto h-screen overflow-y-auto' => $slideOver,
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
@@ -262,7 +262,7 @@
                         @elseif (count($footerActions))
                             <div
                                 @class([
-                                    'fi-modal-footer-actions gap-x-3',
+                                    'fi-modal-footer-actions gap-3',
                                     match ($footerActionsAlignment) {
                                         'center' => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
                                         'end', 'right' => 'flex flex-row-reverse flex-wrap items-center',
