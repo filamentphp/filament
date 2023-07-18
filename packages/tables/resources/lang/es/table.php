@@ -23,7 +23,7 @@ return [
         'search' => [
             'label' => 'Búsqueda',
             'placeholder' => 'Buscar',
-            'indicator' => 'Buscar'
+            'indicator' => 'Buscar',
         ],
 
     ],
@@ -190,7 +190,6 @@ return [
         ],
 
     ],
-
 
     'reorder_indicator' => 'Arrastrar los registros en el orden.',
 

@@ -21,7 +21,6 @@ return [
             'label' => '¿Olvidó su contraseña?',
         ],
 
-
     ],
 
     'fields' => [

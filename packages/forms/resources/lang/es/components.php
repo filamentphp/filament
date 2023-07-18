@@ -231,8 +231,8 @@ return [
                             'label' => 'Crear',
                         ],
                         'create_another' => [
-                            'label' => 'Crear y crear otro'
-                        ]
+                            'label' => 'Crear y crear otro',
+                        ],
 
                     ],
 
@@ -259,8 +259,6 @@ return [
             ],
 
         ],
-
-
 
         'boolean' => [
             'true' => 'Sí',
