@@ -117,7 +117,7 @@ class ImageEntry extends Entry
         return $this;
     }
 
-    public function getImagePath(): ?string
+    public function getImageUrl(): ?string
     {
         $state = $this->getState();
 

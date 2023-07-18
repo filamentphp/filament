@@ -3,7 +3,7 @@
         $height = $getHeight();
         $isCircular = $isCircular();
         $isSquare = $isSquare();
-        $path = $getImagePath();
+        $path = $getImageUrl();
         $width = $getWidth() ?? (($isCircular || $isSquare) ? $height : null);
     @endphp
 

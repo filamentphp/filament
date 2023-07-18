@@ -114,3 +114,84 @@ ImageColumn::make('logo')
         'alt' => "{$record->name} logo",
     ]),
 ```
+
+## Multiple images
+
+You may display multiple images from an array:
+
+```php
+ImageColumn::make('images')
+    ->circular()
+```
+
+Be sure to add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to the model property:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+class Product extends Model
+{
+    protected $casts = [
+        'images' => 'array',
+    ];
+
+    // ...
+}
+```
+
+## Stacking images
+
+You may display multiple images as a stack of overlapping images by using `stacked()`:
+
+```php
+ImageColumn::make('images')
+    ->circular()
+    ->stacked()
+```
+
+### Setting a limit
+
+You may set a limit to the number of images you want to display by passing `limit()`:
+
+```php
+ImageColumn::make('images')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+```
+
+### Showing the remaining images count
+
+When you set a limit you may also display the count of remaining images by passing `showRemaining()`. 
+
+```php
+ImageColumn::make('images')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+    ->showRemaining()
+```
+
+By default, `showRemaining()` will display the count of remaining images as a number stacked on the other images. If you prefer to show the count as a number after the images you may use `showRemainingAfterStack()`. You may also set the text size by using `remainingTextSize('xs')`;
+
+### Customizing the ring width
+
+The default ring width is `ring-3` but you may customize the ring width to be either `0`, `1`, `2`, or `4` which correspond to tailwinds `ring-widths`: `ring-0`, `ring-1`, `ring-2`, and `ring-4` respectively.
+
+```php
+ImageColumn::make('users.avatar')
+    ->circular()
+    ->stacked()
+    ->ring(3)
+```
+
+### Customizing the overlap
+
+The default overlap is `-space-x-1` but you may customize the overlap to be either `0`, `1`, `2`, `3`, or `4` which correspond to tailwinds `space-x` options: `space-x-0`, `-space-x-1`, `-space-x-2`, `-space-x-3`, and `-space-x-4` respectively.
+
+```php
+ImageColumn::make('users.avatar')
+    ->circular()
+    ->stacked()
+    ->overlap(3)
+```

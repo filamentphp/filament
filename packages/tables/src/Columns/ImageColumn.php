@@ -36,6 +36,20 @@ class ImageColumn extends Column
 
     protected string | Closure | null $defaultImageUrl = null;
 
+    protected bool | Closure $isStacked = false;
+
+    protected int | Closure | null $overlap = null;
+
+    protected int | Closure | null $ring = null;
+
+    protected int | Closure | null $limit = null;
+
+    protected bool | Closure $hasLimitedRemainingText = false;
+
+    protected bool | Closure $isLimitedRemainingTextSeparate = false;
+
+    protected string | Closure | null $limitedRemainingTextSize = null;
+
     public function disk(string | Closure | null $disk): static
     {
         $this->disk = $disk;
@@ -126,14 +140,8 @@ class ImageColumn extends Column
         return $this;
     }
 
-    public function getImagePath(): ?string
+    public function getImageUrl(?string $state = null): ?string
     {
-        $state = $this->getState();
-
-        if (! $state) {
-            return $this->getDefaultImageUrl();
-        }
-
         if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
             return $state;
         }
@@ -237,5 +245,91 @@ class ImageColumn extends Column
     public function getExtraImgAttributeBag(): ComponentAttributeBag
     {
         return new ComponentAttributeBag($this->getExtraImgAttributes());
+    }
+
+    public function stacked(bool | Closure $condition = true): static
+    {
+        $this->isStacked = $condition;
+
+        return $this;
+    }
+
+    public function isStacked(): bool
+    {
+        return (bool) $this->evaluate($this->isStacked);
+    }
+
+    public function overlap(int | Closure | null $overlap): static
+    {
+        $this->overlap = $overlap;
+
+        return $this;
+    }
+
+    public function getOverlap(): ?int
+    {
+        return $this->evaluate($this->overlap);
+    }
+
+    public function ring(string | Closure | null $ring): static
+    {
+        $this->ring = $ring;
+
+        return $this;
+    }
+
+    public function getRing(): ?int
+    {
+        return $this->evaluate($this->ring);
+    }
+
+    public function limit(int | Closure | null $limit = 3): static
+    {
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    public function getLimit(): ?int
+    {
+        return $this->evaluate($this->limit);
+    }
+
+    public function limitedRemainingText(bool | Closure $condition = true, bool | Closure $isSeparate = false, string | Closure | null $size = null): static
+    {
+        $this->hasLimitedRemainingText = $condition;
+        $this->limitedRemainingTextSeparate($isSeparate);
+        $this->limitedRemainingTextSize($size);
+
+        return $this;
+    }
+
+    public function limitedRemainingTextSeparate(bool | Closure $condition = true): static
+    {
+        $this->isLimitedRemainingTextSeparate = $condition;
+
+        return $this;
+    }
+
+    public function hasLimitedRemainingText(): bool
+    {
+        return (bool) $this->evaluate($this->hasLimitedRemainingText);
+    }
+
+    public function isLimitedRemainingTextSeparate(): bool
+    {
+        return (bool) $this->evaluate($this->isLimitedRemainingTextSeparate);
+    }
+
+    public function limitedRemainingTextSize(string | Closure | null $size): static
+    {
+        $this->limitedRemainingTextSize = $size;
+
+        return $this;
+    }
+
+    public function getLimitedRemainingTextSize(): ?string
+    {
+        return $this->evaluate($this->limitedRemainingTextSize);
     }
 }

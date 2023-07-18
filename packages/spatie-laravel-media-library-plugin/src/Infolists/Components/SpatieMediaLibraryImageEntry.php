@@ -35,7 +35,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
         return $this->conversion ?? '';
     }
 
-    public function getImagePath(): ?string
+    public function getImageUrl(): ?string
     {
         $state = $this->getState();
 
