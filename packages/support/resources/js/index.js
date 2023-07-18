@@ -3,8 +3,8 @@ import AlpineLazyLoadAssets from 'alpine-lazy-load-assets'
 import Sortable from './sortable'
 import Tooltip from '@ryangjchandler/alpine-tooltip'
 
-import 'tippy.js/dist/tippy.css';
-import 'tippy.js/themes/light.css';
+import 'tippy.js/dist/tippy.css'
+import 'tippy.js/themes/light.css'
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(AlpineFloatingUI)

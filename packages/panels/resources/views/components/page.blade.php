@@ -1,5 +1,7 @@
 @php
-    use phpDocumentor\Reflection\Types\Context;$widgetData = $this->getWidgetData();
+    use phpDocumentor\Reflection\Types\Context;
+
+    $widgetData = $this->getWidgetData();
 @endphp
 
 <div {{ $attributes->class(['fi-page']) }}>
@@ -54,7 +56,7 @@
     </div>
 
     @if (! $this instanceof \Filament\Tables\Contracts\HasTable)
-        <x-filament-actions::modals/>
+        <x-filament-actions::modals />
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('page.end', scope: static::class) }}

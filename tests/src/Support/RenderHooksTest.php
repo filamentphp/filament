@@ -1,6 +1,5 @@
 <?php
 
-use Filament\Facades\Filament;
 use Filament\Support\Facades\FilamentView;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Blade;

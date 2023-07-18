@@ -263,7 +263,7 @@ class Notification extends ViewComponent implements Arrayable
         return $static;
     }
 
-    public static function assertNotified(Notification | string $notification = null): void
+    public static function assertNotified(Notification | string | null $notification = null): void
     {
         $notificationsLivewireComponent = new Notifications();
         $notificationsLivewireComponent->mount();

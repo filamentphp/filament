@@ -2,7 +2,6 @@
 
 namespace Filament\Support;
 
-use Filament\Support\Facades\FilamentView;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 use Illuminate\Translation\MessageSelector;

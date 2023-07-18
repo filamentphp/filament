@@ -4,8 +4,6 @@ namespace Filament\Panel\Concerns;
 
 use Closure;
 use Filament\Support\Facades\FilamentView;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 
 trait HasRenderHooks
 {

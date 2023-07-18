@@ -6,7 +6,6 @@ use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
-use Filament\Support\Facades\FilamentView;
 
 class Panel extends Component
 {

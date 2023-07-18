@@ -267,7 +267,7 @@ export default function selectFormComponent({
                 }
 
                 return (await getOptionLabelsUsing())
-                    .filter((option) => ! existingOptionValues.has(option.value))
+                    .filter((option) => !existingOptionValues.has(option.value))
                     .map((option) => {
                         option.selected = true
 

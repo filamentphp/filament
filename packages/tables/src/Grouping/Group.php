@@ -33,12 +33,12 @@ class Group extends Component
 
     protected bool $isTitlePrefixedWithLabel = true;
 
-    final public function __construct(string $id = null)
+    final public function __construct(?string $id = null)
     {
         $this->id($id);
     }
 
-    public static function make(string $id = null): static
+    public static function make(?string $id = null): static
     {
         return app(static::class, ['id' => $id]);
     }
