@@ -99,7 +99,7 @@
 
         @persist('topbar.end')
             <div class="flex items-center gap-x-4">
-                @if (filament()->getGlobalSearchProvider() !== null)
+                @if (filament()->isGlobalSearchEnabled())
                     @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
                 @endif
 

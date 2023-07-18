@@ -552,6 +552,21 @@ class FilamentManager
         return $this->getCurrentPanel()->hasTopNavigation();
     }
 
+    public function isGlobalSearchEnabled(): bool
+    {
+        if ($this->getGlobalSearchProvider() === null) {
+            return false;
+        }
+
+        foreach ($this->getResources() as $resource) {
+            if ($resource::canGloballySearch()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public function isServing(): bool
     {
         return $this->isServing;
