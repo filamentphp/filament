@@ -68,11 +68,19 @@
             updateVisibleCheckboxListOptions: function () {
                 this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
                     (checkboxListItem) => {
-                        if (checkboxListItem.querySelector('.fi-fo-checkbox-list-option-label-text')?.innerText.toLowerCase().includes(this.search.toLowerCase())) {
+                        if (
+                            checkboxListItem
+                                .querySelector('.fi-fo-checkbox-list-option-label')
+                                ?.innerText.toLowerCase()
+                                .includes(this.search.toLowerCase())
+                        ) {
                             return true
                         }
 
-                        return checkboxListItem.querySelector('.fi-fo-checkbox-list-option-description-text')?.innerText.toLowerCase().includes(this.search.toLowerCase())
+                        return checkboxListItem
+                            .querySelector('.fi-fo-checkbox-list-option-description')
+                            ?.innerText.toLowerCase()
+                            .includes(this.search.toLowerCase())
                     },
                 )
             },
@@ -178,13 +186,15 @@
 
                         <div class="text-sm">
                             <span
-                                class="fi-fo-checkbox-list-option-label-text font-medium text-gray-950 dark:text-white"
+                                class="fi-fo-checkbox-list-option-label font-medium text-gray-950 dark:text-white"
                             >
                                 {{ $optionLabel }}
                             </span>
 
                             @if ($hasDescription($optionValue))
-                                <p class="fi-fo-checkbox-list-option-description-text text-gray-500 dark:text-gray-400">
+                                <p
+                                    class="fi-fo-checkbox-list-option-description text-gray-500 dark:text-gray-400"
+                                >
                                     {{ $getDescription($optionValue) }}
                                 </p>
                             @endif
