@@ -1,5 +1,5 @@
 <div>
-    <form wire:submit.prevent="{{ submitAction }}">
+    <form wire:submit="{{ submitAction }}">
         {{ $this->form }}
 
         <button type="submit">
@@ -7,5 +7,5 @@
         </button>
     </form>
 
-    {{ $this->modal }}
+    <x-filament-actions::modals />
 </div>

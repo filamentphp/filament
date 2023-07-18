@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Kandungan ditutup',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klon',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Tambah ke :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Masukkan',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Padam',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pindah',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Pindah ke bawah',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Pindah ke atas',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Tutup',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Buka',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Nyahpilih semua',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Tambah Baris',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Kandungan ditutup',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Tambah ke :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Padam',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pindah',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klon',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Pindah ke atas',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Pindah ke bawah',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Tutup',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Buka',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Pautkan',
                     'unlink' => 'Nyahpaut',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Sebelum',

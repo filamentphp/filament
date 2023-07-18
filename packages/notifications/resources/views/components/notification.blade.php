@@ -3,10 +3,14 @@
 ])
 
 <div
-    {{ $attributes->class(['filament-notifications-notification pointer-events-auto invisible']) }}
     x-data="notificationComponent({ notification: @js($notification) })"
-    wire:key="{{ $this->id }}.notifications.{{ $notification->getId() }}"
-    dusk="filament.notifications.notification"
+    {{
+        $attributes
+            ->merge([
+                'wire:key' => "{$this->getId()}.notifications.{$notification->getId()}",
+            ], escape: false)
+            ->class(['fi-no-notification pointer-events-auto invisible'])
+    }}
 >
     {{ $slot }}
 </div>

@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'và còn :count',
-        ],
-
-        'messages' => [
-            'copied' => 'Đã sao chép',
+        'text' => [
+            'more_list_items' => 'và còn :count',
         ],
 
     ],
@@ -24,7 +20,7 @@ return [
             'label' => 'Chọn/bỏ chọn mục :key cho các tác vụ hàng loạt.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Tìm kiếm',
             'placeholder' => 'Tìm kiếm',
         ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Đi tới trang :page',
@@ -69,7 +65,35 @@ return [
 
     ],
 
-    'buttons' => [
+    'summary' => [
+
+        'heading' => 'Tóm tắt',
+
+        'subheadings' => [
+            'all' => 'Tất cả :label',
+            'group' => 'Tóm tắt :group',
+            'page' => 'Trang này',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Trung bình',
+            ],
+
+            'count' => [
+                'label' => 'Đếm',
+            ],
+
+            'sum' => [
+                'label' => 'Tổng',
+            ],
+
+        ],
+
+    ],
+
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Sắp xếp lại bản ghi thành công',
@@ -83,7 +107,11 @@ return [
             'label' => 'Lọc',
         ],
 
-        'open_actions' => [
+        'group' => [
+            'label' => 'Nhóm',
+        ],
+
+        'open_bulk_actions' => [
             'label' => 'Xem thao tác',
         ],
 
@@ -97,19 +125,11 @@ return [
 
         'heading' => 'Không có dữ liệu nào',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Xóa tìm kiếm cột',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Xóa bộ lọc',
@@ -150,13 +170,37 @@ return [
 
     ],
 
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Nhóm theo',
+                'placeholder' => 'Nhóm theo',
+            ],
+
+            'direction' => [
+
+                'label' => 'Hướng nhóm',
+
+                'options' => [
+                    'asc' => 'Tăng dần',
+                    'desc' => 'Giảm dần',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'reorder_indicator' => 'Kéo và thả các bản ghi vào thứ tự.',
 
     'selection_indicator' => [
 
         'selected_count' => 'đã chọn 1 bản ghi.|đã chọn :count bản ghi.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Chọn tất cả :count',

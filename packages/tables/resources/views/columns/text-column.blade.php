@@ -1,105 +1,168 @@
 @php
-    $state = $getFormattedState();
+    $isListWithLineBreaks = $isListWithLineBreaks();
+
+    $isBadge = $isBadge();
+
+    $arrayState = $getState();
+    if (is_array($arrayState)) {
+        if ($listLimit = $getListLimit()) {
+            $limitedArrayState = array_slice($arrayState, $listLimit);
+            $arrayState = array_slice($arrayState, 0, $listLimit);
+        }
+
+        if ((! $isListWithLineBreaks) && (! $isBadge)) {
+            $arrayState = implode(', ', $arrayState);
+        }
+    }
+    $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
+
+    $canWrap = $canWrap();
 
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
 
-    $icon = $getIcon();
     $iconPosition = $getIconPosition();
-    $iconClasses = 'h-4 w-4';
+    $iconClasses = 'fi-ta-text-icon ' . ($isBadge ? 'h-3 w-3' : 'h-4 w-4');
 
-    $isCopyable = $isCopyable();
+    $isClickable = $getAction() || $getUrl();
 @endphp
 
 <div
     {{
         $attributes
-            ->merge($getExtraAttributes())
+            ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'filament-tables-text-column',
+                'fi-ta-text',
                 'px-4 py-3' => ! $isInline(),
-                'text-primary-600 transition hover:text-primary-500 hover:underline focus:text-primary-500 focus:underline' => $getAction() || $getUrl(),
-                match ($getColor()) {
-                    'danger' => 'text-danger-600',
-                    'primary' => 'text-primary-600',
-                    'secondary' => 'text-gray-500',
-                    'success' => 'text-success-600',
-                    'warning' => 'text-warning-600',
-                    default => null,
-                } => ! ($getAction() || $getUrl()),
-                match ($getColor()) {
-                    'secondary' => 'dark:text-gray-400',
-                    default => null,
-                } => (! ($getAction() || $getUrl())) && config('tables.dark_mode'),
-                match ($getSize()) {
-                    'sm' => 'text-sm',
-                    'lg' => 'text-lg',
-                    default => null,
-                },
-                match ($getWeight()) {
-                    'thin' => 'font-thin',
-                    'extralight' => 'font-extralight',
-                    'light' => 'font-light',
-                    'medium' => 'font-medium',
-                    'semibold' => 'font-semibold',
-                    'bold' => 'font-bold',
-                    'extrabold' => 'font-extrabold',
-                    'black' => 'font-black',
-                    default => null,
-                },
-                match ($getFontFamily()) {
-                    'sans' => 'font-sans',
-                    'serif' => 'font-serif',
-                    'mono' => 'font-mono',
-                    default => null,
-                },
-                'whitespace-normal' => $canWrap(),
+                'text-primary-600 transition hover:text-primary-500 hover:underline focus:text-primary-500 focus:underline' => $isClickable && (! $isBadge),
             ])
     }}
 >
     @if (filled($descriptionAbove))
-        <div
-            @class([
-                'text-sm text-gray-500',
-                'dark:text-gray-400' => config('tables.dark_mode'),
-            ])
-        >
-            {{ $descriptionAbove instanceof \Illuminate\Support\HtmlString ? $descriptionAbove : \Illuminate\Support\Str::of($descriptionAbove)->markdown()->sanitizeHtml()->toHtmlString() }}
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+            {{ $descriptionAbove }}
         </div>
     @endif
 
-    <div class="inline-flex items-center space-x-1 rtl:space-x-reverse">
-        @if ($icon && $iconPosition === 'before')
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
-        @endif
+    <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
+        @class([
+            'list-inside list-disc' => $isBulleted(),
+            'flex flex-wrap gap-1' => $isBadge,
+        ])
+    >
+        @foreach ($arrayState as $state)
+            @php
+                $formattedState = $formatState($state);
 
-        <span
-            @if ($isCopyable)
-                x-on:click="
-                    window.navigator.clipboard.writeText(@js($getCopyableState()))
-                    $tooltip(@js($getCopyMessage()), { timeout: @js($getCopyMessageDuration()) })
-                "
+                $color = $getColor($state) ?? 'gray';
+                $icon = $getIcon($state);
+
+                $itemIsCopyable = $isCopyable($state);
+                $copyableState = $getCopyableState($state) ?? $state;
+                $copyMessage = $getCopyMessage($state);
+                $copyMessageDuration = $getCopyMessageDuration($state);
+            @endphp
+
+            @if (filled($formattedState))
+                <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
+                    <div
+                        @class([
+                            'inline-flex items-center gap-x-1',
+                            'fi-ta-text-badge min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
+                            'whitespace-normal' => $canWrap,
+                            "fi-ta-text-badge-color-{$color}" => $isBadge && is_string($color),
+                            match ($color) {
+                                'gray' => 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
+                                default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
+                            } => $isBadge,
+                            match ($color) {
+                                'gray' => null,
+                                default => 'text-custom-600 dark:text-custom-400',
+                            } => ! ($isBadge || $isClickable),
+                            match ($size = ($isBadge ? 'xs' : $getSize($state))) {
+                                'xs' => 'text-xs',
+                                'sm', null => 'text-sm',
+                                'base', 'md' => 'text-base',
+                                'lg' => 'text-lg',
+                                default => $size,
+                            },
+                            match ($weight = ($isBadge ? 'medium' : $getWeight($state))) {
+                                'thin' => 'font-thin',
+                                'extralight' => 'font-extralight',
+                                'light' => 'font-light',
+                                'medium' => 'font-medium',
+                                'semibold' => 'font-semibold',
+                                'bold' => 'font-bold',
+                                'extrabold' => 'font-extrabold',
+                                'black' => 'font-black',
+                                default => $weight,
+                            },
+                            match ($getFontFamily($state)) {
+                                'sans' => 'font-sans',
+                                'serif' => 'font-serif',
+                                'mono' => 'font-mono',
+                                default => null,
+                            },
+                        ])
+                        @style([
+                            \Filament\Support\get_color_css_variables(
+                                $color,
+                                shades: match (true) {
+                                    $isBadge => [500, 700],
+                                    ! ($isBadge || $isClickable) => [400, 600],
+                                    default => [],
+                                },
+                            ) => $color !== 'gray',
+                        ])
+                    >
+                        @if ($icon && $iconPosition === 'before')
+                            <x-filament::icon
+                                :name="$icon"
+                                :class="$iconClasses"
+                            />
+                        @endif
+
+                        <span
+                            @if ($itemIsCopyable)
+                                x-on:click="
+                                    window.navigator.clipboard.writeText(@js($copyableState))
+                                    $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
+                                "
+                            @endif
+                            @class([
+                                'fi-ta-text-content',
+                                'cursor-pointer' => $itemIsCopyable,
+                            ])
+                        >
+                            {{ $formattedState }}
+                        </span>
+
+                        @if ($icon && $iconPosition === 'after')
+                            <x-filament::icon
+                                :name="$icon"
+                                :class="$iconClasses"
+                            />
+                        @endif
+                    </div>
+                </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
-            @class([
-                'cursor-pointer' => $isCopyable,
-            ])
-        >
-            {{ $state }}
-        </span>
+        @endforeach
 
-        @if ($icon && $iconPosition === 'after')
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+        @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
+            <{{ $isListWithLineBreaks ? 'li' : 'div' }}
+                @class([
+                    'text-sm' => ! $isBadge,
+                    'text-xs' => $isBadge,
+                ])
+            >
+                {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
+            </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
         @endif
-    </div>
+    </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
 
     @if (filled($descriptionBelow))
-        <div
-            @class([
-                'text-sm text-gray-500',
-                'dark:text-gray-400' => config('tables.dark_mode'),
-            ])
-        >
-            {{ $descriptionBelow instanceof \Illuminate\Support\HtmlString ? $descriptionBelow : \Illuminate\Support\Str::of($descriptionBelow)->markdown()->sanitizeHtml()->toHtmlString() }}
+        <div class="text-sm text-gray-500 dark:text-gray-400">
+            {{ $descriptionBelow }}
         </div>
     @endif
 </div>

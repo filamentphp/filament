@@ -2,15 +2,18 @@
 
 namespace Filament\Forms\Components;
 
-class Placeholder extends Component
+class Placeholder extends Component implements Contracts\HasHintActions
 {
     use Concerns\HasHelperText;
     use Concerns\HasHint;
     use Concerns\HasName;
 
-    protected string $view = 'forms::components.placeholder';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.placeholder';
 
-    protected $content = null;
+    protected mixed $content = null;
 
     final public function __construct(string $name)
     {
@@ -33,16 +36,11 @@ class Placeholder extends Component
         $this->dehydrated(false);
     }
 
-    public function content($content): static
+    public function content(mixed $content): static
     {
         $this->content = $content;
 
         return $this;
-    }
-
-    protected function shouldEvaluateWithState(): bool
-    {
-        return false;
     }
 
     public function getId(): string
@@ -50,7 +48,7 @@ class Placeholder extends Component
         return parent::getId() ?? $this->getStatePath();
     }
 
-    public function getContent()
+    public function getContent(): mixed
     {
         return $this->evaluate($this->content);
     }

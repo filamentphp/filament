@@ -2,13 +2,17 @@
 
 namespace Filament\Notifications\Actions;
 
-use Filament\Support\Actions\ActionGroup as BaseActionGroup;
+use Filament\Actions\ActionGroup as BaseActionGroup;
 use Illuminate\Contracts\Support\Arrayable;
 
+/**
+ * @property array<Action> $actions
+ */
 class ActionGroup extends BaseActionGroup implements Arrayable
 {
-    protected string $view = 'notifications::actions.group';
-
+    /**
+     * @return array<string, mixed>
+     */
     public function toArray(): array
     {
         return [
@@ -16,11 +20,15 @@ class ActionGroup extends BaseActionGroup implements Arrayable
             'color' => $this->getColor(),
             'icon' => $this->getIcon(),
             'iconPosition' => $this->getIconPosition(),
+            'iconSize' => $this->getIconSize(),
             'label' => $this->getLabel(),
             'tooltip' => $this->getTooltip(),
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): static
     {
         $static = static::make(
@@ -33,6 +41,7 @@ class ActionGroup extends BaseActionGroup implements Arrayable
         $static->color($data['color'] ?? null);
         $static->icon($data['icon'] ?? null);
         $static->iconPosition($data['iconPosition'] ?? null);
+        $static->iconSize($data['iconSize'] ?? null);
         $static->label($data['label'] ?? null);
         $static->tooltip($data['tooltip'] ?? null);
 

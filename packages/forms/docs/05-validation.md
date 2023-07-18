@@ -2,9 +2,11 @@
 title: Validation
 ---
 
-## Getting started
+## Overview
 
 Validation rules may be added to any [field](fields).
+
+In Laravel, validation rules are usually defined in arrays like `['required', 'max:255']` or a combined string like `required|max:255`. This is fine if you're exclusively working in the backend with simple form requests. But Filament is also able to give your users frontend validation, so they can fix their mistakes before any backend requests are made.
 
 Filament includes several [dedicated validation methods](#available-rules), but you can also use any [other Laravel validation rules](#other-rules), including [custom validation rules](#custom-rules).
 
@@ -25,14 +27,14 @@ Field::make('name')->activeUrl()
 The field value must be a value after a given date. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-after)
 
 ```php
-Field::make('startDate')->after('tomorrow')
+Field::make('start_date')->after('tomorrow')
 ```
 
 Alternatively, you may pass the name of another field to compare against:
 
 ```php
-Field::make('startDate')
-Field::make('endDate')->after('startDate')
+Field::make('start_date')
+Field::make('end_date')->after('start_date')
 ```
 
 ### After or equal to (date)
@@ -40,14 +42,14 @@ Field::make('endDate')->after('startDate')
 The field value must be a date after or equal to the given date. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-after-or-equal)
 
 ```php
-Field::make('startDate')->afterOrEqual('tomorrow')
+Field::make('start_date')->afterOrEqual('tomorrow')
 ```
 
 Alternatively, you may pass the name of another field to compare against:
 
 ```php
-Field::make('startDate')
-Field::make('endDate')->afterOrEqual('startDate')
+Field::make('start_date')
+Field::make('end_date')->afterOrEqual('start_date')
 ```
 
 ### Alpha
@@ -87,14 +89,14 @@ Field::make('name')->ascii()
 The field value must be a date before a given date. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-before)
 
 ```php
-Field::make('startDate')->before('first day of next month')
+Field::make('start_date')->before('first day of next month')
 ```
 
 Alternatively, you may pass the name of another field to compare against:
 
 ```php
-Field::make('startDate')->before('endDate')
-Field::make('endDate')
+Field::make('start_date')->before('end_date')
+Field::make('end_date')
 ```
 
 ### Before or equal to (date)
@@ -102,14 +104,14 @@ Field::make('endDate')
 The field value must be a date before or equal to the given date. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-before-or-equal)
 
 ```php
-Field::make('startDate')->beforeOrEqual('end of this month')
+Field::make('start_date')->beforeOrEqual('end of this month')
 ```
 
 Alternatively, you may pass the name of another field to compare against:
 
 ```php
-Field::make('startDate')->beforeOrEqual('endDate')
-Field::make('endDate')
+Field::make('start_date')->beforeOrEqual('end_date')
+Field::make('end_date')
 ```
 
 ### Confirmed
@@ -126,7 +128,7 @@ Field::make('password_confirmation')
 The field value must be different to another. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-different)
 
 ```php
-Field::make('backupEmail')->different('email')
+Field::make('backup_email')->different('email')
 ```
 
 ### Doesnt Start With
@@ -169,7 +171,7 @@ The field value must exist in the database. [See the Laravel documentation.](htt
 Field::make('invitation')->exists()
 ```
 
-By default, the form's model will be searched, [if it is registered](getting-started#registering-a-model). You may specify a custom table name or model to search:
+By default, the form's model will be searched, [if it is registered](adding-a-form-to-a-livewire-component#setting-a-form-model). You may specify a custom table name or model to search:
 
 ```php
 use App\Models\Invitation;
@@ -189,7 +191,7 @@ You can further customize the rule by passing a [closure](advanced#closure-custo
 use Illuminate\Validation\Rules\Exists;
 
 Field::make('invitation')
-    ->exists(callback: function (Exists $rule) {
+    ->exists(modifyRuleUsing: function (Exists $rule) {
         return $rule->where('is_active', 1);
     })
 ```
@@ -402,7 +404,7 @@ The field value must not exist in the database. [See the Laravel documentation.]
 Field::make('email')->unique()
 ```
 
-By default, the form's model will be searched, [if it is registered](getting-started#registering-a-model). You may specify a custom table name or model to search:
+By default, the form's model will be searched, [if it is registered](adding-a-form-to-a-livewire-component#setting-a-form-model). You may specify a custom table name or model to search:
 
 ```php
 use App\Models\User;
@@ -422,7 +424,7 @@ Sometimes, you may wish to ignore a given model during unique validation. For ex
 Field::make('email')->unique(ignorable: $ignoredUser)
 ```
 
-If you're using the [admin panel](/docs/admin), you can easily ignore the current record by using `ignoreRecord` instead:
+If you're using the [panel builder](../panels), you can easily ignore the current record by using `ignoreRecord` instead:
 
 ```php
 Field::make('email')->unique(ignoreRecord: true)
@@ -434,7 +436,7 @@ You can further customize the rule by passing a [closure](advanced#closure-custo
 use Illuminate\Validation\Rules\Unique;
 
 Field::make('email')
-    ->unique(callback: function (Unique $rule) {
+    ->unique(modifyRuleUsing: function (Unique $rule) {
         return $rule->where('is_active', 1);
     })
 ```
@@ -506,7 +508,7 @@ protected function onValidationError(ValidationException $exception): void
 }
 ```
 
-Alternatively, if you are using admin panel and you want this behaviour on all the pages, add this inside the `boot()` method of your `AppServiceProvider`:
+Alternatively, if you are using the panel builder and want this behaviour on all the pages, add this inside the `boot()` method of your `AppServiceProvider`:
 
 ```php
 use Filament\Notifications\Notification;

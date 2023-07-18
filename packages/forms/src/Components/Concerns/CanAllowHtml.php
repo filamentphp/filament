@@ -17,6 +17,6 @@ trait CanAllowHtml
 
     public function isHtmlAllowed(): bool
     {
-        return $this->evaluate($this->isHtmlAllowed);
+        return (bool) $this->evaluate($this->isHtmlAllowed);
     }
 }

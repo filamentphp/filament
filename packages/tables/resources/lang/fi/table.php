@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'ja :count lisää',
-        ],
-
-        'messages' => [
-            'copied' => 'Kopioitu',
+        'text' => [
+            'more_list_items' => 'ja :count lisää',
         ],
 
     ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Mene sivulle :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Viimeistele tietueiden järjestely',
@@ -83,7 +79,7 @@ return [
             'label' => 'Suodata',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Avaa toiminnot',
         ],
 
@@ -97,19 +93,11 @@ return [
 
         'heading' => 'Tietueita ei löytynyt',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Tyhjennä kolumnien haku',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Poista suodatin',
@@ -156,7 +144,7 @@ return [
 
         'selected_count' => '1 tietue valittu.|:count tietuetta valittu.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Valitse kaikki :count tietuetta',

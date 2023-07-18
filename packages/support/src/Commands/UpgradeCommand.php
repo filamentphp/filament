@@ -13,15 +13,15 @@ class UpgradeCommand extends Command
     public function handle(): int
     {
         foreach ([
+            AssetsCommand::class,
             'config:clear',
-            'livewire:discover',
             'route:clear',
             'view:clear',
         ] as $command) {
             $this->call($command);
         }
 
-        $this->info('Successfully upgraded!');
+        $this->components->info('Successfully upgraded!');
 
         return static::SUCCESS;
     }

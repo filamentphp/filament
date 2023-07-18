@@ -4,16 +4,16 @@ namespace Filament\Tables\Filters\Concerns;
 
 trait HasDefaultState
 {
-    protected $defaultState = null;
+    protected mixed $defaultState = null;
 
-    public function default($state = true): static
+    public function default(mixed $state = true): static
     {
         $this->defaultState = $state;
 
         return $this;
     }
 
-    public function getDefaultState()
+    public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState);
     }

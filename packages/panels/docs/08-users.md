@@ -1,0 +1,205 @@
+---
+title: Users
+---
+
+## Overview
+
+By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
+
+## Authorizing access to the app
+
+To set up your `App\Models\User` to access Filament in non-local environments, you must implement the `FilamentUser` contract:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable implements FilamentUser
+{
+    // ...
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return str_ends_with($this->email, '@yourdomain.com') && $this->hasVerifiedEmail();
+    }
+}
+```
+
+The `canAccessPanel()` method returns `true` or `false` depending on whether the user is allowed to access Filament. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
+
+## Setting up user avatars
+
+Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if you user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable implements FilamentUser, HasAvatar
+{
+    // ...
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->avatar_url;
+    }
+}
+```
+
+The `getFilamentAvatarUrl()` method is used to retrieve the avatar of the current user. If `null` is returned from this method, Filament will fall back to [ui-avatars.com](https://ui-avatars.com).
+
+### Using a different avatar provider
+
+You can easily swap out [ui-avatars.com](https://ui-avatars.com) for a different service, by creating a new avatar provider.
+
+In this example, we create a new file at `app/Filament/AvatarProviders/BoringAvatarsProvider.php` for [boringavatars.com](https://boringavatars.com). The `get()` method accepts a user model instance and returns an avatar URL for that user:
+
+```php
+<?php
+
+namespace App\Filament\AvatarProviders;
+
+use Filament\Facades\Filament;
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
+
+class BoringAvatarsProvider implements Contracts\AvatarProvider
+{
+    public function get(Model | Authenticatable $record): string
+    {
+        $name = str(Filament::getNameForDefaultAvatar($record))
+            ->trim()
+            ->explode(' ')
+            ->map(fn (string $segment): string => filled($segment) ? mb_substr($segment, 0, 1) : '')
+            ->join(' ');
+
+        return 'https://source.boringavatars.com/beam/120/' . urlencode($name);
+    }
+}
+```
+
+Now, register this new avatar provider in the [configuration](configuration):
+
+```php
+use App\Filament\AvatarProviders\BoringAvatarsProvider;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->defaultAvatarProvider(BoringAvatarsProvider::class);
+}
+```
+
+## Configuring the user name attribute
+
+By default, Filament will use the `name` attribute of the user to display their name in the app. To change this, you can implement the `HasName` contract:
+
+```php
+<?php
+
+namespace App\Models;
+
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasName;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+
+class User extends Authenticatable implements FilamentUser, HasName
+{
+    // ...
+
+    public function getFilamentName(): string
+    {
+        return "{$this->first_name} {$this->last_name}";
+    }
+}
+```
+
+The `getFilamentName()` method is used to retrieve the name of the current user.
+
+## Authentication features
+
+You can easily enable authentication features for a panel in the configuration file:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->login()
+        ->registration()
+        ->passwordReset()
+        ->emailVerification()
+        ->profile();
+}
+```
+
+### Customizing the authentication features
+
+If you'd like to replace these pages with your own, you can pass in any Filament page class to these methods.
+
+Most people will be able to make their desired customizations by extending the base page class from the Filament codebase, overriding methods like `form()`, and then passing the new page class in to the configuration:
+
+```php
+use App\Filament\Pages\Auth\EditProfile;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->profile(EditProfile::class);
+}
+```
+
+In this example, we will customize the profile page. We need to create a new PHP class at `app/Filament/Pages/Auth/EditProfile.php`:
+
+```php
+<?php
+
+namespace App\Filament\Pages\Auth;
+
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Pages\Auth\EditProfile as BaseEditProfile;
+
+class EditProfile extends BaseEditProfile
+{
+    public function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('username')
+                    ->required()
+                    ->maxLength(255),
+                $this->getNameFormComponent(),
+                $this->getEmailFormComponent(),
+                $this->getPasswordFormComponent(),
+                $this->getPasswordConfirmationFormComponent(),
+            ]);
+    }
+}
+```
+
+This class extends the base profile page class from the Filament codebase. Other page classes you could extend include:
+
+- `Filament\Pages\Auth\Login`
+- `Filament\Pages\Auth\Register`
+- `Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt`
+- `Filament\Pages\Auth\PasswordReset\RequestPasswordReset`
+- `Filament\Pages\Auth\PasswordReset\ResetPassword`
+
+In the `form()` method of the example, we call methods like `getNameFormComponent()` to get the default form components for the page. You can customize these components as required. For all the available customization options, see the base `EditProfile` page class in the Filament codebase - it contains all the methods that you can override to make changes.

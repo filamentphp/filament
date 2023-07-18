@@ -12,9 +12,12 @@ trait CanValidateInput
         return $this->validateInput(fn () => $this->ask($question, $default), $field, ['required']);
     }
 
-    protected function validateInput(Closure $callback, string $field, array $rules, ?Closure $onError = null): string
+    /**
+     * @param  array<array-key>  $rules
+     */
+    protected function validateInput(Closure $askUsing, string $field, array $rules, ?Closure $onError = null): string
     {
-        $input = $callback();
+        $input = $askUsing();
 
         $validator = Validator::make(
             [$field => $input],
@@ -22,13 +25,13 @@ trait CanValidateInput
         );
 
         if ($validator->fails()) {
-            $this->error($validator->errors()->first());
+            $this->components->error($validator->errors()->first());
 
             if ($onError) {
                 $onError($validator);
             }
 
-            $input = $this->validateInput($callback, $field, $rules);
+            $input = $this->validateInput($askUsing, $field, $rules);
         }
 
         return $input;

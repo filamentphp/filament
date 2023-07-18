@@ -1,76 +1,61 @@
 <x-dynamic-component
     :component="$getFieldWrapperView()"
-    :id="$getId()"
-    :label="$getLabel()"
-    :label-sr-only="$isAvatar() || $isLabelHidden()"
-    :helper-text="$getHelperText()"
-    :hint="$getHint()"
-    :hint-action="$getHintAction()"
-    :hint-color="$getHintColor()"
-    :hint-icon="$getHintIcon()"
-    :required="$isRequired()"
-    :state-path="$getStatePath()"
+    :field="$field"
+    :label-sr-only="$isLabelHidden()"
 >
     @php
         $imageCropAspectRatio = $getImageCropAspectRatio();
         $imageResizeTargetHeight = $getImageResizeTargetHeight();
         $imageResizeTargetWidth = $getImageResizeTargetWidth();
-        $imageResizeMode = $getImageResizeMode();
-        $imageResizeUpscale = $getImageResizeUpscale();
-        $shouldTransformImage = $imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth;
+        $isAvatar = $isAvatar();
+        $statePath = $getStatePath();
     @endphp
 
     <div
+        ax-load
+        ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
-                    acceptedFileTypes: {{ json_encode($getAcceptedFileTypes()) }},
-                    canDownload: {{ $canDownload() ? 'true' : 'false' }},
-                    canOpen: {{ $canOpen() ? 'true' : 'false' }},
-                    canPreview: {{ $canPreview() ? 'true' : 'false' }},
-                    canReorder: {{ $canReorder() ? 'true' : 'false' }},
+                    acceptedFileTypes: @js($getAcceptedFileTypes()),
                     deleteUploadedFileUsing: async (fileKey) => {
-                        return await $wire.deleteUploadedFile('{{ $getStatePath() }}', fileKey)
+                        return await $wire.deleteUploadedFile(@js($statePath), fileKey)
                     },
-                    getUploadedFileUrlsUsing: async () => {
-                        return await $wire.getUploadedFileUrls('{{ $getStatePath() }}')
+                    getUploadedFilesUsing: async () => {
+                        return await $wire.getFormUploadedFiles(@js($statePath))
                     },
-                    imageCropAspectRatio:
-                        {{ $imageCropAspectRatio ? "'{$imageCropAspectRatio}'" : 'null' }},
-                    imagePreviewHeight:
-                        {{ ($height = $getImagePreviewHeight()) ? "'{$height}'" : 'null' }},
-                    imageResizeMode: {{ $imageResizeMode ? "'{$imageResizeMode}'" : 'null' }},
-                    imageResizeTargetHeight:
-                        {{ $imageResizeTargetHeight ? "'{$imageResizeTargetHeight}'" : 'null' }},
-                    imageResizeTargetWidth:
-                        {{ $imageResizeTargetWidth ? "'{$imageResizeTargetWidth}'" : 'null' }},
-                    imageResizeUpscale: {{ $imageResizeUpscale ? 'true' : 'false' }},
-                    isAvatar: {{ $isAvatar() ? 'true' : 'false' }},
-                    loadingIndicatorPosition: '{{ $getLoadingIndicatorPosition() }}',
+                    imageCropAspectRatio: @js($imageCropAspectRatio),
+                    imagePreviewHeight: @js($getImagePreviewHeight()),
+                    imageResizeMode: @js($getImageResizeMode()),
+                    imageResizeTargetHeight: @js($imageResizeTargetHeight),
+                    imageResizeTargetWidth: @js($imageResizeTargetWidth),
+                    imageResizeUpscale: @js($getImageResizeUpscale()),
+                    isAvatar: {{ $isAvatar ? 'true' : 'false' }},
+                    isDownloadable: @js($isDownloadable()),
+                    isOpenable: @js($isOpenable()),
+                    isPreviewable: @js($isPreviewable()),
+                    isReorderable: @js($isReorderable()),
+                    loadingIndicatorPosition: @js($getLoadingIndicatorPosition()),
                     locale: @js(app()->getLocale()),
-                    panelAspectRatio:
-                        {{ ($aspectRatio = $getPanelAspectRatio()) ? "'{$aspectRatio}'" : 'null' }},
-                    panelLayout: {{ ($layout = $getPanelLayout()) ? "'{$layout}'" : 'null' }},
+                    panelAspectRatio: @js($getPanelAspectRatio()),
+                    panelLayout: @js($getPanelLayout()),
                     placeholder: @js($getPlaceholder()),
                     maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
                     minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
                     removeUploadedFileUsing: async (fileKey) => {
-                        return await $wire.removeUploadedFile('{{ $getStatePath() }}', fileKey)
+                        return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
                     },
-                    removeUploadedFileButtonPosition:
-                        '{{ $getRemoveUploadedFileButtonPosition() }}',
+                    removeUploadedFileButtonPosition: @js($getRemoveUploadedFileButtonPosition()),
                     reorderUploadedFilesUsing: async (files) => {
-                        return await $wire.reorderUploadedFiles('{{ $getStatePath() }}', files)
+                        return await $wire.reorderFormUploadedFiles(@js($statePath), files)
                     },
-                    shouldAppendFiles: {{ $shouldAppendFiles() ? 'true' : 'false' }},
-                    shouldOrientImageFromExif:
-                        {{ $shouldOrientImageFromExif() ? 'true' : 'false' }},
-                    shouldTransformImage: {{ $shouldTransformImage ? 'true' : 'false' }},
-                    state: $wire.{{ $applyStateBindingModifiers('entangle(\'' . $getStatePath() . '\')') }},
-                    uploadButtonPosition: '{{ $getUploadButtonPosition() }}',
-                    uploadProgressIndicatorPosition:
-                        '{{ $getUploadProgressIndicatorPosition() }}',
+                    shouldAppendFiles: @js($shouldAppendFiles()),
+                    shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
+                    shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
+                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    uploadButtonPosition: @js($getUploadButtonPosition()),
+                    uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
                     uploadUsing: (fileKey, file, success, error, progress) => {
                         $wire.upload(
-                            `{{ $getStatePath() }}.${fileKey}`,
+                            `{{ $statePath }}.${fileKey}`,
                             file,
                             () => {
                                 success(fileKey)
@@ -80,28 +65,45 @@
                         )
                     },
                 })"
+        x-ignore
         wire:ignore
-        {!! ($id = $getId()) ? "id=\"{$id}\"" : null !!}
-        style="
-            min-height: {{ $isAvatar() ? '8em' : ($getPanelLayout() === 'compact' ? '2.625em' : '4.75em') }};
-        "
         {{
             $attributes
-                ->merge($getExtraAttributes())
+                ->merge([
+                    'id' => $getId(),
+                ], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+                ->merge($getExtraAlpineAttributes(), escape: false)
                 ->class([
-                    'filament-forms-file-upload-component',
-                    'mx-auto w-32' => $isAvatar(),
+                    'fi-fo-file-upload flex',
+                    match ($getAlignment()) {
+                        'center' => 'justify-center',
+                        'end' => 'justify-end',
+                        'left' => 'justify-left',
+                        'right' => 'justify-right',
+                        'start', null => 'justify-start',
+                    },
                 ])
         }}
-        {{ $getExtraAlpineAttributeBag() }}
     >
-        <input
-            x-ref="input"
-            {{ $isDisabled() ? 'disabled' : '' }}
-            {{ $isMultiple() ? 'multiple' : '' }}
-            type="file"
-            {{ $getExtraInputAttributeBag() }}
-            dusk="filament.forms.{{ $getStatePath() }}"
-        />
+        <div
+            @class([
+                'h-full',
+                'w-32' => $isAvatar,
+                'w-full' => ! $isAvatar,
+            ])
+        >
+            <input
+                x-ref="input"
+                {{
+                    $getExtraInputAttributeBag()
+                        ->merge([
+                            'disabled' => $isDisabled(),
+                            'multiple' => $isMultiple(),
+                            'type' => 'file',
+                        ], escape: false)
+                }}
+            />
+        </div>
     </div>
 </x-dynamic-component>

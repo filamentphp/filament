@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Notifications',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Clear',
@@ -21,6 +21,24 @@ return [
         'empty' => [
             'heading' => 'No notifications here',
             'description' => 'Please check again later',
+        ],
+
+        'pagination' => [
+
+            'label' => 'Pagination navigation',
+
+            'actions' => [
+
+                'next' => [
+                    'label' => 'Next',
+                ],
+
+                'previous' => [
+                    'label' => 'Previous',
+                ],
+
+            ],
+
         ],
 
     ],

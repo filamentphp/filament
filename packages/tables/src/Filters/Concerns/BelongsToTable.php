@@ -26,6 +26,9 @@ trait BelongsToTable
         return $this->getTable()->getLivewire();
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getState(): array
     {
         return $this->getLivewire()->getTableFilterState($this->getName()) ?? [];

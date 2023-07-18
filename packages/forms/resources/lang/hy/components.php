@@ -4,31 +4,29 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Բովանդակությունը ծալվեց',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Ավելացնել :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ջնջել',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Իջեցնել',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Բարձրացնել',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Ծալել',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Ընդարձակել',
             ],
 
@@ -46,7 +44,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ավելացնել տող',
@@ -91,31 +89,29 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Բովանդակությունը ծալվեց',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Ավելացնել :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ջնջել',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Իջեցնել',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Բարձրացնել',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Ծալել',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Ընդարձակել',
             ],
 
@@ -137,7 +133,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Հղում',
                     'unlink' => 'Չեղարկել հղումը',
                 ],
@@ -216,7 +212,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Ետ',

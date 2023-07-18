@@ -4,19 +4,15 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'и :count еще',
-        ],
-
-        'messages' => [
-            'copied' => 'Скопировано',
+        'text' => [
+            'more_list_items' => 'и :count еще',
         ],
 
     ],
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Поиск',
             'placeholder' => 'Поиск',
         ],
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Перейти к странице :page',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Сохранить порядок',
@@ -75,7 +71,7 @@ return [
             'label' => 'Фильтр',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Открыть действия',
         ],
 
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Удалить фильтр',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => 'Выбрана 1 запись.|Выбрано :count записей.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Выбрать всё :count',

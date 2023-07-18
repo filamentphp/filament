@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Tampilkan semua',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Duplikat',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Tambahkan :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Sisipkan',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Hapus',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pindahkan',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Turunkan',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Naikkan',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sembunyikan',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Tampilkan',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Batalkan semua pilihan',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Tambahkan baris',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Tampilkan semua',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Tambahkan :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Hapus',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Duplikat',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pindahkan',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Turunkan',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Naikkan',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Sembunyikan',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Tampilkan',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Buat tautan',
                     'unlink' => 'Batalkan tautan',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Sebelumnya',

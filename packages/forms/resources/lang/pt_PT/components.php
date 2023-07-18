@@ -4,31 +4,29 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Conteúdo recolhido',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Adicionar em :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Remover',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Mover para baixo',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Mover para cima',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Recolher',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandir',
             ],
 
@@ -40,7 +38,7 @@ return [
                 'label' => 'Expandir todos',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Adicionar entre',
             ],
 
@@ -50,7 +48,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Adicionar linha',
@@ -95,35 +93,33 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Conteúdo recolhido',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Adicionar em :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Remover',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonar',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Mover para baixo',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Mover para cima',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Recolher',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandir',
             ],
 
@@ -145,7 +141,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -223,7 +219,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Voltar',

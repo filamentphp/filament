@@ -16,10 +16,10 @@
 }
 
 .dark trix-toolbar .trix-button:not(:first-child) {
-    @apply border-l border-gray-600;
+    @apply border-s border-gray-600;
 }
 
-trix-toolbar .filament-forms-rich-editor-component-toolbar-button.trix-active {
+trix-toolbar .fi-fo-rich-editor-toolbar-btn.trix-active {
     @apply bg-primary-600 text-white;
 }
 

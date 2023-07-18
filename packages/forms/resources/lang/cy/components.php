@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Cynnwys wedi Cwympo',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clôn',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Ychwanegu at :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Mewnosod',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Dileu',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Symud',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Symud i lawr',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Symud i fyny',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Cwympo',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Ymledu',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Dad ddewis popeth',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ychwanegu rhes',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Cynnwys wedi Cwympo',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Ychwanegu at :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Dileu',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clôn',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Symud',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Symud i lawr',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Symud i fyny',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Cwympo',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Ymledu',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Dolen',
                     'unlink' => 'Datgysylltu',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Yn ôl',

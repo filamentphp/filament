@@ -1,63 +1,47 @@
 @props([
     'actions' => null,
-    'columnSearches' => false,
     'description' => null,
     'heading',
     'icon',
 ])
 
 <div
-    {{
-        $attributes->class([
-            'filament-tables-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center',
-            'dark:bg-gray-800' => config('tables.dark_mode'),
-        ])
-    }}
+    {{ $attributes->class(['fi-ta-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center dark:bg-gray-900']) }}
 >
     <div
-        @class([
-            'flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500',
-            'dark:bg-gray-700' => config('tables.dark_mode'),
-        ])
+        class="fi-ta-empty-state-icon-ctn flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500 dark:bg-gray-700"
     >
-        <x-dynamic-component
-            :component="$icon"
-            class="h-6 w-6"
-            wire:loading.remove.delay
-            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
+        <x-filament::icon
+            :name="$icon"
+            wire:loading.remove.delay=""
+            :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
+            class="fi-ta-empty-state-icon h-6 w-6"
         />
 
-        <x-filament-support::loading-indicator
+        <x-filament::loading-indicator
             class="h-6 w-6"
-            wire:loading.delay
+            wire:loading.delay=""
             wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
         />
     </div>
 
-    <div class="max-w-md space-y-1">
-        <x-tables::empty-state.heading>
+    <div class="fi-ta-empty-state-textual-content-ctn max-w-md space-y-1">
+        <x-filament-tables::empty-state.heading>
             {{ $heading }}
-        </x-tables::empty-state.heading>
+        </x-filament-tables::empty-state.heading>
 
         @if ($description)
-            <x-tables::empty-state.description>
+            <x-filament-tables::empty-state.description>
                 {{ $description }}
-            </x-tables::empty-state.description>
+            </x-filament-tables::empty-state.description>
         @endif
     </div>
 
     @if ($actions)
-        <x-tables::actions :actions="$actions" alignment="center" wrap />
-    @endif
-
-    @if ($columnSearches)
-        <x-tables::link
-            wire:click="$set('tableColumnSearchQueries', [])"
-            color="danger"
-            tag="button"
-            size="sm"
-        >
-            {{ __('tables::table.empty.buttons.reset_column_searches.label') }}
-        </x-tables::link>
+        <x-filament-tables::actions
+            :actions="$actions"
+            alignment="center"
+            wrap
+        />
     @endif
 </div>

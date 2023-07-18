@@ -6,6 +6,7 @@ use Filament\Forms\Concerns\HasColumns;
 use Filament\Forms\Concerns\HasStateBindingModifiers;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasExtraAttributes;
+use Illuminate\Database\Eloquent\Model;
 
 class Component extends ViewComponent
 {
@@ -19,8 +20,9 @@ class Component extends ViewComponent
     use Concerns\HasActions;
     use Concerns\HasChildComponents;
     use Concerns\HasFieldWrapper;
-    use Concerns\HasInlineLabel;
     use Concerns\HasId;
+    use Concerns\HasInlineLabel;
+    use Concerns\HasKey;
     use Concerns\HasLabel;
     use Concerns\HasMaxWidth;
     use Concerns\HasMeta;
@@ -32,21 +34,37 @@ class Component extends ViewComponent
 
     protected string $evaluationIdentifier = 'component';
 
-    protected function getDefaultEvaluationParameters(): array
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'context' => $this->getContainer()->getContext(),
-            'get' => $this->getGetCallback(),
-            'livewire' => $this->getLivewire(),
-            'model' => $this->getModel(),
-            'record' => $this->getRecord(),
-            'set' => $this->getSetCallback(),
-            'state' => $this->shouldEvaluateWithState() ? $this->getState() : null,
-        ]);
+        return match ($parameterName) {
+            'context', 'operation' => [$this->getContainer()->getOperation()],
+            'get' => [$this->getGetCallback()],
+            'livewire' => [$this->getLivewire()],
+            'model' => [$this->getModel()],
+            'record' => [$this->getRecord()],
+            'set' => [$this->getSetCallback()],
+            'state' => [$this->getState()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
     }
 
-    protected function shouldEvaluateWithState(): bool
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
     {
-        return true;
+        $record = $this->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

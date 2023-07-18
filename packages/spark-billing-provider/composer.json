@@ -1,0 +1,24 @@
+{
+    "name": "filament/spark-billing-provider",
+    "description": "Filament support for Laravel Spark.",
+    "license": "MIT",
+    "homepage": "https://github.com/filamentphp/filament",
+    "support": {
+        "issues": "https://github.com/filamentphp/filament/issues",
+        "source": "https://github.com/filamentphp/filament"
+    },
+    "require": {
+        "php": "^8.1",
+        "filament/filament": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Filament\\Billing\\Providers\\": "src"
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

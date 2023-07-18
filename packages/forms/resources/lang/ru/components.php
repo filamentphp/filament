@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Содержимое свернуто',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Клонировать',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Добавить к :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Вставить',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Удалить',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Переместить',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Переместить вниз',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Переместить вверх',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Свернуть',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Развернуть',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Снять выделение',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Добавить строку',
@@ -122,39 +120,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Содержимое свернуто',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Добавить к :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Удалить',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Клонировать',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Переместить',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Переместить вниз',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Переместить вверх',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Свернуть',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Развернуть',
             ],
 
@@ -176,7 +172,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Ссылка',
                     'unlink' => 'Убрать ссылку',
                 ],
@@ -256,7 +252,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Назад',

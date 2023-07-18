@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'and :count more',
-        ],
-
-        'messages' => [
-            'copied' => 'Copied',
+        'text' => [
+            'more_list_items' => 'and :count more',
         ],
 
     ],
@@ -24,16 +20,17 @@ return [
             'label' => 'Select/deselect item :key for bulk actions.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Search',
             'placeholder' => 'Search',
+            'indicator' => 'Search',
         ],
 
     ],
 
     'pagination' => [
 
-        'label' => 'Pagination Navigation',
+        'label' => 'Pagination navigation',
 
         'overview' => '{1} Showing 1 result|[2,*] Showing :first to :last of :total results',
 
@@ -51,7 +48,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Go to page :page',
@@ -69,7 +66,35 @@ return [
 
     ],
 
-    'buttons' => [
+    'summary' => [
+
+        'heading' => 'Summary',
+
+        'subheadings' => [
+            'all' => 'All :label',
+            'group' => ':group summary',
+            'page' => 'This page',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Average',
+            ],
+
+            'count' => [
+                'label' => 'Count',
+            ],
+
+            'sum' => [
+                'label' => 'Sum',
+            ],
+
+        ],
+
+    ],
+
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Finish reordering records',
@@ -83,8 +108,12 @@ return [
             'label' => 'Filter',
         ],
 
-        'open_actions' => [
-            'label' => 'Open actions',
+        'group' => [
+            'label' => 'Group',
+        ],
+
+        'open_bulk_actions' => [
+            'label' => 'Bulk actions',
         ],
 
         'toggle_columns' => [
@@ -97,19 +126,11 @@ return [
 
         'heading' => 'No records found',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Clear column search',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Remove filter',
@@ -150,13 +171,37 @@ return [
 
     ],
 
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Group by',
+                'placeholder' => 'Group by',
+            ],
+
+            'direction' => [
+
+                'label' => 'Group direction',
+
+                'options' => [
+                    'asc' => 'Ascending',
+                    'desc' => 'Descending',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'reorder_indicator' => 'Drag and drop the records into order.',
 
     'selection_indicator' => [
 
         'selected_count' => '1 record selected.|:count records selected.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Select all :count',

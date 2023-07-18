@@ -8,23 +8,11 @@ return [
             'more' => 'და კიდევ :count',
         ],
 
-        'messages' => [
-            'copied' => 'დაკოპირებულია',
-        ],
-
     ],
 
     'fields' => [
 
-        'bulk_select_page' => [
-            'label' => 'Select/deselect all items for bulk actions.',
-        ],
-
-        'bulk_select_record' => [
-            'label' => 'Select/deselect item :key for bulk actions.',
-        ],
-
-        'search_query' => [
+        'search' => [
             'label' => 'ძიება',
             'placeholder' => 'ძიება',
         ],
@@ -51,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => '{1} :page-ელ გვერდზე გადასვლა|[2,*] მე-:page გვერდზე გადასვლა',
@@ -69,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'ჩანაწერების გადანაცვლების დასრულება',
@@ -97,19 +85,11 @@ return [
 
         'heading' => 'ჩანაწერები ვერ მოიძებნა',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'სვეტის ძიების წაშლა',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'ფილტრის მოხსნა',
@@ -156,7 +136,7 @@ return [
 
         'selected_count' => 'მონიშნულია :count ჩანაწერი.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => '{1} მონიშნე ყველა|[2,*] მონიშნე :count-ივე',

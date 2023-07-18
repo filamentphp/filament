@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'dan :count lagi',
-        ],
-
-        'messages' => [
-            'copied' => 'Disalin',
+        'text' => [
+            'more_list_items' => 'dan :count lagi',
         ],
 
     ],
@@ -24,7 +20,7 @@ return [
             'label' => 'Pilih/nyahpilih item :key untuk tindakan pukal.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Cari',
             'placeholder' => 'Carian',
         ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Pergi ke halaman :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Selesai menyusun semula rekod',
@@ -83,7 +79,7 @@ return [
             'label' => 'Penapis',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Tindakan terbuka',
         ],
 
@@ -97,19 +93,11 @@ return [
 
         'heading' => 'Tiada rekod dijumpai',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Kosongkan carian',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Buang penapis',
@@ -156,7 +144,7 @@ return [
 
         'selected_count' => '{1} 1 rekod dipilih.|[2,*] :count rekod yang dipilih.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Pilih semua :count',

@@ -4,39 +4,37 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'ערכים מצומצמים',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'שכפל',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'הוסף ל :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'מחק',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'העבר',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'הזז מטה',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'הזז מעלה',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'צמצם',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'הרחב',
             ],
 
@@ -54,7 +52,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'הוסף שורה',
@@ -99,39 +97,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'ערכים מצומצים',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'הוסף ל :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'מחק',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'שכפל',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'העבר',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'הזז מטה',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'הזז מעלה',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'צמצם',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'הרחב',
             ],
 
@@ -153,7 +149,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'קישור',
                     'unlink' => 'הסר קישור',
                 ],
@@ -234,7 +230,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'הקודם',

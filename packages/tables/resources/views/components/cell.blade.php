@@ -1,10 +1,3 @@
-<td
-    {{
-        $attributes->class([
-            'filament-tables-cell',
-            'dark:text-white' => config('tables.dark_mode'),
-        ])
-    }}
->
+<td {{ $attributes->class(['fi-ta-cell dark:text-white']) }}>
     {{ $slot }}
 </td>

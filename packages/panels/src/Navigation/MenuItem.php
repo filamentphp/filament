@@ -1,0 +1,98 @@
+<?php
+
+namespace Filament\Navigation;
+
+use Closure;
+use Filament\Support\Components\Component;
+use Laravel\SerializableClosure\Serializers\Native;
+
+class MenuItem extends Component
+{
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $color = null;
+
+    protected string | Closure | null $icon = null;
+
+    protected string | Closure | null $label = null;
+
+    protected int | Closure | null $sort = null;
+
+    protected string | Closure | Native | null $url = null;
+
+    final public function __construct()
+    {
+    }
+
+    public static function make(): static
+    {
+        return app(static::class);
+    }
+
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
+    public function color(string | array | Closure | null $color): static
+    {
+        $this->color = $color;
+
+        return $this;
+    }
+
+    public function icon(string | Closure | null $icon): static
+    {
+        $this->icon = $icon;
+
+        return $this;
+    }
+
+    public function label(string | Closure | null $label): static
+    {
+        $this->label = $label;
+
+        return $this;
+    }
+
+    public function sort(int | Closure | null $sort): static
+    {
+        $this->sort = $sort;
+
+        return $this;
+    }
+
+    public function url(string | Closure | null $url): static
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getColor(): string | array | null
+    {
+        return $this->evaluate($this->color);
+    }
+
+    public function getIcon(): ?string
+    {
+        return $this->evaluate($this->icon);
+    }
+
+    public function getLabel(): ?string
+    {
+        return $this->evaluate($this->label);
+    }
+
+    public function getSort(): int
+    {
+        return $this->evaluate($this->sort) ?? -1;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->evaluate($this->url);
+    }
+}

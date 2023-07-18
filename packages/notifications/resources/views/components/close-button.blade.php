@@ -1,4 +1,7 @@
-<x-heroicon-s-x
-    class="filament-notifications-close-button h-4 w-4 cursor-pointer text-gray-400"
+<x-filament::icon-button
+    color="gray"
+    icon="heroicon-m-x-mark"
+    icon-alias="notifications::notification.close-button"
     x-on:click="close"
+    class="fi-no-notification-close-btn -m-2"
 />

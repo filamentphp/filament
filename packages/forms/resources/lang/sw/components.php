@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Maudhui yamefichwa',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Iga',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Ongeza kwenye :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Ingiza',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Futa',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Hamisha',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Sogeza chini',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Sogeza juu',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Kunja',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Kunjua',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Ongeza safu',
@@ -107,39 +105,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Maudhui yamefichwa',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Ongeza kwenye :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Futa',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Iga',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Hamisha',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Sogeza chini',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Sogeza juu',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Kunja',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Kunjua',
             ],
 
@@ -161,7 +157,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Unganisha',
                     'unlink' => 'Tenganisha',
                 ],
@@ -242,7 +238,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Nyuma',

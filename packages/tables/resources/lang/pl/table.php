@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'i :count więcej',
-        ],
-
-        'messages' => [
-            'copied' => 'Skopiowano',
+        'text' => [
+            'more_list_items' => 'i :count więcej',
         ],
 
     ],
@@ -24,7 +20,7 @@ return [
             'label' => 'Zaznacz/odznacz pozycję :key dla operacji zbiorczych.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Szukaj',
             'placeholder' => 'Szukaj',
         ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Przejdź do strony :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Zakończ zmienianie kolejności',
@@ -83,7 +79,7 @@ return [
             'label' => 'Filtr',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Otwórz akcje',
         ],
 
@@ -97,19 +93,11 @@ return [
 
         'heading' => 'Nie znaleziono rekordów',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Wyczyść wyszukiwanie w kolumnach',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Usuń filtr',
@@ -156,7 +144,7 @@ return [
 
         'selected_count' => '{1} 1 rekord zaznaczony.|[2,4]:count rekordy zaznaczone.|[5,*]:count rekordów zaznaczonych.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Zaznacz wszystkie :count',

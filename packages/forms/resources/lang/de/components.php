@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Inhalt eingeklappt',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kopieren',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Hinzufügen',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Einfügen',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Löschen',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Verschieben',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Nach unten verschieben',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Nach oben verschieben',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Einklappen',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Ausklappen',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Alle deselektieren',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Zeile hinzufügen',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Inhalt eingeklappt',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Hinzufügen',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Löschen',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Kopieren',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Verschieben',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Runter verschieben',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Hoch verschieben',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Einklappen',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Ausklappen',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Verlinken',
                     'unlink' => 'Verlinkung aufheben',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Zurück',

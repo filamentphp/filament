@@ -2,3 +2,5 @@
 **/dist
 **/vendor
 composer.lock
+docs-assets
+tests/src/Upgrade/Fixture

@@ -44,7 +44,7 @@ class Filter extends BaseFilter
         return $this;
     }
 
-    protected function getFormField(): Field
+    public function getFormField(): Field
     {
         $field = $this->formComponent::make('isActive')
             ->label($this->getLabel());
@@ -54,5 +54,17 @@ class Filter extends BaseFilter
         }
 
         return $field;
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getResetState(): array
+    {
+        if ($this->hasFormSchema()) {
+            return parent::getResetState();
+        }
+
+        return ['isActive' => false];
     }
 }

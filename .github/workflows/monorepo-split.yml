@@ -5,40 +5,27 @@ on:
     tags: '*'
 
 jobs:
-  split-admin:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    steps:
-      - uses: actions/checkout@v3
-      - id: previous-tag
-        uses: 'WyriHaximus/github-action-get-previous-tag@master'
-      - name: Monorepo Split of admin
-        uses: danharrin/monorepo-split-github-action@v2.3.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
-        with:
-          package_directory: 'packages/admin'
-          repository_organization: 'filamentphp'
-          repository_name: 'panels'
-          branch: 2.x
-          tag: ${{ steps.previous-tag.outputs.tag }}
-          user_name: 'Dan Harrin'
-          user_email: 'git@danharrin.com'
   split-monorepo:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         package:
+          - actions
           - forms
+          - infolists
           - notifications
+          - panels
+          - spark-billing-provider
+          - spatie-laravel-google-fonts-plugin
           - spatie-laravel-media-library-plugin
           - spatie-laravel-settings-plugin
           - spatie-laravel-tags-plugin
           - spatie-laravel-translatable-plugin
           - support
           - tables
+          - widgets
+          - upgrade
     steps:
       - uses: actions/checkout@v3
       - id: previous-tag
@@ -51,7 +38,7 @@ jobs:
           package_directory: 'packages/${{ matrix.package }}'
           repository_organization: 'filamentphp'
           repository_name: '${{ matrix.package }}'
-          branch: 2.x
+          branch: 3.x
           tag: ${{ steps.previous-tag.outputs.tag }}
           user_name: 'Dan Harrin'
           user_email: 'git@danharrin.com'

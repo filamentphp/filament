@@ -4,35 +4,33 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Вміст згорнутий',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Додати до :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Видалити',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Перемістити',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Перемістити вниз',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Перемістити вгору',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Згорнути',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Розгорнути',
             ],
 
@@ -50,7 +48,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Додати рядок',
@@ -95,39 +93,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Вміст згорнутий',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Додати до :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Видалити',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Перемістити',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Клонувати',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Перемістити вниз',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Перемістити вгору',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Згорнути',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Розгорнути',
             ],
 
@@ -149,7 +145,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Посилання',
                     'unlink' => 'Прибрати посилання',
                 ],
@@ -227,7 +223,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Назад',

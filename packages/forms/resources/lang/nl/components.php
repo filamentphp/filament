@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Inhoud ingeklapt',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonen',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Toevoegen aan :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Invoegen',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Verwijderen',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Verplaatsen',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Naar beneden',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Naar boven',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Inklappen',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Uitklappen',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Alles deselecteren',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Rij toevoegen',
@@ -108,54 +106,55 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Bestanden bijvoegen',
+            'blockquote' => 'Blokcitaat',
             'bold' => 'Vet',
             'bullet_list' => 'Ongeordende lijst',
             'code_block' => 'Codeblok',
-            'edit' => 'Bewerken',
+            'heading' => 'Kop',
             'italic' => 'Cursief',
             'link' => 'Link',
             'ordered_list' => 'Genummerde lijst',
-            'preview' => 'Voorvertoning',
+            'redo' => 'Opnieuw',
             'strike' => 'Doorhalen',
+            'table' => 'Tabel',
+            'undo' => 'Herstellen',
         ],
 
     ],
 
     'repeater' => [
 
-        'collapsed' => 'Inhoud ingeklapt',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Toevoegen aan :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Verwijderen',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonen',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Verplaatsen',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Naar beneden',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Naar boven',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Inklappen',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Uitklappen',
             ],
 
@@ -177,7 +176,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -226,6 +225,28 @@ return [
                             'label' => 'Aanmaken',
                         ],
 
+                        'create_another' => [
+                            'label' => 'Aanmaken & nieuwe aanmaken',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Bewerken',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Opslaan',
+                        ],
+
                     ],
 
                 ],
@@ -259,7 +280,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Vorige',

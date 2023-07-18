@@ -13,10 +13,11 @@ class Block extends Component
         getLabel as getDefaultLabel;
     }
 
-    protected string $view = 'forms::components.builder.block';
-
     protected string | Closure | null $icon = null;
 
+    /**
+     * @var array<string, mixed> | null
+     */
     protected ?array $labelState = null;
 
     final public function __construct(string $name)
@@ -39,6 +40,9 @@ class Block extends Component
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed> | null  $state
+     */
     public function labelState(?array $state): static
     {
         $this->labelState = $state;

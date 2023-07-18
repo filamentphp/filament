@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components\Concerns;
 
 use Closure;
+use Filament\Forms\Components\Component;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Support\Arr;
 
@@ -13,15 +14,19 @@ trait CanBeDisabled
     public function disabled(bool | Closure $condition = true): static
     {
         $this->isDisabled = $condition;
+        $this->dehydrated(fn (Component $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }
 
-    public function disabledOn(string | array $contexts): static
+    /**
+     * @param  string | array<string>  $operations
+     */
+    public function disabledOn(string | array $operations): static
     {
-        $this->disabled(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $disabledContext) {
-                if ($disabledContext === $context || $livewire instanceof $disabledContext) {
+        $this->disabled(static function (HasForms $livewire, string $operation) use ($operations): bool {
+            foreach (Arr::wrap($operations) as $disabledOperation) {
+                if ($disabledOperation === $operation || $livewire instanceof $disabledOperation) {
                     return true;
                 }
             }

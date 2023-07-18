@@ -4,27 +4,29 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Contracts\CanHaveNumericState;
-use Filament\Forms\Components\TextInput\Mask;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
-use Illuminate\Contracts\Support\Arrayable;
+use Filament\Support\RawJs;
 
-class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState
+class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHaveNumericState, Contracts\HasAffixActions
 {
     use Concerns\CanBeAutocapitalized;
     use Concerns\CanBeAutocompleted;
     use Concerns\CanBeLengthConstrained;
+    use Concerns\CanBeReadOnly;
     use Concerns\HasAffixes;
+    use Concerns\HasDatalistOptions;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasInputMode;
     use Concerns\HasPlaceholder;
     use Concerns\HasStep;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.text-input';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.text-input';
 
-    protected ?Closure $configureMaskUsing = null;
-
-    protected array | Arrayable | Closure | null $datalistOptions = null;
+    protected string | RawJs | Closure | null $mask = null;
 
     protected bool | Closure $isEmail = false;
 
@@ -36,8 +38,14 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
 
     protected bool | Closure $isUrl = false;
 
+    /**
+     * @var scalar | Closure | null
+     */
     protected $maxValue = null;
 
+    /**
+     * @var scalar | Closure | null
+     */
     protected $minValue = null;
 
     protected string | Closure | null $telRegex = null;
@@ -47,13 +55,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     public function currentPassword(bool | Closure $condition = true): static
     {
         $this->rule('current_password', $condition);
-
-        return $this;
-    }
-
-    public function datalist(array | Arrayable | Closure | null $options): static
-    {
-        $this->datalistOptions = $options;
 
         return $this;
     }
@@ -76,13 +77,16 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
-    public function mask(?Closure $configuration): static
+    public function mask(string | RawJs | Closure | null $mask): static
     {
-        $this->configureMaskUsing = $configuration;
+        $this->mask = $mask;
 
         return $this;
     }
 
+    /**
+     * @param  scalar | Closure | null  $value
+     */
     public function maxValue($value): static
     {
         $this->maxValue = $value;
@@ -96,6 +100,9 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
+    /**
+     * @param  scalar | Closure | null  $value
+     */
     public function minValue($value): static
     {
         $this->minValue = $value;
@@ -159,38 +166,22 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
-    public function getDatalistOptions(): ?array
+    public function getMask(): string | RawJs | null
     {
-        $options = $this->evaluate($this->datalistOptions);
-
-        if ($options instanceof Arrayable) {
-            $options = $options->toArray();
-        }
-
-        return $options;
+        return $this->evaluate($this->mask);
     }
 
-    public function getMask(): ?Mask
-    {
-        if (! $this->hasMask()) {
-            return null;
-        }
-
-        return $this->evaluate($this->configureMaskUsing, [
-            'mask' => app(TextInput\Mask::class),
-        ]);
-    }
-
-    public function getJsonMaskConfiguration(): ?string
-    {
-        return $this->getMask()?->toJson();
-    }
-
+    /**
+     * @return scalar | null
+     */
     public function getMaxValue()
     {
         return $this->evaluate($this->maxValue);
     }
 
+    /**
+     * @return scalar | null
+     */
     public function getMinValue()
     {
         return $this->evaluate($this->minValue);
@@ -218,11 +209,6 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     public function getTelRegex(): string
     {
         return $this->evaluate($this->telRegex) ?? '/^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s\.\/0-9]*$/';
-    }
-
-    public function hasMask(): bool
-    {
-        return $this->configureMaskUsing !== null;
     }
 
     public function isEmail(): bool

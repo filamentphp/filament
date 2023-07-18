@@ -1,0 +1,7 @@
+/* Prevent excessive date input height in WebKit */
+/* https://github.com/twbs/bootstrap/issues/34433 */
+
+input::-webkit-datetime-edit {
+    display: block;
+    padding: 0;
+}

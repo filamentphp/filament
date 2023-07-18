@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'un :count vēl',
-        ],
-
-        'messages' => [
-            'copied' => 'Kopēts',
+        'text' => [
+            'more_list_items' => 'un :count vēl',
         ],
 
     ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Doties uz lapu :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Pabeigt ierakstu kārtošanu',
@@ -95,20 +91,11 @@ return [
 
     'empty' => [
         'heading' => 'Nav atrasts neviens ieraksts',
-
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Notīrīt kolonnas meklēšanu',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Noņemt filtru',
@@ -155,7 +142,7 @@ return [
 
         'selected_count' => 'Izvēlēts 1 ieraksts.|:count ieraksti izvēlēti.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Atlasīt visus :count',

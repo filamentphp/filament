@@ -18,30 +18,30 @@ class MakeColumnCommand extends Command
 
     public function handle(): int
     {
-        $column = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `StatusSwitcher`)', 'name'))
+        $column = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `StatusSwitcher`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $columnClass = (string) Str::of($column)->afterLast('\\');
-        $columnNamespace = Str::of($column)->contains('\\') ?
-            (string) Str::of($column)->beforeLast('\\') :
+        $columnClass = (string) str($column)->afterLast('\\');
+        $columnNamespace = str($column)->contains('\\') ?
+            (string) str($column)->beforeLast('\\') :
             '';
 
-        $view = Str::of($column)
+        $view = str($column)
             ->prepend('tables\\columns\\')
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
-            (string) Str::of($column)
+            (string) str($column)
                 ->prepend('Tables\\Columns\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
         $viewPath = resource_path(
-            (string) Str::of($view)
+            (string) str($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
@@ -63,7 +63,7 @@ class MakeColumnCommand extends Command
             $this->copyStubToApp('ColumnView', $viewPath);
         }
 
-        $this->info("Successfully created {$column}!");
+        $this->components->info("Successfully created {$column}!");
 
         return static::SUCCESS;
     }

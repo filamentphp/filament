@@ -4,7 +4,7 @@ return [
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Որոնել',
             'placeholder' => 'Որոնել',
         ],
@@ -25,7 +25,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Գնալ էջ :page',
@@ -43,13 +43,13 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => 'Ֆիլտր',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Բացել գործողություններ',
         ],
 
@@ -65,7 +65,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'reset' => [
                 'label' => 'Վերականգնել ֆիլտրերը',
@@ -99,7 +99,7 @@ return [
 
         'selected_count' => '1 գրառում ընտրված է։|:count գրառում ընտրված է։',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Ընտրել բոլոր :count֊ը',

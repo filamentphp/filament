@@ -7,8 +7,14 @@ use Illuminate\View\ComponentAttributeBag;
 
 trait HasExtraAttributes
 {
+    /**
+     * @var array<array<mixed> | Closure>
+     */
     protected array $extraAttributes = [];
 
+    /**
+     * @param  array<mixed> | Closure  $attributes
+     */
     public function extraAttributes(array | Closure $attributes, bool $merge = false): static
     {
         if ($merge) {
@@ -20,6 +26,9 @@ trait HasExtraAttributes
         return $this;
     }
 
+    /**
+     * @return array<mixed>
+     */
     public function getExtraAttributes(): array
     {
         $temporaryAttributeBag = new ComponentAttributeBag();

@@ -6,7 +6,7 @@ return [
 
         'heading' => '通知',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'クリア',

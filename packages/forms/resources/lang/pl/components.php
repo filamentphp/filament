@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Treść zwinięta',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Duplikuj',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Dodaj do :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Wstaw',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Usuń',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Przesuń',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Przesuń w dół',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Przesuń w górę',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Zwiń',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Rozwiń',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Odznacz wszystkie',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Dodaj wiersz',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Treść zwinięta',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Dodaj do :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Usuń',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Duplikuj',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Przesuń',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Przesuń w dół',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Przesuń w górę',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Zwiń',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Rozwiń',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Linkuj',
                     'unlink' => 'Usuń link',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Poprzedni',

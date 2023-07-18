@@ -1,16 +1,10 @@
-export default (Alpine) => {
-    Alpine.data('textareaFormComponent', () => ({
-        init: function () {
-            this.$nextTick(() => {
-                this.render()
-            })
-        },
-
+export default function textareaFormComponent({ initialHeight }) {
+    return {
         render: function () {
             if (this.$el.scrollHeight > 0) {
-                this.$el.style.height = '150px'
-                this.$el.style.height = this.$el.scrollHeight + 2 + 'px'
+                this.$el.style.height = initialHeight + 'rem'
+                this.$el.style.height = this.$el.scrollHeight + 'px'
             }
         },
-    }))
+    }
 }

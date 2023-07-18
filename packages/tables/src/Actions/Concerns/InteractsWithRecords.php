@@ -36,7 +36,7 @@ trait InteractsWithRecords
 
     public function getModel(): string
     {
-        return $this->getLivewire()->getTableModel();
+        return $this->getTable()->getModel();
     }
 
     public function getModelLabel(): string
@@ -47,7 +47,7 @@ trait InteractsWithRecords
             return $label;
         }
 
-        return $this->getLivewire()->getTableModelLabel();
+        return $this->getTable()->getModelLabel();
     }
 
     public function getPluralModelLabel(): string
@@ -58,14 +58,11 @@ trait InteractsWithRecords
             return $label;
         }
 
-        return $this->getLivewire()->getTablePluralModelLabel();
+        return $this->getTable()->getPluralModelLabel();
     }
 
     public function getRecords(): ?Collection
     {
-        return $this->evaluate(
-            $this->records,
-            exceptParameters: ['records'],
-        );
+        return $this->evaluate($this->records);
     }
 }

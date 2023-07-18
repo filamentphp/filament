@@ -19,7 +19,7 @@ class SpatieLaravelSettingsPluginServiceProvider extends ServiceProvider
             foreach (app(Filesystem::class)->files(__DIR__ . '/../stubs/') as $file) {
                 $this->publishes([
                     $file->getRealPath() => base_path("stubs/filament/{$file->getFilename()}"),
-                ], 'filament-spatie-laravel-settings-plugin-stubs');
+                ], 'filament-stubs');
             }
         }
 
@@ -27,6 +27,9 @@ class SpatieLaravelSettingsPluginServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/../resources/views', 'filament-spatie-laravel-settings-plugin');
     }
 
+    /**
+     * @return array<class-string>
+     */
     protected function getCommands(): array
     {
         $commands = [
@@ -45,6 +48,9 @@ class SpatieLaravelSettingsPluginServiceProvider extends ServiceProvider
             $aliases[] = $class;
         }
 
-        return array_merge($commands, $aliases);
+        return [
+            ...$commands,
+            ...$aliases,
+        ];
     }
 }

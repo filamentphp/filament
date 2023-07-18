@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'و :count تا بیشتر',
-        ],
-
-        'messages' => [
-            'copied' => 'کپی شد',
+        'text' => [
+            'more_list_items' => 'و :count تا بیشتر',
         ],
 
     ],
@@ -24,7 +20,7 @@ return [
             'label' => 'انتخاب/عدم انتخاب مورد :key برای اقدامات گروهی',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'جستجو',
             'placeholder' => 'جستجو',
         ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'برو به صفحه :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'اتمام بازچینش رکوردها',
@@ -83,7 +79,7 @@ return [
             'label' => 'فیلتر',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'بازکردن عملیات',
         ],
 
@@ -95,19 +91,11 @@ return [
 
     'empty' => [
         'heading' => 'هیچ رکوردی یافت نشد',
-
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'جستجوی ستونی را پاک کن',
-            ],
-
-        ],
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'حذف فیلتر',
@@ -154,7 +142,7 @@ return [
 
         'selected_count' => '1 آیتم انتخاب شده.|:count آیتم انتخاب شده.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'انتخاب همه‌ی :count آیتم',

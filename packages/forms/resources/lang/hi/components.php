@@ -4,25 +4,25 @@ return [
 
     'builder' => [
 
-        'buttons' => [
+        'actions' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label में जोड़ें',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'के बीच जोड़ें',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'हटाएँ',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'नीचे करे',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'ऊपर करे',
             ],
 
@@ -32,7 +32,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'पंक्ति जोड़ें',
@@ -77,21 +77,21 @@ return [
 
     'repeater' => [
 
-        'buttons' => [
+        'actions' => [
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label में जोड़ें',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'हटाएँ',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'नीचे करे',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'ऊपर करे',
             ],
 
@@ -105,7 +105,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'लिंक',
                     'unlink' => 'अनलिंक',
                 ],

@@ -3,15 +3,20 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasAlignment;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 
 class FileUpload extends BaseFileUpload
 {
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasPlaceholder;
+    use HasAlignment;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.file-upload';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.file-upload';
 
     protected string | Closure | null $imageCropAspectRatio = null;
 
@@ -37,7 +42,7 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $shouldAppendFiles = false;
 
-    protected bool | Closure $shouldOrientImageFromExif = true;
+    protected bool | Closure $shouldOrientImagesFromExif = true;
 
     protected string | Closure $uploadButtonPosition = 'right';
 
@@ -135,9 +140,19 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function orientImagesFromExif(bool | Closure $condition = true): static
+    {
+        $this->shouldOrientImagesFromExif = $condition;
+
+        return $this;
+    }
+
+    /**
+     * @deprecated Use `orientImagesFromExif()` instead.
+     */
     public function orientImageFromExif(bool | Closure $condition = true): static
     {
-        $this->shouldOrientImageFromExif = $condition;
+        $this->orientImagesFromExif($condition);
 
         return $this;
     }
@@ -204,7 +219,7 @@ class FileUpload extends BaseFileUpload
 
     public function getImageResizeUpscale(): bool
     {
-        return $this->evaluate($this->imageResizeUpscale);
+        return (bool) $this->evaluate($this->imageResizeUpscale);
     }
 
     public function getLoadingIndicatorPosition(): string
@@ -244,11 +259,11 @@ class FileUpload extends BaseFileUpload
 
     public function shouldAppendFiles(): bool
     {
-        return $this->evaluate($this->shouldAppendFiles);
+        return (bool) $this->evaluate($this->shouldAppendFiles);
     }
 
-    public function shouldOrientImageFromExif(): bool
+    public function shouldOrientImagesFromExif(): bool
     {
-        return (bool) $this->evaluate($this->shouldOrientImageFromExif);
+        return (bool) $this->evaluate($this->shouldOrientImagesFromExif);
     }
 }

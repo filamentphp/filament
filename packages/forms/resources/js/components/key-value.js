@@ -1,5 +1,5 @@
-export default (Alpine) => {
-    Alpine.data('keyValueFormComponent', ({ state }) => ({
+export default function keyValueFormComponent({ state }) {
+    return {
         state,
 
         rows: [],
@@ -88,5 +88,5 @@ export default (Alpine) => {
 
             this.state = state
         },
-    }))
+    }
 }

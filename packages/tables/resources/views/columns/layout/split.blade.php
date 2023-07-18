@@ -1,7 +1,7 @@
 <div
     {{
         $attributes
-            ->merge($getExtraAttributes())
+            ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'flex',
                 match ($getFromBreakpoint()) {
@@ -15,7 +15,7 @@
             ])
     }}
 >
-    <x-tables::columns.layout
+    <x-filament-tables::columns.layout
         :components="$getComponents()"
         :record="$getRecord()"
         :record-key="$recordKey"

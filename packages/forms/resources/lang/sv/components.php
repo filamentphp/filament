@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Innehåll komprimerat',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klona',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Lägg till i :label',
             ],
 
-            'create_item_between' => [
+            'add_item_between' => [
                 'label' => 'Infoga',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Radera',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Flytta',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Flytta ned',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Flytta upp',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Komprimera',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandera',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Avmarkera alla',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Lägg till rad',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Innehåll komprimerat',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Lägg till i :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Radera',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klona',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Flytta',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Flytta ned',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Flytta upp',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Komprimera',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandera',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Länka',
                     'unlink' => 'Ta bort länk',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Föregående',

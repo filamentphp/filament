@@ -4,19 +4,15 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'si alte :count',
-        ],
-
-        'messages' => [
-            'copied' => 'Copiat',
+        'text' => [
+            'more_list_items' => 'si alte :count',
         ],
 
     ],
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Căutare',
             'placeholder' => 'Căutare',
         ],
@@ -43,7 +39,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Mergi la pagina :page',
@@ -61,7 +57,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Dezactivați reordonarea',
@@ -75,7 +71,7 @@ return [
             'label' => 'Filtru',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Desdere operațiuni',
         ],
 
@@ -91,7 +87,7 @@ return [
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Ştergere filtru',
@@ -138,7 +134,7 @@ return [
 
         'selected_count' => '1 element selectat.|:count elemente selectate.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Selectare toate :count',

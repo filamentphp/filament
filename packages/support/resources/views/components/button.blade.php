@@ -1,169 +1,252 @@
 @props([
     'color' => 'primary',
-    'darkMode' => false,
     'disabled' => false,
     'form' => null,
     'icon' => null,
+    'iconAlias' => null,
     'iconPosition' => 'before',
+    'iconSize' => null,
+    'indicator' => null,
+    'indicatorColor' => 'primary',
     'keyBindings' => null,
+    'labeledFrom' => null,
+    'labelSrOnly' => false,
     'outlined' => false,
     'size' => 'md',
     'tag' => 'button',
     'tooltip' => null,
     'type' => 'button',
-    'labelSrOnly' => false,
 ])
 
 @php
-    $buttonClasses = array_merge([
-        "filament-button filament-button-size-{$size} inline-flex items-center justify-center py-1 gap-1 font-medium rounded-lg border transition-colors outline-none focus:ring-offset-2 focus:ring-2 focus:ring-inset",
-        'dark:focus:ring-offset-0' => $darkMode,
-        'opacity-70 cursor-not-allowed pointer-events-none' => $disabled,
-        'min-h-[2.25rem] px-4 text-sm' => $size === 'md',
-        'min-h-[2rem] px-3 text-sm' => $size === 'sm',
-        'min-h-[2.75rem] px-6 text-lg' => $size === 'lg',
-    ], $outlined ? [
-        'shadow focus:ring-white' => $color !== 'secondary',
-        'text-primary-600 border-primary-600 hover:bg-primary-600/20 focus:bg-primary-700/20 focus:ring-offset-primary-700' => $color === 'primary',
-        'text-success-600 border-success-600 hover:bg-success-600/20 focus:bg-success-700/20 focus:ring-offset-success-700' => $color === 'success',
-        'text-danger-600 border-danger-600 hover:bg-danger-600/20 focus:bg-danger-700/20 focus:ring-offset-danger-700' => $color === 'danger',
-        'text-warning-600 border-warning-600 hover:bg-warning-600/20 focus:bg-warning-700/20 focus:ring-offset-warning-700' => $color === 'warning',
-        'text-gray-600 border-gray-600 hover:bg-gray-600/20 focus:bg-gray-700/20 focus:ring-offset-gray-700' => $color === 'gray',
-        'text-gray-800 border-gray-300 hover:bg-gray-50 focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600' => $color === 'secondary',
-        'dark:text-primary-500 dark:border-primary-500 dark:hover:bg-primary-500/20 dark:focus:bg-primary-600/20 dark:focus:ring-offset-primary-600' => $color === 'primary' && $darkMode,
-        'dark:text-success-500 dark:border-success-500 dark:hover:bg-success-500/20 dark:focus:bg-success-600/20 dark:focus:ring-offset-success-600' => $color === 'success' && $darkMode,
-        'dark:text-danger-500 dark:border-danger-500 dark:hover:bg-danger-500/20 dark:focus:bg-danger-600/20 dark:focus:ring-offset-danger-600' => $color === 'danger' && $darkMode,
-        'dark:text-warning-500 dark:border-warning-500 dark:hover:bg-warning-500/20 dark:focus:bg-warning-600/20 dark:focus:ring-offset-warning-600' => $color === 'warning' && $darkMode,
-        'dark:text-gray-400 dark:border-gray-400 dark:hover:bg-gray-400/20 dark:focus:bg-gray-600/20 dark:focus:ring-offset-gray-600' => $color === 'gray' && $darkMode,
-        'dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-500/20 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800/20' => $color === 'secondary' && $darkMode,
-    ] : [
-        'text-white shadow focus:ring-white border-transparent' => $color !== 'secondary',
-        'bg-primary-600 hover:bg-primary-500 focus:bg-primary-700 focus:ring-offset-primary-700' => $color === 'primary',
-        'bg-success-600 hover:bg-success-500 focus:bg-success-700 focus:ring-offset-success-700' => $color === 'success',
-        'bg-danger-600 hover:bg-danger-500 focus:bg-danger-700 focus:ring-offset-danger-700' => $color === 'danger',
-        'bg-warning-600 hover:bg-warning-500 focus:bg-warning-700 focus:ring-offset-warning-700' => $color === 'warning',
-        'bg-gray-600 hover:bg-gray-500 focus:bg-gray-700 focus:ring-offset-gray-700' => $color === 'gray',
-        'text-gray-800 bg-white border-gray-300 hover:bg-gray-50 focus:ring-primary-600 focus:text-primary-600 focus:bg-primary-50 focus:border-primary-600' => $color === 'secondary',
-        'dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-gray-600 dark:hover:border-gray-500 dark:text-gray-200 dark:focus:text-primary-400 dark:focus:border-primary-400 dark:focus:bg-gray-800' => $color === 'secondary' && $darkMode,
+    $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
+        ...[
+            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center rounded-lg font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            is_string($color) ? "fi-btn-color-{$color}" : null,
+            match ($size) {
+                'xs' => 'gap-1 px-2 py-1.5 text-xs',
+                'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
+                'md' => 'gap-1.5 px-3 py-2 text-sm',
+                'lg' => 'gap-1.5 px-3.5 py-2.5 text-sm',
+                'xl' => 'gap-1.5 px-4 py-3 text-sm',
+            },
+            'hidden' => $labeledFrom,
+            match ($labeledFrom) {
+                'sm' => 'sm:inline-grid',
+                'md' => 'md:inline-grid',
+                'lg' => 'lg:inline-grid',
+                'xl' => 'xl:inline-grid',
+                '2xl' => '2xl:inline-grid',
+                default => 'inline-grid',
+            },
+        ],
+        ...(
+            $outlined
+            ? [
+                'fi-btn-outlined ring-1 ',
+                match ($color) {
+                    'gray' => 'ring-gray-300 text-gray-950 hover:bg-gray-400/10 focus:bg-gray-400/10 focus:ring-gray-400/40 dark:ring-gray-700 dark:text-white',
+                    default => 'ring-custom-600 text-custom-600 hover:bg-custom-400/10 focus:bg-custom-400/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-400/70',
+                },
+            ]
+                : [
+                    'shadow',
+                    match ($color) {
+                        'gray' => 'ring-gray-950/10 ring-1 bg-white text-gray-950 hover:bg-gray-50 focus:bg-gray-50 dark:ring-white/20 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:hover:ring-white/30 dark:focus:bg-white/20 dark:focus:ring-white/30',
+                        default => 'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 focus:ring-custom-400/50 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus:bg-custom-400',
+                    },
+                ]
+        ),
     ]);
 
+    $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
+        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+    ]);
+
+    $iconSize ??= match ($size) {
+        'xs', 'sm' => 'sm',
+        default => 'md',
+    };
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'filament-button-icon',
-        'w-4 h-4' => $size === 'sm',
-        'w-5 h-5' => $size === 'md',
-        'w-6 h-6' => $size === 'lg',
-        'mr-1 -ml-2 rtl:ml-1 rtl:-mr-2' => ($iconPosition === 'before') && ($size === 'md') && (! $labelSrOnly),
-        'mr-2 -ml-3 rtl:ml-2 rtl:-mr-3' => ($iconPosition === 'before') && ($size === 'lg') && (! $labelSrOnly),
-        'mr-1 -ml-1.5 rtl:ml-1 rtl:-mr-1.5' => ($iconPosition === 'before') && ($size === 'sm') && (! $labelSrOnly),
-        'ml-1 -mr-2 rtl:mr-1 rtl:-ml-2' => ($iconPosition === 'after') && ($size === 'md') && (! $labelSrOnly),
-        'ml-2 -mr-3 rtl:mr-2 rtl:-ml-3' => ($iconPosition === 'after') && ($size === 'lg') && (! $labelSrOnly),
-        'ml-1 -mr-1.5 rtl:mr-1 rtl:-ml-1.5' => ($iconPosition === 'after') && ($size === 'sm') && (! $labelSrOnly),
+        'fi-btn-icon',
+        match ($iconSize) {
+            'sm' => 'h-4 w-4',
+            'md' => 'h-5 w-5',
+            'lg' => 'h-6 w-6',
+            default => $iconSize,
+        },
+    ]);
+
+    $indicatorClasses = 'fi-btn-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-xs font-medium tracking-tight text-white dark:bg-custom-500';
+
+    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [500, 600]);
+
+    $labelClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-btn-label',
+        'sr-only' => $labelSrOnly,
     ]);
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
-    $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
+    $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
+    $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;
 
     if ($hasLoadingIndicator) {
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
 
+@if ($labeledFrom)
+    <x-filament::icon-button
+        :color="$color"
+        :disabled="$disabled"
+        :form="$form"
+        :icon="$icon"
+        :icon-alias="$iconAlias"
+        :icon-size="$iconSize"
+        :indicator="$indicator"
+        :indicator-color="$indicatorColor"
+        :key-bindings="$keyBindings"
+        :label="$slot"
+        :size="$size"
+        :tag="$tag"
+        :tooltip="$tooltip"
+        :type="$type"
+        :class="
+            match ($labeledFrom) {
+                'sm' => 'sm:hidden',
+                'md' => 'md:hidden',
+                'lg' => 'lg:hidden',
+                'xl' => 'xl:hidden',
+                '2xl' => '2xl:hidden',
+                default => 'hidden',
+            }
+        "
+        :attributes="\Filament\Support\prepare_inherited_attributes($attributes)"
+    />
+@endif
+
 @if ($tag === 'button')
     <button
+        @if (($keyBindings || $tooltip) && (! $hasFileUploadLoadingIndicator))
+            x-data="{}"
+        @endif
         @if ($keyBindings)
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        type="{{ $type }}"
-        wire:loading.attr="disabled"
-        {!! $hasLoadingIndicator ? 'wire:loading.class.delay="opacity-70 cursor-wait"' : '' !!}
-        {!! ($hasLoadingIndicator && $loadingIndicatorTarget) ? "wire:target=\"{$loadingIndicatorTarget}\"" : '' !!}
-        {!! $disabled ? 'disabled' : '' !!}
-        x-data="{
-            form: null,
-            isUploadingFile: false,
-        }"
-        x-bind:disabled="isUploadingFile"
-        x-init="
-            form = $el.closest('form')
+        @if ($hasFileUploadLoadingIndicator)
+            x-data="{
+                form: null,
+                isUploadingFile: false,
+            }"
+            x-init="
+                form = $el.closest('form')
 
-            form?.addEventListener('file-upload-started', () => {
-                isUploadingFile = true
-            })
+                form?.addEventListener('file-upload-started', () => {
+                    isUploadingFile = true
+                })
 
-            form?.addEventListener('file-upload-finished', () => {
-                isUploadingFile = false
-            })
-        "
-        x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
-        {{ $attributes->class($buttonClasses) }}
+                form?.addEventListener('file-upload-finished', () => {
+                    isUploadingFile = false
+                })
+            "
+            x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
+        @endif
+        {{
+            $attributes
+                ->merge([
+                    'disabled' => $disabled,
+                    'type' => $type,
+                    'wire:loading.attr' => 'disabled',
+                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
+                    'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : false,
+                ], escape: false)
+                ->class([$buttonClasses])
+                ->style([$buttonStyles])
+        }}
     >
         @if ($iconPosition === 'before')
             @if ($icon)
-                <x-dynamic-component
-                    :component="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                <x-filament::icon
+                    :alias="$iconAlias"
+                    :name="$icon"
                     :class="$iconClasses"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                 />
             @endif
 
             @if ($hasLoadingIndicator)
-                <x-filament-support::loading-indicator
-                    x-cloak
-                    wire:loading.delay
+                <x-filament::loading-indicator
+                    wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
+                />
+            @endif
+
+            @if ($hasFileUploadLoadingIndicator)
+                <x-filament::loading-indicator
+                    x-show="isUploadingFile"
+                    x-cloak="x-cloak"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
         @endif
 
-        <span class="flex items-center gap-1">
-            @if (($type === 'submit') && filled($form))
-                <x-filament-support::loading-indicator
-                    x-show="isUploadingFile"
-                    x-cloak
-                    :class="$iconClasses"
-                />
-
-                <span x-show="isUploadingFile" x-cloak>
-                    {{ __('filament-support::components/button.messages.uploading_file') }}
-                </span>
-
-                <span
-                    x-show="! isUploadingFile"
-                    @class(['sr-only' => $labelSrOnly])
-                >
-                    {{ $slot }}
-                </span>
-            @else
-                <span @class(['sr-only' => $labelSrOnly])>
-                    {{ $slot }}
-                </span>
+        <span
+            @if ($hasFileUploadLoadingIndicator)
+                x-show="! isUploadingFile"
             @endif
+            class="{{ $labelClasses }}"
+        >
+            {{ $slot }}
         </span>
+
+        @if ($hasFileUploadLoadingIndicator)
+            <span x-show="isUploadingFile" x-cloak>
+                {{ __('filament-support::components/button.messages.uploading_file') }}
+            </span>
+        @endif
 
         @if ($iconPosition === 'after')
             @if ($icon)
-                <x-dynamic-component
-                    :component="$icon"
-                    :wire:loading.remove.delay="$hasLoadingIndicator"
-                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : false"
+                <x-filament::icon
+                    :alias="$iconAlias"
+                    :name="$icon"
                     :class="$iconClasses"
+                    :wire:loading.remove.delay="$hasLoadingIndicator"
+                    :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                 />
             @endif
 
             @if ($hasLoadingIndicator)
-                <x-filament-support::loading-indicator
-                    x-cloak
-                    wire:loading.delay
+                <x-filament::loading-indicator
+                    wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses"
+                    :class="$iconClasses . ' ' . $iconSize"
                 />
             @endif
+
+            @if ($hasFileUploadLoadingIndicator)
+                <x-filament::loading-indicator
+                    x-show="isUploadingFile"
+                    x-cloak="x-cloak"
+                    :class="$iconClasses . ' ' . $iconSize"
+                />
+            @endif
+        @endif
+
+        @if ($indicator)
+            <span
+                class="{{ $indicatorClasses }}"
+                style="{{ $indicatorStyles }}"
+            >
+                {{ $indicator }}
+            </span>
         @endif
     </button>
 @elseif ($tag === 'a')
@@ -177,20 +260,39 @@
         @if ($tooltip)
             x-tooltip.raw="{{ $tooltip }}"
         @endif
-        {{ $attributes->class($buttonClasses) }}
+        {{
+            $attributes
+                ->class([$buttonClasses])
+                ->style([$buttonStyles])
+        }}
     >
         @if ($icon && $iconPosition === 'before')
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+            <x-filament::icon
+                :alias="$iconAlias"
+                :name="$icon"
+                :class="$iconClasses"
+            />
         @endif
 
-        <span @class([
-            'sr-only' => $labelSrOnly,
-        ])>
+        <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
 
         @if ($icon && $iconPosition === 'after')
-            <x-dynamic-component :component="$icon" :class="$iconClasses" />
+            <x-filament::icon
+                :alias="$iconAlias"
+                :name="$icon"
+                :class="$iconClasses"
+            />
+        @endif
+
+        @if ($indicator)
+            <span
+                class="{{ $indicatorClasses }}"
+                style="{{ $indicatorStyles }}"
+            >
+                {{ $indicator }}
+            </span>
         @endif
     </a>
 @endif

@@ -1,7 +1,0 @@
-<?php
-
-return [
-
-    'breadcrumb' => 'Llistat',
-
-];

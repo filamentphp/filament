@@ -4,8 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'و :count أكثر',
+        'text' => [
+            'more_list_items' => 'و :count أكثر',
         ],
 
         'messages' => [
@@ -24,7 +24,7 @@ return [
             'label' => 'تحديد / إلغاء تحديد العنصر :key للإجراءات الجماعية',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'بحث',
             'placeholder' => 'بحث',
         ],
@@ -51,7 +51,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'انتقل إلى صفحة :page',
@@ -69,7 +69,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'إنهاء إعادة ترتيب السجلات',
@@ -83,7 +83,7 @@ return [
             'label' => 'تصفية',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'فتح الإجراءات',
         ],
 
@@ -97,19 +97,11 @@ return [
 
         'heading' => 'لا توجد سجلات',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'مسح البحث في العمود',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'إلغاء الفلاتر',
@@ -156,7 +148,7 @@ return [
 
         'selected_count' => '{1} تم تحديد سجل واحد|[3,10] تم تحديد :count سجلات |[2,*] تم تحديد :count سجل',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'تحديد كل السجلات :count',

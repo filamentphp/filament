@@ -4,43 +4,29 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'İçerik daraltıldı',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
-                'label' => 'Klonla',
-            ],
-
-            'create_item' => [
+            'add' => [
                 'label' => ':label kaynağına ekle',
             ],
 
-            'create_item_between' => [
-                'label' => 'Ekle',
-            ],
-
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Sil',
             ],
 
-            'move_item' => [
-                'label' => 'Taşı',
-            ],
-
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Aşağı taşı',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Yukarı taşı',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Daralt',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Genişlet',
             ],
 
@@ -56,25 +42,9 @@ return [
 
     ],
 
-    'checkbox_list' => [
-
-        'buttons' => [
-
-            'deselect_all' => [
-                'label' => 'Seçimleri kaldır',
-            ],
-
-            'select_all' => [
-                'label' => 'Hepsini seç',
-            ],
-
-        ],
-
-    ],
-
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Satır Ekle',
@@ -82,10 +52,6 @@ return [
 
             'delete' => [
                 'label' => 'Satırı Sil',
-            ],
-
-            'reorder' => [
-                'label' => 'Yeniden sırala',
             ],
 
         ],
@@ -123,39 +89,29 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'İçerik daraltıldı',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => ':label kaynağına ekle',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Sil',
             ],
 
-            'clone_item' => [
-                'label' => 'Klonla',
-            ],
-
-            'move_item' => [
-                'label' => 'Taşı',
-            ],
-
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Aşağı taşı',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Yukarı taşı',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Daralt',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Genişlet',
             ],
 
@@ -177,7 +133,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Bağlantı',
                     'unlink' => 'Bağlantıyı kaldır',
                 ],
@@ -240,8 +196,6 @@ return [
 
         'loading_message' => 'Yükleniyor...',
 
-        'max_items_message' => 'Sadece :count adet seçilebilir.',
-
         'no_search_results_message' => 'Aramayla eşleşen bir seçenek yok.',
 
         'placeholder' => 'Bir seçenek seçin',
@@ -258,7 +212,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Geri',

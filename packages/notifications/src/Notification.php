@@ -4,17 +4,11 @@ namespace Filament\Notifications;
 
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Actions\ActionGroup;
-use Filament\Notifications\Concerns\CanBeInline;
-use Filament\Notifications\Concerns\HasActions;
-use Filament\Notifications\Concerns\HasBody;
-use Filament\Notifications\Concerns\HasDate;
-use Filament\Notifications\Concerns\HasDuration;
-use Filament\Notifications\Concerns\HasIcon;
-use Filament\Notifications\Concerns\HasId;
-use Filament\Notifications\Concerns\HasTitle;
 use Filament\Notifications\Events\DatabaseNotificationsSent;
-use Filament\Notifications\Http\Livewire\Notifications;
+use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasColor;
+use Filament\Support\Concerns\HasIcon;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -27,19 +21,26 @@ use PHPUnit\Framework\Assert;
 
 class Notification extends ViewComponent implements Arrayable
 {
-    use CanBeInline;
-    use HasActions;
-    use HasBody;
-    use HasDate;
-    use HasDuration;
+    use Concerns\CanBeInline;
+    use Concerns\HasActions;
+    use Concerns\HasBody;
+    use Concerns\HasDate;
+    use Concerns\HasDuration;
+    use Concerns\HasId;
+    use Concerns\HasTitle;
+    use HasColor;
     use HasIcon;
-    use HasId;
-    use HasTitle;
 
-    protected string $view = 'notifications::notification';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-notifications::notification';
 
     protected string $viewIdentifier = 'notification';
 
+    /**
+     * @var array<string>
+     */
     protected array $safeViews = [];
 
     public function __construct(string $id)
@@ -55,6 +56,9 @@ class Notification extends ViewComponent implements Arrayable
         return $static;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getViewData(): array
     {
         return $this->viewData;
@@ -66,6 +70,7 @@ class Notification extends ViewComponent implements Arrayable
             'id' => $this->getId(),
             'actions' => array_map(fn (Action | ActionGroup $action): array => $action->toArray(), $this->getActions()),
             'body' => $this->getBody(),
+            'color' => $this->getColor(),
             'duration' => $this->getDuration(),
             'icon' => $this->getIcon(),
             'iconColor' => $this->getIconColor(),
@@ -75,6 +80,9 @@ class Notification extends ViewComponent implements Arrayable
         ];
     }
 
+    /**
+     * @param  array<string, mixed>  $data
+     */
     public static function fromArray(array $data): static
     {
         $static = static::make($data['id'] ?? Str::random());
@@ -96,7 +104,8 @@ class Notification extends ViewComponent implements Arrayable
 
         $static->viewData($data['viewData'] ?? []);
         $static->body($data['body'] ?? null);
-        $static->duration($data['duration'] ?? null);
+        $static->color($data['color'] ?? null);
+        $static->duration($data['duration'] ?? $static->getDuration());
         $static->icon($data['icon'] ?? null);
         $static->iconColor($data['iconColor'] ?? $static->getIconColor());
         $static->title($data['title'] ?? null);
@@ -109,12 +118,15 @@ class Notification extends ViewComponent implements Arrayable
         return in_array($view, $this->safeViews, strict: true);
     }
 
+    /**
+     * @param  string | array<string>  $safeViews
+     */
     public function safeViews(string | array $safeViews): static
     {
-        $this->safeViews = array_merge(
-            $this->safeViews,
-            Arr::wrap($safeViews),
-        );
+        $this->safeViews = [
+            ...$this->safeViews,
+            ...Arr::wrap($safeViews),
+        ];
 
         return $this;
     }
@@ -129,6 +141,9 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
+    /**
+     * @param  Model | Authenticatable | Collection | array<Model | Authenticatable>  $users
+     */
     public function broadcast(Model | Authenticatable | Collection | array $users): static
     {
         if (! is_iterable($users)) {
@@ -142,6 +157,9 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
+    /**
+     * @param  Model | Authenticatable | Collection | array<Model | Authenticatable>  $users
+     */
     public function sendToDatabase(Model | Authenticatable | Collection | array $users, bool $isEventDispatched = false): static
     {
         if (! is_iterable($users)) {
@@ -180,6 +198,9 @@ class Notification extends ViewComponent implements Arrayable
         return new BroadcastMessage($data);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getDatabaseMessage(): array
     {
         $data = $this->toArray();
@@ -193,11 +214,28 @@ class Notification extends ViewComponent implements Arrayable
     public function status(string $status): static
     {
         return match ($status) {
+            'danger' => $this->danger(),
+            'info' => $this->info(),
             'success' => $this->success(),
             'warning' => $this->warning(),
-            'danger' => $this->danger(),
             default => $this,
         };
+    }
+
+    public function danger(): static
+    {
+        $this->icon('heroicon-o-x-circle');
+        $this->iconColor('danger');
+
+        return $this;
+    }
+
+    public function info(): static
+    {
+        $this->icon('heroicon-o-information-circle');
+        $this->iconColor('info');
+
+        return $this;
     }
 
     public function success(): static
@@ -212,14 +250,6 @@ class Notification extends ViewComponent implements Arrayable
     {
         $this->icon('heroicon-o-exclamation-circle');
         $this->iconColor('warning');
-
-        return $this;
-    }
-
-    public function danger(): static
-    {
-        $this->icon('heroicon-o-x-circle');
-        $this->iconColor('danger');
 
         return $this;
     }

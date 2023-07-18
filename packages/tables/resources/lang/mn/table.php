@@ -8,10 +8,6 @@ return [
             'more' => '... :count илүү',
         ],
 
-        'messages' => [
-            'copied' => 'Хуулав',
-        ],
-
     ],
 
     'fields' => [
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Хуудасруу очих :page',
@@ -69,7 +65,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Эрэмбэлэлтийг дуусгах',
@@ -97,19 +93,11 @@ return [
 
         'heading' => 'Илэрц хоосон',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Цэвэрлэх',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Цэвэрлэх',
@@ -156,7 +144,7 @@ return [
 
         'selected_count' => '1 бичлэг сонгогдов.|:count -г сонгов.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Бүгдийг сонго :count',

@@ -1,0 +1,37 @@
+<x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
+    @php
+        $isWrappedInCard = $isWrappedInCard();
+    @endphp
+
+    <ul
+        {{
+            $attributes
+                ->merge([
+                    'id' => $getId(),
+                ], escape: false)
+                ->merge($getExtraAttributes(), escape: false)
+                ->class(['fi-in-repeatable'])
+        }}
+    >
+        <x-filament::grid
+            :default="$getGridColumns('default')"
+            :sm="$getGridColumns('sm')"
+            :md="$getGridColumns('md')"
+            :lg="$getGridColumns('lg')"
+            :xl="$getGridColumns('xl')"
+            :two-xl="$getGridColumns('2xl')"
+            class="gap-4"
+        >
+            @foreach ($getChildComponentContainers() as $container)
+                <li
+                    @class([
+                        'block',
+                        'rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isWrappedInCard,
+                    ])
+                >
+                    {{ $container }}
+                </li>
+            @endforeach
+        </x-filament::grid>
+    </ul>
+</x-dynamic-component>

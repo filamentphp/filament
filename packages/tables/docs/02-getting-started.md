@@ -1,587 +1,177 @@
 ---
 title: Getting started
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-## Preparing your Livewire component
+## Overview
 
-Implement the `HasTable` interface and use the `InteractsWithTable` trait:
+Filament's table package allows you to [add an interactive datatable to any Livewire component](adding-a-table-to-a-livewire-component). It's also used within other Filament packages, such as the [panel builder](../panels) for displaying [resources](../panels/resources) and [relation managers](../panels/resources/relation-managers), as well as for the [table widget](../panels/dashboard#table-widgets). Learning the features of the table builder will be incredibly time-saving when both building your own custom Livewire tables and using Filament's other packages.
+
+This guide will walk you through the basics of building tables with Filament's table package. If you're planning to add a new table to your own Livewire component, you should [do that first](adding-a-table-to-a-livewire-component) and then come back. If you're adding a table to an [app resource](../panels/resources), or another Filament package, you're ready to go!
+
+## Defining table columns
+
+The basis of any table are rows and columns. Filament uses Eloquent to get the data for rows in the table, and you are responsible for defining the columns that are used in that row.
+
+Filament includes many column types prebuilt for you, and you can [view a full list here](columns/getting-started#available-columns). You can even [create your own custom column types](columns/custom) to display data however you need.
+
+Columns are stored in an array, as objects within the `$table->columns()` method:
 
 ```php
-<?php
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
 
-namespace App\Http\Livewire;
-
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable // [tl! focus]
+public function table(Table $table): Table
 {
-    use Tables\Concerns\InteractsWithTable; // [tl! focus]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
+    return $table
+        ->columns([
+            TextColumn::make('title'),
+            TextColumn::make('slug'),
+            IconColumn::make('is_featured')
+                ->boolean(),
+        ]);
 }
 ```
 
-In your Livewire component's view, render the table:
+<AutoScreenshot name="tables/getting-started/columns" alt="Table with columns" version="3.x" />
 
-```blade
-<div>
-    {{ $this->table }}
-</div>
-```
+In this example, there are 3 columns in the table. The first two display [text](columns/text) - the title and slug of each row in the table. The third column displays an [icon](columns/icon), either a green check or a red cross depending on if the row is featured or not.
 
-Next, add the Eloquent query you would like the table to be based upon in the `getTableQuery()` method:
+### Making columns sortable and searchable
+
+You can easily modify columns by chaining methods onto them. For example, you can make a column [searchable](columns/getting-started#searching) using the `searchable()` method. Now, there will be a search field in the table, and you will be able to filter rows by the value of that column:
 
 ```php
-<?php
+use Filament\Tables\Columns\TextColumn;
 
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
-{
-    use Tables\Concerns\InteractsWithTable;
-
-    protected function getTableQuery(): Builder // [tl! focus:start]
-    {
-        return Post::query();
-    } // [tl! focus:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
-}
+TextColumn::make('title')
+    ->searchable()
 ```
 
-Finally, add any [columns](columns), [filters](filters), and [actions](actions) to the Livewire component:
+<AutoScreenshot name="tables/getting-started/searchable-columns" alt="Table with searchable column" version="3.x" />
+
+You can make multiple columns searchable, and Filament will be able to search for matches within any of them, all at once.
+
+You can also make a column [sortable](columns/getting-started#sorting) using the `sortable()` method. This will add a sort button to the column header, and clicking it will sort the table by that column:
 
 ```php
-<?php
+use Filament\Tables\Columns\TextColumn;
 
-namespace App\Http\Livewire;
+TextColumn::make('title')
+    ->sortable()
+```
 
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
+<AutoScreenshot name="tables/getting-started/sortable-columns" alt="Table with sortable column" version="3.x" />
+
+### Accessing related data from columns
+
+You can also display data in a column that belongs to a relationship. For example, if you have a `Post` model that belongs to a `User` model (the author of the post), you can display the user's name in the table:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('author.name')
+```
+
+<AutoScreenshot name="tables/getting-started/relationship-columns" alt="Table with relationship column" version="3.x" />
+
+In this case, Filament will search for an `author` relationship on the `Post` model, and then display the `name` attribute of that relationship. We call this "dot notation" - you can use it to display any attribute of any relationship, even nested distant relationships. This dot notation is used by Filament to eager-load the results of that relationship for you.
+
+## Defining table filters
+
+As well as making columns `searchable()`, you can allow the users to filter rows in the table in other ways. We call these components "filters", and they are defined in the `$table->filters()` method:
+
+```php
+use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Livewire\Component;
 
-class ListPosts extends Component implements Tables\Contracts\HasTable
+public function table(Table $table): Table
 {
-    use Tables\Concerns\InteractsWithTable;
-
-    protected function getTableQuery(): Builder
-    {
-        return Post::query();
-    }
-
-    protected function getTableColumns(): array // [tl! focus:start]
-    {
-        return [ // [tl! collapse:start]
-            Tables\Columns\ImageColumn::make('author.avatar')
-                ->size(40)
-                ->circular(),
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('author.name'),
-            Tables\Columns\BadgeColumn::make('status')
-                ->colors([
-                    'danger' => 'draft',
-                    'warning' => 'reviewing',
-                    'success' => 'published',
-                ]),
-            Tables\Columns\IconColumn::make('is_featured')->boolean(),
-        ]; // [tl! collapse:end]
-    }
-
-    protected function getTableFilters(): array
-    {
-        return [ // [tl! collapse:start]
-            Tables\Filters\Filter::make('published')
-                ->query(fn (Builder $query): Builder => $query->where('is_published', true)),
-            Tables\Filters\SelectFilter::make('status')
+    return $table
+        ->columns([
+            // ...
+        ])
+        ->filters([
+            Filter::make('is_featured')
+                ->query(fn (Builder $query) => $query->where('is_featured', true)),
+            SelectFilter::make('status')
                 ->options([
                     'draft' => 'Draft',
-                    'in_review' => 'In Review',
-                    'approved' => 'Approved',
+                    'reviewing' => 'Reviewing',
+                    'published' => 'Published',
                 ]),
-        ]; // [tl! collapse:end]
-    }
-
-    protected function getTableActions(): array
-    {
-        return [ // [tl! collapse:start]
-            Tables\Actions\Action::make('edit')
-                ->url(fn (Post $record): string => route('posts.edit', $record)),
-        ]; // [tl! collapse:end]
-    }
-
-    protected function getTableBulkActions(): array
-    {
-        return [ // [tl! collapse:start]
-            Tables\Actions\BulkAction::make('delete')
-                ->label('Delete selected')
-                ->color('danger')
-                ->action(function (Collection $records): void {
-                    $records->each->delete();
-                })
-                ->requiresConfirmation(),
-        ]; // [tl! collapse:end]
-    } // [tl! focus:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
+        ]);
 }
 ```
 
-Visit your Livewire component in the browser, and you should see the table.
+<AutoScreenshot name="tables/getting-started/filters" alt="Table with filters" version="3.x" />
 
-## Pagination
+In this example, we have defined 2 table filters. On the table, there is now a "filter" icon button in the top corner. Clicking it will open a dropdown with the 2 filters we have defined.
 
-By default, tables will be paginated. To disable this, you should override the `isTablePaginationEnabled()` method on your Livewire component:
+The first filter is rendered as a checkbox. When it's checked, only featured rows in the table will be displayed. When it's unchecked, all rows will be displayed.
 
-```php
-<?php
+The second filter is rendered as a select dropdown. When a user selects an option, only rows with that status will be displayed. When no option is selected, all rows will be displayed.
 
-namespace App\Http\Livewire;
+It's possible to define as many filters as you need, and use any component from the [forms package](../forms) to create a UI. For example, you could create [a custom date range filter](../filters#custom-filter-forms).
 
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Livewire\Component;
+## Defining table actions
 
-class ListPosts extends Component implements Tables\Contracts\HasTable
-{
-    use Tables\Concerns\InteractsWithTable;
-
-    protected function getTableQuery(): Builder
-    {
-        return Post::query();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('author.name'),
-        ];
-    }
-
-    protected function isTablePaginationEnabled(): bool // [tl! focus:start]
-    {
-        return false;
-    } // [tl! focus:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
-}
-```
-
-You may customize the options for the paginated records per page select by overriding the `getTableRecordsPerPageSelectOptions()` method on your Livewire component:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
-{
-    use Tables\Concerns\InteractsWithTable;
-
-    protected function getTableQuery(): Builder
-    {
-        return Post::query();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('author.name'),
-        ];
-    }
-
-    protected function getTableRecordsPerPageSelectOptions(): array // [tl! focus:start]
-    {
-        return [10, 25, 50, 100];
-    } // [tl! focus:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
-}
-```
-
-By default, Livewire stores the pagination state in a `page` parameter of the URL query string. If you have multiple tables on the same page, this will mean that the pagination state of one table may be overwritten by the state of another table.
-
-To fix this, you may define a `getTableQueryStringIdentifier()` on your component, to return a unique query string identifier for that table:
-
-```php
-protected function getTableQueryStringIdentifier(): string
-{
-    return 'users';
-}
-```
-
-### Simple pagination
-
-You may use simple pagination by overriding `paginateTableQuery()` method on your Livewire component:
-
-```php
-use Illuminate\Contracts\Pagination\Paginator;
-use Illuminate\Database\Eloquent\Builder;
-
-protected function paginateTableQuery(Builder $query): Paginator
-{
-    return $query->simplePaginate($this->getTableRecordsPerPage() == -1 ? $query->count() : $this->getTableRecordsPerPage());
-}
-```
-
-## Searching records with Laravel Scout
-
-While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may override methods to integrate it with your Livewire component.
-
-First, you must ensure that the table search input is visible:
-
-```php
-public function isTableSearchable(): bool
-{
-    return true;
-}
-```
-
-Now, use a `whereIn()` clause to filter the query for Scout results:
+Filament's tables can use [actions](../actions/overview). They are buttons that can be added to the [end of any table row](actions#row-actions), or even in the [header](actions#header-actions) of a table. For instance, you may want an action to "create" a new record in the header, and then "edit" and "delete" actions on each row. [Bulk actions](actions#bulk-actions) can be used to execute code when records in the table are selected.
 
 ```php
 use App\Models\Post;
-use Illuminate\Database\Eloquent\Builder;
-
-protected function applySearchToTableQuery(Builder $query): Builder
-{
-    if (filled($searchQuery = $this->getTableSearchQuery())) {
-        $query->whereIn('id', Post::search($searchQuery)->keys());
-    }
-
-    return $query;
-}
-```
-
-Scout uses this `whereIn()` method to retrieve results internally, so there is no performance penalty for using it.
-
-## Clickable rows
-
-### Record URLs
-
-You may allow table rows to be completely clickable by overriding the `getTableRecordUrlUsing()` method on your Livewire component:
-
-```php
-use Closure;
-use Illuminate\Database\Eloquent\Model;
-
-protected function getTableRecordUrlUsing(): ?Closure
-{
-    return fn (Model $record): string => route('posts.edit', ['record' => $record]);
-}
-```
-
-In this example, clicking on each post will take you to the `posts.edit` route.
-
-If you'd like to [override the URL](columns/getting-started#opening-urls) for a specific column, or instead [run a Livewire action](columns#running-actions) when a column is clicked, see the [columns documentation](columns#opening-urls).
-
-### Record actions
-
-Alternatively, you may configure table rows to trigger an action instead of opening a URL:
-
-```php
-use Closure;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 
-protected function getTableRecordActionUsing(): ?Closure
+public function table(Table $table): Table
 {
-    return fn (): string => 'edit';
-}
-```
-
-In this case, if an `EditAction` or another action with the name `edit` exists on the table row, that will be called. If not, a Livewire public method with the name `edit()` will be called, and the selected record will be passed.
-
-### Disabling clickable rows
-
-If you'd like to completely disable the click action for the entire row, you may override the `getTableRecordActionUsing()` method on your Livewire component, and return `null`:
-
-```php
-use Closure;
-
-protected function getTableRecordActionUsing(): ?Closure
-{
-    return null;
-}
-```
-
-## Record classes
-
-You may want to conditionally style rows based on the record data. This can be achieved by specifying a string or array of CSS classes to be applied to the row using the `getTableRecordClassesUsing()` method:
-
-```php
-use Closure;
-use Illuminate\Database\Eloquent\Model;
-
-protected function getTableRecordClassesUsing(): ?Closure
-{
-    return fn (Model $record) => match ($record->status) {
-        'draft' => 'opacity-30',
-        'reviewing' => [
-            'border-l-2 border-orange-600',
-            'dark:border-orange-300' => config('tables.dark_mode'),
-        ],
-        'published' => 'border-l-2 border-green-600',
-        default => null,
-    };
-}
-```
-
-These classes are not automatically compiled by Tailwind CSS. If you want to apply Tailwind CSS classes that are not already used in Blade files, you should update your `content` configuration in `tailwind.config.js` to also scan for classes in your desired PHP files:
-
-```js
-export default {
-    content: ['./app/Filament/**/*.php'],
-}
-```
-
-Alternatively, you may add the classes to your [safelist](https://tailwindcss.com/docs/content-configuration#safelisting-classes):
-
-```js
-export default {
-    safelist: [
-        'border-green-600',
-        'border-l-2',
-        'border-orange-600',
-        'dark:border-orange-300',
-        'opacity-30',
-    ],
-}
-```
-
-## Empty state
-
-By default, an "empty state" card will be rendered when the table is empty. To customize this, you may define methods on your Livewire component:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
-{
-    use Tables\Concerns\InteractsWithTable;
-
-    protected function getTableQuery(): Builder
-    {
-        return Post::query();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [ // [tl! collapse:start]
-            Tables\Columns\ImageColumn::make('author.avatar')
-                ->size(40)
-                ->circular(),
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('author.name'),
-            Tables\Columns\BadgeColumn::make('status')
-                ->colors([
-                    'danger' => 'draft',
-                    'warning' => 'reviewing',
-                    'success' => 'published',
-                ]),
-            Tables\Columns\IconColumn::make('is_featured')->boolean(),
-        ]; // [tl! collapse:end]
-    }
-
-    protected function getTableEmptyStateIcon(): ?string // [tl! focus:start]
-    {
-        return 'heroicon-o-bookmark';
-    }
-
-    protected function getTableEmptyStateHeading(): ?string
-    {
-        return 'No posts yet';
-    }
-
-    protected function getTableEmptyStateDescription(): ?string
-    {
-        return 'You may create a post using the button below.';
-    }
-
-    protected function getTableEmptyStateActions(): array
-    {
-        return [
-            Tables\Actions\Action::make('create')
-                ->label('Create post')
-                ->url(route('posts.create'))
-                ->icon('heroicon-o-plus')
-                ->button(),
-        ];
-    } // [tl! focus:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
-}
-```
-
-## Query string
-
-Livewire ships with a feature to store data in the URL's query string, to access across requests.
-
-With Filament, this allows you to store your table's filters, sort, search and pagination state in the URL.
-
-To store the filters, sorting, and search state of your table in the query string:
-
-```php
-protected $queryString = [
-    'tableFilters',
-    'tableSortColumn',
-    'tableSortDirection',
-    'tableSearchQuery' => ['except' => ''],
-    'tableColumnSearchQueries',
-];
-```
-
-## Reordering records
-
-To allow the user to reorder records using drag and drop in your table, you can use the `getTableReorderColumn()` method:
-
-```php
-protected function getTableReorderColumn(): ?string
-{
-    return 'sort';
-}
-```
-
-When making the table reorderable, a new button will be available on the table to toggle reordering.
-
-The `getTableReorderColumn()` method returns the name of a column to store the record order in. If you use something like [`spatie/eloquent-sortable`](https://github.com/spatie/eloquent-sortable) with an order column such as `order_column`, you may return this instead:
-
-```php
-protected function getTableReorderColumn(): ?string
-{
-    return 'order_column';
-}
-```
-
-### Enabling pagination while reordering
-
-Pagination will be disabled in reorder mode to allow you to move records between pages. It is generally bad UX to re-enable pagination while reordering, but if you are sure then you can use:
-
-```php
-protected function isTablePaginationEnabledWhileReordering(): bool
-{
-    return true;
-}
-```
-
-## Polling content
-
-You may poll table content so that it refreshes at a set interval, using the `getTablePollingInterval()` method:
-
-```php
-protected function getTablePollingInterval(): ?string
-{
-    return '10s';
-}
-```
-
-## Using the form builder
-
-Internally, the table builder uses the [form builder](/docs/forms) to implement filtering, actions, and bulk actions. Because of this, the form builder is already set up on your Livewire component and ready to use with your own custom forms.
-
-You may use the default `form` out of the box:
-
-```php
-<?php
-
-namespace App\Http\Livewire;
-
-use App\Models\Post;
-use Filament\Tables;
-use Illuminate\Contracts\View\View;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Livewire\Component;
-
-class ListPosts extends Component implements Tables\Contracts\HasTable
-{
-    use Tables\Concerns\InteractsWithTable;
-
-    public function mount(): void
-    {
-        $this->form->fill();
-    }
-
-    protected function getFormSchema(): array
-    {
-        return [
+    return $table
+        ->columns([
             // ...
-        ];
-    }
-
-    protected function getTableQuery(): Builder // [tl! collapse:start]
-    {
-        return Post::query();
-    }
-
-    protected function getTableColumns(): array
-    {
-        return [
-            Tables\Columns\ImageColumn::make('author.avatar')
-                ->size(40)
-                ->circular(),
-            Tables\Columns\TextColumn::make('title'),
-            Tables\Columns\TextColumn::make('author.name'),
-            Tables\Columns\BadgeColumn::make('status')
-                ->colors([
-                    'danger' => 'draft',
-                    'warning' => 'reviewing',
-                    'success' => 'published',
-                ]),
-            Tables\Columns\IconColumn::make('is_featured')->boolean(),
-        ];
-    } // [tl! collapse:end]
-
-    public function render(): View
-    {
-        return view('list-posts');
-    }
+        ])
+        ->actions([
+            Action::make('feature')
+                ->action(function (Post $record) {
+                    $record->is_featured = true;
+                    $record->save();
+                })
+                ->hidden(fn (Post $record): bool => $record->is_featured),
+            Action::make('unfeature')
+                ->action(function (Post $record) {
+                    $record->is_featured = false;
+                    $record->save();
+                })
+                ->visible(fn (Post $record): bool => $record->is_featured),
+        ])
+        ->bulkActions([
+            BulkActionGroup::make([
+                DeleteBulkAction::make(),
+            ]),
+        ]);
 }
 ```
+
+<AutoScreenshot name="tables/getting-started/actions" alt="Table with actions" version="3.x" />
+
+In this example, we define 2 actions for table rows. The first action is a "feature" action. When clicked, it will set the `is_featured` attribute on the record to `true` - which is written within the `action()` method. Using the `hidden()` method, the action will be hidden if the record is already featured. The second action is an "unfeature" action. When clicked, it will set the `is_featured` attribute on the record to `false`. Using the `visible()` method, the action will be hidden if the record is not featured.
+
+We also define a bulk action. When bulk actions are defined, each row in the table will have a checkbox. This bulk action is [built-in to Filament](../actions/prebuilt-actions/delete#bulk-delete), and it will delete all selected records. However, you can [write your own custom bulk actions](actions#bulk-actions) easily too.
+
+<AutoScreenshot name="tables/getting-started/actions-modal" alt="Table with action modal open" version="3.x" />
+
+Actions can also open modals to request confirmation from the user, as well as render forms inside to collect extra data. It's a good idea to read the [actions documentation](../actions/overview) to learn more about their extensive capabilities throughout Filament.
+
+## Next steps with the tables package
+
+Now you've finished reading this guide, where to next? Here are some suggestions:
+
+- [Explore the available columns to display data in your table.](columns/getting-started#available-columns)
+- [Deep dive into table actions and start using modals.](actions)
+- [Discover how to build complex, responsive table layouts without touching CSS.](layout)
+- [Add summaries to your tables, which give an overview of the data inside of them.](summaries)
+- [Find out about all advanced techniques that you can customize tables to your needs.](advanced)
+- [Write automated tests for your tables using our suite of helper methods.](testing)

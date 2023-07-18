@@ -14,8 +14,14 @@ class RichEditor extends Field implements Contracts\CanBeLengthConstrained, Cont
     use Concerns\InteractsWithToolbarButtons;
     use HasExtraAlpineAttributes;
 
-    protected string $view = 'forms::components.rich-editor';
+    /**
+     * @var view-string
+     */
+    protected string $view = 'filament-forms::components.rich-editor';
 
+    /**
+     * @var array<string>
+     */
     protected array | Closure $toolbarButtons = [
         'attachFiles',
         'blockquote',

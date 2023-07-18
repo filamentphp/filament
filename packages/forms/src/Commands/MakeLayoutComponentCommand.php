@@ -18,30 +18,30 @@ class MakeLayoutComponentCommand extends Command
 
     public function handle(): int
     {
-        $component = (string) Str::of($this->argument('name') ?? $this->askRequired('Name (e.g. `Wizard`)', 'name'))
+        $component = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Wizard`)', 'name'))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $componentClass = (string) Str::of($component)->afterLast('\\');
-        $componentNamespace = Str::of($component)->contains('\\') ?
-            (string) Str::of($component)->beforeLast('\\') :
+        $componentClass = (string) str($component)->afterLast('\\');
+        $componentNamespace = str($component)->contains('\\') ?
+            (string) str($component)->beforeLast('\\') :
             '';
 
-        $view = Str::of($component)
+        $view = str($component)
             ->prepend('forms\\components\\')
             ->explode('\\')
             ->map(fn ($segment) => Str::kebab($segment))
             ->implode('.');
 
         $path = app_path(
-            (string) Str::of($component)
+            (string) str($component)
                 ->prepend('Forms\\Components\\')
                 ->replace('\\', '/')
                 ->append('.php'),
         );
         $viewPath = resource_path(
-            (string) Str::of($view)
+            (string) str($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
@@ -63,7 +63,7 @@ class MakeLayoutComponentCommand extends Command
             $this->copyStubToApp('LayoutComponentView', $viewPath);
         }
 
-        $this->info("Successfully created {$component}!");
+        $this->components->info("Successfully created {$component}!");
 
         return static::SUCCESS;
     }

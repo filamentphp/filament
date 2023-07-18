@@ -1,58 +1,62 @@
 {
     "name": "filament/filament",
-    "description": "A collection of tools for rapidly building beautiful TALL stack apps, designed for humans.",
+    "description": "A collection of full-stack components for accelerated Laravel development.",
     "license": "MIT",
     "require": {
-        "php": "^8.0",
+        "php": "^8.1",
         "ext-intl": "*",
         "composer-runtime-api": "^2.1"
     },
     "require-dev": {
-        "akaunting/laravel-money": "^1.2|^2.0|^3.0|^4.0",
-        "blade-ui-kit/blade-heroicons": "^1.2",
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "doctrine/dbal": "^3.2",
         "filament/support": "*",
+        "kirschbaum-development/eloquent-power-joins": "^2.6",
+        "laravel/cashier": "^14.2",
         "laravel/pint": "^1.0",
-        "league/flysystem-aws-s3-v3": "^1.0|^2.0|^3.0",
-        "nunomaduro/larastan": "^2.0",
-        "orchestra/testbench": "^6.0|^7.0|^8.0",
-        "pestphp/pest": "^1.17",
-        "pestphp/pest-plugin-laravel": "^1.0",
-        "pestphp/pest-plugin-livewire": "^1.0",
-        "pestphp/pest-plugin-parallel": "^0.3",
+        "league/flysystem-aws-s3-v3": "^3.0",
+        "nunomaduro/larastan": "^2.2",
+        "nunomaduro/termwind": "^1.0",
+        "orchestra/testbench": "^7.0|^8.0",
+        "pestphp/pest": "^2.0",
+        "pestphp/pest-plugin-laravel": "^2.0",
+        "pestphp/pest-plugin-livewire": "*",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.8",
-        "ryangjchandler/blade-capture-directive": "^0.2|^0.3",
-        "spatie/invade": "^1.0",
+        "rector/rector": "^0.15",
         "spatie/laravel-medialibrary": "^9.11|^10.0",
-        "spatie/laravel-package-tools": "^1.9",
         "spatie/laravel-ray": "^1.29",
         "spatie/laravel-tags": "^4.2",
         "staudenmeir/belongs-to-through": "^2.5",
         "staudenmeir/eloquent-has-many-deep": "^1.7",
-        "symplify/monorepo-builder": "^10.0",
-        "tgalopin/html-sanitizer": "^1.5"
+        "symplify/monorepo-builder": "^10.0"
     },
     "autoload": {
         "files": [
-            "packages/admin/src/helpers.php",
+            "packages/panels/src/global_helpers.php",
+            "packages/panels/src/helpers.php",
             "packages/support/src/helpers.php"
         ],
         "psr-4": {
             "Filament\\": [
-                "packages/admin/src",
+                "packages/panels/src",
                 "packages/spatie-laravel-media-library-plugin/src",
                 "packages/spatie-laravel-settings-plugin/src",
                 "packages/spatie-laravel-tags-plugin/src",
                 "packages/spatie-laravel-translatable-plugin/src"
             ],
+            "Filament\\Actions\\": "packages/actions/src",
+            "Filament\\Billing\\Providers\\": "packages/spark-billing-provider/src",
             "Filament\\Forms\\": "packages/forms/src",
+            "Filament\\FontProviders\\": "packages/spatie-laravel-google-fonts-plugin/src",
+            "Filament\\Infolists\\": "packages/infolists/src",
             "Filament\\Notifications\\": "packages/notifications/src",
             "Filament\\Support\\": "packages/support/src",
             "Filament\\Tables\\": "packages/tables/src",
             "Filament\\Tests\\": "tests/src",
-            "Filament\\Tests\\Database\\Factories\\": "tests/database/factories"
+            "Filament\\Tests\\Database\\Factories\\": "tests/database/factories",
+            "Filament\\Upgrade\\": "packages/upgrade/src",
+            "Filament\\Widgets\\": "packages/widgets/src"
         }
     },
     "config": {
@@ -64,6 +68,10 @@
         }
     },
     "scripts": {
+        "cs": [
+            "pint",
+            "npm run prettier"
+        ],
         "pint": "pint",
         "test:pest": "pest --parallel",
         "test:phpstan": "phpstan analyse",
@@ -78,6 +86,14 @@
         {
             "type": "path",
             "url": "packages/support"
+        },
+        {
+            "type": "path",
+            "url": "../../livewire3"
+        },
+        {
+            "type": "path",
+            "url": "../../pest-plugin-livewire"
         }
     ]
 }

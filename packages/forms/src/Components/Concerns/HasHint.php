@@ -5,14 +5,26 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 
 trait HasHint
 {
     protected string | Htmlable | Closure | null $hint = null;
 
-    protected Action | Closure | null $hintAction = null;
+    /**
+     * @var array<Action> | null
+     */
+    protected ?array $cachedHintActions = null;
 
-    protected string | Closure | null $hintColor = null;
+    /**
+     * @var array<Action | Closure>
+     */
+    protected array $hintActions = [];
+
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
+    protected string | array | Closure | null $hintColor = null;
 
     protected string | Closure | null $hintIcon = null;
 
@@ -23,9 +35,12 @@ trait HasHint
         return $this;
     }
 
-    public function hintColor(string | Closure | null $hintColor): static
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
+    public function hintColor(string | array | Closure | null $color): static
     {
-        $this->hintColor = $hintColor;
+        $this->hintColor = $color;
 
         return $this;
     }
@@ -37,9 +52,22 @@ trait HasHint
         return $this;
     }
 
-    public function hintAction(Action | Closure | null $action): static
+    public function hintAction(Action | Closure $action): static
     {
-        $this->hintAction = $action;
+        $this->hintActions([$action]);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Action | Closure>  $actions
+     */
+    public function hintActions(array $actions): static
+    {
+        $this->hintActions = [
+            ...$this->hintActions,
+            ...$actions,
+        ];
 
         return $this;
     }
@@ -49,7 +77,10 @@ trait HasHint
         return $this->evaluate($this->hint);
     }
 
-    public function getHintColor(): ?string
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
+    public function getHintColor(): string | array | null
     {
         return $this->evaluate($this->hintColor);
     }
@@ -59,18 +90,27 @@ trait HasHint
         return $this->evaluate($this->hintIcon);
     }
 
-    public function getHintAction(): ?Action
+    /**
+     * @return array<Action>
+     */
+    public function getHintActions(): array
     {
-        return $this->evaluate($this->hintAction)?->component($this);
+        return $this->cachedHintActions ?? $this->cacheHintActions();
     }
 
-    public function getActions(): array
+    /**
+     * @return array<Action>
+     */
+    public function cacheHintActions(): array
     {
-        $hintAction = $this->getHintAction();
+        $this->cachedHintActions = [];
 
-        return array_merge(
-            parent::getActions(),
-            $hintAction ? [$hintAction->getName() => $hintAction->component($this)] : [],
-        );
+        foreach ($this->hintActions as $hintAction) {
+            foreach (Arr::wrap($this->evaluate($hintAction)) as $action) {
+                $this->cachedHintActions[$action->getName()] = $this->prepareAction($action->defaultSize('sm'));
+            }
+        }
+
+        return $this->cachedHintActions;
     }
 }

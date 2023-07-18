@@ -4,39 +4,37 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Turinys suskleistas',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonuoti',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Pridėti prie :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ištrinti',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pastumti',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Žemyn',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Aukštyn',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Suskleisti',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Išskleisti',
             ],
 
@@ -54,7 +52,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Pridėti eilutę',
@@ -99,39 +97,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Turinys suskleistas',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Pridėti prie :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ištrinti',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Klonuoti',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Pastumti',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Žemyn',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Aukštyn',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Suskleisti',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Išskleisti',
             ],
 
@@ -153,7 +149,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -234,7 +230,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Atgal',

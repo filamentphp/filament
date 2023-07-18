@@ -4,31 +4,29 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Contenuto compresso',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Aggiungi a :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Elimina',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Muovi giù',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Muovi su',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Comprimi',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Espandi',
             ],
 
@@ -46,7 +44,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Aggiungi riga',
@@ -91,35 +89,33 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Contenuto compresso',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Aggiungi a :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Elimina',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clona',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Muovi giù',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Muovi su',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Comprimi',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Espandi',
             ],
 
@@ -141,7 +137,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Collega',
                     'unlink' => 'Rimuovi',
                 ],
@@ -220,7 +216,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Precedente',

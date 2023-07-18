@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => 'en :count meer',
-        ],
-
-        'messages' => [
-            'copied' => 'Gekopieerd',
+        'text' => [
+            'more_list_items' => 'en :count meer',
         ],
 
     ],
@@ -24,7 +20,7 @@ return [
             'label' => 'Item :key selecteren/deselecteren voor bulkacties.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Zoeken',
             'placeholder' => 'Zoeken',
         ],
@@ -51,7 +47,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Ga naar pagina :page',
@@ -69,7 +65,35 @@ return [
 
     ],
 
-    'buttons' => [
+    'summary' => [
+
+        'heading' => 'Samenvatting',
+
+        'subheadings' => [
+            'all' => 'Alle :label',
+            'group' => ':group samenvatting',
+            'page' => 'Deze pagina',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Gemiddelde',
+            ],
+
+            'count' => [
+                'label' => 'Aantal',
+            ],
+
+            'sum' => [
+                'label' => 'Som',
+            ],
+
+        ],
+
+    ],
+
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Herordenen van records voltooien',
@@ -83,7 +107,11 @@ return [
             'label' => 'Filteren',
         ],
 
-        'open_actions' => [
+        'group' => [
+            'label' => 'Groeperen',
+        ],
+
+        'open_bulk_actions' => [
             'label' => 'Acties openen',
         ],
 
@@ -95,20 +123,11 @@ return [
 
     'empty' => [
         'heading' => 'Geen records gevonden',
-
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Kolom zoekopdracht wissen',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Filter verwijderen',
@@ -149,13 +168,37 @@ return [
 
     ],
 
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Groeperen op',
+                'placeholder' => 'Groeperen op',
+            ],
+
+            'direction' => [
+
+                'label' => 'Groeperingsrichting',
+
+                'options' => [
+                    'asc' => 'Oplopend',
+                    'desc' => 'Aflopend',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'reorder_indicator' => 'Sleep de records in de juiste volgorde.',
 
     'selection_indicator' => [
 
         'selected_count' => '1 record geselecteerd.|:count records geselecteerd.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Selecteer alle :count',

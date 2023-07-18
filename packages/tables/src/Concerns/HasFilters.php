@@ -3,95 +3,75 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Forms;
-use Filament\Forms\ComponentContainer;
+use Filament\Forms\Form;
 use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Filters\Layout;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
- * @property ComponentContainer $tableFiltersForm
+ * @property Form $tableFiltersForm
  */
 trait HasFilters
 {
-    protected array $cachedTableFilters;
+    /**
+     * @var array<string, mixed> | null
+     */
+    public ?array $tableFilters = null;
 
-    public $tableFilters = null;
-
-    public function cacheTableFilters(): void
-    {
-        $this->cachedTableFilters = [];
-
-        foreach ($this->getTableFilters() as $filter) {
-            $filter->table($this->getCachedTable());
-
-            $this->cachedTableFilters[$filter->getName()] = $filter;
-        }
-    }
-
-    public function getCachedTableFilters(): array
-    {
-        return array_filter(
-            $this->cachedTableFilters,
-            fn (BaseFilter $filter): bool => ! $filter->isHidden(),
-        );
-    }
-
-    public function getCachedTableFilter(string $name): ?BaseFilter
-    {
-        return $this->getCachedTableFilters()[$name] ?? null;
-    }
-
-    public function getTableFiltersForm(): Forms\ComponentContainer
+    public function getTableFiltersForm(): Form
     {
         if ((! $this->isCachingForms) && $this->hasCachedForm('tableFiltersForm')) {
-            return $this->getCachedForm('tableFiltersForm');
+            return $this->getForm('tableFiltersForm');
         }
 
         return $this->makeForm()
             ->schema($this->getTableFiltersFormSchema())
-            ->columns($this->getTableFiltersFormColumns())
+            ->columns($this->getTable()->getFiltersFormColumns())
+            ->model($this->getTable()->getModel())
             ->statePath('tableFilters')
-            ->reactive();
-    }
-
-    public function isTableFilterable(): bool
-    {
-        return (bool) count($this->getCachedTableFilters());
+            ->live();
     }
 
     public function updatedTableFilters(): void
     {
-        if ($this->shouldPersistTableFiltersInSession()) {
+        if ($this->getTable()->persistsFiltersInSession()) {
             session()->put(
                 $this->getTableFiltersSessionKey(),
                 $this->tableFilters,
             );
         }
 
-        if ($this->shouldDeselectAllRecordsWhenTableFiltered()) {
+        if ($this->getTable()->shouldDeselectAllRecordsWhenFiltered()) {
             $this->deselectAllTableRecords();
         }
 
         $this->resetPage();
     }
 
-    public function removeTableFilter(string $filter, ?string $field = null): void
+    public function removeTableFilter(string $filterName, ?string $field = null, bool $shouldTriggerUpdatedFiltersHook = true): void
     {
-        $filterGroup = $this->getTableFiltersForm()->getComponents()[$filter];
-        $fields = $filterGroup?->getChildComponentContainer()->getFlatFields() ?? [];
+        $filter = $this->getTable()->getFilter($filterName);
+        $filterResetState = $filter->getResetState();
 
-        if (filled($field) && array_key_exists($field, $fields)) {
-            $fields = [$fields[$field]];
+        $filterFormGroup = $this->getTableFiltersForm()->getComponents()[$filterName] ?? null;
+        $filterFields = $filterFormGroup?->getChildComponentContainer()->getFlatFields();
+
+        if (filled($field) && array_key_exists($field, $filterFields)) {
+            $filterFields = [$field => $filterFields[$field]];
         }
 
-        foreach ($fields as $field) {
+        foreach ($filterFields as $fieldName => $field) {
             $state = $field->getState();
 
-            $field->state(match (true) {
+            $field->state($filterResetState[$fieldName] ?? match (true) {
                 is_array($state) => [],
-                $state === true => false,
+                is_bool($state) => false,
                 default => null,
             });
+        }
+
+        if (! $shouldTriggerUpdatedFiltersHook) {
+            return;
         }
 
         $this->updatedTableFilters();
@@ -99,17 +79,19 @@ trait HasFilters
 
     public function removeTableFilters(): void
     {
-        foreach ($this->getTableFiltersForm()->getFlatFields(withAbsolutePathKeys: true) as $field) {
-            $state = $field->getState();
+        $filters = $this->getTable()->getFilters();
 
-            $field->state(match (true) {
-                is_array($state) => [],
-                is_bool($state) => false,
-                default => null,
-            });
+        foreach ($filters as $filterName => $filter) {
+            $this->removeTableFilter(
+                $filterName,
+                shouldTriggerUpdatedFiltersHook: false,
+            );
         }
 
         $this->updatedTableFilters();
+
+        $this->resetTableSearch();
+        $this->resetTableColumnSearches();
     }
 
     public function resetTableFiltersForm(): void
@@ -123,7 +105,7 @@ trait HasFilters
     {
         $data = $this->getTableFiltersForm()->getRawState();
 
-        foreach ($this->getCachedTableFilters() as $filter) {
+        foreach ($this->getTable()->getFilters() as $filter) {
             $filter->applyToBaseQuery(
                 $query,
                 $data[$filter->getName()] ?? [],
@@ -131,7 +113,7 @@ trait HasFilters
         }
 
         return $query->where(function (Builder $query) use ($data) {
-            foreach ($this->getCachedTableFilters() as $filter) {
+            foreach ($this->getTable()->getFilters() as $filter) {
                 $filter->apply(
                     $query,
                     $data[$filter->getName()] ?? [],
@@ -140,17 +122,12 @@ trait HasFilters
         });
     }
 
-    protected function getTableFilters(): array
-    {
-        return [];
-    }
-
     public function getTableFilterState(string $name): ?array
     {
-        return $this->getTableFiltersForm()->getRawState()[$this->parseFilterName($name)] ?? null;
+        return $this->getTableFiltersForm()->getRawState()[$this->parseTableFilterName($name)] ?? null;
     }
 
-    public function parseFilterName(string $name): string
+    public function parseTableFilterName(string $name): string
     {
         if (! class_exists($name)) {
             return $name;
@@ -163,6 +140,47 @@ trait HasFilters
         return $name::getDefaultName();
     }
 
+    /**
+     * @return array<string, Forms\Components\Group>
+     */
+    public function getTableFiltersFormSchema(): array
+    {
+        $schema = [];
+
+        foreach ($this->getTable()->getFilters() as $filter) {
+            $schema[$filter->getName()] = Forms\Components\Group::make()
+                ->schema($filter->getFormSchema())
+                ->statePath($filter->getName())
+                ->columnSpan($filter->getColumnSpan())
+                ->columnStart($filter->getColumnStart())
+                ->columns($filter->getColumns());
+        }
+
+        return $schema;
+    }
+
+    public function getTableFiltersSessionKey(): string
+    {
+        $table = class_basename($this::class);
+
+        return "tables.{$table}_filters";
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return array<BaseFilter>
+     */
+    protected function getTableFilters(): array
+    {
+        return [];
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     *
+     * @return int | array<string, int | null>
+     */
     protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTableFiltersLayout()) {
@@ -176,48 +194,33 @@ trait HasFilters
         };
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
+    protected function getTableFiltersFormWidth(): ?string
+    {
+        return null;
+    }
+
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableFiltersFormMaxHeight(): ?string
     {
         return null;
     }
 
-    protected function getTableFiltersFormSchema(): array
-    {
-        $schema = [];
-
-        foreach ($this->getCachedTableFilters() as $filter) {
-            $schema[$filter->getName()] = Forms\Components\Group::make()
-                ->schema($filter->getFormSchema())
-                ->statePath($filter->getName())
-                ->columnSpan($filter->getColumnSpan())
-                ->columns($filter->getColumns());
-        }
-
-        return $schema;
-    }
-
-    protected function getTableFiltersFormWidth(): ?string
-    {
-        return match ($this->getTableFiltersFormColumns()) {
-            2 => '2xl',
-            3 => '4xl',
-            4 => '6xl',
-            default => null,
-        };
-    }
-
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableFiltersLayout(): ?string
     {
         return null;
     }
 
-    public function getTableFiltersSessionKey(): string
-    {
-        $table = class_basename($this::class);
-
-        return "tables.{$table}_filters";
-    }
-
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function shouldPersistTableFiltersInSession(): bool
     {
         return false;

@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'Conținutul este comprimat',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonează',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => 'Adăugare la :label',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'Inserează',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ștergere',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mutare',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Mutare în jos',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Mutare în sus',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Comprimare',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandare',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'deselect_all' => [
                 'label' => 'Deselectează toate',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'Adăugare linie',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'Conținutul este comprimat',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => 'Adăugare la :label',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'Ștergere',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'Clonează',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'Mutare',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'Mutare în jos',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'Mutare în sus',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'Comprimare',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'Expandare',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'Link',
                     'unlink' => 'Unlink',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'Pasul anterior',

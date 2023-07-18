@@ -4,6 +4,8 @@ namespace Filament\Forms\Components\Concerns;
 
 use Closure;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
@@ -17,7 +19,7 @@ trait HasState
 
     protected ?Closure $beforeStateDehydrated = null;
 
-    protected $defaultState = null;
+    protected mixed $defaultState = null;
 
     protected ?Closure $dehydrateStateUsing = null;
 
@@ -28,6 +30,8 @@ trait HasState
     protected bool | Closure $isDehydrated = true;
 
     protected ?string $statePath = null;
+
+    protected string $cachedAbsoluteStatePath;
 
     public function afterStateHydrated(?Closure $callback): static
     {
@@ -79,7 +83,7 @@ trait HasState
         return $this;
     }
 
-    public function default($state): static
+    public function default(mixed $state): static
     {
         $this->defaultState = $state;
         $this->hasDefaultState = true;
@@ -101,6 +105,9 @@ trait HasState
         return $this;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getStateToDehydrate(): array
     {
         if ($callback = $this->dehydrateStateUsing) {
@@ -110,10 +117,15 @@ trait HasState
         return [$this->getStatePath() => $this->getState()];
     }
 
+    /**
+     * @param  array<string, mixed>  $state
+     */
     public function dehydrateState(array &$state): void
     {
         if (! $this->isDehydrated()) {
-            Arr::forget($state, $this->getStatePath());
+            if ($this->hasStatePath()) {
+                Arr::forget($state, $this->getStatePath());
+            }
 
             return;
         }
@@ -140,6 +152,9 @@ trait HasState
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed> | null  $hydratedDefaultState
+     */
     public function hydrateState(?array &$hydratedDefaultState): void
     {
         $this->hydrateDefaultState($hydratedDefaultState);
@@ -158,6 +173,9 @@ trait HasState
         $this->hydrateDefaultState($defaults);
     }
 
+    /**
+     * @param  array<string, mixed> | null  $hydratedDefaultState
+     */
     public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
         if ($hydratedDefaultState === null) {
@@ -204,7 +222,7 @@ trait HasState
         }
     }
 
-    public function mutateDehydratedState($state)
+    public function mutateDehydratedState(mixed $state): mixed
     {
         return $this->evaluate(
             $this->mutateDehydratedStateUsing,
@@ -224,7 +242,7 @@ trait HasState
         return $this;
     }
 
-    public function state($state): static
+    public function state(mixed $state): static
     {
         $livewire = $this->getLivewire();
 
@@ -240,12 +258,12 @@ trait HasState
         return $this;
     }
 
-    public function getDefaultState()
+    public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState);
     }
 
-    public function getState()
+    public function getState(): mixed
     {
         $state = data_get($this->getLivewire(), $this->getStatePath());
 
@@ -260,13 +278,13 @@ trait HasState
         return $state;
     }
 
-    public function getOldState()
+    public function getOldState(): mixed
     {
         if (! Livewire::isLivewireRequest()) {
             return null;
         }
 
-        $state = request('serverMemo.data.' . $this->getStatePath());
+        $state = $this->getLivewire()->getOldFormState($this->getStatePath());
 
         if (blank($state)) {
             return null;
@@ -277,17 +295,30 @@ trait HasState
 
     public function getStatePath(bool $isAbsolute = true): string
     {
+        if (! $isAbsolute) {
+            return $this->statePath ?? '';
+        }
+
+        if (isset($this->cachedAbsoluteStatePath)) {
+            return $this->cachedAbsoluteStatePath;
+        }
+
         $pathComponents = [];
 
-        if ($isAbsolute && ($containerStatePath = $this->getContainer()->getStatePath())) {
+        if ($containerStatePath = $this->getContainer()->getStatePath()) {
             $pathComponents[] = $containerStatePath;
         }
 
-        if (filled($statePath = $this->statePath)) {
-            $pathComponents[] = $statePath;
+        if ($this->hasStatePath()) {
+            $pathComponents[] = $this->statePath;
         }
 
-        return implode('.', $pathComponents);
+        return $this->cachedAbsoluteStatePath = implode('.', $pathComponents);
+    }
+
+    public function hasStatePath(): bool
+    {
+        return filled($this->statePath);
     }
 
     protected function hasDefaultState(): bool
@@ -300,34 +331,17 @@ trait HasState
         return (bool) $this->evaluate($this->isDehydrated);
     }
 
-    protected function getGetCallback(): Closure
+    public function getGetCallback(): Get
     {
-        return function (Component | string $path, bool $isAbsolute = false) {
-            $livewire = $this->getLivewire();
-
-            return data_get(
-                $livewire,
-                $this->generateRelativeStatePath($path, $isAbsolute)
-            );
-        };
+        return new Get($this);
     }
 
-    protected function getSetCallback(): Closure
+    public function getSetCallback(): Set
     {
-        return function (string | Component $path, $state, bool $isAbsolute = false) {
-            $livewire = $this->getLivewire();
-
-            data_set(
-                $livewire,
-                $this->generateRelativeStatePath($path, $isAbsolute),
-                $this->evaluate($state),
-            );
-
-            return $state;
-        };
+        return new Set($this);
     }
 
-    protected function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
+    public function generateRelativeStatePath(string | Component $path, bool $isAbsolute = false): string
     {
         if ($path instanceof Component) {
             return $path->getStatePath();
@@ -339,12 +353,12 @@ trait HasState
 
         $containerPath = $this->getContainer()->getStatePath();
 
-        while (Str::of($path)->startsWith('../')) {
+        while (str($path)->startsWith('../')) {
             $containerPath = Str::contains($containerPath, '.') ?
-                (string) Str::of($containerPath)->beforeLast('.') :
+                (string) str($containerPath)->beforeLast('.') :
                 null;
 
-            $path = (string) Str::of($path)->after('../');
+            $path = (string) str($path)->after('../');
         }
 
         if (blank($containerPath)) {
@@ -352,5 +366,10 @@ trait HasState
         }
 
         return "{$containerPath}.{$path}";
+    }
+
+    protected function flushCachedAbsoluteStatePath(): void
+    {
+        unset($this->cachedAbsoluteStatePath);
     }
 }

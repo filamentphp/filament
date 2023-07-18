@@ -6,7 +6,7 @@ return [
 
         'heading' => 'پیام‌ها',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'پاک کردن',

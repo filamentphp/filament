@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Hysbysiadau',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Clirio',

@@ -2,64 +2,84 @@
 
 namespace Filament\Tables\Columns\Concerns;
 
-use BackedEnum;
 use Closure;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Collection;
 
 trait HasState
 {
-    protected $defaultState = null;
+    protected mixed $defaultState = null;
 
-    protected ?Closure $getStateUsing = null;
+    protected mixed $getStateUsing = null;
 
-    public function getStateUsing(?Closure $callback): static
+    protected string | Closure | null $separator = null;
+
+    protected bool | Closure $isDistinctList = false;
+
+    public function distinctList(bool | Closure $condition = true): static
+    {
+        $this->isDistinctList = $condition;
+
+        return $this;
+    }
+
+    public function getStateUsing(mixed $callback): static
     {
         $this->getStateUsing = $callback;
 
         return $this;
     }
 
-    public function default($state): static
+    public function state(mixed $state): static
+    {
+        $this->getStateUsing($state);
+
+        return $this;
+    }
+
+    public function default(mixed $state): static
     {
         $this->defaultState = $state;
 
         return $this;
     }
 
-    public function getDefaultState()
+    public function isDistinctList(): bool
+    {
+        return (bool) $this->evaluate($this->isDistinctList);
+    }
+
+    public function getDefaultState(): mixed
     {
         return $this->evaluate($this->defaultState);
     }
 
-    public function getState()
+    public function getState(): mixed
     {
-        $state = $this->getStateUsing ?
+        if (! $this->getRecord()) {
+            return null;
+        }
+
+        $state = ($this->getStateUsing !== null) ?
             $this->evaluate($this->getStateUsing) :
             $this->getStateFromRecord();
 
-        if (
-            interface_exists(BackedEnum::class) &&
-            ($state instanceof BackedEnum) &&
-            property_exists($state, 'value')
-        ) {
-            $state = $state->value;
+        if (is_string($state) && ($separator = $this->getSeparator())) {
+            $state = explode($separator, $state);
+            $state = (count($state) === 1 && blank($state[0])) ?
+                [] :
+                $state;
         }
 
         if ($state === null) {
             $state = value($this->getDefaultState());
         }
 
-        if (is_array($state)) {
-            $state = $this->mutateArrayState($state);
-        }
-
         return $state;
     }
 
-    protected function getStateFromRecord()
+    public function getStateFromRecord(): mixed
     {
         $record = $this->getRecord();
 
@@ -73,34 +93,36 @@ trait HasState
             return null;
         }
 
-        $relationshipName = $this->getRelationshipName();
+        $relationship = $this->getRelationship($record);
 
-        if (! method_exists($record, $relationshipName)) {
+        if (! $relationship) {
             return null;
         }
 
-        $relationship = $record->{$relationshipName}();
+        $relationshipAttribute = $this->getRelationshipAttribute();
 
-        if (! (
-            $relationship instanceof HasMany ||
-            $relationship instanceof BelongsToMany ||
-            $relationship instanceof MorphMany ||
-            ($relationship instanceof \Staudenmeir\EloquentHasManyDeep\HasManyDeep && (! $relationship instanceof \Staudenmeir\EloquentHasManyDeep\HasOneDeep))
-        )) {
+        $state = collect($this->getRelationshipResults($record))
+            ->filter(fn (Model $record): bool => array_key_exists($relationshipAttribute, $record->attributesToArray()))
+            ->pluck($relationshipAttribute)
+            ->when($this->isDistinctList(), fn (Collection $state) => $state->unique())
+            ->values();
+
+        if (! $state->count()) {
             return null;
         }
 
-        $state = $record->getRelationValue($relationshipName)->pluck($this->getRelationshipTitleColumnName());
-
-        if (! count($state)) {
-            return null;
-        }
-
-        return $state->toArray();
+        return $state->all();
     }
 
-    protected function mutateArrayState(array $state)
+    public function separator(string | Closure | null $separator = ','): static
     {
-        return $state;
+        $this->separator = $separator;
+
+        return $this;
+    }
+
+    public function getSeparator(): ?string
+    {
+        return $this->evaluate($this->separator);
     }
 }

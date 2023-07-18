@@ -39,23 +39,27 @@
         $isColumn = $layoutComponent instanceof \Filament\Tables\Columns\Column;
     @endphp
 
-    @if (! $layoutComponent->isHidden())
-        <x-filament-support::grid.column
+    @if ($layoutComponent->isVisible())
+        <x-filament::grid.column
             :default="$layoutComponent->getColumnSpan('default')"
             :sm="$layoutComponent->getColumnSpan('sm')"
             :md="$layoutComponent->getColumnSpan('md')"
             :lg="$layoutComponent->getColumnSpan('lg')"
             :xl="$layoutComponent->getColumnSpan('xl')"
             :twoXl="$layoutComponent->getColumnSpan('2xl')"
-            :class="
-                \Illuminate\Support\Arr::toCssClasses([
-                    'flex-1 w-full' => $layoutComponent->canGrow(),
-                    $getHiddenClasses($layoutComponent),
-                ])
-            "
+            :defaultStart="$layoutComponent->getColumnStart('default')"
+            :smStart="$layoutComponent->getColumnStart('sm')"
+            :mdStart="$layoutComponent->getColumnStart('md')"
+            :lgStart="$layoutComponent->getColumnStart('lg')"
+            :xlStart="$layoutComponent->getColumnStart('xl')"
+            :twoXlStart="$layoutComponent->getColumnStart('2xl')"
+            @class([
+                'flex-1 w-full' => $layoutComponent->canGrow(),
+                $getHiddenClasses($layoutComponent),
+            ])
         >
             @if ($isColumn)
-                <x-tables::columns.column
+                <x-filament-tables::columns.column
                     :column="$layoutComponent->inline()"
                     :record="$record"
                     :record-key="$recordKey"
@@ -63,6 +67,6 @@
             @else
                 {{ $layoutComponent->viewData(['recordKey' => $recordKey]) }}
             @endif
-        </x-filament-support::grid.column>
+        </x-filament::grid.column>
     @endif
 @endforeach

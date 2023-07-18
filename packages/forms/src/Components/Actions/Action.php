@@ -2,50 +2,85 @@
 
 namespace Filament\Forms\Components\Actions;
 
-use Filament\Forms\Components\Actions\Modal\Actions\Action as ModalAction;
-use Filament\Support\Actions\Action as BaseAction;
-use Filament\Support\Actions\Concerns\CanBeDisabled;
-use Filament\Support\Actions\Concerns\CanOpenUrl;
-use Filament\Support\Actions\Concerns\HasTooltip;
+use Filament\Actions\Concerns\HasMountableArguments;
+use Filament\Actions\MountableAction;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Js;
 
-class Action extends BaseAction
+class Action extends MountableAction
 {
     use Concerns\BelongsToComponent;
-    use CanBeDisabled;
-    use CanOpenUrl;
-    use HasTooltip;
+    use HasMountableArguments;
 
-    protected string $view = 'forms::components.actions.icon-button-action';
-
-    public function iconButton(): static
+    protected function setUp(): void
     {
-        $this->view('forms::components.actions.icon-button-action');
+        parent::setUp();
 
-        return $this;
+        $this->iconButton();
     }
 
-    protected function getLivewireCallActionName(): string
+    public function getLivewireCallMountedActionName(): string
     {
         return 'callMountedFormComponentAction';
     }
 
-    protected static function getModalActionClass(): string
+    public function getLivewireClickHandler(): ?string
     {
-        return ModalAction::class;
+        if (! $this->isLivewireClickHandlerEnabled()) {
+            return null;
+        }
+
+        if (is_string($this->action)) {
+            return $this->action;
+        }
+
+        $argumentsParameter = '';
+
+        if (count($arguments = $this->getArguments())) {
+            $argumentsParameter .= ', ';
+            $argumentsParameter .= Js::from($arguments);
+            $argumentsParameter .= '';
+        }
+
+        return "mountFormComponentAction('{$this->getComponent()->getKey()}', '{$this->getName()}'{$argumentsParameter})";
     }
 
-    public static function makeModalAction(string $name): ModalAction
+    public function toFormComponent(): ActionContainer
     {
-        /** @var ModalAction $action */
-        $action = parent::makeModalAction($name);
-
-        return $action;
+        return ActionContainer::make($this);
     }
 
-    protected function getDefaultEvaluationParameters(): array
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
-        return array_merge(parent::getDefaultEvaluationParameters(), [
-            'component' => $this->getComponent(),
-        ]);
+        return match ($parameterName) {
+            'component' => [$this->getComponent()],
+            'context', 'operation' => [$this->getComponent()->getContainer()->getOperation()],
+            'get' => [$this->getComponent()->getGetCallback()],
+            'model' => [$this->getComponent()->getModel()],
+            'record' => [$this->getComponent()->getRecord()],
+            'set' => [$this->getComponent()->getSetCallback()],
+            'state' => [$this->getComponent()->getState()],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
+        };
+    }
+
+    /**
+     * @return array<mixed>
+     */
+    protected function resolveDefaultClosureDependencyForEvaluationByType(string $parameterType): array
+    {
+        $record = $this->getComponent()->getRecord();
+
+        if (! $record) {
+            return parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType);
+        }
+
+        return match ($parameterType) {
+            Model::class, $record::class => [$record],
+            default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
+        };
     }
 }

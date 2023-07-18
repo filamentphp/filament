@@ -3,7 +3,7 @@
     'unreadNotificationsCount',
 ])
 
-<x-notifications::modal
+<x-filament::modal
     id="database-notifications"
     close-button
     slide-over
@@ -11,39 +11,76 @@
 >
     @if ($notifications->count())
         <x-slot name="header">
-            <x-notifications::database.modal.heading
-                :unread-notifications-count="$unreadNotificationsCount"
-            />
+            <div>
+                <x-filament-notifications::database.modal.heading
+                    :unread-notifications-count="$unreadNotificationsCount"
+                />
 
-            <x-notifications::database.modal.actions
-                :notifications="$notifications"
-                :unread-notifications-count="$unreadNotificationsCount"
-            />
+                <x-filament-notifications::database.modal.actions
+                    :notifications="$notifications"
+                    :unread-notifications-count="$unreadNotificationsCount"
+                />
+            </div>
         </x-slot>
 
-        <div class="mt-[calc(-1rem-1px)]">
+        <div class="-mx-6 divide-y border-b dark:border-gray-700">
             @foreach ($notifications as $notification)
                 <div
                     @class([
-                        '-mx-6 border-b',
-                        'border-t' => $notification->unread(),
-                        'dark:border-gray-700' => (! $notification->unread()) && config('notifications.dark_mode'),
-                        'dark:border-gray-800' => $notification->unread() && config('notifications.dark_mode'),
+                        'bg-primary-50 dark:bg-gray-700' => $notification->unread(),
                     ])
                 >
-                    <div
-                        @class([
-                            'py-2 pl-4 pr-2',
-                            '-mb-px bg-primary-50' => $notification->unread(),
-                            'dark:bg-gray-700' => $notification->unread() && config('notifications.dark_mode'),
-                        ])
-                    >
-                        {{ $this->getNotificationFromDatabaseRecord($notification)->inline() }}
-                    </div>
+                    {{ $this->getNotification($notification)->inline() }}
                 </div>
             @endforeach
         </div>
+
+        @if ($notifications instanceof \Illuminate\Contracts\Pagination\Paginator &&
+             $notifications->hasPages())
+            <x-slot name="footer">
+                @php
+                    $isRtl = __('filament::layout.direction') === 'rtl';
+                    $previousArrowIcon = $isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left';
+                    $nextArrowIcon = $isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right';
+                @endphp
+
+                <nav
+                    role="navigation"
+                    aria-label="{{ __('filament-notifications::database.modal.pagination.label') }}"
+                    class="flex items-center justify-between"
+                >
+                    <div class="flex items-center">
+                        @if (! $notifications->onFirstPage())
+                            <x-filament::button
+                                :wire:click="'previousPage(\'' . $notifications->getPageName() . '\')'"
+                                :icon="$previousArrowIcon"
+                                rel="prev"
+                                size="sm"
+                                color="gray"
+                            >
+                                {{ __('filament-notifications::database.modal.pagination.actions.previous.label') }}
+                            </x-filament::button>
+                        @endif
+                    </div>
+
+                    <div class="flex items-center">
+                        @if ($notifications->hasMorePages())
+                            <x-filament::button
+                                :wire:click="'nextPage(\'' . $notifications->getPageName() . '\')'"
+                                :icon="$nextArrowIcon"
+                                icon-position="after"
+                                rel="next"
+                                size="sm"
+                                color="gray"
+                            >
+                                {{ __('filament-notifications::database.modal.pagination.actions.next.label') }}
+                            </x-filament::button>
+                        @endif
+                    </div>
+                </nav>
+            </x-slot>
+        @endif
     @else
-        <x-notifications::database.modal.empty-state />
+        <x-filament-notifications::database.modal.empty-state />
     @endif
-</x-notifications::modal>
+</x-filament::modal>

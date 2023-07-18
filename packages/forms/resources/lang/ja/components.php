@@ -4,43 +4,37 @@ return [
 
     'builder' => [
 
-        'collapsed' => '折り畳まれたコンテンツ',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => '複製',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => ':labelを追加',
             ],
 
-            'create_item_between' => [
-                'label' => '挿入',
-            ],
-
-            'delete_item' => [
+            'delete' => [
                 'label' => '削除',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => '移動',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => '下に移動',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => '上に移動',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => '折り畳む',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => '展開',
             ],
 
@@ -56,25 +50,9 @@ return [
 
     ],
 
-    'checkbox_list' => [
-
-        'buttons' => [
-
-            'deselect_all' => [
-                'label' => '全選択解除',
-            ],
-
-            'select_all' => [
-                'label' => '全て選択',
-            ],
-
-        ],
-
-    ],
-
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => '行を追加',
@@ -82,10 +60,6 @@ return [
 
             'delete' => [
                 'label' => '行を削除',
-            ],
-
-            'reorder' => [
-                'label' => '行を並べ直す',
             ],
 
         ],
@@ -123,39 +97,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => '折り畳まれたコンテンツ',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => ':labelを追加',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => '削除',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => '複製',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => '移動',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => '下に移動',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => '上に移動',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => '折り畳む',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => '展開',
             ],
 
@@ -177,7 +149,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'リンク追加',
                     'unlink' => 'リンク解除',
                 ],
@@ -258,7 +230,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => '前へ',

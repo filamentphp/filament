@@ -6,7 +6,7 @@ return [
 
         'heading' => 'Paziņojumi',
 
-        'buttons' => [
+        'actions' => [
 
             'clear' => [
                 'label' => 'Nodzēst',

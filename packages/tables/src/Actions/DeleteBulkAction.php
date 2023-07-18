@@ -2,7 +2,7 @@
 
 namespace Filament\Tables\Actions;
 
-use Filament\Support\Actions\Concerns\CanCustomizeProcess;
+use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\TrashedFilter;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,19 +21,21 @@ class DeleteBulkAction extends BulkAction
     {
         parent::setUp();
 
-        $this->label(__('filament-support::actions/delete.multiple.label'));
+        $this->label(__('filament-actions::delete.multiple.label'));
 
-        $this->modalHeading(fn (): string => __('filament-support::actions/delete.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
+        $this->modalHeading(fn (): string => __('filament-actions::delete.multiple.modal.heading', ['label' => $this->getPluralModelLabel()]));
 
-        $this->modalButton(__('filament-support::actions/delete.multiple.modal.actions.delete.label'));
+        $this->modalSubmitActionLabel(__('filament-actions::delete.multiple.modal.actions.delete.label'));
 
-        $this->successNotificationTitle(__('filament-support::actions/delete.multiple.messages.deleted'));
+        $this->successNotificationTitle(__('filament-actions::delete.multiple.messages.deleted'));
 
         $this->color('danger');
 
-        $this->icon('heroicon-s-trash');
+        $this->icon('heroicon-m-trash');
 
         $this->requiresConfirmation();
+
+        $this->modalIcon('heroicon-o-trash');
 
         $this->action(function (): void {
             $this->process(static fn (Collection $records) => $records->each(fn (Model $record) => $record->delete()));

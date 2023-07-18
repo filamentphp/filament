@@ -5,17 +5,10 @@ import {
     Notification,
 } from './Notification'
 
-window.NotificationAction = NotificationAction
-window.NotificationActionGroup = NotificationActionGroup
-window.Notification = Notification
+window.FilamentNotificationAction = NotificationAction
+window.FilamentNotificationActionGroup = NotificationActionGroup
+window.FilamentNotification = Notification
 
-export default (Alpine) => {
-    Alpine.plugin(NotificationComponentAlpinePlugin)
-}
-
-export {
-    NotificationAction,
-    NotificationActionGroup,
-    Notification,
-    NotificationComponentAlpinePlugin,
-}
+document.addEventListener('alpine:init', () => {
+    window.Alpine.plugin(NotificationComponentAlpinePlugin)
+})

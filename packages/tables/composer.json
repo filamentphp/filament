@@ -1,6 +1,6 @@
 {
     "name": "filament/tables",
-    "description": "Effortlessly build TALL-powered tables.",
+    "description": "Easily add beautiful tables to any Livewire component.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {
@@ -8,20 +8,17 @@
         "source": "https://github.com/filamentphp/filament"
     },
     "require": {
-        "php": "^8.0",
-        "akaunting/laravel-money": "^1.2|^2.0|^3.0|^4.0",
-        "blade-ui-kit/blade-heroicons": "^1.2",
+        "php": "^8.1",
+        "filament/actions": "self.version",
         "filament/forms": "self.version",
-        "filament/notifications": "self.version",
         "filament/support": "self.version",
-        "illuminate/console": "^8.6|^9.0|^10.0",
-        "illuminate/contracts": "^8.6|^9.0|^10.0",
-        "illuminate/database": "^8.6|^9.0|^10.0",
-        "illuminate/filesystem": "^8.6|^9.0|^10.0",
-        "illuminate/support": "^8.6|^9.0|^10.0",
-        "illuminate/view": "^8.6|^9.0|^10.0",
-        "livewire/livewire": "^2.10.7",
-        "spatie/invade": "^1.0",
+        "illuminate/console": "^9.0|^10.0",
+        "illuminate/contracts": "^9.0|^10.0",
+        "illuminate/database": "^9.0|^10.0",
+        "illuminate/filesystem": "^9.0|^10.0",
+        "illuminate/support": "^9.0|^10.0",
+        "illuminate/view": "^9.0|^10.0",
+        "kirschbaum-development/eloquent-power-joins": "^2.6",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

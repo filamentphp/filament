@@ -4,7 +4,6 @@ namespace Filament\Forms\Commands\Concerns;
 
 use Doctrine\DBAL\Types;
 use Filament\Forms;
-use Illuminate\Support\Str;
 
 trait CanGenerateForms
 {
@@ -31,7 +30,7 @@ trait CanGenerateForms
 
             $columnName = $column->getName();
 
-            if (Str::of($columnName)->is([
+            if (str($columnName)->is([
                 'created_at',
                 'deleted_at',
                 'updated_at',
@@ -42,45 +41,88 @@ trait CanGenerateForms
 
             $componentData = [];
 
-            $componentData['type'] = $type = match ($column->getType()::class) {
-                Types\BooleanType::class => Forms\Components\Toggle::class,
-                Types\DateType::class => Forms\Components\DatePicker::class,
-                Types\DateTimeType::class => Forms\Components\DateTimePicker::class,
-                Types\TextType::class => Forms\Components\Textarea::class,
+            $componentData['type'] = match (true) {
+                $column->getType()::class === Types\BooleanType::class => Forms\Components\Toggle::class,
+                in_array($column->getType()::class, [Types\DateImmutableType::class, Types\DateType::class]) => Forms\Components\DatePicker::class,
+                in_array($column->getType()::class, [Types\DateTimeImmutableType::class, Types\DateTimeType::class, Types\DateTimeTzImmutableType::class, Types\DateTimeTzType::class]) => Forms\Components\DateTimePicker::class,
+                $column->getType()::class === Types\TextType::class => Forms\Components\Textarea::class,
+                $columnName === 'image', str($columnName)->startsWith('image_'), str($columnName)->contains('_image_'), str($columnName)->endsWith('_image') => Forms\Components\FileUpload::class,
                 default => Forms\Components\TextInput::class,
             };
 
-            if (Str::of($columnName)->endsWith('_id')) {
+            if (str($columnName)->endsWith('_id')) {
                 $guessedRelationshipName = $this->guessBelongsToRelationshipName($column, $model);
 
                 if (filled($guessedRelationshipName)) {
                     $guessedRelationshipTitleColumnName = $this->guessBelongsToRelationshipTitleColumnName($column, app($model)->{$guessedRelationshipName}()->getModel()::class);
 
-                    $componentData['type'] = $type = Forms\Components\Select::class;
-                    $componentData['relationship'] = ["'{$guessedRelationshipName}", "{$guessedRelationshipTitleColumnName}'"];
+                    $componentData['type'] = Forms\Components\Select::class;
+                    $componentData['relationship'] = [$guessedRelationshipName, $guessedRelationshipTitleColumnName];
                 }
             }
 
-            if ($type === Forms\Components\TextInput::class) {
-                if (Str::of($columnName)->contains(['email'])) {
+            if (in_array($columnName, [
+                'sku',
+                'uuid',
+            ])) {
+                $componentData['label'] = [strtoupper($columnName)];
+            }
+
+            if ($componentData['type'] === Forms\Components\TextInput::class) {
+                if (str($columnName)->contains(['email'])) {
                     $componentData['email'] = [];
                 }
 
-                if (Str::of($columnName)->contains(['password'])) {
+                if (str($columnName)->contains(['password'])) {
                     $componentData['password'] = [];
                 }
 
-                if (Str::of($columnName)->contains(['phone', 'tel'])) {
+                if (str($columnName)->contains(['phone', 'tel'])) {
                     $componentData['tel'] = [];
                 }
+            }
+
+            if ($componentData['type'] === Forms\Components\FileUpload::class) {
+                $componentData['image'] = [];
             }
 
             if ($column->getNotnull()) {
                 $componentData['required'] = [];
             }
 
-            if (in_array($type, [Forms\Components\TextInput::class, Forms\Components\Textarea::class]) && ($length = $column->getLength())) {
+            if (in_array($column->getType()::class, [
+                Types\BigIntType::class,
+                Types\DecimalType::class,
+                Types\FloatType::class,
+                Types\IntegerType::class,
+                Types\SmallIntType::class,
+            ])) {
+                $componentData['numeric'] = [];
+
+                if (filled($column->getDefault())) {
+                    $componentData['default'] = [$column->getDefault()];
+                }
+
+                if (in_array($columnName, [
+                    'cost',
+                    'money',
+                    'price',
+                ])) {
+                    $componentData['prefix'] = ['$'];
+                }
+            } elseif (in_array($componentData['type'], [
+                Forms\Components\TextInput::class,
+                Forms\Components\Textarea::class,
+            ]) && ($length = $column->getLength())) {
                 $componentData['maxLength'] = [$length];
+
+                if (filled($column->getDefault())) {
+                    $componentData['default'] = [$column->getDefault()];
+                }
+            }
+
+            if ($componentData['type'] === Forms\Components\Textarea::class) {
+                $componentData['columnSpanFull'] = [];
             }
 
             $components[$columnName] = $componentData;
@@ -90,7 +132,7 @@ trait CanGenerateForms
 
         foreach ($components as $componentName => $componentData) {
             // Constructor
-            $output .= (string) Str::of($componentData['type'])->after('Filament\\');
+            $output .= (string) str($componentData['type'])->after('Filament\\');
             $output .= '::make(\'';
             $output .= $componentName;
             $output .= '\')';
@@ -103,7 +145,23 @@ trait CanGenerateForms
                 $output .= '    ->';
                 $output .= $methodName;
                 $output .= '(';
-                $output .= implode('\', \'', $parameters);
+                $output .= collect($parameters)
+                    ->map(function (mixed $parameterValue, int | string $parameterName): string {
+                        $parameterValue = match (true) {
+                            /** @phpstan-ignore-next-line */
+                            is_bool($parameterValue) => $parameterValue ? 'true' : 'false',
+                            is_null($parameterValue) => 'null',
+                            is_numeric($parameterValue) => $parameterValue,
+                            default => "'{$parameterValue}'",
+                        };
+
+                        if (is_numeric($parameterName)) {
+                            return $parameterValue;
+                        }
+
+                        return "{$parameterName}: {$parameterValue}";
+                    })
+                    ->implode(', ');
                 $output .= ')';
             }
 

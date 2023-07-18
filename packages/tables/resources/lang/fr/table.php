@@ -4,12 +4,8 @@ return [
 
     'columns' => [
 
-        'tags' => [
-            'more' => ':count de plus',
-        ],
-
-        'messages' => [
-            'copied' => 'Copié',
+        'text' => [
+            'more_list_items' => ':count de plus',
         ],
 
     ],
@@ -24,7 +20,7 @@ return [
             'label' => "Sélectionner/désélectionner l'élément :key pour les actions groupées.",
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Rechercher',
             'placeholder' => 'Rechercher',
         ],
@@ -50,7 +46,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Aller à la page :page',
@@ -68,7 +64,7 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'disable_reordering' => [
             'label' => 'Fin du classement des enregistrements',
@@ -82,7 +78,7 @@ return [
             'label' => 'Filtre',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Actions ouvertes',
         ],
 
@@ -96,19 +92,11 @@ return [
 
         'heading' => 'Aucun élément trouvé',
 
-        'buttons' => [
-
-            'reset_column_searches' => [
-                'label' => 'Effacer la recherche de colonne',
-            ],
-
-        ],
-
     ],
 
     'filters' => [
 
-        'buttons' => [
+        'actions' => [
 
             'remove' => [
                 'label' => 'Supprimer le filtre',
@@ -155,7 +143,7 @@ return [
 
         'selected_count' => '1 élément sélectionné.|:count éléments sélectionnés.',
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Sélectionner tout (:count)',

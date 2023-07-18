@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use League\Flysystem\UnableToCheckFileExistence;
-use Livewire\TemporaryUploadedFile;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\FileAdder;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -24,10 +24,19 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected string | Closure | null $mediaName = null;
 
+    /**
+     * @var array<string, mixed> | Closure | null
+     */
     protected array | Closure | null $customProperties = null;
 
+    /**
+     * @var array<string, array<string, string>> | Closure | null
+     */
     protected array | Closure | null $manipulations = null;
 
+    /**
+     * @var array<string, mixed> | Closure | null
+     */
     protected array | Closure | null $properties = null;
 
     protected function setUp(): void
@@ -63,7 +72,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
         $this->dehydrated(false);
 
-        $this->getUploadedFileUrlUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): ?string {
+        $this->getUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, string $file): ?array {
             if (! $component->getRecord()) {
                 return null;
             }
@@ -71,9 +80,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             /** @var ?Media $media */
             $media = $component->getRecord()->getRelationValue('media')->firstWhere('uuid', $file);
 
+            $url = null;
+
             if ($component->getVisibility() === 'private') {
                 try {
-                    return $media?->getTemporaryUrl(
+                    $url = $media?->getTemporaryUrl(
                         now()->addMinutes(5),
                     );
                 } catch (Throwable $exception) {
@@ -82,10 +93,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             }
 
             if ($component->getConversion() && $media->hasGeneratedConversion($component->getConversion())) {
-                return $media?->getUrl($component->getConversion());
+                $url ??= $media?->getUrl($component->getConversion());
             }
 
-            return $media?->getUrl();
+            $url ??= $media?->getUrl();
+
+            return [
+                'name' => $media->getAttributeValue('name') ?? $media->getAttributeValue('file_name'),
+                'size' => $media->getAttributeValue('size'),
+                'type' => $media->getAttributeValue('mime_type'),
+                'url' => $url,
+            ];
         });
 
         $this->saveRelationshipsUsing(static function (SpatieMediaLibraryFileUpload $component) {
@@ -131,7 +149,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             $mappedIds = $mediaClass::query()->whereIn('uuid', $uuids)->pluck('id', 'uuid')->toArray();
 
-            $mediaClass::setNewOrder(array_merge(array_flip($uuids), $mappedIds));
+            $mediaClass::setNewOrder([
+                ...array_flip($uuids),
+                ...$mappedIds,
+            ]);
 
             return $state;
         });
@@ -158,6 +179,9 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed> | Closure | null  $properties
+     */
     public function customProperties(array | Closure | null $properties): static
     {
         $this->customProperties = $properties;
@@ -165,6 +189,9 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    /**
+     * @param  array<string, array<string, string>> | Closure | null  $manipulations
+     */
     public function manipulations(array | Closure | null $manipulations): static
     {
         $this->manipulations = $manipulations;
@@ -172,6 +199,9 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    /**
+     * @param  array<string, mixed> | Closure | null  $properties
+     */
     public function properties(array | Closure | null $properties): static
     {
         $this->properties = $properties;
@@ -212,16 +242,25 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this->evaluate($this->conversionsDisk);
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getCustomProperties(): array
     {
         return $this->evaluate($this->customProperties) ?? [];
     }
 
+    /**
+     * @return array<string, array<string, string>>
+     */
     public function getManipulations(): array
     {
         return $this->evaluate($this->manipulations) ?? [];
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getProperties(): array
     {
         return $this->evaluate($this->properties) ?? [];

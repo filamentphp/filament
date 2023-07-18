@@ -2,100 +2,84 @@
 
 namespace Filament\Tables\Contracts;
 
-use Filament\Forms\ComponentContainer;
-use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Form;
+use Filament\Support\Contracts\TranslatableContentDriver;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Columns\Layout\Component;
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
 use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-interface HasTable extends HasForms
+interface HasTable
 {
-    public function allowsDuplicates(): bool;
-
-    public function callTableColumnAction(string $columnName, string $recordKey);
+    public function callTableColumnAction(string $name, string $recordKey): mixed;
 
     public function deselectAllTableRecords(): void;
 
     public function getActiveTableLocale(): ?string;
 
+    /**
+     * @return array<int | string>
+     */
     public function getAllSelectableTableRecordKeys(): array;
-
-    public function getAllSelectableTableRecordsCount(): int;
 
     public function getAllTableRecordsCount(): int;
 
-    public function getCachedTableActions(): array;
+    public function getAllSelectableTableRecordsCount(): int;
 
-    public function getCachedTableBulkActions(): array;
-
-    public function getCachedTableColumns(): array;
-
-    public function getCachedTableColumnsLayout(): array;
-
-    public function getCachedCollapsibleTableColumnsLayout(): ?Component;
-
-    public function hasTableColumnsLayout(): bool;
-
-    public function getCachedTableEmptyStateActions(): array;
-
-    public function getCachedTableFilters(): array;
-
-    public function getCachedTableHeaderActions(): array;
-
+    /**
+     * @return array<string, mixed> | null
+     */
     public function getTableFilterState(string $name): ?array;
 
-    public function parseFilterName(string $name): string;
+    public function getSelectedTableRecords(): Collection;
+
+    public function parseTableFilterName(string $name): string;
+
+    public function getTableGrouping(): ?Group;
 
     public function getMountedTableAction(): ?Action;
 
-    public function getMountedTableActionForm(): ?ComponentContainer;
+    public function getMountedTableActionForm(): ?Form;
 
-    public function getMountedTableActionRecordKey();
+    public function getMountedTableActionRecord(): ?Model;
+
+    public function getMountedTableActionRecordKey(): int | string | null;
 
     public function getMountedTableBulkAction(): ?BulkAction;
 
-    public function getMountedTableBulkActionForm(): ?ComponentContainer;
+    public function getMountedTableBulkActionForm(): ?Form;
 
-    public function getTableFiltersForm(): ComponentContainer;
+    public function getTable(): Table;
 
-    public function getTableModel(): string;
+    public function getTableFiltersForm(): Form;
 
     public function getTableRecords(): Collection | Paginator;
+
+    public function getTableRecordsPerPage(): int | string | null;
+
+    public function getTablePage(): int;
 
     public function getTableSortColumn(): ?string;
 
     public function getTableSortDirection(): ?string;
 
-    public function isTableFilterable(): bool;
+    public function getAllTableSummaryQuery(): Builder;
 
-    public function isTableSearchable(): bool;
-
-    public function isTableSearchableByColumn(): bool;
-
-    public function isTableSelectionEnabled(): bool;
-
-    public function getTableRecordCheckboxPosition(): string;
-
-    public function hasToggleableTableColumns(): bool;
+    public function getPageTableSummaryQuery(): Builder;
 
     public function isTableColumnToggledHidden(string $name): bool;
 
-    public function getTableColumnToggleForm(): ComponentContainer;
+    public function getTableColumnToggleForm(): Form;
 
     public function getTableRecord(?string $key): ?Model;
 
     public function getTableRecordKey(Model $record): string;
 
-    public function getTableRecordTitle(Model $record): string;
-
-    public function getTablePluralModelLabel(): string;
-
-    public function getTableModelLabel(): string;
-
-    public function mountedTableActionRecord($record): void;
+    public function mountedTableActionRecord(int | string | null $record): void;
 
     public function toggleTableReordering(): void;
 
@@ -103,5 +87,22 @@ interface HasTable extends HasForms
 
     public function isTableLoaded(): bool;
 
-    public function hasTableColumnSearches(): bool;
+    public function hasTableSearch(): bool;
+
+    public function resetTableSearch(): void;
+
+    public function resetTableColumnSearch(string $column): void;
+
+    public function getTableSearchIndicator(): string;
+
+    /**
+     * @return array<string, string>
+     */
+    public function getTableColumnSearchIndicators(): array;
+
+    public function getFilteredTableQuery(): Builder;
+
+    public function getFilteredSortedTableQuery(): Builder;
+
+    public function makeFilamentTranslatableContentDriver(): ?TranslatableContentDriver;
 }

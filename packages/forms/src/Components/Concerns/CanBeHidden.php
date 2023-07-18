@@ -5,6 +5,7 @@ namespace Filament\Forms\Components\Concerns;
 use Closure;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Forms\Get;
 use Illuminate\Support\Arr;
 
 trait CanBeHidden
@@ -20,11 +21,14 @@ trait CanBeHidden
         return $this;
     }
 
-    public function hiddenOn(string | array $contexts): static
+    /**
+     * @param  string | array<string>  $operations
+     */
+    public function hiddenOn(string | array $operations): static
     {
-        $this->hidden(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $hiddenContext) {
-                if ($hiddenContext === $context || $livewire instanceof $hiddenContext) {
+        $this->hidden(static function (HasForms $livewire, string $operation) use ($operations): bool {
+            foreach (Arr::wrap($operations) as $hiddenOperation) {
+                if ($hiddenOperation === $operation || $livewire instanceof $hiddenOperation) {
                     return true;
                 }
             }
@@ -57,11 +61,14 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  string | array<string>  $paths
+     */
     public function whenTruthy(string | array $paths): static
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(static function (Closure $get) use ($paths): bool {
+        $this->hidden(static function (Get $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if (! $get($path)) {
                     return true;
@@ -74,11 +81,14 @@ trait CanBeHidden
         return $this;
     }
 
+    /**
+     * @param  string | array<string>  $paths
+     */
     public function whenFalsy(string | array $paths): static
     {
         $paths = Arr::wrap($paths);
 
-        $this->hidden(static function (Closure $get) use ($paths): bool {
+        $this->hidden(static function (Get $get) use ($paths): bool {
             foreach ($paths as $path) {
                 if ((bool) $get($path)) {
                     return true;
@@ -98,11 +108,14 @@ trait CanBeHidden
         return $this;
     }
 
-    public function visibleOn(string | array $contexts): static
+    /**
+     * @param  string | array<string>  $operations
+     */
+    public function visibleOn(string | array $operations): static
     {
-        $this->visible(static function (string $context, HasForms $livewire) use ($contexts): bool {
-            foreach (Arr::wrap($contexts) as $visibleContext) {
-                if ($visibleContext === $context || $livewire instanceof $visibleContext) {
+        $this->visible(static function (string $operation, HasForms $livewire) use ($operations): bool {
+            foreach (Arr::wrap($operations) as $visibleOperation) {
+                if ($visibleOperation === $operation || $livewire instanceof $visibleOperation) {
                     return true;
                 }
             }
@@ -120,5 +133,10 @@ trait CanBeHidden
         }
 
         return ! $this->evaluate($this->isVisible);
+    }
+
+    public function isVisible(): bool
+    {
+        return ! $this->isHidden();
     }
 }

@@ -1,56 +1,46 @@
 ---
 title: Icon column
 ---
+import AutoScreenshot from "@components/AutoScreenshot.astro"
 
-Icon columns render a Blade icon component representing their contents:
+## Overview
 
-```php
-use Filament\Tables\Columns\IconColumn;
-
-IconColumn::make('is_featured')
-    ->options([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => 'draft',
-        'heroicon-o-clock' => 'reviewing',
-        'heroicon-o-check-circle' => 'published',
-    ])
-```
-
-You may also pass a callback to activate an option, accepting the cell's `$state` and `$record`:
+Icon columns render an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) representing their contents:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
 
-IconColumn::make('is_featured')
-    ->options([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => fn ($state, $record): bool => $record->status === 2,
-        'heroicon-o-clock' => fn ($state): bool => $state === 'reviewing',
-        'heroicon-o-check-circle' => fn ($state): bool => $state === 'published',
-    ])
+IconColumn::make('status')
+    ->icon(fn (string $state): string => match ($state) {
+        'draft' => 'heroicon-o-pencil',
+        'reviewing' => 'heroicon-o-clock',
+        'published' => 'heroicon-o-check-circle',
+    })
 ```
+
+In the function, `$state` is the value of the column, and `$record` can be used to access the underlying Eloquent record.
+
+<AutoScreenshot name="tables/columns/icon/simple" alt="Icon column" version="3.x" />
 
 ## Customizing the color
 
-Icon columns may also have a set of icon colors, using the same syntax. They may be either `primary`, `secondary`, `success`, `warning` or `danger`:
+Icon columns may also have a set of icon colors, using the same syntax. They may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
 
-IconColumn::make('is_featured')
-    ->options([
-        'heroicon-o-x-circle',
-        'heroicon-o-pencil' => 'draft',
-        'heroicon-o-clock' => 'reviewing',
-        'heroicon-o-check-circle' => 'published',
-    ])
-    ->colors([
-        'secondary',
-        'danger' => 'draft',
-        'warning' => 'reviewing',
-        'success' => 'published',
-    ])
+IconColumn::make('status')
+    ->color(fn (string $state): string => match ($state) {
+        'draft' => 'info',
+        'reviewing' => 'warning',
+        'published' => 'success',
+        default => 'gray',
+    })
 ```
+
+In the function, `$state` is the value of the column, and `$record` can be used to access the underlying Eloquent record.
+
+<AutoScreenshot name="tables/columns/icon/color" alt="Icon column with color" version="3.x" />
 
 ## Customizing the size
 
@@ -59,15 +49,11 @@ The default icon size is `lg`, but you may customize the size to be either `xs`,
 ```php
 use Filament\Tables\Columns\IconColumn;
 
-IconColumn::make('is_featured')
-    ->options([
-        'heroicon-s-x-circle',
-        'heroicon-s-pencil' => 'draft',
-        'heroicon-s-clock' => 'reviewing',
-        'heroicon-s-check-circle' => 'published',
-    ])
+IconColumn::make('status')
     ->size('md')
 ```
+
+<AutoScreenshot name="tables/columns/icon/medium" alt="Medium-sized icon column" version="3.x" />
 
 ## Handling booleans
 
@@ -80,6 +66,8 @@ IconColumn::make('is_featured')
     ->boolean()
 ```
 
+<AutoScreenshot name="tables/columns/icon/boolean" alt="Icon column to display a boolean" version="3.x" />
+
 ### Customizing the boolean icons
 
 You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons v1](https://v1.heroicons.com) are installed:
@@ -89,19 +77,23 @@ use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
     ->boolean()
-    ->trueIcon('heroicon-o-badge-check')
-    ->falseIcon('heroicon-o-x-circle')
+    ->trueIcon('heroicon-o-check-badge')
+    ->falseIcon('heroicon-o-x-mark')
 ```
+
+<AutoScreenshot name="tables/columns/icon/boolean-icon" alt="Icon column to display a boolean with custom icons" version="3.x" />
 
 ### Customizing the boolean colors
 
-You may customize the icon color representing each state. These may be either `primary`, `secondary`, `success`, `warning` or `danger`:
+You may customize the icon color representing each state. These may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
 
 ```php
 use Filament\Tables\Columns\IconColumn;
 
 IconColumn::make('is_featured')
     ->boolean()
-    ->trueColor('primary')
+    ->trueColor('info')
     ->falseColor('warning')
 ```
+
+<AutoScreenshot name="tables/columns/icon/boolean-color" alt="Icon column to display a boolean with custom colors" version="3.x" />

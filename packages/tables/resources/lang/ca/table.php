@@ -4,7 +4,7 @@ return [
 
     'fields' => [
 
-        'search_query' => [
+        'search' => [
             'label' => 'Cerca',
             'placeholder' => 'Cerca',
         ],
@@ -25,7 +25,7 @@ return [
 
         ],
 
-        'buttons' => [
+        'actions' => [
 
             'go_to_page' => [
                 'label' => 'Anar a la pàgina :page',
@@ -43,13 +43,13 @@ return [
 
     ],
 
-    'buttons' => [
+    'actions' => [
 
         'filter' => [
             'label' => 'Filtre',
         ],
 
-        'open_actions' => [
+        'open_bulk_actions' => [
             'label' => 'Open actions',
         ],
 
@@ -61,7 +61,7 @@ return [
 
     'selection_indicator' => [
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'Select all :count',

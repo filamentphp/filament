@@ -4,43 +4,41 @@ return [
 
     'builder' => [
 
-        'collapsed' => 'কন্টেন্ট ছোট হয়েছে',
+        'actions' => [
 
-        'buttons' => [
-
-            'clone_item' => [
+            'clone' => [
                 'label' => 'অনুলিপি করুন',
             ],
 
-            'create_item' => [
+            'add' => [
                 'label' => ':label এ যোগ করুন',
             ],
 
-            'create_item_between' => [
+            'add_between' => [
                 'label' => 'প্রবেশ করান',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'মুছে ফেলুন',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'সরান',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'নিচে সরান',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'উপরে সরান',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'ছোট করুন',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'বড় করুন',
             ],
 
@@ -58,7 +56,7 @@ return [
 
     'checkbox_list' => [
 
-        'buttons' => [
+        'actions' => [
 
             'select_all' => [
                 'label' => 'সব নির্বাচিত করুন',
@@ -74,7 +72,7 @@ return [
 
     'key_value' => [
 
-        'buttons' => [
+        'actions' => [
 
             'add' => [
                 'label' => 'সারি যোগ করুন',
@@ -123,39 +121,37 @@ return [
 
     'repeater' => [
 
-        'collapsed' => 'কন্টেন্ট ছোট হয়েছে',
+        'actions' => [
 
-        'buttons' => [
-
-            'create_item' => [
+            'add' => [
                 'label' => ':label এ যোগ করুন',
             ],
 
-            'delete_item' => [
+            'delete' => [
                 'label' => 'মুছে ফেলুন',
             ],
 
-            'clone_item' => [
+            'clone' => [
                 'label' => 'অনুলিপি করুন',
             ],
 
-            'move_item' => [
+            'reorder' => [
                 'label' => 'সরান',
             ],
 
-            'move_item_down' => [
+            'move_down' => [
                 'label' => 'নিচে সরান',
             ],
 
-            'move_item_up' => [
+            'move_up' => [
                 'label' => 'উপরে সরান',
             ],
 
-            'collapse_item' => [
+            'collapse' => [
                 'label' => 'ছোট করুন',
             ],
 
-            'expand_item' => [
+            'expand' => [
                 'label' => 'বড় করুন',
             ],
 
@@ -177,7 +173,7 @@ return [
 
             'link' => [
 
-                'buttons' => [
+                'actions' => [
                     'link' => 'লিংক',
                     'unlink' => 'আনলিংক',
                 ],
@@ -258,7 +254,7 @@ return [
 
     'wizard' => [
 
-        'buttons' => [
+        'actions' => [
 
             'previous_step' => [
                 'label' => 'পেছনে',
