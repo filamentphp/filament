@@ -25,4 +25,9 @@ trait BelongsToComponent
     {
         return $this->getComponent()->getLivewire();
     }
+
+    public function getArguments(): array
+    {
+        return $this->getLivewire()->mountedFormComponentActionArguments;
+    }
 }
