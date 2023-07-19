@@ -4,6 +4,7 @@ namespace Filament\Support;
 
 use Composer\InstalledVersions;
 use Filament\Support\Assets\AssetManager;
+use Filament\Support\Assets\Css;
 use Filament\Support\Assets\Js;
 use Filament\Support\Colors\ColorManager;
 use Filament\Support\Commands\AssetsCommand;
@@ -12,6 +13,7 @@ use Filament\Support\Commands\InstallCommand;
 use Filament\Support\Commands\UpgradeCommand;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Support\Icons\IconManager;
+use Filament\Support\View\ViewManager;
 use Illuminate\Foundation\Console\AboutCommand;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Str;
@@ -57,6 +59,11 @@ class SupportServiceProvider extends PackageServiceProvider
         );
 
         $this->app->scoped(
+            ViewManager::class,
+            fn () => new ViewManager(),
+        );
+
+        $this->app->scoped(
             HtmlSanitizerInterface::class,
             fn (): HtmlSanitizer => new HtmlSanitizer(
                 (new HtmlSanitizerConfig())
@@ -70,8 +77,9 @@ class SupportServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::register([
-            Js::make('support', __DIR__ . '/../dist/index.js'),
             Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
+            Css::make('support', __DIR__ . '/../dist/index.css'),
+            Js::make('support', __DIR__ . '/../dist/index.js'),
         ], 'filament/support');
 
         Blade::directive('captureSlots', function (string $expression): string {

@@ -30,17 +30,6 @@ class GlobalSearch extends Component
         return $results;
     }
 
-    public function isEnabled(): bool
-    {
-        foreach (Filament::getResources() as $resource) {
-            if ($resource::canGloballySearch()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
     public function render(): View
     {
         return view('filament::components.global-search.index', [

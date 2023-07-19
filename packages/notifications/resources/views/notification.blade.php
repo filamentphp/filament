@@ -21,7 +21,12 @@
             : null,
         ])
     "
-    x-transition:leave-end="scale-95 opacity-0"
+    :x-transition:leave-end="
+        \Illuminate\Support\Arr::toCssClasses([
+            'opacity-0',
+            'scale-95' => ! $isInline,
+        ])
+    "
     @class([
         'w-full transition duration-300',
         ...match ($isInline) {
@@ -41,11 +46,11 @@
 >
     <div
         @class([
-            'flex w-full gap-3',
+            'flex w-full gap-3 p-4',
             ...match ($isInline) {
-                true => ['py-2 pe-2 ps-6'],
+                true => [],
                 false => [
-                    'rounded-xl p-4',
+                    'rounded-xl',
                     match ($color) {
                         'gray' => null,
                         default => 'bg-custom-50 dark:bg-custom-400/10',
@@ -73,7 +78,7 @@
             @endif
 
             @if (filled($date = $getDate()))
-                <x-filament-notifications::date>
+                <x-filament-notifications::date class="mt-1">
                     {{ $date }}
                 </x-filament-notifications::date>
             @endif

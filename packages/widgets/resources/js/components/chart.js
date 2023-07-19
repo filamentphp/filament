@@ -1,51 +1,66 @@
 import Chart from 'chart.js/auto'
 
-Chart.defaults.font.family = `var(--filament-widgets-chart-font-family)`
-Chart.defaults.color = '#6b7280'
-
 export default function chart({ cachedData, options, type }) {
     return {
-        chart: null,
-
         init: function () {
-            let chart = this.initChart()
+            this.initChart()
 
             this.$el.addEventListener('updateChartData', async ({ data }) => {
-                chart.data = this.applyColorToData(data)
+                chart = this.getChart()
+                chart.data = data
                 chart.update('resize')
             })
 
-            this.$el.addEventListener('filterChartData', async ({ data }) => {
-                chart.destroy()
-                chart = this.initChart(data)
+            Alpine.effect(() => {
+                Alpine.store('theme')
+
+                this.getChart().destroy()
+                this.initChart()
             })
+
+            window
+                .matchMedia('(prefers-color-scheme: dark)')
+                .addEventListener('change', () => {
+                    if (Alpine.store('theme') !== 'system') {
+                        return
+                    }
+
+                    this.$nextTick(() => {
+                        this.getChart().destroy()
+                        this.initChart()
+                    })
+                })
         },
 
         initChart: function (data = null) {
-            return (this.chart = new Chart(this.$refs.canvas, {
+            Chart.defaults.backgroundColor = getComputedStyle(
+                this.$refs.backgroundColorElement,
+            ).color
+
+            Chart.defaults.borderColor = getComputedStyle(
+                this.$refs.borderColorElement,
+            ).color
+
+            Chart.defaults.color = getComputedStyle(
+                this.$refs.colorElement,
+            ).color
+
+            Chart.defaults.font.family = getComputedStyle(this.$el).fontFamily
+
+            return new Chart(this.$refs.canvas, {
                 type: type,
-                data: this.applyColorToData(data ?? cachedData),
-                options: options ?? {},
-            }))
+                data: data ?? cachedData,
+                options: {
+                    animation: {
+                        duration: 0,
+                    },
+                    ...options,
+                },
+            })
         },
 
-        applyColorToData: function (data) {
-            data.datasets.forEach((dataset, datasetIndex) => {
-                if (!dataset.backgroundColor) {
-                    data.datasets[datasetIndex].backgroundColor =
-                        getComputedStyle(
-                            this.$refs.backgroundColorElement,
-                        ).color
-                }
-
-                if (!dataset.borderColor) {
-                    data.datasets[datasetIndex].borderColor = getComputedStyle(
-                        this.$refs.borderColorElement,
-                    ).color
-                }
-            })
-
-            return data
+        getChart: function () {
+            return Chart.getChart(this.$refs.canvas)
         },
     }
 }

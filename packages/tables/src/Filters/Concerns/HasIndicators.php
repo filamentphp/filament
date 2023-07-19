@@ -18,7 +18,7 @@ trait HasIndicators
         return $this;
     }
 
-    public function indicateUsing(Closure | null $callback): static
+    public function indicateUsing(?Closure $callback): static
     {
         $this->indicateUsing = $callback;
 

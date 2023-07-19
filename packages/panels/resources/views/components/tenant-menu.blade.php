@@ -23,12 +23,12 @@
     $items = \Illuminate\Support\Arr::except($items, ['billing', 'profile', 'register']);
 @endphp
 
-{{ filament()->renderHook('tenant-menu.before') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('tenant-menu.before') }}
 
 <x-filament::dropdown placement="bottom-start" teleport class="fi-tenant-menu">
     <x-slot name="trigger">
         <div
-            class="-m-3 flex items-center space-x-3 rounded-lg p-2 transition hover:bg-gray-500/5 rtl:space-x-reverse dark:hover:bg-gray-900/50"
+            class="-m-3 flex items-center gap-x-3 rounded-lg p-2 transition hover:bg-gray-500/5 dark:hover:bg-gray-900/50"
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-data="{ tooltip: {} }"
                 x-init="
@@ -146,4 +146,4 @@
     @endif
 </x-filament::dropdown>
 
-{{ filament()->renderHook('tenant-menu.after') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('tenant-menu.after') }}

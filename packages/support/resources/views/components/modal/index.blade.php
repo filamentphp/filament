@@ -4,6 +4,7 @@
     'closeButton' => \Filament\Support\View\Components\Modal::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
     'closeEventName' => 'close-modal',
+    'description' => null,
     'displayClasses' => 'inline-block',
     'footer' => null,
     'footerActions' => [],
@@ -11,18 +12,25 @@
     'header' => null,
     'heading' => null,
     'icon' => null,
+    'iconAlias' => null,
     'iconColor' => 'primary',
     'id' => null,
     'openEventName' => 'open-modal',
     'slideOver' => false,
     'stickyFooter' => false,
-    'description' => null,
     'trigger' => null,
     'visible' => true,
     'width' => 'sm',
 ])
 
 <div
+    @if ($ariaLabelledby)
+        aria-labelledby="{{ $ariaLabelledby }}"
+    @elseif ($heading)
+        aria-labelledby="{{ "{$id}.heading" }}"
+    @endif
+    aria-modal="true"
+    role="dialog"
     x-data="{
         isOpen: false,
 
@@ -44,33 +52,30 @@
             )
         },
     }"
-    x-trap.noscroll="isOpen"
     @if ($id)
         x-on:{{ $closeEventName }}.window="if ($event.detail.id === '{{ $id }}') close()"
         x-on:{{ $openEventName }}.window="if ($event.detail.id === '{{ $id }}') open()"
     @endif
-    @if ($ariaLabelledby)
-        aria-labelledby="{{ $ariaLabelledby }}"
-    @elseif ($heading)
-        aria-labelledby="{{ "{$id}.heading" }}"
-    @endif
-    role="dialog"
-    aria-modal="true"
+    x-trap.noscroll="isOpen"
     wire:ignore.self
-    class="fi-modal {{ $displayClasses }}"
+    @class([
+        'fi-modal',
+        $displayClasses,
+    ])
 >
     {{ $trigger }}
 
     <div
+        x-cloak
         x-show="isOpen"
         x-transition.duration.300ms.opacity
-        x-cloak
         @class([
             'fixed inset-0 z-40 min-h-full overflow-y-auto overflow-x-hidden transition',
             'flex items-center' => ! $slideOver,
         ])
     >
         <div
+            aria-hidden="true"
             @if ($closeByClickingAway)
                 @if (filled($id))
                     x-on:click="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
@@ -78,17 +83,16 @@
                     x-on:click="close()"
                 @endif
             @endif
-            aria-hidden="true"
             @class([
-                'fi-modal-close-overlay fixed inset-0 h-full w-full bg-black/50',
+                'fi-modal-close-overlay fixed inset-0 bg-gray-950/50 dark:bg-gray-950/75',
                 'cursor-pointer' => $closeByClickingAway,
             ])
             style="will-change: transform"
         ></div>
 
         <div
-            x-ref="modalContainer"
             x-cloak
+            x-ref="modalContainer"
             {{
                 $attributes->class([
                     'pointer-events-none relative w-full transition',
@@ -97,6 +101,7 @@
             }}
         >
             <div
+                x-cloak
                 x-data="{ isShown: false }"
                 x-init="
                     $nextTick(() => {
@@ -104,28 +109,27 @@
                         $watch('isOpen', () => (isShown = isOpen))
                     })
                 "
-                x-show="isShown"
-                x-cloak
                 @if (filled($id))
                     x-on:keydown.window.escape="$dispatch('{{ $closeEventName }}', { id: '{{ $id }}' })"
                 @else
                     x-on:keydown.window.escape="close()"
                 @endif
-                x-transition:enter="ease duration-300"
-                x-transition:leave="ease duration-300"
+                x-show="isShown"
+                x-transition:enter="duration-300"
+                x-transition:leave="duration-300"
                 @if ($slideOver)
                     x-transition:enter-start="translate-x-full rtl:-translate-x-full"
                     x-transition:enter-end="translate-x-0"
                     x-transition:leave-start="translate-x-0"
                     x-transition:leave-end="translate-x-full rtl:-translate-x-full"
                 @elseif ($width !== 'screen')
-                    x-transition:enter-start="translate-y-8"
-                    x-transition:enter-end="translate-y-0"
-                    x-transition:leave-start="translate-y-0"
-                    x-transition:leave-end="translate-y-8"
+                    x-transition:enter-start="scale-95"
+                    x-transition:enter-end="scale-100"
+                    x-transition:leave-start="scale-95"
+                    x-transition:leave-end="scale-100"
                 @endif
                 @class([
-                    'fi-modal-window pointer-events-auto w-full cursor-default bg-white dark:bg-gray-900',
+                    'fi-modal-window pointer-events-auto w-full cursor-default bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     'relative' => $width !== 'screen',
                     'fi-modal-slide-over-window ms-auto h-screen overflow-y-auto' => $slideOver,
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
@@ -180,6 +184,7 @@
                                             style="{{ \Filament\Support\get_color_css_variables($iconColor, shades: [100, 500]) }}"
                                         >
                                             <x-filament::icon
+                                                :alias="$iconAlias"
                                                 :name="$icon"
                                                 :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 600])"
                                                 class="fi-modal-icon h-6 w-6 text-custom-600 dark:text-custom-400"
@@ -225,7 +230,7 @@
                                 :label="__('filament-support::components/modal.actions.close.label')"
                                 tabindex="-1"
                                 :x-on:click="filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()'"
-                                class="fi-modal-close-btn -m-2"
+                                class="fi-modal-close-btn -m-1.5"
                             />
                         </div>
                     @endif
@@ -243,36 +248,38 @@
                         </div>
                     @endif
 
-                    <div
-                        @class([
-                            'fi-modal-footer w-full',
-                            'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter),
-                            'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
-                            'sticky bottom-0 rounded-b-xl border-t border-gray-200 bg-white py-5 dark:border-gray-800 dark:bg-gray-900' => $stickyFooter,
-                            'pb-6' => ! $stickyFooter,
-                            'mt-6' => (! $stickyFooter) && \Filament\Support\is_slot_empty($slot) && (! $slideOver),
-                            'mt-auto' => $slideOver,
-                        ])
-                    >
-                        @if ($footer)
-                            {{ $footer }}
-                        @elseif (count($footerActions))
-                            <div
-                                @class([
-                                    'fi-modal-footer-actions gap-3',
-                                    match ($footerActionsAlignment) {
-                                        'center' => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
-                                        'end', 'right' => 'flex flex-row-reverse flex-wrap items-center',
-                                        'left', 'start' => 'flex flex-wrap items-center',
-                                    },
-                                ])
-                            >
-                                @foreach ($footerActions as $action)
-                                    {{ $action }}
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
+                    @if (count($footerActions) || (! \Filament\Support\is_slot_empty($footer)))
+                        <div
+                            @class([
+                                'fi-modal-footer w-full',
+                                'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter),
+                                'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
+                                'sticky bottom-0 rounded-b-xl border-t border-gray-100 bg-white py-5 dark:border-gray-800 dark:bg-gray-900' => $stickyFooter,
+                                'pb-6' => ! $stickyFooter,
+                                'mt-6' => (! $stickyFooter) && \Filament\Support\is_slot_empty($slot) && (! $slideOver),
+                                'mt-auto' => $slideOver,
+                            ])
+                        >
+                            @if (! \Filament\Support\is_slot_empty($footer))
+                                {{ $footer }}
+                            @elseif (count($footerActions))
+                                <div
+                                    @class([
+                                        'fi-modal-footer-actions gap-3',
+                                        match ($footerActionsAlignment) {
+                                            'center' => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
+                                            'end', 'right' => 'flex flex-row-reverse flex-wrap items-center',
+                                            'left', 'start' => 'flex flex-wrap items-center',
+                                        },
+                                    ])
+                                >
+                                    @foreach ($footerActions as $action)
+                                        {{ $action }}
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

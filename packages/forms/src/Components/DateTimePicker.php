@@ -32,7 +32,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
      */
     protected array $extraTriggerAttributes = [];
 
-    protected int | null $firstDayOfWeek = null;
+    protected ?int $firstDayOfWeek = null;
 
     protected string | Closure | null $format = null;
 
@@ -157,7 +157,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
         return $this;
     }
 
-    public function firstDayOfWeek(int | null $day): static
+    public function firstDayOfWeek(?int $day): static
     {
         if ($day < 0 || $day > 7) {
             $day = null;

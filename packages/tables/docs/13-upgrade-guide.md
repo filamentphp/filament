@@ -47,11 +47,11 @@ The `TABLES_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILES
 
 The `@filamentScripts` and `@filamentStyles` Blade directives must be added to your Blade layout file/s. Since Livewire 3 no longer uses similar directives, you can replace `@livewireScripts` with `@filamentScripts`  and `@livewireStyles` with `@filamentStyles`.
 
-#### CSS file renamed
+#### CSS file removed
 
-The CSS file for form components has been renamed from `module.esm.css` to `index.css`. You should update any references to this file in your code - check `resources/css/app.css`.
+The CSS file for form components, `module.esm.css`, has been removed. Check `resources/css/app.css`. That CSS is now automatically loaded by `@filamentStyles`.
 
-#### JavaScript assets
+#### JavaScript files removed
 
 You no longer need to import the `FormsAlpinePlugin` in your JavaScript files. Alpine plugins are now automatically loaded by `@filamentScripts`.
 

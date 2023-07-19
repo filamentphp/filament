@@ -2,16 +2,14 @@
     'unreadNotificationsCount',
 ])
 
-<x-filament::modal.heading class="relative">
-    <span>
+<x-filament::modal.heading>
+    <span class="relative">
         {{ __('filament-notifications::database.modal.heading') }}
-    </span>
 
-    @if ($unreadNotificationsCount)
-        <span
-            class="absolute top-0 ms-1 inline-flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary-500/10 text-xs text-primary-700 dark:text-primary-500"
-        >
-            {{ $unreadNotificationsCount }}
-        </span>
-    @endif
+        @if ($unreadNotificationsCount)
+            <x-filament::badge size="xs" class="absolute -top-1 left-full ms-1">
+                {{ $unreadNotificationsCount }}
+            </x-filament::badge>
+        @endif
+    </span>
 </x-filament::modal.heading>

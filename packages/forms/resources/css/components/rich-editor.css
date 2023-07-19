@@ -1,42 +1,24 @@
-@import 'trix/dist/trix.css';
-
-.dark .trix-button {
-    @apply border-gray-600 bg-gray-700 text-gray-200;
+.fi-fo-rich-editor trix-editor:empty::before {
+    @apply text-gray-400 dark:text-gray-500;
+    content: attr(placeholder);
 }
 
-.dark .trix-button-group {
-    @apply border-gray-600;
-}
+/* Add RTL support */
+/* https://github.com/tailwindlabs/tailwindcss-typography/pull/306 */
 
-.dark trix-toolbar .trix-dialog {
-    @apply border-t-2 border-gray-900 bg-gray-800;
-    box-shadow: 0 0.3em 1em theme('colors.gray.900');
-}
-
-.dark trix-toolbar .trix-input {
-    @apply border-gray-600 bg-gray-700;
-}
-
-.dark trix-toolbar .trix-button:not(:first-child) {
-    @apply border-s border-gray-600;
-}
-
-trix-toolbar .fi-fo-rich-editor-toolbar-btn.trix-active {
-    @apply bg-primary-600 text-white;
-}
-
-[dir='rtl'] trix-editor.prose :where(ul):not(:where([class~='not-prose'] *)),
-[dir='rtl'] trix-editor.prose :where(ol):not(:where([class~='not-prose'] *)) {
-    padding-right: 1.625em !important;
-    padding-left: 0em !important;
-}
-
-[dir='rtl']
+.fi-fo-rich-editor
     trix-editor.prose
-    :where(ul > li):not(:where([class~='not-prose'] *)),
-[dir='rtl']
+    :where(ul):not(:where([class~='not-prose'] *)),
+.fi-fo-rich-editor
     trix-editor.prose
-    :where(ol > li):not(:where([class~='not-prose'] *)) {
-    padding-right: 0.375em !important;
-    padding-left: 0em !important;
+    :where(ol):not(:where([class~='not-prose'] *)) {
+    padding-inline-start: 1.625em !important;
+    padding-inline-end: 0 !important;
+}
+
+.fi-fo-rich-editor
+    trix-editor.prose
+    :where(ul > li):not(:where([class~='not-prose'] *)) {
+    padding-inline-start: 0.375em !important;
+    padding-inline-end: 0 !important;
 }

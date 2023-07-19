@@ -50,15 +50,15 @@ select:not(.choices) {
 }
 
 .choices__list--multiple {
-    @apply flex flex-wrap gap-1.5;
+    @apply flex flex-wrap gap-1;
 }
 
 .choices__list--multiple:not(:empty) {
-    @apply py-2;
+    @apply -mx-1 mb-1 py-0.5;
 }
 
 .choices__list--multiple .choices__item {
-    @apply inline-flex items-center gap-1 break-all rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-700 ring-1 ring-inset ring-primary-600/20 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400/30;
+    @apply inline-flex items-center gap-1 break-all rounded-md bg-primary-300/10 px-2 py-1 text-xs font-medium text-primary-600 ring-1 ring-inset ring-primary-600/10 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400/30;
 }
 
 .choices__list--dropdown,

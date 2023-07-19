@@ -16,7 +16,7 @@
                 'tabindex' => '0',
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-in-tabs-tab outline-none'])
+            ->class(['fi-in-tabs-tab'])
     }}
 >
     {{ $getChildComponentContainer() }}

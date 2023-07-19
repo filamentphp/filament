@@ -1,4 +1,6 @@
 @props([
+    'badge' => null,
+    'badgeColor' => 'primary',
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -6,8 +8,6 @@
     'iconAlias' => null,
     'iconPosition' => 'before',
     'iconSize' => null,
-    'indicator' => null,
-    'indicatorColor' => 'primary',
     'keyBindings' => null,
     'size' => 'md',
     'tag' => 'a',
@@ -20,7 +20,7 @@
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
         "fi-link fi-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
-        'pe-4' => $indicator,
+        'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         match ($size) {
             'xs' => 'gap-1 text-xs',
@@ -59,12 +59,10 @@
     ]);
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 500]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
     ]);
 
-    $indicatorClasses = 'fi-link-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-xs font-medium tracking-tight text-white dark:bg-custom-500';
-
-    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [500, 600]);
+    $badgeClasses = 'absolute -top-1 start-full -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -112,13 +110,12 @@
             />
         @endif
 
-        @if ($indicator)
-            <span
-                class="{{ $indicatorClasses }}"
-                style="{{ $indicatorStyles }}"
-            >
-                {{ $indicator }}
-            </span>
+        @if ($badge)
+            <div class="{{ $badgeClasses }}">
+                <x-filament::badge :color="$badgeColor" size="xs">
+                    {{ $badge }}
+                </x-filament::badge>
+            </div>
         @endif
     </a>
 @elseif ($tag === 'button')
@@ -137,6 +134,8 @@
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
+                    'wire:loading.attr' => 'disabled',
+                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 ], escape: false)
                 ->class([$linkClasses])
                 ->style([$linkStyles])
@@ -188,13 +187,12 @@
             @endif
         @endif
 
-        @if ($indicator)
-            <span
-                class="{{ $indicatorClasses }}"
-                style="{{ $indicatorStyles }}"
-            >
-                {{ $indicator }}
-            </span>
+        @if ($badge)
+            <div class="{{ $badgeClasses }}">
+                <x-filament::badge :color="$badgeColor" size="xs">
+                    {{ $badge }}
+                </x-filament::badge>
+            </div>
         @endif
     </button>
 @endif

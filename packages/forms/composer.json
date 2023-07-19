@@ -1,6 +1,6 @@
 {
     "name": "filament/forms",
-    "description": "Effortlessly build TALL-powered forms.",
+    "description": "Easily add beautiful forms to any Livewire component.",
     "license": "MIT",
     "homepage": "https://github.com/filamentphp/filament",
     "support": {

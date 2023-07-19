@@ -15,7 +15,7 @@
     {{ $attributes->class(['fi-ta-filters']) }}
 >
     <x-slot name="trigger">
-        {{ $triggerAction->indicator($indicatorsCount) }}
+        {{ $triggerAction->badge($indicatorsCount) }}
     </x-slot>
 
     <x-filament-tables::filters :form="$form" class="p-4" />

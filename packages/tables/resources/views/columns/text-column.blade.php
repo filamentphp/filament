@@ -67,7 +67,7 @@
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
                     <div
                         @class([
-                            'inline-flex items-center space-x-1 rtl:space-x-reverse',
+                            'inline-flex items-center gap-x-1',
                             'fi-ta-text-badge min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
                             'whitespace-normal' => $canWrap,
                             "fi-ta-text-badge-color-{$color}" => $isBadge && is_string($color),

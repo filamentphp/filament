@@ -29,7 +29,7 @@ class MakeThemeCommand extends Command
 
         $this->info("Using Node.js v{$npmVersion[0]}");
 
-        exec('npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer tippy.js --save-dev');
+        exec('npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev');
 
         $panel = $this->argument('panel');
 

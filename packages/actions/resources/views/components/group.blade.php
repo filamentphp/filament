@@ -1,5 +1,7 @@
 @props([
     'actions' => [],
+    'badge' => null,
+    'badgeColor' => null,
     'button' => false,
     'color' => null,
     'dropdownPlacement' => null,
@@ -7,8 +9,6 @@
     'group' => null,
     'icon' => null,
     'iconButton' => false,
-    'indicator' => null,
-    'indicatorColor' => null,
     'label' => null,
     'link' => false,
     'size' => null,
@@ -19,11 +19,11 @@
 @if (! ($dynamicComponent && $group))
     @php
         $group = \Filament\Actions\ActionGroup::make($actions)
+            ->badge($badge)
+            ->badgeColor($badgeColor)
             ->color($color)
             ->dropdownPlacement($dropdownPlacement)
             ->icon($icon)
-            ->indicator($indicator)
-            ->indicatorColor($indicatorColor)
             ->label($label)
             ->size($size)
             ->tooltip($tooltip)
@@ -87,12 +87,12 @@
     >
         <x-slot name="trigger">
             <x-dynamic-component
+                :badge="$group->getBadge()"
+                :badge-color="$group->getBadgeColor()"
                 :component="$dynamicComponent"
                 :color="$group->getColor()"
                 :tooltip="$group->getTooltip()"
                 :icon="$group->getIcon()"
-                :indicator="$group->getIndicator()"
-                :indicator-color="$group->getIndicatorColor()"
                 :size="$group->getSize()"
                 :label-sr-only="$group->isLabelHidden()"
                 :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($group->getExtraAttributes(), escape: false)"

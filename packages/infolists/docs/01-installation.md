@@ -43,7 +43,7 @@ php artisan filament:install --infolists
 First, use NPM to install Tailwind CSS and its `forms` and `typography` plugins:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss --save-dev
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev
 ```
 
 Create a new `tailwind.config.js` file. Ensure that you add Filament's `preset` which configures colors and the plugins you installed:
@@ -63,11 +63,9 @@ export default {
 
 ### Configuring styles
 
-In `resources/css/app.css`, import Tailwind CSS, and the Filament forms CSS, which is used for action modal forms:
+In `resources/css/app.css`, import Tailwind CSS:
 
 ```css
-@import '../../vendor/filament/forms/dist/index.css';
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

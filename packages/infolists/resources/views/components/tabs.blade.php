@@ -1,4 +1,5 @@
 <div
+    x-cloak
     x-data="{
         tab: null,
 
@@ -23,7 +24,6 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
-    x-cloak
     {{
         $attributes
             ->merge([
@@ -34,7 +34,7 @@
             ->class(['fi-in-tabs rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'])
     }}
 >
-    <div class="p-1">
+    <div class="border-b border-gray-100 px-3 py-2.5 dark:border-white/10">
         <x-filament::tabs :label="$getLabel()">
             @foreach ($getChildComponentContainer()->getComponents() as $tab)
                 @php
@@ -42,12 +42,12 @@
                 @endphp
 
                 <x-filament::tabs.item
-                    :x-on:click="'tab = \'' . $tabId . '\''"
                     :alpine-active="'tab === \'' . $tabId . '\''"
                     :badge="$tab->getBadge()"
                     :icon="$tab->getIcon()"
                     :icon-color="$tab->getIconColor()"
                     :icon-position="$tab->getIconPosition()"
+                    :x-on:click="'tab = \'' . $tabId . '\''"
                 >
                     {{ $tab->getLabel() }}
                 </x-filament::tabs.item>

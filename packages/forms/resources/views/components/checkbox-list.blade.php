@@ -68,9 +68,18 @@
             updateVisibleCheckboxListOptions: function () {
                 this.visibleCheckboxListOptions = this.checkboxListOptions.filter(
                     (checkboxListItem) => {
+                        if (
+                            checkboxListItem
+                                .querySelector('.fi-fo-checkbox-list-option-label')
+                                ?.innerText.toLowerCase()
+                                .includes(this.search.toLowerCase())
+                        ) {
+                            return true
+                        }
+
                         return checkboxListItem
-                            .querySelector('.fi-fo-checkbox-list-option-label-text')
-                            .innerText.toLowerCase()
+                            .querySelector('.fi-fo-checkbox-list-option-description')
+                            ?.innerText.toLowerCase()
                             .includes(this.search.toLowerCase())
                     },
                 )
@@ -135,15 +144,17 @@
             :direction="$gridDirection"
             :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
             :attributes="
-                \Filament\Support\prepare_inherited_attributes($attributes)->class([
-                    'fi-fo-checkbox-list gap-2',
-                    '-mt-2' => $gridDirection === 'column',
-                ])
+                \Filament\Support\prepare_inherited_attributes($attributes)
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->class([
+                        'fi-fo-checkbox-list gap-4',
+                        '-mt-4' => $gridDirection === 'column',
+                    ])
             "
         >
-            @forelse ($getOptions() as $optionValue => $optionLabel)
+            @forelse ($getOptions() as $value => $label)
                 <div
-                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}"
+                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
                         x-show="
                             $el.querySelector('.fi-fo-checkbox-list-option-label-text')
@@ -152,33 +163,44 @@
                         "
                     @endif
                     @class([
-                        'break-inside-avoid pt-2' => $gridDirection === 'column',
+                        'break-inside-avoid pt-4' => $gridDirection === 'column',
                     ])
                 >
                     <label
-                        class="fi-fo-checkbox-list-option-label flex items-center gap-x-3"
+                        class="fi-fo-checkbox-list-option-label flex gap-x-3"
                     >
                         <x-filament::input.checkbox
                             :errors="$errors"
                             :state-path="$statePath"
                             :attributes="
-                                $getExtraAttributeBag()
+                                $getExtraInputAttributeBag()
                                     ->merge([
                                         'disabled' => $isDisabled,
                                         'type' => 'checkbox',
-                                        'value' => $optionValue,
+                                        'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,
                                         'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)
+                                    ->class(['mt-1'])
                             "
                         />
 
-                        <span
-                            class="fi-fo-checkbox-list-option-label-text text-sm font-medium text-gray-950 dark:text-white"
-                        >
-                            {{ $optionLabel }}
-                        </span>
+                        <div class="grid text-sm leading-6">
+                            <span
+                                class="fi-fo-checkbox-list-option-label font-medium text-gray-950 dark:text-white"
+                            >
+                                {{ $label }}
+                            </span>
+
+                            @if ($hasDescription($value))
+                                <p
+                                    class="fi-fo-checkbox-list-option-description text-gray-500 dark:text-gray-400"
+                                >
+                                    {{ $getDescription($value) }}
+                                </p>
+                            @endif
+                        </div>
                     </label>
                 </div>
             @empty

@@ -39,6 +39,23 @@ ImageColumn::make('header_image')
     ->visibility('private')
 ```
 
+## Customizing the size
+
+You may customize the image size by passing a `width()` and `height()`, or both with `size()`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('header_image')
+    ->width(200)
+
+ImageColumn::make('header_image')
+    ->height(50)
+
+ImageColumn::make('author.avatar')
+    ->size(40)
+```
+
 ## Square image
 
 You may display the image using a 1:1 aspect ratio:
@@ -65,23 +82,6 @@ ImageColumn::make('avatar')
 
 <AutoScreenshot name="tables/columns/image/circular" alt="Circular image column" version="3.x" />
 
-## Customizing the size
-
-You may customize the image size by passing a `width()` and `height()`, or both with `size()`:
-
-```php
-use Filament\Tables\Columns\ImageColumn;
-
-ImageColumn::make('header_image')
-    ->width(200)
-
-ImageColumn::make('header_image')
-    ->height(50)
-
-ImageColumn::make('author.avatar')
-    ->size(40)
-```
-
 ## Adding a default image URL
 
 You can display a placeholder image if one doesn't exist yet, by passing a URL to the `defaultImageUrl()` method:
@@ -91,6 +91,103 @@ use Filament\Tables\Columns\ImageColumn;
 
 ImageColumn::make('avatar')
     ->defaultImageUrl(url('/images/placeholder.png'))
+```
+
+## Stacking images
+
+You may display multiple images as a stack of overlapping images by using `stacked()`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+```
+
+<AutoScreenshot name="tables/columns/image/stacked" alt="Stacked image column" version="3.x" />
+
+### Customizing the stacked ring width
+
+The default ring width is `3`, but you may customize it to be from `0` to `8`:
+
+```php
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->ring(5)
+```
+
+### Customizing the stacked overlap
+
+The default overlap is `4`, but you may customize it to be from `0` to `8`:
+
+```php
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->overlap(2)
+```
+
+## Setting a limit
+
+You may set a limit of the maximum number of images you want to display by passing `limit()`:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+```
+
+<AutoScreenshot name="tables/columns/image/limited" alt="Limited image column" version="3.x" />
+
+### Showing the remaining images count
+
+When you set a limit you may also display the count of remaining images by passing `limitedRemainingText()`. 
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+    ->limitedRemainingText()
+```
+
+<AutoScreenshot name="tables/columns/image/limited-remaining-text" alt="Limited image column with remaining text" version="3.x" />
+
+#### Showing the limited remaining text separately
+
+By default, `limitedRemainingText()` will display the count of remaining images as a number stacked on the other images. If you prefer to show the count as a number after the images you may use the `isSeparate: true` parameter:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+    ->limitedRemainingText(isSeparate: true)
+```
+
+<AutoScreenshot name="tables/columns/image/limited-remaining-text-separately" alt="Limited image column with remaining text separately" version="3.x" />
+
+#### Customizing the limited remaining text size
+
+By default, the size of the remaining text is `sm`. You can customize this to be `xs`, `md` or `lg` using the `size` parameter:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('colleagues.avatar')
+    ->circular()
+    ->stacked()
+    ->limit(3)
+    ->limitedRemainingText(size: 'lg')
 ```
 
 ## Custom attributes

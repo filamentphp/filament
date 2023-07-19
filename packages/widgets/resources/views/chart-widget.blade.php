@@ -28,7 +28,7 @@
                     <x-filament-forms::affixes
                         inline-prefix
                         wire:target="filter"
-                        class="ml-auto"
+                        class="ms-auto"
                     >
                         <x-filament::input.select
                             inline-prefix
@@ -76,6 +76,11 @@
                 <span
                     x-ref="borderColorElement"
                     class="text-gray-950/50 dark:text-white/60"
+                ></span>
+
+                <span
+                    x-ref="colorElement"
+                    class="text-gray-500 dark:text-gray-400"
                 ></span>
             </div>
         </div>

@@ -65,42 +65,33 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'actions/trigger-button/indicator': {
+    'actions/trigger-button/badge': {
         url: 'actions',
-        selector: '#indicatorAction',
+        selector: '#badgeAction',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#indicatorAction button')
+            await page.hover('#badgeAction button')
         },
     },
-    'actions/trigger-button/success-indicator': {
+    'actions/trigger-button/success-badge': {
         url: 'actions',
-        selector: '#successIndicatorAction',
+        selector: '#successBadgeAction',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#successIndicatorAction button')
+            await page.hover('#successBadgeAction button')
         },
     },
     'actions/trigger-button/outlined': {
         url: 'actions',
         selector: '#outlinedAction',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'actions/trigger-button/inline-icon': {
-        url: 'actions',
-        selector: '#inlineIconAction',
         viewport: {
             width: 1920,
             height: 640,
@@ -582,6 +573,15 @@ export default {
     'forms/fields/checkbox-list/simple': {
         url: 'forms/fields',
         selector: '#checkboxList',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/checkbox-list/option-descriptions': {
+        url: 'forms/fields',
+        selector: '#checkboxListOptionDescriptions',
         viewport: {
             width: 1920,
             height: 640,
@@ -1336,6 +1336,42 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/image/stacked': {
+        url: 'infolists/entries',
+        selector: '#imageStacked',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/image/limited': {
+        url: 'infolists/entries',
+        selector: '#imageLimited',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/image/limited-remaining-text': {
+        url: 'infolists/entries',
+        selector: '#imageLimitedRemainingText',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/image/limited-remaining-text-separately': {
+        url: 'infolists/entries',
+        selector: '#imageLimitedRemainingTextSeparately',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/color/simple': {
         url: 'infolists/entries',
         selector: '#color',
@@ -1874,6 +1910,42 @@ export default {
     },
     'tables/columns/image/circular': {
         url: 'tables?table=imageColumnCircular',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/image/stacked': {
+        url: 'tables?table=imageColumnStacked',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/image/limited': {
+        url: 'tables?table=imageColumnLimited',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/image/limited-remaining-text': {
+        url: 'tables?table=imageColumnLimitedRemainingText',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/image/limited-remaining-text-separately': {
+        url: 'tables?table=imageColumnLimitedRemainingTextSeparately',
         selector: 'body',
         viewport: {
             width: 1080,

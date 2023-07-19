@@ -15,7 +15,7 @@
     ]);
 
     $descriptionIconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($descriptionColor, shades: [400, 500]) => $descriptionColor !== 'gray',
+        \Filament\Support\get_color_css_variables($descriptionColor, shades: [500]) => $descriptionColor !== 'gray',
     ]);
 @endphp
 
@@ -94,10 +94,6 @@
                         values: @js(array_values($chart)),
                     })"
             x-ignore
-            x-on:theme-changed.window="
-                chart.destroy()
-                initChart()
-            "
             @class([
                 'absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl',
             ])

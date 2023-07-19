@@ -159,22 +159,9 @@ Action::make('save')
     ->keyBindings(['command+s', 'ctrl+s'])
 ```
 
-## Adding an indicator in the corner of the button
+## Adding a badge to the corner of the button
 
-You can add an indicator to the corner of the button, to display whatever you want. It's useful for displaying a count of something, or a status indicator:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('filter')
-    ->iconButton()
-    ->icon('heroicon-m-funnel')
-    ->indicator(5)
-```
-
-<AutoScreenshot name="actions/trigger-button/indicator" alt="Trigger with indicator" version="3.x" />
-
-You can also pass a color to be used for the indicator, which can be either `danger`, `gray`, `info`, `primary`, `success` and `warning`:
+You can add a badge to the corner of the button, to display whatever you want. It's useful for displaying a count of something, or a status indicator:
 
 ```php
 use Filament\Actions\Action;
@@ -182,11 +169,24 @@ use Filament\Actions\Action;
 Action::make('filter')
     ->iconButton()
     ->icon('heroicon-m-funnel')
-    ->indicator(5)
-    ->indicatorColor('success')
+    ->badge(5)
 ```
 
-<AutoScreenshot name="actions/trigger-button/success-indicator" alt="Trigger with green indicator" version="3.x" />
+<AutoScreenshot name="actions/trigger-button/badge" alt="Trigger with badge" version="3.x" />
+
+You can also pass a color to be used for the badge, which can be either `danger`, `gray`, `info`, `primary`, `success` and `warning`:
+
+```php
+use Filament\Actions\Action;
+
+Action::make('filter')
+    ->iconButton()
+    ->icon('heroicon-m-funnel')
+    ->badge(5)
+    ->badgeColor('success')
+```
+
+<AutoScreenshot name="actions/trigger-button/success-badge" alt="Trigger with green badge" version="3.x" />
 
 ## Outlined button style
 
@@ -202,21 +202,6 @@ Action::make('edit')
 ```
 
 <AutoScreenshot name="actions/trigger-button/outlined" alt="Outlined trigger button" version="3.x" />
-
-## Inline icon button style
-
-When you're using the "icon button" trigger style, you might wish to make it fit inline with other content. You can do this with the `inline()` method, which removes the background color when it the button is hovered over:
-
-```php
-use Filament\Actions\Action;
-
-Action::make('edit')
-    ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
-    ->iconButton()
-    ->inline()
-```
-
-<AutoScreenshot name="actions/trigger-button/inline-icon" alt="Inline icon button" version="3.x" />
 
 ## Adding extra HTML attributes
 

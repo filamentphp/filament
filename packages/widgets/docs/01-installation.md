@@ -43,7 +43,7 @@ php artisan filament:install --widgets
 First, use NPM to install Tailwind CSS and its `forms` and `typography` plugins:
 
 ```bash
-npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss --save-dev
+npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev
 ```
 
 Create a new `tailwind.config.js` file. Ensure that you add Filament's `content` path, custom `colors`, and the `plugins` you installed:
@@ -64,7 +64,7 @@ export default {
             colors: {
                 danger: colors.red,
                 info: colors.blue,
-                primary: colors.amber,,
+                primary: colors.amber,
                 success: colors.green,
                 warning: colors.amber,
             },

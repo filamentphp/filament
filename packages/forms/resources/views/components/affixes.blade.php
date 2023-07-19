@@ -27,7 +27,7 @@
         'focus-within:ring-danger-600 dark:focus-within:ring-danger-400' => ! $disabled,
     ]);
 
-    $affixActionsClasses = '-mx-1.5 flex';
+    $affixActionsClasses = '-mx-1.5 flex items-center';
 
     $affixIconClasses = 'fi-fo-affixes-icon h-5 w-5 text-gray-400 dark:text-gray-500';
 

@@ -288,7 +288,7 @@ trait HasComponents
         }
     }
 
-    public function registerLivewireComponents(): void
+    protected function registerLivewireComponents(): void
     {
         $this->queueLivewireComponentForRegistration(DatabaseNotifications::class);
         $this->queueLivewireComponentForRegistration(EditProfile::class);

@@ -528,7 +528,7 @@ public function form(Form $form): Form
 
 #### Configuring the `price` field
 
-Additionally, we need a `price` field. We can use a text input for this, with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation as well as changing the keyboard layout on mobile devices. We can also add a `prefix('$')` which will render a `$` before the input, while not changing the saved output of the field:
+Additionally, we need a `price` field. We can use a text input for this, with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation as well as changing the keyboard layout on mobile devices. We can also add a `prefix('€')` which will render a `€` before the input, while not changing the saved output of the field:
 
 ```php
 use Filament\Forms;
@@ -547,7 +547,7 @@ public function form(Form $form): Form
                 ->columnSpan('full'),
             Forms\Components\TextInput::make('price')
                 ->numeric()
-                ->prefix('$')
+                ->prefix('€')
                 ->maxValue(42949672.95),
         ]);
 }

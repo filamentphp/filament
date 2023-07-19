@@ -12,10 +12,10 @@
     $items = \Illuminate\Support\Arr::except($items, ['account', 'logout', 'profile']);
 @endphp
 
-{{ filament()->renderHook('user-menu.start') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.start') }}
 
 <x-filament::dropdown placement="bottom-end" class="fi-user-menu">
-    <x-slot name="trigger" class="ms-4">
+    <x-slot name="trigger">
         <button
             class="block"
             aria-label="{{ __('filament::layout.actions.open_user_menu.label') }}"
@@ -24,7 +24,7 @@
         </button>
     </x-slot>
 
-    {{ filament()->renderHook('user-menu.profile.before') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.profile.before') }}
 
     @if (filled($hasProfile))
         <x-filament::dropdown.list>
@@ -46,7 +46,7 @@
         </x-filament::dropdown.header>
     @endif
 
-    {{ filament()->renderHook('user-menu.profile.after') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.profile.after') }}
 
     @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
         <div
@@ -103,7 +103,7 @@
                             }
                         }
 
-                        $dispatch('theme-changed', this.theme)
+                        Alpine.store('theme', this.theme)
                     })
                 },
 
@@ -184,4 +184,4 @@
     </x-filament::dropdown.list>
 </x-filament::dropdown>
 
-{{ filament()->renderHook('user-menu.end') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.end') }}

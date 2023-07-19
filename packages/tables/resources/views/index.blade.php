@@ -259,7 +259,7 @@
                                 x-on:click="areFiltersOpen = ! areFiltersOpen"
                                 class="flex w-full justify-end"
                             >
-                                {{ $getFiltersTriggerAction()->indicator(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
+                                {{ $getFiltersTriggerAction()->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
                             </div>
                         @endif
 

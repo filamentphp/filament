@@ -5,7 +5,7 @@
 ])
 
 <header
-    {{ $attributes->class(['fi-header items-start justify-between space-y-2 sm:flex sm:space-x-4 sm:space-y-0 sm:py-4 sm:rtl:space-x-reverse']) }}
+    {{ $attributes->class(['fi-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between']) }}
 >
     <div>
         <x-filament::header.heading>
@@ -13,7 +13,7 @@
         </x-filament::header.heading>
 
         @if ($subheading)
-            <x-filament::header.subheading class="mt-1">
+            <x-filament::header.subheading class="mt-2">
                 {{ $subheading }}
             </x-filament::header.subheading>
         @endif

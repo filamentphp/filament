@@ -28,12 +28,12 @@
             {{ $this->iconAfterAction }}
         </div>
 
-        <div id="indicatorAction" class="p-16 flex items-center justify-center max-w-xl">
-            {{ $this->indicatorAction }}
+        <div id="badgeAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->badgeAction }}
         </div>
 
-        <div id="successIndicatorAction" class="p-16 flex items-center justify-center max-w-xl">
-            {{ $this->successIndicatorAction }}
+        <div id="successBadgeAction" class="p-16 flex items-center justify-center max-w-xl">
+            {{ $this->successBadgeAction }}
         </div>
 
         <div id="outlinedAction" class="p-16 flex items-center justify-center max-w-xl">

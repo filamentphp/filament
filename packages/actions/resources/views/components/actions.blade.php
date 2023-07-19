@@ -18,14 +18,14 @@
         <div
             {{
                 $attributes->class([
-                    'fi-ac',
-                    'flex flex-wrap items-center gap-3' => ! $fullWidth,
+                    'fi-ac gap-3',
+                    'flex flex-wrap items-center' => ! $fullWidth,
                     match ($alignment) {
                         'center' => 'justify-center',
-                        'end', 'right' => 'flex-row-reverse space-x-reverse',
+                        'end', 'right' => 'flex-row-reverse',
                         default => 'justify-start',
                     } => ! $fullWidth,
-                    'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] gap-2' => $fullWidth,
+                    'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,
                 ])
             }}
         >

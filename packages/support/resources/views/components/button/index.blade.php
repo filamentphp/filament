@@ -1,4 +1,6 @@
 @props([
+    'badge' => null,
+    'badgeColor' => 'primary',
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
@@ -7,8 +9,6 @@
     'iconAlias' => null,
     'iconPosition' => 'before',
     'iconSize' => null,
-    'indicator' => null,
-    'indicatorColor' => 'primary',
     'keyBindings' => null,
     'labeledFrom' => null,
     'labelSrOnly' => false,
@@ -77,16 +77,17 @@
         default => 'md',
     };
 
-    $iconClasses = 'fi-btn-icon ' . match ($iconSize) {
-        'sm' => 'h-4 w-4',
-        'md' => 'h-5 w-5',
-        'lg' => 'h-6 w-6',
-        default => $iconSize,
-    };
+    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-btn-icon',
+        match ($iconSize) {
+            'sm' => 'h-4 w-4',
+            'md' => 'h-5 w-5',
+            'lg' => 'h-6 w-6',
+            default => $iconSize,
+        },
+    ]);
 
-    $indicatorClasses = 'fi-btn-indicator absolute -end-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-custom-600 text-xs font-medium tracking-tight text-white dark:bg-custom-500';
-
-    $indicatorStyles = \Filament\Support\get_color_css_variables($indicatorColor, shades: [500, 600]);
+    $badgeClasses = 'absolute -top-1 start-full -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-label',
@@ -105,14 +106,14 @@
 
 @if ($labeledFrom)
     <x-filament::icon-button
+        :badge="$badge"
+        :badge-color="$badgeColor"
         :color="$color"
         :disabled="$disabled"
         :form="$form"
         :icon="$icon"
         :icon-alias="$iconAlias"
         :icon-size="$iconSize"
-        :indicator="$indicator"
-        :indicator-color="$indicatorColor"
         :key-bindings="$keyBindings"
         :label="$slot"
         :size="$size"
@@ -246,13 +247,12 @@
             @endif
         @endif
 
-        @if ($indicator)
-            <span
-                class="{{ $indicatorClasses }}"
-                style="{{ $indicatorStyles }}"
-            >
-                {{ $indicator }}
-            </span>
+        @if ($badge)
+            <div class="{{ $badgeClasses }}">
+                <x-filament::badge :color="$badgeColor" size="xs">
+                    {{ $badge }}
+                </x-filament::badge>
+            </div>
         @endif
     </button>
 @elseif ($tag === 'a')
@@ -275,7 +275,7 @@
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
                 :alias="$iconAlias"
-                name="$icon"
+                :name="$icon"
                 :class="$iconClasses"
             />
         @endif
@@ -292,13 +292,12 @@
             />
         @endif
 
-        @if ($indicator)
-            <span
-                class="{{ $indicatorClasses }}"
-                style="{{ $indicatorStyles }}"
-            >
-                {{ $indicator }}
-            </span>
+        @if ($badge)
+            <div class="{{ $badgeClasses }}">
+                <x-filament::badge :color="$badgeColor" size="xs">
+                    {{ $badge }}
+                </x-filament::badge>
+            </div>
         @endif
     </a>
 @endif

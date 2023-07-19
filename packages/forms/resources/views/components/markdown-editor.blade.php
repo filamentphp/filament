@@ -11,10 +11,15 @@
         </div>
     @else
         <div
-            @class([
-                '[&>*]:ring-gray-950/10 focus-within:[&>*]:ring-primary-600 dark:[&>*]:ring-white/20 dark:focus-within:[&>*]:ring-primary-600' => ! $errors->has($statePath),
-                '[&>*]:ring-danger-600 focus-within:[&>*]:ring-danger-600 dark:[&>*]:ring-danger-400 dark:focus-within:[&>*]:ring-danger-400' => $errors->has($statePath),
-            ])
+            {{
+                $attributes
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->class([
+                        'fi-fo-markdown-editor max-w-full overflow-hidden rounded-lg bg-white font-mono text-base text-gray-950 shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-gray-900 dark:text-white sm:text-sm',
+                        'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-600' => ! $errors->has($statePath),
+                        'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-400 dark:focus-within:ring-danger-400' => $errors->has($statePath),
+                    ])
+            }}
         >
             <div
                 ax-load="visible"
@@ -43,14 +48,7 @@
                         })"
                 x-ignore
                 wire:ignore
-                {{
-                    $attributes
-                        ->merge($getExtraAttributes(), escape: false)
-                        ->merge($getExtraAlpineAttributes(), escape: false)
-                        ->class([
-                            'fi-fo-markdown-editor overflow-hidden rounded-lg bg-white font-mono text-base text-gray-950 shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-gray-900 dark:text-white sm:text-sm',
-                        ])
-                }}
+                {{ $getExtraAlpineAttributeBag() }}
             >
                 <textarea x-ref="editor" class="hidden"></textarea>
             </div>

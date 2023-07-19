@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('avatar')->nullable();
             $table->string('phone')->nullable();
             $table->string('job')->nullable();
+            $table->json('colleagues')->nullable();
             $table->rememberToken();
             $table->timestamps();
         });

@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -14,6 +15,7 @@ use Illuminate\Database\Query\JoinClause;
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanBeSearchable;
+    use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasNestedRecursiveValidationRules;
     use Concerns\HasOptions;
@@ -28,6 +30,11 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     protected ?Closure $getOptionLabelFromRecordUsing = null;
 
     protected string | Closure | null $relationship = null;
+
+    /**
+     * @var array<string> | Arrayable | Closure
+     */
+    protected array | Arrayable | Closure $descriptions = [];
 
     protected bool | Closure $isBulkToggleable = false;
 
@@ -272,5 +279,45 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     public function isBulkToggleable(): bool
     {
         return (bool) $this->evaluate($this->isBulkToggleable);
+    }
+
+    /**
+     * @param  array<string> | Arrayable | Closure  $descriptions
+     */
+    public function descriptions(array | Arrayable | Closure $descriptions): static
+    {
+        $this->descriptions = $descriptions;
+
+        return $this;
+    }
+
+    /**
+     * @param  array-key  $value
+     */
+    public function hasDescription($value): bool
+    {
+        return array_key_exists($value, $this->getDescriptions());
+    }
+
+    /**
+     * @param  array-key  $value
+     */
+    public function getDescription($value): ?string
+    {
+        return $this->getDescriptions()[$value] ?? null;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getDescriptions(): array
+    {
+        $descriptions = $this->evaluate($this->descriptions);
+
+        if ($descriptions instanceof Arrayable) {
+            $descriptions = $descriptions->toArray();
+        }
+
+        return $descriptions;
     }
 }

@@ -38,7 +38,7 @@ trait ListensToEvents
     /**
      * @return array<string | int, array<Closure> | Closure>
      */
-    public function getListeners(string $event = null): array
+    public function getListeners(?string $event = null): array
     {
         $listeners = $this->listeners;
 

@@ -181,7 +181,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
             })
             ->livewireClickHandlerEnabled(false)
-            ->link()
+            ->button()
             ->size('sm')
             ->visible(fn (): bool => $this->isAddable());
 

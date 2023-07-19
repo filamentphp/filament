@@ -10,6 +10,8 @@
 @endphp
 
 <x-dynamic-component
+    :badge="$action->getBadge()"
+    :badge-color="$action->getBadgeColor()"
     :component="$dynamicComponent"
     :form="$action->getFormToSubmit()"
     :tag="$url ? 'a' : 'button'"
@@ -24,8 +26,6 @@
     :disabled="$isDisabled"
     :icon="$icon ?? $action->getIcon()"
     :icon-size="$action->getIconSize()"
-    :indicator="$action->getIndicator()"
-    :indicator-color="$action->getIndicatorColor()"
     :size="$action->getSize()"
     :label-sr-only="$action->isLabelHidden()"
     :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($action->getExtraAttributes(), escape: false)"

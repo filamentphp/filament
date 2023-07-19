@@ -36,6 +36,32 @@ class App extends Model
 }
 ```
 
+## Setting option descriptions
+
+You can optionally provide descriptions to each option using the `descriptions()` method:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->descriptions([
+        'tailwind' => 'A utility-first CSS framework for rapidly building modern websites without ever leaving your HTML.',
+        'alpine' => 'A rugged, minimal tool for composing behavior directly in your markup.',
+        'laravel' => 'A web application framework with expressive, elegant syntax.',
+        'livewire' => 'A full-stack framework for Laravel building dynamic interfaces simple, without leaving the comfort of Laravel.',
+    ])
+```
+
+<AutoScreenshot name="forms/fields/checkbox-list/option-descriptions" alt="Checkbox list with option descriptions" version="3.x" />
+
+Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
+
 ## Splitting options into columns
 
 You may split options into columns by using the `columns()` method:

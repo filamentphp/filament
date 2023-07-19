@@ -48,7 +48,7 @@
             <ul
                 x-sortable
                 wire:end.stop="{{ 'mountFormComponentAction(\'' . $statePath . '\', \'reorder\', { items: $event.target.sortable.toArray() })' }}"
-                class="space-y-6"
+                class="space-y-4"
             >
                 @php
                     $hasBlockLabels = $hasBlockLabels();
@@ -61,8 +61,8 @@
                         x-data="{
                             isCollapsed: @js($isCollapsed($item)),
                         }"
-                        x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
+                        x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand-concealing-component.window="
                             error = $el.querySelector('[data-validation-error]')
 
@@ -90,7 +90,7 @@
                         class="fi-fo-builder-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                     >
                         @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible)
-                            <header class="flex items-center gap-x-3 px-4 py-2">
+                            <div class="flex items-center gap-x-3 px-4 py-2">
                                 @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
                                     <ul class="-ms-1.5 flex">
                                         @if ($isReorderableWithDragAndDrop)
@@ -116,7 +116,7 @@
                                 @endif
 
                                 @if ($hasBlockLabels)
-                                    <p
+                                    <h4
                                         class="truncate text-sm font-medium text-gray-950 dark:text-white"
                                     >
                                         @php
@@ -134,11 +134,11 @@
                                         @if ($hasBlockNumbers)
                                             {{ $loop->iteration }}
                                         @endif
-                                    </p>
+                                    </h4>
                                 @endif
 
                                 @if ($isCloneable || $isDeletable || $isCollapsible)
-                                    <ul class="ml-auto flex">
+                                    <ul class="-me-1.5 ms-auto flex">
                                         @if ($isCloneable)
                                             <li>
                                                 {{ $cloneAction(['item' => $uuid]) }}
@@ -153,22 +153,28 @@
 
                                         @if ($isCollapsible)
                                             <li
-                                                x-show="! isCollapsed"
-                                                x-on:click.stop="isCollapsed = true"
+                                                class="relative transition"
+                                                x-on:click.stop="isCollapsed = !isCollapsed"
+                                                x-bind:class="{ '-rotate-180': isCollapsed }"
                                             >
-                                                {{ $getAction('collapse') }}
-                                            </li>
+                                                <div
+                                                    class="transition"
+                                                    x-bind:class="{ 'opacity-0 pointer-events-none': isCollapsed }"
+                                                >
+                                                    {{ $getAction('collapse') }}
+                                                </div>
 
-                                            <li
-                                                x-show="isCollapsed"
-                                                x-on:click.stop="isCollapsed = false"
-                                            >
-                                                {{ $getAction('expand') }}
+                                                <div
+                                                    class="absolute inset-0 rotate-180 transition"
+                                                    x-bind:class="{ 'opacity-0 pointer-events-none': ! isCollapsed }"
+                                                >
+                                                    {{ $getAction('expand') }}
+                                                </div>
                                             </li>
                                         @endif
                                     </ul>
                                 @endif
-                            </header>
+                            </div>
                         @endif
 
                         <div
@@ -180,20 +186,24 @@
                     </li>
 
                     @if ((! $loop->last) && $isAddable)
-                        <li class="relative top-0.5 !mt-0 h-0">
+                        <li class="relative -top-2 !mt-0 h-0">
                             <div
                                 class="flex w-full justify-center opacity-0 transition duration-75 hover:opacity-100"
                             >
-                                <x-filament-forms::builder.block-picker
-                                    :action="$addBetweenAction"
-                                    :after-item="$uuid"
-                                    :blocks="$getBlocks()"
-                                    :state-path="$statePath"
+                                <div
+                                    class="rounded-lg bg-white dark:bg-gray-900"
                                 >
-                                    <x-slot name="trigger">
-                                        {{ $addBetweenAction }}
-                                    </x-slot>
-                                </x-filament-forms::builder.block-picker>
+                                    <x-filament-forms::builder.block-picker
+                                        :action="$addBetweenAction"
+                                        :after-item="$uuid"
+                                        :blocks="$getBlocks()"
+                                        :state-path="$statePath"
+                                    >
+                                        <x-slot name="trigger">
+                                            {{ $addBetweenAction }}
+                                        </x-slot>
+                                    </x-filament-forms::builder.block-picker>
+                                </div>
                             </div>
                         </li>
                     @endif

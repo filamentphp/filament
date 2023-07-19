@@ -51,6 +51,8 @@ class Panel extends Component
 
         FilamentIcon::register($this->icons);
 
+        $this->registerRenderHooks();
+
         $this->registerLivewireComponents();
         $this->registerLivewirePersistentMiddleware();
 

@@ -7,6 +7,7 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\ComponentAttributeBag;
+use League\Flysystem\UnableToCheckFileExistence;
 use Throwable;
 
 class ImageEntry extends Entry
@@ -34,6 +35,20 @@ class ImageEntry extends Entry
     protected array | Closure $extraImgAttributes = [];
 
     protected string | Closure | null $defaultImageUrl = null;
+
+    protected bool | Closure $isStacked = false;
+
+    protected int | Closure | null $overlap = null;
+
+    protected int | Closure | null $ring = null;
+
+    protected int | Closure | null $limit = null;
+
+    protected bool | Closure $hasLimitedRemainingText = false;
+
+    protected bool | Closure $isLimitedRemainingTextSeparate = false;
+
+    protected string | Closure | null $limitedRemainingTextSize = null;
 
     public function disk(string | Closure | null $disk): static
     {
@@ -117,14 +132,8 @@ class ImageEntry extends Entry
         return $this;
     }
 
-    public function getImagePath(): ?string
+    public function getImageUrl(?string $state = null): ?string
     {
-        $state = $this->getState();
-
-        if (! $state) {
-            return $this->getDefaultImageUrl();
-        }
-
         if (filter_var($state, FILTER_VALIDATE_URL) !== false) {
             return $state;
         }
@@ -132,7 +141,11 @@ class ImageEntry extends Entry
         /** @var FilesystemAdapter $storage */
         $storage = $this->getDisk();
 
-        if (! $storage->exists($state)) {
+        try {
+            if (! $storage->exists($state)) {
+                return null;
+            }
+        } catch (UnableToCheckFileExistence $exception) {
             return null;
         }
 
@@ -206,5 +219,91 @@ class ImageEntry extends Entry
     public function getExtraImgAttributeBag(): ComponentAttributeBag
     {
         return new ComponentAttributeBag($this->getExtraImgAttributes());
+    }
+
+    public function stacked(bool | Closure $condition = true): static
+    {
+        $this->isStacked = $condition;
+
+        return $this;
+    }
+
+    public function isStacked(): bool
+    {
+        return (bool) $this->evaluate($this->isStacked);
+    }
+
+    public function overlap(int | Closure | null $overlap): static
+    {
+        $this->overlap = $overlap;
+
+        return $this;
+    }
+
+    public function getOverlap(): ?int
+    {
+        return $this->evaluate($this->overlap);
+    }
+
+    public function ring(string | Closure | null $ring): static
+    {
+        $this->ring = $ring;
+
+        return $this;
+    }
+
+    public function getRing(): ?int
+    {
+        return $this->evaluate($this->ring);
+    }
+
+    public function limit(int | Closure | null $limit = 3): static
+    {
+        $this->limit = $limit;
+
+        return $this;
+    }
+
+    public function getLimit(): ?int
+    {
+        return $this->evaluate($this->limit);
+    }
+
+    public function limitedRemainingText(bool | Closure $condition = true, bool | Closure $isSeparate = false, string | Closure | null $size = null): static
+    {
+        $this->hasLimitedRemainingText = $condition;
+        $this->limitedRemainingTextSeparate($isSeparate);
+        $this->limitedRemainingTextSize($size);
+
+        return $this;
+    }
+
+    public function limitedRemainingTextSeparate(bool | Closure $condition = true): static
+    {
+        $this->isLimitedRemainingTextSeparate = $condition;
+
+        return $this;
+    }
+
+    public function hasLimitedRemainingText(): bool
+    {
+        return (bool) $this->evaluate($this->hasLimitedRemainingText);
+    }
+
+    public function isLimitedRemainingTextSeparate(): bool
+    {
+        return (bool) $this->evaluate($this->isLimitedRemainingTextSeparate);
+    }
+
+    public function limitedRemainingTextSize(string | Closure | null $size): static
+    {
+        $this->limitedRemainingTextSize = $size;
+
+        return $this;
+    }
+
+    public function getLimitedRemainingTextSize(): ?string
+    {
+        return $this->evaluate($this->limitedRemainingTextSize);
     }
 }

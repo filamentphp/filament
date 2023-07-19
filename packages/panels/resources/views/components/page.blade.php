@@ -1,9 +1,11 @@
 @php
+    use phpDocumentor\Reflection\Types\Context;
+
     $widgetData = $this->getWidgetData();
 @endphp
 
 <div {{ $attributes->class(['fi-page']) }}>
-    {{ filament()->renderHook('page.start') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('page.start', scope: static::class) }}
 
     <div class="space-y-6">
         @if ($header = $this->getHeader())
@@ -22,7 +24,7 @@
             </x-filament::header>
         @endif
 
-        {{ filament()->renderHook('page.header-widgets.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('page.header-widgets.start', scope: static::class) }}
 
         @if ($headerWidgets = $this->getVisibleHeaderWidgets())
             <x-filament-widgets::widgets
@@ -32,11 +34,11 @@
             />
         @endif
 
-        {{ filament()->renderHook('page.header-widgets.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('page.header-widgets.end', scope: static::class) }}
 
         {{ $slot }}
 
-        {{ filament()->renderHook('page.footer-widgets.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('page.footer-widgets.start', scope: static::class) }}
 
         @if ($footerWidgets = $this->getVisibleFooterWidgets())
             <x-filament-widgets::widgets
@@ -46,7 +48,7 @@
             />
         @endif
 
-        {{ filament()->renderHook('page.footer-widgets.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('page.footer-widgets.end', scope: static::class) }}
 
         @if ($footer = $this->getFooter())
             {{ $footer }}
@@ -57,5 +59,5 @@
         <x-filament-actions::modals />
     @endif
 
-    {{ filament()->renderHook('page.end') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('page.end', scope: static::class) }}
 </div>

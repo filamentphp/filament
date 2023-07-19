@@ -7,12 +7,12 @@
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
     @class([
-        'filament js-focus-visible min-h-screen antialiased',
+        'fi min-h-screen',
         'dark' => filament()->hasDarkModeForced(),
     ])
 >
     <head>
-        {{ filament()->renderHook('head.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('head.start') }}
 
         <meta charset="utf-8" />
         <meta name="csrf-token" content="{{ csrf_token() }}" />
@@ -27,7 +27,7 @@
             {{ filament()->getBrandName() }}
         </title>
 
-        {{ filament()->renderHook('styles.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('styles.start') }}
 
         <style>
             [x-cloak=''],
@@ -56,13 +56,12 @@
         <style>
             :root {
                 --font-family: {!! filament()->getFontFamily() !!};
-                --filament-widgets-chart-font-family: var(--font-family);
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
             }
         </style>
 
-        {{ filament()->renderHook('styles.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('styles.end') }}
 
         @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
             <script>
@@ -79,19 +78,19 @@
             </script>
         @endif
 
-        {{ filament()->renderHook('head.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('head.end') }}
     </head>
 
     <body
-        class="fi-body min-h-screen overscroll-y-none bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white"
+        class="fi-body min-h-screen bg-gray-50 text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
     >
-        {{ filament()->renderHook('body.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('body.start') }}
 
         {{ $slot }}
 
         @livewire(Filament\Livewire\Notifications::class)
 
-        {{ filament()->renderHook('scripts.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('scripts.start') }}
 
         @filamentScripts(withCore: true)
 
@@ -107,8 +106,8 @@
 
         @stack('scripts')
 
-        {{ filament()->renderHook('scripts.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('scripts.end') }}
 
-        {{ filament()->renderHook('body.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('body.end') }}
     </body>
 </html>

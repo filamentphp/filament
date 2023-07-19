@@ -40,16 +40,14 @@
             />
         @endif
 
-        <div>
+        <span>
             {{ $slot }}
-        </div>
+        </span>
 
         @if (filled($badge))
-            <x-filament::layouts.app.topbar.badge
-                :badge="$badge"
-                :badge-color="$badgeColor"
-                :active="$active"
-            />
+            <x-filament::badge :color="$badgeColor" size="sm">
+                {{ $badge }}
+            </x-filament::badge>
         @endif
     </{{ $tag }}>
 </li>

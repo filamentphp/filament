@@ -103,7 +103,6 @@ class KeyValue extends Field
             ->color('danger')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->inline()
             ->size('sm')
             ->visible(fn (): bool => $this->isDeletable());
 
@@ -136,7 +135,6 @@ class KeyValue extends Field
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->inline()
             ->size('sm')
             ->visible(fn (): bool => $this->isReorderable());
 

@@ -113,7 +113,7 @@
                 icon-alias="section.collapse-button"
                 x-on:click.stop="isCollapsed = ! isCollapsed"
                 x-bind:class="{ 'rotate-180': ! isCollapsed }"
-                class="-my-2.5 -me-2.5 ml-auto"
+                class="-my-2.5 -me-2.5 ms-auto"
             />
         @endif
     </div>

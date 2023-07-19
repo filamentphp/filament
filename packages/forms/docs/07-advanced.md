@@ -443,7 +443,7 @@ Grid::make(2)
                 TextInput::make('hourly_rate')
                     ->numeric()
                     ->required()
-                    ->prefix('$'),
+                    ->prefix('€'),
                 FileUpload::make('contract')
                     ->required(),
             ];

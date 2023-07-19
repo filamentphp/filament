@@ -10,7 +10,7 @@
         class="flex h-16 items-center justify-between px-2 sm:px-4 md:px-6 lg:px-8"
     >
         <div class="flex flex-1 items-center">
-            {{ filament()->renderHook('topbar.start') }}
+            {{ \Filament\Support\Facades\FilamentView::renderHook('topbar.start') }}
 
             <button
                 x-cloak
@@ -98,8 +98,8 @@
         </div>
 
         @persist('topbar.end')
-            <div class="flex items-center">
-                @if (filament()->getGlobalSearchProvider() !== null)
+            <div class="flex items-center gap-x-4">
+                @if (filament()->isGlobalSearchEnabled())
                     @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
                 @endif
 
@@ -109,7 +109,7 @@
 
                 <x-filament::user-menu />
 
-                {{ filament()->renderHook('topbar.end') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('topbar.end') }}
             </div>
         @endpersist
     </div>

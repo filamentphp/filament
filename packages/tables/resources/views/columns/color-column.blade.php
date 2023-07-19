@@ -11,24 +11,24 @@
     @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)
         @php
             $itemIsCopyable = $isCopyable($state);
-            $copyableState = $copyableState($state) ?? $state;
+            $copyableState = $getCopyableState($state) ?? $state;
             $copyMessage = $getCopyMessage($state);
             $copyMessageDuration = $getCopyMessageDuration($state);
         @endphp
 
         <div
-            @if ($state)
-                style="background-color: {{ $state }}"
-                @if ($itemIsCopyable)
-                    x-on:click="
-                        window.navigator.clipboard.writeText(@js($copyableState))
-                        $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
-                    "
-                @endif
+            @if ($itemIsCopyable)
+                x-on:click="
+                    window.navigator.clipboard.writeText(@js($copyableState))
+                    $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
+                "
             @endif
             @class([
-                'fi-ta-color-content relative flex h-6 w-6 rounded-md',
+                'fi-ta-color-item h-6 w-6 rounded-md',
                 'cursor-pointer' => $itemIsCopyable,
+            ])
+            @style([
+                "background-color: {$state}" => $state,
             ])
         ></div>
     @endforeach
