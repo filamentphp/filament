@@ -55,7 +55,6 @@
         >
             @if (filament()->hasDatabaseNotifications())
                 @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
-                )
             @endif
 
             <x-filament::user-menu />

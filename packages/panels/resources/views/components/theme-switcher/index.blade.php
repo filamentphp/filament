@@ -8,13 +8,10 @@
             window
                 .matchMedia('(prefers-color-scheme: dark)')
                 .addEventListener('change', (event) => {
-                    if (! (this.theme === 'system' || event.matches)) {
-                        return
-                    }
-
-                    document.documentElement.classList.contains('dark')
-                        ? document.documentElement.classList.remove('dark')
-                        : document.documentElement.classList.add('dark')
+                    this.theme === 'dark' ||
+                    (this.theme === 'system' && event.matches)
+                        ? document.documentElement.classList.add('dark')
+                        : document.documentElement.classList.remove('dark')
                 })
 
             $watch('theme', (theme) => {
