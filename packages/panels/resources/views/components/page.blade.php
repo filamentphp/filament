@@ -11,7 +11,10 @@
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
-            <x-filament::header :actions="$this->getCachedHeaderActions()">
+            <x-filament::header
+                :actions="$this->getCachedHeaderActions()"
+                :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
+            >
                 <x-slot name="heading">
                     {{ $heading }}
                 </x-slot>

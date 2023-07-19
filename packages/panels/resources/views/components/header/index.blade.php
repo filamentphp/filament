@@ -1,5 +1,6 @@
 @props([
     'actions' => null,
+    'breadcrumbs' => [],
     'heading',
     'subheading' => null,
 ])
@@ -8,6 +9,10 @@
     {{ $attributes->class(['fi-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between']) }}
 >
     <div>
+        @if ($breadcrumbs)
+            <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
+        @endif
+
         <x-filament::header.heading>
             {{ $heading }}
         </x-filament::header.heading>
