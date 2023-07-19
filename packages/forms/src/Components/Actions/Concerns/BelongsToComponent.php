@@ -28,6 +28,6 @@ trait BelongsToComponent
 
     public function getArguments(): array
     {
-        return $this->getLivewire()->mountedFormComponentActionArguments;
+        return array_merge($this->getLivewire()->mountedFormComponentActionArguments, parent::getArguments());
     }
 }
