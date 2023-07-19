@@ -1,12 +1,12 @@
 <x-filament::page
     @class([
-        'fi-resources-list-records-page',
-        'fi-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
+        'fi-resource-list-records-page',
+        'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
     ])
 >
-    @if (count($tabs = $this->getTabs()))
-        <div class="flex justify-center">
-            <x-filament::tabs>
+    <div class="flex flex-col gap-y-4">
+        @if (count($tabs = $this->getTabs()))
+            <x-filament::tabs class="self-center">
                 @foreach ($tabs as $tabKey => $tab)
                     @php
                         $activeTab = strval($activeTab);
@@ -14,23 +14,23 @@
                     @endphp
 
                     <x-filament::tabs.item
-                        :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                         :active="$activeTab === $tabKey"
                         :badge="$tab->getBadge()"
                         :icon="$tab->getIcon()"
                         :icon-color="$tab->getIconColor()"
                         :icon-position="$tab->getIconPosition()"
+                        :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                     >
                         {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
                     </x-filament::tabs.item>
                 @endforeach
             </x-filament::tabs>
-        </div>
-    @endif
+        @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.start', scope: static::class) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.start', scope: static::class) }}
 
-    {{ $this->table }}
+        {{ $this->table }}
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.end', scope: static::class) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.end', scope: static::class) }}
+    </div>
 </x-filament::page>

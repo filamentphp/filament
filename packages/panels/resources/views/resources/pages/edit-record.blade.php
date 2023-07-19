@@ -1,14 +1,14 @@
 <x-filament::page
     @class([
-        'fi-resources-edit-record-page',
-        'fi-resources-' . str_replace('/', '-', $this->getResource()::getSlug()),
-        'fi-resources-record-' . $record->getKey(),
+        'fi-resource-edit-record-page',
+        'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
+        'fi-resource-record-' . $record->getKey(),
     ])
 >
     @capture($form)
         <x-filament::form
-            wire:submit="save"
             :wire:key="$this->getId() . '.forms.' . $this->getFormStatePath()"
+            wire:submit="save"
         >
             {{ $this->form }}
 
