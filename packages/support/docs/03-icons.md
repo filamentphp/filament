@@ -89,6 +89,8 @@ If you have built a Filament plugin, your users may want to be able to customize
 ### Notifications icon aliases
 
 - `notifications::database.modal.empty-state` - Empty state of the database notifications modal
+- `notifications::database.modal.pagination.previous-button` - Button to go to the previous page of the database notifications modal
+- `notifications::database.modal.pagination.next-button` - Button to go to the next page of the database notifications modal
 - `notifications::notification.close-button` - Button to close a notification
 
 ### UI components icon aliases

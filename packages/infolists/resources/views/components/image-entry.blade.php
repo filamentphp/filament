@@ -62,12 +62,14 @@
                             @if ($height) height: {{ $height }}; @endif
                             @if ($width) width: {{ $width }}; @endif
                         "
-                        {{ $getExtraImgAttributeBag()->class([
-                            'max-w-none ring-white object-cover object-center dark:ring-gray-900',
-                            'rounded-full' => $isCircular,
-                            $ringClasses,
-                        ]) }}
-                    >
+                        {{
+                            $getExtraImgAttributeBag()->class([
+                                'max-w-none object-cover object-center ring-white dark:ring-gray-900',
+                                'rounded-full' => $isCircular,
+                                $ringClasses,
+                            ])
+                        }}
+                    />
                 @endforeach
 
                 @if ($hasLimitedRemainingText && ($loop->iteration < count($state)) && (! $isLimitedRemainingTextSeparate) && $isCircular)
@@ -83,7 +85,7 @@
                             $ringClasses,
                         ])
                     >
-                        <span class="-ml-1">
+                        <span class="-ms-1">
                             +{{ count($state) - $loop->iteration }}
                         </span>
                     </div>

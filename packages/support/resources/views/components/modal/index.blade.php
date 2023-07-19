@@ -248,36 +248,38 @@
                         </div>
                     @endif
 
-                    <div
-                        @class([
-                            'fi-modal-footer w-full',
-                            'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter),
-                            'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
-                            'sticky bottom-0 rounded-b-xl border-t border-gray-100 bg-white py-5 dark:border-gray-800 dark:bg-gray-900' => $stickyFooter,
-                            'pb-6' => ! $stickyFooter,
-                            'mt-6' => (! $stickyFooter) && \Filament\Support\is_slot_empty($slot) && (! $slideOver),
-                            'mt-auto' => $slideOver,
-                        ])
-                    >
-                        @if ($footer)
-                            {{ $footer }}
-                        @elseif (count($footerActions))
-                            <div
-                                @class([
-                                    'fi-modal-footer-actions gap-3',
-                                    match ($footerActionsAlignment) {
-                                        'center' => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
-                                        'end', 'right' => 'flex flex-row-reverse flex-wrap items-center',
-                                        'left', 'start' => 'flex flex-wrap items-center',
-                                    },
-                                ])
-                            >
-                                @foreach ($footerActions as $action)
-                                    {{ $action }}
-                                @endforeach
-                            </div>
-                        @endif
-                    </div>
+                    @if (count($footerActions) || (! \Filament\Support\is_slot_empty($footer)))
+                        <div
+                            @class([
+                                'fi-modal-footer w-full',
+                                'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter),
+                                'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
+                                'sticky bottom-0 rounded-b-xl border-t border-gray-100 bg-white py-5 dark:border-gray-800 dark:bg-gray-900' => $stickyFooter,
+                                'pb-6' => ! $stickyFooter,
+                                'mt-6' => (! $stickyFooter) && \Filament\Support\is_slot_empty($slot) && (! $slideOver),
+                                'mt-auto' => $slideOver,
+                            ])
+                        >
+                            @if (! \Filament\Support\is_slot_empty($footer))
+                                {{ $footer }}
+                            @elseif (count($footerActions))
+                                <div
+                                    @class([
+                                        'fi-modal-footer-actions gap-3',
+                                        match ($footerActionsAlignment) {
+                                            'center' => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
+                                            'end', 'right' => 'flex flex-row-reverse flex-wrap items-center',
+                                            'left', 'start' => 'flex flex-wrap items-center',
+                                        },
+                                    ])
+                                >
+                                    @foreach ($footerActions as $action)
+                                        {{ $action }}
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>

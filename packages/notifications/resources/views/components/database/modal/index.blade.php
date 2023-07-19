@@ -32,11 +32,11 @@
             </div>
         </x-slot>
 
-        <div class="-mx-6 divide-y border-b dark:border-gray-700">
+        <div class="-mx-6 divide-y divide-gray-100 dark:divide-white/10">
             @foreach ($notifications as $notification)
                 <div
                     @class([
-                        'bg-primary-50 dark:bg-gray-700' => $notification->unread(),
+                        'relative before:absolute before:start-0 before:h-full before:w-0.5 before:bg-primary-600 dark:before:bg-primary-400' => $notification->unread(),
                     ])
                 >
                     {{ $this->getNotification($notification)->inline() }}
@@ -55,36 +55,36 @@
                 <nav
                     aria-label="{{ __('filament-notifications::database.modal.pagination.label') }}"
                     role="navigation"
-                    class="flex items-center justify-between"
+                    class="flex items-center justify-between gap-3"
                 >
-                    <div class="flex items-center">
-                        @if (! $notifications->onFirstPage())
-                            <x-filament::button
-                                color="gray"
-                                :icon="$previousArrowIcon"
-                                rel="prev"
-                                size="sm"
-                                :wire:click="'previousPage(\'' . $notifications->getPageName() . '\')'"
-                            >
-                                {{ __('filament-notifications::database.modal.pagination.actions.previous.label') }}
-                            </x-filament::button>
-                        @endif
-                    </div>
+                    @if (! $notifications->onFirstPage())
+                        <x-filament::button
+                            color="gray"
+                            :icon="$previousArrowIcon"
+                            icon-alias="notifications::database.modal.pagination.previous-button"
+                            rel="prev"
+                            size="sm"
+                            :wire:click="'previousPage(\'' . $notifications->getPageName() . '\')'"
+                            class="me-auto"
+                        >
+                            {{ __('filament-notifications::database.modal.pagination.actions.previous.label') }}
+                        </x-filament::button>
+                    @endif
 
-                    <div class="flex items-center">
-                        @if ($notifications->hasMorePages())
-                            <x-filament::button
-                                color="gray"
-                                :icon="$nextArrowIcon"
-                                icon-position="after"
-                                rel="next"
-                                size="sm"
-                                :wire:click="'nextPage(\'' . $notifications->getPageName() . '\')'"
-                            >
-                                {{ __('filament-notifications::database.modal.pagination.actions.next.label') }}
-                            </x-filament::button>
-                        @endif
-                    </div>
+                    @if ($notifications->hasMorePages())
+                        <x-filament::button
+                            color="gray"
+                            :icon="$nextArrowIcon"
+                            icon-alias="notifications::database.modal.pagination.next-button"
+                            icon-position="after"
+                            rel="next"
+                            size="sm"
+                            :wire:click="'nextPage(\'' . $notifications->getPageName() . '\')'"
+                            class="ms-auto"
+                        >
+                            {{ __('filament-notifications::database.modal.pagination.actions.next.label') }}
+                        </x-filament::button>
+                    @endif
                 </nav>
             </x-slot>
         @endif

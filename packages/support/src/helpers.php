@@ -89,8 +89,12 @@ if (! function_exists('Filament\Support\prepare_inherited_attributes')) {
 }
 
 if (! function_exists('Filament\Support\is_slot_empty')) {
-    function is_slot_empty(Htmlable $slot): bool
+    function is_slot_empty(?Htmlable $slot): bool
     {
+        if ($slot === null) {
+            return true;
+        }
+
         return trim(
             str_replace(
                 [
