@@ -121,7 +121,7 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('published_at')
     ->native()
     ->weekStartsOnMonday()
-    
+
 DateTimePicker::make('published_at')
     ->native()
     ->weekStartsOnSunday()
@@ -151,28 +151,6 @@ use Filament\Forms\Components\DateTimePicker;
 DateTimePicker::make('date')
     ->native(false)
     ->closeOnDateSelection()
-```
-
-### Customizing the icon
-
-You may change the icon of the JavaScript picker using the `icon()` method, which accepts an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) name:
-
-```php
-use Filament\Forms\Components\DateTimePicker;
-
-DateTimePicker::make('date')
-    ->native(false)
-    ->icon('heroicon-o-calendar')
-```
-
-Alternatively, you may remove the JavaScript picker icon altogether by passing `false`:
-
-```php
-use Filament\Forms\Components\DateTimePicker;
-
-DateTimePicker::make('date')
-    ->native(false)
-    ->icon(false)
 ```
 
 ## Autocompleting dates with a datalist

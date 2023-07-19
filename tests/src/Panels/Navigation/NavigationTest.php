@@ -17,15 +17,15 @@ it('can register navigation items from resources and pages', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Dashboard')
-                        ->getIcon()->toBe('heroicon-o-home'),
+                        ->getIcon()->toBe('heroicon-m-home'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Actions'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Users')
-                        ->getIcon()->toBe('heroicon-o-user'),
+                        ->getIcon()->toBe('heroicon-m-user'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Settings')
-                        ->getIcon()->toBe('heroicon-o-cog-6-tooth'),
+                        ->getIcon()->toBe('heroicon-m-cog-6-tooth'),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
@@ -35,10 +35,10 @@ it('can register navigation items from resources and pages', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Posts')
-                        ->getIcon()->toBe('heroicon-o-document-text'),
+                        ->getIcon()->toBe('heroicon-m-document-text'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Post Categories')
-                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
+                        ->getIcon()->toBe('heroicon-m-rectangle-stack'),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
@@ -48,7 +48,7 @@ it('can register navigation items from resources and pages', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Products')
-                        ->getIcon()->toBe('heroicon-o-shopping-bag'),
+                        ->getIcon()->toBe('heroicon-m-shopping-bag'),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
         );

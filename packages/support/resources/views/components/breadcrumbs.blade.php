@@ -8,7 +8,7 @@
 @endphp
 
 <nav {{ $attributes->class(['fi-breadcrumbs']) }}>
-    <ul class="flex flex-wrap items-center gap-x-2">
+    <ol class="flex flex-wrap items-center gap-x-2">
         @foreach ($breadcrumbs as $url => $label)
             <li class="flex gap-x-2">
                 @if (! $loop->first)
@@ -39,5 +39,5 @@
                 </a>
             </li>
         @endforeach
-    </ul>
+    </ol>
 </nav>

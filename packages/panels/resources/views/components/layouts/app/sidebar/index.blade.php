@@ -24,7 +24,7 @@
         "
     @endif
     @class([
-        'fi-sidebar fixed inset-y-0 start-0 z-20 flex h-screen w-[--sidebar-width] flex-col bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent dark:lg:bg-transparent',
+        'fi-sidebar fixed inset-y-0 start-0 z-30 flex h-screen w-[--sidebar-width] flex-col bg-white shadow-xl ring-1 ring-gray-950/5 transition-all dark:bg-gray-900 dark:ring-white/10 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 dark:lg:bg-transparent',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])

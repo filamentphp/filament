@@ -4,7 +4,7 @@
     $widgetData = $this->getWidgetData();
 @endphp
 
-<div {{ $attributes->class(['fi-page']) }}>
+<section {{ $attributes->class(['fi-page']) }}>
     {{ \Filament\Support\Facades\FilamentView::renderHook('page.start', scope: static::class) }}
 
     <div class="space-y-6">
@@ -63,4 +63,4 @@
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('page.end', scope: static::class) }}
-</div>
+</section>

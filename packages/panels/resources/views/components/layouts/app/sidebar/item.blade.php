@@ -51,11 +51,11 @@
             <x-filament::icon
                 :name="($active && $activeIcon) ? $activeIcon : $icon"
                 :style="\Filament\Support\get_color_css_variables(($active ? 'primary' : 'gray'), shades: [400, 600])"
-                class="fi-sidebar-item-icon h-6 w-6 text-custom-600 dark:text-custom-400"
+                class="fi-sidebar-item-icon h-5 w-5 text-custom-600 dark:text-custom-400"
             />
         @elseif ($hasGroupedBorder)
             <div
-                class="fi-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
+                class="fi-sidebar-item-grouped-border relative flex h-5 w-5 items-center justify-center"
             >
                 @if (! $first)
                     <div

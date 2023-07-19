@@ -563,10 +563,10 @@ it('delete actions have correct icons', function () {
     $post = Post::factory()->create();
 
     livewire(PostResource\Pages\ListPosts::class)
-        ->assertTableActionHasIcon('delete', 'heroicon-o-archive-box')
-        ->assertTableActionDoesNotHaveIcon('delete', 'heroicon-o-trash');
-        ->assertTableBulkActionHasIcon('delete', 'heroicon-o-archive-box')
-        ->assertTableBulkActionDoesNotHaveIcon('delete', 'heroicon-o-trash');
+        ->assertTableActionHasIcon('delete', 'heroicon-m-archive-box')
+        ->assertTableActionDoesNotHaveIcon('delete', 'heroicon-m-trash');
+        ->assertTableBulkActionHasIcon('delete', 'heroicon-m-archive-box')
+        ->assertTableBulkActionDoesNotHaveIcon('delete', 'heroicon-m-trash');
 });
 ```
 

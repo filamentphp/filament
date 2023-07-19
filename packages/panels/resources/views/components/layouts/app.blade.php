@@ -3,14 +3,14 @@
 @endphp
 
 <x-filament::layouts.base :livewire="$livewire">
-    <div class="fi-app-layout flex h-full w-full overflow-x-clip">
+    <div class="fi-app-layout flex min-h-full w-full overflow-x-clip">
         <div
             x-data="{}"
             x-cloak
             x-show="$store.sidebar.isOpen"
             x-transition.opacity.500ms
             x-on:click="$store.sidebar.close()"
-            class="fi-sidebar-close-overlay fixed inset-0 z-20 h-full w-full bg-gray-900/50 lg:hidden"
+            class="fi-sidebar-close-overlay fixed inset-0 z-30 h-full w-full bg-gray-900/50 lg:hidden"
         ></div>
 
         <x-filament::layouts.app.sidebar :navigation="$navigation" />

@@ -28,7 +28,7 @@ public static function getNavigationLabel(): ?string
 To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set=1#search), you may override the `$navigationIcon` property on the [resource](resources) or [page](pages) class:
 
 ```php
-protected static ?string $navigationIcon = 'heroicon-o-document-text';
+protected static ?string $navigationIcon = 'heroicon-m-document-text';
 ```
 
 ### Switching navigation item icon when it is active
@@ -36,7 +36,7 @@ protected static ?string $navigationIcon = 'heroicon-o-document-text';
 You may assign a navigation [icon](https://blade-ui-kit.com/blade-icons?set=1#search) which will only be used for active items using the `$activeNavigationIcon` property:
 
 ```php
-protected static ?string $activeNavigationIcon = 'heroicon-s-document-text';
+protected static ?string $activeNavigationIcon = 'heroicon-m-document-text';
 ```
 
 ## Sorting navigation items
@@ -94,13 +94,13 @@ public function panel(Panel $panel): Panel
         ->navigationGroups([
             NavigationGroup::make()
                  ->label('Shop')
-                 ->icon('heroicon-s-shopping-cart'),
+                 ->icon('heroicon-m-shopping-cart'),
             NavigationGroup::make()
                 ->label('Blog')
-                ->icon('heroicon-s-pencil'),
+                ->icon('heroicon-m-pencil'),
             NavigationGroup::make()
                 ->label('Settings')
-                ->icon('heroicon-s-cog-6-tooth')
+                ->icon('heroicon-m-cog-6-tooth')
                 ->collapsed(),
         ]);
 }
@@ -130,7 +130,7 @@ use Filament\Navigation\NavigationGroup;
 
 NavigationGroup::make()
     ->label('Settings')
-    ->icon('heroicon-s-cog-6-tooth')
+    ->icon('heroicon-m-cog-6-tooth')
     ->collapsible(false);
 ```
 
@@ -190,8 +190,7 @@ public function panel(Panel $panel): Panel
         ->navigationItems([
             NavigationItem::make('Analytics')
                 ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
-                ->icon('heroicon-o-presentation-chart-line')
-                ->activeIcon('heroicon-s-presentation-chart-line')
+                ->icon('heroicon-m-presentation-chart-line')
                 ->group('Reports')
                 ->sort(3),
             // ...
@@ -242,8 +241,7 @@ public function panel(Panel $panel): Panel
         ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
             return $builder->items([
                 NavigationItem::make('Dashboard')
-                    ->icon('heroicon-o-home')
-                    ->activeIcon('heroicon-s-home')
+                    ->icon('heroicon-m-home')
                     ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
                     ->url(route('filament.pages.dashboard')),
                 ...UserResource::getNavigationItems(),

@@ -2,37 +2,49 @@
     'navigation',
 ])
 
-<header
-    {{ $attributes->class(['fi-topbar sticky top-0 z-20 flex items-center justify-between bg-white px-2 py-3.5 shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)] sm:px-4 md:px-6 lg:px-8']) }}
+@php
+    $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
+        'shrink-0 -ms-1.5 me-4',
+        'lg:me-4' => filament()->isSidebarFullyCollapsibleOnDesktop(),
+        'lg:hidden' => ! filament()->isSidebarFullyCollapsibleOnDesktop(),
+    ]);
+@endphp
+
+<nav
+    {{ $attributes->class(['fi-topbar sticky top-0 z-20 flex h-16 items-center bg-white px-4 shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] transition dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)] sm:px-4 md:px-6 lg:px-8']) }}
 >
     {{ \Filament\Support\Facades\FilamentView::renderHook('topbar.start') }}
 
-    <button
+    <x-filament::icon-button
+        color="gray"
+        icon="heroicon-o-bars-3"
+        icon-alias="panels::topbar.open-mobile-sidebar-button"
+        icon-size="lg"
+        :label="__('filament::layout.actions.sidebar.expand.label')"
         x-cloak
         x-data="{}"
-        x-bind:aria-label="
-            $store.sidebar.isOpen
-                ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
-                : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
-        "
-        x-on:click="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
-        @class([
-            'fi-sidebar-open-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full outline-none hover:bg-gray-500/5 focus:bg-primary-500/10',
-            'lg:me-4' => filament()->isSidebarFullyCollapsibleOnDesktop(),
-            'lg:hidden' => ! (filament()->isSidebarFullyCollapsibleOnDesktop()),
-        ])
-    >
-        <x-filament::icon
-            name="heroicon-o-bars-3"
-            alias="panels::topbar.open-mobile-sidebar-button"
-            class="h-6 w-6 text-primary-500"
-        />
-    </button>
+        x-on:click="$store.sidebar.open()"
+        x-show="! $store.sidebar.isOpen"
+        :class="$buttonClasses"
+    />
+
+    <x-filament::icon-button
+        color="gray"
+        icon="heroicon-o-x-mark"
+        icon-alias="panels::topbar.close-mobile-sidebar-button"
+        icon-size="lg"
+        :label="__('filament::layout.actions.sidebar.collapse.label')"
+        x-cloak
+        x-data="{}"
+        x-on:click="$store.sidebar.close()"
+        x-show="$store.sidebar.isOpen"
+        :class="$buttonClasses"
+    />
 
     @if (filament()->hasTopNavigation())
-        <div class="me-12 hidden lg:flex">
+        <div class="me-6 hidden lg:flex">
             @if ($homeUrl = filament()->getHomeUrl())
-                <a href="{{ $homeUrl }}" data-turbo="false">
+                <a href="{{ $homeUrl }}" wire:navigate>
                     <x-filament::logo />
                 </a>
             @else
@@ -41,7 +53,7 @@
         </div>
 
         @if (filament()->hasNavigation())
-            <ul class="hidden flex-wrap items-center gap-x-1 lg:flex">
+            <ul class="me-4 hidden items-center gap-x-4 lg:flex">
                 @foreach ($navigation as $group)
                     @if ($groupLabel = $group->getLabel())
                         <x-filament::dropdown placement="bottom-start">
@@ -56,11 +68,17 @@
 
                             <x-filament::dropdown.list>
                                 @foreach ($group->getItems() as $item)
+                                    @php
+                                        $icon = $item->getIcon();
+                                        $shouldOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
+                                    @endphp
+
                                     <x-filament::dropdown.list.item
-                                        :icon="$item->isActive() ? ($item->getActiveIcon() ?? $item->getIcon()) : $item->getIcon()"
                                         :href="$item->getUrl()"
-                                        :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
+                                        :icon="$item->isActive() ? ($item->getActiveIcon() ?? $icon) : $icon"
                                         tag="a"
+                                        :target="$shouldOpenUrlInNewTab ? '_blank' : null"
+                                        :wire:navigate="$shouldOpenUrlInNewTab ? null : true"
                                     >
                                         {{ $item->getLabel() }}
                                     </x-filament::dropdown.list.item>
@@ -71,12 +89,12 @@
                         @foreach ($group->getItems() as $item)
                             <x-filament::layouts.app.topbar.item
                                 :active="$item->isActive()"
-                                :icon="$item->getIcon()"
                                 :active-icon="$item->getActiveIcon()"
-                                :url="$item->getUrl()"
                                 :badge="$item->getBadge()"
-                                :badgeColor="$item->getBadgeColor()"
-                                :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
+                                :badge-color="$item->getBadgeColor()"
+                                :icon="$item->getIcon()"
+                                :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                                :url="$item->getUrl()"
                             >
                                 {{ $item->getLabel() }}
                             </x-filament::layouts.app.topbar.item>
@@ -100,4 +118,4 @@
     </div>
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('topbar.end') }}
-</header>
+</nav>

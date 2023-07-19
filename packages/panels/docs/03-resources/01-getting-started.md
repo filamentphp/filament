@@ -261,7 +261,7 @@ public static function getNavigationLabel(): string
 The `$navigationIcon` property supports the name of any Blade component. By default, the [Blade Heroicons v1](https://github.com/blade-ui-kit/blade-heroicons/tree/1.3.1) package is installed, so you may use the name of any [Heroicons v1](https://v1.heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
-protected static ?string $navigationIcon = 'heroicon-o-user-group';
+protected static ?string $navigationIcon = 'heroicon-m-user-group';
 ```
 
 Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
@@ -269,7 +269,7 @@ Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()
 ```php
 public static function getNavigationIcon(): ?string
 {
-    return 'heroicon-o-user-group';
+    return 'heroicon-m-user-group';
 }
 ```
 

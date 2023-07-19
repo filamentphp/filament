@@ -10,8 +10,12 @@
 ])
 
 @php
+    $inactiveItemClasses = \Illuminate\Support\Arr::toCssClasses([
+        'text-gray-700 dark:text-gray-300',
+    ]);
+
     $activeItemClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-tabs-item-active bg-gray-950/5 dark:bg-white/5',
+        'fi-tabs-item-active bg-gray-950/5 dark:bg-white/5 text-primary-600 dark:text-primary-400',
     ]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -32,7 +36,10 @@
         type="{{ $type }}"
     @endif
     @if ($alpineActive)
-        x-bind:class="{ @js($activeItemClasses): {{ $alpineActive }} }"
+        x-bind:class="{
+            @js($inactiveItemClasses): ! {{ $alpineActive }}
+            @js($activeItemClasses): {{ $alpineActive }}
+        }"
     @endif
     {{
         $attributes
@@ -41,8 +48,9 @@
                 'role' => 'tab',
             ])
             ->class([
-                'fi-tabs-item flex items-center gap-x-1.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5',
-                $activeItemClasses => $active && (! $alpineActive),
+                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5',
+                $inactiveItemClasses => (! $alpineActive) && (! $active),
+                $activeItemClasses => (! $alpineActive) && $active,
             ])
     }}
 >

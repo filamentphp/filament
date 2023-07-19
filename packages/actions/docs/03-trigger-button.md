@@ -35,7 +35,7 @@ Action::make('edit')
 
 ```php
 Action::make('edit')
-    ->icon('heroicon-o-pencil-square')
+    ->icon('heroicon-m-pencil-square')
     ->iconButton()
 ```
 
@@ -47,7 +47,7 @@ You may want to use a button style with a label on desktop, but remove the label
 
 ```php
 Action::make('edit')
-    ->icon('heroicon-o-pencil-square')
+    ->icon('heroicon-m-pencil-square')
     ->button()
     ->labeledFrom('md')
 ```

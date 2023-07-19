@@ -60,6 +60,7 @@ If you have built a Filament plugin, your users may want to be able to customize
 - `panels::sidebar.collapse-button.full` - Desktop sidebar collapse button when it is fully collapsible
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
 - `panels::topbar.global-search.field` - Global search field
+- `panels::topbar.close-mobile-sidebar-button` - Button to close the mobile sidebar
 - `panels::topbar.open-mobile-sidebar-button` - Button to open the mobile sidebar
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::topbar.user-menu.profile-item` - Profile item in the user menu

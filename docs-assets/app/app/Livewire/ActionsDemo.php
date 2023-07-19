@@ -34,7 +34,7 @@ class ActionsDemo extends Component implements HasActions, HasForms
     public function iconButtonAction(): Action
     {
         return Action::make('iconButton')
-            ->icon('heroicon-o-pencil-square')
+            ->icon('heroicon-m-pencil-square')
             ->iconButton();
     }
 
@@ -90,14 +90,6 @@ class ActionsDemo extends Component implements HasActions, HasForms
             ->label('Edit')
             ->button()
             ->outlined();
-    }
-
-    public function inlineIconAction(): Action
-    {
-        return Action::make('inlineIcon')
-            ->icon('heroicon-o-pencil-square')
-            ->iconButton()
-            ->inline();
     }
 
     public function confirmationModalAction(): Action
