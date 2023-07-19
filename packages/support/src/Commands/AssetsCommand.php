@@ -16,7 +16,7 @@ class AssetsCommand extends Command
     protected $signature = 'filament:assets';
 
     /** @var array<string> */
-    protected $publishedAssets = [];
+    protected array $publishedAssets = [];
 
     public function handle(): int
     {
@@ -62,6 +62,8 @@ class AssetsCommand extends Command
     protected function copyAsset(string $from, string $to): void
     {
         $filesystem = app(Filesystem::class);
+
+        [$from, $to] = str_replace('/', DIRECTORY_SEPARATOR, [$from, $to]);
 
         $filesystem->ensureDirectoryExists(
             (string) str($to)
