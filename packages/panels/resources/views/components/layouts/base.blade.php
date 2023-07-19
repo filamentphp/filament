@@ -7,7 +7,7 @@
     lang="{{ str_replace('_', '-', app()->getLocale()) }}"
     dir="{{ __('filament::layout.direction') ?? 'ltr' }}"
     @class([
-        'filament js-focus-visible min-h-screen antialiased',
+        'fi min-h-screen',
         'dark' => filament()->hasDarkModeForced(),
     ])
 >
@@ -82,7 +82,7 @@
     </head>
 
     <body
-        class="fi-body min-h-screen overscroll-y-none bg-gray-50 text-gray-950 dark:bg-gray-950 dark:text-white"
+        class="fi-body min-h-screen bg-gray-50 text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('body.start') }}
 
