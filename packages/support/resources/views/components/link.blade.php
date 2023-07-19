@@ -134,6 +134,8 @@
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
+                    'wire:loading.attr' => 'disabled',
+                    'wire:target' => ($hasLoadingIndicator && $loadingIndicatorTarget) ? $loadingIndicatorTarget : null,
                 ], escape: false)
                 ->class([$linkClasses])
                 ->style([$linkStyles])
