@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Arrayable;
 class Radio extends Field
 {
     use Concerns\HasExtraInputAttributes;
+    use Concerns\HasGridDirection;
     use Concerns\HasOptions;
 
     /**
