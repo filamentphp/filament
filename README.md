@@ -45,9 +45,9 @@ An important part of any application is the ability to notify your users of impo
 composer require filament/notifications
 ```
 
-### Action Modals • [Documentation](https://filamentphp.com/docs/actions)
+### Actions • [Documentation](https://filamentphp.com/docs/actions)
 
-Action modals are a very versatile component of many interfaces, avoiding the need for the user to navigate away from the page to complete a task. From confirming a destructive action, to editing an Eloquent record, to importing data from an uploaded CSV file, action modals are a great way to keep the user in the flow of the application. It is built upon our form builder, so it is builds upon the same principles of flexibility and extensibility. Modals can be added to any Livewire component with just a few lines of code, and no HTML or JavaScript.
+Actions are buttons that can open modals. They are a very versatile component of many interfaces, avoiding the need for the user to navigate away from the page to complete a task. From confirming a destructive action, to editing an Eloquent record, to importing data from an uploaded CSV file, action modals are a great way to keep the user in the flow of the application. It is built upon our form builder, so it is builds upon the same principles of flexibility and extensibility. Modals can be added to any Livewire component with just a few lines of code, and no HTML or JavaScript.
 
 ```bash
 composer require filament/actions
@@ -61,7 +61,7 @@ Infolists are a great way to display read-only information to users about a part
 composer require filament/infolists
 ```
 
-### Dashboard Widgets • [Documentation](https://filamentphp.com/docs/widgets)
+### Widgets • [Documentation](https://filamentphp.com/docs/widgets)
 
 Filament's collection of widgets are built upon Livewire's core principles of real-time reactivity with the server. Combining many widgets allows you to quickly build a dashboard for your application, complete with charts and stats, which are able to update live without refreshing the page. They are also seamlessly integrated with any page in the panel builder.
 
