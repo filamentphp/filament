@@ -3,13 +3,22 @@
     'unreadNotificationsCount',
 ])
 
+@php
+    $hasNotifications = $notifications->count();
+@endphp
+
 <x-filament::modal
+    :alignment="$hasNotifications ? null : 'center'"
     close-button
+    :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
+    :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"
+    :icon="$hasNotifications ? null : 'heroicon-o-bell'"
+    :icon-alias="$hasNotifications ? null : 'notifications::database.modal.empty-state'"
     id="database-notifications"
     slide-over
     width="md"
 >
-    @if ($notifications->count())
+    @if ($hasNotifications)
         <x-slot name="header">
             <div>
                 <x-filament-notifications::database.modal.heading
@@ -35,8 +44,7 @@
             @endforeach
         </div>
 
-        @if ($notifications instanceof \Illuminate\Contracts\Pagination\Paginator &&
-             $notifications->hasPages())
+        @if ($notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages())
             <x-slot name="footer">
                 @php
                     $isRtl = __('filament::layout.direction') === 'rtl';
@@ -45,18 +53,18 @@
                 @endphp
 
                 <nav
-                    role="navigation"
                     aria-label="{{ __('filament-notifications::database.modal.pagination.label') }}"
+                    role="navigation"
                     class="flex items-center justify-between"
                 >
                     <div class="flex items-center">
                         @if (! $notifications->onFirstPage())
                             <x-filament::button
-                                :wire:click="'previousPage(\'' . $notifications->getPageName() . '\')'"
+                                color="gray"
                                 :icon="$previousArrowIcon"
                                 rel="prev"
                                 size="sm"
-                                color="gray"
+                                :wire:click="'previousPage(\'' . $notifications->getPageName() . '\')'"
                             >
                                 {{ __('filament-notifications::database.modal.pagination.actions.previous.label') }}
                             </x-filament::button>
@@ -66,12 +74,12 @@
                     <div class="flex items-center">
                         @if ($notifications->hasMorePages())
                             <x-filament::button
-                                :wire:click="'nextPage(\'' . $notifications->getPageName() . '\')'"
+                                color="gray"
                                 :icon="$nextArrowIcon"
                                 icon-position="after"
                                 rel="next"
                                 size="sm"
-                                color="gray"
+                                :wire:click="'nextPage(\'' . $notifications->getPageName() . '\')'"
                             >
                                 {{ __('filament-notifications::database.modal.pagination.actions.next.label') }}
                             </x-filament::button>
@@ -80,7 +88,5 @@
                 </nav>
             </x-slot>
         @endif
-    @else
-        <x-filament-notifications::database.modal.empty-state />
     @endif
 </x-filament::modal>

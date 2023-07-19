@@ -12,6 +12,7 @@
     'header' => null,
     'heading' => null,
     'icon' => null,
+    'iconAlias' => null,
     'iconColor' => 'primary',
     'id' => null,
     'openEventName' => 'open-modal',
@@ -183,6 +184,7 @@
                                             style="{{ \Filament\Support\get_color_css_variables($iconColor, shades: [100, 500]) }}"
                                         >
                                             <x-filament::icon
+                                                :alias="$iconAlias"
                                                 :name="$icon"
                                                 :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 600])"
                                                 class="fi-modal-icon h-6 w-6 text-custom-600 dark:text-custom-400"
