@@ -2,15 +2,32 @@
     'breadcrumbs' => [],
 ])
 
+@php
+    $iconAlias = 'breadcrumbs.separator';
+    $iconClasses = 'h-5 w-5 text-gray-400 dark:text-gray-500';
+@endphp
+
 <nav {{ $attributes->class(['fi-breadcrumbs']) }}>
     <ul class="flex flex-wrap items-center gap-x-2">
         @foreach ($breadcrumbs as $url => $label)
             <li class="flex gap-x-2">
                 @if (! $loop->first)
                     <x-filament::icon
-                        alias="breadcrumbs.separator"
+                        :alias="$iconAlias"
                         name="heroicon-m-chevron-right"
-                        class="h-5 w-5 text-gray-400 dark:text-gray-500"
+                        @class([
+                            $iconClasses,
+                            'rtl:hidden',
+                        ])
+                    />
+
+                    <x-filament::icon
+                        :alias="$iconAlias"
+                        name="heroicon-m-chevron-left"
+                        @class([
+                            $iconClasses,
+                            'ltr:hidden',
+                        ])
                     />
                 @endif
 
