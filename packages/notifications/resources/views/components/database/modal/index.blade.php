@@ -23,7 +23,7 @@
             </div>
         </x-slot>
 
-        <div class="-mx-6 divide-y border-b dark:border-gray-700">
+        <div class="-mx-6 divide-y border-b dark:divide-gray-600 dark:border-gray-600">
             @foreach ($notifications as $notification)
                 <div
                     @class([
