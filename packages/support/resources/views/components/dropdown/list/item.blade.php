@@ -2,6 +2,7 @@
     'color' => 'gray',
     'disabled' => false,
     'icon' => null,
+    'iconAlias' => null,
     'iconSize' => 'md',
     'image' => null,
     'keyBindings' => null,
@@ -76,6 +77,7 @@
     >
         @if ($icon)
             <x-filament::icon
+                :alias="$iconAlias"
                 :name="$icon"
                 :wire:loading.remove.delay="$hasLoadingIndicator"
                 :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
@@ -115,7 +117,11 @@
         }}
     >
         @if ($icon)
-            <x-filament::icon :name="$icon" :class="$iconClasses" />
+            <x-filament::icon
+                :alias="$iconAlias"
+                :name="$icon"
+                :class="$iconClasses"
+            />
         @endif
 
         @if ($image)
@@ -149,7 +155,11 @@
             }}
         >
             @if ($icon)
-                <x-filament::icon :name="$icon" :class="$iconClasses" />
+                <x-filament::icon
+                    :alias="$iconAlias"
+                    :name="$icon"
+                    :class="$iconClasses"
+                />
             @endif
 
             <span class="{{ $labelClasses }}">

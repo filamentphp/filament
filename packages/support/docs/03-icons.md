@@ -62,10 +62,12 @@ If you have built a Filament plugin, your users may want to be able to customize
 - `panels::topbar.global-search.field` - Global search field
 - `panels::topbar.open-mobile-sidebar-button` - Button to open the mobile sidebar
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
+- `panels::topbar.user-menu.profile-item` - Profile item in the user menu
+- `panels::topbar.user-menu.logout-button` - Button in the user menu to log out
 - `panels::topbar.user-menu.theme-switcher.light-button` - Button in the user menu to switch to the light theme
 - `panels::topbar.user-menu.theme-switcher.dark-button` - Button in the user menu to switch to the dark theme
 - `panels::topbar.user-menu.theme-switcher.system-button` - Button in the user menu to switch to the system theme
-- `panels::widgets.account.logout-button` - Button to log out from the account widget
+- `panels::widgets.account.logout-button` - Button in the account widget to log out
 
 ### Form Builder icon aliases
 

@@ -37,11 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Donkere weergave inschakelen',
+                'label' => 'Donker thema inschakelen',
             ],
 
             'light' => [
-                'label' => 'Lichte weergave inschakelen',
+                'label' => 'Licht thema inschakelen',
+            ],
+
+            'system' => [
+                'label' => 'Systeemthema inschakelen',
             ],
 
         ],
