@@ -5,36 +5,35 @@
     'url',
 ])
 
-<li {{ $attributes->class(['fi-global-search-result']) }}>
-    <div
-        class="relative block px-6 py-4 hover:bg-gray-500/5 focus:bg-gray-500/5 focus:ring-1 focus:ring-gray-300"
+<li
+    {{ $attributes->class(['fi-global-search-result transition duration-75 focus-within:bg-gray-950/5 hover:bg-gray-950/5 dark:focus-within:bg-white/5 dark:hover:bg-white/5']) }}
+>
+    <a
+        href="{{ $url }}"
+        @class([
+            'block outline-none',
+            'pe-4 ps-4 pt-4' => $actions,
+            'p-4' => ! $actions,
+        ])
     >
-        <a href="{{ $url }}" class="">
-            <p class="font-medium dark:text-gray-200">
-                {{ $title }}
-            </p>
+        <h4 class="text-sm font-medium text-gray-950 dark:text-white">
+            {{ $title }}
+        </h4>
 
-            <p
-                class="gap-x-2 text-sm font-medium text-gray-500 dark:text-gray-400"
-            >
+        @if ($details)
+            <dl class="mt-1">
                 @foreach ($details as $label => $value)
-                    <span>
-                        <span
-                            class="font-medium text-gray-700 dark:text-gray-200"
-                        >
-                            {{ $label }}:
-                        </span>
+                    <div class="text-sm text-gray-500 dark:text-gray-400">
+                        <dt class="inline font-medium">{{ $label }}:</dt>
 
-                        <span>
-                            {{ $value }}
-                        </span>
-                    </span>
+                        <dd class="inline">{{ $value }}</dd>
+                    </div>
                 @endforeach
-            </p>
-        </a>
-
-        @if ($actions)
-            <x-filament::global-search.actions :actions="$actions" />
+            </dl>
         @endif
-    </div>
+    </a>
+
+    @if ($actions)
+        <x-filament::global-search.actions :actions="$actions" />
+    @endif
 </li>

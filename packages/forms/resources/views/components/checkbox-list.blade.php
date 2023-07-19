@@ -144,15 +144,17 @@
             :direction="$gridDirection"
             :x-show="$isSearchable ? 'visibleCheckboxListOptions.length' : null"
             :attributes="
-                \Filament\Support\prepare_inherited_attributes($attributes)->class([
-                    'fi-fo-checkbox-list gap-2',
-                    '-mt-2' => $gridDirection === 'column',
-                ])
+                \Filament\Support\prepare_inherited_attributes($attributes)
+                    ->merge($getExtraAttributes(), escape: false)
+                    ->class([
+                        'fi-fo-checkbox-list gap-4',
+                        '-mt-4' => $gridDirection === 'column',
+                    ])
             "
         >
-            @forelse ($getOptions() as $optionValue => $optionLabel)
+            @forelse ($getOptions() as $value => $label)
                 <div
-                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $optionValue }}"
+                    wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
                         x-show="
                             $el.querySelector('.fi-fo-checkbox-list-option-label-text')
@@ -161,41 +163,41 @@
                         "
                     @endif
                     @class([
-                        'break-inside-avoid pt-2' => $gridDirection === 'column',
+                        'break-inside-avoid pt-4' => $gridDirection === 'column',
                     ])
                 >
                     <label
-                        class="fi-fo-checkbox-list-option-label flex items-start gap-x-3"
+                        class="fi-fo-checkbox-list-option-label flex gap-x-3"
                     >
                         <x-filament::input.checkbox
                             :errors="$errors"
                             :state-path="$statePath"
                             :attributes="
-                                $getExtraAttributeBag()
+                                $getExtraInputAttributeBag()
                                     ->merge([
                                         'disabled' => $isDisabled,
                                         'type' => 'checkbox',
-                                        'value' => $optionValue,
+                                        'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,
                                         'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)
+                                    ->class(['mt-1'])
                             "
-                            class="mt-0.5"
                         />
 
-                        <div class="text-sm">
+                        <div class="grid text-sm leading-6">
                             <span
                                 class="fi-fo-checkbox-list-option-label font-medium text-gray-950 dark:text-white"
                             >
-                                {{ $optionLabel }}
+                                {{ $label }}
                             </span>
 
-                            @if ($hasDescription($optionValue))
+                            @if ($hasDescription($value))
                                 <p
                                     class="fi-fo-checkbox-list-option-description text-gray-500 dark:text-gray-400"
                                 >
-                                    {{ $getDescription($optionValue) }}
+                                    {{ $getDescription($value) }}
                                 </p>
                             @endif
                         </div>
