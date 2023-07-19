@@ -3,10 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Support\Collection;
-use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
@@ -93,7 +90,8 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
                 "{$this->getRelationshipName()}.media" => fn (Builder $query) => $query->when(
                     $this->getCollection(),
                     fn (Builder $query, string $collection) => $query->where(
-                        'collection_name', $collection,
+                        'collection_name',
+                        $collection,
                     ),
                 ),
             ]);

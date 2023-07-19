@@ -2,7 +2,6 @@
 
 namespace Filament\Infolists\Components;
 
-use Illuminate\Support\Collection;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Throwable;
 
