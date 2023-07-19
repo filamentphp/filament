@@ -4,8 +4,8 @@
 ])
 
 <x-filament::modal
-    id="database-notifications"
     close-button
+    id="database-notifications"
     slide-over
     width="md"
 >
