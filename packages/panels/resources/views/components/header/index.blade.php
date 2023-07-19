@@ -10,7 +10,10 @@
 >
     <div>
         @if ($breadcrumbs)
-            <x-filament::breadcrumbs :breadcrumbs="$breadcrumbs" />
+            <x-filament::breadcrumbs
+                :breadcrumbs="$breadcrumbs"
+                class="mb-2 hidden sm:block"
+            />
         @endif
 
         <x-filament::header.heading>
@@ -24,5 +27,11 @@
         @endif
     </div>
 
-    <x-filament-actions::actions :actions="$actions" class="shrink-0" />
+    <x-filament-actions::actions
+        :actions="$actions"
+        @class([
+            'shrink-0',
+            'sm:mt-7' => $breadcrumbs,
+        ])
+    />
 </header>
