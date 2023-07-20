@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Zarządzaj subskrypcją',
+        ],
+
         'logout' => [
             'label' => 'Wyloguj się',
         ],
@@ -38,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Tryb jasny',
+            ],
+
+            'system' => [
+                'label' => 'Tryb systemowy',
             ],
 
         ],
