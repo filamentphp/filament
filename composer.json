@@ -20,7 +20,7 @@
         "orchestra/testbench": "^7.0|^8.0",
         "pestphp/pest": "^2.0",
         "pestphp/pest-plugin-laravel": "^2.0",
-        "pestphp/pest-plugin-livewire": "*",
+        "pestphp/pest-plugin-livewire": "dev-livewire-3",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.8",
         "rector/rector": "^0.15",
@@ -86,6 +86,10 @@
         {
             "type": "path",
             "url": "packages/support"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/danharrin/pest-plugin-livewire"
         }
     ]
 }
