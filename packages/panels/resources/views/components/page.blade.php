@@ -7,7 +7,7 @@
 <div {{ $attributes->class(['fi-page']) }}>
     {{ \Filament\Support\Facades\FilamentView::renderHook('page.start', scope: static::class) }}
 
-    <section class="space-y-6">
+    <section class="grid auto-cols-fr gap-y-8 py-8">
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
@@ -23,9 +23,9 @@
 
         @if ($headerWidgets = $this->getVisibleHeaderWidgets())
             <x-filament-widgets::widgets
-                :widgets="$headerWidgets"
                 :columns="$this->getHeaderWidgetsColumns()"
                 :data="$widgetData"
+                :widgets="$headerWidgets"
             />
         @endif
 
@@ -37,9 +37,9 @@
 
         @if ($footerWidgets = $this->getVisibleFooterWidgets())
             <x-filament-widgets::widgets
-                :widgets="$footerWidgets"
                 :columns="$this->getFooterWidgetsColumns()"
                 :data="$widgetData"
+                :widgets="$footerWidgets"
             />
         @endif
 
