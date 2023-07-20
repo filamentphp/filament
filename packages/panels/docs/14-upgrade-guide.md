@@ -37,7 +37,7 @@ The Filament v2 config file grew pretty big, and now it is incredibly small. Mos
 Before you can create the new panel provider, make sure that you've got Filament v3 installed with Composer. Then, run the following command:
 
 ```bash
-php artisan filament:install --panels`
+php artisan filament:install --panels
 ```
 
 A new `app/Providers/Filament/AdminPanelProvider.php` file will be created, ready for you to transfer over your old configuration from the `config/filament.php` file.
