@@ -227,7 +227,7 @@ return [
             'attach_files' => 'Dołącz pliki',
             'blockquote' => 'Cytat blokowy',
             'bold' => 'Pogrubienie',
-            'bullet_list' => 'Lista punktowa',
+            'bullet_list' => 'Lista punktowana',
             'code_block' => 'Blok kodu',
             'heading' => 'Nagłówek',
             'italic' => 'Kursywa',
