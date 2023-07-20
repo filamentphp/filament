@@ -21,7 +21,7 @@
 
     @if (filled($subheading))
         <p
-            class="fi-simple-header-subheading mt-4 text-center text-sm text-gray-500 dark:text-gray-400"
+            class="fi-simple-header-subheading mt-2 text-center text-sm text-gray-500 dark:text-gray-400"
         >
             {{ $subheading }}
         </p>

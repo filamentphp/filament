@@ -20,24 +20,7 @@
 
         <div class="fi-simple-main-ctn w-full">
             <main
-                @class([
-                    'fi-simple-main mx-auto w-full space-y-4 rounded-xl bg-white p-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
-                    match ($maxContentWidth = $livewire->getMaxContentWidth()) {
-                        'xs' => 'max-w-xs',
-                        'sm' => 'max-w-sm',
-                        'md' => 'max-w-md',
-                        'lg' => 'max-w-lg',
-                        'xl' => 'max-w-xl',
-                        '2xl' => 'max-w-2xl',
-                        '3xl' => 'max-w-3xl',
-                        '4xl' => 'max-w-4xl',
-                        '5xl' => 'max-w-5xl',
-                        '6xl' => 'max-w-6xl',
-                        '7xl' => 'max-w-7xl',
-                        'full' => 'max-w-full',
-                        default => $maxContentWidth,
-                    },
-                ])
+                class="fi-simple-main mx-auto w-full bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:max-w-lg sm:rounded-xl sm:px-12"
             >
                 {{ $slot }}
             </main>

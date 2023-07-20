@@ -267,6 +267,11 @@ class EditProfile extends SimplePage
             ->keyBindings(['mod+s']);
     }
 
+    protected function hasFullWidthFormActions(): bool
+    {
+        return true;
+    }
+
     public function getTitle(): string | Htmlable
     {
         return static::getLabel();
@@ -287,7 +292,10 @@ class EditProfile extends SimplePage
         return Action::make('back')
             ->link()
             ->label(__('filament::pages/auth/edit-profile.actions.back.label'))
-            ->icon('heroicon-m-arrow-small-left')
+            ->icon(match (__('filament::layout.direction')) {
+                'rtl' => 'heroicon-m-arrow-right',
+                default => 'heroicon-m-arrow-left',
+            })
             ->url(filament()->getUrl());
     }
 }
