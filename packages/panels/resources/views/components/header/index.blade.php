@@ -1,5 +1,5 @@
 @props([
-    'actions' => null,
+    'actions' => [],
     'breadcrumbs' => [],
     'heading',
     'subheading' => null,
@@ -27,11 +27,13 @@
         @endif
     </div>
 
-    <x-filament-actions::actions
-        :actions="$actions"
-        @class([
-            'shrink-0',
-            'sm:mt-7' => $breadcrumbs,
-        ])
-    />
+    @if ($actions)
+        <x-filament-actions::actions
+            :actions="$actions"
+            @class([
+                'shrink-0',
+                'sm:mt-7' => $breadcrumbs,
+            ])
+        />
+    @endif
 </header>

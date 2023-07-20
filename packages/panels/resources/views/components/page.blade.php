@@ -4,27 +4,19 @@
     $widgetData = $this->getWidgetData();
 @endphp
 
-<section {{ $attributes->class(['fi-page']) }}>
+<div {{ $attributes->class(['fi-page']) }}>
     {{ \Filament\Support\Facades\FilamentView::renderHook('page.start', scope: static::class) }}
 
-    <div class="space-y-6">
+    <section class="space-y-6">
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
             <x-filament::header
                 :actions="$this->getCachedHeaderActions()"
                 :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
-            >
-                <x-slot name="heading">
-                    {{ $heading }}
-                </x-slot>
-
-                @if ($subheading = $this->getSubheading())
-                    <x-slot name="subheading">
-                        {{ $subheading }}
-                    </x-slot>
-                @endif
-            </x-filament::header>
+                :heading="$heading"
+                :subheading="$this->getSubheading()"
+            />
         @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('page.header-widgets.start', scope: static::class) }}
@@ -56,11 +48,11 @@
         @if ($footer = $this->getFooter())
             {{ $footer }}
         @endif
-    </div>
+    </section>
 
     @if (! $this instanceof \Filament\Tables\Contracts\HasTable)
         <x-filament-actions::modals />
     @endif
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('page.end', scope: static::class) }}
-</section>
+</div>
