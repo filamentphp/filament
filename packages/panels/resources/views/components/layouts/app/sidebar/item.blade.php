@@ -50,8 +50,11 @@
         @if ($icon)
             <x-filament::icon
                 :name="($active && $activeIcon) ? $activeIcon : $icon"
-                :style="\Filament\Support\get_color_css_variables(($active ? 'primary' : 'gray'), shades: [400, 600])"
-                class="fi-sidebar-item-icon h-5 w-5 text-custom-600 dark:text-custom-400"
+                @class([
+                    'fi-sidebar-item-icon h-5 w-5',
+                    'text-gray-400 dark:text-gray-500' => ! $active,
+                    'text-primary-500' => $active,
+                ])
             />
         @elseif ($hasGroupedBorder)
             <div
@@ -72,8 +75,8 @@
                 <div
                     @class([
                         'relative h-1.5 w-1.5 rounded-full',
-                        'bg-gray-400' => ! $active,
-                        'bg-primary-600 dark:bg-primary-400' => $active,
+                        'bg-gray-400 dark:bg-gray-500' => ! $active,
+                        'bg-primary-500' => $active,
                     ])
                 ></div>
             </div>
