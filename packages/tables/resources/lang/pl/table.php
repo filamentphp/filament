@@ -23,6 +23,7 @@ return [
         'search' => [
             'label' => 'Szukaj',
             'placeholder' => 'Szukaj',
+            'indicator' => 'Szukaj',
         ],
 
     ],
@@ -65,6 +66,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'Podsumowanie',
+
+        'subheadings' => [
+            'all' => 'Wszystkie :label',
+            'group' => 'Grupa :group',
+            'page' => 'Bieżąca strona',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Średnia',
+            ],
+
+            'count' => [
+                'label' => 'Ilość',
+            ],
+
+            'sum' => [
+                'label' => 'Suma',
+            ],
+
+        ],
+
+    ],
+
     'actions' => [
 
         'disable_reordering' => [
@@ -79,8 +108,12 @@ return [
             'label' => 'Filtr',
         ],
 
+        'group' => [
+            'label' => 'Grupa',
+        ],
+
         'open_bulk_actions' => [
-            'label' => 'Otwórz akcje',
+            'label' => 'Akcje masowe',
         ],
 
         'toggle_columns' => [
@@ -133,6 +166,30 @@ return [
             'with_trashed' => 'Uwzględnij usunięte rekordy',
 
             'without_trashed' => 'Bez usuniętych rekordów',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Grupuj według',
+                'placeholder' => 'Grupuj według',
+            ],
+
+            'direction' => [
+
+                'label' => 'Kolejność grup',
+
+                'options' => [
+                    'asc' => 'Rosnąco',
+                    'desc' => 'Malejąco',
+                ],
+
+            ],
 
         ],
 

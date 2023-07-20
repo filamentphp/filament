@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Zaloguj się',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'lub',
+            'label' => 'zarejestruj się',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Nie pamiętam hasła',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [

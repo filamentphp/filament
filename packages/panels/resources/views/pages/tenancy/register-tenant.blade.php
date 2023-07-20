@@ -1,4 +1,4 @@
-<x-filament::layout.simple>
+<x-filament::page.simple>
     <x-filament::form wire:submit="register">
         {{ $this->form }}
 
@@ -33,4 +33,4 @@
             @endforeach
         </ul>
     @endif
-</x-filament::layout.simple>
+</x-filament::page.simple>
