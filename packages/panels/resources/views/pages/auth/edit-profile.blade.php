@@ -1,14 +1,14 @@
-<x-filament::layouts.card>
+<x-filament::page.simple>
     <x-slot name="subheading">
         {{ $this->backAction }}
     </x-slot>
 
-    <form wire:submit="save" class="grid gap-y-8">
+    <x-filament::form wire:submit="save">
         {{ $this->form }}
 
         <x-filament::form.actions
             :actions="$this->getCachedFormActions()"
             :full-width="$this->hasFullWidthFormActions()"
         />
-    </form>
-</x-filament::layouts.card>
+    </x-filament::form>
+</x-filament::page.simple>

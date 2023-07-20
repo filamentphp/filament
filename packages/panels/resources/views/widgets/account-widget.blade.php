@@ -25,6 +25,7 @@
                 class="my-auto -me-2.5 sm:me-0"
             >
                 @csrf
+
                 <x-filament::button
                     color="gray"
                     icon="heroicon-m-arrow-left-on-rectangle"

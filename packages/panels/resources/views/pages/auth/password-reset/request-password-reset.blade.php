@@ -1,13 +1,16 @@
-<x-filament::layouts.card>
+<x-filament::page.simple>
     @if (filament()->hasLogin())
         <x-slot name="subheading">
             {{ $this->loginAction }}
         </x-slot>
     @endif
 
-    <form wire:submit="request" class="grid gap-y-6">
+    <x-filament::form wire:submit="request">
         {{ $this->form }}
 
-        {{ $this->requestAction }}
-    </form>
-</x-filament::layouts.card>
+        <x-filament::form.actions
+            :actions="$this->getCachedFormActions()"
+            :full-width="$this->hasFullWidthFormActions()"
+        />
+    </x-filament::form>
+</x-filament::page.simple>

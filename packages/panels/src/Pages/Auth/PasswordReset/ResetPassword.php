@@ -11,7 +11,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse;
 use Filament\Notifications\Notification;
-use Filament\Pages\CardPage;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\SimplePage;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -26,8 +27,9 @@ use Livewire\Attributes\Locked;
 /**
  * @property Form $form
  */
-class ResetPassword extends CardPage
+class ResetPassword extends SimplePage
 {
+    use InteractsWithFormActions;
     use WithRateLimiting;
 
     /**
@@ -146,13 +148,6 @@ class ResetPassword extends CardPage
             ->dehydrated(false);
     }
 
-    public function resetPasswordAction(): Action
-    {
-        return Action::make('resetPassword')
-            ->label(__('filament::pages/auth/password-reset/reset-password.form.actions.reset.label'))
-            ->submit('resetPassword');
-    }
-
     public function getTitle(): string | Htmlable
     {
         return __('filament::pages/auth/password-reset/reset-password.title');
@@ -161,5 +156,27 @@ class ResetPassword extends CardPage
     public function getHeading(): string | Htmlable
     {
         return __('filament::pages/auth/password-reset/reset-password.heading');
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getResetPasswordFormAction(),
+        ];
+    }
+
+    public function getResetPasswordFormAction(): Action
+    {
+        return Action::make('resetPassword')
+            ->label(__('filament::pages/auth/password-reset/reset-password.form.actions.reset.label'))
+            ->submit('resetPassword');
+    }
+
+    protected function hasFullWidthFormActions(): bool
+    {
+        return true;
     }
 }

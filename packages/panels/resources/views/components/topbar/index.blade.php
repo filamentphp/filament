@@ -58,12 +58,12 @@
                     @if ($groupLabel = $group->getLabel())
                         <x-filament::dropdown placement="bottom-start">
                             <x-slot name="trigger">
-                                <x-filament::layouts.app.topbar.item
+                                <x-filament::topbar.item
                                     :active="$group->isActive()"
                                     :icon="$group->getIcon()"
                                 >
                                     {{ $groupLabel }}
-                                </x-filament::layouts.app.topbar.item>
+                                </x-filament::topbar.item>
                             </x-slot>
 
                             <x-filament::dropdown.list>
@@ -87,7 +87,7 @@
                         </x-filament::dropdown>
                     @else
                         @foreach ($group->getItems() as $item)
-                            <x-filament::layouts.app.topbar.item
+                            <x-filament::topbar.item
                                 :active="$item->isActive()"
                                 :active-icon="$item->getActiveIcon()"
                                 :badge="$item->getBadge()"
@@ -97,7 +97,7 @@
                                 :url="$item->getUrl()"
                             >
                                 {{ $item->getLabel() }}
-                            </x-filament::layouts.app.topbar.item>
+                            </x-filament::topbar.item>
                         @endforeach
                     @endif
                 @endforeach

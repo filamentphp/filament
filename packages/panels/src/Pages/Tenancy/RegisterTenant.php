@@ -5,8 +5,9 @@ namespace Filament\Pages\Tenancy;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
-use Filament\Pages\CardPage;
 use Filament\Pages\Concerns;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\SimplePage;
 use Filament\Panel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Support\Htmlable;
@@ -16,8 +17,9 @@ use Illuminate\Support\Facades\Route;
 /**
  * @property Form $form
  */
-abstract class RegisterTenant extends CardPage
+abstract class RegisterTenant extends SimplePage
 {
+    use InteractsWithFormActions;
     use Concerns\HasRoutes;
 
     /**
@@ -122,13 +124,6 @@ abstract class RegisterTenant extends CardPage
         ];
     }
 
-    public function registerAction(): Action
-    {
-        return Action::make('register')
-            ->label(static::getLabel())
-            ->submit('register');
-    }
-
     public function getModel(): string
     {
         return Filament::getTenantModel();
@@ -147,5 +142,27 @@ abstract class RegisterTenant extends CardPage
     public function hasLogo(): bool
     {
         return false;
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getRegisterFormAction(),
+        ];
+    }
+
+    public function getRegisterFormAction(): Action
+    {
+        return Action::make('register')
+            ->label(static::getLabel())
+            ->submit('register');
+    }
+
+    protected function hasFullWidthFormActions(): bool
+    {
+        return true;
     }
 }

@@ -68,7 +68,7 @@
     >
         @foreach ($items as $item)
             @if ($item->isVisible())
-                <x-filament::layouts.app.sidebar.item
+                <x-filament::sidebar.item
                     :active="$item->isActive()"
                     :has-grouped-border="! $hasItemIcons"
                     :icon="$item->getIcon()"
@@ -81,7 +81,7 @@
                     :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                 >
                     {{ $item->getLabel() }}
-                </x-filament::layouts.app.sidebar.item>
+                </x-filament::sidebar.item>
             @endif
         @endforeach
     </ul>

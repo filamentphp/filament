@@ -12,7 +12,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Notifications\Notification;
-use Filament\Pages\CardPage;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\SimplePage;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\HtmlString;
@@ -21,8 +22,9 @@ use Illuminate\Validation\ValidationException;
 /**
  * @property Form $form
  */
-class Login extends CardPage
+class Login extends SimplePage
 {
+    use InteractsWithFormActions;
     use WithRateLimiting;
 
     /**
@@ -112,13 +114,6 @@ class Login extends CardPage
             ->label(__('filament::pages/auth/login.form.remember.label'));
     }
 
-    public function authenticateAction(): Action
-    {
-        return Action::make('authenticate')
-            ->label(__('filament::pages/auth/login.form.actions.authenticate.label'))
-            ->submit('authenticate');
-    }
-
     public function registerAction(): Action
     {
         return Action::make('register')
@@ -135,5 +130,27 @@ class Login extends CardPage
     public function getHeading(): string | Htmlable
     {
         return __('filament::pages/auth/login.heading');
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getAuthenticateFormAction(),
+        ];
+    }
+
+    protected function getAuthenticateFormAction(): Action
+    {
+        return Action::make('authenticate')
+            ->label(__('filament::pages/auth/login.form.actions.authenticate.label'))
+            ->submit('authenticate');
+    }
+
+    protected function hasFullWidthFormActions(): bool
+    {
+        return true;
     }
 }

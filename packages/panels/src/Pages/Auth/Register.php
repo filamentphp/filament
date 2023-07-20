@@ -11,7 +11,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use Filament\Notifications\Notification;
-use Filament\Pages\CardPage;
+use Filament\Pages\Concerns\InteractsWithFormActions;
+use Filament\Pages\SimplePage;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\SessionGuard;
@@ -22,8 +23,9 @@ use Illuminate\Validation\Rules\Password;
 /**
  * @property Form $form
  */
-class Register extends CardPage
+class Register extends SimplePage
 {
+    use InteractsWithFormActions;
     use WithRateLimiting;
 
     /**
@@ -132,13 +134,6 @@ class Register extends CardPage
             ->dehydrated(false);
     }
 
-    public function registerAction(): Action
-    {
-        return Action::make('register')
-            ->label(__('filament::pages/auth/register.form.actions.register.label'))
-            ->submit('register');
-    }
-
     public function loginAction(): Action
     {
         return Action::make('login')
@@ -170,5 +165,27 @@ class Register extends CardPage
     public function getHeading(): string | Htmlable
     {
         return __('filament::pages/auth/register.heading');
+    }
+
+    /**
+     * @return array<Action | ActionGroup>
+     */
+    protected function getFormActions(): array
+    {
+        return [
+            $this->getRegisterFormAction(),
+        ];
+    }
+
+    public function getRegisterFormAction(): Action
+    {
+        return Action::make('register')
+            ->label(__('filament::pages/auth/register.form.actions.register.label'))
+            ->submit('register');
+    }
+
+    protected function hasFullWidthFormActions(): bool
+    {
+        return true;
     }
 }

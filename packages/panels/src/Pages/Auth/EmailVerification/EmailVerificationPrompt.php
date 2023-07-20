@@ -10,14 +10,14 @@ use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
-use Filament\Pages\CardPage;
+use Filament\Pages\SimplePage;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 
 /**
  * @property Form $form
  */
-class EmailVerificationPrompt extends CardPage
+class EmailVerificationPrompt extends SimplePage
 {
     use WithRateLimiting;
 

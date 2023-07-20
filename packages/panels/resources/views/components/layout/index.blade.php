@@ -2,8 +2,8 @@
     $navigation = filament()->getNavigation();
 @endphp
 
-<x-filament::layouts.base :livewire="$livewire">
-    <div class="fi-app-layout flex min-h-full w-full overflow-x-clip">
+<x-filament::layout.base :livewire="$livewire">
+    <div class="fi-layout flex min-h-full w-full overflow-x-clip">
         <div
             x-cloak
             x-data="{}"
@@ -13,7 +13,7 @@
             class="fi-sidebar-close-overlay fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"
         ></div>
 
-        <x-filament::layouts.app.sidebar :navigation="$navigation" />
+        <x-filament::sidebar :navigation="$navigation" />
 
         <div
             @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -36,11 +36,11 @@
                 'flex lg:ps-[--sidebar-width]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
             ])
         >
-            <x-filament::layouts.app.topbar :navigation="$navigation" />
+            <x-filament::topbar :navigation="$navigation" />
 
             <main
                 @class([
-                    'fi-main mx-auto w-full flex-1 px-4 md:px-6 lg:px-8',
+                    'fi-main mx-auto w-full px-4 md:px-6 lg:px-8',
                     match ($maxContentWidth ?? filament()->getMaxContentWidth() ?? '7xl') {
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',
@@ -66,4 +66,4 @@
             </div>
         </div>
     </div>
-</x-filament::layouts.base>
+</x-filament::layout.base>

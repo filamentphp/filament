@@ -1,7 +1,10 @@
-<x-filament::layouts.card>
-    <form wire:submit="resetPassword" class="grid gap-y-6">
+<x-filament::page.simple>
+    <x-filament::form wire:submit="resetPassword">
         {{ $this->form }}
 
-        {{ $this->resetPasswordAction }}
-    </form>
-</x-filament::layouts.card>
+        <x-filament::form.actions
+            :actions="$this->getCachedFormActions()"
+            :full-width="$this->hasFullWidthFormActions()"
+        />
+    </x-filament::form>
+</x-filament::page.simple>

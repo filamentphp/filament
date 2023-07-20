@@ -22,6 +22,6 @@ class DatabaseNotifications extends BaseComponent
 
     public function getTrigger(): View
     {
-        return view('filament::components.layouts.app.topbar.database-notifications-trigger');
+        return view('filament::components.topbar.database-notifications-trigger');
     }
 }

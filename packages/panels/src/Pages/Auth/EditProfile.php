@@ -11,8 +11,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
-use Filament\Pages\CardPage;
 use Filament\Pages\Concerns;
+use Filament\Pages\SimplePage;
 use Filament\Panel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Auth\Authenticatable;
@@ -25,7 +25,7 @@ use Illuminate\Validation\Rules\Password;
 /**
  * @property Form $form
  */
-class EditProfile extends CardPage
+class EditProfile extends SimplePage
 {
     use Concerns\HasRoutes;
     use Concerns\InteractsWithFormActions;

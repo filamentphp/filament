@@ -156,7 +156,7 @@
         @if (filament()->hasNavigation())
             <ul class="-mx-3 grid gap-y-3 px-6">
                 @foreach ($navigation as $group)
-                    <x-filament::layouts.app.sidebar.group
+                    <x-filament::sidebar.group
                         :label="$group->getLabel()"
                         :icon="$group->getIcon()"
                         :collapsible="$group->isCollapsible()"

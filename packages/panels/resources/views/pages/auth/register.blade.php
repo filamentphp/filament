@@ -1,4 +1,4 @@
-<x-filament::layouts.card>
+<x-filament::page.simple>
     @if (filament()->hasLogin())
         <x-slot name="subheading">
             {{ __('filament::pages/auth/register.actions.login.before') }}
@@ -7,9 +7,12 @@
         </x-slot>
     @endif
 
-    <form wire:submit="register" class="grid gap-y-6">
+    <x-filament::form wire:submit="register">
         {{ $this->form }}
 
-        {{ $this->registerAction }}
-    </form>
-</x-filament::layouts.card>
+        <x-filament::form.actions
+            :actions="$this->getCachedFormActions()"
+            :full-width="$this->hasFullWidthFormActions()"
+        />
+    </x-filament::form>
+</x-filament::page.simple>
