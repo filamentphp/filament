@@ -11,7 +11,7 @@
 @endphp
 
 <nav
-    {{ $attributes->class(['fi-topbar sticky top-0 z-20 flex h-16 items-center bg-white px-4 shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] transition dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)] sm:px-4 md:px-6 lg:px-8']) }}
+    {{ $attributes->class(['fi-topbar sticky top-0 z-20 flex h-16 items-center bg-white px-4 shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] transition dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)] md:px-6 lg:px-8']) }}
 >
     {{ \Filament\Support\Facades\FilamentView::renderHook('topbar.start') }}
 
