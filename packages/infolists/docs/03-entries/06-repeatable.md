@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-The repeatable entry allows you repeat a set of entries and layout components for items in an array or relationship.
+The repeatable entry allows you to repeat a set of entries and layout components for items in an array or relationship.
 
 ```php
 use Filament\Infolists\Components\RepeatableEntry;
