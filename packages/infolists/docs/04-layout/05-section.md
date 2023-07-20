@@ -38,7 +38,7 @@ Section::make('Cart')
 
 ## Positioning the heading and description aside
 
-You may use the `aside()` to align heading & description on the left, and the infolist components inside a card on the right:
+You may use the `aside()` method to align the heading and description on the left, and the infolist components inside a card on the right:
 
 ```php
 use Filament\Infolists\Components\Section;

@@ -100,4 +100,4 @@ Card::make()
     ])
 ```
 
-In this example, the grid has 3 columns on small devices, 6 columns on extra large devices, and 8 columns on extra extra large devices. The text entry will start at column 2 on small devices, column 3 on extra large devices, and column 4 on extra extra large devices. This is essentially producing a layout whereby the text entry always starts half way through the grid, regardless of how many columns the grid has.
+In this example, the grid has 3 columns on small devices, 6 columns on extra large devices, and 8 columns on extra extra large devices. The text entry will start at column 2 on small devices, column 3 on extra large devices, and column 4 on extra extra large devices. This is essentially producing a layout whereby the text entry always starts halfway through the grid, regardless of how many columns the grid has.

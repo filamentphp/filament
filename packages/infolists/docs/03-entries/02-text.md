@@ -58,7 +58,7 @@ TextEntry::make('created_at')
 
 ## Number formatting
 
-The `numeric()` method allows you to format a entry as a number, using PHP's `number_format()`:
+The `numeric()` method allows you to format an entry as a number, using PHP's `number_format()`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -271,7 +271,7 @@ TextEntry::make('title')
 
 ## Customizing the font weight
 
-Text entries have regular font weight by default but you may change this to any of the the following options: `thin`, `extralight`, `light`, `medium`, `semibold`, `bold`, `extrabold` or `black`.
+Text entries have regular font weight by default but you may change this to any of the following options: `thin`, `extralight`, `light`, `medium`, `semibold`, `bold`, `extrabold` or `black`.
 
 For instance, you may make the font bold using `weight('bold')`:
 

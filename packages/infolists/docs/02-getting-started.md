@@ -52,7 +52,7 @@ You can learn more about columns and spans in the [layout documentation](layout/
 
 ## Using layout components
 
-The infolist builder allows you to use [layout components](layout/getting-started#available-layout-components) to inside the schema array to control how entries are displayed. `Section` is a layout component, and it allows you to add a heading and description to a set of entries. It can also allow entries inside it to collapse, which saves space in long infolists.
+The infolist builder allows you to use [layout components](layout/getting-started#available-layout-components) inside the schema array to control how entries are displayed. `Section` is a layout component, and it allows you to add a heading and description to a set of entries. It can also allow entries inside it to collapse, which saves space in long infolists.
 
 ```php
 use Filament\Infolists\Components\Section;

@@ -4,7 +4,7 @@ title: Custom entries
 
 ## View entries
 
-You may render a custom view for a entry using the `view()` method:
+You may render a custom view for an entry using the `view()` method:
 
 ```php
 use Filament\Infolists\Components\ViewEntry;
