@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "baac17014f1bd7027caa687f1ead5b15",
+    "content-hash": "4b3928b1ec8c9aa80c50fc43a47a303a",
     "packages": [],
     "packages-dev": [
         {
@@ -5013,60 +5013,37 @@
         },
         {
             "name": "pestphp/pest-plugin-livewire",
-            "version": "dev-livewire-3",
+            "version": "v2.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/danharrin/pest-plugin-livewire.git",
-                "reference": "c86e0dfa07134e84d320b4e914dc63dbba929208"
+                "url": "https://github.com/pestphp/pest-plugin-livewire.git",
+                "reference": "e72a2f850f727dfdb6bfa6e2ee6ff478ccc93f97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/danharrin/pest-plugin-livewire/zipball/c86e0dfa07134e84d320b4e914dc63dbba929208",
-                "reference": "c86e0dfa07134e84d320b4e914dc63dbba929208",
+                "url": "https://api.github.com/repos/pestphp/pest-plugin-livewire/zipball/e72a2f850f727dfdb6bfa6e2ee6ff478ccc93f97",
+                "reference": "e72a2f850f727dfdb6bfa6e2ee6ff478ccc93f97",
                 "shasum": ""
             },
             "require": {
                 "livewire/livewire": "^2.12.3|^3.0",
-                "pestphp/pest": "^2.0.0",
+                "pestphp/pest": "^2.9.1",
                 "php": "^8.1"
             },
             "require-dev": {
-                "orchestra/testbench": "^8.0.10",
-                "pestphp/pest-dev-tools": "^2.5.0"
+                "orchestra/testbench": "^8.5.10",
+                "pestphp/pest-dev-tools": "^2.12.0"
             },
             "type": "library",
             "autoload": {
-                "psr-4": {
-                    "Pest\\Livewire\\": "src/"
-                },
                 "files": [
                     "src/Autoload.php"
-                ]
-            },
-            "autoload-dev": {
+                ],
                 "psr-4": {
-                    "Tests\\": "tests/"
+                    "Pest\\Livewire\\": "src/"
                 }
             },
-            "scripts": {
-                "lint": [
-                    "pint"
-                ],
-                "test:lint": [
-                    "pint --test"
-                ],
-                "test:types": [
-                    "phpstan analyse --ansi"
-                ],
-                "test:unit": [
-                    "pest --colors=always"
-                ],
-                "test": [
-                    "@test:lint",
-                    "@test:types",
-                    "@test:unit"
-                ]
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -5082,23 +5059,23 @@
                 "unit"
             ],
             "support": {
-                "source": "https://github.com/danharrin/pest-plugin-livewire/tree/livewire-3"
+                "source": "https://github.com/pestphp/pest-plugin-livewire/tree/v2.1.0"
             },
             "funding": [
                 {
-                    "type": "github",
-                    "url": "https://github.com/nunomaduro"
+                    "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L",
+                    "type": "custom"
                 },
                 {
-                    "type": "patreon",
-                    "url": "https://www.patreon.com/nunomaduro"
+                    "url": "https://github.com/nunomaduro",
+                    "type": "github"
                 },
                 {
-                    "type": "custom",
-                    "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=66BYDWAT92N6L"
+                    "url": "https://www.patreon.com/nunomaduro",
+                    "type": "patreon"
                 }
             ],
-            "time": "2023-07-15T13:42:01+00:00"
+            "time": "2023-07-20T16:28:21+00:00"
         },
         {
             "name": "phar-io/manifest",
@@ -8988,16 +8965,16 @@
         },
         {
             "name": "stripe/stripe-php",
-            "version": "v10.17.0",
+            "version": "v10.18.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/stripe/stripe-php.git",
-                "reference": "73383b44de153f4d602b90dad3ef075259bcecef"
+                "reference": "c32549e443a619d1b885b99d624568ecae82d6a0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/73383b44de153f4d602b90dad3ef075259bcecef",
-                "reference": "73383b44de153f4d602b90dad3ef075259bcecef",
+                "url": "https://api.github.com/repos/stripe/stripe-php/zipball/c32549e443a619d1b885b99d624568ecae82d6a0",
+                "reference": "c32549e443a619d1b885b99d624568ecae82d6a0",
                 "shasum": ""
             },
             "require": {
@@ -9043,9 +9020,9 @@
             ],
             "support": {
                 "issues": "https://github.com/stripe/stripe-php/issues",
-                "source": "https://github.com/stripe/stripe-php/tree/v10.17.0"
+                "source": "https://github.com/stripe/stripe-php/tree/v10.18.0"
             },
-            "time": "2023-07-13T22:12:18+00:00"
+            "time": "2023-07-20T16:59:49+00:00"
         },
         {
             "name": "symfony/console",
@@ -12296,9 +12273,7 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "pestphp/pest-plugin-livewire": 20
-    },
+    "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

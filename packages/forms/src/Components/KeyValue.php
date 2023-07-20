@@ -69,9 +69,9 @@ class KeyValue extends Field
     {
         $action = Action::make($this->getAddActionName())
             ->label(fn (KeyValue $component) => $component->getAddActionLabel())
+            ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm')
             ->visible(fn (): bool => $this->isAddable());
 
         if ($this->modifyAddActionUsing) {
