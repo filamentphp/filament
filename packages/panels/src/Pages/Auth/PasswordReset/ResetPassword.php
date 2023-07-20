@@ -5,6 +5,7 @@ namespace Filament\Pages\Auth\PasswordReset;
 use DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException;
 use DanHarrin\LivewireRateLimiting\WithRateLimiting;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
