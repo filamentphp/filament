@@ -79,6 +79,6 @@
             {{ $logoutItem?->getLabel() ?? __('filament::layout.actions.logout.label') }}
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
-</x-filament::dropdown.list>
+</x-filament::dropdown>
 
 {{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.end') }}
