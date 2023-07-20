@@ -10,7 +10,7 @@ Filament has a few requirements to run:
 
 - PHP 8.1+
 - Laravel v9.0+
-- Livewire v2.0+
+- Livewire v3.0+
 
 First, require the actions package using Composer:
 
