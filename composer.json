@@ -19,7 +19,7 @@
         "nunomaduro/termwind": "^1.0",
         "orchestra/testbench": "^7.0|^8.0",
         "pestphp/pest": "^2.0",
-        "pestphp/pest-plugin-laravel": "^1.0|^2.0",
+        "pestphp/pest-plugin-laravel": "^1.4.0|^2.0",
         "pestphp/pest-plugin-livewire": "dev-livewire-3",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.8",
