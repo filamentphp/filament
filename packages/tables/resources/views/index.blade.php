@@ -553,17 +553,18 @@
                                     ])
                                 >
                                     @php
-                                        $tag = $group->isCollapsible() ? 'button' : 'div';
+                                        $isCollapsible = $group->isCollapsible();
+                                        $tag = $isCollapsible ? 'button' : 'div';
                                     @endphp
 
                                     <{{ $tag }}
-                                        @if ($group->isCollapsible())
+                                        @if ($isCollapsible)
                                             type="button"
                                             x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
                                         @endif
                                         class="flex w-full justify-start gap-x-2 whitespace-nowrap px-4 py-2"
                                     >
-                                        @if ($group->isCollapsible())
+                                        @if ($isCollapsible)
                                             <x-filament::icon
                                                 alias="tables::grouping.collapse-button"
                                                 icon="heroicon-m-chevron-up"
@@ -992,17 +993,18 @@
                                     >
                                         <td colspan="{{ $columnsCount }}">
                                             @php
-                                                $tag = $group->isCollapsible() ? 'button' : 'div';
+                                                $isCollapsible = $group->isCollapsible();
+                                                $tag = $isCollapsible ? 'button' : 'div';
                                             @endphp
 
                                             <{{ $tag }}
-                                                @if ($group->isCollapsible())
+                                                @if ($isCollapsible)
                                                     type="button"
                                                     x-on:click="toggleCollapseGroup(@js($recordGroupTitle))"
                                                 @endif
                                                 class="flex w-full justify-start gap-x-2 whitespace-nowrap px-4 py-2"
                                             >
-                                                @if ($group->isCollapsible())
+                                                @if ($isCollapsible)
                                                     <x-filament::icon
                                                         alias="tables::grouping.collapse-button"
                                                         icon="heroicon-m-chevron-up"
