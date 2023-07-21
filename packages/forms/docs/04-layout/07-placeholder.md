@@ -40,6 +40,6 @@ use Filament\Forms\Get;
 
 Placeholder::make('total')
     ->content(function (Get $get): string {
-        return '$' . number_format($get('cost') * $get('quantity'), 2);
+        return '€' . number_format($get('cost') * $get('quantity'), 2);
     })
 ```
