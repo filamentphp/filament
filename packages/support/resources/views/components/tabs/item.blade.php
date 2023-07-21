@@ -37,8 +37,8 @@
     @endif
     @if ($alpineActive)
         x-bind:class="{
-            @js($inactiveItemClasses): ! {{ $alpineActive }}
-            @js($activeItemClasses): {{ $alpineActive }}
+            @js($inactiveItemClasses): ! {{ $alpineActive }},
+            @js($activeItemClasses): {{ $alpineActive }},
         }"
     @endif
     {{
