@@ -14,10 +14,10 @@ Filament plugins build on top of the concepts of Laravel packages and allow you 
 
 ## Configuring the panel with a plugin class
 
-A plugin class is used to allow your package to interact with a panel [configuration](configuration) file. It's a simple PHP class that implements the `Plugin` interface. 3 methods are required:
+A plugin class is used to allow your package to interact with a panel [configuration](../configuration) file. It's a simple PHP class that implements the `Plugin` interface. 3 methods are required:
 
 - The `getId()` method returns the unique identifier of the plugin amongst other plugins. Please ensure that it is specific enough to not clash with other plugins that might be used in the same project.
-- The `register()` method allows you to use any [configuration](configuration) option that is available to the panel. This includes registering [resources](resources), [pages](pages), [themes](themes), [render hooks](configuration#render-hooks) and more.
+- The `register()` method allows you to use any [configuration](../configuration) option that is available to the panel. This includes registering [resources](resources), [pages](pages), [themes](themes), [render hooks](configuration#render-hooks) and more.
 - The `boot()` method is run only when the panel that the plugin is being registered to is actually in-use. It is executed by a middleware class.
 
 ```php
@@ -57,7 +57,7 @@ class BlogPlugin implements Plugin
 }
 ```
 
-The users of your plugin can add it to a panel by instantiating the plugin class and passing it to the `plugin()` method of the [configuration](configuration):
+The users of your plugin can add it to a panel by instantiating the plugin class and passing it to the `plugin()` method of the [configuration](../configuration):
 
 ```php
 use DanHarrin\FilamentBlog\BlogPlugin;
@@ -183,7 +183,7 @@ BlogPlugin::get()->hasAuthorResource()
 
 It's very easy to distribute an entire panel in a Laravel package. This way, a user can simply install your plugin and have an entirely new part of their app pre-built.
 
-When [configuring](configuration) a panel, the configuration class extends the `PanelProvider` class, and that is a standard Laravel service provider. You can use it as a service provider in your package:
+When [configuring](../configuration) a panel, the configuration class extends the `PanelProvider` class, and that is a standard Laravel service provider. You can use it as a service provider in your package:
 
 ```php
 <?php

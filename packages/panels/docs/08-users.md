@@ -88,7 +88,7 @@ class BoringAvatarsProvider implements Contracts\AvatarProvider
 }
 ```
 
-Now, register this new avatar provider in the [configuration](configuration):
+Now, register this new avatar provider in the [configuration](../configuration):
 
 ```php
 use App\Filament\AvatarProviders\BoringAvatarsProvider;
