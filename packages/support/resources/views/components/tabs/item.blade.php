@@ -12,7 +12,7 @@
 @php
     $inactiveItemClasses = 'text-gray-700 dark:text-gray-300';
 
-    $activeItemClasses = 'fi-tabs-item-active bg-gray-950/5 dark:bg-white/5 text-primary-600 dark:text-primary-400';
+    $activeItemClasses = 'fi-tabs-item-active bg-gray-950/5 text-primary-600 dark:bg-white/5 dark:text-primary-400';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-tabs-item-icon h-5 w-5',
@@ -33,7 +33,7 @@
     @endif
     @if ($alpineActive)
         x-bind:class="{
-            @js($inactiveItemClasses): ! ({{ $alpineActive }}),
+            @js($inactiveItemClasses): ! {{ $alpineActive }},
             @js($activeItemClasses): {{ $alpineActive }},
         }"
     @endif
