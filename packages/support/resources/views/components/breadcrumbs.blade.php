@@ -14,7 +14,7 @@
                 @if (! $loop->first)
                     <x-filament::icon
                         :alias="$iconAlias"
-                        name="heroicon-m-chevron-right"
+                        icon="heroicon-m-chevron-right"
                         @class([
                             $iconClasses,
                             'rtl:hidden',
@@ -23,7 +23,7 @@
 
                     <x-filament::icon
                         :alias="$iconAlias"
-                        name="heroicon-m-chevron-left"
+                        icon="heroicon-m-chevron-left"
                         @class([
                             $iconClasses,
                             'ltr:hidden',

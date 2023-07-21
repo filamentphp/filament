@@ -25,7 +25,7 @@
 
     @if ($icon)
         <x-filament::icon
-            :name="$icon"
+            :icon="$icon"
             @class([
                 'fi-in-entry-wrp-hint-icon h-5 w-5',
                 match ($color) {

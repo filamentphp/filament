@@ -16,7 +16,7 @@
                 @endphp
 
                 <x-filament::icon
-                    :name="$icon"
+                    :icon="$icon"
                     @class([
                         'fi-in-icon-icon',
                         match ($size) {

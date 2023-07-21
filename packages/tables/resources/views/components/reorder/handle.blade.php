@@ -8,8 +8,8 @@
     }}
 >
     <x-filament::icon
-        name="heroicon-m-bars-3"
         alias="tables::reorder.handle"
+        icon="heroicon-m-bars-3"
         class="block h-4 w-4"
     />
 </button>

@@ -149,8 +149,8 @@
                                 class="fi-fo-wizard-header-step-icon-ctn flex h-10 w-10 items-center justify-center rounded-full"
                             >
                                 <x-filament::icon
-                                    name="heroicon-m-check"
                                     alias="forms::components.wizard.completed-step"
+                                    icon="heroicon-m-check"
                                     x-show="getStepIndex(step) > {{ $loop->index }}"
                                     x-cloak="x-cloak"
                                     class="fi-fo-wizard-header-step-icon h-5 w-5 text-white"
@@ -158,7 +158,7 @@
 
                                 @if ($icon = $step->getIcon())
                                     <x-filament::icon
-                                        :name="$icon"
+                                        :icon="$icon"
                                         x-show="getStepIndex(step) <= {{ $loop->index }}"
                                         x-cloak="x-cloak"
                                         x-bind:class="{

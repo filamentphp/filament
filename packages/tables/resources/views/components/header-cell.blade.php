@@ -40,8 +40,8 @@
 
         @if ($sortable)
             <x-filament::icon
-                :name="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 :alias="$activelySorted && $sortDirection === 'asc' ? 'tables::header-cell.sort-asc' : 'tables::header-cell.sort-desc'"
+                :icon="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 @class([
                     'fi-ta-header-cell-sort-icon h-5 w-5 dark:text-gray-300',
                     'opacity-25' => ! $activelySorted,

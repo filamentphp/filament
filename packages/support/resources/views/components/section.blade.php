@@ -69,7 +69,7 @@
         <div class="fi-section-header flex gap-x-3">
             @if ($icon)
                 <x-filament::icon
-                    :name="$icon"
+                    :icon="$icon"
                     @class([
                         'fi-section-header-icon',
                         match ($iconColor) {

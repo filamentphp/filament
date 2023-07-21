@@ -56,7 +56,7 @@
 >
     @if ($icon && $iconPosition === 'before')
         <x-filament::icon
-            :name="$icon"
+            :icon="$icon"
             :style="$iconStyles"
             :class="$iconClasses"
             :style="$iconStyles"
@@ -69,7 +69,7 @@
 
     @if ($icon && $iconPosition === 'after')
         <x-filament::icon
-            :name="$icon"
+            :icon="$icon"
             :class="$iconClasses"
             :style="$iconStyles"
         />

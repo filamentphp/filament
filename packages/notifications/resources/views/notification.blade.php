@@ -65,7 +65,7 @@
         @if ($icon = $getIcon())
             <x-filament-notifications::icon
                 :color="$getIconColor()"
-                :name="$icon"
+                :icon="$icon"
                 :size="$getIconSize()"
             />
         @endif
