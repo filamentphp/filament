@@ -124,7 +124,7 @@ You can use the active filter value within your `getData()` method:
 protected function getData(): array
 {
     $activeFilter = $this->filter;
-    
+
     // ...
 }
 ```
@@ -194,7 +194,7 @@ protected function getOptions(): RawJs
             scales: {
                 y: {
                     ticks: {
-                        callback: (value) => '$' + value,
+                        callback: (value) => '€' + value,
                     },
                 },
             },
