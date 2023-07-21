@@ -132,7 +132,7 @@ class EditProfile extends SimplePage
             return;
         }
 
-        if (request()->hasSession()) {
+        if (request()->hasSession() && array_key_exists('password', $data)) {
             request()->session()->put([
                 'password_hash_' . Filament::getAuthGuard() => $data['password'],
             ]);
