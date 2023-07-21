@@ -350,7 +350,7 @@ Action::make('help')
     ->modalCancelAction(fn (ModalAction $action) => $action->label('Close'))
 ```
 
-The [methods available to customize trigger buttons](trigger-button) will work to modify on the `$action` instance inside the closure.
+The [methods available to customize trigger buttons](trigger-button) will work to modify the `$action` instance inside the closure.
 
 ### Removing a default modal footer action button
 
