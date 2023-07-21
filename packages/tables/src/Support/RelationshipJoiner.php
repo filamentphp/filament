@@ -4,27 +4,27 @@ namespace Filament\Tables\Support;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\JoinClause;
-use Kirschbaum\PowerJoins\PowerJoins;
+use Kirschbaum\PowerJoins\JoinsHelper;
 
 class RelationshipJoiner
 {
-    use PowerJoins;
-
     public function leftJoinRelationship(Builder $query, string $relationship): Builder
     {
         if (str($relationship)->contains('.')) {
-            $this->scopeJoinNestedRelationship(
-                $query,
+            /** @phpstan-ignore-next-line */
+            $query->joinNestedRelationship(
                 $relationship,
-                joinType: static::$joinMethodsMap['leftJoin'] ?? 'leftJoin',
+                callback: null,
+                joinType: JoinsHelper::$joinMethodsMap['leftJoin'] ?? 'leftJoin',
             );
 
             return $query;
         }
 
-        $this->scopeJoinRelationship(
-            $query,
+        /** @phpstan-ignore-next-line */
+        $query->joinRelationship(
             $relationship,
+            callback: null,
             joinType: 'leftJoin',
         );
 
@@ -36,7 +36,8 @@ class RelationshipJoiner
      */
     public function getLeftJoinsForRelationship(Builder $query, string $relationship): array
     {
-        $this->leftJoinRelationship($query, $relationship);
+        /** @phpstan-ignore-next-line */
+        $query->leftJoinRelationship($relationship);
 
         return $query->toBase()->joins;
     }
