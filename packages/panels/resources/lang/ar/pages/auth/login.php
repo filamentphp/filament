@@ -6,6 +6,19 @@ return [
 
     'heading' => 'الدخول إلى حسابك',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'أو',
+            'label' => 'إنشاء حساب',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'نسيت كلمة المرور؟',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [

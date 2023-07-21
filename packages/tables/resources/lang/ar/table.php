@@ -5,11 +5,7 @@ return [
     'columns' => [
 
         'text' => [
-            'more_list_items' => 'و :count أكثر',
-        ],
-
-        'messages' => [
-            'copied' => 'تم النسخ',
+            'more_list_items' => 'و :count إضافية',
         ],
 
     ],
@@ -27,6 +23,7 @@ return [
         'search' => [
             'label' => 'بحث',
             'placeholder' => 'بحث',
+            'indicator' => 'بحث',
         ],
 
     ],
@@ -69,6 +66,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'الملخص',
+
+        'subheadings' => [
+            'all' => 'كافة :label',
+            'group' => 'ملخص :group',
+            'page' => 'هذه الصفحة',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'المتوسط',
+            ],
+
+            'count' => [
+                'label' => 'العدد',
+            ],
+
+            'sum' => [
+                'label' => 'المجموع',
+            ],
+
+        ],
+
+    ],
+
     'actions' => [
 
         'disable_reordering' => [
@@ -81,6 +106,10 @@ return [
 
         'filter' => [
             'label' => 'تصفية',
+        ],
+
+        'group' => [
+            'label' => 'مجموعة',
         ],
 
         'open_bulk_actions' => [
@@ -137,6 +166,30 @@ return [
             'with_trashed' => 'مع السجلات المحذوفة',
 
             'without_trashed' => 'بدون السجلات المحذوفة',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'تجميع حسب',
+                'placeholder' => 'تجميع حسب',
+            ],
+
+            'direction' => [
+
+                'label' => 'إتجاه التجميع',
+
+                'options' => [
+                    'asc' => 'تصاعدي',
+                    'desc' => 'تنازلي',
+                ],
+
+            ],
 
         ],
 
