@@ -79,7 +79,7 @@
             >
                 @if ($hasOffIcon())
                     <x-filament::icon
-                        :name="$getOffIcon()"
+                        :icon="$getOffIcon()"
                         @class([
                             'fi-ta-toggle-off-icon h-3 w-3',
                             match ($onColor) {
@@ -101,7 +101,7 @@
             >
                 @if ($hasOnIcon())
                     <x-filament::icon
-                        :name="$getOnIcon()"
+                        :icon="$getOnIcon()"
                         x-cloak="x-cloak"
                         @class([
                             'fi-ta-toggle-on-icon h-3 w-3',

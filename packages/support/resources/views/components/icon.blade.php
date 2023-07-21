@@ -1,17 +1,17 @@
 @props([
     'alias' => null,
     'class' => '',
-    'name' => null,
+    'icon' => null,
 ])
 
 @php
-    $name = ($alias ? \Filament\Support\Facades\FilamentIcon::resolve($alias) : null) ?: $name;
+    $icon = ($alias ? \Filament\Support\Facades\FilamentIcon::resolve($alias) : null) ?: $icon;
 @endphp
 
-@if ($name)
-    @svg($name, $class, array_filter($attributes->getAttributes()))
+@if (is_string($icon))
+    @svg($icon, $class, array_filter($attributes->getAttributes()))
 @else
     <div {{ $attributes->class($class) }}>
-        {{ $slot }}
+        {{ $icon ?? $slot }}
     </div>
 @endif

@@ -113,8 +113,8 @@
                 x-transition:enter-end="opacity-100"
             >
                 <x-filament::icon
-                    name="heroicon-o-bars-3"
                     alias="panels::sidebar.collapse-button.full"
+                    icon="heroicon-o-bars-3"
                     class="h-6 w-6"
                 />
             </button>

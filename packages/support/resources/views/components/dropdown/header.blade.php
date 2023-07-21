@@ -23,7 +23,7 @@
 >
     @if ($icon)
         <x-filament::icon
-            :name="$icon"
+            :icon="$icon"
             @class([
                 'fi-dropdown-header-icon',
                 match ($iconSize) {

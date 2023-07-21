@@ -18,7 +18,7 @@
                     </span>
 
                     <x-filament::icon
-                        :name="$icon"
+                        :icon="$icon"
                         :style="\Filament\Support\get_color_css_variables(json_decode($color) ?? 'gray', shades: [500])"
                         class="fi-ta-icon-count-summary-icon h-4 w-4 text-custom-500"
                     />

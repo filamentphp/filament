@@ -565,8 +565,8 @@
                                     >
                                         @if ($group->isCollapsible())
                                             <x-filament::icon
-                                                name="heroicon-m-chevron-up"
                                                 alias="tables::grouping.collapse-button"
+                                                icon="heroicon-m-chevron-up"
                                                 class="h-5 w-5 text-gray-600 transition dark:text-gray-300"
                                                 x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) && 'rotate-180'"
                                             />
@@ -1004,8 +1004,8 @@
                                             >
                                                 @if ($group->isCollapsible())
                                                     <x-filament::icon
-                                                        name="heroicon-m-chevron-up"
                                                         alias="tables::grouping.collapse-button"
+                                                        icon="heroicon-m-chevron-up"
                                                         class="h-5 w-5 text-gray-600 transition dark:text-gray-300"
                                                         x-bind:class="isGroupCollapsed({{ \Illuminate\Support\Js::from($recordGroupTitle) }}) && 'rotate-180'"
                                                     />

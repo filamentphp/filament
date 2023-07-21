@@ -96,7 +96,7 @@
             @if ($prefixIcon)
                 <x-filament::icon
                     :alias="$prefixIconAlias"
-                    :name="$prefixIcon"
+                    :icon="$prefixIcon"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                     :class="$affixIconClasses"
@@ -159,7 +159,7 @@
             @if ($suffixIcon)
                 <x-filament::icon
                     :alias="$suffixIconAlias"
-                    :name="$suffixIcon"
+                    :icon="$suffixIcon"
                     :class="$affixIconClasses"
                 />
             @endif

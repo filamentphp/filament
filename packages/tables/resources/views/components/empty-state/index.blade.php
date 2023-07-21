@@ -12,7 +12,7 @@
         class="fi-ta-empty-state-icon-ctn flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500 dark:bg-gray-700"
     >
         <x-filament::icon
-            :name="$icon"
+            :icon="$icon"
             wire:loading.remove.delay=""
             :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
             class="fi-ta-empty-state-icon h-6 w-6"

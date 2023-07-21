@@ -93,7 +93,7 @@
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
                 :alias="$iconAlias"
-                :name="$icon"
+                :icon="$icon"
                 :class="$iconClasses"
                 :style="$iconStyles"
             />
@@ -104,7 +104,7 @@
         @if ($icon && $iconPosition === 'after')
             <x-filament::icon
                 :alias="$iconAlias"
-                :name="$icon"
+                :icon="$icon"
                 :class="$iconClasses"
                 :style="$iconStyles"
             />
@@ -145,7 +145,7 @@
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
-                    :name="$icon"
+                    :icon="$icon"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                     :class="$iconClasses"
@@ -169,7 +169,7 @@
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
-                    :name="$icon"
+                    :icon="$icon"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                     :class="$iconClasses"

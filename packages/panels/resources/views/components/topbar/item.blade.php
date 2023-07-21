@@ -38,7 +38,7 @@
     >
         @if ($icon || $activeIcon)
             <x-filament::icon
-                :name="($active && $activeIcon) ? $activeIcon : $icon"
+                :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 @class([
                     'fi-topbar-item-icon h-5 w-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,

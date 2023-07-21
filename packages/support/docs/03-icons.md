@@ -43,11 +43,25 @@ If you have built a Filament plugin, your users may want to be able to customize
 
 ```blade
 <x-filament::icon
-    name="heroicon-m-magnifying-glass"
     alias="panels::topbar.global-search.field"
+    icon="heroicon-m-magnifying-glass"
     wire:target="search"
     class="h-5 w-5 text-gray-500 dark:text-gray-400"
 />
+```
+
+Alternatively, you may pass an SVG element into the component's slot instead of defining a default icon name:
+
+```blade
+<x-filament::icon
+    alias="panels::topbar.global-search.field"
+    wire:target="search"
+    class="h-5 w-5 text-gray-500 dark:text-gray-400"
+>
+    <svg>
+        <!-- ... -->
+    </svg>
+</x-filament::icon>
 ```
 
 ## Available icon aliases
@@ -69,6 +83,8 @@ If you have built a Filament plugin, your users may want to be able to customize
 - `panels::topbar.user-menu.theme-switcher.dark-button` - Button in the user menu to switch to the dark theme
 - `panels::topbar.user-menu.theme-switcher.system-button` - Button in the user menu to switch to the system theme
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
+- `panels::widgets.filament-info.documentation-link` - Link to visit the documentation from the Filament info widget
+- `panels::widgets.filament-info.github-link` - Link to visit GitHub from the Filament info widget
 
 ### Form Builder icon aliases
 

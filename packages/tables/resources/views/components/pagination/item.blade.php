@@ -28,7 +28,7 @@
     >
         @if ($icon)
             <x-filament::icon
-                :name="$icon"
+                :icon="$icon"
                 class="fi-ta-pagination-item-icon h-5 w-5 rtl:-scale-x-100"
             />
         @endif

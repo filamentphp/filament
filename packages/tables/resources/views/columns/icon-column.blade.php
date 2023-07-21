@@ -12,7 +12,7 @@
     @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)
         @if ($icon = $getIcon($state))
             <x-filament::icon
-                :name="$icon"
+                :icon="$icon"
                 :style="\Filament\Support\get_color_css_variables($getColor($state) ?? 'gray', shades: [500])"
                 @class([
                     'fi-ta-icon-icon text-custom-500',

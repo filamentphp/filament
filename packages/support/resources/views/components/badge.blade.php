@@ -48,7 +48,7 @@
     }}
 >
     @if ($icon && $iconPosition === 'before')
-        <x-filament::icon :name="$icon" :class="$iconClasses" />
+        <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 
     <span>
@@ -63,11 +63,11 @@
         >
             <x-filament::icon
                 alias="badge.delete-button"
-                name="heroicon-m-x-mark"
+                icon="heroicon-m-x-mark"
                 class="h-3.5 w-3.5"
             />
         </button>
     @elseif ($icon && $iconPosition === 'after')
-        <x-filament::icon :name="$icon" :class="$iconClasses" />
+        <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 </div>

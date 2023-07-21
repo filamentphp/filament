@@ -85,6 +85,10 @@
             'lg' => 'h-6 w-6',
             default => $iconSize,
         },
+        match ($color) {
+            'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500',
+        },
     ]);
 
     $badgeClasses = 'absolute -top-1 start-full -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
@@ -180,10 +184,10 @@
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
-                    :name="$icon"
-                    :class="$iconClasses"
+                    :icon="$icon"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
+                    :class="$iconClasses"
                 />
             @endif
 
@@ -223,10 +227,10 @@
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
-                    :name="$icon"
-                    :class="$iconClasses"
+                    :icon="$icon"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
+                    :class="$iconClasses"
                 />
             @endif
 
@@ -275,7 +279,7 @@
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
                 :alias="$iconAlias"
-                :name="$icon"
+                :icon="$icon"
                 :class="$iconClasses"
             />
         @endif
@@ -287,7 +291,7 @@
         @if ($icon && $iconPosition === 'after')
             <x-filament::icon
                 :alias="$iconAlias"
-                :name="$icon"
+                :icon="$icon"
                 :class="$iconClasses"
             />
         @endif
