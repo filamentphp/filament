@@ -83,6 +83,8 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::topbar.user-menu.theme-switcher.dark-button` - Button in the user menu to switch to the dark theme
 - `panels::topbar.user-menu.theme-switcher.system-button` - Button in the user menu to switch to the system theme
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
+- `panels::widgets.filament-info.documentation-link` - Link to visit the documentation from the Filament info widget
+- `panels::widgets.filament-info.github-link` - Link to visit GitHub from the Filament info widget
 
 ### Form Builder icon aliases
 
