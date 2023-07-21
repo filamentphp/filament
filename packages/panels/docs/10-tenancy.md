@@ -101,7 +101,7 @@ class RegisterTeam extends RegisterTenant
 }
 ```
 
-You may add any [form components](../forms/getting-started) to the `form()` method, and create the team inside the `handleRegistration()` method.
+You may add any [form components](../../forms/getting-started) to the `form()` method, and create the team inside the `handleRegistration()` method.
 
 Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
 
@@ -153,7 +153,7 @@ class EditTeamProfile extends EditTenantProfile
 }
 ```
 
-You may add any [form components](../forms/getting-started) to the `form()` method. They will get saved directly to the tenant model.
+You may add any [form components](../../forms/getting-started) to the `form()` method. They will get saved directly to the tenant model.
 
 Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
 

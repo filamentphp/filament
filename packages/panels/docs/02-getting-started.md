@@ -141,7 +141,7 @@ If you open the `PatientResource.php` file, you can see a `form()` method with a
 
 #### "Name" text input
 
-Filament contains a [large selection of form fields](../forms/fields) built-in. The most simple field to start with is the [text input](../forms/fields/text-input):
+Filament contains a [large selection of form fields](../../forms/fields/getting-started) built-in. The most simple field to start with is the [text input](../../forms/fields/text-input):
 
 ```php
 use Filament\Forms;
@@ -158,7 +158,7 @@ public static function form(Form $form): Form
 
 Visit `/admin/patients/create` (or click the "New patient" button), and observe that a form field for the patient's name has been added.
 
-This field is required in the database, and has a maximum length of 255 characters. We can add [validation rules](../forms/validation) to the field to ensure that these constraints are met when the user submits the form:
+This field is required in the database, and has a maximum length of 255 characters. We can add [validation rules](../../forms/validation) to the field to ensure that these constraints are met when the user submits the form:
 
 ```php
 use Filament\Forms;
@@ -172,7 +172,7 @@ Attempt to submit the form to create a new patient without a name, and observe t
 
 #### "Type" select
 
-Let's add a second field, for the type of patient - either a cat, dog or rabbit. Since there are a set of options that should be chosen from, it's best to use a [select](../forms/fields/select) field for this:
+Let's add a second field, for the type of patient - either a cat, dog or rabbit. Since there are a set of options that should be chosen from, it's best to use a [select](../../forms/fields/select) field for this:
 
 ```php
 use Filament\Forms;
@@ -213,7 +213,7 @@ Forms\Components\Select::make('type')
 
 #### "Date of birth" picker
 
-Since we have a `date_of_birth` column in our database, we will need to also add a field for that. A [date picker](../forms/fields/date-time-picker) is suitable:
+Since we have a `date_of_birth` column in our database, we will need to also add a field for that. A [date picker](../../forms/fields/date-time-picker) is suitable:
 
 ```php
 use Filament\Forms;
@@ -244,7 +244,7 @@ The field is required, and the date of birth cannot be in the future, so we can 
 
 #### "Owner" select
 
-When creating a pet, it'll be important to store its owner. This is already set up as a `BelongsTo` relationship, and we can easily load options from the `owners` table by using the [`relationship()` method of the select](../forms/fields/select#integrating-with-an-eloquent-relationship):
+When creating a pet, it'll be important to store its owner. This is already set up as a `BelongsTo` relationship, and we can easily load options from the `owners` table by using the [`relationship()` method of the select](../../forms/fields/select#integrating-with-an-eloquent-relationship):
 
 ```php
 use Filament\Forms;
@@ -332,7 +332,7 @@ If you open the `PatientResource.php` file, you can see a `table()` method with 
 
 #### Adding text columns
 
-Filament contains a [selection of table columns](../tables/columns) built-in. The most common column type is the [text column](../tables/columns/text). All of our fields can be added as text columns in our table:
+Filament contains a [selection of table columns](../../tables/columns) built-in. The most common column type is the [text column](../../tables/columns/text). All of our fields can be added as text columns in our table:
 
 ```php
 use Filament\Tables;
@@ -405,7 +405,7 @@ This will add a sort button to the column header, and clicking it will sort the 
 
 The `type` field could be searchable, but it's probably much better UX to add a select to filter this column with.
 
-Filament tables can have [filters](../tables/filters), which are components that allow you to scope the Eloquent query as a way to reduce the number of records in a table. Filters can even contain custom form components, which make them incredibly powerful to build interfaces with. While you could use a custom filter to render a select field, Filament includes a prebuilt [`SelectFilter`](../tables/filters#select-filters) that you can add to the `filters()` of the table:
+Filament tables can have [filters](../../tables/filters), which are components that allow you to scope the Eloquent query as a way to reduce the number of records in a table. Filters can even contain custom form components, which make them incredibly powerful to build interfaces with. While you could use a custom filter to render a select field, Filament includes a prebuilt [`SelectFilter`](../../tables/filters#select-filters) that you can add to the `filters()` of the table:
 
 ```php
 use Filament\Tables;
@@ -505,7 +505,7 @@ Forms\Components\TextInput::make('description')
     ->columnSpan('full')
 ```
 
-Let's add a `notes` field, which can be used to add more information about the treatment. We can use a [textarea](../forms/fields/textarea) for this:
+Let's add a `notes` field, which can be used to add more information about the treatment. We can use a [textarea](../../forms/fields/textarea) for this:
 
 ```php
 use Filament\Forms;
@@ -637,13 +637,13 @@ public function table(Table $table): Table
 
 ## Introducing widgets
 
-Filament has "widgets" - which are components that you can use to display information, especially statistics. Widgets typically get added to the Dashboard of the panel, but you can add them to any page you wish, including resource pages. Filament includes built-in widgets, like the [stats widget](../stats-overview) to render important statistics in a simple card, [chart widget](../widgets/charts) which can render an interactive chart, and [table widget](../panels/dashboard#table-widgets) which allows you to easily embed the table builder.
+Filament has "widgets" - which are components that you can use to display information, especially statistics. Widgets typically get added to the Dashboard of the panel, but you can add them to any page you wish, including resource pages. Filament includes built-in widgets, like the [stats widget](../../widgets/stats-overview) to render important statistics in a simple card, [chart widget](../../widgets/charts) which can render an interactive chart, and [table widget](../dashboard#table-widgets) which allows you to easily embed the table builder.
 
 In our system, we could add statistics for the type of patient, as well as treatments that are administered over time.
 
 ### Creating a stats widget
 
-Let's create a [stats widget](../widgets/stats-overview) to render patient types:
+Let's create a [stats widget](../../widgets/stats-overview) to render patient types:
 
 ```bash
 php artisan make:filament-widget PatientTypeOverview --stats-overview
@@ -730,10 +730,10 @@ Now, check out your widget in the dashboard.
 
 Now you've finished reading this guide, where to next? Here are some suggestions:
 
-- [Create custom pages in the panel that don't belong to resources.](pages)
-- [Learn more about adding action buttons to pages and resources, with modals to get user input or confirmation.](../actions/overview)
-- [Explore the available fields to collect input from your users.](../forms/fields/getting-started#available-fields)
-- [Check out the list of layout components to craft intuitive form structures with.](../forms/fields/getting-started#available-fields)
-- [Discover how to build complex, responsive table layouts without touching CSS.](../tables/layout)
-- [Add summaries to your tables, which give an overview of the data inside of them.](../tables/summaries)
-- [Write automated tests for your panel using our suite of helper methods.](testing)
+- [Create custom pages in the panel that don't belong to resources.](../pages)
+- [Learn more about adding action buttons to pages and resources, with modals to get user input or confirmation.](../../actions/overview)
+- [Explore the available fields to collect input from your users.](../../forms/fields/getting-started#available-fields)
+- [Check out the list of layout components to craft intuitive form structures with.](../../forms/fields/getting-started#available-fields)
+- [Discover how to build complex, responsive table layouts without touching CSS.](../../tables/layout)
+- [Add summaries to your tables, which give an overview of the data inside of them.](../../tables/summaries)
+- [Write automated tests for your panel using our suite of helper methods.](../testing)

@@ -40,9 +40,9 @@ public function mount(): void
 
 ## Adding actions to pages
 
-Actions are buttons that can perform tasks on the page, or visit a URL. You can read more about their capabilities [here](../actions).
+Actions are buttons that can perform tasks on the page, or visit a URL. You can read more about their capabilities [here](../../actions).
 
-Since all pages are Livewire components, you can [add actions](../actions/adding-an-action-to-a-livewire-component#adding-the-action) anywhere. Pages already have the `InteractsWithActions` trait, `HasActions` interface, and `<x-filament-actions::modals />` Blade component all set up for you.
+Since all pages are Livewire components, you can [add actions](../../actions/adding-an-action-to-a-livewire-component#adding-the-action) anywhere. Pages already have the `InteractsWithActions` trait, `HasActions` interface, and `<x-filament-actions::modals />` Blade component all set up for you.
 
 ### Header actions
 

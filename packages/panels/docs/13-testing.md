@@ -39,9 +39,9 @@ it('can render page', function () {
 
 ##### Table
 
-Filament includes a selection of helpers for testing tables. A full guide to testing tables can be found [in the Table Builder documentation](../tables/testing).
+Filament includes a selection of helpers for testing tables. A full guide to testing tables can be found [in the Table Builder documentation](../../tables/testing).
 
-To use a table [testing helper](../tables/testing), make assertions on the resource's List page class, which holds the table:
+To use a table [testing helper](../../tables/testing), make assertions on the resource's List page class, which holds the table:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -298,9 +298,9 @@ it('can render relation manager', function () {
 
 ##### Table
 
-Filament includes a selection of helpers for testing tables. A full guide to testing tables can be found [in the Table Builder documentation](../tables/testing).
+Filament includes a selection of helpers for testing tables. A full guide to testing tables can be found [in the Table Builder documentation](../../tables/testing).
 
-To use a table [testing helper](../tables/testing), make assertions on the relation manager class, which holds the table:
+To use a table [testing helper](../../tables/testing), make assertions on the relation manager class, which holds the table:
 
 ```php
 use function Pest\Livewire\livewire;

@@ -27,13 +27,13 @@ If you don't have one, you may create a new user account using:
 php artisan make:filament-user
 ```
 
-Visit your app at `/admin` to sign in, and you're now ready to start [building your app](getting-started)!
+Visit your app at `/admin` to sign in, and you're now ready to start [building your app](../getting-started)!
 
 ## Deploying to production
 
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
 
-Please see the [Users page](users#authorizing-access-to-the-admin-panel).
+Please see the [Users page](../users#authorizing-access-to-the-admin-panel).
 
 If you don't complete these steps, there will be a 403 error when you try to access the app in production.
 
