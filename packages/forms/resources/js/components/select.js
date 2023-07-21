@@ -212,7 +212,7 @@ export default function selectFormComponent({
             }
 
             return results.map((option) =>
-                this.state?.includes(option.value)
+                (![null, undefined, ''].includes(this.state)) && (this.state.includes(option.value))
                     ? ((option) => {
                           option.selected = true
 
