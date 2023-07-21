@@ -42,7 +42,7 @@ $databaseNotificationsPollingIntervalPhp = preg_match("/'database_notifications'
 if ($databaseNotificationsPollingIntervalPhp === '\'30s\'') {
     $databaseNotificationsPollingIntervalPhp = null;
 }
-$databaseNotificationsPollingIntervalPhp = $databaseNotificationsPollingIntervalPhp ? "\n            ->databaseNotificationsPollingInterval({$databaseNotificationsPollingIntervalPhp})" : '';
+$databaseNotificationsPollingIntervalPhp = $databaseNotificationsPollingIntervalPhp ? "\n            ->databaseNotificationsPolling({$databaseNotificationsPollingIntervalPhp})" : '';
 
 if (! file_exists('app/Providers/Filament')) {
     mkdir('app/Providers/Filament', 0777, true);

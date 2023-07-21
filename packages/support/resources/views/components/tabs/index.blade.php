@@ -9,7 +9,7 @@
                 'aria-label' => $label,
                 'role' => 'tablist',
             ])
-            ->class(['fi-tabs flex gap-x-1 overflow-x-auto'])
+            ->class(['fi-tabs flex max-w-full gap-x-1 overflow-x-auto'])
     }}
 >
     {{ $slot }}
