@@ -238,7 +238,7 @@ You may replace the default [heading](#customizing-the-page-heading), [subheadin
 ```php
 use Illuminate\Contracts\View\View;
 
-protected function getHeader(): View
+public function getHeader(): ?View
 {
     return view('filament.settings.custom-header');
 }
@@ -253,7 +253,7 @@ You may also add a footer to any page, below its content. You may return it from
 ```php
 use Illuminate\Contracts\View\View;
 
-protected function getFooter(): View
+public function getFooter(): ?View
 {
     return view('filament.settings.custom-footer');
 }
