@@ -204,6 +204,7 @@ return [
             'ordered_list' => 'لیست مرتب',
             'redo' => 'جلو',
             'strike' => 'خط زده',
+            'underline' => 'زیرخط',
             'undo' => 'عقب',
         ],
 
