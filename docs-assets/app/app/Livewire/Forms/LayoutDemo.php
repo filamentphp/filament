@@ -20,7 +20,6 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
-use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms
