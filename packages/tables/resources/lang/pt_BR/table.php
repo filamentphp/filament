@@ -21,8 +21,9 @@ return [
         ],
 
         'search' => [
-            'label' => 'Procurar',
-            'placeholder' => 'Procurar',
+            'label' => 'Pesquisar',
+            'placeholder' => 'Pesquisar',
+            'indicator' => 'Pesquisar',
         ],
 
     ],
@@ -65,6 +66,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'Resumo',
+
+        'subheadings' => [
+            'all' => 'Todos :label',
+            'group' => ':group resumo',
+            'page' => 'Esta página',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Média',
+            ],
+
+            'count' => [
+                'label' => 'Contagem',
+            ],
+
+            'sum' => [
+                'label' => 'Soma',
+            ],
+
+        ],
+
+    ],
+
     'actions' => [
 
         'disable_reordering' => [
@@ -77,6 +106,10 @@ return [
 
         'filter' => [
             'label' => 'Filtrar',
+        ],
+
+        'group' => [
+            'label' => 'Agrupar',
         ],
 
         'open_bulk_actions' => [
@@ -133,6 +166,30 @@ return [
             'with_trashed' => 'Exibir registros excluídos',
 
             'without_trashed' => 'Não exibir registros excluídos',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Agrupar por',
+                'placeholder' => 'Agrupar por',
+            ],
+
+            'direction' => [
+
+                'label' => 'Direção do agrupamento',
+
+                'options' => [
+                    'asc' => 'Ascendente',
+                    'desc' => 'Descendente',
+                ],
+
+            ],
 
         ],
 
