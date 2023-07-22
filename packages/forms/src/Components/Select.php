@@ -53,7 +53,11 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected string | Closure | null $createOptionModalHeading = null;
 
+    protected string | Closure | null $createOptionModalWidth = null;
+
     protected string | Closure | null $editOptionModalHeading = null;
+
+    protected string | Closure | null $editOptionModalWidth = null;
 
     protected ?Closure $modifyCreateOptionActionUsing = null;
 
@@ -259,6 +263,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             ->icon('heroicon-m-plus')
             ->iconButton()
             ->modalHeading($this->getCreateOptionModalHeading() ?? __('filament-forms::components.select.actions.create_option.modal.heading'))
+            ->modalWidth($this->createOptionModalWidth  ?? '4xl')
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.create_option.modal.actions.create.label'))
             ->extraModalFooterActions(fn (Action $action, Select $component): array => $component->isMultiple() ? [
                 $action->makeModalSubmitAction('createAnother', arguments: ['another' => true])
@@ -287,9 +292,23 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this;
     }
 
+    public function createOptionModalWidth(string | Closure | null $width = null): static
+    {
+        $this->createOptionModalWidth = $width;
+
+        return $this;
+    }
+
     public function editOptionModalHeading(string | Closure | null $heading): static
     {
         $this->editOptionModalHeading = $heading;
+
+        return $this;
+    }
+
+    public function editOptionModalWidth(string | Closure | null $width = null): static
+    {
+        $this->editOptionModalWidth = $width;
 
         return $this;
     }
@@ -400,6 +419,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             ->icon('heroicon-m-pencil-square')
             ->iconButton()
             ->modalHeading($this->getEditOptionModalHeading() ?? __('filament-forms::components.select.actions.edit_option.modal.heading'))
+            ->modalWidth($this->editOptionModalWidth ?? '4xl')
             ->modalSubmitActionLabel(__('filament-forms::components.select.actions.edit_option.modal.actions.save.label'));
 
         if ($this->modifyManageOptionActionsUsing) {
