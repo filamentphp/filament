@@ -7,7 +7,7 @@ title: Plugin development
 The basis of Filament plugins are Laravel packages. They are installed into your Filament project via Composer, and follow all the standard techniques, like using service providers to register routes, views, and translations. If you're new to Laravel package development, here are some resources that can help you grasp the core concepts:
 
 - [The Package Development section of the Laravel docs](https://laravel.com/docs/packages) serves as a great reference guide.
-- [Spatie's Package Training course](https://spatie.be/products/laravel-package-training) is a good instructional video series to each you the process step by step.
+- [Spatie's Package Training course](https://spatie.be/products/laravel-package-training) is a good instructional video series to teach you the process step by step.
 - [Spatie's Package Tools](https://github.com/spatie/laravel-package-tools) allows you to simplify your service provider classes using a fluent configuration object.
 
 Filament plugins build on top of the concepts of Laravel packages and allow you to ship and consume reusable features for any Filament panel. They can be added to each panel one at a time, and are also configurable differently per-panel.
@@ -157,7 +157,7 @@ Additionally, you can use the unique ID of the plugin to access any of its confi
 filament('blog')->hasAuthorResource()
 ```
 
-You may wish to have better type safety and IDE autocompletion when accessing configuration. It's completely up to you how you choose to achieve this, but one idea could be adding a static method to the plugin class to retrieve it:
+You may wish to have better type safety and IDE autocompletion when accessing the configuration. It's completely up to you how you choose to achieve this, but one idea could be adding a static method to the plugin class to retrieve it:
 
 ```php
 use Filament\Contracts\Plugin;
