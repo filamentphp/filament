@@ -63,10 +63,12 @@ You can tweak how the record is created with the `using()` method:
 use Illuminate\Database\Eloquent\Model;
 
 CreateAction::make()
-    ->using(function (array $data): Model {
-        return static::getModel()::create($data);
+    ->using(function (array $data, string $model): Model {
+        return $model::create($data);
     })
 ```
+
+`$model` is the class name of the model, but you can replace this with your own hard-coded class if you wish.
 
 ## Redirecting after creation
 

@@ -198,9 +198,9 @@ export default {
         },
         before: async (page) => {
             await page.click('#actionGroup button')
-            await page.waitForSelector('#actionGroup .filament-dropdown-list')
+            await page.waitForSelector('#actionGroup .fi-dropdown-list')
 
-            await page.hover('#actionGroup .filament-dropdown-list-item')
+            await page.hover('#actionGroup .fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -215,9 +215,9 @@ export default {
         },
         before: async (page) => {
             await page.click('#customizedActionGroup button')
-            await page.waitForSelector('#customizedActionGroup .filament-dropdown-list')
+            await page.waitForSelector('#customizedActionGroup .fi-dropdown-list')
 
-            await page.hover('#customizedActionGroup .filament-dropdown-list-item')
+            await page.hover('#customizedActionGroup .fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -232,9 +232,9 @@ export default {
         },
         before: async (page) => {
             await page.click('#actionGroupPlacement button')
-            await page.waitForSelector('#actionGroupPlacement .filament-dropdown-list')
+            await page.waitForSelector('#actionGroupPlacement .fi-dropdown-list')
 
-            await page.hover('#actionGroupPlacement .filament-dropdown-list-item')
+            await page.hover('#actionGroupPlacement .fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -249,9 +249,9 @@ export default {
         },
         before: async (page) => {
             await page.click('#nestedActionGroups button')
-            await page.waitForSelector('#nestedActionGroups .filament-dropdown-list')
+            await page.waitForSelector('#nestedActionGroups .fi-dropdown-list')
 
-            await page.hover('#nestedActionGroups .filament-dropdown-list-item')
+            await page.hover('#nestedActionGroups .fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -872,7 +872,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#builderIcons .filament-forms-builder-component-block-picker button')
+            await page.click('#builderIcons .fi-fo-builder-block-picker button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1192,7 +1192,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#tooltips .filament-infolists-text-entry')
+            await page.hover('#tooltips .fi-in-text')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1296,7 +1296,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#textCopyable .filament-infolists-text-entry-content')
+            await page.click('#textCopyable .fi-in-text-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         }
@@ -1436,7 +1436,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#colorCopyable .filament-infolists-color-entry-content')
+            await page.click('#colorCopyable .fi-in-color-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1738,7 +1738,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1762,8 +1762,8 @@ export default {
         },
         before: async (page) => {
             await page.click('thead input')
-            await page.click('.filament-dropdown-trigger')
-            await page.click('.filament-dropdown-list-item')
+            await page.click('.fi-dropdown-trigger')
+            await page.click('.fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1804,7 +1804,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-column-toggling button')
+            await page.click('.fi-ta-col-toggling button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         }
@@ -1818,7 +1818,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('[wire\\:key$="4.column.email_verified_at"] .filament-tables-column-wrapper')
+            await page.hover('[wire\\:key$="4.column.email_verified_at"] .fi-ta-col-wrp')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1931,7 +1931,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('[wire\\:key$="4.column.email"] .filament-tables-text-column-content')
+            await page.click('[wire\\:key$="4.column.email"] .fi-ta-text-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2071,7 +2071,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('[wire\\:key$="4.column.color"] .filament-tables-color-column-content')
+            await page.click('[wire\\:key$="4.column.color"] .fi-ta-color-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2121,7 +2121,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2135,7 +2135,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2149,7 +2149,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2163,7 +2163,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2241,8 +2241,8 @@ export default {
         },
         before: async (page) => {
             await page.click('thead input')
-            await page.click('.filament-dropdown-trigger')
-            await page.click('.filament-dropdown-list-item')
+            await page.click('.fi-dropdown-trigger')
+            await page.click('.fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2279,7 +2279,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2293,7 +2293,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2307,7 +2307,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2321,7 +2321,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2335,7 +2335,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2349,7 +2349,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2363,7 +2363,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2377,7 +2377,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('.filament-dropdown-trigger')
+            await page.hover('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2400,7 +2400,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-table-container .filament-icon-button')
+            await page.click('.fi-ta-content .fi-icon-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2531,7 +2531,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-table-container .filament-icon-button')
+            await page.click('.fi-ta-content .fi-icon-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2545,7 +2545,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-table-container .filament-icon-button')
+            await page.click('.fi-ta-content .fi-icon-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2655,7 +2655,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-icon-button')
+            await page.click('.fi-icon-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2669,7 +2669,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-button')
+            await page.click('.fi-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },

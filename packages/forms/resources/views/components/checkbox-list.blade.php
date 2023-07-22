@@ -157,7 +157,10 @@
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
                         x-show="
-                            $el.querySelector('.fi-fo-checkbox-list-option-label-text')
+                            $el.querySelector('.fi-fo-checkbox-list-option-label')
+                                .innerText.toLowerCase()
+                                .includes(search.toLowerCase()) ||
+                            $el.querySelector('.fi-fo-checkbox-list-option-description')
                                 .innerText.toLowerCase()
                                 .includes(search.toLowerCase())
                         "

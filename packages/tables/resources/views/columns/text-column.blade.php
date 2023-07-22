@@ -130,7 +130,7 @@
                                 "
                             @endif
                             @class([
-                                'fi-ta-text-content',
+                                'fi-ta-text-item',
                                 'cursor-pointer' => $itemIsCopyable,
                             ])
                         >
