@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Filament's fields can use [actions](../actions). They are buttons that can be added to any form component. For instance, you may want an action to call an API endpoint to generate content with AI, or to create a new option for a select dropdown. Also, you can render sets of actions on their own, that are not attached to a particular form component.
+Filament's forms can use [actions](../actions). They are buttons that can be added to any form component. For instance, you may want an action to call an API endpoint to generate content with AI, or to create a new option for a select dropdown. Also, you can [render anonymous sets of actions](#adding-anonymous-actions-to-a-form-without-attaching-them-to-a-component) on their own, that are not attached to a particular form component.
 
 ## Defining a form component action
 
@@ -41,12 +41,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 
 TextInput::make('cost')
+    ->prefix('€')
     ->suffixAction(
         Action::make('copyCostToPrice')
             ->icon('heroicon-m-clipboard')
             ->requiresConfirmation()
             ->action(function (Set $set, $state) {
-                $set('old_price', $state);
+                $set('price', $state);
             })
     )
 ```
@@ -64,12 +65,13 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
-    ->suffixActions([
+    ->prefix('€')
+    ->prefixActions([
+        Action::make('...'),
         Action::make('...'),
         Action::make('...'),
     ])
-    ->prefixActions([
-        Action::make('...'),
+    ->suffixActions([
         Action::make('...'),
         Action::make('...'),
     ])
@@ -85,12 +87,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Set;
 
 TextInput::make('cost')
+    ->prefix('€')
     ->hintAction(
         Action::make('copyCostToPrice')
             ->icon('heroicon-m-clipboard')
             ->requiresConfirmation()
             ->action(function (Set $set, $state) {
-                $set('old_price', $state);
+                $set('price', $state);
             })
     )
 ```
@@ -108,6 +111,7 @@ use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('cost')
+    ->prefix('€')
     ->hintActions([
         Action::make('...'),
         Action::make('...'),
@@ -230,6 +234,6 @@ Action::make('copyCostToPrice')
     ->icon('heroicon-m-clipboard')
     ->requiresConfirmation()
     ->action(function (Set $set, $state) {
-        $set('old_price', $state);
+        $set('price', $state);
     })
 ```

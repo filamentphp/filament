@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Infolists;
 
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Components\ColorEntry;
 use Filament\Infolists\Components\Group;
@@ -471,6 +472,36 @@ class EntriesDemo extends Component implements HasInfolists
                             ])
                             ->columns(2)
                             ->grid(2),
+                    ]),
+                Group::make()
+                    ->id('suffixAction')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('suffixAction')
+                            ->label('Cost')
+                            ->prefix('€')
+                            ->default('22.66')
+                            ->suffixAction(
+                                Action::make('copyCostToPrice')
+                                    ->icon('heroicon-m-clipboard'),
+                            ),
+                    ]),
+                Group::make()
+                    ->id('hintAction')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('hintAction')
+                            ->label('Cost')
+                            ->prefix('€')
+                            ->default('22.66')
+                            ->hintAction(
+                                Action::make('copyCostToPrice')
+                                    ->icon('heroicon-m-clipboard'),
+                            ),
                     ]),
             ])
             ->state([

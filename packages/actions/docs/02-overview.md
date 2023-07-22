@@ -80,6 +80,12 @@ These actions use the `Filament\Forms\Components\Actions\Action` class. They can
 
 If you're looking to add an action to a form component in your app, [visit this page](../forms/actions) in the docs.
 
+### Infolist component actions
+
+Infolist components can contain actions. These use the `Filament\Infolists\Components\Actions\Action` class. They can open a modal if you choose, or even just a URL.
+
+If you're looking to add an action to an infolist component in your app, [visit this page](../infolists/actions) in the docs.
+
 ### Notification actions
 
 When you [send notifications](../notifications/sending-notifications), you can add actions. These buttons are rendered below the content of the notification. For example, a notification to alert the user that they have a new message should contain an action button that opens the conversation thread.

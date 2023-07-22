@@ -1459,6 +1459,24 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/actions/suffix': {
+        url: 'infolists/entries',
+        selector: '#suffixAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/actions/hint': {
+        url: 'infolists/entries',
+        selector: '#hintAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/layout/fieldset/simple': {
         url: 'infolists/layout',
         selector: '#fieldset',
@@ -1561,6 +1579,42 @@ export default {
     'infolists/layout/split/simple': {
         url: 'infolists/layout',
         selector: '#split',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/actions/anonymous/simple': {
+        url: 'infolists/layout',
+        selector: '#anonymousActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/actions/anonymous/full-width': {
+        url: 'infolists/layout',
+        selector: '#anonymousActionsFullWidth',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/actions/anonymous/horizontally-aligned-center': {
+        url: 'infolists/layout',
+        selector: '#anonymousActionsHorizontallyAlignedCenter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/actions/anonymous/vertically-aligned-end': {
+        url: 'infolists/layout',
+        selector: '#anonymousActionsVerticallyAlignedEnd',
         viewport: {
             width: 1920,
             height: 640,

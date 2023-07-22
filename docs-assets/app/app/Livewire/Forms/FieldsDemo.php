@@ -1145,6 +1145,8 @@ class FieldsDemo extends Component implements HasForms
                     ->schema([
                         TextInput::make('suffixAction')
                             ->label('Cost')
+                            ->prefix('€')
+                            ->default('22.66')
                             ->suffixAction(
                                 Action::make('copyCostToPrice')
                                     ->icon('heroicon-m-clipboard'),
@@ -1158,6 +1160,8 @@ class FieldsDemo extends Component implements HasForms
                     ->schema([
                         TextInput::make('hintAction')
                             ->label('Cost')
+                            ->prefix('€')
+                            ->default('22.66')
                             ->hintAction(
                                 Action::make('copyCostToPrice')
                                     ->icon('heroicon-m-clipboard'),

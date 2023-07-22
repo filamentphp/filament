@@ -471,8 +471,8 @@ class LayoutDemo extends Component implements HasForms
                     ->schema([
                         Grid::make(2)
                             ->schema([
-                                Placeholder::make('fieldExample')
-                                    ->content(new HtmlString('<div class="h-9 rounded-lg bg-gray-100"></div>')),
+                                TextInput::make('stars')
+                                    ->default('4572100479'),
                                 Actions::make([
                                     Action::make('star')
                                         ->icon('heroicon-m-star'),
