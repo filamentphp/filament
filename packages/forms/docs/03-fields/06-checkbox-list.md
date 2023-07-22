@@ -230,3 +230,25 @@ CheckboxList::make('technologies')
     ->searchable()
     ->searchDebounce(500)
 ```
+
+## Customizing the checkbox list action objects
+
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
+
+- `selectAllAction()`
+- `deselectAllAction()`
+
+Here is an example of how you might customize an action:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        // ...
+    ])
+    ->selectAllAction(
+        fn (Action $action) => $action->label('Select all technologies'),
+    )
+```

@@ -81,7 +81,7 @@
             history.pushState(null, document.title, url.toString())
         },
     }"
-    x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
+    x-on:next-wizard-step.window="if ($event.detail.key === '{{ $getKey() }}') nextStep()"
     x-cloak
     {{
         $attributes
@@ -256,7 +256,7 @@
                 x-show="! isLastStep()"
                 x-cloak
             >
-                {{ $getAction('next') }}
+                {{ $getAction('next')(['step' => ]) }}
             </div>
 
             <div x-show="isLastStep()">

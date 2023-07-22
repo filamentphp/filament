@@ -61,6 +61,10 @@
         {
             "type": "path",
             "url": "../../packages/*"
+        },
+        {
+            "type": "path",
+            "url": "../../../../livewire"
         }
     ],
     "config": {

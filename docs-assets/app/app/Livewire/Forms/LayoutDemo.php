@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Forms;
 
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -17,6 +20,7 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms
@@ -416,6 +420,67 @@ class LayoutDemo extends Component implements HasForms
                         ])
                             ->statePath('card')
                             ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('anonymousActions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ]),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsFullWidth')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ])->fullWidth(),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsHorizontallyAlignedCenter')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ])->alignment('center'),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsVerticallyAlignedEnd')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Placeholder::make('fieldExample')
+                                    ->content(new HtmlString('<div class="h-9 rounded-lg bg-gray-100"></div>')),
+                                Actions::make([
+                                    Action::make('star')
+                                        ->icon('heroicon-m-star'),
+                                    Action::make('resetStars')
+                                        ->icon('heroicon-m-x-mark')
+                                        ->color('danger'),
+                                ])->verticalAlignment('end'),
+                            ]),
                     ]),
             ]);
     }

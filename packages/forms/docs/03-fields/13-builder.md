@@ -301,3 +301,53 @@ Builder::make('content')
     ->minItems(1)
     ->maxItems(5)
 ```
+
+## Customizing the builder action objects
+
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
+
+- `addAction()`
+- `addBetweenAction()`
+- `cloneAction()`
+- `collapseAction()`
+- `collapseAllAction()`
+- `deleteAction()`
+- `expandAction()`
+- `expandAllAction()`
+- `moveDownAction()`
+- `moveUpAction()`
+- `reorderAction()`
+
+Here is an example of how you might customize an action:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->collapseAllAction(
+        fn (Action $action) => $action->label('Collapse all content'),
+    )
+```
+
+### Confirming builder actions with a modal
+
+You can confirm actions with a modal by using the `requiresConfirmation()` method on the action object. You may use any [modal customization method](../../actions/modals) to change its content and behaviour:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Builder;
+
+Builder::make('content')
+    ->blocks([
+        // ...
+    ])
+    ->deleteAction(
+        fn (Action $action) => $action->requiresConfirmation(),
+    )
+```
+
+Please note that the `addAction()`, `addBetweenAction()`, `collapseAction()`, `collapseAllAction()`, `expandAction()`, `expandAllAction()` and `reorderAction()` methods do not support confirmation modals, as clicking their buttons does not make the network request that is required to show the modal.

@@ -948,13 +948,23 @@ export default {
             height: 640,
             deviceScaleFactor: 3,
         },
-        before: async (page) => {
-            // Ensure that the Markdown editor is visible otherwise its JS won't load.
-            await page.evaluate(() => {
-                document.querySelector('#colorPicker').scrollIntoView()
-            })
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+    },
+    'forms/fields/actions/suffix': {
+        url: 'forms/fields',
+        selector: '#suffixAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/actions/hint': {
+        url: 'forms/fields',
+        selector: '#hintAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
     'forms/layout/fieldset/simple': {
@@ -1086,6 +1096,42 @@ export default {
     'forms/layout/card/simple': {
         url: 'forms/layout',
         selector: '#card',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/actions/anonymous/simple': {
+        url: 'forms/layout',
+        selector: '#anonymousActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/actions/anonymous/full-width': {
+        url: 'forms/layout',
+        selector: '#anonymousActionsFullWidth',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/actions/anonymous/horizontally-aligned-center': {
+        url: 'forms/layout',
+        selector: '#anonymousActionsHorizontallyAlignedCenter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/actions/anonymous/vertically-aligned-end': {
+        url: 'forms/layout',
+        selector: '#anonymousActionsVerticallyAlignedEnd',
         viewport: {
             width: 1920,
             height: 640,
