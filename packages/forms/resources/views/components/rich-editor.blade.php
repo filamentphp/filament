@@ -62,11 +62,11 @@
                 <trix-toolbar
                     id="trix-toolbar-{{ $id }}"
                     @class([
-                        'relative flex gap-x-3 overflow-x-auto border-b border-gray-100 px-2.5 py-2 dark:border-white/10',
+                        'relative flex flex-col gap-x-3 border-b border-gray-100 px-2.5 py-2 dark:border-white/10',
                         'hidden' => ! count($getToolbarButtons()),
                     ])
                 >
-                    <div class="flex gap-x-3">
+                    <div class="flex gap-x-3 overflow-x-auto">
                         @if ($hasToolbarButton(['bold', 'italic', 'underline', 'strike', 'link']))
                             <x-filament-forms::rich-editor.toolbar.group
                                 data-trix-button-group="text-tools"
@@ -474,7 +474,7 @@
                     wire:ignore
                     {{
                         $getExtraInputAttributeBag()->class([
-                            'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert dark:text-white sm:text-sm sm:leading-6',
+                            'prose min-h-[theme(spacing.48)] max-w-none !border-none  focus:outline-none focus-visible:outline-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert dark:text-white sm:text-sm sm:leading-6',
                         ])
                     }}
                 ></trix-editor>

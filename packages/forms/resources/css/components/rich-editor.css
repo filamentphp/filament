@@ -1,3 +1,27 @@
+.fi-fo-rich-editor trix-toolbar .trix-dialogs {
+    position: relative;
+}
+
+.fi-fo-rich-editor trix-toolbar .trix-dialog {
+    @apply absolute inset-x-0 top-4 bottom-auto p-2 rounded-lg bg-gray-50 shadow-md dark:bg-gray-800;
+}
+
+.fi-fo-rich-editor trix-toolbar .trix-dialog__link-fields {
+    @apply w-full flex flex-col gap-2;
+}
+
+.fi-fo-rich-editor trix-toolbar .trix-dialog__link-fields .trix-button-group {
+    @apply flex gap-2;
+}
+
+.fi-fo-rich-editor trix-toolbar .trix-dialog__link-fields .trix-input {
+    @apply block w-full py-1.5 ps-3 pe-3 text-sm rounded-md text-gray-950 outline-none transition duration-75 ring-1 border-none ring-gray-950/10 bg-white placeholder:text-gray-400 dark:ring-white/20 dark:bg-gray-700 dark:text-white dark:placeholder:text-gray-500 focus-within:ring-primary-600 dark:focus-within:ring-primary-600 sm:text-sm sm:leading-6;
+}
+
+.fi-fo-rich-editor trix-toolbar .trix-dialog__link-fields .trix-button-group .trix-button {
+    @apply rounded-md py-0.5 px-2 text-xs ring-1 ring-gray-200 bg-gray-50 dark:ring-gray-600 dark:bg-gray-700;
+}
+
 .fi-fo-rich-editor trix-editor:empty::before {
     @apply text-gray-400 dark:text-gray-500;
     content: attr(placeholder);
