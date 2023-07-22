@@ -441,34 +441,28 @@ Select::make('type')
         ->getContainer()
         ->getComponent('dynamicTypeFields')
         ->getChildComponentContainer()
-        ->fill())
+        ->fill()),
     
 Grid::make(2)
     ->schema(function (Get $get): array {
-        $type = $get('type');
-        
-        if ($type === 'employee') {
-            return [
+        return match ($get('type')) {
+            'employee' => [
                 TextInput::make('employee_number')
                     ->required(),
                 FileUpload::make('badge')
                     ->image()
                     ->required(),
-            ];
-        }
-        
-        if ($type === 'freelancer') {
-            return [
+            ],
+            'freelancer' => [
                 TextInput::make('hourly_rate')
                     ->numeric()
                     ->required()
                     ->prefix('€'),
                 FileUpload::make('contract')
                     ->required(),
-            ];
-        }
-        
-        return [];
+            ],
+            default => []
+        };
     })
     ->key('dynamicTypeFields')
 ```
