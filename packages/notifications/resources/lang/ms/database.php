@@ -23,6 +23,24 @@ return [
             'description' => 'Sila semak semula kemudian',
         ],
 
+        'pagination' => [
+
+            'label' => 'Navigasi penomboran',
+
+            'actions' => [
+
+                'next' => [
+                    'label' => 'Seterusnya',
+                ],
+
+                'previous' => [
+                    'label' => 'Sebelumnya',
+                ],
+
+            ],
+
+        ],
+
     ],
 
 ];
