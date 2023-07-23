@@ -23,6 +23,7 @@ return [
         'search' => [
             'label' => 'جستجو',
             'placeholder' => 'جستجو',
+            'indicator' => 'جستجو',
         ],
 
     ],
@@ -65,6 +66,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'خلاصه',
+
+        'subheadings' => [
+            'all' => 'تمام :label',
+            'group' => ':group خلاصه',
+            'page' => 'این صفحه',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'میانگین',
+            ],
+
+            'count' => [
+                'label' => 'تعداد',
+            ],
+
+            'sum' => [
+                'label' => 'مجموع',
+            ],
+
+        ],
+
+    ],
+
     'actions' => [
 
         'disable_reordering' => [
@@ -77,6 +106,10 @@ return [
 
         'filter' => [
             'label' => 'فیلتر',
+        ],
+
+        'group' => [
+            'label' => 'گروه',
         ],
 
         'open_bulk_actions' => [
@@ -131,6 +164,30 @@ return [
             'with_trashed' => 'به همراه رکوردهای حذف‌شده',
 
             'without_trashed' => 'بدون رکوردهای حذف‌شده',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'گروه‌بندی براساس',
+                'placeholder' => 'گروه‌بندی براساس',
+            ],
+
+            'direction' => [
+
+                'label' => 'ترتیب گروه',
+
+                'options' => [
+                    'asc' => 'صعودی',
+                    'desc' => 'نزولی',
+                ],
+
+            ],
 
         ],
 

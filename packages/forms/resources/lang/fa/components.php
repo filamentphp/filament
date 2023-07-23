@@ -70,6 +70,125 @@ return [
 
     ],
 
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'لغو',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'حالت کشیدن «برش»',
+                ],
+
+                'drag_move' => [
+                    'label' => 'حالت کشیدن «حرکت»',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'برگردان افقی عکس',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'برگردان عمودی عکس',
+                ],
+
+                'move_down' => [
+                    'label' => 'به پایین بردن عکس',
+                ],
+
+                'move_left' => [
+                    'label' => 'به چپ بردن عکس',
+                ],
+
+                'move_right' => [
+                    'label' => 'به راست بردن عکس',
+                ],
+
+                'move_up' => [
+                    'label' => 'به بالا بردن عکس',
+                ],
+
+                'reset' => [
+                    'label' => 'بازنشانی',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'چرخاندن عکس به چپ',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'چرخاندن عکس به راست',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'تنظیم نسبت ابعاد به :ratio',
+                ],
+
+                'save' => [
+                    'label' => 'ذخیره',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'بزرگنمایی عکس به 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'بزرگنمایی',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'دورنمایی',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'ارتفاع',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'چرخش',
+                    'unit' => 'deg',
+                ],
+
+                'width' => [
+                    'label' => 'عرض',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'نسبت ابعاد',
+
+                'no_fixed' => [
+                    'label' => 'آزاد',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'actions' => [
@@ -106,15 +225,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'پیوستن فایل ها',
+            'blockquote' => 'نقل قول',
             'bold' => 'پررنگ',
             'bullet_list' => 'لیست نامرتب',
             'code_block' => 'بلاک کد',
-            'edit' => 'نوشتن',
+            'heading' => 'عنوان',
             'italic' => 'مورب',
             'link' => 'لینک',
             'ordered_list' => 'لیست مرتب',
-            'preview' => 'پیش نمایش',
+            'redo' => 'اَزنو',
             'strike' => 'خط زده',
+            'table' => 'جدول',
+            'undo' => 'واگرد',
         ],
 
     ],
@@ -220,6 +342,28 @@ return [
 
                         'create' => [
                             'label' => 'ساختن',
+                        ],
+
+                        'create_another' => [
+                            'label' => 'ساختن و ساختن یکی دیگر',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'ویرایش',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'ذخیره',
                         ],
 
                     ],

@@ -62,7 +62,7 @@ Wizard::make([
         size="sm"
     >
         Submit
-    </button>
+    </x-filament::button>
 BLADE)))
 ```
 
