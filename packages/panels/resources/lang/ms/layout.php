@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Urus langganan',
+        ],
+
         'logout' => [
             'label' => 'Log keluar',
         ],
@@ -38,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Tukar mod terang',
+            ],
+
+            'system' => [
+                'label' => 'Dayakan tema sistem',
             ],
 
         ],

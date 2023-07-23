@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Log masuk ke akaun anda',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'atau',
+            'label' => 'mendaftar akaun',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Lupa kata laluan?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
