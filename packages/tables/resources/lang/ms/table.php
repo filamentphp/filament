@@ -23,6 +23,7 @@ return [
         'search' => [
             'label' => 'Cari',
             'placeholder' => 'Carian',
+            'indicator' => 'Carian',
         ],
 
     ],
@@ -65,6 +66,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'Ringkasan',
+
+        'subheadings' => [
+            'all' => 'Semua :label',
+            'group' => ':group ringkasan',
+            'page' => 'Muka surat ini',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Purata',
+            ],
+
+            'count' => [
+                'label' => 'Bilangan',
+            ],
+
+            'sum' => [
+                'label' => 'Jumlah',
+            ],
+
+        ],
+
+    ],
+
     'actions' => [
 
         'disable_reordering' => [
@@ -77,6 +106,10 @@ return [
 
         'filter' => [
             'label' => 'Penapis',
+        ],
+
+        'group' => [
+            'label' => 'Kumpulan',
         ],
 
         'open_bulk_actions' => [
@@ -133,6 +166,30 @@ return [
             'with_trashed' => 'Dengan rekod yang dipadam',
 
             'without_trashed' => 'Tanpa rekod yang dipadam',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Kumpulan mengikut',
+                'placeholder' => 'Kumpulan mengikut',
+            ],
+
+            'direction' => [
+
+                'label' => 'Arah kumpulan',
+
+                'options' => [
+                    'asc' => 'Menaik',
+                    'desc' => 'Menurun',
+                ],
+
+            ],
 
         ],
 
