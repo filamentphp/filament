@@ -157,7 +157,7 @@ Additionally, you can use the unique ID of the plugin to access any of its confi
 filament('blog')->hasAuthorResource()
 ```
 
-You may wish to have better type safety and IDE autocompletion when accessing the configuration. It's completely up to you how you choose to achieve this, but one idea could be adding a static method to the plugin class to retrieve it:
+You may wish to have better type safety and IDE autocompletion when accessing configuration. It's completely up to you how you choose to achieve this, but one idea could be adding a static method to the plugin class to retrieve it:
 
 ```php
 use Filament\Contracts\Plugin;
