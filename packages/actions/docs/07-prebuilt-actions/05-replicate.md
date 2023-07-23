@@ -31,7 +31,7 @@ public function table(Table $table): Table
 
 ## Excluding attributes
 
-The `excludeAttributes()` method is used to instruct the action on which columns to be excluded from replication:
+The `excludeAttributes()` method is used to instruct the action which columns should be excluded from replication:
 
 ```php
 ReplicateAction::make()
