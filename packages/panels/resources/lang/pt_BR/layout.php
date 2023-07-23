@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Gerenciar assinatura',
+        ],
+
         'logout' => [
             'label' => 'Logout',
         ],
@@ -15,7 +19,7 @@ return [
         ],
 
         'open_user_menu' => [
-            'label' => 'menu do usuário',
+            'label' => 'Menu do usuário',
         ],
 
         'sidebar' => [
@@ -33,11 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Mudar para modo escuro',
+                'label' => 'Mudar para tema escuro',
             ],
 
             'light' => [
-                'label' => 'Mudar para modo claro',
+                'label' => 'Mudar para tema claro',
+            ],
+
+            'system' => [
+                'label' => 'Mudar para tema do sistema',
             ],
 
         ],

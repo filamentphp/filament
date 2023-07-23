@@ -19,8 +19,26 @@ return [
         ],
 
         'empty' => [
-            'heading' => 'Sem notificações aqui',
-            'description' => 'Por favor, verifique mais tarde',
+            'heading' => 'Sem notificações',
+            'description' => 'Por favor, verifique mais tarde.',
+        ],
+
+        'pagination' => [
+
+            'label' => 'Paginação',
+
+            'actions' => [
+
+                'next' => [
+                    'label' => 'Próximo',
+                ],
+
+                'previous' => [
+                    'label' => 'Anterior',
+                ],
+
+            ],
+
         ],
 
     ],

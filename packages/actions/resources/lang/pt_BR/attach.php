@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Vincular e Vincular outro',
+                    'label' => 'Salvar e vincular outro',
                 ],
 
             ],
@@ -33,7 +33,7 @@ return [
         ],
 
         'messages' => [
-            'attached' => 'Vinculado!',
+            'attached' => 'Vinculado',
         ],
 
     ],

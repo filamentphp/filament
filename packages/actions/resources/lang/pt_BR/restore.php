@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Restaurar selecionado :label',
+            'heading' => 'Restaurar :label selecionado',
 
             'actions' => [
 
@@ -45,7 +45,7 @@ return [
         ],
 
         'messages' => [
-            'restored' => 'Restored',
+            'restored' => 'Restaurado',
         ],
 
     ],
