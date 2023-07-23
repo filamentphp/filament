@@ -113,7 +113,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
         $action
             ->authorize($resource::canCreate())
             ->model($this->getModel())
-            ->modelLabel($this->getModelLabel())
+            ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->form(fn (Form $form): Form => $this->form($form->columns(2)))
             ->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
 
