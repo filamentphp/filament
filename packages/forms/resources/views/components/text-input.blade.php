@@ -29,7 +29,10 @@
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
         class="fi-fo-text-input"
-        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class(['overflow-hidden'])
+        "
     >
         <x-filament::input
             :attributes="
