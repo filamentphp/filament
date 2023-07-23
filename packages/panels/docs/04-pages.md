@@ -40,9 +40,9 @@ public function mount(): void
 
 ## Adding actions to pages
 
-Actions are buttons that can perform tasks on the page, or visit a URL. You can read more about their capabilities [here](../actions).
+Actions are buttons that can perform tasks on the page, or visit a URL. You can read more about their capabilities [here](../../actions/installation).
 
-Since all pages are Livewire components, you can [add actions](../actions/adding-an-action-to-a-livewire-component#adding-the-action) anywhere. Pages already have the `InteractsWithActions` trait, `HasActions` interface, and `<x-filament-actions::modals />` Blade component all set up for you.
+Since all pages are Livewire components, you can [add actions](../../actions/adding-an-action-to-a-livewire-component#adding-the-action) anywhere. Pages already have the `InteractsWithActions` trait, `HasActions` interface, and `<x-filament-actions::modals />` Blade component all set up for you.
 
 ### Header actions
 
@@ -65,7 +65,7 @@ protected function getHeaderActions(): array
 
 ### Refreshing form data
 
-If you're using actions on an [Edit](resources/editing-records) or [View](resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
+If you're using actions on an [Edit](../resources/editing-records) or [View](../resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
 
 ```php
 use Filament\Actions\Action;
@@ -84,7 +84,7 @@ This method accepts an array of model attributes that you wish to refresh in the
 
 ## Adding widgets to pages
 
-Filament allows you to display [widgets](dashboard) inside pages, below the header and above the footer.
+Filament allows you to display [widgets](../resources/dashboard) inside pages, below the header and above the footer.
 
 To add a widget to a page, use the `getHeaderWidgets()` or `getFooterWidgets()` methods:
 
@@ -101,7 +101,7 @@ protected function getHeaderWidgets(): array
 
 `getHeaderWidgets()` returns an array of widgets to display above the page content, whereas `getFooterWidgets()` are displayed below.
 
-If you'd like to learn how to build and customize widgets, check out the [Dashboard](dashboard) documentation section.
+If you'd like to learn how to build and customize widgets, check out the [Dashboard](../dashboard) documentation section.
 
 ### Customizing the widgets grid
 
@@ -130,7 +130,7 @@ protected function getHeaderWidgetsColumns(): int | array
 }
 ```
 
-This pairs well with [responsive widget widths](dashboard#responsive-widget-widths).
+This pairs well with [responsive widget widths](../dashboard#responsive-widget-widths).
 
 #### Passing data to widgets from the page
 
@@ -174,7 +174,7 @@ public function getTitle(): string | Htmlable
 
 ## Customizing the page navigation label
 
-By default, Filament will use the page's [title](#customizing-the-page-title) as its [navigation](navigation) item label. You may override this by defining a `$navigationLabel` property on your page class:
+By default, Filament will use the page's [title](#customizing-the-page-title) as its [navigation](../navigation) item label. You may override this by defining a `$navigationLabel` property on your page class:
 
 ```php
 protected static ?string $navigationLabel = 'Custom Navigation Label';

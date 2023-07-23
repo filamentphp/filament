@@ -12,9 +12,9 @@ The following document will explain how to use these widgets to assemble a dashb
 
 Filament ships with these widgets:
 
-- [Stats overview](../widgets/stats-overview) widgets display any data, often numeric data, within cards in a row.
-- [Chart](../widgets/charts) widgets display numeric data in a visual chart.
-- [Table](#table-widgets) widgets which display a [table](../tables/getting-started) on your dashboard.
+- [Stats overview](../../widgets/stats-overview) widgets display any data, often numeric data, within cards in a row.
+- [Chart](../../widgets/charts) widgets display numeric data in a visual chart.
+- [Table](#table-widgets) widgets which display a [table](../../tables/getting-started) on your dashboard.
 
 You may also [create your own custom widgets](#custom-widgets) which can then have a consistent design with Filament's prebuilt widgets.
 
@@ -97,7 +97,7 @@ You may easily add tables to your dashboard. Start by creating a widget with the
 php artisan make:filament-widget LatestOrders --table
 ```
 
-You may now [customize the table](../tables/getting-started) by editing the widget file.
+You may now [customize the table](../../tables/getting-started) by editing the widget file.
 
 ## Custom widgets
 
@@ -111,7 +111,7 @@ This command will create two files - a widget class in the `/Widgets` directory 
 
 ## Disabling the default widgets
 
-By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](configuration):
+By default, two widgets are displayed on the dashboard. These widgets can be disabled by updating the `widgets()` array of the [configuration](../configuration):
 
 ```php
 use Filament\Panel;
@@ -141,7 +141,7 @@ class Dashboard extends BasePage
 }
 ```
 
-Finally, remove the original `Dashboard` class from [configuration file](configuration):
+Finally, remove the original `Dashboard` class from [configuration file](../configuration):
 
 ```php
 use Filament\Panel;

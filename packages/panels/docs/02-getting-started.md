@@ -141,7 +141,7 @@ If you open the `PatientResource.php` file, you can see a `form()` method with a
 
 #### "Name" text input
 
-Filament contains a [large selection of form fields](../forms/fields) built-in. The most simple field to start with is the [text input](../forms/fields/text-input):
+Filament contains a [large selection of form fields](../forms/fields/getting-started) built-in. The most simple field to start with is the [text input](../forms/fields/text-input):
 
 ```php
 use Filament\Forms;
@@ -332,7 +332,7 @@ If you open the `PatientResource.php` file, you can see a `table()` method with 
 
 #### Adding text columns
 
-Filament contains a [selection of table columns](../tables/columns) built-in. The most common column type is the [text column](../tables/columns/text). All of our fields can be added as text columns in our table:
+Filament contains a [selection of table columns](../tables/columns/getting-started) built-in. The most common column type is the [text column](../tables/columns/text). All of our fields can be added as text columns in our table:
 
 ```php
 use Filament\Tables;
@@ -354,7 +354,7 @@ Note that for the owner column, we don't use `owner_id` as the text column name.
 
 ##### Making columns searchable
 
-[Searching](columns/getting-started#searching) through patients in this table would be useful. Patient results should be found by searching for their name, or their owner's name. You can make these columns `searchable()`:
+[Searching](tables/columns/getting-started#searching) through patients in this table would be useful. Patient results should be found by searching for their name, or their owner's name. You can make these columns `searchable()`:
 
 ```php
 use Filament\Tables;
@@ -378,7 +378,7 @@ Now, there will be a search input in the table, and you will be able to filter r
 
 ##### Making the columns sortable
 
-Patients could be [sorted](columns/getting-started#sorting) by their age, by making the `date_of_birth` column `sortable()`:
+Patients could be [sorted](tables/columns/getting-started#sorting) by their age, by making the `date_of_birth` column `sortable()`:
 
 ```php
 use Filament\Tables;
@@ -637,7 +637,7 @@ public function table(Table $table): Table
 
 ## Introducing widgets
 
-Filament has "widgets" - which are components that you can use to display information, especially statistics. Widgets typically get added to the Dashboard of the panel, but you can add them to any page you wish, including resource pages. Filament includes built-in widgets, like the [stats widget](../stats-overview) to render important statistics in a simple card, [chart widget](../widgets/charts) which can render an interactive chart, and [table widget](../panels/dashboard#table-widgets) which allows you to easily embed the table builder.
+Filament has "widgets" - which are components that you can use to display information, especially statistics. Widgets typically get added to the Dashboard of the panel, but you can add them to any page you wish, including resource pages. Filament includes built-in widgets, like the [stats widget](../widgets/stats-overview) to render important statistics in a simple card, [chart widget](../widgets/charts) which can render an interactive chart, and [table widget](../panels/dashboard#table-widgets) which allows you to easily embed the table builder.
 
 In our system, we could add statistics for the type of patient, as well as treatments that are administered over time.
 

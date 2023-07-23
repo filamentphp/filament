@@ -230,7 +230,7 @@ Now, users will be redirected to the billing page if they don't have an active s
 
 #### Requiring a subscription for specific resources and pages
 
-Sometimes, you may wish to only require a subscription for certain [resources](resources) and [pages](pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
+Sometimes, you may wish to only require a subscription for certain [resources](resources/getting-started) and [pages](pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
 
 ```php
 public static function isTenantSubscriptionRequired(Panel $panel): bool

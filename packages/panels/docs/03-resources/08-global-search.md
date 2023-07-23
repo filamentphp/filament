@@ -63,7 +63,7 @@ public static function getGlobalSearchEloquentQuery(): Builder
 
 ## Customizing global search result URLs
 
-Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-page) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
+Global search results will link to the [Edit page](editing-records) of your resource, or the [View page](viewing-records) if the user does not have [edit permissions](editing-records#authorization). To customize this, you may override the `getGlobalSearchResultUrl()` method and return a route of your choice:
 
 ```php
 public static function getGlobalSearchResultUrl(Model $record): string
@@ -124,9 +124,9 @@ protected static int $globalSearchResultsLimit = 20;
 
 ## Disabling global search
 
-As [explained above](#title), global search is automatically enables once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
+As [explained above](#setting-global-search-result-titles), global search is automatically enables once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
 
-This can be achieved by disabling global search in the [configuration](configuration):
+This can be achieved by disabling global search in the [configuration](../configuration):
 
 ```php
 use Filament\Panel;
@@ -141,7 +141,7 @@ public function panel(Panel $panel): Panel
 
 ## Registering global search keybindings
 
-The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](configuration):
+The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](../configuration):
 
 ```php
 use Filament\Panel;
