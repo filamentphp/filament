@@ -328,7 +328,9 @@ render(<<<HTML
     </p>
 HTML);
 
-exec("vendor/bin/rector process {$appDirectory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
+$rectorBin = implode(DIRECTORY_SEPARATOR, ['vendor', 'bin', 'rector']);
+
+exec("{$rectorBin} process {$appDirectory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
 
 render(<<<HTML
     <p class="pt-2">
