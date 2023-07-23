@@ -89,7 +89,7 @@ if (file_exists('config/notifications.php')) {
 
     render(<<<HTML
         <p>
-            Removed <stong>config/notifications.php</stong>. All config files have been merged into <strong>config/filament.php</strong>.
+            Removed <strong>config/notifications.php</strong>. All config files have been merged into <strong>config/filament.php</strong>.
         </p>
     HTML);
 }
