@@ -10,7 +10,7 @@
 
 <div class="fi-resource-relation-managers flex flex-col gap-y-4">
     @php
-        $normalizeRelationManagerClass = function (null | string | Filament\Resources\RelationManagers\RelationManagerConfiguration $manager): ?string {
+        $normalizeRelationManagerClass = function (string | Filament\Resources\RelationManagers\RelationManagerConfiguration $manager): ?string {
             if ($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) {
                 return $manager->relationManager;
             }
@@ -38,7 +38,7 @@
                     if ($isGroup) {
                         $manager->ownerRecord($ownerRecord);
                         $manager->pageClass($pageClass);
-                    } else {
+                    } elseif (filled($tabKey)) {
                         $manager = $normalizeRelationManagerClass($manager);
                     }
                 @endphp
