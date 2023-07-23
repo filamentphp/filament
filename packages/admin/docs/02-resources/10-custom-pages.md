@@ -22,6 +22,8 @@ public static function getPages(): array
 }
 ```
 
+Please note that the order of pages registered in this method matters - any wildcard route segments that are defined before hard-coded ones will be matched by Laravel's router first.
+
 Any [parameters](https://laravel.com/docs/routing#route-parameters) defined in the route's path will be available to the page class, in an identical way to [Livewire](https://laravel-livewire.com/docs/rendering-components#route-params).
 
 To generate a URL for a resource route, you may call the static `getUrl()` method on the resource class:
