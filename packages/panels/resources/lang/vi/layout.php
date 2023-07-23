@@ -37,11 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Chuyển chế độ tối',
+                'label' => 'Bật chế độ tối',
             ],
 
             'light' => [
-                'label' => 'Chuyển chế độ sáng',
+                'label' => 'Bật chế độ sáng',
+            ],
+
+            'system' => [
+                'label' => 'Bật chế độ theo hệ thống',
             ],
 
         ],

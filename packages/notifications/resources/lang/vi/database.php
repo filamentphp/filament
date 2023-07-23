@@ -23,6 +23,24 @@ return [
             'description' => 'Vui lòng kiểm tra lại sau',
         ],
 
+        'pagination' => [
+
+            'label' => 'Điều hướng phân trang',
+
+            'actions' => [
+
+                'next' => [
+                    'label' => 'Kế tiếp',
+                ],
+
+                'previous' => [
+                    'label' => 'Trước',
+                ],
+
+            ],
+
+        ],
+
     ],
 
 ];
