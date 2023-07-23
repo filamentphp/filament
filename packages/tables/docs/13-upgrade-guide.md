@@ -65,8 +65,6 @@ The Heroicons library has been updated to v2. This means that any icons you use 
 
 Filament v2 had a `secondary` color for many components which was gray. All references to `secondary` should be replaced with `gray` to preserve the same appearance. This frees `secondary` to be registered to a new custom color of your choice.
 
-#### BadgeColumn enum has been removed
+#### `BadgeColumn::enum()` removed
 
-BadgeColumn enum function has been removed. One possible workaround is to use custom formatting.
-
-
+You can use a `formatStateUsing()` function to transform text.
