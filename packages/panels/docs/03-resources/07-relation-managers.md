@@ -497,12 +497,12 @@ public static function getRelations(): array
 
 By default, relation managers will be visible if the `viewAny()` method for the related model policy returns `true`.
 
-You may use the `canView()` method to determine if the relation manager should be visible for a specific owner record and page:
+You may use the `canViewForRecord()` method to determine if the relation manager should be visible for a specific owner record and page:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
 
-public static function canView(Model $ownerRecord, string $pageClass): bool
+public static function canViewForRecord(Model $ownerRecord, string $pageClass): bool
 {
     return $ownerRecord->status === Status::Draft;
 }
