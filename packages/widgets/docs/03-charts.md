@@ -4,7 +4,7 @@ title: Chart widgets
 
 ## Overview
 
-Filament comes with many "chart" widget template, which you can use to display real-time, interactive charts.
+Filament comes with many "chart" widget templates, which you can use to display real-time, interactive charts.
 
 Start by creating a widget with the command:
 
@@ -16,7 +16,7 @@ There are several chart classes available, but we'll use the `LineChartWidget` c
 
 The `getHeading()` method is used to return a heading that describes the chart.
 
-The `getData()` method is used to return an array of datasets and labels. Each dataset is a labeled array of points to plot on the chart, and each label is a string. This structure is identical with the [Chart.js](https://www.chartjs.org/docs) library, which Filament uses to render charts. You may use the [Chart.js documentation](https://www.chartjs.org/docs) to fully understand the possibilities to return from `getData()`, based on the chart type.
+The `getData()` method is used to return an array of datasets and labels. Each dataset is a labeled array of points to plot on the chart, and each label is a string. This structure is identical to the [Chart.js](https://www.chartjs.org/docs) library, which Filament uses to render charts. You may use the [Chart.js documentation](https://www.chartjs.org/docs) to fully understand the possibilities to return from `getData()`, based on the chart type.
 
 ```php
 <?php
@@ -51,7 +51,7 @@ Now, check out your widget in the dashboard.
 
 ## Available chart types
 
-Below is a list of available chart widget classes which you may extend, and their corresponding [Chart.js](https://www.chartjs.org/docs) documentation page, for inspiration what to return from `getData()`:
+Below is a list of available chart widget classes which you may extend, and their corresponding [Chart.js](https://www.chartjs.org/docs) documentation page, for inspiration on what to return from `getData()`:
 
 - `Filament\Widgets\BarChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/bar)
 - `Filament\Widgets\BubbleChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/bubble)
@@ -167,7 +167,7 @@ protected static ?array $options = [
 ];
 ```
 
-Alternative, you can override the `getOptions()` method to return a dynamic array of options:
+Alternatively, you can override the `getOptions()` method to return a dynamic array of options:
 
 ```php
 protected function getOptions(): array
