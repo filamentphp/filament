@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'مدیریت آبونمان',
+        ],
+
         'logout' => [
             'label' => 'خروج',
         ],
@@ -38,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'حالت روشن',
+            ],
+
+            'system' => [
+                'label' => 'حالت سیستم',
             ],
 
         ],
