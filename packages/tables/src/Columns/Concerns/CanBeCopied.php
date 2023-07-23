@@ -54,7 +54,11 @@ trait CanBeCopied
 
     public function getCopyableState(): ?string
     {
-        return $this->evaluate($this->copyableState) ?? $this->getState();
+        $state = $this->getState();
+
+        return $this->evaluate($this->copyableState, [
+            'state' => $state,
+        ]) ?? $state;
     }
 
     public function isCopyable(): bool
