@@ -25,6 +25,19 @@ Before we dive into the specifics of building plugins, there are a few concepts 
 2. [Spatie Package Tools](https://github.com/spatie/laravel-package-tools)
 3. [Filament Asset Management](/docs/3.x/support/assets)
 
+### The Plugin object
+
+Filament v3 introduces the concept of a Plugin object that is used to configure the plugin. This object is a simple PHP class that extends the `Filament\Support\Plugin` class. This class is used to configure the plugin and is the main entry point for the plugin. It is also used to register Resources and Icons that might be used by your plugin.
+
+While the plugin object is extremely helpful, it is not required to build a plugin. You can still build plugins without using the plugin object as you can see in the [Building a Panel Plugin](/docs/3.x/support/plugins/build-a-panel-plugin) tutorial.
+
+> **Info** 
+> The Plugin object is only used for Panel Providers. Standalone Plugins do not use this object. All configuration for Standalone Plugins should be handled in the plugin's service provider.
+
+### Registering Assets
+
+All [asset registration](/docs/3.x/support/assets), including CSS, JS and Alpine Components, should be done through the plugin's service provider in the `packageBooted()` method. This allows Filament to register the assets with the Asset Manager and load them when needed.
+
 ## Creating a Plugin
 
 While you can certainly build plugins from scratch, we recommend using the [Filament Plugin Skeleton](https://github.com/filamentphp/plugin-skeleton) to quickly get started. This skeleton includes all the necessary boilerplate to get you up and running quickly.
@@ -38,3 +51,31 @@ php ./configure.php
 ```
 
 This will ask you a series of questions to configure the plugin. Once you've answered all the questions the script will stub out a new plugin for you and you can begin to build your amazing new extension for Filament.
+
+## Upgrading existing plugins
+
+Since every plugin varies greatly in its scope of use and functionality, there is no one size fits all approach to upgrading existing plugins. However, one thing to note, that is consistent to all plugins is the deprecation of the `PluginServiceProvider`.
+
+In you plugin service provider you will need to change it to extend the PackageServiceProvider instead. You will also need to add a static `$name` property to the service provider. This property is used to register the plugin with Filament. Here is an example of what your service provider might look like:
+
+```php
+class MyPluginServiceProvider extends PackageServiceProvider
+{
+    public static string $name = 'my-plugin';
+
+    public function configurePackage(Package $package): void
+    {
+        $package->name(static::$name);
+    }
+}
+```
+
+### Helpful links
+
+Please read this guide in its entirety before upgrading your plugin. It will help you understand the concepts and how to build your plugin.
+
+1. [Filament Asset Management](/docs/3.x/support/assets)
+2. [Panel Plugin Development](/docs/3.x/panels/plugins)
+3. [Icon Management](docs/3.x/support/icons)
+4. [Colors Management](docs/3.x/support/colors)
+5. [Stying Customization](docs/3.x/support/style-customization)

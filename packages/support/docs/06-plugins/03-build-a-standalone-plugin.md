@@ -8,7 +8,7 @@ Please read the docs on [panel plugin development](/docs/3.x/panels/plugins/) an
 
 ## Overview
 
-In this walkthrough we'll build a simple plugin that adds a new form field that can be used in forms. This also means it will be available to users in their panels.
+In this walkthrough we'll build a simple plugin that adds a new form component that can be used in forms. This also means it will be available to users in their panels.
 
 You can find the final code for this plugin at [https://github.com/awcodes/headings](https://github.com/awcodes/headings).
 
@@ -21,20 +21,12 @@ First we'll create the plugin using the steps outlined in the [getting started g
 Next we'll clean up the plugin to remove the boilerplate code we don't need. This will see like a lot, but since this is a simple plugin we can remove a lot of the boilerplate code.
 
 Remove the following directories and files:
+1. `bin`
 1. `config`
 1. `database`
 1. `src/Commands`
 1. `src/Facades`
 1. `stubs`
-
-Since our plugin doesn't have any settings or additional methods needed for functionality we can also remove the `ClockWidgetPlugin.php` file.
-
-1. `ClockWidgetPlugin.php`
-
-Since Filament v3 recommends that users style their plugins with a custom filament theme we'll remove the files needed for using css in the plugin. This is optional, and you can still use css if you want, but it is not recommended.
-
-1. `resources/css`
-1. `postcss.config.js`
 1. `tailwind.config.js`
 
 Now we can clean up our `composer.json` file to remove unneeded options.
@@ -43,154 +35,246 @@ Now we can clean up our `composer.json` file to remove unneeded options.
 "autoload": {
     "psr-4": {
         // We can remove the database factories
-        "Awcodes\\ClockWidget\\Database\\Factories\\": "database/factories/"
+        "Awcodes\\Headings\\Database\\Factories\\": "database/factories/"
     }
 },
 "extra": {
     "laravel": {
         // We can remove the facade
         "aliases": {
-            "ClockWidget": "Awcodes\\ClockWidget\\Facades\\ClockWidget"
+            "Headings": "Awcodes\\Headings\\Facades\\ClockWidget"
         }
     }
 },
 ```
 
-Last step is to update the `package.json` file to remove unneeded options. Replace the contents of `package.json` with the following.
+Normally, Filament v3 recommends that users style their plugins with a custom filament theme, but for the sake of example let's provide our own stylesheet that can be loaded asynchronously using the new `x-load` features in Filament v3. So, let's update our `package.json` file to include cssnano, postcss, postcss-cli and postcss-nesting to build our stylesheet.
 
 ```json
 {
     "private": true,
-    "type": "module",
     "scripts": {
-        "dev": "node bin/build.js --dev",
-        "build": "node bin/build.js"
+        "build": "postcss resources/css/index.css -o resources/dist/headings.css"
     },
     "devDependencies": {
-        "esbuild": "^0.17.19"
+        "cssnano": "^6.0.1",
+        "postcss": "^8.4.27",
+        "postcss-cli": "^10.1.0",
+        "postcss-nesting": "^12.0.0"
     }
 }
 ```
 
-You may also remove the Testing directories and files, but we'll leave them in for now, although we won't be using them for this example, and we highly recommend that you write tests your plugins.
+Then we need to install our dependencies.
+
+```bash
+npm install
+```
+
+We will also need to update our `postcss.config.js` file to configure postcss.
+
+```js
+module.exports = {
+    plugins: [
+        require('postcss-nesting')(),
+        require('cssnano')({
+            preset: 'default',
+        }),
+    ],
+};
+```
+
+You may also remove the Testing directories and files, but we'll leave them in for now, although we won't be using them for this example, and we highly recommend that you write tests for your plugins.
 
 ## Step 3: Setting up the Provider
 
-Now that we have our plugin cleaned up we can start adding our code. The boilerplate in the `src/ClockWidgetServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
+Now that we have our plugin cleaned up we can start adding our code. The boilerplate in the `src/HeadingsServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
 
-We need to be able to register our Widget with the panel and load our Alpine component when the widget is used. To do this we'll need to add the following to the `packageBooted` method in our service provider. This will register our widget component with Livewire and our Alpine component with the Filament Asset Manager.
+We need to be able to register our stylesheet with the Filament Asset Manager so that we can load it on demand in our blade view. To do this we'll need to add the following to the `packageBooted` method in our service provider. 
+
+***Note the `loadedOnRequest()` method. This is important, because it tells Filament to only load the stylesheet when it's needed.***
 
 ```php
-use Filament\Support\Assets\AlpineComponent;
+namespace Awcodes\Headings;
+
+use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
-use Livewire\Livewire;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class ClockWidgetServiceProvider extends PackageServiceProvider
+class HeadingsServiceProvider extends PackageServiceProvider
 {
-    public static string $name = 'clock-widget';
+    public static string $name = 'headings';
 
     public function configurePackage(Package $package): void
     {
         $package->name(static::$name)
-            ->hasViews()
-            ->hasTranslations();
+            ->hasViews();
     }
 
     public function packageBooted(): void
     {
-        Livewire::component('clock-widget', ClockWidget::class);
-
-        // Asset Registration
-        FilamentAsset::register(
-            assets:[
-                 AlpineComponent::make('clock-widget', __DIR__ . '/../resources/dist/clock-widget.js'),
-            ],
-            package: 'awcodes/clock-widget'
-        );
+        FilamentAsset::register([
+            Css::make('headings', __DIR__ . '/../resources/dist/headings.css')->loadedOnRequest(),
+        ], 'awcodes/headings');
     }
 }
 ```
 
-## Step 4: Create the Widget
+## Step 4: Creating our component
 
-Now we can create our widget. We'll first need to extend Filament's `Widget` class in our `ClockWidget.php` file and tell it where to find the view for the widget. Since we are using the PackageServiceProvider to register our views we can use the `::` syntax to tell Filament where to find the view.
+Next we'll need to create our component. Create a new file at `src/Heading.php` and add the following code.
 
 ```php
-use Filament\Widgets\Widget;
+namespace Awcodes\Headings;
 
-class ClockWidget extends Widget
+use Closure;
+use Filament\Forms\Components\Component;
+use Filament\Support\Colors\Color;
+use Filament\Support\Concerns\HasColor;
+
+class Heading extends Component
 {
-    protected static string $view = 'clock-widget::widget';
-}
-```
+    use HasColor;
 
-Next we'll need to create the view for our widget. Create a new file at `resources/views/widget.blade.php` and add the following code. We'll make use of Filament's blade components to save time on writing the html for the widget.
+    protected string | int $level = 2;
 
-We are using async Alpine to load our Alpine component, so we'll need to add the `x-ignore` attribute to the div that will load our component. We'll also need to add the `ax-load` attribute to the div to tell Alpine to load our component. You can learn more about this in the [Core Concepts](/docs/3.x/support/plugins/core-concepts#alpine-components) section of the docs.
+    protected string | Closure $content = '';
 
-```html
-<x-filament-widgets::widget>
-    <x-filament::card>
-        <h2 class="font-bold text-xl mb-4 text-center">
-            {{ __('clock-widget::clock-widget.title') }}
-        </h2>
+    protected string $view = 'headings::heading';
 
-        <div
-            x-ignore
-            ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('clock-widget', 'awcodes/clock-widget') }}"
-            x-data="clockWidget()"
-            class="text-center"
-        >
-            <p>{{ __('clock-widget::clock-widget.description') }}</p>
-            <p class="text-xl" x-text="time"></p>
-        </div>
-    </x-filament::card>
-</x-filament-widgets::widget>
-```
+    final public function __construct(string | int $level)
+    {
+        $this->level($level);
+    }
 
-Next, we need to write our Alpine component in `src/js/index.js`. And build our assets with `npm run build`.
+    public static function make(string | int $level): static
+    {
+        return app(static::class, ['level' => $level]);
+    }
 
-```js
-export default function clockWidget() {
-    return {
-        time: new Date().toLocaleTimeString(),
-        init() {
-            setInterval(() => {
-                this.time = new Date().toLocaleTimeString();
-            }, 1000);
-        }
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->dehydrated(false);
+    }
+
+    public function content(string | Closure $content): static
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    public function level(string | int $level): static
+    {
+        $this->level = $level;
+
+        return $this;
+    }
+
+    public function getColor(): array
+    {
+        return $this->evaluate($this->color) ?? Color::Amber;
+    }
+
+    public function getContent(): string
+    {
+        return $this->evaluate($this->content);
+    }
+
+    public function getLevel(): string
+    {
+        return is_int($this->level) ? 'h' . $this->level : $this->level;
     }
 }
 ```
 
-We should also add translations for the text in the widget so user's can translate the widget into their language. We'll add the translations to `resources/lang/en/widget.php`.
+## Step 5: Rendering our component
 
-```php
-return [
-    'title' => 'Clock Widget',
-    'description' => 'Your current time is:',
-];
+Next we'll need to create the view for our component. Create a new file at `resources/views/heading.blade.php` and add the following code.
+
+We are using x-load to asynchronously load or stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](docs/3.x/support/assets#lazy-loading-css) section of the docs.
+
+```blade
+@php
+    $level = $getLevel();
+    $color = $getColor();
+@endphp
+
+<{{ $level }}
+    x-data
+    x-load-css="[@js(\Filament\Support\Facades\FilamentAsset::getStyleHref('headings', package: 'awcodes/headings'))]"
+    {{
+        $attributes
+            ->class([
+                'headings-component',
+                match ($color) {
+                    'gray' => 'text-gray-600 dark:text-gray-400',
+                    default => 'text-custom-500',
+                },
+                ])
+                ->style([
+                    \Filament\Support\get_color_css_variables($color, [500]) => $color !== 'gray',
+                ])
+    }}
+>
+    {{ $getContent() }}
+</{{ $level }}>
 ```
 
-## Step 5: Update your Readme
+## Step 6: Adding some styles
+
+Next, let's provide some custom styling for our field. We'll add the following to `resources/css/index.css`. And run `npm run build` to compile our css.
+
+```css
+.headings-component {
+    &:is(h1, h2, h3, h4, h5, h6) {
+         font-weight: 700;
+         letter-spacing: -.025em;
+         line-height: 1.1;
+     }
+    
+    &h1 {
+         font-size: 2rem;
+     }
+    
+    &h2 {
+         font-size: 1.75rem;
+     }
+    
+    &h3 {
+         font-size: 1.5rem;
+     }
+    
+    &h4 {
+         font-size: 1.25rem;
+     }
+    
+    &h5,
+    &h6 {
+         font-size: 1rem;
+     }
+}
+```
+
+Then we need to build our stylesheet.
+
+```bash
+npm run build
+```
+
+## Step 7: Update your Readme
 
 You'll want to update your `README.md` file to include instructions on how to install your plugin and any other information you want to share with users, Like how to use it in their projects. For example:
 
 ```php
-Register the plugin and/or Widget in your Panel provider:
+use Awcodes\Headings\Heading;
 
-use Awcodes\ClockWidget\ClockWidgetWidget;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        ->widgets([
-            ClockWidgetWidget::class,
-        ]);
-}
+Heading::make(2)
+    ->content('Product Information')
+    ->color(Color::Lime),
 ```
 
 And, that's it, our users can not install our plugin and use it in their projects.

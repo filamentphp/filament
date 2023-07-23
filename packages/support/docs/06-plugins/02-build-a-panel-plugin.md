@@ -4,7 +4,7 @@ title: Build a panel plugin
 
 ## Preface
 
-Please read the docs on [panel plugin development](/docs/3.x/panels/plugins/) and the [getting started guide](/docs/3.x/support/plugins/getting-started) before continuing.
+Please read the docs on [panel plugin development](/docs/3.x/panels/plugins) and the [getting started guide](/docs/3.x/support/plugins/getting-started) before continuing.
 
 ## Overview
 
@@ -72,7 +72,13 @@ Last step is to update the `package.json` file to remove unneeded options. Repla
 }
 ```
 
-You may also remove the Testing directories and files, but we'll leave them in for now, although we won't be using them for this example, and we highly recommend that you write tests your plugins.
+Then we need to install our dependencies.
+
+```bash
+npm install
+```
+
+You may also remove the Testing directories and files, but we'll leave them in for now, although we won't be using them for this example, and we highly recommend that you write tests for your plugins.
 
 ## Step 3: Setting up the Provider
 
@@ -130,7 +136,7 @@ Next we'll need to create the view for our widget. Create a new file at `resourc
 
 We are using async Alpine to load our Alpine component, so we'll need to add the `x-ignore` attribute to the div that will load our component. We'll also need to add the `ax-load` attribute to the div to tell Alpine to load our component. You can learn more about this in the [Core Concepts](/docs/3.x/support/plugins/core-concepts#alpine-components) section of the docs.
 
-```html
+```blade
 <x-filament-widgets::widget>
     <x-filament::card>
         <h2 class="font-bold text-xl mb-4 text-center">
