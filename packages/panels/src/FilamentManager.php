@@ -41,6 +41,8 @@ class FilamentManager
 
     protected bool $isServing = false;
 
+    protected bool $isCurrentPanelBooted = false;
+
     protected ?Model $tenant = null;
 
     public function auth(): Guard
@@ -50,7 +52,13 @@ class FilamentManager
 
     public function bootCurrentPanel(): void
     {
+        if ($this->isCurrentPanelBooted) {
+            return;
+        }
+
         $this->getCurrentPanel()->boot();
+
+        $this->isCurrentPanelBooted = true;
     }
 
     /**
