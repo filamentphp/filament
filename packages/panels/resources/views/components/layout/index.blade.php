@@ -3,7 +3,7 @@
 @endphp
 
 <x-filament::layout.base :livewire="$livewire">
-    <div class="fi-layout flex min-h-full w-full overflow-x-clip">
+    <div class="fi-layout flex min-h-screen w-full overflow-x-clip">
         <div
             x-cloak
             x-data="{}"
