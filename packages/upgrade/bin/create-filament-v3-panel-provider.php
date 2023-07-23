@@ -108,8 +108,8 @@ class {$className} extends PanelProvider
 }");
 
 file_put_contents('config/app.php', str_replace(
-    'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
-    "App\\Providers\\Filament\\{$className}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+    'App\\Providers\\RouteServiceProvider::class,',
+    "App\\Providers\\Filament\\{$className}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
     file_get_contents('config/app.php'),
 ));
 

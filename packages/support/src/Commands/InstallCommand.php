@@ -59,8 +59,8 @@ class InstallCommand extends Command
 
         if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminPanelProvider::class')) {
             file_put_contents(config_path('app.php'), str_replace(
-                'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
-                'App\\Providers\\Filament\\AdminPanelProvider::class,' . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+                'App\\Providers\\RouteServiceProvider::class,',
+                'App\\Providers\\Filament\\AdminPanelProvider::class,' . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
                 $appConfig,
             ));
         }
