@@ -5,7 +5,9 @@
 @endif
 
 @foreach ($assets as $asset)
-    {{ $asset->getHtml() }}
+    @if (! $asset->isLoadedOnRequest())
+        {{ $asset->getHtml() }}
+    @endif
 @endforeach
 
 <style>
