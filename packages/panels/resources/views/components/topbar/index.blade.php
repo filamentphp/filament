@@ -105,7 +105,7 @@
         @endif
     @endif
 
-    <div x-persist="topbar.end" class="ms-auto flex items-center gap-x-4">
+    <div {{--x-persist="topbar.end"--}} class="ms-auto flex items-center gap-x-4">
         @if (filament()->isGlobalSearchEnabled())
             @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
         @endif
