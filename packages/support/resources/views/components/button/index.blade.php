@@ -147,7 +147,10 @@
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
-            x-tooltip.raw="{{ $tooltip }}"
+            x-tooltip="{
+                content: @js($tooltip),
+                theme: $store.theme,
+            }"
         @endif
         @if ($hasFileUploadLoadingIndicator)
             x-data="{
@@ -268,7 +271,10 @@
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
-            x-tooltip.raw="{{ $tooltip }}"
+            x-tooltip="{
+                content: @js($tooltip),
+                theme: $store.theme,
+            }"
         @endif
         {{
             $attributes

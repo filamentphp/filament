@@ -16,7 +16,10 @@
             : 'text-gray-400 hover:text-gray-500 focus:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus:text-gray-400'
     "
     x-on:click="(theme = @js($theme)) && close()"
-    x-tooltip="@js($label)"
+    x-tooltip="{
+        content: @js($label),
+        theme: $store.theme,
+    }"
     class="flex justify-center rounded-lg p-2 outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5"
 >
     <x-filament::icon

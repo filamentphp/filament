@@ -44,7 +44,10 @@
 
                 isLoading = false
             "
-            x-tooltip="error"
+            x-tooltip="{
+                content: error,
+                theme: $store.theme,
+            }"
             x-bind:class="
                 (state
                     ? '{{

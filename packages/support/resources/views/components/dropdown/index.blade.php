@@ -26,7 +26,7 @@
 >
     <div
         x-on:click="toggle"
-        {{ $trigger->attributes->class(['fi-dropdown-trigger cursor-pointer']) }}
+        {{ $trigger->attributes->class(['fi-dropdown-trigger flex cursor-pointer']) }}
     >
         {{ $trigger }}
     </div>

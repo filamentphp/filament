@@ -1,5 +1,5 @@
 @props([
-    'size' => null,
+    'size' => 'md',
     'src',
 ])
 
@@ -7,9 +7,10 @@
     {{
         $attributes
             ->class([
-                'rounded-full bg-cover bg-center ring-1 ring-inset ring-gray-950/10 dark:ring-white/20',
+                'fi-avatar bg-cover bg-center ring-1 ring-inset ring-gray-950/10 dark:ring-white/20',
                 match ($size) {
-                    null => 'h-9 w-9',
+                    'md' => 'h-9 w-9',
+                    'lg' => 'h-10 w-10',
                     default => $size,
                 },
             ])
