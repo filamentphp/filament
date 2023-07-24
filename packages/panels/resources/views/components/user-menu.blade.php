@@ -32,7 +32,7 @@
                 :color="$profileItem?->getColor()"
                 :icon="$profileItem?->getIcon() ?? 'heroicon-m-user-circle'"
                 :href="$profileItemUrl ?? filament()->getProfileUrl()"
-                icon-alias="panels::topbar.user-menu.profile-item"
+                icon-alias="panels::user-menu.profile-item"
                 tag="a"
             >
                 {{ $profileItem?->getLabel() ?? ($profilePage ? $profilePage::getLabel() : null) ?? filament()->getUserName($user) }}
@@ -42,7 +42,7 @@
         <x-filament::dropdown.header
             :color="$profileItem?->getColor()"
             :icon="$profileItem?->getIcon() ?? 'heroicon-m-user-circle'"
-            icon-alias="panels::topbar.user-menu.profile-item"
+            icon-alias="panels::user-menu.profile-item"
         >
             {{ $profileItem?->getLabel() ?? filament()->getUserName($user) }}
         </x-filament::dropdown.header>
@@ -72,7 +72,7 @@
             :action="$logoutItem?->getUrl() ?? filament()->getLogoutUrl()"
             :color="$logoutItem?->getColor()"
             :icon="$logoutItem?->getIcon() ?? 'heroicon-m-arrow-left-on-rectangle'"
-            icon-alias="panels::topbar.user-menu.logout-button"
+            icon-alias="panels::user-menu.logout-button"
             method="post"
             tag="form"
         >

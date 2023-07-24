@@ -23,7 +23,7 @@
     class="flex justify-center rounded-lg p-2 outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5"
 >
     <x-filament::icon
-        :alias="'panels::topbar.user-menu.theme-switcher.' . $theme . '-button'"
+        :alias="'panels::theme-switcher.' . $theme . '-button'"
         :icon="$icon"
         class="h-5 w-5"
     />
