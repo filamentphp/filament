@@ -57,7 +57,7 @@
                 @foreach ($getOptions() as $value => $label)
                     @if (is_array($label))
                         <optgroup label="{{ $value }}">
-                            @foreach($option as $v => $l)
+                            @foreach($label as $v => $l)
                                 <option
                                     value="{{ $v }}"
                                     @disabled($isOptionDisabled($v, $l))
