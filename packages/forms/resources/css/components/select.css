@@ -168,3 +168,7 @@ select:not(.choices) {
 .choices__input::-ms-reveal {
     @apply hidden h-0 w-0;
 }
+
+.choices__group {
+    @apply p-2 text-gray-400 dark:text-gray-500 pt-6 first:pt-2;
+}

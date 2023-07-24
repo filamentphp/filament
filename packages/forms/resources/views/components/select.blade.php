@@ -55,6 +55,36 @@
                 @endif
 
                 @foreach ($getOptions() as $value => $label)
+                    @if (is_array($label))
+                        <optgroup label="{{ $value }}">
+                            @foreach($option as $v => $l)
+                                <option
+                                    value="{{ $v }}"
+                                    @disabled($isOptionDisabled($v, $l))
+                                >
+                                    @if ($isHtmlAllowed)
+                                        {!! $l !!}
+                                    @else
+                                        {{ $l }}
+                                    @endif
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @else
+                        <option
+                            value="{{ $value }}"
+                            @disabled($isOptionDisabled($value, $label))
+                        >
+                            @if ($isHtmlAllowed)
+                                {!! $label !!}
+                            @else
+                                {{ $label }}
+                            @endif
+                        </option>
+                    @endif
+                @endforeach
+
+                @foreach ($getOptions() as $value => $label)
                     <option
                         value="{{ $value }}"
                         @disabled($isOptionDisabled($value, $label))

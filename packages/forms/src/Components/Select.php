@@ -609,7 +609,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     protected function transformOptionsForJs(array $options): array
     {
         return collect($options)
-            ->map(fn ($label, $value): array => ['label' => $label, 'value' => strval($value)])
+            ->map(fn ($label, $value): array => is_array($label)
+                ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
+                : ['label' => $label, 'value' => strval($value)])
             ->values()
             ->all();
     }
