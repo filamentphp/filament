@@ -3,7 +3,7 @@
 ])
 
 <td
-    wire:loading.remove.delay
+    wire:loading.remove.delay=""
     {{
         $attributes
             ->merge([
