@@ -670,7 +670,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::beforeLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -719,7 +719,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::beforeLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -828,7 +828,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::beforeLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
