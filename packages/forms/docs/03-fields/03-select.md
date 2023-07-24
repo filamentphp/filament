@@ -18,6 +18,22 @@ Select::make('status')
     ])
 ```
 
+You can optionally also add groups by adding an array instead of a label in the options:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'In Process' => [
+            'draft' => 'Draft',
+            'reviewing' => 'Reviewing',
+        ],
+        'published' => 'Published',
+    ])
+```
+
+
 <AutoScreenshot name="forms/fields/select/simple" alt="Select" version="3.x" />
 
 ## Searching options
