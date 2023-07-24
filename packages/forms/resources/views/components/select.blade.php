@@ -83,19 +83,6 @@
                         </option>
                     @endif
                 @endforeach
-
-                @foreach ($getOptions() as $value => $label)
-                    <option
-                        value="{{ $value }}"
-                        @disabled($isOptionDisabled($value, $label))
-                    >
-                        @if ($isHtmlAllowed)
-                            {!! $label !!}
-                        @else
-                            {{ $label }}
-                        @endif
-                    </option>
-                @endforeach
             </x-filament::input.select>
         @else
             <div
