@@ -19,6 +19,7 @@
         <button
             aria-label="{{ __('filament::layout.actions.open_user_menu.label') }}"
             type="button"
+            class="flex"
         >
             <x-filament::avatar.user :user="$user" />
         </button>
