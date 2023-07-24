@@ -170,5 +170,5 @@ select:not(.choices) {
 }
 
 .choices__group {
-    @apply p-2 text-gray-400 dark:text-gray-500 pt-6 first:pt-2;
+    @apply p-2 pt-6 text-gray-400 first:pt-2 dark:text-gray-500;
 }
