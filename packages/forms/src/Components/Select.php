@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
@@ -131,6 +132,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             $labels = [];
 
             foreach ($values as $value) {
+                foreach ($options as $group => $option) {
+                    if (is_array($option) && Arr::has($option, $value)) {
+                        Arr::set($labels, "$group.$value", $option[$value]);
+                        continue 2;
+                    }
+                }
                 $labels[$value] = $options[$value] ?? $value;
             }
 
