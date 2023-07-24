@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Str;
 
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
@@ -162,7 +163,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getQualifiedRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($relationship->getQualifiedRelatedKeyName(), '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }

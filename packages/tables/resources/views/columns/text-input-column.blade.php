@@ -64,7 +64,10 @@
         "
         x-bind:readonly="isLoading"
         wire:loading.attr="readonly"
-        x-tooltip="error"
+        x-tooltip="{
+            content: error,
+            theme: $store.theme,
+        }"
         x-bind:class="{
             'border-gray-300 dark:border-gray-600': ! error,
             'border-danger-600 ring-1 ring-inset ring-danger-600 dark:border-danger-400 dark:ring-danger-400':

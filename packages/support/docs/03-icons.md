@@ -68,23 +68,24 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ### Panel Builder icon aliases
 
+- `panels::database-notifications.open-button` - Button to open the database notifications modal
+- `panels::global-search.field` - Global search field
 - `panels::pages.dashboard.navigation-item` - Dashboard navigation item
 - `panels::pages.tenancy.register-tenant.open-tenant-button` - Button to open a tenant from the tenant registration page
 - `panels::sidebar.collapse-button` - Desktop sidebar collapse button when it is partially collapsible
 - `panels::sidebar.collapse-button.full` - Desktop sidebar collapse button when it is fully collapsible
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
-- `panels::topbar.global-search.field` - Global search field
+- `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
+- `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
+- `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
+- `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
 - `panels::topbar.close-mobile-sidebar-button` - Button to close the mobile sidebar
 - `panels::topbar.open-mobile-sidebar-button` - Button to open the mobile sidebar
-- `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
-- `panels::topbar.user-menu.profile-item` - Profile item in the user menu
-- `panels::topbar.user-menu.logout-button` - Button in the user menu to log out
-- `panels::topbar.user-menu.theme-switcher.light-button` - Button in the user menu to switch to the light theme
-- `panels::topbar.user-menu.theme-switcher.dark-button` - Button in the user menu to switch to the dark theme
-- `panels::topbar.user-menu.theme-switcher.system-button` - Button in the user menu to switch to the system theme
+- `panels::user-menu.profile-item` - Profile item in the user menu
+- `panels::user-menu.logout-button` - Button in the user menu to log out
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
-- `panels::widgets.filament-info.documentation-link` - Link to visit the documentation from the Filament info widget
-- `panels::widgets.filament-info.github-link` - Link to visit GitHub from the Filament info widget
+- `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
+- `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
 
 ### Form Builder icon aliases
 

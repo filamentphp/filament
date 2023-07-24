@@ -13,7 +13,7 @@
     <x-filament-forms::affixes
         inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
-        prefix-icon-alias="panels::topbar.global-search.field"
+        prefix-icon-alias="panels::global-search.field"
         wire:target="search"
     >
         <x-filament::input

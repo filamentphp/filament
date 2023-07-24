@@ -44,7 +44,10 @@
     @if (filament()->hasTopNavigation())
         <div class="me-6 hidden lg:flex">
             @if ($homeUrl = filament()->getHomeUrl())
-                <a href="{{ $homeUrl }}" wire:navigate>
+                <a
+                    href="{{ $homeUrl }}"
+                    {{-- wire:navigate --}}
+                >
                     <x-filament::logo />
                 </a>
             @else
@@ -78,7 +81,7 @@
                                         :icon="$item->isActive() ? ($item->getActiveIcon() ?? $icon) : $icon"
                                         tag="a"
                                         :target="$shouldOpenUrlInNewTab ? '_blank' : null"
-                                        :wire:navigate="$shouldOpenUrlInNewTab ? null : true"
+                                        {{-- :wire:navigate="$shouldOpenUrlInNewTab ? null : true" --}}
                                     >
                                         {{ $item->getLabel() }}
                                     </x-filament::dropdown.list.item>
@@ -105,7 +108,10 @@
         @endif
     @endif
 
-    <div x-persist="topbar.end" class="ms-auto flex items-center gap-x-4">
+    <div
+        {{-- x-persist="topbar.end" --}}
+        class="ms-auto flex items-center gap-x-4"
+    >
         @if (filament()->isGlobalSearchEnabled())
             @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
         @endif

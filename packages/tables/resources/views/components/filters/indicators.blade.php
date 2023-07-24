@@ -49,7 +49,7 @@
                         alias="tables::filters.remove-all-button"
                         icon="heroicon-m-x-mark"
                         class="h-5 w-5"
-                        :x-tooltip.raw="__('filament-tables::table.filters.actions.remove_all.tooltip')"
+                        :x-tooltip="'{ content: ' . \Illuminate\Support\Js::from(__('filament-tables::table.filters.actions.remove_all.tooltip')) . ', theme: $store.theme }'"
                         wire:loading.remove.delay=""
                         wire:target="removeTableFilters,removeTableFilter"
                     />

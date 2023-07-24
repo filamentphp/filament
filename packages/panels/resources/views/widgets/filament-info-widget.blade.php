@@ -34,17 +34,17 @@
                     color="gray"
                     href="https://filamentphp.com/docs"
                     icon="heroicon-m-book-open"
-                    icon-alias="panels::widgets.filament-info.documentation-link"
+                    icon-alias="panels::widgets.filament-info.open-documentation-button"
                     rel="noopener noreferrer"
                     target="_blank"
                 >
-                    {{ __('filament::widgets/filament-info-widget.actions.visit_documentation.label') }}
+                    {{ __('filament::widgets/filament-info-widget.actions.open_documentation.label') }}
                 </x-filament::link>
 
                 <x-filament::link
                     color="gray"
                     href="https://github.com/filamentphp/filament"
-                    icon-alias="panels::widgets.filament-info.github-link"
+                    icon-alias="panels::widgets.filament-info.open-github-button"
                     rel="noopener noreferrer"
                     target="_blank"
                 >
@@ -62,7 +62,7 @@
                         </svg>
                     </x-slot>
 
-                    {{ __('filament::widgets/filament-info-widget.actions.visit_github.label') }}
+                    {{ __('filament::widgets/filament-info-widget.actions.open_github.label') }}
                 </x-filament::link>
             </div>
         </div>
