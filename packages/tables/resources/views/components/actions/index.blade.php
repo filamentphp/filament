@@ -8,13 +8,13 @@
 <div
     {{
         $attributes->class([
-            'fi-ta-actions flex items-center gap-3',
+            'fi-ta-actions flex shrink-0 items-center gap-3',
             'flex-wrap' => $wrap,
-            'md:flex-nowrap' => $wrap === '-md',
+            'sm:flex-nowrap' => $wrap === '-sm',
             match ($alignment) {
                 'center' => 'justify-center',
                 'start', 'left' => 'justify-start',
-                'start md:end', 'left md:right' => 'justify-start md:justify-end',
+                'start sm:end', 'left sm:right' => 'justify-start sm:justify-end',
                 default => 'justify-end',
             },
         ])

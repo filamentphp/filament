@@ -235,16 +235,12 @@
         >
             @if ($header)
                 {{ $header }}
-            @elseif ($heading || $description || $headerActions)
+            @elseif (($heading || $description || $headerActions) && ! $isReordering)
                 <x-filament-tables::header
                     :actions="$isReordering ? [] : $headerActions"
                     :actions-position="$headerActionsPosition"
                     :description="$description"
                     :heading="$heading"
-                    @class([
-                        'm-2',
-                        'hidden' => ! ($heading || $description) && $isReordering,
-                    ])
                 />
             @endif
 
@@ -726,9 +722,9 @@
                                         @if (count($actions))
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'start' : 'start md:end'"
+                                                :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'start' : 'start sm:end'"
                                                 :record="$record"
-                                                wrap="-md"
+                                                wrap="-sm"
                                                 @class([
                                                     'absolute bottom-1 end-1' => $actionsPosition === ActionsPosition::BottomCorner,
                                                     'md:relative md:bottom-0 md:end-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
