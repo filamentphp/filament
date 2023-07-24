@@ -75,7 +75,7 @@
 
                 @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
                     <x-filament::icon
-                        :name="$descriptionIcon"
+                        :icon="$descriptionIcon"
                         :class="$descriptionIconClasses"
                         :style="$descriptionIconStyles"
                     />
