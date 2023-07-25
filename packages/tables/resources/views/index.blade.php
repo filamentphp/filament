@@ -1107,8 +1107,6 @@
 
                                         <x-filament-tables::cell
                                             wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                            wire:loading.remove.delay=""
-                                            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
                                             class="fi-table-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
                                             :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())"
                                         >
@@ -1167,14 +1165,6 @@
                                             />
                                         </x-filament-tables::actions.cell>
                                     @endif
-
-                                    <x-filament-tables::loading-cell
-                                        :colspan="$columnsCount"
-                                        wire:loading.class.remove.delay="hidden"
-                                        class="hidden"
-                                        :wire:key="$this->getId() . '.table.records.' . $recordKey . '.loading-cell'"
-                                        wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-                                    />
                                 </x-filament-tables::row>
                             @endif
 

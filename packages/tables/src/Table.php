@@ -46,8 +46,15 @@ class Table extends ViewComponent
         'gotoPage',
         'nextPage',
         'previousPage',
+        'removeTableFilter',
+        'removeTableFilters',
+        'reorderTable',
+        'resetTableFiltersForm',
         'sortTable',
+        'tableColumnSearches',
+        'tableFilters',
         'tableRecordsPerPage',
+        'tableSearch',
     ];
 
     public static string $defaultCurrency = 'usd';
