@@ -158,14 +158,14 @@ You may add any [form components](../forms/getting-started) to the `form()` meth
 Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
 
 ```php
-use App\Filament\Pages\Tenancy\RegisterTeam;
+use App\Filament\Pages\Tenancy\EditTeamProfile;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->tenantProfile(RegisterTeam::class);
+        ->tenantProfile(EditTeamProfile::class);
 }
 ```
 

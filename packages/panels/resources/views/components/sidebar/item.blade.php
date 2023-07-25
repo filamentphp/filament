@@ -26,19 +26,15 @@
         @endif
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if (filament()->isSidebarCollapsibleOnDesktop())
-            x-data="{ tooltip: {} }"
-            x-init="
-                Alpine.effect(() => {
-                    if (Alpine.store('sidebar').isOpen) {
-                        tooltip = false
-                    } else {
-                        tooltip = {
-                            content: @js($slot->toHtml()),
-                            theme: Alpine.store('theme') === 'light' ? 'dark' : 'light',
-                            placement: document.dir === 'rtl' ? 'left' : 'right',
-                        }
-                    }
-                })
+            x-data="{ tooltip: false }"
+            x-effect="
+                tooltip = $store.sidebar.isOpen
+                    ? false
+                    : {
+                          content: @js($slot->toHtml()),
+                          placement: document.dir === 'rtl' ? 'left' : 'right',
+                          theme: $store.theme,
+                      }
             "
             x-tooltip.html="tooltip"
         @endif

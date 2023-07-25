@@ -175,13 +175,11 @@
                         class="fi-fo-checkbox-list-option-label flex gap-x-3"
                     >
                         <x-filament::input.checkbox
-                            :errors="$errors"
-                            :state-path="$statePath"
+                            :error="$errors->has($statePath)"
                             :attributes="
-                                $getExtraInputAttributeBag()
+                                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
                                         'disabled' => $isDisabled,
-                                        'type' => 'checkbox',
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,

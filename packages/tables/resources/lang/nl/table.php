@@ -139,10 +139,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Filters resetten',
+                'label' => 'Resetten',
             ],
 
         ],
+
+        'heading' => 'Filters',
 
         'indicator' => 'Actieve filters',
 

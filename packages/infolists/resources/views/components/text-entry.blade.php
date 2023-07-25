@@ -1,8 +1,8 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
         $isBadge = $isBadge();
-        $isListWithLineBreaks = $isListWithLineBreaks();
         $iconPosition = $getIconPosition();
+        $isListWithLineBreaks = $isListWithLineBreaks();
         $isProse = $isProse();
         $url = $getUrl();
 
@@ -36,9 +36,8 @@
         :prefix-actions="$getPrefixActions()"
         :suffix-actions="$getSuffixActions()"
         :attributes="
-            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())->class([
-                'fi-in-text',
-            ])
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class(['fi-in-text'])
         "
     >
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
@@ -50,7 +49,7 @@
             @foreach ($arrayState as $state)
                 @if (filled($formattedState = $formatState($state)))
                     @php
-                        $color = $getColor($state) ?? 'gray';
+                        $color = $getColor($state);
                         $copyableState = $getCopyableState($state) ?? $state;
                         $copyMessage = $getCopyMessage($state);
                         $copyMessageDuration = $getCopyMessageDuration($state);
@@ -73,7 +72,7 @@
                         ]);
 
                         $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-                            'fi-in-text-icon h-5 w-5',
+                            'fi-in-text-item-icon h-5 w-5',
                             match ($color) {
                                 'gray' => 'text-gray-400 dark:text-gray-500',
                                 default => 'text-custom-500',
@@ -116,7 +115,8 @@
                                         default => $size,
                                     },
                                     match ($color) {
-                                        'gray' => 'text-gray-950 dark:text-white',
+                                        null => 'text-gray-950 dark:text-white',
+                                        'gray' => 'text-gray-500 dark:text-gray-400',
                                         default => 'text-custom-600 dark:text-custom-400',
                                     },
                                     match ($weight) {
@@ -138,7 +138,7 @@
                                     },
                                 ])
                                 @style([
-                                    \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => $color !== 'gray',
+                                    \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
                                 ])
                             >
                                 @if ($icon && $iconPosition === 'before')
@@ -172,7 +172,7 @@
 
             @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}
-                    class="text-sm text-gray-950 dark:text-white"
+                    class="text-sm text-gray-500 dark:text-gray-400"
                 >
                     {{ trans_choice('filament-infolists::components.text_entry.more_list_items', $limitedArrayStateCount) }}
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>

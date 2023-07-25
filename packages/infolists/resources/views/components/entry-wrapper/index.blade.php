@@ -93,7 +93,10 @@
             <dd
                 @if ($tooltip)
                     x-data="{}"
-                    x-tooltip.raw="{{ $tooltip }}"
+                    x-tooltip="{
+                        content: @js($tooltip),
+                        theme: $store.theme,
+                    }"
                 @endif
                 @class([
                     match ($alignment) {

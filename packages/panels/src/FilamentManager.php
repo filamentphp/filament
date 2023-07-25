@@ -525,6 +525,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasPasswordReset();
     }
 
+    public function hasPlugin(string $id): bool
+    {
+        return $this->getCurrentPanel()->hasPlugin($id);
+    }
+
     public function hasProfile(): bool
     {
         return $this->getCurrentPanel()->hasProfile();

@@ -473,9 +473,10 @@
                     x-ref="trix"
                     wire:ignore
                     {{
-                        $getExtraInputAttributeBag()->class([
-                            'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert dark:text-white sm:text-sm sm:leading-6',
-                        ])
+                        $getExtraInputAttributeBag()
+                            ->class([
+                                'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert dark:text-white sm:text-sm sm:leading-6',
+                            ])
                     }}
                 ></trix-editor>
             </div>
