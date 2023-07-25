@@ -252,11 +252,6 @@ class FilamentManager
         return $this->getCurrentPanel()->getPlugin($id);
     }
 
-    public function hasPlugin(string $id): bool
-    {
-        return $this->getCurrentPanel()->hasPlugin($id);
-    }
-
     /**
      * @param  array<mixed>  $parameters
      */
@@ -528,6 +523,11 @@ class FilamentManager
     public function hasPasswordReset(): bool
     {
         return $this->getCurrentPanel()->hasPasswordReset();
+    }
+
+    public function hasPlugin(string $id): bool
+    {
+        return $this->getCurrentPanel()->hasPlugin($id);
     }
 
     public function hasProfile(): bool
