@@ -177,7 +177,7 @@
                         <x-filament::input.checkbox
                             :error="$errors->has($statePath)"
                             :attributes="
-                                $getExtraInputAttributeBag()
+                                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
                                         'disabled' => $isDisabled,
                                         'value' => $value,

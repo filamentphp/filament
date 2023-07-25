@@ -1,4 +1,5 @@
 @php
+    $isDisabled = $isDisabled();
     $state = (bool) $getState();
 @endphp
 
@@ -38,14 +39,15 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-checkbox flex items-center px-3'])
+            ->class(['fi-ta-checkbox flex items-center px-3 py-[1.125rem]'])
     }}
 >
     <input type="hidden" value="{{ $state ? 1 : 0 }}" x-ref="newState" />
 
     <x-filament::input.checkbox
-        alpine-error="error"
-        :disabled="$isDisabled()"
+        alpine-valid="! error"
+        :disabled="$isDisabled"
+        :x-bind:disabled="$isDisabled ? null : 'isLoading'"
         x-model="state"
         x-on:change="
             isLoading = true
@@ -68,7 +70,6 @@
                     theme: $store.theme,
                 }
         "
-        x-bind:disabled="isLoading"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($getExtraInputAttributes(), escape: false)

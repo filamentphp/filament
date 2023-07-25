@@ -36,9 +36,8 @@
         :prefix-actions="$getPrefixActions()"
         :suffix-actions="$getSuffixActions()"
         :attributes="
-            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())->class([
-                'fi-in-text',
-            ])
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class(['fi-in-text'])
         "
     >
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }}

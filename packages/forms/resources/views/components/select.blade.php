@@ -14,7 +14,6 @@
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
-        :state-path="$statePath"
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -24,22 +23,23 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :valid="! $errors->has($statePath)"
         class="fi-fo-select"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @if (! ($isSearchable() || $isMultiple()))
             <x-filament::input.select
                 :autofocus="$isAutofocused()"
-                :can-select-placeholder="$canSelectPlaceholder"
                 :disabled="$isDisabled"
                 :id="$getId()"
                 :inline-prefix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
                 :inline-suffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
                 :required="$isRequired() && ((bool) $isConcealed())"
                 :attributes="
-                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())->merge([
-                        $applyStateBindingModifiers('wire:model') => $statePath,
-                    ], escape: false)
+                    $getExtraInputAttributeBag()
+                        ->merge([
+                            $applyStateBindingModifiers('wire:model') => $statePath,
+                        ], escape: false)
                 "
             >
                 @php
@@ -56,8 +56,8 @@
 
                 @foreach ($getOptions() as $value => $label)
                     <option
-                        value="{{ $value }}"
                         @disabled($isOptionDisabled($value, $label))
+                        value="{{ $value }}"
                     >
                         @if ($isHtmlAllowed)
                             {!! $label !!}
