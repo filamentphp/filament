@@ -6,6 +6,7 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Panels\Fixtures\Resources\PostResource;
 use Filament\Tests\Panels\Fixtures\Resources\UserResource;
 use Filament\Tests\Panels\Resources\TestCase;
+use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
@@ -99,7 +100,7 @@ it('can delete posts', function () {
     livewire(PostResource\Pages\ListPosts::class)
         ->callTableAction(DeleteAction::class, $post);
 
-    $this->assertSoftDeleted($post);
+    assertSoftDeleted($post);
 });
 
 it('can bulk delete posts', function () {
@@ -109,6 +110,6 @@ it('can bulk delete posts', function () {
         ->callTableBulkAction(DeleteBulkAction::class, $posts);
 
     foreach ($posts as $post) {
-        $this->assertSoftDeleted($post);
+        assertSoftDeleted($post);
     }
 });
