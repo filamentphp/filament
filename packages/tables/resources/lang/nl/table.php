@@ -122,7 +122,11 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Geen :model',
+
+        'description' => 'Maak een :model aan om aan de slag te gaan.',
+
     ],
 
     'filters' => [

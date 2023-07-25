@@ -126,7 +126,7 @@ return [
 
         'heading' => 'No :model',
 
-        'description' => 'You don\'t have any :model yet. Create one to get started.',
+        'description' => 'Create a :model to get started.',
 
     ],
 
