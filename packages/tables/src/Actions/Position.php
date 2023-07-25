@@ -15,8 +15,4 @@ class Position
     public const BeforeColumns = 'before_columns';
 
     public const BottomCorner = 'bottom_corner';
-
-    public const End = 'end';
-
-    public const Start = 'start';
 }

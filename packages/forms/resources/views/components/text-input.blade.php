@@ -18,7 +18,6 @@
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
     <x-filament-forms::affixes
-        :state-path="$statePath"
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -28,6 +27,7 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :valid="! $errors->has($statePath)"
         class="fi-fo-text-input"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
@@ -36,7 +36,7 @@
     >
         <x-filament::input
             :attributes="
-                $getExtraInputAttributeBag()
+                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                     ->merge($extraAlpineAttributes, escape: false)
                     ->merge([
                         'autocapitalize' => $getAutocapitalize(),

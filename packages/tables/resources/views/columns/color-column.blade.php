@@ -4,7 +4,7 @@
             ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'fi-ta-color flex flex-wrap gap-1',
-                'px-4 py-3' => ! $isInline(),
+                'px-3 py-3.5' => ! $isInline(),
             ])
     }}
 >

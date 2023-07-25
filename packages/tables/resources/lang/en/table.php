@@ -142,10 +142,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Reset filters',
+                'label' => 'Reset',
             ],
 
         ],
+
+        'heading' => 'Filters',
 
         'indicator' => 'Active filters',
 
