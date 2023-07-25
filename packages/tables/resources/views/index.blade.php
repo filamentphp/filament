@@ -809,7 +809,7 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                <x-filament-tables::checkbox.cell>
+                                <x-filament-tables::cell>
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -827,7 +827,7 @@
                                             return null
                                         "
                                     />
-                                </x-filament-tables::checkbox.cell>
+                                </x-filament-tables::cell>
                             @endif
 
                             @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
@@ -878,7 +878,7 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                <x-filament-tables::checkbox.cell>
+                                <x-filament-tables::cell>
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-on:click="toggleSelectRecordsOnPage"
@@ -896,7 +896,7 @@
                                             return null
                                         "
                                     />
-                                </x-filament-tables::checkbox.cell>
+                                </x-filament-tables::cell>
                             @endif
 
                             @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
@@ -1051,15 +1051,11 @@
                                         ...$getRecordClasses($record),
                                     ])
                                 >
-                                    <x-filament-tables::reorder.cell
-                                        @class([
-                                            'hidden' => ! $isReordering,
-                                        ])
-                                    >
-                                        @if ($isReordering)
+                                    @if ($isReordering)
+                                        <x-filament-tables::cell>
                                             <x-filament-tables::reorder.handle />
-                                        @endif
-                                    </x-filament-tables::reorder.cell>
+                                        </x-filament-tables::cell>
+                                    @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
                                         <x-filament-tables::actions.cell
@@ -1076,7 +1072,7 @@
                                     @endif
 
                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                        <x-filament-tables::checkbox.cell
+                                        <x-filament-tables::cell
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
@@ -1089,7 +1085,7 @@
                                                     class="fi-ta-record-checkbox"
                                                 />
                                             @endif
-                                        </x-filament-tables::checkbox.cell>
+                                        </x-filament-tables::cell>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
@@ -1145,7 +1141,7 @@
                                     @endif
 
                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                        <x-filament-tables::checkbox.cell
+                                        <x-filament-tables::cell
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
@@ -1158,7 +1154,7 @@
                                                     class="fi-ta-record-checkbox"
                                                 />
                                             @endif
-                                        </x-filament-tables::checkbox.cell>
+                                        </x-filament-tables::cell>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
