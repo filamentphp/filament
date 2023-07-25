@@ -12,9 +12,18 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Buat/batalkan pilihan semua item untuk tindakan masal.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Buat/batalkan pilihan item :key untuk tindakan masal.',
+        ],
+
         'search' => [
             'label' => 'Cari',
             'placeholder' => 'Cari',
+            'indicator' => 'Pencarian',
         ],
 
     ],
@@ -57,6 +66,34 @@ return [
 
     ],
 
+    'summary' => [
+
+        'heading' => 'Rangkuman',
+
+        'subheadings' => [
+            'all' => 'Semua :label',
+            'group' => 'Rangkuman :group',
+            'page' => 'Halaman ini',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Rata-rata',
+            ],
+
+            'count' => [
+                'label' => 'Jumlah',
+            ],
+
+            'sum' => [
+                'label' => 'Total',
+            ],
+
+        ],
+
+    ],
+
     'actions' => [
 
         'disable_reordering' => [
@@ -71,6 +108,10 @@ return [
             'label' => 'Filter',
         ],
 
+        'group' => [
+            'label' => 'Grup',
+        ],
+
         'open_bulk_actions' => [
             'label' => 'Tindakan',
         ],
@@ -82,7 +123,9 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Tidak ada data yang ditemukan',
+
     ],
 
     'filters' => [
@@ -104,6 +147,8 @@ return [
 
         ],
 
+        'heading' => 'Filter',
+
         'indicator' => 'Filter aktif',
 
         'multi_select' => [
@@ -123,6 +168,30 @@ return [
             'with_trashed' => 'Dengan data yang dihapus',
 
             'without_trashed' => 'Tanpa data yang dihapus',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Kelompokkan berdasar',
+                'placeholder' => 'Kelompokkan berdasar',
+            ],
+
+            'direction' => [
+
+                'label' => 'Urutan grup',
+
+                'options' => [
+                    'asc' => 'Naik',
+                    'desc' => 'Turun',
+                ],
+
+            ],
 
         ],
 
