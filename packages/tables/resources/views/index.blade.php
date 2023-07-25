@@ -63,7 +63,7 @@
     $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
-    $isColumnToggleFormVisible = $hasToggleableColumns();
+    $hasColumnToggleDropdown = $hasToggleableColumns();
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
@@ -230,7 +230,7 @@
     <x-filament-tables::container>
         <div
             class="fi-ta-header-ctn"
-            x-show="hasHeader = @js($renderHeader = ($header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($bulkActions)))"
+            x-show="hasHeader = @js($renderHeader = ($header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $hasColumnToggleDropdown)) || (selectedRecords.length && @js(count($bulkActions)))"
             @if (! $renderHeader) x-cloak @endif
         >
             @if ($header)
@@ -269,7 +269,7 @@
             @endif
 
             <div
-                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)) || (selectedRecords.length && @js(count($bulkActions)))"
+                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)) || (selectedRecords.length && @js(count($bulkActions)))"
                 @if (! $shouldRenderHeaderDiv) x-cloak @endif
                 class="fi-ta-header-toolbar flex h-14 items-center justify-between px-3 py-2"
                 x-bind:class="{
@@ -298,7 +298,7 @@
                     @endif
                 </div>
 
-                @if ($isGlobalSearchVisible || $hasFiltersDropdown || $isColumnToggleFormVisible)
+                @if ($isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)
                     <div
                         class="flex flex-1 items-center justify-end gap-3 md:max-w-md"
                     >
@@ -310,7 +310,7 @@
                             </div>
                         @endif
 
-                        @if ($hasFiltersDropdown || $isColumnToggleFormVisible)
+                        @if ($hasFiltersDropdown || $hasColumnToggleDropdown)
                             <div class="flex items-center gap-x-1">
                                 @if ($hasFiltersDropdown)
                                     <x-filament-tables::filters.dropdown
@@ -323,8 +323,8 @@
                                     />
                                 @endif
 
-                                @if ($isColumnToggleFormVisible)
-                                    <x-filament-tables::toggleable.dropdown
+                                @if ($hasColumnToggleDropdown)
+                                    <x-filament-tables::column-toggle.dropdown
                                         :form="$getColumnToggleForm()"
                                         :max-height="$getColumnToggleFormMaxHeight()"
                                         :trigger-action="$getToggleColumnsTriggerAction()"

@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Columns',
+
+    ],
+
     'columns' => [
 
         'text' => [
