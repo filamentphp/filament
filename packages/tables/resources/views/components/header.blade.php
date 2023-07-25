@@ -8,7 +8,7 @@
 <div
     {{
         $attributes->class([
-            'fi-ta-header flex flex-col gap-4 px-6 py-4',
+            'fi-ta-header flex flex-col gap-4 px-3 py-3 sm:px-6 sm:py-4',
             'sm:flex-row sm:items-center sm:justify-between' => $actionsPosition === \Filament\Tables\Actions\HeaderActionsPosition::Adaptive,
         ])
     }}

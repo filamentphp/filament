@@ -90,13 +90,11 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 ### Form Builder icon aliases
 
 - `forms:components.checkbox-list.search-field` - Search input in a checkbox list
-- `forms::components.tags-input.delete-button` - Button to delete a tag in a tags input
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
 
 - `tables::columns.collapse-button`
-- `tables::filters.remove-button` - Button to remove a filter
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
 - `tables::header-cell.sort-asc` - Sort button of a column sorted in ascending order

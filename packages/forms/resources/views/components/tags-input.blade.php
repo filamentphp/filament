@@ -58,7 +58,7 @@
                 <template x-cloak x-if="state?.length">
                     <div
                         @class([
-                            'flex w-full flex-wrap gap-1 p-2',
+                            'flex w-full flex-wrap gap-1.5 p-2',
                             'border-t border-t-gray-100 dark:border-t-white/10',
                         ])
                     >
@@ -67,13 +67,15 @@
                             x-bind:key="tag"
                             class="hidden"
                         >
-                            <x-filament::badge :deletable="! $isDisabled">
+                            <x-filament::badge>
                                 <span class="text-start" x-text="tag"></span>
 
-                                <x-slot
-                                    name="deleteButton"
-                                    x-on:click="deleteTag(tag)"
-                                ></x-slot>
+                                @if (! $isDisabled)
+                                    <x-slot
+                                        name="deleteButton"
+                                        x-on:click="deleteTag(tag)"
+                                    ></x-slot>
+                                @endif
                             </x-filament::badge>
                         </template>
                     </div>

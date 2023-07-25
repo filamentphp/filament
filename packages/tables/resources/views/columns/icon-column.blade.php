@@ -3,7 +3,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-icon flex flex-wrap gap-1',
+                'fi-ta-icon flex flex-wrap gap-1.5',
                 'flex-col' => $isListWithLineBreaks(),
                 'px-3 py-3.5' => ! $isInline(),
             ])

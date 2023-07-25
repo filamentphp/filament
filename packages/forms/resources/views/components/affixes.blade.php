@@ -66,7 +66,7 @@
     @endif
     {{
         $attributes
-            ->except('wire:target')
+            ->except(['wire:target'])
             ->class([
                 'fi-fo-affixes flex rounded-lg shadow-sm ring-1 transition duration-75',
                 $enabledClasses => (! $hasAlpineClasses) && (! $disabled),
