@@ -340,10 +340,7 @@
         </div>
 
         @if ($isReordering)
-            <x-filament-tables::reorder.indicator
-                :colspan="$columnsCount"
-                class="border-t dark:border-gray-700"
-            />
+            <x-filament-tables::reorder.indicator :colspan="$columnsCount" />
         @elseif ($isSelectionEnabled && $isLoaded)
             <x-filament-tables::selection-indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
