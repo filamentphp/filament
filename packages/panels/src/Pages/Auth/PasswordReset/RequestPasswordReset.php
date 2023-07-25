@@ -80,17 +80,19 @@ class RequestPasswordReset extends SimplePage
             },
         );
 
-        if ($status === Password::RESET_LINK_SENT) {
-            Notification::make()
-                ->title(__($status))
-                ->success()
-                ->send();
-        } else {
+        if ($status !== Password::RESET_LINK_SENT) {
             Notification::make()
                 ->title(__($status))
                 ->danger()
                 ->send();
+
+            return;
         }
+
+        Notification::make()
+            ->title(__($status))
+            ->success()
+            ->send();
 
         $this->form->fill();
     }
