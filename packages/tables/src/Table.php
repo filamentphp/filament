@@ -70,4 +70,19 @@ class Table extends ViewComponent
 
         return $static;
     }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->emptyStateDescription(function (Table $table): ?string {
+            if (! $table->hasAction('create')) {
+                return null;
+            }
+
+            return __('filament-tables::table.empty.description', [
+                'model' => $table->getPluralModelLabel(),
+            ]);
+        });
+    }
 }

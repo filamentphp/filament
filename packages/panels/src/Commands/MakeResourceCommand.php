@@ -147,6 +147,12 @@ class MakeResourceCommand extends Command
 
         $tableActions = implode(PHP_EOL, $tableActions);
 
+        $tableEmptyStateActions = [];
+
+        $tableEmptyStateActions[] = 'Tables\Actions\CreateAction::make(),';
+
+        $tableEmptyStateActions = implode(PHP_EOL, $tableEmptyStateActions);
+
         $tableBulkActions = [];
 
         $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
@@ -182,6 +188,7 @@ class MakeResourceCommand extends Command
             'resourceClass' => $resourceClass,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
+            'tableEmptyStateActions' => $this->indentString($tableEmptyStateActions, 4),
             'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
                 'App\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
             ) : '//', 4),

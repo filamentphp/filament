@@ -76,19 +76,19 @@ class MakeRelationManagerCommand extends Command
             return static::INVALID;
         }
 
-        $tableHeaderActions = [];
+        $tableHeaderAndEmptyStateActions = [];
 
-        $tableHeaderActions[] = 'Tables\Actions\CreateAction::make(),';
+        $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\CreateAction::make(),';
 
         if ($this->option('associate')) {
-            $tableHeaderActions[] = 'Tables\Actions\AssociateAction::make(),';
+            $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\AssociateAction::make(),';
         }
 
         if ($this->option('attach')) {
-            $tableHeaderActions[] = 'Tables\Actions\AttachAction::make(),';
+            $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\AttachAction::make(),';
         }
 
-        $tableHeaderActions = implode(PHP_EOL, $tableHeaderActions);
+        $tableHeaderAndEmptyStateActions = implode(PHP_EOL, $tableHeaderAndEmptyStateActions);
 
         $tableActions = [];
 
@@ -148,11 +148,12 @@ class MakeRelationManagerCommand extends Command
             'relationship' => $relationship,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
+            'tableEmptyStateActions' => $this->indentString($tableHeaderAndEmptyStateActions, 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make()' : '//',
                 4,
             ),
-            'tableHeaderActions' => $this->indentString($tableHeaderActions, 4),
+            'tableHeaderActions' => $this->indentString($tableHeaderAndEmptyStateActions, 4),
         ]);
 
         $this->components->info("Successfully created {$managerClass}!");
