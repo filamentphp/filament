@@ -88,7 +88,7 @@ class Table extends ViewComponent
             }
 
             return __('filament-tables::table.empty.description', [
-                'model' => $table->getPluralModelLabel(),
+                'model' => $table->getModelLabel(),
             ]);
         });
     }

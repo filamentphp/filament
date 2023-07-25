@@ -38,6 +38,7 @@
             :actions="$actions"
             alignment="start"
             wrap
+            class="ms-auto"
         />
     @endif
 </div>
