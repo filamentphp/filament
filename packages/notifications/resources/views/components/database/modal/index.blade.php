@@ -12,8 +12,9 @@
     close-button
     :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
     :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"
-    :icon="$hasNotifications ? null : 'heroicon-o-bell'"
+    :icon="$hasNotifications ? null : 'heroicon-o-bell-slash'"
     :icon-alias="$hasNotifications ? null : 'notifications::database.modal.empty-state'"
+    :icon-color="$hasNotifications ? null : 'gray'"
     id="database-notifications"
     slide-over
     width="md"

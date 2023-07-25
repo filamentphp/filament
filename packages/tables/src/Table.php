@@ -42,7 +42,13 @@ class Table extends ViewComponent
 
     protected string $evaluationIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage'];
+    public const LOADING_TARGETS = [
+        'gotoPage',
+        'nextPage',
+        'previousPage',
+        'sortTable',
+        'tableRecordsPerPage',
+    ];
 
     public static string $defaultCurrency = 'usd';
 

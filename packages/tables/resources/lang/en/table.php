@@ -124,7 +124,7 @@ return [
 
     'empty' => [
 
-        'heading' => 'No records found',
+        'heading' => 'No :model',
 
     ],
 

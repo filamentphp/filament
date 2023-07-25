@@ -122,7 +122,7 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Geen records gevonden',
+        'heading' => 'Geen :model',
     ],
 
     'filters' => [

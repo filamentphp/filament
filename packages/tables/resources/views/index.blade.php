@@ -1235,22 +1235,12 @@
                 @else
                     <tr>
                         <td colspan="{{ $columnsCount }}">
-                            <div
-                                class="flex w-full items-center justify-center p-4"
-                            >
-                                <x-filament-tables::empty-state
-                                    :icon="$getEmptyStateIcon()"
-                                    :actions="$getEmptyStateActions()"
-                                >
-                                    <x-slot name="heading">
-                                        {{ $getEmptyStateHeading() }}
-                                    </x-slot>
-
-                                    <x-slot name="description">
-                                        {{ $getEmptyStateDescription() }}
-                                    </x-slot>
-                                </x-filament-tables::empty-state>
-                            </div>
+                            <x-filament-tables::empty-state
+                                :actions="$getEmptyStateActions()"
+                                :description="$getEmptyStateDescription()"
+                                :heading="$getEmptyStateHeading()"
+                                :icon="$getEmptyStateIcon()"
+                            />
                         </td>
                     </tr>
                 @endif
