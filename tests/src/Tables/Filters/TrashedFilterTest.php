@@ -7,10 +7,6 @@ use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
-use function Pest\Laravel\assertModelExists;
-use function Pest\Laravel\assertModelMissing;
-use function Pest\Laravel\assertNotSoftDeleted;
-use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
@@ -37,11 +33,11 @@ it('can delete records that are not already deleted', function () {
     $post = Post::factory()->create();
     $trashedPost = Post::factory()->trashed()->create();
 
-    assertModelExists($post);
-    assertNotSoftDeleted($post);
+    $this->assertModelExists($post);
+    $this->assertNotSoftDeleted($post);
 
-    assertModelExists($trashedPost);
-    assertSoftDeleted($trashedPost);
+    $this->assertModelExists($trashedPost);
+    $this->assertSoftDeleted($trashedPost);
 
     livewire(PostsTable::class)
         ->callTableAction(DeleteAction::class, $post)
@@ -50,21 +46,21 @@ it('can delete records that are not already deleted', function () {
         ->mountTableAction(DeleteAction::class, $trashedPost)
         ->assertTableActionNotMounted(DeleteAction::class);
 
-    assertSoftDeleted($post);
+    $this->assertSoftDeleted($post);
 
-    assertModelExists($trashedPost);
-    assertSoftDeleted($trashedPost);
+    $this->assertModelExists($trashedPost);
+    $this->assertSoftDeleted($trashedPost);
 });
 
 it('can force delete records that are already deleted', function () {
     $post = Post::factory()->create();
     $trashedPost = Post::factory()->trashed()->create();
 
-    assertModelExists($post);
-    assertNotSoftDeleted($post);
+    $this->assertModelExists($post);
+    $this->assertNotSoftDeleted($post);
 
-    assertModelExists($trashedPost);
-    assertSoftDeleted($trashedPost);
+    $this->assertModelExists($trashedPost);
+    $this->assertSoftDeleted($trashedPost);
 
     livewire(PostsTable::class)
         ->assertTableActionHidden(ForceDeleteAction::class, $post)
@@ -73,21 +69,21 @@ it('can force delete records that are already deleted', function () {
         ->filterTable(TrashedFilter::class, true)
         ->callTableAction(ForceDeleteAction::class, $trashedPost);
 
-    assertModelExists($post);
-    assertNotSoftDeleted($post);
+    $this->assertModelExists($post);
+    $this->assertNotSoftDeleted($post);
 
-    assertModelMissing($trashedPost);
+    $this->assertModelMissing($trashedPost);
 });
 
 it('can restore records that are already deleted', function () {
     $post = Post::factory()->create();
     $trashedPost = Post::factory()->trashed()->create();
 
-    assertModelExists($post);
-    assertNotSoftDeleted($post);
+    $this->assertModelExists($post);
+    $this->assertNotSoftDeleted($post);
 
-    assertModelExists($trashedPost);
-    assertSoftDeleted($trashedPost);
+    $this->assertModelExists($trashedPost);
+    $this->assertSoftDeleted($trashedPost);
 
     livewire(PostsTable::class)
         ->assertTableActionHidden(RestoreAction::class, $post)
@@ -96,9 +92,9 @@ it('can restore records that are already deleted', function () {
         ->filterTable(TrashedFilter::class, true)
         ->callTableAction(RestoreAction::class, $trashedPost);
 
-    assertModelExists($post);
-    assertNotSoftDeleted($post);
+    $this->assertModelExists($post);
+    $this->assertNotSoftDeleted($post);
 
-    assertModelExists($trashedPost);
-    assertNotSoftDeleted($trashedPost);
+    $this->assertModelExists($trashedPost);
+    $this->assertNotSoftDeleted($trashedPost);
 });

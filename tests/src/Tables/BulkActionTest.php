@@ -5,7 +5,6 @@ use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
 use Illuminate\Support\Str;
-use function Pest\Laravel\assertSoftDeleted;
 use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
@@ -17,7 +16,7 @@ it('can call bulk action', function () {
         ->callTableBulkAction(DeleteBulkAction::class, $posts);
 
     foreach ($posts as $post) {
-        assertSoftDeleted($post);
+        $this->assertSoftDeleted($post);
     }
 });
 
