@@ -5,8 +5,7 @@
 
     @capture($content)
         <x-filament::input.checkbox
-            :errors="$errors"
-            :state-path="$statePath"
+            :error="$errors->has($statePath)"
             :attributes="
                 $attributes
                     ->merge([
@@ -14,7 +13,6 @@
                         'disabled' => $isDisabled(),
                         'id' => $getId(),
                         'required' => $isRequired() && (! $isConcealed()),
-                        'type' => 'checkbox',
                         'wire:loading.attr' => 'disabled',
                         $applyStateBindingModifiers('wire:model') => $statePath,
                     ], escape: false)
