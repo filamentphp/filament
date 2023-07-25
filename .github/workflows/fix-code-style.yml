@@ -2,7 +2,6 @@ name: fix-code-style
 
 on:
   push:
-  pull_request:
 
 jobs:
   fix-code-style:
