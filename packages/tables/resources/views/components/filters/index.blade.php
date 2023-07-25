@@ -22,7 +22,7 @@
 
         <x-filament::loading-indicator
             wire:loading.delay=""
-            wire:target="$set,tableFilters,resetTableFiltersForm"
+            wire:target="tableFilters,resetTableFiltersForm"
             class="h-5 w-5 text-gray-400 dark:text-gray-500"
         />
     </div>
