@@ -252,6 +252,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getPlugin($id);
     }
 
+    public function hasPlugin(string $id): bool
+    {
+        return $this->getCurrentPanel()->hasPlugin($id);
+    }
+
     /**
      * @param  array<mixed>  $parameters
      */

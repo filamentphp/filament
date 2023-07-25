@@ -54,6 +54,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static Panel getPanel(?string $id = null)
  * @method static array<string, Panel> getPanels()
  * @method static Plugin getPlugin(string $id)
+ * @method static bool hasPlugin(string $id)
  * @method static string | null getProfileUrl(array $parameters = [])
  * @method static string | null getRegistrationUrl(array $parameters = [])
  * @method static string | null getRequestPasswordResetUrl(array $parameters = [])
