@@ -35,7 +35,9 @@
                 state = ! state
 
                 isLoading = true
-                response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+
+                const response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+
                 error = response?.error ?? undefined
 
                 if (error) {

@@ -52,7 +52,7 @@
         x-on:change="
             isLoading = true
 
-            response = await $wire.updateTableColumnState(
+            const response = await $wire.updateTableColumnState(
                 name,
                 recordKey,
                 $event.target.checked,
