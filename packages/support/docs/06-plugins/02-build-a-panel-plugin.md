@@ -199,4 +199,4 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-And, that's it, our users can not install our plugin and use it in their projects.
+And, that's it, our users can now install our plugin and use it in their projects.
