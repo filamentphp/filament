@@ -6,10 +6,10 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
+use function Filament\Tests\livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
