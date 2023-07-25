@@ -5,7 +5,7 @@ export default function chart({ cachedData, options, type }) {
         init: function () {
             this.initChart()
 
-            this.$el.addEventListener('updateChartData', async ({ data }) => {
+            this.$wire.$on('updateChartData', ({ data }) => {
                 chart = this.getChart()
                 chart.data = data
                 chart.update('resize')
