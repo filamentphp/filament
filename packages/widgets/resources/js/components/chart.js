@@ -5,9 +5,9 @@ export default function chart({ cachedData, options, type }) {
         init: function () {
             this.initChart()
 
-            window.addEventListener('updateChartData', async ({ data }) => {
+            window.addEventListener('updateChartData', async (event) => {
                 chart = this.getChart()
-                chart.data = data
+                chart.data = event.detail.data
                 chart.update('resize')
             })
 
