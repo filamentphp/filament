@@ -900,6 +900,7 @@
                             @foreach ($columns as $column)
                                 <x-filament-tables::cell
                                     :class="'fi-table-individual-search-cell-' . str($column->getName())->camel()->kebab()"
+                                    class="p-1"
                                 >
                                     @if ($column->isIndividuallySearchable())
                                         <x-filament-tables::search-field
