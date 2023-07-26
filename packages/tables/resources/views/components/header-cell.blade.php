@@ -39,7 +39,7 @@
             </span>
         @endif
 
-        <span class="text-sm font-semibold text-gray-950 dark:text-white">
+        <span class="text-sm font-medium text-gray-950 dark:text-white">
             {{ $slot }}
         </span>
 
