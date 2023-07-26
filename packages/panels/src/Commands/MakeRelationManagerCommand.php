@@ -62,8 +62,18 @@ class MakeRelationManagerCommand extends Command
             )] : Arr::first($panels);
         }
 
-        $resourcePath = $panel->getResourceDirectory() ?? app_path('Filament/Resources/');
-        $resourceNamespace = $panel->getResourceNamespace() ?? 'App\\Filament\\Resources';
+        $resourceDirectories = $panel->getResourceDirectories();
+        $resourceNamespaces = $panel->getResourceNamespaces();
+
+        $resourceNamespace = (count($resourceNamespaces) > 1) ?
+            $this->choice(
+                'Which namespace would you like to create this in?',
+                $resourceNamespaces,
+            ) :
+            (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
+        $resourcePath = (count($resourceDirectories) > 1) ?
+            $resourceDirectories[array_search($resourceNamespace, $resourceNamespaces)] :
+            (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
 
         $path = (string) str($managerClass)
             ->prepend("{$resourcePath}/{$resource}/RelationManagers/")

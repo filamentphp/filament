@@ -63,7 +63,7 @@ class MakeThemeCommand extends Command
             return static::INVALID;
         }
 
-        $classPathPrefix = (string) str($panel->getPageDirectory())
+        $classPathPrefix = (string) str(Arr::first($panel->getPageDirectories()))
             ->afterLast('Filament/')
             ->beforeLast('Pages');
 
