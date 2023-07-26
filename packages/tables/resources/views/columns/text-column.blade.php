@@ -37,7 +37,10 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-text grid gap-y-1'])
+            ->class([
+                'fi-ta-text grid gap-y-1',
+                'px-3 py-3.5' => ! $isInline(),
+            ])
     }}
 >
     @if (filled($descriptionAbove))

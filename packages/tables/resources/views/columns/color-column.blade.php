@@ -2,7 +2,10 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-color flex flex-wrap gap-1.5'])
+            ->class([
+                'fi-ta-color flex flex-wrap gap-1.5',
+                'px-3 py-3.5' => ! $isInline(),
+            ])
     }}
 >
     @foreach (\Illuminate\Support\Arr::wrap($getState()) as $state)

@@ -39,7 +39,10 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-checkbox flex items-center'])
+            ->class([
+                'fi-ta-checkbox flex items-center',
+                'px-3 py-[1.125rem]' => ! $isInline(),
+            ])
     }}
 >
     <input type="hidden" value="{{ $state ? 1 : 0 }}" x-ref="newState" />
