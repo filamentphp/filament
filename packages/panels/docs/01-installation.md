@@ -21,6 +21,8 @@ composer require filament/filament:"^3.0"
 php artisan filament:install --panels
 ```
 
+This will create a file at `app/Providers/Filament/AdminPanelProvider.php`. Since this is a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
+
 If you don't have one, you may create a new user account using:
 
 ```bash
