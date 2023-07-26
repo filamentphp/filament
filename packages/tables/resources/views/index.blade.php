@@ -394,7 +394,6 @@
                         @if ($isSelectionEnabled)
                             <x-filament-tables::checkbox
                                 :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                x-on:click="toggleSelectRecordsOnPage"
                                 x-bind:checked="
                                     let recordsOnPage = getRecordsOnPage()
 
@@ -408,6 +407,7 @@
 
                                     return null
                                 "
+                                x-on:click="toggleSelectRecordsOnPage"
                                 @class(['hidden' => $isReordering])
                             />
                         @endif
@@ -606,8 +606,8 @@
                                         @if ($isSelectionEnabled && $isRecordSelectable($record))
                                             <x-filament-tables::checkbox
                                                 :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                x-model="selectedRecords"
                                                 :value="$recordKey"
+                                                x-model="selectedRecords"
                                                 @class([
                                                     'fi-ta-record-checkbox absolute top-3 end-3',
                                                     'md:relative md:top-0 md:end-0' => ! $contentGrid,
@@ -777,7 +777,6 @@
                                 <x-filament-tables::cell>
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                        x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
 
@@ -791,6 +790,7 @@
 
                                             return null
                                         "
+                                        x-on:click="toggleSelectRecordsOnPage"
                                     />
                                 </x-filament-tables::cell>
                             @endif
@@ -846,7 +846,6 @@
                                 <x-filament-tables::cell>
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                        x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
 
@@ -860,6 +859,7 @@
 
                                             return null
                                         "
+                                        x-on:click="toggleSelectRecordsOnPage"
                                     />
                                 </x-filament-tables::cell>
                             @endif
@@ -1012,6 +1012,7 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
+                                                    class="fi-ta-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::cell>
@@ -1083,8 +1084,8 @@
                                             @if ($isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                    x-model="selectedRecords"
                                                     :value="$recordKey"
+                                                    x-model="selectedRecords"
                                                     class="fi-ta-record-checkbox"
                                                 />
                                             @endif
