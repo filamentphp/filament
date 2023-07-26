@@ -63,7 +63,15 @@
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('styles.end') }}
 
-        @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
+        @if (! filament()->hasDarkMode())
+            <script>
+                localStorage.setItem('theme', 'light')
+            </script>
+        @elseif (filament()->hasDarkModeForced())
+            <script>
+                localStorage.setItem('theme', 'dark')
+            </script>
+        @else
             <script>
                 const theme = localStorage.getItem('theme') ?? 'system'
 
