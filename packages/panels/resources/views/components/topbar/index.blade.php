@@ -120,7 +120,7 @@
             @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
         @endif
 
-        @if(filament()->hasTopNavigation() && filament()->hasTenancy())
+        @if (filament()->hasTopNavigation() && filament()->hasTenancy())
             <div class="hidden lg:block">
                 <x-filament::tenant-menu />
             </div>
