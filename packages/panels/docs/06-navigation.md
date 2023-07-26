@@ -81,7 +81,7 @@ All items in the same navigation group will be displayed together under the same
 
 ### Customizing navigation groups
 
-You may customize navigation groups by calling `navigationGroups()` in the [configuration](../configuration), and passing `NavigationGroup` objects in order:
+You may customize navigation groups by calling `navigationGroups()` in the [configuration](configuration), and passing `NavigationGroup` objects in order:
 
 ```php
 use Filament\Navigation\NavigationGroup;
@@ -134,7 +134,7 @@ NavigationGroup::make()
     ->collapsible(false);
 ```
 
-Or, you can do it globally for all groups in the [configuration](../configuration):
+Or, you can do it globally for all groups in the [configuration](configuration):
 
 ```php
 use Filament\Panel;
@@ -149,7 +149,7 @@ public function panel(Panel $panel): Panel
 
 ## Collapsible sidebar on desktop
 
-To make the sidebar collapsible on desktop as well as mobile, you can use the [configuration](../configuration):
+To make the sidebar collapsible on desktop as well as mobile, you can use the [configuration](configuration):
 
 ```php
 use Filament\Panel;
@@ -177,7 +177,7 @@ public function panel(Panel $panel): Panel
 
 ## Registering custom navigation items
 
-To register new navigation items, you can use the [configuration](../configuration):
+To register new navigation items, you can use the [configuration](configuration):
 
 ```php
 use Filament\Navigation\NavigationItem;
@@ -221,7 +221,7 @@ protected static bool $shouldRegisterNavigation = false;
 
 ## Advanced navigation customization
 
-The `navigation()` method can be called from the [configuration](../configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.
+The `navigation()` method can be called from the [configuration](configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.
 
 ### Registering custom navigation items
 
@@ -299,7 +299,7 @@ public function panel(Panel $panel): Panel
 
 The user menu is featured in the top right corner of the admin layout. It's fully customizable.
 
-To register new items to the user menu, you can use the [configuration](../configuration):
+To register new items to the user menu, you can use the [configuration](configuration):
 
 ```php
 use Filament\Navigation\MenuItem;
@@ -363,7 +363,7 @@ public function panel(Panel $panel): Panel
 
 The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.
 
-You may disable breadcrumbs in your [configuration](../configuration):
+You may disable breadcrumbs in your [configuration](configuration):
 
 ```php
 use Filament\Panel;

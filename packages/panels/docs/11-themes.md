@@ -4,7 +4,7 @@ title: Themes
 
 ## Changing the colors
 
-In the [configuration](../configuration), you can easily change the colors that are used. Filament ships with 7 predefined colors that are used everywhere within the framework. They are customizable as follows:
+In the [configuration](configuration), you can easily change the colors that are used. Filament ships with 7 predefined colors that are used everywhere within the framework. They are customizable as follows:
 
 ```php
 use Filament\Panel;
@@ -66,7 +66,7 @@ $panel
 
 ## Changing the font
 
-By default, we use the [Be Vietnam Pro](https://fonts.google.com/specimen/Be+Vietnam+Pro) font. You can change this using the `font()` method in the [configuration](../configuration) file:
+By default, we use the [Be Vietnam Pro](https://fonts.google.com/specimen/Be+Vietnam+Pro) font. You can change this using the `font()` method in the [configuration](configuration) file:
 
 ```php
 use Filament\Panel;
@@ -145,7 +145,7 @@ You may create a `resources/views/vendor/filament/components/logo.blade.php` fil
 
 ## Disabling dark mode
 
-To disable dark mode switching, you can use the [configuration](../configuration) file:
+To disable dark mode switching, you can use the [configuration](configuration) file:
 
 ```php
 use Filament\Panel;
@@ -160,7 +160,7 @@ public function panel(Panel $panel): Panel
 
 ## Adding a favicon
 
-To add a favicon, you can use the [configuration](../configuration) file, passing the public URL of the favicon:
+To add a favicon, you can use the [configuration](configuration) file, passing the public URL of the favicon:
 
 ```php
 use Filament\Panel;

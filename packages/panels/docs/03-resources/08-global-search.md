@@ -126,7 +126,7 @@ protected static int $globalSearchResultsLimit = 20;
 
 As [explained above](#title), global search is automatically enables once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
 
-This can be achieved by disabling global search in the [configuration](../../configuration):
+This can be achieved by disabling global search in the [configuration](configuration):
 
 ```php
 use Filament\Panel;
@@ -141,7 +141,7 @@ public function panel(Panel $panel): Panel
 
 ## Registering global search keybindings
 
-The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](../configuration):
+The global search field can be opened using keyboard shortcuts. To configure these, pass the `globalSearchKeyBindings()` method to the [configuration](configuration):
 
 ```php
 use Filament\Panel;

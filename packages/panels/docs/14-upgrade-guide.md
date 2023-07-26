@@ -42,7 +42,7 @@ php artisan filament:install --panels
 
 A new `app/Providers/Filament/AdminPanelProvider.php` file will be created, ready for you to transfer over your old configuration from the `config/filament.php` file.
 
-Most configuration transfer is very self-explanatory, but if you get stuck please refer to the [configuration documentation](../configuration).
+Most configuration transfer is very self-explanatory, but if you get stuck please refer to the [configuration documentation](configuration).
 
 Finally, you can run the following command to replace the old config file with the shiny new one:
 

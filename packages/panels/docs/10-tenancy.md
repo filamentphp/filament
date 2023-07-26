@@ -10,7 +10,7 @@ Multi-tenancy is a very sensitive topic. It's important to understand the securi
 
 ## Setting up tenancy
 
-To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](../configuration):
+To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
 
 ```php
 use App\Models\Team;
@@ -103,7 +103,7 @@ class RegisterTeam extends RegisterTenant
 
 You may add any [form components](../forms/getting-started) to the `form()` method, and create the team inside the `handleRegistration()` method.
 
-Now, we need to tell Filament to use this page. We can do this in the [configuration](../configuration):
+Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
 
 ```php
 use App\Filament\Pages\Tenancy\RegisterTeam;
@@ -155,7 +155,7 @@ class EditTeamProfile extends EditTenantProfile
 
 You may add any [form components](../forms/getting-started) to the `form()` method. They will get saved directly to the tenant model.
 
-Now, we need to tell Filament to use this page. We can do this in the [configuration](../configuration):
+Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
 
 ```php
 use App\Filament\Pages\Tenancy\EditTeamProfile;
@@ -195,7 +195,7 @@ Now, you can install the Filament billing provider for Spark using Composer:
 composer require filament/spark-billing-provider
 ```
 
-In the [configuration](../configuration), set Spark as the `tenantBillingProvider()`:
+In the [configuration](configuration), set Spark as the `tenantBillingProvider()`:
 
 ```php
 use Filament\Billing\Providers\SparkBillingProvider;
@@ -276,7 +276,7 @@ class ExampleBillingProvider implements Provider
 
 The tenant-switching menu is featured in the sidebar of the admin layout. It's fully customizable.
 
-To register new items to the tenant menu, you can use the [configuration](../configuration):
+To register new items to the tenant menu, you can use the [configuration](configuration):
 
 ```php
 use Filament\Navigation\MenuItem;
@@ -509,7 +509,7 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 
 ## Applying middleware to tenant-aware routes
 
-You can apply extra middleware to all tenant-aware routes by passing an array of middleware classes to the `tenantMiddleware()` method in the [panel configuration file](../configuration):
+You can apply extra middleware to all tenant-aware routes by passing an array of middleware classes to the `tenantMiddleware()` method in the [panel configuration file](configuration):
 
 ```php
 use Filament\Panel;

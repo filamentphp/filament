@@ -6,7 +6,7 @@ title: Notifications
 
 The panel builder uses the [Notifications](../notifications/sending-notifications) package to send messages to users. Please read the [documentation](../notifications/sending-notifications) to discover how to send notifications easily.
 
-If you'd like to receive [database notifications](../notifications/database-notifications), you can enable them in the [configuration](../configuration):
+If you'd like to receive [database notifications](../notifications/database-notifications), you can enable them in the [configuration](configuration):
 
 ```php
 use Filament\Panel;
