@@ -10,10 +10,21 @@
         x-on:click="toggleCollapseGroup(@js($title))"
     @endif
     @class([
-        'flex w-full items-center justify-between gap-x-3 bg-gray-50 px-3 py-2 dark:bg-gray-800 sm:px-6',
+        'flex w-full items-center gap-x-3 bg-gray-50 px-3 py-2 dark:bg-gray-800 sm:px-6',
         'cursor-pointer' => $collapsible,
     ])
 >
+    @if ($collapsible)
+        <x-filament::icon-button
+            color="gray"
+            icon-alias="tables::grouping.collapse-button"
+            icon="heroicon-m-chevron-up"
+            size="sm"
+            :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'-rotate-180\''"
+            class="-m-1.5"
+        />
+    @endif
+
     <div class="grid">
         <h4 class="text-sm font-medium text-gray-950 dark:text-white">
             @if (filled($label))
@@ -29,15 +40,4 @@
             </p>
         @endif
     </div>
-
-    @if ($collapsible)
-        <x-filament::icon-button
-            color="gray"
-            icon-alias="tables::grouping.collapse-button"
-            icon="heroicon-m-chevron-up"
-            size="sm"
-            :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'-rotate-180\''"
-            class="-m-1.5"
-        />
-    @endif
 </div>
