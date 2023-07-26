@@ -5,6 +5,13 @@
     'wrap' => false,
 ])
 
+@php
+    $actions = array_filter(
+        $actions,
+        fn ($action): bool => $action->isVisible(),
+    );
+@endphp
+
 <div
     {{
         $attributes->class([
@@ -14,7 +21,7 @@
             match ($alignment) {
                 'center' => 'justify-center',
                 'start', 'left' => 'justify-start',
-                'start sm:end', 'left sm:right' => 'justify-start sm:justify-end',
+                'start sm:end' => 'justify-start sm:justify-end',
                 default => 'justify-end',
             },
         ])
@@ -27,8 +34,6 @@
             }
         @endphp
 
-        @if ($action->isVisible())
-            {{ $action }}
-        @endif
+        {{ $action }}
     @endforeach
 </div>

@@ -394,7 +394,6 @@
                         @if ($isSelectionEnabled)
                             <x-filament-tables::checkbox
                                 :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                x-on:click="toggleSelectRecordsOnPage"
                                 x-bind:checked="
                                     let recordsOnPage = getRecordsOnPage()
 
@@ -408,6 +407,7 @@
 
                                     return null
                                 "
+                                x-on:click="toggleSelectRecordsOnPage"
                                 @class(['hidden' => $isReordering])
                             />
                         @endif
@@ -606,8 +606,8 @@
                                         @if ($isSelectionEnabled && $isRecordSelectable($record))
                                             <x-filament-tables::checkbox
                                                 :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                x-model="selectedRecords"
                                                 :value="$recordKey"
+                                                x-model="selectedRecords"
                                                 @class([
                                                     'fi-ta-record-checkbox absolute top-3 end-3',
                                                     'md:relative md:top-0 md:end-0' => ! $contentGrid,
@@ -774,10 +774,9 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                <x-filament-tables::cell>
+                                <x-filament-tables::cell tag="th">
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                        x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
 
@@ -791,6 +790,7 @@
 
                                             return null
                                         "
+                                        x-on:click="toggleSelectRecordsOnPage"
                                     />
                                 </x-filament-tables::cell>
                             @endif
@@ -817,13 +817,18 @@
                         @foreach ($columns as $column)
                             <x-filament-tables::header-cell
                                 :actively-sorted="$getSortColumn() === $column->getName()"
-                                :name="$column->getName()"
                                 :alignment="$column->getAlignment()"
+                                :name="$column->getName()"
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
-                                class="fi-table-header-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
-                                :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())"
                                 :wrap="$column->isHeaderWrapped()"
+                                :attributes="
+                                    \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
+                                        ->class([
+                                            'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
+                                            $getHiddenClasses($column),
+                                        ])
+                                "
                             >
                                 {{ $column->getLabel() }}
                             </x-filament-tables::header-cell>
@@ -843,10 +848,9 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                <x-filament-tables::cell>
+                                <x-filament-tables::cell tag="th">
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                        x-on:click="toggleSelectRecordsOnPage"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
 
@@ -860,6 +864,7 @@
 
                                             return null
                                         "
+                                        x-on:click="toggleSelectRecordsOnPage"
                                     />
                                 </x-filament-tables::cell>
                             @endif
@@ -918,6 +923,7 @@
 
                     @if (($records !== null) && count($records))
                         @php
+                            $isRecordRowStriped = false;
                             $previousRecord = null;
                             $previousRecordGroupKey = null;
                             $previousRecordGroupTitle = null;
@@ -962,20 +968,22 @@
                                         </td>
                                     </x-filament-tables::row>
                                 @endif
+
+                                @php
+                                    $isRecordRowStriped = false;
+                                @endphp
                             @endif
 
                             @if (! $isGroupsOnly)
                                 <x-filament-tables::row
+                                    :alpine-hidden="($group?->isCollapsible() ? 'true' : 'false') . ' && isGroupCollapsed(\'' . $recordGroupTitle . '\')'"
+                                    :alpine-selected="'isRecordSelected(\'' . $recordKey . '\')'"
                                     :record-action="$recordAction"
                                     :record-url="$recordUrl"
+                                    :striped="$isStriped && $isRecordRowStriped"
                                     :wire:key="$this->getId() . '.table.records.' . $recordKey"
                                     :x-sortable-item="$isReordering ? $recordKey : null"
                                     :x-sortable-handle="$isReordering"
-                                    :striped="$isStriped"
-                                    x-bind:class="{
-                                        'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
-                                        'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
-                                    }"
                                     @class([
                                         'group cursor-move' => $isReordering,
                                         ...$getRecordClasses($record),
@@ -1006,12 +1014,20 @@
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
+                                            :attributes="
+                                                \Filament\Support\prepare_inherited_attributes(
+                                                    new \Illuminate\View\ComponentAttributeBag([
+                                                        'x-bind:class' => '{ \'relative before:absolute before:start-0 before:inset-y-0 before:w-0.5 before:bg-primary-600 dark:before:bg-primary-400\': isRecordSelected(\'' . $recordKey . '\') }',
+                                                    ])
+                                                )
+                                            "
                                         >
                                             @if ($isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
+                                                    class="fi-ta-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::cell>
@@ -1083,8 +1099,8 @@
                                             @if ($isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                    x-model="selectedRecords"
                                                     :value="$recordKey"
+                                                    x-model="selectedRecords"
                                                     class="fi-ta-record-checkbox"
                                                 />
                                             @endif
@@ -1108,6 +1124,7 @@
                             @endif
 
                             @php
+                                $isRecordRowStriped = ! $isRecordRowStriped;
                                 $previousRecordGroupKey = $recordGroupKey;
                                 $previousRecordGroupTitle = $recordGroupTitle;
                                 $previousRecord = $record;

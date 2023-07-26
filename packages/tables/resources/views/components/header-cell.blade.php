@@ -1,9 +1,9 @@
 @props([
     'activelySorted' => false,
+    'alignment' => null,
     'name',
     'sortable' => false,
     'sortDirection',
-    'alignment' => null,
     'wrap' => false,
 ])
 
@@ -14,12 +14,12 @@
     }}
 >
     <button
+        type="button"
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"
         @endif
-        type="button"
         @class([
-            'flex w-full items-center gap-x-1 text-sm font-medium text-gray-600 dark:text-gray-300',
+            'group flex w-full items-center gap-x-1',
             'cursor-default' => ! $sortable,
             'whitespace-nowrap' => ! $wrap,
             'whitespace-normal' => $wrap,
@@ -39,7 +39,7 @@
             </span>
         @endif
 
-        <span>
+        <span class="text-sm font-semibold text-gray-950 dark:text-white">
             {{ $slot }}
         </span>
 
@@ -48,8 +48,9 @@
                 :alias="$activelySorted && $sortDirection === 'asc' ? 'tables::header-cell.sort-asc' : 'tables::header-cell.sort-desc'"
                 :icon="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 @class([
-                    'fi-ta-header-cell-sort-icon h-5 w-5 dark:text-gray-300',
-                    'opacity-25' => ! $activelySorted,
+                    'fi-ta-header-cell-sort-icon h-5 w-5 transition duration-75',
+                    'text-gray-950 dark:text-white' => $activelySorted,
+                    'text-gray-400 dark:text-gray-500 group-hover:text-gray-500 group-focus:text-gray-500 dark:group-hover:text-gray-400 dark:group-focus:text-gray-400' => ! $activelySorted,
                 ])
             />
 

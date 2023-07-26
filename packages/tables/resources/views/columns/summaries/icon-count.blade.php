@@ -2,32 +2,48 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-icon-count-summary space-y-1 text-sm'])
+            ->class(['fi-ta-icon-count-summary grid gap-y-1.5'])
     }}
 >
     @if (filled($label = $getLabel()))
-        <p class="text-gray-500 dark:text-gray-400">{{ $label }}:</p>
+        <p class="text-sm font-medium text-gray-950 dark:text-white">
+            {{ $label }}
+        </p>
     @endif
 
-    @foreach ($getState() as $color => $icons)
-        @foreach ($icons as $icon => $count)
-            @if ($icon)
-                <div class="flex items-center gap-x-1">
-                    <span>
-                        {{ $count }}
-                    </span>
+    @if ($state = $getState())
+        <div class="grid gap-y-1.5">
+            @foreach ($state as $color => $icons)
+                @php
+                    $color = json_decode($color);
+                @endphp
 
-                    <span class="text-gray-500 dark:text-gray-400">
-                        &times;
-                    </span>
+                @foreach ($icons as $icon => $count)
+                    @if (filled($icon))
+                        <div class="flex items-center justify-end gap-x-1.5">
+                            <span
+                                class="text-sm text-gray-500 dark:text-gray-400"
+                            >
+                                {{ $count }}
+                            </span>
 
-                    <x-filament::icon
-                        :icon="$icon"
-                        :style="\Filament\Support\get_color_css_variables(json_decode($color) ?? 'gray', shades: [500])"
-                        class="fi-ta-icon-count-summary-icon h-4 w-4 text-custom-500"
-                    />
-                </div>
-            @endif
-        @endforeach
-    @endforeach
+                            <x-filament::icon
+                                :icon="$icon"
+                                @class([
+                                    'fi-ta-icon-count-summary-icon h-6 w-6',
+                                    match ($color) {
+                                        'gray' => 'text-gray-400 dark:text-gray-500',
+                                        default => 'text-custom-500 dark:text-custom-400',
+                                    },
+                                ])
+                                @style([
+                                    \Filament\Support\get_color_css_variables($color, shades: [400, 500]) => $color !== 'gray',
+                                ])
+                            />
+                        </div>
+                    @endif
+                @endforeach
+            @endforeach
+        </div>
+    @endif
 </div>
