@@ -444,31 +444,23 @@ Select::make('type')
         ->fill())
     
 Grid::make(2)
-    ->schema(function (Get $get): array {
-        $type = $get('type');
-        
-        if ($type === 'employee') {
-            return [
-                TextInput::make('employee_number')
-                    ->required(),
-                FileUpload::make('badge')
-                    ->image()
-                    ->required(),
-            ];
-        }
-        
-        if ($type === 'freelancer') {
-            return [
-                TextInput::make('hourly_rate')
-                    ->numeric()
-                    ->required()
-                    ->prefix('€'),
-                FileUpload::make('contract')
-                    ->required(),
-            ];
-        }
-        
-        return [];
+    ->schema(fn (Get $get): array => match ($get('type')) {
+        'employee' => [
+            TextInput::make('employee_number')
+                ->required(),
+            FileUpload::make('badge')
+                ->image()
+                ->required(),
+        ],
+        'freelancer' => [
+            TextInput::make('hourly_rate')
+                ->numeric()
+                ->required()
+                ->prefix('€'),
+            FileUpload::make('contract')
+                ->required(),
+        ],
+        default => [],
     })
     ->key('dynamicTypeFields')
 ```

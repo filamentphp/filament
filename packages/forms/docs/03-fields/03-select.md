@@ -226,7 +226,7 @@ use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
-    ->editOptionAction([
+    ->editOptionForm([
         Forms\Components\TextInput::make('name')
             ->required(),
         Forms\Components\TextInput::make('email')
@@ -496,4 +496,25 @@ Select::make('technologies')
     ])
     ->minItems(1)
     ->maxItems(3)
+```
+
+## Customizing the select action objects
+
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button) or [customize its modal](../../actions/modals). The following methods are available to customize the actions:
+
+- `createOptionAction()`
+- `editOptionAction()`
+- `manageOptionActions()` (for customizing both the create and edit option actions at once)
+
+Here is an example of how you might customize an action:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->createOptionAction(
+        fn (Action $action) => $action->modalWidth('3xl'),
+    )
 ```

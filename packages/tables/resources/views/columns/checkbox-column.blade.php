@@ -1,12 +1,19 @@
 @php
-    $state = $getState();
+    $isDisabled = $isDisabled();
+    $state = (bool) $getState();
 @endphp
 
 <div
     x-data="{
         error: undefined,
-        state: @js((bool) $state),
+
         isLoading: false,
+
+        name: @js($getName()),
+
+        recordKey: @js($recordKey),
+
+        state: @js($state),
     }"
     x-init="
         Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
@@ -19,7 +26,7 @@
                     return
                 }
 
-                let newState = $refs.newState.value === '1' ? true : false
+                const newState = $refs.newState.value === '1' ? true : false
 
                 if (state === newState) {
                     return
@@ -32,35 +39,40 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-checkbox'])
+            ->class(['fi-ta-checkbox flex items-center px-3 py-[1.125rem]'])
     }}
 >
     <input type="hidden" value="{{ $state ? 1 : 0 }}" x-ref="newState" />
 
-    <input
+    <x-filament::input.checkbox
+        alpine-valid="! error"
+        :disabled="$isDisabled"
+        :x-bind:disabled="$isDisabled ? null : 'isLoading'"
         x-model="state"
-        @disabled($isDisabled())
-        type="checkbox"
         x-on:change="
             isLoading = true
-            response = await $wire.updateTableColumnState(
-                @js($getName()),
-                @js($recordKey),
+
+            const response = await $wire.updateTableColumnState(
+                name,
+                recordKey,
                 $event.target.checked,
             )
+
             error = response?.error ?? undefined
+
             isLoading = false
         "
-        x-tooltip="error"
-        {{
-            $attributes
+        x-tooltip="
+            error === undefined
+                ? false
+                : {
+                    content: error,
+                    theme: $store.theme,
+                }
+        "
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($attributes)
                 ->merge($getExtraInputAttributes(), escape: false)
-                ->class(['ms-4 rounded text-sm text-primary-600 shadow-sm outline-none transition duration-75 focus:border-primary-500 focus:ring-2 focus:ring-primary-500 disabled:opacity-70 dark:bg-gray-700 dark:checked:bg-primary-500'])
-        }}
-        x-bind:class="{
-            'opacity-70 pointer-events-none': isLoading,
-            'border-gray-300 dark:border-gray-600': ! error,
-            'border-danger-600 ring-1 ring-inset ring-danger-600': error,
-        }"
+        "
     />
 </div>

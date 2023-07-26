@@ -1,4 +1,6 @@
 @props([
+    'alpineDisabled' => null,
+    'alpineValid' => null,
     'disabled' => false,
     'inlinePrefix' => false,
     'inlineSuffix' => false,
@@ -6,31 +8,30 @@
     'prefixActions' => [],
     'prefixIcon' => null,
     'prefixIconAlias' => null,
-    'statePath' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
     'suffixIconAlias' => null,
+    'valid' => true,
 ])
 
 @php
     $hasPrefix = count($prefixActions) || $prefixIcon || filled($prefix);
     $hasSuffix = count($suffixActions) || $suffixIcon || filled($suffix);
 
-    $ringClasses = \Illuminate\Support\Arr::toCssClasses([
-        'ring-gray-950/10 dark:ring-white/20',
-        'focus-within:ring-primary-600 dark:focus-within:ring-primary-600' => ! $disabled,
-    ]);
+    $hasAlpineDisabledClasses = filled($alpineDisabled);
+    $hasAlpineValidClasses = filled($alpineValid);
+    $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
-    $errorRingClasses = \Illuminate\Support\Arr::toCssClasses([
-        'ring-danger-600 dark:ring-danger-400',
-        'focus-within:ring-danger-600 dark:focus-within:ring-danger-400' => ! $disabled,
-    ]);
+    $enabledClasses = 'bg-white focus-within:ring-2 dark:bg-gray-900';
+    $disabledClasses = 'bg-gray-50 dark:bg-gray-950';
+    $validClasses = 'ring-gray-950/10 dark:ring-white/20';
+    $invalidClasses = 'ring-danger-600 dark:ring-danger-400';
+    $enabledValidClasses = 'focus-within:ring-primary-600 dark:focus-within:ring-primary-600';
+    $enabledInvalidClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-400';
 
     $affixActionsClasses = '-mx-1.5 flex items-center';
-
     $affixIconClasses = 'fi-fo-affixes-icon h-5 w-5 text-gray-400 dark:text-gray-500';
-
     $affixLabelClasses = 'fi-fo-affixes-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $prefixActions = array_filter(
@@ -53,21 +54,27 @@
 @endphp
 
 <div
-    @if ($statePath)
-        x-bind:class="
-            @js($statePath) in $wire.__instance.snapshot.memo.errors
-                ? '{{ $errorRingClasses }}'
-                : '{{ $ringClasses }}'
-        "
+    @if ($hasAlpineClasses)
+        x-bind:class="{
+            {{ $hasAlpineDisabledClasses ? "'{$enabledClasses}': ! ({$alpineDisabled})," : null }}
+            {{ $hasAlpineDisabledClasses ? "'{$disabledClasses}': {$alpineDisabled}," : null }}
+            {{ $hasAlpineValidClasses ? "'{$validClasses}': {$alpineValid}," : null }}
+            {{ $hasAlpineValidClasses ? "'{$invalidClasses}': ! ({$alpineValid})," : null }}
+            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledValidClasses}': ! ({$alpineDisabled}) && {$alpineValid}," : null }}
+            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledInvalidClasses}': ! ({$alpineDisabled}) && ! ({$alpineValid})," : null }}
+        }"
     @endif
     {{
         $attributes
-            ->except('wire:target')
+            ->except(['wire:target'])
             ->class([
                 'fi-fo-affixes flex rounded-lg shadow-sm ring-1 transition duration-75',
-                $ringClasses => ! $statePath,
-                'bg-gray-50 dark:bg-gray-950' => $disabled,
-                'bg-white focus-within:ring-2 dark:bg-gray-900' => ! $disabled,
+                $enabledClasses => (! $hasAlpineClasses) && (! $disabled),
+                $disabledClasses => (! $hasAlpineClasses) && $disabled,
+                $validClasses => (! $hasAlpineClasses) && $valid,
+                $invalidClasses => (! $hasAlpineClasses) && (! $valid),
+                $enabledValidClasses => (! $hasAlpineClasses) && (! $disabled) && $valid,
+                $enabledInvalidClasses => (! $hasAlpineClasses) && (! $disabled) && (! $valid),
             ])
     }}
 >
@@ -96,7 +103,7 @@
             @if ($prefixIcon)
                 <x-filament::icon
                     :alias="$prefixIconAlias"
-                    :name="$prefixIcon"
+                    :icon="$prefixIcon"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                     :class="$affixIconClasses"
@@ -159,7 +166,7 @@
             @if ($suffixIcon)
                 <x-filament::icon
                     :alias="$suffixIconAlias"
-                    :name="$suffixIcon"
+                    :icon="$suffixIcon"
                     :class="$affixIconClasses"
                 />
             @endif

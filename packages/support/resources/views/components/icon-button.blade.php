@@ -70,7 +70,10 @@
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
-            x-tooltip.raw="{{ $tooltip }}"
+            x-tooltip="{
+                content: @js($tooltip),
+                theme: $store.theme,
+            }"
         @endif
         {{
             $attributes
@@ -91,7 +94,7 @@
 
         <x-filament::icon
             :alias="$iconAlias"
-            :name="$icon"
+            :icon="$icon"
             :wire:loading.remove.delay="$hasLoadingIndicator"
             :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
             :class="$iconClasses"
@@ -122,7 +125,10 @@
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
         @endif
         @if ($tooltip)
-            x-tooltip.raw="{{ $tooltip }}"
+            x-tooltip="{
+                content: @js($tooltip),
+                theme: $store.theme,
+            }"
         @endif
         {{
             $attributes
@@ -141,7 +147,7 @@
 
         <x-filament::icon
             :alias="$iconAlias"
-            :name="$icon"
+            :icon="$icon"
             :class="$iconClasses"
         />
 

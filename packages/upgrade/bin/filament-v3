@@ -89,7 +89,7 @@ if (file_exists('config/notifications.php')) {
 
     render(<<<HTML
         <p>
-            Removed <stong>config/notifications.php</stong>. All config files have been merged into <strong>config/filament.php</strong>.
+            Removed <strong>config/notifications.php</strong>. All config files have been merged into <strong>config/filament.php</strong>.
         </p>
     HTML);
 }
@@ -328,7 +328,9 @@ render(<<<HTML
     </p>
 HTML);
 
-exec("vendor/bin/rector process {$appDirectory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
+$rectorScriptPath = implode(DIRECTORY_SEPARATOR, ['vendor', 'bin', 'rector']);
+
+exec("{$rectorScriptPath} process {$appDirectory} --config vendor/filament/upgrade/src/rector.php --clear-cache");
 
 render(<<<HTML
     <p class="pt-2">

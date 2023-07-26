@@ -32,27 +32,45 @@ trait HasComponents
      */
     protected array $pages = [];
 
-    protected ?string $pageDirectory = null;
+    /**
+     * @var array<string>
+     */
+    protected array $pageDirectories = [];
 
-    protected ?string $pageNamespace = null;
+    /**
+     * @var array<string>
+     */
+    protected array $pageNamespaces = [];
 
     /**
      * @var array<class-string>
      */
     protected array $resources = [];
 
-    protected ?string $resourceDirectory = null;
+    /**
+     * @var array<string>
+     */
+    protected array $resourceDirectories = [];
 
-    protected ?string $resourceNamespace = null;
+    /**
+     * @var array<string>
+     */
+    protected array $resourceNamespaces = [];
 
     /**
      * @var array<class-string<Widget>>
      */
     protected array $widgets = [];
 
-    protected ?string $widgetDirectory = null;
+    /**
+     * @var array<string>
+     */
+    protected array $widgetDirectories = [];
 
-    protected ?string $widgetNamespace = null;
+    /**
+     * @var array<string>
+     */
+    protected array $widgetNamespaces = [];
 
     /**
      * @param  array<class-string>  $pages
@@ -133,8 +151,8 @@ trait HasComponents
 
     public function discoverPages(string $in, string $for): static
     {
-        $this->pageDirectory ??= $in;
-        $this->pageNamespace ??= $for;
+        $this->pageDirectories[] = $in;
+        $this->pageNamespaces[] = $for;
 
         $this->discoverComponents(
             Page::class,
@@ -146,20 +164,26 @@ trait HasComponents
         return $this;
     }
 
-    public function getPageDirectory(): ?string
+    /**
+     * @return array<string>
+     */
+    public function getPageDirectories(): array
     {
-        return $this->pageDirectory;
+        return $this->pageDirectories;
     }
 
-    public function getPageNamespace(): ?string
+    /**
+     * @return array<string>
+     */
+    public function getPageNamespaces(): array
     {
-        return $this->pageNamespace;
+        return $this->pageNamespaces;
     }
 
     public function discoverResources(string $in, string $for): static
     {
-        $this->resourceDirectory ??= $in;
-        $this->resourceNamespace ??= $for;
+        $this->resourceDirectories[] = $in;
+        $this->resourceNamespaces[] = $for;
 
         $this->discoverComponents(
             Resource::class,
@@ -171,20 +195,26 @@ trait HasComponents
         return $this;
     }
 
-    public function getResourceDirectory(): ?string
+    /**
+     * @return array<string>
+     */
+    public function getResourceDirectories(): array
     {
-        return $this->resourceDirectory;
+        return $this->resourceDirectories;
     }
 
-    public function getResourceNamespace(): ?string
+    /**
+     * @return array<string>
+     */
+    public function getResourceNamespaces(): array
     {
-        return $this->resourceNamespace;
+        return $this->resourceNamespaces;
     }
 
     public function discoverWidgets(string $in, string $for): static
     {
-        $this->widgetDirectory ??= $in;
-        $this->widgetNamespace ??= $for;
+        $this->widgetDirectories[] = $in;
+        $this->widgetNamespaces[] = $for;
 
         $this->discoverComponents(
             Widget::class,
@@ -196,14 +226,20 @@ trait HasComponents
         return $this;
     }
 
-    public function getWidgetDirectory(): ?string
+    /**
+     * @return array<string>
+     */
+    public function getWidgetDirectories(): array
     {
-        return $this->widgetDirectory;
+        return $this->widgetDirectories;
     }
 
-    public function getWidgetNamespace(): ?string
+    /**
+     * @return array<string>
+     */
+    public function getWidgetNamespaces(): array
     {
-        return $this->widgetNamespace;
+        return $this->widgetNamespaces;
     }
 
     /**

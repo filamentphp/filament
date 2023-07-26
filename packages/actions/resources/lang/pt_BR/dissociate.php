@@ -32,7 +32,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Dissociar selecionado :label',
+            'heading' => 'Dissociar :label selecionado',
 
             'actions' => [
 

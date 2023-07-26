@@ -9,7 +9,8 @@ Aside from [building custom fields](custom), you may create "view" fields which 
 ```php
 use Filament\Forms\Components\ViewField;
 
-ViewField::make('rating')->view('filament.forms.components.range-slider')
+ViewField::make('rating')
+    ->view('filament.forms.components.range-slider')
 ```
 
 This assumes that you have a `resources/views/filament/forms/components/range-slider.blade.php` file.

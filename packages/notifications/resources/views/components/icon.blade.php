@@ -1,11 +1,11 @@
 @props([
     'color' => 'gray',
-    'name',
+    'icon',
     'size' => 'lg',
 ])
 
 <x-filament::icon
-    :name="$name"
+    :icon="$icon"
     :attributes="
         $attributes
             ->class([

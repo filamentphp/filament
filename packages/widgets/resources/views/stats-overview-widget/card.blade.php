@@ -26,13 +26,18 @@
             target="_blank"
         @endif
     @endif
-    {{ $getExtraAttributeBag()->class(['fi-wi-stats-overview-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10']) }}
+    {{
+        $getExtraAttributeBag()
+            ->class([
+                'fi-wi-stats-overview-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
+            ])
+    }}
 >
     <div class="grid gap-y-2">
         <div class="flex items-center gap-x-2">
             @if ($icon = $getIcon())
                 <x-filament::icon
-                    :name="$icon"
+                    :icon="$icon"
                     class="fi-wi-stats-overview-card-icon h-5 w-5 text-gray-400 dark:text-gray-500"
                 />
             @endif
@@ -52,7 +57,7 @@
             <div class="flex items-center gap-x-1">
                 @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
                     <x-filament::icon
-                        :name="$descriptionIcon"
+                        :icon="$descriptionIcon"
                         :class="$descriptionIconClasses"
                         :style="$descriptionIconStyles"
                     />
@@ -75,7 +80,7 @@
 
                 @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
                     <x-filament::icon
-                        :name="$descriptionIcon"
+                        :icon="$descriptionIcon"
                         :class="$descriptionIconClasses"
                         :style="$descriptionIconStyles"
                     />

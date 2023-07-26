@@ -38,7 +38,7 @@
                     if ($isGroup) {
                         $manager->ownerRecord($ownerRecord);
                         $manager->pageClass($pageClass);
-                    } else {
+                    } elseif (filled($tabKey)) {
                         $manager = $normalizeRelationManagerClass($manager);
                     }
                 @endphp

@@ -90,6 +90,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasLogin()
  * @method static bool hasNavigation()
  * @method static bool hasPasswordReset()
+ * @method static bool hasPlugin(string $id)
  * @method static bool hasProfile()
  * @method static bool hasRegistration()
  * @method static bool hasTenancy()

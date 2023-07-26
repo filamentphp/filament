@@ -113,8 +113,8 @@
                 x-transition:enter-end="opacity-100"
             >
                 <x-filament::icon
-                    name="heroicon-o-bars-3"
                     alias="panels::sidebar.collapse-button.full"
+                    icon="heroicon-o-bars-3"
                     class="h-6 w-6"
                 />
             </button>
@@ -122,15 +122,13 @@
     </header>
 
     <nav
-        class="fi-sidebar-nav flex-1 overflow-y-auto overflow-x-hidden py-6 shadow-lg lg:shadow-none"
+        class="fi-sidebar-nav grid flex-1 content-start gap-y-6 overflow-y-auto overflow-x-hidden py-6 shadow-lg lg:shadow-none"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.start') }}
 
         @if (filament()->hasTenancy())
-            <div class="mb-6 space-y-6 px-6">
+            <div class="mx-4">
                 <x-filament::tenant-menu />
-
-                <div class="-me-6 border-t dark:border-gray-700"></div>
             </div>
         @endif
 

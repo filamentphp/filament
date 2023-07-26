@@ -47,18 +47,19 @@
                     {{ __('filament-tables::table.grouping.fields.group.label') }}
                 </span>
 
-                <x-filament::input.select
-                    x-model="group"
-                    x-on:change="resetCollapsedGroups()"
-                    class="w-full"
-                >
-                    <option value="">-</option>
-                    @foreach ($groups as $group)
-                        <option value="{{ $group->getId() }}">
-                            {{ $group->getLabel() }}
-                        </option>
-                    @endforeach
-                </x-filament::input.select>
+                <x-filament-forms::affixes>
+                    <x-filament::input.select
+                        x-model="group"
+                        x-on:change="resetCollapsedGroups()"
+                    >
+                        <option value="">-</option>
+                        @foreach ($groups as $group)
+                            <option value="{{ $group->getId() }}">
+                                {{ $group->getLabel() }}
+                            </option>
+                        @endforeach
+                    </x-filament::input.select>
+                </x-filament-forms::affixes>
             </label>
 
             <label x-show="group" x-cloak class="space-y-1">
@@ -68,14 +69,16 @@
                     {{ __('filament-tables::table.grouping.fields.direction.label') }}
                 </span>
 
-                <x-filament::input.select x-model="direction" class="w-full">
-                    <option value="asc">
-                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                    </option>
-                    <option value="desc">
-                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                    </option>
-                </x-filament::input.select>
+                <x-filament-forms::affixes>
+                    <x-filament::input.select x-model="direction">
+                        <option value="asc">
+                            {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                        </option>
+                        <option value="desc">
+                            {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                        </option>
+                    </x-filament::input.select>
+                </x-filament-forms::affixes>
             </label>
         </div>
     </x-filament::dropdown>
@@ -87,21 +90,21 @@
                     {{ __('filament-tables::table.grouping.fields.group.label') }}
                 </span>
 
-                <x-filament::input.select
-                    x-model="group"
-                    x-on:change="resetCollapsedGroups()"
-                    size="sm"
-                    class="text-sm"
-                >
-                    <option value="">
-                        {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
-                    </option>
-                    @foreach ($groups as $group)
-                        <option value="{{ $group->getId() }}">
-                            {{ $group->getLabel() }}
+                <x-filament-forms::affixes class="w-full">
+                    <x-filament::input.select
+                        x-model="group"
+                        x-on:change="resetCollapsedGroups()"
+                    >
+                        <option value="">
+                            {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
                         </option>
-                    @endforeach
-                </x-filament::input.select>
+                        @foreach ($groups as $group)
+                            <option value="{{ $group->getId() }}">
+                                {{ $group->getLabel() }}
+                            </option>
+                        @endforeach
+                    </x-filament::input.select>
+                </x-filament-forms::affixes>
             </label>
 
             <label x-show="group" x-cloak>
@@ -109,18 +112,16 @@
                     {{ __('filament-tables::table.grouping.fields.direction.label') }}
                 </span>
 
-                <x-filament::input.select
-                    x-model="direction"
-                    size="sm"
-                    class="text-sm"
-                >
-                    <option value="asc">
-                        {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
-                    </option>
-                    <option value="desc">
-                        {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
-                    </option>
-                </x-filament::input.select>
+                <x-filament-forms::affixes>
+                    <x-filament::input.select x-model="direction">
+                        <option value="asc">
+                            {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
+                        </option>
+                        <option value="desc">
+                            {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
+                        </option>
+                    </x-filament::input.select>
+                </x-filament-forms::affixes>
             </label>
         </div>
     @endif

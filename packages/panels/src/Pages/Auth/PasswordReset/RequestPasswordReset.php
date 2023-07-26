@@ -80,7 +80,7 @@ class RequestPasswordReset extends SimplePage
             },
         );
 
-        if ($status === Password::RESET_THROTTLED) {
+        if ($status !== Password::RESET_LINK_SENT) {
             Notification::make()
                 ->title(__($status))
                 ->danger()
@@ -89,12 +89,12 @@ class RequestPasswordReset extends SimplePage
             return;
         }
 
-        $this->form->fill();
-
         Notification::make()
-            ->title(__(Password::RESET_LINK_SENT))
+            ->title(__($status))
             ->success()
             ->send();
+
+        $this->form->fill();
     }
 
     public function form(Form $form): Form

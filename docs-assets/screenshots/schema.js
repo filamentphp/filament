@@ -198,9 +198,9 @@ export default {
         },
         before: async (page) => {
             await page.click('#actionGroup button')
-            await page.waitForSelector('#actionGroup .filament-dropdown-list')
+            await page.waitForSelector('#actionGroup .fi-dropdown-list')
 
-            await page.hover('#actionGroup .filament-dropdown-list-item')
+            await page.hover('#actionGroup .fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -215,9 +215,9 @@ export default {
         },
         before: async (page) => {
             await page.click('#customizedActionGroup button')
-            await page.waitForSelector('#customizedActionGroup .filament-dropdown-list')
+            await page.waitForSelector('#customizedActionGroup .fi-dropdown-list')
 
-            await page.hover('#customizedActionGroup .filament-dropdown-list-item')
+            await page.hover('#customizedActionGroup .fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -232,9 +232,9 @@ export default {
         },
         before: async (page) => {
             await page.click('#actionGroupPlacement button')
-            await page.waitForSelector('#actionGroupPlacement .filament-dropdown-list')
+            await page.waitForSelector('#actionGroupPlacement .fi-dropdown-list')
 
-            await page.hover('#actionGroupPlacement .filament-dropdown-list-item')
+            await page.hover('#actionGroupPlacement .fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -249,9 +249,9 @@ export default {
         },
         before: async (page) => {
             await page.click('#nestedActionGroups button')
-            await page.waitForSelector('#nestedActionGroups .filament-dropdown-list')
+            await page.waitForSelector('#nestedActionGroups .fi-dropdown-list')
 
-            await page.hover('#nestedActionGroups .filament-dropdown-list-item')
+            await page.hover('#nestedActionGroups .fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -872,7 +872,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#builderIcons .filament-forms-builder-component-block-picker button')
+            await page.click('#builderIcons .fi-fo-builder-block-picker button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -948,13 +948,23 @@ export default {
             height: 640,
             deviceScaleFactor: 3,
         },
-        before: async (page) => {
-            // Ensure that the Markdown editor is visible otherwise its JS won't load.
-            await page.evaluate(() => {
-                document.querySelector('#colorPicker').scrollIntoView()
-            })
-
-            await new Promise((resolve) => setTimeout(resolve, 500))
+    },
+    'forms/fields/actions/suffix': {
+        url: 'forms/fields',
+        selector: '#suffixAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/fields/actions/hint': {
+        url: 'forms/fields',
+        selector: '#hintAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
         },
     },
     'forms/layout/fieldset/simple': {
@@ -1092,6 +1102,42 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/layout/actions/anonymous/simple': {
+        url: 'forms/layout',
+        selector: '#anonymousActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/actions/anonymous/full-width': {
+        url: 'forms/layout',
+        selector: '#anonymousActionsFullWidth',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/actions/anonymous/horizontally-aligned-center': {
+        url: 'forms/layout',
+        selector: '#anonymousActionsHorizontallyAlignedCenter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'forms/layout/actions/anonymous/vertically-aligned-end': {
+        url: 'forms/layout',
+        selector: '#anonymousActionsVerticallyAlignedEnd',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/simple': {
         url: 'infolists/entries',
         selector: '#simple',
@@ -1146,7 +1192,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('#tooltips .filament-infolists-text-entry')
+            await page.hover('#tooltips .fi-in-text')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1250,7 +1296,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#textCopyable .filament-infolists-text-entry-content')
+            await page.click('#textCopyable .fi-in-text-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         }
@@ -1390,7 +1436,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('#colorCopyable .filament-infolists-color-entry-content')
+            await page.click('#colorCopyable .fi-in-color-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1407,6 +1453,24 @@ export default {
     'infolists/entries/repeatable/grid': {
         url: 'infolists/entries',
         selector: '#repeatableGrid',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/actions/suffix': {
+        url: 'infolists/entries',
+        selector: '#suffixAction',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/actions/hint': {
+        url: 'infolists/entries',
+        selector: '#hintAction',
         viewport: {
             width: 1920,
             height: 640,
@@ -1515,6 +1579,42 @@ export default {
     'infolists/layout/split/simple': {
         url: 'infolists/layout',
         selector: '#split',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/actions/anonymous/simple': {
+        url: 'infolists/layout',
+        selector: '#anonymousActions',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/actions/anonymous/full-width': {
+        url: 'infolists/layout',
+        selector: '#anonymousActionsFullWidth',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/actions/anonymous/horizontally-aligned-center': {
+        url: 'infolists/layout',
+        selector: '#anonymousActionsHorizontallyAlignedCenter',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/actions/anonymous/vertically-aligned-end': {
+        url: 'infolists/layout',
+        selector: '#anonymousActionsVerticallyAlignedEnd',
         viewport: {
             width: 1920,
             height: 640,
@@ -1638,7 +1738,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1662,8 +1762,8 @@ export default {
         },
         before: async (page) => {
             await page.click('thead input')
-            await page.click('.filament-dropdown-trigger')
-            await page.click('.filament-dropdown-list-item')
+            await page.click('.fi-dropdown-trigger')
+            await page.click('.fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1704,7 +1804,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-column-toggling button')
+            await page.click('.fi-ta-col-toggling button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         }
@@ -1718,7 +1818,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('[wire\\:key$="4.column.email_verified_at"] .filament-tables-column-wrapper')
+            await page.hover('[wire\\:key$="4.column.email_verified_at"] .fi-ta-col-wrp')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1831,7 +1931,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('[wire\\:key$="4.column.email"] .filament-tables-text-column-content')
+            await page.click('[wire\\:key$="4.column.email"] .fi-ta-text-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1971,7 +2071,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('[wire\\:key$="4.column.color"] .filament-tables-color-column-content')
+            await page.click('[wire\\:key$="4.column.color"] .fi-ta-color-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2021,7 +2121,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2035,7 +2135,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2049,7 +2149,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2063,7 +2163,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-filters button')
+            await page.click('.fi-ta-filters button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2141,8 +2241,8 @@ export default {
         },
         before: async (page) => {
             await page.click('thead input')
-            await page.click('.filament-dropdown-trigger')
-            await page.click('.filament-dropdown-list-item')
+            await page.click('.fi-dropdown-trigger')
+            await page.click('.fi-dropdown-list-item')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2179,7 +2279,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2193,7 +2293,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2207,7 +2307,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2221,7 +2321,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2235,7 +2335,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2249,7 +2349,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2263,7 +2363,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-dropdown-trigger')
+            await page.click('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2277,7 +2377,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.hover('.filament-dropdown-trigger')
+            await page.hover('.fi-dropdown-trigger')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2300,7 +2400,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-table-container .filament-icon-button')
+            await page.click('.fi-ta-content .fi-icon-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2431,7 +2531,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-table-container .filament-icon-button')
+            await page.click('.fi-ta-content .fi-icon-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2445,7 +2545,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-tables-table-container .filament-icon-button')
+            await page.click('.fi-ta-content .fi-icon-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2555,7 +2655,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-icon-button')
+            await page.click('.fi-icon-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2569,7 +2669,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.filament-button')
+            await page.click('.fi-btn')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },

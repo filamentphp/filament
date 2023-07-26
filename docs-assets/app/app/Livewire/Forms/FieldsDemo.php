@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\CheckboxList;
@@ -1135,6 +1136,36 @@ class FieldsDemo extends Component implements HasForms
                         ColorPicker::make('colorPicker')
                             ->label('Color')
                             ->default('#3490dc'),
+                    ]),
+                Group::make()
+                    ->id('suffixAction')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('suffixAction')
+                            ->label('Cost')
+                            ->prefix('€')
+                            ->default('22.66')
+                            ->suffixAction(
+                                Action::make('copyCostToPrice')
+                                    ->icon('heroicon-m-clipboard'),
+                            ),
+                    ]),
+                Group::make()
+                    ->id('hintAction')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextInput::make('hintAction')
+                            ->label('Cost')
+                            ->prefix('€')
+                            ->default('22.66')
+                            ->hintAction(
+                                Action::make('copyCostToPrice')
+                                    ->icon('heroicon-m-clipboard'),
+                            ),
                     ]),
             ]);
     }

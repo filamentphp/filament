@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolommen',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -122,7 +128,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Geen records gevonden',
+
+        'heading' => 'Geen :model',
+
+        'description' => 'Maak een :model aan om aan de slag te gaan.',
+
     ],
 
     'filters' => [
@@ -139,10 +149,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Filters resetten',
+                'label' => 'Resetten',
             ],
 
         ],
+
+        'heading' => 'Filters',
 
         'indicator' => 'Actieve filters',
 

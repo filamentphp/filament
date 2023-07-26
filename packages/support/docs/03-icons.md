@@ -43,43 +43,58 @@ If you have built a Filament plugin, your users may want to be able to customize
 
 ```blade
 <x-filament::icon
-    name="heroicon-m-magnifying-glass"
     alias="panels::topbar.global-search.field"
+    icon="heroicon-m-magnifying-glass"
     wire:target="search"
     class="h-5 w-5 text-gray-500 dark:text-gray-400"
 />
+```
+
+Alternatively, you may pass an SVG element into the component's slot instead of defining a default icon name:
+
+```blade
+<x-filament::icon
+    alias="panels::topbar.global-search.field"
+    wire:target="search"
+    class="h-5 w-5 text-gray-500 dark:text-gray-400"
+>
+    <svg>
+        <!-- ... -->
+    </svg>
+</x-filament::icon>
 ```
 
 ## Available icon aliases
 
 ### Panel Builder icon aliases
 
+- `panels::database-notifications.open-button` - Button to open the database notifications modal
+- `panels::global-search.field` - Global search field
 - `panels::pages.dashboard.navigation-item` - Dashboard navigation item
 - `panels::pages.tenancy.register-tenant.open-tenant-button` - Button to open a tenant from the tenant registration page
 - `panels::sidebar.collapse-button` - Desktop sidebar collapse button when it is partially collapsible
 - `panels::sidebar.collapse-button.full` - Desktop sidebar collapse button when it is fully collapsible
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
-- `panels::topbar.global-search.field` - Global search field
+- `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
+- `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
+- `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
+- `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
 - `panels::topbar.close-mobile-sidebar-button` - Button to close the mobile sidebar
 - `panels::topbar.open-mobile-sidebar-button` - Button to open the mobile sidebar
-- `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
-- `panels::topbar.user-menu.profile-item` - Profile item in the user menu
-- `panels::topbar.user-menu.logout-button` - Button in the user menu to log out
-- `panels::topbar.user-menu.theme-switcher.light-button` - Button in the user menu to switch to the light theme
-- `panels::topbar.user-menu.theme-switcher.dark-button` - Button in the user menu to switch to the dark theme
-- `panels::topbar.user-menu.theme-switcher.system-button` - Button in the user menu to switch to the system theme
+- `panels::user-menu.profile-item` - Profile item in the user menu
+- `panels::user-menu.logout-button` - Button in the user menu to log out
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
+- `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
+- `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
 
 ### Form Builder icon aliases
 
 - `forms:components.checkbox-list.search-field` - Search input in a checkbox list
-- `forms::components.tags-input.delete-button` - Button to delete a tag in a tags input
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
 
 - `tables::columns.collapse-button`
-- `tables::filters.remove-button` - Button to remove a filter
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
 - `tables::header-cell.sort-asc` - Sort button of a column sorted in ascending order

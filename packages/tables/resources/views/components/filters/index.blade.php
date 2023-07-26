@@ -2,25 +2,30 @@
     'form',
 ])
 
-<div {{ $attributes->class(['fi-ta-filters-form space-y-6']) }}>
-    {{ $form }}
-
-    <div class="flex items-center justify-between gap-3">
-        <div>
-            <x-filament::loading-indicator
-                wire:target="$set,tableFilters,resetTableFiltersForm"
-                wire:loading.delay=""
-                class="h-4 w-4 text-gray-700"
-            />
-        </div>
+<div {{ $attributes->class(['fi-ta-filters grid gap-y-4']) }}>
+    <div class="flex items-center justify-between">
+        <h4
+            class="text-base font-medium leading-6 text-gray-950 dark:text-white"
+        >
+            {{ __('filament-tables::table.filters.heading') }}
+        </h4>
 
         <x-filament::link
-            wire:click="resetTableFiltersForm"
             color="danger"
             tag="button"
-            size="sm"
+            wire:click="resetTableFiltersForm"
+            wire:loading.remove.delay=""
+            wire:target="tableFilters,resetTableFiltersForm"
         >
             {{ __('filament-tables::table.filters.actions.reset.label') }}
         </x-filament::link>
+
+        <x-filament::loading-indicator
+            wire:loading.delay=""
+            wire:target="tableFilters,resetTableFiltersForm"
+            class="h-5 w-5 text-gray-400 dark:text-gray-500"
+        />
     </div>
+
+    {{ $form }}
 </div>

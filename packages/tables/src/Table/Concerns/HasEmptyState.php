@@ -98,7 +98,9 @@ trait HasEmptyState
 
     public function getEmptyStateHeading(): string | Htmlable
     {
-        return $this->evaluate($this->emptyStateHeading) ?? __('filament-tables::table.empty.heading');
+        return $this->evaluate($this->emptyStateHeading) ?? __('filament-tables::table.empty.heading', [
+            'model' => $this->getPluralModelLabel(),
+        ]);
     }
 
     public function getEmptyStateIcon(): string

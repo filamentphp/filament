@@ -11,7 +11,7 @@
         "danharrin/livewire-rate-limiting": "^0.3|^1.0",
         "doctrine/dbal": "^3.2",
         "filament/support": "*",
-        "kirschbaum-development/eloquent-power-joins": "^2.6|^3.0",
+        "kirschbaum-development/eloquent-power-joins": "^3.0",
         "laravel/cashier": "^14.2",
         "laravel/pint": "^1.0",
         "league/flysystem-aws-s3-v3": "^3.0",
@@ -20,7 +20,6 @@
         "orchestra/testbench": "^7.0|^8.0",
         "pestphp/pest": "^1.0|^2.0",
         "pestphp/pest-plugin-laravel": "^1.4.0|^2.0",
-        "pestphp/pest-plugin-livewire": "^2.1",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.8",
         "rector/rector": "^0.15",
@@ -35,7 +34,8 @@
         "files": [
             "packages/panels/src/global_helpers.php",
             "packages/panels/src/helpers.php",
-            "packages/support/src/helpers.php"
+            "packages/support/src/helpers.php",
+            "tests/helpers.php"
         ],
         "psr-4": {
             "Filament\\": [

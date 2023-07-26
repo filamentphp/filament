@@ -32,7 +32,10 @@
 <div
     @if ($tooltip)
         x-data="{}"
-        x-tooltip.raw="{{ $tooltip }}"
+        x-tooltip="{
+            content: @js($tooltip),
+            theme: $store.theme,
+        }"
     @endif
     {{ $attributes->class(['fi-ta-col-wrp']) }}
 >

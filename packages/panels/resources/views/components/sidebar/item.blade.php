@@ -22,23 +22,19 @@
         @if ($shouldOpenUrlInNewTab)
             target="_blank"
         @else
-            wire:navigate
+            {{-- wire:navigate --}}
         @endif
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if (filament()->isSidebarCollapsibleOnDesktop())
-            x-data="{ tooltip: {} }"
-            x-init="
-                Alpine.effect(() => {
-                    if (Alpine.store('sidebar').isOpen) {
-                        tooltip = false
-                    } else {
-                        tooltip = {
-                            content: @js($slot->toHtml()),
-                            theme: Alpine.store('theme') === 'light' ? 'dark' : 'light',
-                            placement: document.dir === 'rtl' ? 'left' : 'right',
-                        }
-                    }
-                })
+            x-data="{ tooltip: false }"
+            x-effect="
+                tooltip = $store.sidebar.isOpen
+                    ? false
+                    : {
+                          content: @js($slot->toHtml()),
+                          placement: document.dir === 'rtl' ? 'left' : 'right',
+                          theme: $store.theme,
+                      }
             "
             x-tooltip.html="tooltip"
         @endif
@@ -49,7 +45,7 @@
     >
         @if ($icon)
             <x-filament::icon
-                :name="($active && $activeIcon) ? $activeIcon : $icon"
+                :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 @class([
                     'fi-sidebar-item-icon h-5 w-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,

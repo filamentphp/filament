@@ -10,24 +10,20 @@
 ])
 
 @php
-    $inactiveItemClasses = \Illuminate\Support\Arr::toCssClasses([
-        'text-gray-700 dark:text-gray-300',
-    ]);
+    $inactiveItemClasses = 'text-gray-700 dark:text-gray-300';
 
-    $activeItemClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-tabs-item-active bg-gray-950/5 dark:bg-white/5 text-primary-600 dark:text-primary-400',
-    ]);
+    $activeItemClasses = 'fi-tabs-item-active bg-gray-950/5 text-primary-600 dark:bg-white/5 dark:text-primary-400';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-tabs-item-icon h-5 w-5',
         match ($iconColor) {
             'gray' => 'text-gray-400 dark:text-gray-500',
-            default => 'text-custom-500 dark:text-custom-400',
+            default => 'text-custom-500',
         },
     ]);
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($iconColor, shades: [400, 500]) => $iconColor !== 'gray',
+        \Filament\Support\get_color_css_variables($iconColor, shades: [500]) => $iconColor !== 'gray',
     ]);
 @endphp
 
@@ -37,8 +33,8 @@
     @endif
     @if ($alpineActive)
         x-bind:class="{
-            @js($inactiveItemClasses): ! {{ $alpineActive }}
-            @js($activeItemClasses): {{ $alpineActive }}
+            @js($inactiveItemClasses): ! {{ $alpineActive }},
+            @js($activeItemClasses): {{ $alpineActive }},
         }"
     @endif
     {{
@@ -56,7 +52,7 @@
 >
     @if ($icon && $iconPosition === 'before')
         <x-filament::icon
-            :name="$icon"
+            :icon="$icon"
             :style="$iconStyles"
             :class="$iconClasses"
             :style="$iconStyles"
@@ -69,7 +65,7 @@
 
     @if ($icon && $iconPosition === 'after')
         <x-filament::icon
-            :name="$icon"
+            :icon="$icon"
             :class="$iconClasses"
             :style="$iconStyles"
         />

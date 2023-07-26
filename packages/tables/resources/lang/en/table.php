@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Columns',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -124,7 +130,9 @@ return [
 
     'empty' => [
 
-        'heading' => 'No records found',
+        'heading' => 'No :model',
+
+        'description' => 'Create a :model to get started.',
 
     ],
 
@@ -142,10 +150,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Reset filters',
+                'label' => 'Reset',
             ],
 
         ],
+
+        'heading' => 'Filters',
 
         'indicator' => 'Active filters',
 

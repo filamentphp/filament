@@ -185,9 +185,17 @@
                                         >
                                             <x-filament::icon
                                                 :alias="$iconAlias"
-                                                :name="$icon"
-                                                :style="\Filament\Support\get_color_css_variables($iconColor, shades: [400, 600])"
-                                                class="fi-modal-icon h-6 w-6 text-custom-600 dark:text-custom-400"
+                                                :icon="$icon"
+                                                @class([
+                                                    'fi-modal-icon h-6 w-6',
+                                                    match ($iconColor) {
+                                                        'gray' => 'text-gray-500 dark:text-gray-400',
+                                                        default => 'text-custom-600 dark:text-custom-400',
+                                                    },
+                                                ])
+                                                @style([
+                                                    \Filament\Support\get_color_css_variables($iconColor, shades: [400, 600]) => $iconColor !== 'gray',
+                                                ])
                                             />
                                         </div>
                                     </div>

@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => 'Salvar',
+                    'label' => 'Salvar alterações',
                 ],
 
             ],
@@ -21,7 +21,7 @@ return [
         ],
 
         'messages' => [
-            'saved' => 'Salvo!',
+            'saved' => 'Salvo',
         ],
 
     ],

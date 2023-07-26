@@ -131,6 +131,11 @@ trait HasActions
         return $this->flatActions;
     }
 
+    public function hasAction(string $name): bool
+    {
+        return array_key_exists($name, $this->getFlatActions());
+    }
+
     protected function cacheAction(Action $action): void
     {
         $this->flatActions[$action->getName()] = $action;

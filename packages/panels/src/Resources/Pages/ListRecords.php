@@ -106,16 +106,19 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
         return static::getResource()::infolist($infolist);
     }
 
-    protected function configureCreateAction(CreateAction $action): void
+    protected function configureCreateAction(CreateAction | Tables\Actions\CreateAction $action): void
     {
         $resource = static::getResource();
 
         $action
             ->authorize($resource::canCreate())
             ->model($this->getModel())
-            ->modelLabel($this->getModelLabel())
-            ->form(fn (Form $form): Form => $this->form($form->columns(2)))
-            ->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
+            ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
+            ->form(fn (Form $form): Form => $this->form($form->columns(2)));
+
+        if ($action instanceof CreateAction) {
+            $action->relationship(($tenant = Filament::getTenant()) ? fn (): Relation => static::getResource()::getTenantRelationship($tenant) : null);
+        }
 
         if ($resource::hasPage('create')) {
             $action->url(fn (): string => $resource::getUrl('create'));
@@ -125,6 +128,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     protected function configureTableAction(Tables\Actions\Action $action): void
     {
         match (true) {
+            $action instanceof Tables\Actions\CreateAction => $this->configureCreateAction($action),
             $action instanceof Tables\Actions\DeleteAction => $this->configureDeleteAction($action),
             $action instanceof Tables\Actions\EditAction => $this->configureEditAction($action),
             $action instanceof Tables\Actions\ForceDeleteAction => $this->configureForceDeleteAction($action),

@@ -4,7 +4,7 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
-                    'fi-in-icon flex flex-wrap gap-1',
+                    'fi-in-icon flex flex-wrap gap-1.5',
                 ])
         }}
     >
@@ -16,15 +16,15 @@
                 @endphp
 
                 <x-filament::icon
-                    :name="$icon"
+                    :icon="$icon"
                     @class([
-                        'fi-in-icon-icon',
+                        'fi-in-icon-item',
                         match ($size) {
-                            'xs' => 'fi-in-icon-size-xs h-3 w-3',
-                            'sm' => 'fi-in-icon-size-sm h-4 w-4',
-                            'md' => 'fi-in-icon-size-md h-5 w-5',
-                            'lg' => 'fi-in-icon-size-lg h-6 w-6',
-                            'xl' => 'fi-in-icon-size-xl h-7 w-7',
+                            'xs' => 'fi-in-icon-item-size-xs h-3 w-3',
+                            'sm' => 'fi-in-icon-item-size-sm h-4 w-4',
+                            'md' => 'fi-in-icon-item-size-md h-5 w-5',
+                            'lg' => 'fi-in-icon-item-size-lg h-6 w-6',
+                            'xl' => 'fi-in-icon-item-size-xl h-7 w-7',
                             default => $size,
                         },
                         match ($color) {

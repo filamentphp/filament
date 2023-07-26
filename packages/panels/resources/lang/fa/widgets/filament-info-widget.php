@@ -4,11 +4,11 @@ return [
 
     'actions' => [
 
-        'visit_documentation' => [
+        'open_documentation' => [
             'label' => 'مستندات',
         ],
 
-        'visit_github' => [
+        'open_github' => [
             'label' => 'گیت‌هاب',
         ],
 

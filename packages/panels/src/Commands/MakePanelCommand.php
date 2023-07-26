@@ -45,8 +45,8 @@ class MakePanelCommand extends Command
 
         if (! Str::contains($appConfig, "App\\Providers\\Filament\\{$class}::class")) {
             file_put_contents(config_path('app.php'), str_replace(
-                'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
-                "App\\Providers\\Filament\\{$class}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+                'App\\Providers\\RouteServiceProvider::class,',
+                "App\\Providers\\Filament\\{$class}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
                 $appConfig,
             ));
         }

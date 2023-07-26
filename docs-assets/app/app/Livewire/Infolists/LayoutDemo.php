@@ -4,8 +4,11 @@ namespace App\Livewire\Infolists;
 
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Card;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
 use Filament\Infolists\Components\IconEntry;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -294,6 +297,68 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     ->state('2023-07-02 23:29:24'),
                             ])->grow(false),
                         ]),
+                    ]),
+                Group::make()
+                    ->id('anonymousActions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ]),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsFullWidth')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ])->fullWidth(),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsHorizontallyAlignedCenter')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ])->alignment('center'),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsVerticallyAlignedEnd')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextEntry::make('stars')
+                                    ->state(4572100479)
+                                    ->numeric(),
+                                Actions::make([
+                                    Action::make('star')
+                                        ->icon('heroicon-m-star'),
+                                    Action::make('resetStars')
+                                        ->icon('heroicon-m-x-mark')
+                                        ->color('danger'),
+                                ])->verticalAlignment('end'),
+                            ]),
                     ]),
             ])
             ->state([

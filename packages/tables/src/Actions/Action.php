@@ -47,6 +47,7 @@ class Action extends MountableAction implements Groupable, HasRecord, HasTable
     protected function resolveDefaultClosureDependencyForEvaluationByName(string $parameterName): array
     {
         return match ($parameterName) {
+            'model' => [$this->getModel()],
             'record' => [$this->getRecord()],
             'table' => [$this->getTable()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),

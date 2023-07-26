@@ -19,7 +19,7 @@ return [
             ],
 
             'create_another' => [
-                'label' => 'Criar e criar novo',
+                'label' => 'Salvar e criar outro',
             ],
 
         ],
@@ -27,7 +27,7 @@ return [
     ],
 
     'messages' => [
-        'created' => 'Salvo!',
+        'created' => 'Criado',
     ],
 
 ];

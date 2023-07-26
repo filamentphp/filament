@@ -74,11 +74,17 @@ If you're looking to add a bulk action to a table in your app, [visit this page]
 
 ### Form component actions
 
-Form components can contain actions. A good use case for actions inside form components would be with a select field, and an action button to "create" a new record. When you click on the button, a modal opens to collect the new record's data. When the modal form is submitted, the new record is created in the database, and the select field is filled with the newly created record. Fortunately, [this case is handled for you out of the box](../forms/fields/select#creating-new-records), but it's a good example for how form component actions can be powerful.
+Form components can contain actions. A good use case for actions inside form components would be with a select field, and an action button to "create" a new record. When you click on the button, a modal opens to collect the new record's data. When the modal form is submitted, the new record is created in the database, and the select field is filled with the newly created record. Fortunately, [this case is handled for you out of the box](../forms/fields/select#creating-new-records), but it's a good example of how form component actions can be powerful.
 
 These actions use the `Filament\Forms\Components\Actions\Action` class. They can open a modal if you choose, or even just a URL.
 
 If you're looking to add an action to a form component in your app, [visit this page](../forms/actions) in the docs.
+
+### Infolist component actions
+
+Infolist components can contain actions. These use the `Filament\Infolists\Components\Actions\Action` class. They can open a modal if you choose, or even just a URL.
+
+If you're looking to add an action to an infolist component in your app, [visit this page](../infolists/actions) in the docs.
 
 ### Notification actions
 

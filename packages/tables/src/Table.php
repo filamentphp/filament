@@ -42,7 +42,20 @@ class Table extends ViewComponent
 
     protected string $evaluationIdentifier = 'table';
 
-    public const LOADING_TARGETS = ['previousPage', 'nextPage', 'gotoPage', 'sortTable', 'tableSearch', 'tableColumnSearches', 'tableRecordsPerPage'];
+    public const LOADING_TARGETS = [
+        'gotoPage',
+        'nextPage',
+        'previousPage',
+        'removeTableFilter',
+        'removeTableFilters',
+        'reorderTable',
+        'resetTableFiltersForm',
+        'sortTable',
+        'tableColumnSearches',
+        'tableFilters',
+        'tableRecordsPerPage',
+        'tableSearch',
+    ];
 
     public static string $defaultCurrency = 'usd';
 
@@ -63,5 +76,20 @@ class Table extends ViewComponent
         $static->configure();
 
         return $static;
+    }
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->emptyStateDescription(function (Table $table): ?string {
+            if (! $table->hasAction('create')) {
+                return null;
+            }
+
+            return __('filament-tables::table.empty.description', [
+                'model' => $table->getModelLabel(),
+            ]);
+        });
     }
 }

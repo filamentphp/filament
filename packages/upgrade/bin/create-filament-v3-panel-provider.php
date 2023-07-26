@@ -42,7 +42,7 @@ $databaseNotificationsPollingIntervalPhp = preg_match("/'database_notifications'
 if ($databaseNotificationsPollingIntervalPhp === '\'30s\'') {
     $databaseNotificationsPollingIntervalPhp = null;
 }
-$databaseNotificationsPollingIntervalPhp = $databaseNotificationsPollingIntervalPhp ? "\n            ->databaseNotificationsPollingInterval({$databaseNotificationsPollingIntervalPhp})" : '';
+$databaseNotificationsPollingIntervalPhp = $databaseNotificationsPollingIntervalPhp ? "\n            ->databaseNotificationsPolling({$databaseNotificationsPollingIntervalPhp})" : '';
 
 if (! file_exists('app/Providers/Filament')) {
     mkdir('app/Providers/Filament', 0777, true);
@@ -108,8 +108,8 @@ class {$className} extends PanelProvider
 }");
 
 file_put_contents('config/app.php', str_replace(
-    'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
-    "App\\Providers\\Filament\\{$className}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+    'App\\Providers\\RouteServiceProvider::class,',
+    "App\\Providers\\Filament\\{$className}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
     file_get_contents('config/app.php'),
 ));
 

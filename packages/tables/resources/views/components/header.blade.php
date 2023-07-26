@@ -1,55 +1,44 @@
-@php
-    use Filament\Tables\Actions\Position as ActionsPosition;
-@endphp
-
 @props([
     'actions' => [],
-    'actionsPosition' => ActionsPosition::End,
+    'actionsPosition',
     'description' => null,
     'heading' => null,
 ])
 
-<div {{ $attributes->class(['fi-ta-header px-4 py-2']) }}>
-    <div class="flex flex-col gap-4 md:flex-row md:items-center">
-        @if ($heading || $description || $actionsPosition === ActionsPosition::Start)
-            <div>
-                @if ($heading)
-                    <h3
-                        class="fi-ta-header-heading text-base font-semibold leading-6"
-                    >
-                        {{ $heading }}
-                    </h3>
-                @endif
+<div
+    {{
+        $attributes->class([
+            'fi-ta-header flex flex-col gap-4 px-3 py-3 sm:px-6 sm:py-4',
+            'sm:flex-row sm:items-center sm:justify-between' => $actionsPosition === \Filament\Tables\Actions\HeaderActionsPosition::Adaptive,
+        ])
+    }}
+>
+    @if ($heading || $description)
+        <div class="grid gap-y-2">
+            @if ($heading)
+                <h3
+                    class="fi-ta-header-heading text-base font-semibold leading-6"
+                >
+                    {{ $heading }}
+                </h3>
+            @endif
 
-                @if ($description)
-                    <p
-                        class="fi-ta-header-description mt-1 text-sm text-gray-500 dark:text-gray-400"
-                    >
-                        {{ $description }}
-                    </p>
-                @endif
+            @if ($description)
+                <p
+                    class="fi-ta-header-description text-sm text-gray-600 dark:text-gray-400"
+                >
+                    {{ $description }}
+                </p>
+            @endif
+        </div>
+    @endif
 
-                @if ($actionsPosition === ActionsPosition::Start)
-                    <x-filament-tables::actions
-                        :actions="$actions"
-                        alignment="start"
-                        wrap
-                        @class([
-                            'md:-ms-2' => ! ($heading || $description),
-                            'mt-2' => $heading || $description,
-                        ])
-                    />
-                @endif
-            </div>
-        @endif
-
-        @if ($actionsPosition === ActionsPosition::End)
-            <x-filament-tables::actions
-                :actions="$actions"
-                alignment="end"
-                wrap
-                class="ms-auto shrink-0 md:-me-2"
-            />
-        @endif
-    </div>
+    @if ($actions)
+        <x-filament-tables::actions
+            :actions="$actions"
+            alignment="start"
+            wrap
+            class="ms-auto"
+        />
+    @endif
 </div>

@@ -4,6 +4,7 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Filters\TrashedFilter;
+use function Filament\Tests\livewire;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -11,7 +12,6 @@ use function Pest\Laravel\assertModelExists;
 use function Pest\Laravel\assertModelMissing;
 use function Pest\Laravel\assertNotSoftDeleted;
 use function Pest\Laravel\assertSoftDeleted;
-use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 

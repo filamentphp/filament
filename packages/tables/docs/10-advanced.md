@@ -155,7 +155,7 @@ public function table(Table $table): Table
 
 ## Polling table content
 
-You may poll table content so that it refreshes at a set interval, using the `$form->poll()` method:
+You may poll table content so that it refreshes at a set interval, using the `$table->poll()` method:
 
 ```php
 use Filament\Tables\Table;

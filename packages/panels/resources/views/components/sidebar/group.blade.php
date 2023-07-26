@@ -30,7 +30,7 @@
         >
             @if ($icon)
                 <x-filament::icon
-                    :name="$icon"
+                    :icon="$icon"
                     class="fi-sidebar-group-icon h-6 w-6 text-gray-600 dark:text-gray-400"
                 />
             @endif

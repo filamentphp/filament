@@ -23,6 +23,7 @@ return [
         'search' => [
             'label' => 'Tìm kiếm',
             'placeholder' => 'Tìm kiếm',
+            'indicator' => 'Tìm kiếm',
         ],
 
     ],
