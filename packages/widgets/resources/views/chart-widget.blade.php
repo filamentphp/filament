@@ -69,17 +69,23 @@
                 ></canvas>
 
                 <span
-                    x-ref="backgroundColorElement"
-                    class="text-gray-700 dark:text-gray-200"
-                ></span>
-
-                <span
-                    x-ref="borderColorElement"
-                    class="text-gray-950/50 dark:text-white/60"
-                ></span>
-
-                <span
                     x-ref="colorElement"
+                    @class([
+                        match ($color = $this->getColor()) {
+                            'gray' => 'text-gray-400',
+                            default => 'text-custom-500 dark:text-custom-400',
+                        },
+                    ])
+                    style="{{ \Filament\Support\get_color_css_variables($color, shades: [400, 500]) }}"
+                ></span>
+
+                <span
+                    x-ref="gridColorElement"
+                    class="text-gray-300 dark:text-gray-700"
+                ></span>
+
+                <span
+                    x-ref="textColorElement"
                     class="text-gray-500 dark:text-gray-400"
                 ></span>
             </div>

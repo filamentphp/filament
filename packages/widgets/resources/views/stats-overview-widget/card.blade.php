@@ -116,7 +116,6 @@
                         default => 'text-custom-50 dark:text-custom-400/10',
                     },
                 ])
-                class=""
             ></span>
 
             <span
