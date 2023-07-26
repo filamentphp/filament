@@ -5,7 +5,7 @@
 ])
 
 <table
-    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-300 text-start dark:divide-gray-700']) }}
+    {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-gray-700']) }}
 >
     @if ($header)
         <thead>
@@ -20,7 +20,7 @@
             x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
             x-sortable
         @endif
-        class="divide-y divide-gray-200 whitespace-nowrap dark:divide-gray-800"
+        class="divide-y divide-gray-200 whitespace-nowrap dark:divide-gray-700"
     >
         {{ $slot }}
     </tbody>

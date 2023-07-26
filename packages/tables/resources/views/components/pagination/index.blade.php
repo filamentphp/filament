@@ -104,7 +104,7 @@
                 @if ($paginator->hasPages())
                     <div class="rounded-lg border py-3 dark:border-gray-600">
                         <ol
-                            class="flex items-center gap-px divide-x divide-gray-300 text-sm text-gray-500 rtl:divide-x-reverse dark:divide-gray-600 dark:text-gray-400"
+                            class="flex items-center gap-px divide-x divide-gray-200 text-sm text-gray-500 rtl:divide-x-reverse dark:divide-gray-700 dark:text-gray-400"
                         >
                             @if (! $paginator->onFirstPage())
                                 <x-filament-tables::pagination.item
