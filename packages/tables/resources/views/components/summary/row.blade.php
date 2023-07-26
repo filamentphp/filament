@@ -73,7 +73,7 @@
             >
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
                     <span
-                        class="px-4 py-3 flex text-sm font-medium text-gray-950 dark:text-white"
+                        class="flex px-4 py-3 text-sm font-medium text-gray-950 dark:text-white"
                     >
                         {{ $heading }}
                     </span>
