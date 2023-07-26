@@ -37,10 +37,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class([
-                'fi-ta-text',
-                'px-3 py-3.5' => ! $isInline(),
-            ])
+            ->class(['fi-ta-text'])
     }}
 >
     @if (filled($descriptionAbove))
@@ -87,8 +84,11 @@
                             window.navigator.clipboard.writeText(@js($copyableState))
                             $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                         "
-                        class="cursor-pointer max-w-max"
                     @endif
+                    @class([
+                        'flex max-w-max',
+                        'cursor-pointer' => $itemIsCopyable,
+                    ])
                 >
                     @if ($isBadge)
                         <x-filament::badge
@@ -105,7 +105,7 @@
                                 'transition duration-75 hover:underline focus:underline' => $url,
                                 match ($size) {
                                     'xs' => 'text-xs',
-                                    'sm', null => 'text-sm leading-6',
+                                    'sm', null => 'text-sm',
                                     'base', 'md' => 'text-base',
                                     'lg' => 'text-lg',
                                     default => $size,
