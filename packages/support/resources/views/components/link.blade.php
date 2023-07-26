@@ -19,7 +19,7 @@
     $iconSize ??= $size;
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        "fi-link fi-link-size-{$size} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
+        "fi-link fi-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         match ($size) {
