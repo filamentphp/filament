@@ -35,9 +35,7 @@ export default function chart({ cachedData, options, type }) {
         initChart: function (data = null) {
             Chart.defaults.animation.duration = 0
 
-            const color = getComputedStyle(
-                this.$refs.colorElement,
-            ).color
+            const color = getComputedStyle(this.$refs.colorElement).color
 
             Chart.defaults.backgroundColor = color
             Chart.defaults.borderColor = color
