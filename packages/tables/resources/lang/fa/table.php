@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'ستون‌ها',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -123,7 +129,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'هیچ رکوردی یافت نشد',
+
+        'heading' => ':model یافت نشد.',
+
+        'description' => 'برای شروع یک :model ایجاد کنید.',
+
     ],
 
     'filters' => [
@@ -144,6 +154,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'فیلترها',
 
         'indicator' => 'فیلترهای فعال',
 
