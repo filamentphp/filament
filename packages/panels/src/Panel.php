@@ -6,6 +6,7 @@ use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
+use Illuminate\Support\Traits\Conditionable;
 
 class Panel extends Component
 {
@@ -33,7 +34,7 @@ class Panel extends Component
     use Panel\Concerns\HasTheme;
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUserMenu;
-    use \Illuminate\Support\Traits\Conditionable;
+    use Conditionable;
     
     protected bool $isDefault = false;
 
