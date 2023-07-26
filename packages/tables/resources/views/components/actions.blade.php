@@ -8,7 +8,7 @@
 @php
     $actions = array_filter(
         $actions,
-        function (Filament\Tables\Actions\Action | Filament\Tables\Actions\BulkAction $action) use ($record): bool {
+        function ($action) use ($record): bool {
             if (! $action instanceof \Filament\Tables\Actions\BulkAction) {
                 $action->record($record);
             }
