@@ -2,7 +2,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-icon-count-summary grid px-4 py-3 gap-y-1.5'])
+            ->class(['fi-ta-icon-count-summary grid gap-y-1.5 px-4 py-3'])
     }}
 >
     @if (filled($label = $getLabel()))
