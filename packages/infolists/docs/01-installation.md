@@ -15,7 +15,7 @@ Filament has a few requirements to run:
 First, require the actions package using Composer:
 
 ```bash
-composer require filament/infolists:"^3.0"
+composer require filament/infolists:"^3.0@beta"
 ```
 
 ## New Laravel projects

@@ -17,7 +17,7 @@ This package is compatible with other Filament v3.x products. The [form builder]
 To get started with a panel, you can install it using the commands:
 
 ```bash
-composer require filament/filament:"^3.0"
+composer require filament/filament:"^3.0@beta"
 php artisan filament:install --panels
 ```
 
