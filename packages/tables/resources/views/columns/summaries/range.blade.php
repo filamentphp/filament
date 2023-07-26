@@ -2,7 +2,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-range-summary text-sm'])
+            ->class(['fi-ta-range-summary grid gap-y-1'])
     }}
 >
     @php
@@ -12,21 +12,19 @@
     @endphp
 
     @if (filled($label = $getLabel()))
-        <span class="text-gray-500 dark:text-gray-400">{{ $label }}:</span>
-    @endif
-
-    @if (filled($from))
-        <span>
-            {{ $from }}
+        <span class="text-sm font-medium text-gray-950 dark:text-white">
+            {{ $label }}
         </span>
     @endif
 
-    @if (filled($from) && filled($to))
-        <span class="text-gray-500 dark:text-gray-400">-</span>
-    @endif
+    @if (filled($from) || filled($to))
+        <span class="text-sm text-gray-500 dark:text-gray-400">
+            {{ $from }}
 
-    @if (filled($to))
-        <span>
+            @if (filled($from) && filled($to))
+                -
+            @endif
+
             {{ $to }}
         </span>
     @endif

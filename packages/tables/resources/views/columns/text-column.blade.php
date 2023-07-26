@@ -37,7 +37,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-text'])
+            ->class(['fi-ta-text grid gap-y-1'])
     }}
 >
     @if (filled($descriptionAbove))
