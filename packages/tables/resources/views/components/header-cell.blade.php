@@ -7,14 +7,19 @@
     'wrap' => false,
 ])
 
-<th {{ $attributes->class(['fi-ta-header-cell p-0']) }}>
+<th
+    {{
+        $attributes
+            ->class(['fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6'])
+    }}
+>
     <button
         @if ($sortable)
             wire:click="sortTable('{{ $name }}')"
         @endif
         type="button"
         @class([
-            'flex w-full items-center gap-x-1 px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300',
+            'flex w-full items-center gap-x-1 text-sm font-medium text-gray-600 dark:text-gray-300',
             'cursor-default' => ! $sortable,
             'whitespace-nowrap' => ! $wrap,
             'whitespace-normal' => $wrap,

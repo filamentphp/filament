@@ -9,7 +9,6 @@
     'query',
     'selectionEnabled' => false,
     'selectedState',
-    'strong' => false,
     'recordCheckboxPosition' => null,
 ])
 
@@ -19,12 +18,10 @@
 @endphp
 
 <x-filament-tables::row
-    {{
-    $attributes->class([
-        'fi-ta-summary-row',
-        'bg-gray-500/5' => $strong,
-    ])
-}}
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes($attributes)
+            ->class(['fi-ta-summary-row'])
+    "
 >
     @if ($placeholderColumns && $actions && in_array($actionsPosition, [ActionsPosition::BeforeCells, ActionsPosition::BeforeColumns]))
         <td></td>
@@ -35,9 +32,11 @@
     @endif
 
     @if ($extraHeadingColumn || $groupsOnly)
-        <td class="px-4 py-3 align-top text-sm font-medium">
+        <x-filament-tables::cell
+            class="text-sm font-medium text-gray-950 dark:text-white"
+        >
             {{ $heading }}
-        </td>
+        </x-filament-tables::cell>
     @else
         @php
             $headingColumnSpan = 1;
@@ -58,12 +57,9 @@
 
     @foreach ($columns as $column)
         @if (($loop->first || $extraHeadingColumn || $groupsOnly || ($loop->iteration > $headingColumnSpan)) && ($placeholderColumns || $column->hasSummary()))
-            <td
-                @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1))
-                    colspan="{{ $headingColumnSpan }}"
-                @endif
+            <x-filament-tables::cell
+                :colspan="($loop->first && (! $extraHeadingColumn) && (! $groupsOnly) && ($headingColumnSpan > 1)) ? $headingColumnSpan : null"
                 @class([
-                    '-space-y-3 align-top',
                     match ($column->getAlignment()) {
                         'start' => 'text-start',
                         'center' => 'text-center',
@@ -76,15 +72,17 @@
                 ])
             >
                 @if ($loop->first && (! $extraHeadingColumn) && (! $groupsOnly))
-                    <div class="px-4 py-3 text-sm font-medium">
+                    <span
+                        class="flex text-sm font-medium text-gray-950 dark:text-white"
+                    >
                         {{ $heading }}
-                    </div>
+                    </span>
                 @elseif ((! $placeholderColumns) || $column->hasSummary())
                     @foreach ($column->getSummarizers() as $summarizer)
                         {{ $summarizer->query($query)->selectedState($selectedState) }}
                     @endforeach
                 @endif
-            </td>
+            </x-filament-tables::cell>
         @endif
     @endforeach
 

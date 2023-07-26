@@ -3,7 +3,7 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-values-summary whitespace-normal px-4 py-3 text-sm',
+                'fi-ta-values-summary whitespace-normal text-sm',
                 'prose prose-sm max-w-none dark:prose-invert' => $isBulleted(),
             ])
     }}

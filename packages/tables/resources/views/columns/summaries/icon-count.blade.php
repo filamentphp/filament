@@ -1,5 +1,9 @@
 <div
-    {{ $attributes->merge($getExtraAttributes(), escape: false)->class(['fi-ta-icon-count-summary space-y-1 px-4 py-3 text-sm']) }}
+    {{
+        $attributes
+            ->merge($getExtraAttributes(), escape: false)
+            ->class(['fi-ta-icon-count-summary space-y-1 text-sm'])
+    }}
 >
     @if (filled($label = $getLabel()))
         <p class="text-gray-500 dark:text-gray-400">{{ $label }}:</p>

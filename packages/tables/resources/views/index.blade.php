@@ -894,7 +894,7 @@
 
                             @foreach ($columns as $column)
                                 <x-filament-tables::cell
-                                    class="fi-table-individual-search-cell-{{ str($column->getName())->camel()->kebab() }} px-4 py-1"
+                                    :class="'fi-table-individual-search-cell-' . str($column->getName())->camel()->kebab()"
                                 >
                                     @if ($column->isIndividuallySearchable())
                                         <x-filament-tables::search-field
@@ -988,7 +988,7 @@
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                        <x-filament-tables::actions.cell
+                                        <x-filament-tables::cell
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
@@ -998,7 +998,7 @@
                                                 :alignment="$actionsAlignment ?? 'start'"
                                                 :record="$record"
                                             />
-                                        </x-filament-tables::actions.cell>
+                                        </x-filament-tables::cell>
                                     @endif
 
                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
@@ -1010,16 +1010,15 @@
                                             @if ($isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
-                                                    x-model="selectedRecords"
                                                     :value="$recordKey"
-                                                    class="fi-ta-record-checkbox"
+                                                    x-model="selectedRecords"
                                                 />
                                             @endif
                                         </x-filament-tables::cell>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
-                                        <x-filament-tables::actions.cell
+                                        <x-filament-tables::cell
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
@@ -1029,7 +1028,7 @@
                                                 :alignment="$actionsAlignment ?? 'start'"
                                                 :record="$record"
                                             />
-                                        </x-filament-tables::actions.cell>
+                                        </x-filament-tables::cell>
                                     @endif
 
                                     @foreach ($columns as $column)
@@ -1039,9 +1038,16 @@
                                         @endphp
 
                                         <x-filament-tables::cell
-                                            wire:key="{{ $this->getId() }}.table.record.{{ $recordKey }}.column.{{ $column->getName() }}"
-                                            class="fi-table-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
-                                            :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())"
+                                            :attributes="
+                                                \Filament\Support\prepare_inherited_attributes($column->getExtraCellAttributeBag())
+                                                    ->merge([
+                                                        'wire:key' => $this->getId() . '.table.record.' . $recordKey . '.column.' . $column->getName(),
+                                                    ])
+                                                    ->class([
+                                                        'fi-table-cell-' . str($column->getName())->camel()->kebab(),
+                                                        $getHiddenClasses($column),
+                                                    ])
+                                            "
                                         >
                                             <x-filament-tables::columns.column
                                                 :column="$column"
@@ -1055,7 +1061,7 @@
                                     @endforeach
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
-                                        <x-filament-tables::actions.cell
+                                        <x-filament-tables::cell
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
@@ -1065,7 +1071,7 @@
                                                 :alignment="$actionsAlignment ?? 'end'"
                                                 :record="$record"
                                             />
-                                        </x-filament-tables::actions.cell>
+                                        </x-filament-tables::cell>
                                     @endif
 
                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
@@ -1086,7 +1092,7 @@
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
-                                        <x-filament-tables::actions.cell
+                                        <x-filament-tables::cell
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
@@ -1096,7 +1102,7 @@
                                                 :alignment="$actionsAlignment ?? 'end'"
                                                 :record="$record"
                                             />
-                                        </x-filament-tables::actions.cell>
+                                        </x-filament-tables::cell>
                                     @endif
                                 </x-filament-tables::row>
                             @endif

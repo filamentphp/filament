@@ -40,7 +40,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-select px-3 py-2'])
+            ->class(['fi-ta-select'])
     }}
 >
     <input
