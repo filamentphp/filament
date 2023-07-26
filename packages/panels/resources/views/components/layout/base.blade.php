@@ -80,11 +80,7 @@
 
         @if (! filament()->hasDarkMode())
             <script>
-                const theme = localStorage.getItem('theme') ?? 'system'
-                
-                if (theme != 'light') {
-                    localStorage.setItem('theme', 'light')
-                }
+                localStorage.setItem('theme', 'light')
             </script>
         @endif
 
