@@ -4,8 +4,8 @@
     $descriptionBelow = $getDescriptionBelow();
     $isBadge = $isBadge();
     $iconPosition = $getIconPosition();
-    $isClickable = $getAction() || $getUrl();
     $isListWithLineBreaks = $isListWithLineBreaks();
+    $url = $getUrl();
 
     $arrayState = $getState();
 
