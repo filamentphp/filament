@@ -4,7 +4,7 @@
 
 @if (count($indicators))
     <div
-        {{ $attributes->class(['fi-ta-filter-indicators flex items-start justify-between bg-gray-50 px-3 py-1.5 dark:bg-gray-800 sm:px-6']) }}
+        {{ $attributes->class(['fi-ta-filter-indicators flex items-start justify-between gap-x-3 bg-gray-50 px-3 py-1.5 dark:bg-gray-800 sm:px-6']) }}
     >
         <div class="flex flex-col gap-x-3 gap-y-1 sm:flex-row sm:items-center">
             <span
