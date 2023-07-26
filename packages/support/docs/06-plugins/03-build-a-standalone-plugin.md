@@ -84,7 +84,7 @@ module.exports = {
 };
 ```
 
-You may also remove the Testing directories and files, but we'll leave them in for now, although we won't be using them for this example, and we highly recommend that you write tests for your plugins.
+You may also remove the testing directories and files, but we'll leave them in for now, although we won't be using them for this example, and we highly recommend that you write tests for your plugins.
 
 ## Step 3: Setting up the Provider
 
@@ -277,4 +277,4 @@ Heading::make(2)
     ->color(Color::Lime),
 ```
 
-And, that's it, our users can not install our plugin and use it in their projects.
+And, that's it, our users can now install our plugin and use it in their projects.
