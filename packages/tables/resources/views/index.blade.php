@@ -918,6 +918,7 @@
 
                     @if (($records !== null) && count($records))
                         @php
+                            $isRecordRowStriped = false;
                             $previousRecord = null;
                             $previousRecordGroupKey = null;
                             $previousRecordGroupTitle = null;
@@ -962,20 +963,22 @@
                                         </td>
                                     </x-filament-tables::row>
                                 @endif
+
+                                @php
+                                    $isRecordRowStriped = false;
+                                @endphp
                             @endif
 
                             @if (! $isGroupsOnly)
                                 <x-filament-tables::row
+                                    :alpine-hidden="($group?->isCollapsible() ? 'true' : 'false') . ' && isGroupCollapsed(\'' . $recordGroupTitle . '\')'"
+                                    :alpine-selected="'isRecordSelected(\'' . $recordKey . '\')'"
                                     :record-action="$recordAction"
                                     :record-url="$recordUrl"
+                                    :striped="$isStriped && $isRecordRowStriped"
                                     :wire:key="$this->getId() . '.table.records.' . $recordKey"
                                     :x-sortable-item="$isReordering ? $recordKey : null"
                                     :x-sortable-handle="$isReordering"
-                                    :striped="$isStriped"
-                                    x-bind:class="{
-                                        'hidden': {{ $group?->isCollapsible() ? 'true' : 'false' }} && isGroupCollapsed('{{ $recordGroupTitle }}'),
-                                        'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
-                                    }"
                                     @class([
                                         'group cursor-move' => $isReordering,
                                         ...$getRecordClasses($record),
@@ -1006,6 +1009,13 @@
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
+                                            :attributes="
+                                                \Filament\Support\prepare_inherited_attributes(
+                                                    new \Illuminate\View\ComponentAttributeBag([
+                                                        'x-bind:class' => '{ \'relative before:absolute before:start-0 before:inset-y-0 before:w-0.5 before:bg-primary-600 dark:before:bg-primary-400\': isRecordSelected(\'' . $recordKey . '\') }',
+                                                    ])
+                                                )
+                                            "
                                         >
                                             @if ($isRecordSelectable($record))
                                                 <x-filament-tables::checkbox
@@ -1109,6 +1119,7 @@
                             @endif
 
                             @php
+                                $isRecordRowStriped = ! $isRecordRowStriped;
                                 $previousRecordGroupKey = $recordGroupKey;
                                 $previousRecordGroupTitle = $recordGroupTitle;
                                 $previousRecord = $record;
