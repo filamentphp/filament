@@ -500,6 +500,11 @@ class FilamentManager
         return $this->getCurrentPanel()->hasDarkModeForced();
     }
 
+    public function hasLightModeForced(): bool
+    {
+        return $this->getCurrentPanel()->hasLightModeForced();
+    }
+
     public function hasDatabaseNotifications(): bool
     {
         return $this->getCurrentPanel()->hasDatabaseNotifications();
