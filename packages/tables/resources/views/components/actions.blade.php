@@ -8,7 +8,13 @@
 @php
     $actions = array_filter(
         $actions,
-        fn ($action): bool => $action->isVisible(),
+        function (\Filament\Tables\Actions\Action | \Filament\Tables\Actions\BulkAction $action) use ($record): bool {
+            if (! $action instanceof \Filament\Tables\Actions\BulkAction) {
+                $action->record($record);
+            }
+
+            return $action->isVisible();
+        },
     );
 @endphp
 
@@ -28,12 +34,6 @@
     }}
 >
     @foreach ($actions as $action)
-        @php
-            if (! $action instanceof \Filament\Tables\Actions\BulkAction) {
-                $action->record($record);
-            }
-        @endphp
-
         {{ $action }}
     @endforeach
 </div>
