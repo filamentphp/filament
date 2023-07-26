@@ -78,6 +78,16 @@
             </script>
         @endif
 
+        @if (! filament()->hasDarkMode())
+            <script>
+                const theme = localStorage.getItem('theme') ?? 'system'
+                
+                if (theme != 'light') {
+                    localStorage.setItem('theme', 'light')
+                }
+            </script>
+        @endif
+
         {{ \Filament\Support\Facades\FilamentView::renderHook('head.end') }}
     </head>
 
