@@ -533,9 +533,10 @@ export default function fileUploadFormComponent({
         },
 
         destroyEditor: function () {
-            if (this.editor && typeof this.editor.destroy === 'function') {
+            if (this.editor && (typeof this.editor.destroy === 'function')) {
                 this.editor.destroy()
             }
+            
             this.editor = null
         },
     }
