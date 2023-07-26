@@ -81,6 +81,11 @@ class MakeWidgetCommand extends Command
             }
         }
 
+        $path = null;
+        $namespace = null;
+        $resourcePath = null;
+        $resourceNamespace = null;
+
         if (! $panel) {
             $path = app_path('Livewire/');
             $namespace = 'App\\Livewire';
