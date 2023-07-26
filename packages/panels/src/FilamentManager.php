@@ -74,6 +74,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getAuthGuard();
     }
 
+    public function getAuthPasswordBroker(): string
+    {
+        return $this->getCurrentPanel()->getAuthPasswordBroker();
+    }
+
     public function getBrandName(): string
     {
         return $this->getCurrentPanel()->getBrandName();
