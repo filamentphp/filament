@@ -33,7 +33,7 @@ class Panel extends Component
     use Panel\Concerns\HasTheme;
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUserMenu;
-    use Illuminate\Support\Traits\Conditionable;
+    use \Illuminate\Support\Traits\Conditionable;
     
     protected bool $isDefault = false;
 
