@@ -22,7 +22,7 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
             is_string($color) ? "fi-btn-color-{$color}" : null,

@@ -774,7 +774,7 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                <x-filament-tables::cell>
+                                <x-filament-tables::cell tag="th">
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
@@ -817,13 +817,18 @@
                         @foreach ($columns as $column)
                             <x-filament-tables::header-cell
                                 :actively-sorted="$getSortColumn() === $column->getName()"
-                                :name="$column->getName()"
                                 :alignment="$column->getAlignment()"
+                                :name="$column->getName()"
                                 :sortable="$column->isSortable() && (! $isReordering)"
                                 :sort-direction="$getSortDirection()"
-                                class="fi-table-header-cell-{{ str($column->getName())->camel()->kebab() }} {{ $getHiddenClasses($column) }}"
-                                :attributes="\Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())"
                                 :wrap="$column->isHeaderWrapped()"
+                                :attributes="
+                                    \Filament\Support\prepare_inherited_attributes($column->getExtraHeaderAttributeBag())
+                                        ->class([
+                                            'fi-table-header-cell-' . str($column->getName())->camel()->kebab(),
+                                            $getHiddenClasses($column),
+                                        ])
+                                "
                             >
                                 {{ $column->getLabel() }}
                             </x-filament-tables::header-cell>
@@ -843,7 +848,7 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                <x-filament-tables::cell>
+                                <x-filament-tables::cell tag="th">
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="

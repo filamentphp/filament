@@ -10,7 +10,7 @@
         x-on:click="toggleCollapseGroup(@js($title))"
     @endif
     @class([
-        'flex w-full items-center gap-x-3 bg-gray-50 px-3 py-2 dark:bg-gray-800 sm:px-6',
+        'flex w-full items-center gap-x-3 bg-gray-50 px-3 py-2 dark:bg-white/5 sm:px-6',
         'cursor-pointer' => $collapsible,
     ])
 >

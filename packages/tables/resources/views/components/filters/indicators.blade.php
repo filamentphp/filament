@@ -4,11 +4,11 @@
 
 @if (count($indicators))
     <div
-        {{ $attributes->class(['fi-ta-filter-indicators flex items-start justify-between gap-x-3 bg-gray-50 px-3 py-1.5 dark:bg-gray-800 sm:px-6']) }}
+        {{ $attributes->class(['fi-ta-filter-indicators flex items-start justify-between gap-x-3 bg-gray-50 px-3 py-1.5 dark:bg-white/5 sm:px-6']) }}
     >
         <div class="flex flex-col gap-x-3 gap-y-1 sm:flex-row sm:items-center">
             <span
-                class="text-sm font-medium leading-6 text-gray-500 dark:text-gray-400"
+                class="text-sm font-medium leading-6 text-gray-950 dark:text-white"
             >
                 {{ __('filament-tables::table.filters.indicator') }}
             </span>
