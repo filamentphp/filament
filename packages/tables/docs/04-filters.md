@@ -141,6 +141,19 @@ SelectFilter::make('author')
     ->relationship('author', 'name')
 ```
 
+### Preloading the select filter relationship options
+
+If you'd like to populate the searchable options from the database when the page is loaded, instead of when the user searches, you can use the `preload()` method:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('author')
+    ->relationship('author', 'name')
+    ->searchable()
+    ->preload()
+```
+
 ##### Customizing the select filter relationship query
 
 You may customize the database query that retrieves options using the third parameter of the `relationship()` method:
@@ -151,6 +164,18 @@ use Illuminate\Database\Eloquent\Builder;
 
 SelectFilter::make('author')
     ->relationship('author', 'name', fn (Builder $query) => $query->withTrashed())
+```
+
+#### Searching select filter options
+
+You may enable a search input to allow easier access to many options, using the `searchable()` method:
+
+```php
+use Filament\Tables\Filters\SelectFilter;
+
+SelectFilter::make('author')
+    ->relationship('author', 'name')
+    ->searchable()
 ```
 
 ### Ternary filters
