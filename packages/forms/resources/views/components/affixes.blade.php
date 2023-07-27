@@ -23,8 +23,8 @@
     $hasAlpineValidClasses = filled($alpineValid);
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
-    $enabledClasses = 'bg-white focus-within:ring-2 dark:bg-gray-900';
-    $disabledClasses = 'bg-gray-50 dark:bg-gray-950';
+    $enabledClasses = 'bg-white focus-within:ring-2 dark:bg-white/5';
+    $disabledClasses = 'bg-gray-50 dark:bg-transparent';
     $validAffixesClasses = 'ring-gray-950/10 dark:ring-white/20';
     $invalidAffixesClasses = 'ring-danger-600 dark:ring-danger-500';
     $enabledValidAffixesClasses = 'focus-within:ring-primary-600 dark:focus-within:ring-primary-500';
@@ -89,7 +89,7 @@
                 'flex items-center gap-x-3 ps-3',
                 'pe-1' => $inlinePrefix && filled($prefix),
                 'pe-2' => $inlinePrefix && blank($prefix),
-                'border-e border-gray-950/10 pe-3 ps-3 dark:border-white/20' => ! $inlinePrefix,
+                'border-e border-gray-200 pe-3 ps-3 dark:border-white/10' => ! $inlinePrefix,
             ])
         >
             @if (count($prefixActions))
@@ -154,7 +154,7 @@
                 'flex items-center gap-x-3 pe-3',
                 'ps-1' => $inlineSuffix && filled($suffix),
                 'ps-2' => $inlineSuffix && blank($suffix),
-                'border-s border-gray-950/10 ps-3 dark:border-white/20' => ! $inlineSuffix,
+                'border-s border-gray-200 ps-3 dark:border-white/10' => ! $inlineSuffix,
             ])
         >
             @if (filled($suffix))

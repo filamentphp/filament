@@ -36,7 +36,7 @@
             @endif
 
             <span
-                class="flex-1 text-sm font-medium text-gray-700 dark:text-gray-300"
+                class="flex-1 text-sm font-medium text-gray-700 dark:text-gray-200"
             >
                 {{ $label }}
             </span>

@@ -47,12 +47,6 @@
 
         @if ($notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages())
             <x-slot name="footer">
-                @php
-                    $isRtl = __('filament::layout.direction') === 'rtl';
-                    $previousArrowIcon = $isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left';
-                    $nextArrowIcon = $isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right';
-                @endphp
-
                 <nav
                     aria-label="{{ __('filament-notifications::database.modal.pagination.label') }}"
                     role="navigation"
@@ -61,10 +55,7 @@
                     @if (! $notifications->onFirstPage())
                         <x-filament::button
                             color="gray"
-                            :icon="$previousArrowIcon"
-                            icon-alias="notifications::database.modal.pagination.previous-button"
                             rel="prev"
-                            size="sm"
                             :wire:click="'previousPage(\'' . $notifications->getPageName() . '\')'"
                             class="me-auto"
                         >
@@ -75,11 +66,7 @@
                     @if ($notifications->hasMorePages())
                         <x-filament::button
                             color="gray"
-                            :icon="$nextArrowIcon"
-                            icon-alias="notifications::database.modal.pagination.next-button"
-                            icon-position="after"
                             rel="next"
-                            size="sm"
                             :wire:click="'nextPage(\'' . $notifications->getPageName() . '\')'"
                             class="ms-auto"
                         >

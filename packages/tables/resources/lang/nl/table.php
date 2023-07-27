@@ -43,7 +43,7 @@ return [
 
             'records_per_page' => [
 
-                'label' => 'per pagina',
+                'label' => 'Per pagina',
 
                 'options' => [
                     'all' => 'Alles',

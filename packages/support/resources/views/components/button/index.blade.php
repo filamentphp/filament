@@ -53,7 +53,7 @@
                     },
                 ] :
                 [
-                    'shadow' => ! $grouped,
+                    'shadow-sm' => ! $grouped,
                     ...match ($color) {
                         'gray' => [
                             'bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',

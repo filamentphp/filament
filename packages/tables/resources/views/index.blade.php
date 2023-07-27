@@ -786,7 +786,7 @@
 
                         @if ($isGroupsOnly)
                             <th
-                                class="fi-ta-header-cell whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-300"
+                                class="fi-ta-header-cell whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-950 dark:text-white"
                             >
                                 {{ $group->getLabel() }}
                             </th>
@@ -1174,9 +1174,8 @@
             @endif
         </div>
 
-        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator &&
-             ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total()))
-            <div class="fi-ta-pagination-ctn p-2">
+        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()) && $records->hasPages())
+            <div class="fi-ta-pagination-ctn px-3 py-3 sm:px-6">
                 <x-filament-tables::pagination
                     :paginator="$records"
                     :page-options="$getPaginationPageOptions()"

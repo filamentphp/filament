@@ -12,7 +12,7 @@
 @php
     $hasAlpineActiveClasses = filled($alpineActive);
 
-    $inactiveItemClasses = 'text-gray-700 dark:text-gray-300';
+    $inactiveItemClasses = 'text-gray-700 dark:text-gray-200';
 
     $activeItemClasses = 'fi-tabs-item-active bg-gray-50 text-primary-600 dark:bg-white/5 dark:text-primary-400';
 
