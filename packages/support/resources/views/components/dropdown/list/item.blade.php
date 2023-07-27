@@ -106,7 +106,7 @@
             {{ $slot }}
         </span>
 
-        @if ($badge)
+        @if (filled($badge))
             <x-filament::badge :color="$badgeColor" size="sm">
                 {{ $badge }}
             </x-filament::badge>
@@ -143,7 +143,7 @@
             {{ $slot }}
         </span>
 
-        @if ($badge)
+        @if (filled($badge))
             <x-filament::badge :color="$badgeColor" size="sm">
                 {{ $badge }}
             </x-filament::badge>
@@ -180,7 +180,7 @@
                 {{ $slot }}
             </span>
 
-            @if ($badge)
+            @if (filled($badge))
                 <x-filament::badge :color="$badgeColor" size="sm">
                     {{ $badge }}
                 </x-filament::badge>
