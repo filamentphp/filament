@@ -59,6 +59,7 @@
                     @foreach ($containers as $uuid => $item)
                         @php
                             $itemLabel = $getItemLabel($uuid);
+                            $itemDeletable = $getItemDeletable($uuid);
                         @endphp
 
                         <li
@@ -94,7 +95,7 @@
                             x-sortable-item="{{ $uuid }}"
                             class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
                         >
-                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
+                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || ($isDeletable && $itemDeletable) || $isCollapsible)
                                 <div
                                     class="flex items-center gap-x-3 px-4 py-2"
                                 >
@@ -138,7 +139,7 @@
                                                 </li>
                                             @endif
 
-                                            @if ($isDeletable)
+                                            @if ($isDeletable && $itemDeletable)
                                                 <li>
                                                     {{ $deleteAction(['item' => $uuid]) }}
                                                 </li>

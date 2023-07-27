@@ -49,6 +49,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected string | Closure | null $itemLabel = null;
 
+    protected bool | Closure $itemDeletable = true;
+
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
     protected ?Closure $modifyAddActionUsing = null;
@@ -517,6 +519,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function itemDeletable(Closure|bool $condition = true): static
+    {
+        $this->itemDeletable = $condition;
+
+        return $this;
+    }
+
     public function reorderable(bool | Closure $condition = true): static
     {
         $this->isReorderable = $condition;
@@ -857,6 +866,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function getItemLabel(string $uuid): string | Htmlable | null
     {
         return $this->evaluate($this->itemLabel, [
+            'state' => $this->getChildComponentContainer($uuid)->getRawState(),
+            'uuid' => $uuid,
+        ]);
+    }
+
+    public function getItemDeletable(string $uuid): string | Htmlable | null
+    {
+        return $this->evaluate($this->itemDeletable, [
             'state' => $this->getChildComponentContainer($uuid)->getRawState(),
             'uuid' => $uuid,
         ]);
