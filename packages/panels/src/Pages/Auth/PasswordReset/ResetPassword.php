@@ -78,7 +78,6 @@ class ResetPassword extends SimplePage
         }
 
         $data = $this->form->getState();
-        $broker = Filament::getAuthPasswordBroker();
 
         $data['email'] = $this->email;
         $data['token'] = $this->token;
