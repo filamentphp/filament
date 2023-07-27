@@ -33,6 +33,7 @@ class Panel extends Component
     use Panel\Concerns\HasTheme;
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUserMenu;
+
     protected bool $isDefault = false;
 
     protected ?Closure $bootUsing = null;
