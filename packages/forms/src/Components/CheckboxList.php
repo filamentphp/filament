@@ -155,7 +155,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (empty($relationshipQuery->getQuery()->orders)) {
+            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
                 $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
@@ -241,7 +241,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         );
     }
 
-    public function getRelationshipTitleAttribute(): string
+    public function getRelationshipTitleAttribute(): ?string
     {
         return $this->evaluate($this->relationshipTitleAttribute);
     }

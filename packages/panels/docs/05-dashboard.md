@@ -154,9 +154,9 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-### Creating more than one dashboard
+### Creating multiple dashboards
 
-If you want to create more than one dashboard, you can do so by repeating the process described above. Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
+If you want to create multiple dashboards, you can do so by repeating the process described above. Creating new pages that extend the `Dashboard` class will allow you to create as many dashboards as you need.
 
 You may change the title of the dashboard by overriding the `$title` property:
 

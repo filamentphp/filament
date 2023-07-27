@@ -70,7 +70,7 @@ You can customize the color of the chart data by setting the `$color` property t
 protected static string $color = 'info';
 ```
 
-If you're looking to customize the color further, or use more than one color across multiple datasets, you can still make use of Chart.js's [color options](https://www.chartjs.org/docs/latest/general/colors.html) in the data:
+If you're looking to customize the color further, or use multiple colors across multiple datasets, you can still make use of Chart.js's [color options](https://www.chartjs.org/docs/latest/general/colors.html) in the data:
 
 ```php
 protected function getData(): array

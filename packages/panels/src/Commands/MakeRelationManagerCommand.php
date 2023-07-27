@@ -151,7 +151,7 @@ class MakeRelationManagerCommand extends Command
         $tableBulkActions = implode(PHP_EOL, $tableBulkActions);
 
         $this->copyStubToApp('RelationManager', $path, [
-            'modifyQueryUsing' => $this->indentString($modifyQueryUsing, 3),
+            'modifyQueryUsing' => filled($modifyQueryUsing) ? PHP_EOL . $this->indentString($modifyQueryUsing, 3) : $modifyQueryUsing,
             'namespace' => "{$resourceNamespace}\\{$resource}\\RelationManagers",
             'managerClass' => $managerClass,
             'recordTitleAttribute' => $recordTitleAttribute,
