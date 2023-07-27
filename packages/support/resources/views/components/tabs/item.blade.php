@@ -71,7 +71,7 @@
         />
     @endif
 
-    @if ($badge)
+    @if (filled($badge))
         <x-filament::badge size="sm">
             {{ $badge }}
         </x-filament::badge>

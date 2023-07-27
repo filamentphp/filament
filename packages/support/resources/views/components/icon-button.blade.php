@@ -108,7 +108,7 @@
             />
         @endif
 
-        @if ($badge)
+        @if (filled($badge))
             <div class="{{ $badgeClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
@@ -151,7 +151,7 @@
             :class="$iconClasses"
         />
 
-        @if ($badge)
+        @if (filled($badge))
             <div class="{{ $badgeClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
