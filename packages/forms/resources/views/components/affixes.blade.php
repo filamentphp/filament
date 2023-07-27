@@ -26,9 +26,9 @@
     $enabledClasses = 'bg-white focus-within:ring-2 dark:bg-gray-900';
     $disabledClasses = 'bg-gray-50 dark:bg-gray-950';
     $validClasses = 'ring-gray-950/10 dark:ring-white/20';
-    $invalidClasses = 'ring-danger-600 dark:ring-danger-400';
-    $enabledValidClasses = 'focus-within:ring-primary-600 dark:focus-within:ring-primary-600';
-    $enabledInvalidClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-400';
+    $invalidClasses = 'ring-danger-600 dark:ring-danger-500';
+    $enabledValidClasses = 'focus-within:ring-primary-600 dark:focus-within:ring-primary-500';
+    $enabledInvalidClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-500';
 
     $affixActionsClasses = '-mx-1.5 flex items-center';
     $affixIconClasses = 'fi-fo-affixes-icon h-5 w-5 text-gray-400 dark:text-gray-500';

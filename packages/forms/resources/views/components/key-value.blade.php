@@ -14,8 +14,8 @@
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
                     'fi-fo-key-value rounded-lg bg-white shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-gray-900',
-                    'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-600' => ! $errors->has($statePath),
-                    'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-400 dark:focus-within:ring-danger-400' => $errors->has($statePath),
+                    'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
+                    'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-500 dark:focus-within:ring-danger-500' => $errors->has($statePath),
                 ])
         }}
     >

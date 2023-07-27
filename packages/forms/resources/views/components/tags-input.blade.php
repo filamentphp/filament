@@ -27,8 +27,8 @@
                 'block w-full rounded-lg shadow-sm ring-1 transition duration-75',
                 'bg-gray-50 dark:bg-gray-950' => $isDisabled,
                 'bg-white focus-within:ring-2 dark:bg-gray-900' => ! $isDisabled,
-                'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-400 dark:focus-within:ring-danger-400' => $errors->has($statePath),
-                'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-600' => ! $errors->has($statePath),
+                'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-500 dark:focus-within:ring-danger-500' => $errors->has($statePath),
+                'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
             ])
         >
             <x-filament::input
