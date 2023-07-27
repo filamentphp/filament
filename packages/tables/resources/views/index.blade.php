@@ -346,35 +346,23 @@
                 :all-selectable-records-count="$allSelectableRecordsCount"
                 :colspan="$columnsCount"
                 x-show="selectedRecords.length"
-                class="border-t dark:border-gray-700"
-            >
-                <x-slot name="selectedRecordsCount">
-                    <span x-text="selectedRecords.length"></span>
-                </x-slot>
-            </x-filament-tables::selection-indicator>
+            />
         @endif
 
-        <div>
-            <x-filament-tables::filters.indicators
-                :indicators="$filterIndicators"
-                class="border-t dark:border-gray-700"
-            />
-        </div>
+        <x-filament-tables::filters.indicators
+            :indicators="$filterIndicators"
+        />
 
         <div
             @if ($pollingInterval = $getPollingInterval())
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'fi-ta-content overflow-x-auto dark:border-gray-700',
+                'fi-ta-content overflow-x-auto',
                 'overflow-x-auto' => $content || $hasColumnsLayout,
                 'rounded-t-xl' => ! $renderHeader,
-                'border-t' => $renderHeader,
             ])
-            x-bind:class="{
-                'rounded-t-xl': ! hasHeader,
-                'border-t': hasHeader,
-            }"
+            x-bind:class="{ 'rounded-t-xl': ! hasHeader }"
         >
             @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                 @if (! $isReordering)
@@ -387,7 +375,7 @@
 
                     <div
                         @class([
-                            'flex items-center gap-4 border-b bg-gray-500/5 px-4 dark:border-gray-700',
+                            'flex items-center gap-4 bg-gray-500/5 px-4',
                             'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
                         ])
                     >
@@ -440,47 +428,41 @@
                                         {{ __('filament-tables::table.sorting.fields.column.label') }}
                                     </span>
 
-                                    <select
-                                        x-model="column"
-                                        style="
-                                            background-position: right 0.2rem
-                                                center;
-                                        "
-                                        class="rounded-lg border-0 border-gray-300 bg-gray-500/5 py-1 pe-6 ps-2 text-xs font-medium focus:border-primary-500 focus:ring-0 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 sm:text-sm"
-                                    >
-                                        <option value="">-</option>
+                                    <x-filament-forms::affixes>
+                                        <x-filament::input.select
+                                            x-model="column"
+                                        >
+                                            <option value="">-</option>
 
-                                        @foreach ($sortableColumns as $column)
-                                            <option
-                                                value="{{ $column->getName() }}"
-                                            >
-                                                {{ $column->getLabel() }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                            @foreach ($sortableColumns as $column)
+                                                <option
+                                                    value="{{ $column->getName() }}"
+                                                >
+                                                    {{ $column->getLabel() }}
+                                                </option>
+                                            @endforeach
+                                        </x-filament::input.select>
+                                    </x-filament-forms::affixes>
                                 </label>
 
-                                <label x-show="column" x-cloak>
+                                <label x-cloak x-show="column">
                                     <span class="sr-only">
                                         {{ __('filament-tables::table.sorting.fields.direction.label') }}
                                     </span>
 
-                                    <select
+                                    <x-filament-forms::affixes
                                         x-model="direction"
-                                        style="
-                                            background-position: right 0.2rem
-                                                center;
-                                        "
-                                        class="rounded-lg border-0 border-gray-300 bg-gray-500/5 py-1 pe-6 ps-2 text-xs font-medium focus:border-primary-500 focus:ring-0 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:focus:border-primary-500 sm:text-sm"
                                     >
-                                        <option value="asc">
-                                            {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
-                                        </option>
+                                        <x-filament::input.select>
+                                            <option value="asc">
+                                                {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
+                                            </option>
 
-                                        <option value="desc">
-                                            {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
-                                        </option>
-                                    </select>
+                                            <option value="desc">
+                                                {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
+                                            </option>
+                                        </x-filament::input.select>
+                                    </x-filament-forms::affixes>
                                 </label>
                             </div>
                         @endif
@@ -500,9 +482,8 @@
                         :xl="$contentGrid['xl'] ?? null"
                         :two-xl="$contentGrid['2xl'] ?? null"
                         @class([
-                            'dark:divide-gray-700',
-                            'divide-y' => ! $contentGrid,
                             'p-2 gap-2' => $contentGrid,
+                            'divide-y divide-gray-200 dark:divide-gray-800' => ! $contentGrid,
                         ])
                     >
                         @php
@@ -583,9 +564,8 @@
                                     @class([
                                         'relative h-full px-4 transition',
                                         'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
-                                        'dark:border-gray-600' => ! $contentGrid,
                                         'group' => $isReordering,
-                                        'rounded-xl border border-gray-200 shadow-sm dark:border-gray-700 dark:bg-gray-700/40' => $contentGrid,
+                                        'rounded-xl shadow-sm dark:bg-gray-700/40' => $contentGrid,
                                         ...$getRecordClasses($record),
                                     ])
                                 >
@@ -745,9 +725,7 @@
                 @endif
 
                 @if ($hasSummary && (! $isReordering))
-                    <x-filament-tables::table
-                        class="border-t dark:border-gray-700"
-                    >
+                    <x-filament-tables::table>
                         <x-filament-tables::summary
                             :columns="$columns"
                             :plural-model-label="$pluralModelLabel"
@@ -1198,7 +1176,7 @@
 
         @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator &&
              ((! $records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator) || $records->total()))
-            <div class="fi-ta-pagination-ctn border-t p-2 dark:border-gray-700">
+            <div class="fi-ta-pagination-ctn p-2">
                 <x-filament-tables::pagination
                     :paginator="$records"
                     :page-options="$getPaginationPageOptions()"
