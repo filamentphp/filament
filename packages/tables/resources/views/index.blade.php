@@ -971,9 +971,9 @@
                                     ])
                                 >
                                     @if ($isReordering)
-                                        <x-filament-tables::cell>
+                                        <x-filament-tables::reorder.cell>
                                             <x-filament-tables::reorder.handle />
-                                        </x-filament-tables::cell>
+                                        </x-filament-tables::reorder.cell>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)

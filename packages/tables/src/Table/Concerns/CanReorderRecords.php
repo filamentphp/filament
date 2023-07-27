@@ -36,7 +36,7 @@ trait CanReorderRecords
         $action = Action::make('reorderRecords')
             ->label($isReordering ? __('filament-tables::table.actions.disable_reordering.label') : __('filament-tables::table.actions.enable_reordering.label'))
             ->iconButton()
-            ->icon($isReordering ? 'heroicon-m-check' : 'heroicon-m-chevron-up-down')
+            ->icon($isReordering ? 'heroicon-m-check' : 'heroicon-m-arrows-up-down')
             ->color('gray')
             ->action('toggleTableReordering')
             ->table($this);
@@ -46,10 +46,6 @@ trait CanReorderRecords
                 'action' => $action,
                 'isReordering' => $isReordering,
             ]) ?? $action;
-        }
-
-        if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize('sm');
         }
 
         return $action;
