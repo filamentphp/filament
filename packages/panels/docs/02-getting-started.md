@@ -117,7 +117,7 @@ class Treatment extends Model
 
 In Filament, resources are static classes used to build CRUD interfaces for your Eloquent models. They describe how administrators can interact with data from your panel using tables and forms.
 
-Since patients (pets) are the core entity in this system, let's start by creating a patient resource that enables us to build screens for creating, viewing, updating, and deleting patients.
+Since patients (pets) are the core entity in this system, let's start by creating a patient resource that enables us to build pages for creating, viewing, updating, and deleting patients.
 
 Use the following artisan command to create a new Filament resource for the `Patient` model:
 
