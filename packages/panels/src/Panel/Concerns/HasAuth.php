@@ -122,7 +122,7 @@ trait HasAuth
 
     public function authPasswordBroker(?string $broker = null): static
     {
-        $this->authPasswordBroker = $name;
+        $this->authPasswordBroker = $broker;
 
         return $this;
     }
