@@ -111,6 +111,23 @@ Repeater::make('members')
     ->deletable(false)
 ```
 
+### Preventing the user from deleting specific item
+
+You may prevent the user from deleting specific item from the repeater using the `itemDeletable()` method:
+This method accepts a closure that receive the current item's data in a `$state` variable.
+You must return the boolean value to determine that item deletable or not.
+
+```PHP
+use Filament\Forms\Components\Repeater;
+
+Repeater::make('members')
+    ->schema([
+        // ...
+    ])
+    ->itemDeletable(fn ($state): bool => !$state['is_default'])
+```
+Above example means that attribute `is_default` is true will prevent user delete item.
+
 ## Reordering items
 
 A button is displayed on each item to allow the user to drag and drop to reorder it in the list.
