@@ -19,7 +19,7 @@ class ImageEntry extends Entry
 
     protected string | Closure | null $disk = null;
 
-    protected int | string | Closure | null $height = 120;
+    protected int | string | Closure | null $height = null;
 
     protected bool | Closure $isCircular = false;
 

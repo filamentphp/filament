@@ -19,7 +19,7 @@ class ImageColumn extends Column
 
     protected string | Closure | null $disk = null;
 
-    protected int | string | Closure | null $height = 40;
+    protected int | string | Closure | null $height = null;
 
     protected bool | Closure $isCircular = false;
 
