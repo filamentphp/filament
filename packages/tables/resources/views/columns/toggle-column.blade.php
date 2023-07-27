@@ -15,7 +15,10 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-ta-toggle'])
+                ->class([
+                    'fi-ta-toggle',
+                    'px-3 py-4' => ! $isInline(),
+                ])
         }}
     >
         @php
