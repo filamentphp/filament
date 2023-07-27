@@ -276,7 +276,7 @@
                     'gap-3': @js($isReorderable) || @js(count($groups)) || (selectedRecords.length && @js(count($bulkActions))),
                 }"
             >
-                <div class="flex shrink-0 items-center sm:gap-3">
+                <div class="flex shrink-0 items-center gap-x-1 sm:gap-x-3">
                     @if ($isReorderable)
                         {{ $getReorderRecordsTriggerAction($isReordering) }}
                     @endif
