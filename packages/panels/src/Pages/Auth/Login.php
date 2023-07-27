@@ -65,10 +65,7 @@ class Login extends SimplePage
 
         $data = $this->form->getState();
 
-        if (! Filament::auth()->attempt([
-            'email' => $data['email'],
-            'password' => $data['password'],
-        ], $data['remember'])) {
+        if (! Filament::auth()->attempt($this->loginConditions($data), $data['remember'] ?? false)) {
             throw ValidationException::withMessages([
                 'data.email' => __('filament::pages/auth/login.messages.failed'),
             ]);
@@ -153,5 +150,13 @@ class Login extends SimplePage
     protected function hasFullWidthFormActions(): bool
     {
         return true;
+    }
+
+    protected function loginConditions(array $data): array
+    {
+        return [
+            'email' => $data['email'],
+            'password' => $data['password'],
+        ];
     }
 }
