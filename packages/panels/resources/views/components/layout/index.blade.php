@@ -61,9 +61,7 @@
                 {{ \Filament\Support\Facades\FilamentView::renderHook('content.end') }}
             </main>
 
-            <div class="shrink-0 py-4">
-                <x-filament::footer />
-            </div>
+            {{ \Filament\Support\Facades\FilamentView::renderHook('footer') }}
         </div>
     </div>
 </x-filament::layout.base>
