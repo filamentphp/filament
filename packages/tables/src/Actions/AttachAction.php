@@ -30,6 +30,8 @@ class AttachAction extends Action
 
     protected array | Closure | null $recordSelectSearchColumns = null;
 
+    protected bool | Closure $isMultiple = false;
+
     public static function getDefaultName(): ?string
     {
         return 'attach';
@@ -160,6 +162,13 @@ class AttachAction extends Action
         return $this->evaluate($this->recordSelectSearchColumns);
     }
 
+    public function multiple(bool | Closure $condition = true): static
+    {
+        $this->isMultiple = $condition;
+
+        return $this;
+    }
+
     public function getRecordSelect(): Select
     {
         $getOptions = function (?string $search = null, ?array $searchColumns = []): array {
@@ -226,6 +235,7 @@ class AttachAction extends Action
         $select = Select::make('recordId')
             ->label(__('filament-support::actions/attach.single.modal.fields.record_id.label'))
             ->required()
+            ->multiple($this->isMultiple)
             ->searchable($this->getRecordSelectSearchColumns() ?? true)
             ->getSearchResultsUsing(static fn (Select $component, string $search): array => $getOptions(search: $search, searchColumns: $component->getSearchColumns()))
             ->getOptionLabelUsing(fn ($value): string => $this->getRecordTitle($this->getRelationship()->getRelated()->query()->find($value)))
