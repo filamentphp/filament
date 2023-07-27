@@ -15,7 +15,7 @@
     $url = $column->getUrl();
 
     $columnClasses = \Illuminate\Support\Arr::toCssClasses([
-        'flex w-full disabled:opacity-70 disabled:pointer-events-none',
+        'flex w-full disabled:pointer-events-none',
         match ($column->getAlignment()) {
             'center' => 'justify-center text-center',
             'end' => 'justify-end text-end',
@@ -63,10 +63,10 @@
         @endphp
 
         <button
-            wire:click="{{ $wireClickAction }}"
-            wire:target="{{ $wireClickAction }}"
-            wire:loading.attr="disabled"
             type="button"
+            wire:click="{{ $wireClickAction }}"
+            wire:loading.attr="disabled"
+            wire:target="{{ $wireClickAction }}"
             class="{{ $columnClasses }}"
         >
             {{ $slot }}
