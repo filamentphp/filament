@@ -14,8 +14,10 @@ export default function chart({ cachedData, options, type }) {
             Alpine.effect(() => {
                 Alpine.store('theme')
 
-                this.getChart().destroy()
-                this.initChart()
+                this.$nextTick(() => {
+                    this.getChart().destroy()
+                    this.initChart()
+                })
             })
 
             window
