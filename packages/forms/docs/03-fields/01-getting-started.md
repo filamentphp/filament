@@ -227,7 +227,7 @@ Toggle::make('is_admin')
     ->dehydrated()
 ```
 
-Please note that if you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
+> If you choose to dehydrate the field, a skilled user could still edit the field's value by manipulating Livewire's JavaScript.
 
 ### Hiding a field
 

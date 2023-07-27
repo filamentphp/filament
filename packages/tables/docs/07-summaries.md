@@ -34,7 +34,7 @@ TextColumn::make('rating')
     ])
 ```
 
-> Note: The first column in a table may not use summarizers. That column is used to render the heading and subheading/s of the summary section.
+> The first column in a table may not use summarizers. That column is used to render the heading and subheading/s of the summary section.
 
 <AutoScreenshot name="tables/summaries" alt="Table with summaries" version="3.x" />
 
