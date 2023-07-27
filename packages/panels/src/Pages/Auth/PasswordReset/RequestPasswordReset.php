@@ -64,7 +64,7 @@ class RequestPasswordReset extends SimplePage
 
         $data = $this->form->getState();
 
-        $status = Password::sendResetLink(
+        $status = Password::broker(Filament::getAuthPasswordBroker())->sendResetLink(
             $data,
             function (CanResetPassword $user, string $token): void {
                 if (! method_exists($user, 'notify')) {
