@@ -13,7 +13,7 @@ trait HasRenderHooks
     protected array $renderHooks = [];
 
     /**
-     * @param  string | array<string> | null  $scopes
+     * @param string | array<string> | null $scopes
      */
     public function renderHook(string $name, Closure $hook, string | array | null $scopes = null): static
     {
