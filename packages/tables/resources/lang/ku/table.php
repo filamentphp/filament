@@ -129,7 +129,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '١ تۆمار دیاری کراوە.|:count تۆمار دیاری کراوە.',
+        'selected_count' => '١ تۆمار دیاری کراوە|:count تۆمار دیاری کراوە',
 
         'actions' => [
 

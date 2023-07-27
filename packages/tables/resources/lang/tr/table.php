@@ -130,7 +130,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 kayıt seçildi.|:count kayıt seçildi.',
+        'selected_count' => '1 kayıt seçildi|:count kayıt seçildi',
 
         'actions' => [
 

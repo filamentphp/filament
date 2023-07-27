@@ -140,7 +140,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 izabran zapis.|:count izabrani zapisi.',
+        'selected_count' => '1 izabran zapis|:count izabrani zapisi',
 
         'actions' => [
 

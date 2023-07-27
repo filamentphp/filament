@@ -132,7 +132,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selezionato.|:count records selezionati.',
+        'selected_count' => '1 record selezionato|:count records selezionati',
 
         'actions' => [
 

@@ -209,7 +209,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selected.|:count records selected.',
+        'selected_count' => '1 record selected|:count records selected',
 
         'actions' => [
 

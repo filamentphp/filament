@@ -132,7 +132,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'רשומה אחת נבחרה.|:count רשומות נבחרו.',
+        'selected_count' => 'רשומה אחת נבחרה|:count רשומות נבחרו',
 
         'actions' => [
 

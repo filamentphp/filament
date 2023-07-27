@@ -209,7 +209,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 آیتم انتخاب شده.|:count آیتم انتخاب شده.',
+        'selected_count' => '1 آیتم انتخاب شده|:count آیتم انتخاب شده',
 
         'actions' => [
 

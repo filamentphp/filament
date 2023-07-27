@@ -97,7 +97,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '已選擇 :count 個項目。',
+        'selected_count' => '已選擇 :count 個項目',
 
         'actions' => [
 

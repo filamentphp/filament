@@ -141,7 +141,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 élément sélectionné.|:count éléments sélectionnés.',
+        'selected_count' => '1 élément sélectionné|:count éléments sélectionnés',
 
         'actions' => [
 

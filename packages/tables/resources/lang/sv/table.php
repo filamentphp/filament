@@ -197,7 +197,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 rad vald.|:count rader valda.',
+        'selected_count' => '1 rad vald|:count rader valda',
 
         'actions' => [
 

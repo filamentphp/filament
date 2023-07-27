@@ -140,7 +140,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'Rekodi 1 imeshaguliwa .|Rekodi :count zimeshaguliwa.',
+        'selected_count' => 'Rekodi 1 imeshaguliwa|Rekodi :count zimeshaguliwa',
 
         'actions' => [
 

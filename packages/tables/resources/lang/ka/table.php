@@ -134,7 +134,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'მონიშნულია :count ჩანაწერი.',
+        'selected_count' => 'მონიშნულია :count ჩანაწერი',
 
         'actions' => [
 

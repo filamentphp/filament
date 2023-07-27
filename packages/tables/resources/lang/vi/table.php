@@ -199,7 +199,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'đã chọn 1 bản ghi.|đã chọn :count bản ghi.',
+        'selected_count' => 'đã chọn 1 bản ghi|đã chọn :count bản ghi',
 
         'actions' => [
 

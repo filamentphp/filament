@@ -201,7 +201,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => ':count data dipilih.',
+        'selected_count' => ':count data dipilih',
 
         'actions' => [
 

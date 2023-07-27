@@ -136,7 +136,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 registo selecionado.|:count registos selecionados.',
+        'selected_count' => '1 registo selecionado|:count registos selecionados',
 
         'actions' => [
 

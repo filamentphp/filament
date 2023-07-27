@@ -199,7 +199,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} 1 rekod dipilih.|[2,*] :count rekod yang dipilih.',
+        'selected_count' => '{1} 1 rekod dipilih|[2,*] :count rekod yang dipilih',
 
         'actions' => [
 

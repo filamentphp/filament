@@ -142,7 +142,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'Erregistro bat hautatu da.|Hautatutako erregistroak: :count',
+        'selected_count' => 'Erregistro bat hautatu da|Hautatutako erregistroak: :count',
 
         'actions' => [
 

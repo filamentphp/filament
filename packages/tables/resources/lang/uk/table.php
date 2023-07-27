@@ -132,7 +132,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'Вибрано 1 запис.|Вибрано :count записів.',
+        'selected_count' => 'Вибрано 1 запис|Вибрано :count записів',
 
         'actions' => [
 
