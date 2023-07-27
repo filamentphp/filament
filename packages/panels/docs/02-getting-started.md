@@ -176,7 +176,7 @@ Attempt to submit the form to create a new patient without a name and observe th
 
 #### "Type" select
 
-Let's add a second field for the type of patient: a choice between a cat, dog, or rabbit. Since there's a fixed set of options to choose from, a [Select](../forms/fields/select) field works well:
+Let's add a second field for the type of patient: a choice between a cat, dog, or rabbit. Since there's a fixed set of options to choose from, a [select](../forms/fields/select) field works well:
 
 ```php
 use Filament\Forms;
@@ -351,7 +351,7 @@ public static function table(Table $table): Table
 }
 ```
 
-**NOTE:** Filament uses dot notation to eager-load related data. We used `owner.name` in our table to display a list of owner names instead of less informational ID numbers. You could also add columns for the owner's email address and phone number.
+> Filament uses dot notation to eager-load related data. We used `owner.name` in our table to display a list of owner names instead of less informational ID numbers. You could also add columns for the owner's email address and phone number.
 
 ##### Making columns searchable
 
@@ -441,7 +441,7 @@ One option is to create a new `TreatmentResource` with a select field to associa
 
 Relation managers are tables that display related records for an existing resource on the edit screen for the parent resource. For example, in our project, you could view and manage a patient's treatments directly below their edit form.
 
-NOTE: You can also use Filament ["actions"](../actions/modals#modal-forms) to open a modal form to create, edit, and delete treatments directly from the patient's table.
+> You can also use Filament ["actions"](../actions/modals#modal-forms) to open a modal form to create, edit, and delete treatments directly from the patient's table.
 
 Use the `make:filament-relation-manager` artisan command to quickly create a relation manager, connecting the patient resource to the related treatments:
 
@@ -636,7 +636,7 @@ public function table(Table $table): Table
 }
 ```
 
-**NOTE:** you can pass any valid [PHP date formatting string](https://www.php.net/manual/en/datetime.format.php) to the `dateTime()` method (e.g. `dateTime('m-d-Y h:i A')`)
+> You can pass any valid [PHP date formatting string](https://www.php.net/manual/en/datetime.format.php) to the `dateTime()` method (e.g. `dateTime('m-d-Y h:i A')`).
 
 ## Introducing widgets
 
@@ -729,7 +729,7 @@ protected function getData(): array
 
 Now, check out your new chart widget in the dashboard!
 
-NOTE: You can [customize your dashboard page](../panels/dashboard#customizing-the-dashboard-page) to change the grid and how many widgets are displayed.
+> You can [customize your dashboard page](../panels/dashboard#customizing-the-dashboard-page) to change the grid and how many widgets are displayed.
 
 ## Next steps with the panel builder
 
