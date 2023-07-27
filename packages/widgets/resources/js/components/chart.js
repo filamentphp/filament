@@ -56,6 +56,9 @@ export default function chart({ cachedData, options, type }) {
             ).color
 
             options ??= {}
+            options.borderWidth ??= 2
+            options.pointHitRadius ??= 4
+            options.pointRadius ??= 2
             options.scales ??= {}
             options.scales.x ??= {}
             options.scales.x.grid ??= {}

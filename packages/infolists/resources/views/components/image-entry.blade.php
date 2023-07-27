@@ -1,48 +1,53 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
         $limit = $getLimit();
-        $state = collect($getState())->take($limit)->all();
+        $state = \Illuminate\Support\Arr::wrap($getState());
+        $limitedState = array_slice($state, 0, $limit);
         $isCircular = $isCircular();
         $isSquare = $isSquare();
-        $height = $getHeight();
-        $width = $getWidth() ?? ($isCircular || $isSquare ? $height : null);
-        $overlap = $isStacked() ? ($getOverlap() ?? 4) : null;
+        $isStacked = $isStacked();
+        $overlap = $isStacked ? ($getOverlap() ?? 2) : null;
+        $ring = $isStacked ? ($getRing() ?? 2) : null;
+        $height = $getHeight() ?? ($isStacked ? '2.5rem' : '8rem');
+        $width = $getWidth() ?? (($isCircular || $isSquare) ? $height : null);
 
         $defaultImageUrl = $getDefaultImageUrl();
-        if ((! count($state)) && filled($defaultImageUrl)) {
-            $state = [null];
+
+        if ((! count($limitedState)) && filled($defaultImageUrl)) {
+            $limitedState = [null];
         }
 
-        $ringClasses = match ($getRing()) {
-            0 => '',
-            1 => 'ring-1',
-            2 => 'ring-2',
-            3 => 'ring-3',
-            4 => 'ring-4',
-            5 => 'ring-5',
-            6 => 'ring-6',
-            7 => 'ring-7',
-            8 => 'ring-8',
-            default => 'ring',
-        };
+        $ringClasses = \Illuminate\Support\Arr::toCssClasses([
+            'ring-white dark:ring-gray-900',
+            match ($ring) {
+                0 => null,
+                1 => 'ring-1',
+                2 => 'ring-2',
+                3 => 'ring',
+                4 => 'ring-4',
+                default => $ring,
+            },
+        ]);
 
         $hasLimitedRemainingText = $hasLimitedRemainingText();
         $isLimitedRemainingTextSeparate = $isLimitedRemainingTextSeparate();
+
         $limitedRemainingTextSizeClasses = match ($getLimitedRemainingTextSize()) {
             'xs' => 'text-xs',
+            'sm', null => 'text-sm',
             'base', 'md' => 'text-base',
             'lg' => 'text-lg',
-            default => 'text-sm',
+            default => $size,
         };
     @endphp
 
-    @if (count($state))
-        <div class="flex items-center gap-2">
+    @if (count($limitedState))
+        <div class="fi-in-image flex items-center gap-x-2.5">
             <div
                 @class([
                     'flex',
                     match ($overlap) {
-                        0 => '',
+                        0 => null,
                         1 => '-space-x-1',
                         2 => '-space-x-2',
                         3 => '-space-x-3',
@@ -51,55 +56,60 @@
                         6 => '-space-x-6',
                         7 => '-space-x-7',
                         8 => '-space-x-8',
-                        default => 'space-x-1',
+                        default => 'gap-x-1.5',
                     },
                 ])
             >
-                @foreach ($state as $stateItem)
+                @foreach ($limitedState as $stateItem)
                     <img
                         src="{{ filled($stateItem) ? $getImageUrl($stateItem) : $defaultImageUrl }}"
-                        style="
-                            @if ($height) height: {{ $height }}; @endif
-                            @if ($width) width: {{ $width }}; @endif
-                        "
                         {{
-                            $getExtraImgAttributeBag()->class([
-                                'max-w-none object-cover object-center ring-white dark:ring-gray-900',
-                                'rounded-full' => $isCircular,
-                                $ringClasses,
-                            ])
+                            $getExtraImgAttributeBag()
+                                ->class([
+                                    'max-w-none object-cover object-center',
+                                    'rounded-full' => $isCircular,
+                                    $ringClasses,
+                                ])
+                                ->style([
+                                    "height: {$height}" => $height,
+                                    "width: {$width}" => $width,
+                                ])
                         }}
                     />
                 @endforeach
 
-                @if ($hasLimitedRemainingText && ($loop->iteration < count($state)) && (! $isLimitedRemainingTextSeparate) && $isCircular)
+                @if ($hasLimitedRemainingText && ($loop->iteration < count($limitedState)) && (! $isLimitedRemainingTextSeparate) && $isCircular)
                     <div
                         style="
                             @if ($height) height: {{ $height }}; @endif
                             @if ($width) width: {{ $width }}; @endif
                         "
                         @class([
-                            'flex items-center justify-center bg-gray-100 text-gray-500 ring-white dark:bg-gray-800 dark:text-gray-300 dark:ring-gray-900',
+                            'flex items-center justify-center bg-gray-100 font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400',
                             'rounded-full' => $isCircular,
                             $limitedRemainingTextSizeClasses,
                             $ringClasses,
                         ])
+                        @style([
+                            "height: {$height}" => $height,
+                            "width: {$width}" => $width,
+                        ])
                     >
-                        <span class="-ms-1">
-                            +{{ count($state) - $loop->iteration }}
+                        <span class="-ms-0.5">
+                            +{{ count($state) - count($limitedState) }}
                         </span>
                     </div>
                 @endif
             </div>
 
-            @if ($hasLimitedRemainingText && ($loop->iteration < count($state)) && ($isLimitedRemainingTextSeparate || (! $isCircular)))
+            @if ($hasLimitedRemainingText && ($loop->iteration < count($limitedState)) && ($isLimitedRemainingTextSeparate || (! $isCircular)))
                 <div
                     @class([
-                        'text-gray-600 dark:text-gray-300',
+                        'font-medium text-gray-500 dark:text-gray-400',
                         $limitedRemainingTextSizeClasses,
                     ])
                 >
-                    +{{ count($state) - $loop->iteration }}
+                    +{{ count($state) - count($limitedState) }}
                 </div>
             @endif
         </div>
