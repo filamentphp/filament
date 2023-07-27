@@ -20,7 +20,6 @@
                             :active="$activeTab === $tabKey"
                             :badge="$tab->getBadge()"
                             :icon="$tab->getIcon()"
-                            :icon-color="$tab->getIconColor()"
                             :icon-position="$tab->getIconPosition()"
                             :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                         >
