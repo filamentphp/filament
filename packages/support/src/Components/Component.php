@@ -10,9 +10,9 @@ use Illuminate\Support\Traits\Tappable;
 
 abstract class Component
 {
+    use Conditionable;
     use Configurable;
     use EvaluatesClosures;
     use Macroable;
     use Tappable;
-    use Conditionable;
 }
