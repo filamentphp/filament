@@ -15,7 +15,7 @@ class ViewManager
     protected array $renderHooks = [];
 
     /**
-     * @param string | array<string> | null $scopes
+     * @param  string | array<string> | null  $scopes
      */
     public function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
     {
@@ -29,7 +29,7 @@ class ViewManager
     }
 
     /**
-     * @param string | array<string> | null $scopes
+     * @param  string | array<string> | null  $scopes
      */
     public function renderHook(string $name, string | array | null $scopes = null): Htmlable
     {
