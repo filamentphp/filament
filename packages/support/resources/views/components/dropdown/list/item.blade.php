@@ -1,4 +1,6 @@
 @props([
+    'badge' => null,
+    'badgeColor' => null,
     'color' => 'gray',
     'disabled' => false,
     'icon' => null,
@@ -103,6 +105,12 @@
         <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
+
+        @if ($badge)
+            <x-filament::badge :color="$badgeColor" size="sm">
+                {{ $badge }}
+            </x-filament::badge>
+        @endif
     </button>
 @elseif ($tag === 'a')
     <a
@@ -134,6 +142,12 @@
         <span class="{{ $labelClasses }}">
             {{ $slot }}
         </span>
+
+        @if ($badge)
+            <x-filament::badge :color="$badgeColor" size="sm">
+                {{ $badge }}
+            </x-filament::badge>
+        @endif
     </a>
 @elseif ($tag === 'form')
     <form
@@ -165,6 +179,12 @@
             <span class="{{ $labelClasses }}">
                 {{ $slot }}
             </span>
+
+            @if ($badge)
+                <x-filament::badge :color="$badgeColor" size="sm">
+                    {{ $badge }}
+                </x-filament::badge>
+            @endif
         </button>
     </form>
 @endif
