@@ -43,6 +43,7 @@
                             'max' => (! $isConcealed) ? $getMaxDate() : null,
                             'min' => (! $isConcealed) ? $getMinDate() : null,
                             'placeholder' => $getPlaceholder(),
+                            'onfocus' => 'this.showPicker?.()',
                             'readonly' => $isReadOnly(),
                             'required' => $isRequired() && (! $isConcealed),
                             'step' => $getStep(),
