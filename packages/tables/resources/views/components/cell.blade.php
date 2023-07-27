@@ -3,7 +3,7 @@
 ])
 
 <{{ $tag }}
-    {{ $attributes->class(['fi-ta-cell sm:first-of-type:ps-6']) }}
+    {{ $attributes->class(['fi-ta-cell first-of-type:ps-4']) }}
 >
     {{ $slot }}
 </{{ $tag }}>
