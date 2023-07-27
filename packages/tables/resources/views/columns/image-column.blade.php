@@ -1,50 +1,50 @@
+@php
+    $limit = $getLimit();
+    $state = collect($getState())->take($limit)->all();
+    $isCircular = $isCircular();
+    $isSquare = $isSquare();
+    $height = $getHeight();
+    $width = $getWidth() ?? ($isCircular || $isSquare ? $height : null);
+    $overlap = $isStacked() ? ($getOverlap() ?? 4) : null;
+
+    $defaultImageUrl = $getDefaultImageUrl();
+    if ((! count($state)) && filled($defaultImageUrl)) {
+        $state = [null];
+    }
+
+    $ringClasses = match ($getRing()) {
+        0 => '',
+        1 => 'ring-1',
+        2 => 'ring-2',
+        3 => 'ring-3',
+        4 => 'ring-4',
+        5 => 'ring-5',
+        6 => 'ring-6',
+        7 => 'ring-7',
+        8 => 'ring-8',
+        default => 'ring',
+    };
+
+    $hasLimitedRemainingText = $hasLimitedRemainingText();
+    $isLimitedRemainingTextSeparate = $isLimitedRemainingTextSeparate();
+    $limitedRemainingTextSizeClasses = match ($getLimitedRemainingTextSize()) {
+        'xs' => 'text-xs',
+        'base', 'md' => 'text-base',
+        'lg' => 'text-lg',
+        default => 'text-sm',
+    };
+@endphp
+
 <div
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'fi-ta-image',
-                'px-4 py-3' => ! $isInline(),
+                'px-3 py-4' => ! $isInline(),
             ])
     }}
 >
-    @php
-        $limit = $getLimit();
-        $state = collect($getState())->take($limit)->all();
-        $isCircular = $isCircular();
-        $isSquare = $isSquare();
-        $height = $getHeight();
-        $width = $getWidth() ?? ($isCircular || $isSquare ? $height : null);
-        $overlap = $isStacked() ? ($getOverlap() ?? 4) : null;
-
-        $defaultImageUrl = $getDefaultImageUrl();
-        if ((! count($state)) && filled($defaultImageUrl)) {
-            $state = [null];
-        }
-
-        $ringClasses = match ($getRing()) {
-            0 => '',
-            1 => 'ring-1',
-            2 => 'ring-2',
-            3 => 'ring-3',
-            4 => 'ring-4',
-            5 => 'ring-5',
-            6 => 'ring-6',
-            7 => 'ring-7',
-            8 => 'ring-8',
-            default => 'ring',
-        };
-
-        $hasLimitedRemainingText = $hasLimitedRemainingText();
-        $isLimitedRemainingTextSeparate = $isLimitedRemainingTextSeparate();
-        $limitedRemainingTextSizeClasses = match ($getLimitedRemainingTextSize()) {
-            'xs' => 'text-xs',
-            'base', 'md' => 'text-base',
-            'lg' => 'text-lg',
-            default => 'text-sm',
-        };
-    @endphp
-
     @if (count($state))
         <div class="flex items-center gap-2">
             <div

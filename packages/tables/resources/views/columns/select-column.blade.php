@@ -42,7 +42,7 @@
             ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'fi-ta-select',
-                'px-3 py-2' => ! $isInline(),
+                'px-3 py-4' => ! $isInline(),
             ])
     }}
 >

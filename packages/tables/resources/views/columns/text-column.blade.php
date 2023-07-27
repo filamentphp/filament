@@ -39,7 +39,7 @@
             ->merge($getExtraAttributes(), escape: false)
             ->class([
                 'fi-ta-text grid gap-y-1',
-                'px-3 py-3.5' => ! $isInline(),
+                'px-3 py-4' => ! $isInline(),
             ])
     }}
 >

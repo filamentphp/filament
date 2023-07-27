@@ -774,7 +774,7 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                <x-filament-tables::cell tag="th">
+                                <x-filament-tables::actions.cell tag="th">
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
@@ -792,7 +792,7 @@
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
                                     />
-                                </x-filament-tables::cell>
+                                </x-filament-tables::actions.cell>
                             @endif
 
                             @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
@@ -848,7 +848,7 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                <x-filament-tables::cell tag="th">
+                                <x-filament-tables::actions.cell tag="th">
                                     <x-filament-tables::checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
@@ -866,7 +866,7 @@
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
                                     />
-                                </x-filament-tables::cell>
+                                </x-filament-tables::actions.cell>
                             @endif
 
                             @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
@@ -899,8 +899,10 @@
 
                             @foreach ($columns as $column)
                                 <x-filament-tables::cell
-                                    :class="'fi-table-individual-search-cell-' . str($column->getName())->camel()->kebab()"
-                                    class="p-1"
+                                    @class([
+                                        'fi-table-individual-search-cell-' . str($column->getName())->camel()->kebab(),
+                                        'px-3 py-4',
+                                    ])
                                 >
                                     @if ($column->isIndividuallySearchable())
                                         <x-filament-tables::search-field
