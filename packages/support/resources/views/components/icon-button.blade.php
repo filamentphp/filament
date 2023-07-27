@@ -50,7 +50,7 @@
         },
     ]);
 
-    $badgeClasses = 'absolute start-full top-0 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
+    $badgeClasses = 'absolute start-full top-0 z-10 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
