@@ -19,7 +19,7 @@
 
     <div class="grid gap-y-4 p-6">
         <h4
-            class="text-base font-medium leading-6 text-gray-950 dark:text-white"
+            class="text-base font-semibold leading-6 text-gray-950 dark:text-white"
         >
             {{ __('filament-tables::table.column_toggle.heading') }}
         </h4>
