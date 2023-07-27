@@ -7,7 +7,7 @@ Panels are the top-level container in Filament, allowing you to build feature-ri
 
 ## Prerequisites
 
-Before using Filament, you should be familiar with Laravel. Filament build upon many core Laravel concepts, especially [database migrations](https://laravel.com/docs/migrations) and [Eloquent ORM](https://laravel.com/docs/eloquent). If you're new to Laravel, or need a refresher, we highly recommend completing the [Laravel Bootcamp](https://bootcamp.laravel.com/), which covers the fundamentals of building Laravel apps.
+Before using Filament, you should be familiar with Laravel. Filament build upon many core Laravel concepts, especially [database migrations](https://laravel.com/docs/migrations) and [Eloquent ORM](https://laravel.com/docs/eloquent). If you're new to Laravel, or need a refresher, we highly recommend completing the [Laravel Bootcamp](https://bootcamp.laravel.com), which covers the fundamentals of building Laravel apps.
 
 ## The demo project
 
