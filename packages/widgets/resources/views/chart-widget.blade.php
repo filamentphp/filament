@@ -5,7 +5,7 @@
 @endphp
 
 <x-filament-widgets::widget>
-    <x-filament::card class="fi-wi-chart grid gap-y-4">
+    <x-filament::card class="fi-wi-chart grid auto-cols-fr gap-y-4">
         @if ($heading || $description || $filters)
             <div class="flex items-center gap-x-4">
                 @if ($heading || $description)
