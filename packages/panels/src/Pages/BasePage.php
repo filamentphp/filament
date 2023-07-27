@@ -126,7 +126,7 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
         static::$formActionsAlignment = 'center';
     }
 
-    public static function alignFormactionsEnd(): void
+    public static function alignFormActionsEnd(): void
     {
         static::$formActionsAlignment = 'end';
     }
