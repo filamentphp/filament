@@ -206,9 +206,9 @@
                                                 ! dayIsSelected(day) &&
                                                 focusedDate.date() !== day &&
                                                 ! dayIsDisabled(day),
-                                            'bg-gray-950/5 dark:bg-white/5':
+                                            'bg-gray-50 dark:bg-white/5':
                                                 focusedDate.date() === day && ! dayIsSelected(day),
-                                            'text-primary-600 bg-gray-950/5 dark:bg-white/5 dark:text-primary-400':
+                                            'text-primary-600 bg-gray-50 dark:bg-white/5 dark:text-primary-400':
                                                 dayIsSelected(day),
                                             'pointer-events-none': dayIsDisabled(day),
                                             'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),

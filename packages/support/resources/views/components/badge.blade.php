@@ -30,14 +30,15 @@
                     'md' => 'px-2 min-w-[theme(spacing.6)] py-1',
                 },
                 match ($color) {
-                    'gray' => 'bg-gray-300/10 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
-                    default => 'bg-custom-300/10 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
+                    'gray' => 'bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
+                    default => 'bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
                 },
             ])
             ->style([
                 \Filament\Support\get_color_css_variables(
                     $color,
                     shades: [
+                        50,
                         300,
                         400,
                         ...$icon ? [500] : [],

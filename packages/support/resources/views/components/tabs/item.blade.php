@@ -12,7 +12,7 @@
 @php
     $inactiveItemClasses = 'text-gray-700 dark:text-gray-300';
 
-    $activeItemClasses = 'fi-tabs-item-active bg-gray-950/5 text-primary-600 dark:bg-white/5 dark:text-primary-400';
+    $activeItemClasses = 'fi-tabs-item-active bg-gray-50 text-primary-600 dark:bg-white/5 dark:text-primary-400';
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-tabs-item-icon h-5 w-5',
@@ -44,7 +44,7 @@
                 'role' => 'tab',
             ])
             ->class([
-                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5',
+                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
                 $inactiveItemClasses => (! $alpineActive) && (! $active),
                 $activeItemClasses => (! $alpineActive) && $active,
             ])

@@ -23,7 +23,7 @@
     };
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-icon-btn relative flex items-center justify-center outline-none transition duration-75 disabled:pointer-events-none disabled:opacity-70 rounded-lg',
+        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
         match ($size) {
             'xs' => 'h-7 w-7',
             'sm' => 'h-8 w-8',
@@ -33,12 +33,12 @@
             default => $size,
         },
         match ($color) {
-            'gray' => 'text-gray-400 hover:text-gray-500 focus:bg-gray-950/5 focus:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus:bg-white/5 dark:focus:text-gray-400',
-            default => 'text-custom-500 hover:text-custom-600 focus:bg-custom-50 focus:text-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus:bg-custom-400/10 dark:focus:text-custom-300',
+            'gray' => 'text-gray-400 hover:text-gray-500 focus:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus:ring-primary-500',
+            default => 'text-custom-500 hover:text-custom-600 focus:ring-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus:ring-custom-500',
         },
     ]);
 
-    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [50, 300, 400, 500, 600]);
+    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [300, 400, 500, 600]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-icon-btn-icon',

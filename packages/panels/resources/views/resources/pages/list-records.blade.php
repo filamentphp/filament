@@ -6,25 +6,29 @@
 >
     <div class="flex flex-col gap-y-4">
         @if (count($tabs = $this->getTabs()))
-            <x-filament::tabs class="self-center">
-                @foreach ($tabs as $tabKey => $tab)
-                    @php
-                        $activeTab = strval($activeTab);
-                        $tabKey = strval($tabKey);
-                    @endphp
+            <div
+                class="mx-auto max-w-full rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+            >
+                <x-filament::tabs class="self-center">
+                    @foreach ($tabs as $tabKey => $tab)
+                        @php
+                            $activeTab = strval($activeTab);
+                            $tabKey = strval($tabKey);
+                        @endphp
 
-                    <x-filament::tabs.item
-                        :active="$activeTab === $tabKey"
-                        :badge="$tab->getBadge()"
-                        :icon="$tab->getIcon()"
-                        :icon-color="$tab->getIconColor()"
-                        :icon-position="$tab->getIconPosition()"
-                        :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
-                    >
-                        {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
-                    </x-filament::tabs.item>
-                @endforeach
-            </x-filament::tabs>
+                        <x-filament::tabs.item
+                            :active="$activeTab === $tabKey"
+                            :badge="$tab->getBadge()"
+                            :icon="$tab->getIcon()"
+                            :icon-color="$tab->getIconColor()"
+                            :icon-position="$tab->getIconPosition()"
+                            :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                        >
+                            {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
+                        </x-filament::tabs.item>
+                    @endforeach
+                </x-filament::tabs>
+            </div>
         @endif
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.start', scope: static::class) }}

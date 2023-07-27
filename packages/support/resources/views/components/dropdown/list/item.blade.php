@@ -17,7 +17,7 @@
         'pointer-events-none opacity-70' => $disabled,
         is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
         match ($color) {
-            'gray' => 'hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'gray' => 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
             default => 'hover:bg-custom-50 focus:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus:bg-custom-400/10',
         },
     ]);
