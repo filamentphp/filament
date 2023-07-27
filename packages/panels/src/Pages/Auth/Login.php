@@ -152,6 +152,10 @@ class Login extends SimplePage
         return true;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
     protected function getCredentialsFromFormData(array $data): array
     {
         return [
