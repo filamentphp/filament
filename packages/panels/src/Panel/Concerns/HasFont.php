@@ -13,8 +13,14 @@ trait HasFont
 
     protected ?string $fontUrl = null;
 
+    /**
+     * @var array<string, int> | null
+     */
     protected ?array $fontWeights = null;
 
+    /**
+     * @param  array<string, int> | null  $weights
+     */
     public function font(string $family, ?array $weights = null, ?string $url = null, ?string $provider = null): static
     {
         $this->fontFamily = $family;
@@ -52,6 +58,9 @@ trait HasFont
         return $this->fontUrl;
     }
 
+    /**
+     * @return  array<string, int>
+     */
     public function getFontWeights(): array
     {
         return $this->fontWeights ?? (

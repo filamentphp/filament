@@ -154,6 +154,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontUrl();
     }
 
+    /**
+     * @return  array<string, int>
+     */
     public function getFontWeights(): array
     {
         return $this->getCurrentPanel()->getFontWeights();
