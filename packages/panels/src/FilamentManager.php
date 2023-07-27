@@ -74,7 +74,7 @@ class FilamentManager
         return $this->getCurrentPanel()->getAuthGuard();
     }
 
-    public function getAuthPasswordBroker(): string
+    public function getAuthPasswordBroker(): ?string
     {
         return $this->getCurrentPanel()->getAuthPasswordBroker();
     }

@@ -26,7 +26,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static void bootCurrentPanel()
  * @method static array<NavigationGroup> buildNavigation()
  * @method static string getAuthGuard()
- * @method static string getAuthPasswordBroker()
+ * @method static string | null getAuthPasswordBroker()
  * @method static string getBrandName()
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
