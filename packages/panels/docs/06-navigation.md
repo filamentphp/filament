@@ -219,6 +219,21 @@ To prevent resources or pages from showing up in navigation, you may use:
 protected static bool $shouldRegisterNavigation = false;
 ```
 
+## Using top navigation
+
+By default, Filament will use a sidebar navigation. You may use a top navigation instead by using the [configuration](configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->topNavigation();
+}
+```
+
 ## Advanced navigation customization
 
 The `navigation()` method can be called from the [configuration](configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.
