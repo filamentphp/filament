@@ -42,6 +42,7 @@
     );
 
     $hasError = $errors->has($statePath) || ($hasNestedRecursiveValidationRules && $errors->has("{$statePath}.*"));
+    $hasHint = filled($hint) || $hintIcon || count($hintActions);
 @endphp
 
 <div {{ $attributes->class(['fi-fo-field-wrp']) }}>
@@ -57,11 +58,13 @@
             'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
         ])
     >
-        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
+        @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || $hasHint)
             <div
                 @class([
-                    'flex items-center justify-between gap-x-3',
-                    'sm:pt-1.5' => $hasInlineLabel,
+                    'flex',
+                    'items-center justify-between gap-x-3' => !$hasInlineLabel,
+                    'sm:pt-1.5' => $hasInlineLabel && !$hasHint,
+                    'flex-col gap-y-1' => $hasInlineLabel && $hasHint
                 ])
             >
                 @if ($label && (! $labelSrOnly))
@@ -82,7 +85,7 @@
                     {{ $labelSuffix }}
                 @endif
 
-                @if (filled($hint) || $hintIcon || count($hintActions))
+                @if ($hasHint)
                     <x-filament-forms::field-wrapper.hint
                         :actions="$hintActions"
                         :color="$hintColor"
