@@ -62,9 +62,7 @@ public function panel(Panel $panel): Panel
 
 ## Render hooks
 
-Filament allows you to render Blade content at various points in the app layout. This is useful for integrations with packages like [`wire-elements/modal`](https://github.com/wire-elements/modal) which require you to add a Livewire component to your app.
-
-Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
+[Render hooks](../support/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](../support/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
 
 ```php
 use Filament\Panel;
@@ -75,57 +73,13 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->renderHook(
-            'body.start',
+            'panels::body.start',
             fn (): string => Blade::render('@livewire(\'livewire-ui-modal\')'),
         );
 }
 ```
 
-You could also render view content from a file:
-
-```php
-$panel->renderHook(
-    'body.start',
-    fn (): View => view('impersonation-banner'),
-);
-```
-
-The available hooks are as follows:
-
-- `body.start` - after `<body>`
-- `body.end` - before `</body>`
-- `head.start` - after `<head>`
-- `head.end` - before `</head>`
-- `content.start` - before page content
-- `content.end` - after page content
-- `footer` - footer content (centered)
-- `footer.before` - before footer
-- `footer.after` - after footer
-- `sidebar.start` - before [sidebar](navigation) content
-- `sidebar.end` - after [sidebar](navigation) content
-- `sidebar.footer` - pinned to the bottom of the sidebar, below the content
-- `scripts.start` - before scripts are defined
-- `scripts.end` - after scripts are defined
-- `styles.start` - before styles are defined
-- `styles.end` - after styles are defined
-- `global-search.start` - before [global search](resources/global-search) field
-- `global-search.end` - after [global search](resources/global-search) field
-- `page.header-widgets.start` - before page header widgets
-- `page.header-widgets.end` - after page header widgets
-- `page.footer-widgets.start` - before page footer widgets
-- `page.footer-widgets.end` - after page footer widgets
-- `page.actions.start` - before page actions
-- `page.actions.end` - after page actions
-- `resource.pages.list-records.table.start` - before the resource table
-- `resource.pages.list-records.table.end` - after the resource table
-- `resource.relation-manager.start` - before the relation manager table
-- `resource.relation-manager.end` - after the relation manager table
-- `tenant-menu.start` - before tenant menu
-- `tenant-menu.end` - after tenant menu
-- `user-menu.start` - before [user menu](navigation#customizing-the-user-menu)
-- `user-menu.end` - after [user menu](navigation#customizing-the-user-menu)
-- `user-menu.profile.before` - before the profile item in the [user menu](navigation#customizing-the-user-menu)
-- `user-menu.profile.after` - after the profile item in the [user menu](navigation#customizing-the-user-menu)
+A full list of available render hooks can be found [here](../support/render-hooks#available-render-hooks).
 
 ## Setting a domain
 

@@ -54,14 +54,14 @@
                     },
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook('content.start') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.start') }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('content.end') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.end') }}
             </main>
 
-            {{ \Filament\Support\Facades\FilamentView::renderHook('footer') }}
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
         </div>
     </div>
 </x-filament::layout.base>

@@ -23,7 +23,7 @@
     $items = \Illuminate\Support\Arr::except($items, ['billing', 'profile', 'register']);
 @endphp
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('tenant-menu.before') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('panels::tenant-menu.before') }}
 
 <x-filament::dropdown placement="bottom-start" teleport class="fi-tenant-menu">
     <x-slot name="trigger">
@@ -141,4 +141,4 @@
     @endif
 </x-filament::dropdown>
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('tenant-menu.after') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('panels::tenant-menu.after') }}

@@ -171,4 +171,12 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
     {
         static::$hasInlineLabels = $condition;
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getRenderHookScopes(): array
+    {
+        return [static::class];
+    }
 }

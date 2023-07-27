@@ -30,10 +30,10 @@
             </div>
         @endif
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.start', scope: static::class) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.before', scopes: $this->getRenderHookScopes()) }}
 
         {{ $this->table }}
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('resource.pages.list-records.table.end', scope: static::class) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
     </div>
 </x-filament::page>

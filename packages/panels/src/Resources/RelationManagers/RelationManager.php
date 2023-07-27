@@ -543,4 +543,15 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
     {
         return app(RelationManagerConfiguration::class, ['relationManager' => static::class, 'props' => $props]);
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getRenderHookScopes(): array
+    {
+        return [
+            static::class,
+            $this->pageClass,
+        ];
+    }
 }

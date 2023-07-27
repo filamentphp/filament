@@ -1,5 +1,5 @@
 <div class="fi-global-search flex items-center">
-    {{ \Filament\Support\Facades\FilamentView::renderHook('global-search.start') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.start') }}
 
     <div class="relative">
         <x-filament::global-search.field />
@@ -9,5 +9,5 @@
         @endif
     </div>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('global-search.end') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.end') }}
 </div>
