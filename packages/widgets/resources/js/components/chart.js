@@ -57,12 +57,12 @@ export default function chart({ cachedData, options, type }) {
             options.scales ??= {}
             options.scales.x ??= {}
             options.scales.x.grid ??= {}
-            options.scales.x.grid.color ??= gridColor
+            options.scales.x.grid.color = gridColor
             options.scales.x.grid.display ??= false
             options.scales.x.grid.drawBorder ??= false
             options.scales.y ??= {}
             options.scales.y.grid ??= {}
-            options.scales.y.grid.color ??= gridColor
+            options.scales.y.grid.color = gridColor
             options.scales.y.grid.drawBorder ??= false
 
             return new Chart(this.$refs.canvas, {

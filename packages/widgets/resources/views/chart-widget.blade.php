@@ -81,7 +81,7 @@
 
                 <span
                     x-ref="gridColorElement"
-                    class="text-gray-300 dark:text-gray-700"
+                    class="text-gray-200 dark:text-gray-800"
                 ></span>
 
                 <span
