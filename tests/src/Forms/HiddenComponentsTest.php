@@ -24,7 +24,7 @@ test('components can be hidden based on condition', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->components([
             (new Component())
-                ->when(fn (callable $get) => $get($statePath) === false),
+                ->visible(fn (callable $get) => $get($statePath) === false),
         ])
         ->fill([
             $statePath => true,
