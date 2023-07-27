@@ -56,6 +56,11 @@
         <style>
             :root {
                 --font-family: {!! filament()->getFontFamily() !!};
+
+                @foreach (filament()->getFontWeights() as $fontWeightKey => $fontWeightValue)
+                    --font-weight-{{ $fontWeightKey }}: {{ $fontWeightValue }};
+                @endforeach
+
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
             }
@@ -90,7 +95,7 @@
     </head>
 
     <body
-        class="min-h-screen bg-gray-50 text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
+        class="min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('body.start') }}
 

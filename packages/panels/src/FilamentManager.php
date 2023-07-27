@@ -139,6 +139,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontFamily();
     }
 
+    public function getFontHtml(): Htmlable
+    {
+        return $this->getCurrentPanel()->getFontHtml();
+    }
+
     public function getFontProvider(): string
     {
         return $this->getCurrentPanel()->getFontProvider();
@@ -149,9 +154,9 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontUrl();
     }
 
-    public function getFontHtml(): Htmlable
+    public function getFontWeights(): array
     {
-        return $this->getCurrentPanel()->getFontHtml();
+        return $this->getCurrentPanel()->getFontWeights();
     }
 
     /**
