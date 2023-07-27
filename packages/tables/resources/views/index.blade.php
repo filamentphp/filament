@@ -1020,7 +1020,7 @@
                                             :attributes="
                                                 \Filament\Support\prepare_inherited_attributes(
                                                     new \Illuminate\View\ComponentAttributeBag([
-                                                        'x-bind:class' => '{ \'relative before:absolute before:start-0 before:inset-y-0 before:w-0.5 before:bg-primary-600 dark:before:bg-primary-400\': isRecordSelected(\'' . $recordKey . '\') }',
+                                                        'x-bind:class' => '{ \'relative before:absolute before:start-0 before:inset-y-0 before:w-0.5 before:bg-primary-600 dark:before:bg-primary-500\': isRecordSelected(\'' . $recordKey . '\') }',
                                                     ])
                                                 )
                                             "
