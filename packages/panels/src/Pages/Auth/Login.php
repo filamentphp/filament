@@ -152,7 +152,7 @@ class Login extends SimplePage
         return true;
     }
 
-    protected function loginConditions(array $data): array
+    protected function getCredentialsFromFormData(array $data): array
     {
         return [
             'email' => $data['email'],
