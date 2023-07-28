@@ -173,7 +173,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
     protected function configureViewAction(Tables\Actions\ViewAction $action): void
     {
         $action
-            ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canView($record))
+            ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
             ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
     }
