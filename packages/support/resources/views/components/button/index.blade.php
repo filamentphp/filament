@@ -61,7 +61,7 @@
                         ],
                         default => [
                             'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400',
-                            'focus:ring-custom-400/50' => ! $grouped,
+                            'focus:ring-custom-500/50 dark:focus:ring-custom-400/50' => ! $grouped,
                         ],
                     },
                 ]
