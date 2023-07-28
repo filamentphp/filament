@@ -575,7 +575,7 @@
                                             'me-6' => $isSelectionEnabled || $hasCollapsibleColumnsLayout || $isReordering,
                                         ])
                                     >
-                                        <x-filament-tables::reorder.button
+                                        <x-filament-tables::reorder.handle
                                             @class([
                                                 'absolute top-3 end-3',
                                                 'md:relative md:top-0 end-0' => ! $contentGrid,
@@ -972,7 +972,7 @@
                                 >
                                     @if ($isReordering)
                                         <x-filament-tables::reorder.cell>
-                                            <x-filament-tables::reorder.button />
+                                            <x-filament-tables::reorder.handle />
                                         </x-filament-tables::reorder.cell>
                                     @endif
 
