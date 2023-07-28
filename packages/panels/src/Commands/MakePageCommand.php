@@ -87,8 +87,8 @@ class MakePageCommand extends Command
         }
 
         if ($resource === null) {
-            $pageDirectories = $panel->getResourceDirectories();
-            $pageNamespaces = $panel->getResourceNamespaces();
+            $pageDirectories = $panel->getPageDirectories();
+            $pageNamespaces = $panel->getPageNamespaces();
 
             $namespace = (count($pageNamespaces) > 1) ?
                 $this->choice(
