@@ -27,44 +27,6 @@ return [
 
     ],
 
-    'pagination' => [
-
-        'label' => 'Хуудас',
-
-        'overview' => '{1} Нийт 1 |[2,*] Нийт :total бичлэг :first - :last',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'хуудас бүр',
-
-                'options' => [
-                    'all' => 'Бүгд',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'Хуудасруу очих :page',
-            ],
-
-            'next' => [
-                'label' => 'Дараах',
-            ],
-
-            'previous' => [
-                'label' => 'Өмнөх',
-            ],
-
-        ],
-
-    ],
-
     'actions' => [
 
         'disable_reordering' => [
