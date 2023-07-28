@@ -13,8 +13,12 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
-                    'fi-fo-key-value rounded-lg bg-white shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-white/5',
-                    'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
+                    'fi-fo-key-value rounded-lg shadow-sm ring-1 transition duration-75 focus-within:ring-2',
+                    'bg-white dark:bg-white/5' => ! $isDisabled,
+                    'bg-gray-50 dark:bg-transparent' => $isDisabled,
+                    'ring-gray-950/10 focus-within:ring-primary-600 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
+                    'dark:ring-white/20' => (! $errors->has($statePath)) && (! $isDisabled),
+                    'dark:ring-white/10' => (! $errors->has($statePath)) && $isDisabled,
                     'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-500 dark:focus-within:ring-danger-500' => $errors->has($statePath),
                 ])
         }}

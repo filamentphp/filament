@@ -28,7 +28,9 @@
                 'bg-gray-50 dark:bg-transparent' => $isDisabled,
                 'bg-white focus-within:ring-2 dark:bg-white/5' => ! $isDisabled,
                 'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-500 dark:focus-within:ring-danger-500' => $errors->has($statePath),
-                'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
+                'ring-gray-950/10 focus-within:ring-primary-600 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
+                'dark:ring-white/20' => (! $isDisabled) && (! $errors->has($statePath)),
+                'dark:ring-white/10' => $isDisabled && (! $errors->has($statePath)),
             ])
         >
             <x-filament::input
