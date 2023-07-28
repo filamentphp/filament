@@ -66,7 +66,7 @@ If you're looking to add an action to a table in your app, [visit this page](../
 
 #### Table bulk actions
 
-Tables also support "bulk actions". These can be used when the user selects rows int the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. Bulk actions may also be added to the header of a table, next to other header actions. In this case, bulk action trigger buttons are disabled until the user selects table rows.
+Tables also support "bulk actions". These can be used when the user selects rows in the table. Traditionally, when rows are selected, a "bulk actions" button appears in the top left corner of the table. When the user clicks this button, they are presented with a dropdown menu of actions to choose from. Bulk actions may also be added to the header of a table, next to other header actions. In this case, bulk action trigger buttons are disabled until the user selects table rows.
 
 These actions use the `Filament\Tables\Actions\BulkAction` class. They can open modals if you choose.
 
