@@ -242,18 +242,17 @@ Action::make('advance')
     ->action(fn () => $this->record->advance())
     ->modalContent(fn (Action $action): View => view(
         'filament.pages.actions.advance',
-        ['reportAction' => $action->getModalAction('report')],
+        ['action' => $action],
     ))
 ```
 
-Now, in the view file, you can render the action button using the name that it was passed into the view as:
+Now, in the view file, you can render the action button by calling `getModalAction()`:
 
 ```blade
 <div>
-    {{ $reportAction }}
+    {{ $action->getModalAction('report') }}
 </div>
 ```
-
 
 ## Using a slide-over instead of a modal
 
@@ -368,6 +367,10 @@ You may pass an array of extra actions to be rendered, between the default actio
 
 ```php
 Action::make('create')
+    ->form([
+        // ...
+    ])
+    // ...
     ->extraModalFooterActions(fn (Action $action): array => [
         $action->makeModalSubmitAction('createAnother', arguments: ['another' => true]),
     ])
@@ -379,6 +382,10 @@ The second parameter of `makeModalSubmitAction()` allows you to pass an array of
 
 ```php
 Action::make('create')
+    ->form([
+        // ...
+    ])
+    // ...
     ->extraModalFooterActions(fn (Action $action): array => [
         $action->makeModalSubmitAction('createAnother', arguments: ['another' => true]),
     ])
@@ -390,6 +397,69 @@ Action::make('create')
         }
     })
 ```
+
+#### Opening another modal from an extra footer action
+
+You can nest actions within each other, allowing you to open a new modal from an extra footer action:
+
+```php
+Action::make('edit')
+    // ...
+    ->extraModalFooterActions([
+        Action::make('delete')
+            ->requiresConfirmation()
+            ->action(function () {
+                // ...
+            }),
+    ])
+```
+
+Now, the edit modal will have a "Delete" button in the footer, which will open a confirmation modal when clicked. This action is completely independent of the `edit` action, and will not run the `edit` action when it is clicked.
+
+In this example though, you probably want to cancel the `edit` action if the `delete` action is run. You can do this using the `cancelParentActions()` method:
+
+```php
+Action::make('delete')
+    ->requiresConfirmation()
+    ->action(function () {
+        // ...
+    })
+    ->cancelParentActions()
+```
+
+If you have deep nesting with multiple parent actions, but you don't want to cancel all of them, you can pass the name of the parent action you want to cancel, including its children, to `cancelParentActions()`:
+
+```php
+Action::make('first')
+    ->requiresConfirmation()
+    ->action(function () {
+        // ...
+    })
+    ->extraModalFooterActions([
+        Action::make('second')
+            ->requiresConfirmation()
+            ->action(function () {
+                // ...
+            })
+            ->extraModalFooterActions([
+                Action::make('third')
+                    ->requiresConfirmation()
+                    ->action(function () {
+                        // ...
+                    })
+                    ->extraModalFooterActions([
+                        Action::make('fourth')
+                            ->requiresConfirmation()
+                            ->action(function () {
+                                // ...
+                            })
+                            ->cancelParentActions('second'),
+                    ]),
+            ]),
+    ])
+```
+
+In this example, if the `fourth` action is run, the `second` action is cancelled, but so is the `third` action since it is a child of `second`. The `first` action is not cancelled, however, since it is the parent of `second`. The `first` action's modal will remain open.
 
 ## Closing the modal by clicking away
 

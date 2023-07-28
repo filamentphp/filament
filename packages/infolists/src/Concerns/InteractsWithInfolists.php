@@ -174,7 +174,7 @@ trait InteractsWithInfolists
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->unmountInfolistAction(shouldCloseParentActions: false);
+            $this->unmountInfolistAction(shouldCancelParentActions: false);
 
             return null;
         }
@@ -250,26 +250,26 @@ trait InteractsWithInfolists
         );
     }
 
-    public function unmountInfolistAction(bool $shouldCloseParentActions = true): void
+    public function unmountInfolistAction(bool $shouldCancelParentActions = true): void
     {
         $action = $this->getMountedInfolistAction();
 
-        if (! ($shouldCloseParentActions && $action)) {
+        if (! ($shouldCancelParentActions && $action)) {
             array_pop($this->mountedInfolistActions);
             array_pop($this->mountedInfolistActionsData);
-        } elseif ($action->shouldCloseAllParentActions()) {
+        } elseif ($action->shouldCancelAllParentActions()) {
             $this->mountedInfolistActions = [];
             $this->mountedInfolistActionsData = [];
         } else {
-            $parentActionToCloseTo = $action->getParentActionToCloseTo();
+            $parentActionToCancelTo = $action->getParentActionToCancelTo();
 
             while (true) {
                 $recentlyClosedParentAction = array_pop($this->mountedInfolistActions);
                 array_pop($this->mountedInfolistActionsData);
 
                 if (
-                    blank($parentActionToCloseTo) ||
-                    ($recentlyClosedParentAction === $parentActionToCloseTo)
+                    blank($parentActionToCancelTo) ||
+                    ($recentlyClosedParentAction === $parentActionToCancelTo)
                 ) {
                     break;
                 }

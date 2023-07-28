@@ -6,22 +6,22 @@ use Closure;
 
 trait HasParentActions
 {
-    protected bool | string | Closure | null $closeParentActions = null;
+    protected bool | string | Closure | null $cancelParentActions = null;
 
-    public function closeParentActions(bool | string | Closure | null $toAction = true): static
+    public function cancelParentActions(bool | string | Closure | null $toAction = true): static
     {
-        $this->closeParentActions = $toAction;
+        $this->cancelParentActions = $toAction;
 
         return $this;
     }
 
-    public function shouldCloseAllParentActions(): bool
+    public function shouldCancelAllParentActions(): bool
     {
-        return $this->evaluate($this->closeParentActions) === true;
+        return $this->evaluate($this->cancelParentActions) === true;
     }
 
-    public function getParentActionToCloseTo(): ?string
+    public function getParentActionToCancelTo(): ?string
     {
-        return $this->evaluate($this->closeParentActions);
+        return $this->evaluate($this->cancelParentActions);
     }
 }
