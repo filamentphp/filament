@@ -13,7 +13,9 @@
         "
     />
 
-    <span class="sr-only">
-        {{ $label }}
-    </span>
+    @if (filled($label))
+        <span class="sr-only">
+            {{ $label }}
+        </span>
+    @endif
 </label>
