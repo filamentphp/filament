@@ -23,6 +23,8 @@ trait CanOpenModal
 
     protected bool | Closure | null $isModalFooterSticky = null;
 
+    protected bool | Closure | null $isModalHeaderSticky = null;
+
     /**
      * @var array<string, StaticAction>
      */
@@ -515,6 +517,11 @@ trait CanOpenModal
         return (bool) ($this->evaluate($this->isModalFooterSticky) ?? $this->isModalSlideOver());
     }
 
+    public function isModalHeaderSticky(): bool
+    {
+        return (bool) ($this->evaluate($this->isModalHeaderSticky) ?? $this->isModalSlideOver());
+    }
+
     public function isModalSlideOver(): bool
     {
         return (bool) $this->evaluate($this->isModalSlideOver);
@@ -578,6 +585,13 @@ trait CanOpenModal
     public function stickyModalFooter(bool | Closure $condition = true): static
     {
         $this->isModalFooterSticky = $condition;
+
+        return $this;
+    }
+
+    public function stickyModalHeader(bool | Closure $condition = true): static
+    {
+        $this->isModalHeaderSticky = $condition;
 
         return $this;
     }
