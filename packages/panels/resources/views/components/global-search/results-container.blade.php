@@ -30,7 +30,7 @@
     @if ($results->getCategories()->isEmpty())
         <x-filament::global-search.no-results-message />
     @else
-        <ul class="divide-y divide-gray-100 dark:divide-white/10">
+        <ul class="divide-y divide-gray-200 dark:divide-white/10">
             @foreach ($results->getCategories() as $group => $groupedResults)
                 <x-filament::global-search.result-group
                     :label="$group"
