@@ -58,7 +58,6 @@ You can also change the icon's position to be after the label instead of before 
 ```php
 Tab::make()
     ->icon('heroicon-m-user-group')
-    ->icon('heroicon-m-pencil-square')
     ->iconPosition('after')
 ```
 
