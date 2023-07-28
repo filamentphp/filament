@@ -237,3 +237,5 @@ Action::make('copyCostToPrice')
         $set('price', $state);
     })
 ```
+
+Form component actions also have access to [all utilities that apply to actions](../actions/advanced#action-utility-injection) in general.

@@ -390,7 +390,7 @@ TextColumn::make('index')->state(
 ),
 ```
 
-As `$rowLoop` is Laravel Blade's `$loop` object, you can reference all other `$loop` properties.
+As `$rowLoop` is [Laravel Blade's `$loop` object](https://laravel.com/docs/blade#the-loop-variable), you can reference all other `$loop` properties.
 
 As a shortcut, you may use the `rowIndex()` method:
 

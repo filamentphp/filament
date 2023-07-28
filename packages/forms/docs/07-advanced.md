@@ -52,7 +52,7 @@ In this example, `500` is the number of milliseconds to wait before sending a ne
 
 ## Form component utility injection
 
-The vast majority of methods used to configure [fields](fields) and [layout components](layout) accept closures as parameters instead of hardcoded values:
+The vast majority of methods used to configure [fields](fields) and [layout components](layout) accept functions as parameters instead of hardcoded values:
 
 ```php
 use App\Models\User;
