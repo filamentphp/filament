@@ -78,7 +78,7 @@ Field::make('name')->alphaNum()
 
 ### ASCII
 
-The field must be entirely 7-bit ASCII characters. [See the Laravel documentation.](https://laravel.com/docs/10.x/validation#rule-ascii)
+The field must be entirely 7-bit ASCII characters. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-ascii)
 
 ```php
 Field::make('name')->ascii()
