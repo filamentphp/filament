@@ -120,3 +120,33 @@ use Filament\Widgets\StatsOverviewWidget\Card;
 
 Card::make('Total Products', $this->getPageTableRecords()->count()),
 ```
+
+## Passing properties to widgets on resource pages
+
+When registering a widget on a resource page, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
+
+```php
+protected function getHeaderWidgets(): array
+{
+    return [
+        CustomerResource\Widgets\CustomerOverview::make([
+            'status' => 'active',
+        ]),
+    ];
+}
+```
+
+This array of properties gets mapped to [public Livewire properties](https://livewire.laravel.com/docs/properties) on the widget class:
+
+```php
+use Filament\Widgets\Widget;
+
+class CustomerOverview extends Widget
+{
+    public string $status;
+
+    // ...
+}
+```
+
+Now, you can access the `status` in the widget class using `$this->status`.

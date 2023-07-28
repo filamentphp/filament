@@ -719,3 +719,35 @@ AssociateAction::make()
 AttachAction::make()
     ->recordSelectSearchColumns(['title', 'id'])
 ```
+
+## Passing properties to relation managers
+
+When registering a relation manager in a resource, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
+
+```php
+use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+
+public static function getRelations(): array
+{
+    return [
+        CommentsRelationManager::make([
+            'status' => 'approved',
+        ]),
+    ];
+}
+```
+
+This array of properties gets mapped to [public Livewire properties](https://livewire.laravel.com/docs/properties) on the relation manager class:
+
+```php
+use Filament\Resources\RelationManagers\RelationManager;
+
+class CommentsRelationManager extends RelationManager
+{
+    public string $status;
+
+    // ...
+}
+```
+
+Now, you can access the `status` in the relation manager class using `$this->status`.
