@@ -18,8 +18,8 @@
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
-                    imageEditorEmptyFillColor: '{{ $getImageEditorEmptyFillColor() }}',
-                    imageEditorMode: {{ $getImageEditorMode() }},
+                    imageEditorEmptyFillColor: @js($getImageEditorEmptyFillColor()),
+                    imageEditorMode: @js($getImageEditorMode()),
                     imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
                     imageEditorViewportWidth: @js($getImageEditorViewportWidth()),
                     deleteUploadedFileUsing: async (fileKey) => {
@@ -46,8 +46,8 @@
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
                     placeholder: @js($getPlaceholder()),
-                    maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
-                    minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
+                    maxSize: @js(($size = $getMaxSize()) ? "'{$size} KB'" : null),
+                    minSize: @js(($size = $getMinSize()) ? "'{$size} KB'" : null),
                     removeUploadedFileUsing: async (fileKey) => {
                         return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
                     },

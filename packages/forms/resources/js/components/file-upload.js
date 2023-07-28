@@ -490,7 +490,7 @@ export default function fileUploadFormComponent({
 
             this.editor
                 .getCroppedCanvas({
-                    fillColor: imageEditorEmptyFillColor,
+                    fillColor: imageEditorEmptyFillColor ?? 'transparent',
                     height: imageResizeTargetHeight,
                     imageSmoothingEnabled: true,
                     imageSmoothingQuality: 'high',
