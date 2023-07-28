@@ -40,7 +40,7 @@ SelectColumn::make('status')
 
 ## Disabling placeholder selection
 
-You can prevent the placeholder from being selected using the `disablePlaceholderSelection()` method:
+You can prevent the placeholder from being selected using the `selectablePlaceholder()` method:
 
 ```php
 use Filament\Tables\Columns\SelectColumn;
@@ -51,5 +51,5 @@ SelectColumn::make('status')
         'reviewing' => 'Reviewing',
         'published' => 'Published',
     ])
-    ->disablePlaceholderSelection()
+    ->selectablePlaceholder(false)
 ```
