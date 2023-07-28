@@ -483,7 +483,7 @@
                         :two-xl="$contentGrid['2xl'] ?? null"
                         @class([
                             'p-2 gap-2' => $contentGrid,
-                            'divide-y divide-gray-200 dark:divide-gray-800' => ! $contentGrid,
+                            'divide-y divide-gray-200 dark:divide-white/5' => ! $contentGrid,
                         ])
                     >
                         @php
@@ -1174,7 +1174,7 @@
             @endif
         </div>
 
-        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()) && $records->hasPages())
+        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
             <div class="fi-ta-pagination-ctn px-3 py-3 sm:px-6">
                 <x-filament-tables::pagination
                     :paginator="$records"

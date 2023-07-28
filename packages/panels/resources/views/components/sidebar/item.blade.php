@@ -47,9 +47,9 @@
             <x-filament::icon
                 :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 @class([
-                    'fi-sidebar-item-icon h-5 w-5',
+                    'fi-sidebar-item-icon h-6 w-6',
                     'text-gray-400 dark:text-gray-500' => ! $active,
-                    'text-primary-500' => $active,
+                    'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
         @elseif ($hasGroupedBorder)
@@ -93,7 +93,6 @@
         @if (filled($badge))
             <x-filament::badge
                 :color="$badgeColor"
-                size="sm"
                 :x-show="filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : null"
             >
                 {{ $badge }}

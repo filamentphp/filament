@@ -97,7 +97,7 @@
         </x-filament::button>
     @endif
 
-    @if (! $isSimple)
+    @if ((! $isSimple) && $paginator->hasPages())
         <ol
             class="hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 md:flex"
         >
