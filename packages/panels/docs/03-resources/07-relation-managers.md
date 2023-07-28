@@ -720,6 +720,17 @@ AttachAction::make()
     ->recordSelectSearchColumns(['title', 'id'])
 ```
 
+## Read-only mode
+
+Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit and delete. However, you can disable this behaviour, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
+
+```php
+public function isReadOnly(): bool
+{
+    return false;
+}
+```
+
 ## Passing properties to relation managers
 
 When registering a relation manager in a resource, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
