@@ -375,7 +375,7 @@
 
                     <div
                         @class([
-                            'flex items-center gap-4 bg-gray-500/5 px-4',
+                            'flex items-center gap-4 bg-gray-50 px-3 dark:bg-white/5 sm:px-6',
                             'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
                         ])
                     >
@@ -562,7 +562,7 @@
                                         'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
                                     }"
                                     @class([
-                                        'relative h-full px-4 transition',
+                                        'relative h-full px-3 transition sm:px-6',
                                         'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
                                         'group' => $isReordering,
                                         'rounded-xl shadow-sm dark:bg-gray-700/40' => $contentGrid,
@@ -621,7 +621,7 @@
                                         @if ($recordUrl)
                                             <a
                                                 href="{{ $recordUrl }}"
-                                                class="fi-ta-record-url-link block flex-1 py-3"
+                                                class="fi-ta-record-url-link block flex-1 py-4"
                                             >
                                                 <x-filament-tables::columns.layout
                                                     :components="$getColumnsLayout()"
