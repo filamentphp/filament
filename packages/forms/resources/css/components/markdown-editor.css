@@ -121,7 +121,7 @@
 }
 
 .EasyMDEContainer .editor-toolbar {
-    @apply flex gap-x-1 overflow-x-auto rounded-none border-0 border-b border-gray-100 px-2.5 py-2 dark:border-white/10;
+    @apply flex gap-x-1 overflow-x-auto rounded-none border-0 border-b border-gray-200 px-2.5 py-2 dark:border-white/10;
 }
 
 .EasyMDEContainer .editor-toolbar button {
@@ -137,6 +137,10 @@
     content: '';
     mask-position: center;
     mask-repeat: no-repeat;
+}
+
+.EasyMDEContainer .editor-toolbar button.active::before {
+    @apply bg-primary-600 dark:bg-primary-400;
 }
 
 .EasyMDEContainer .editor-toolbar .separator {

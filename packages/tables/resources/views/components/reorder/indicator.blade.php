@@ -16,7 +16,9 @@
         class="h-5 w-5 text-gray-400 dark:text-gray-500"
     />
 
-    <span class="text-sm font-medium leading-6 text-gray-950 dark:text-white">
+    <span
+        class="text-sm font-medium leading-6 text-gray-700 dark:text-gray-200"
+    >
         {{ __('filament-tables::table.reorder_indicator') }}
     </span>
 </div>
