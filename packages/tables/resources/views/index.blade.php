@@ -1174,7 +1174,7 @@
             @endif
         </div>
 
-        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()) && $records->hasPages())
+        @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
             <div class="fi-ta-pagination-ctn px-3 py-3 sm:px-6">
                 <x-filament-tables::pagination
                     :paginator="$records"
