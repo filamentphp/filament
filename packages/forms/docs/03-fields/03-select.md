@@ -318,7 +318,7 @@ Be aware that you will need to ensure that the HTML is safe to render, otherwise
 
 ## Disable placeholder selection
 
-You can prevent the placeholder (null option) from being selected using the `disablePlaceholderSelection()` method:
+You can prevent the placeholder (null option) from being selected using the `selectablePlaceholder()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -330,7 +330,7 @@ Select::make('status')
         'published' => 'Published',
     ])
     ->default('draft')
-    ->disablePlaceholderSelection()
+    ->selectablePlaceholder(false)
 ```
 
 ## Disabling specific options
