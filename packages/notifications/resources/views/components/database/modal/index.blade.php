@@ -5,6 +5,7 @@
 
 @php
     $hasNotifications = $notifications->count();
+    $isPaginated = $notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages();
 @endphp
 
 <x-filament::modal
@@ -17,6 +18,7 @@
     :icon-color="$hasNotifications ? null : 'gray'"
     id="database-notifications"
     slide-over
+    :sticky-header="$hasNotifications"
     width="md"
 >
     @if ($hasNotifications)
@@ -33,7 +35,12 @@
             </div>
         </x-slot>
 
-        <div class="-mx-6 divide-y divide-gray-200 dark:divide-white/10">
+        <div
+            @class([
+                '-mx-6 -mt-6 divide-y divide-gray-200 dark:divide-white/10',
+                'border-b border-gray-200 dark:border-white/10' => $isPaginated,
+            ])
+        >
             @foreach ($notifications as $notification)
                 <div
                     @class([
@@ -45,7 +52,7 @@
             @endforeach
         </div>
 
-        @if ($notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages())
+        @if ($isPaginated)
             <x-slot name="footer">
                 <nav
                     aria-label="{{ __('filament-notifications::database.modal.pagination.label') }}"
