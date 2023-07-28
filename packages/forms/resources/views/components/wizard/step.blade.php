@@ -3,7 +3,6 @@
 @endphp
 
 <div
-    x-ref="step-{{ $id }}"
     x-bind:class="{ 'invisible h-0 overflow-y-hidden': step !== @js($id) }"
     x-on:expand-concealing-component.window="
         error = $el.querySelector('[data-validation-error]')
@@ -32,6 +31,7 @@
             200,
         )
     "
+    x-ref="step-{{ $id }}"
     {{
         $attributes
             ->merge([
