@@ -45,7 +45,7 @@
 
         @if ($sortable)
             <x-filament::icon
-                :alias="$activelySorted && $sortDirection === 'asc' ? 'tables::header-cell.sort-asc' : 'tables::header-cell.sort-desc'"
+                :alias="$activelySorted && $sortDirection === 'asc' ? 'tables::header-cell.sort-asc-button' : 'tables::header-cell.sort-desc-button'"
                 :icon="$activelySorted && $sortDirection === 'asc' ? 'heroicon-m-chevron-up' : 'heroicon-m-chevron-down'"
                 @class([
                     'fi-ta-header-cell-sort-icon h-5 w-5 transition duration-75',
