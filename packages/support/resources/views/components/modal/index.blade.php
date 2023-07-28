@@ -210,12 +210,12 @@
                                         {{ $heading }}
                                     </x-filament::modal.heading>
 
-                                    @if ($description)
-                                        <p
-                                            class="fi-modal-description mt-2 text-sm text-gray-500 dark:text-gray-400"
+                                    @if (filled($description))
+                                        <x-filament::modal.description
+                                            class="mt-2"
                                         >
                                             {{ $description }}
-                                        </p>
+                                        </x-filament::modal.description>
                                     @endif
                                 </div>
                             @endif
