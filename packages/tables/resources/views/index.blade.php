@@ -377,6 +377,7 @@
                         @class([
                             'flex items-center gap-4 bg-gray-50 px-3 dark:bg-white/5 sm:px-6',
                             'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
+                            'py-3' => ($hasColumnsLayout && $isSelectionEnabled)
                         ])
                     >
                         @if ($isSelectionEnabled)
