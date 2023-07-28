@@ -262,7 +262,7 @@
                                 'fi-modal-footer w-full',
                                 'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter),
                                 'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
-                                'sticky bottom-0 rounded-b-xl border-t border-gray-100 bg-white py-5 dark:border-gray-800 dark:bg-gray-900' => $stickyFooter,
+                                'sticky bottom-0 rounded-b-xl border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900' => $stickyFooter,
                                 'pb-6' => ! $stickyFooter,
                                 'mt-6' => (! $stickyFooter) && \Filament\Support\is_slot_empty($slot) && (! $slideOver),
                                 'mt-auto' => $slideOver,

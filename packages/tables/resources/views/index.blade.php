@@ -483,7 +483,7 @@
                         :two-xl="$contentGrid['2xl'] ?? null"
                         @class([
                             'p-2 gap-2' => $contentGrid,
-                            'divide-y divide-gray-200 dark:divide-gray-800' => ! $contentGrid,
+                            'divide-y divide-gray-200 dark:divide-white/5' => ! $contentGrid,
                         ])
                     >
                         @php
