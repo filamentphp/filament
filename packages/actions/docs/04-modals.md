@@ -178,9 +178,11 @@ Action::make('delete')
 
 ## Customizing the alignment of modal content
 
-By default, modal content will be aligned to the start, or centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to change the alignment of content in a modal, you can use the `modalAlignment()` method and pass it `start` or `center`:
+By default, modal content will be aligned to the start, or centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to change the alignment of content in a modal, you can use the `modalAlignment()` method and pass it `Alignment::Start` or `Alignment::Center`:
 
 ```php
+use Filament\Support\Enums\Alignment;
+
 Action::make('updateAuthor')
     ->form([
         // ...
@@ -188,7 +190,7 @@ Action::make('updateAuthor')
     ->action(function (array $data): void {
         // ...
     })
-    ->modalAlignment('center')
+    ->modalAlignment(Alignment::Center)
 ```
 
 ## Custom modal content

@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\Action;
@@ -1092,7 +1093,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                             ->icon('heroicon-m-envelope')
                             ->grow(false),
                     ])
-                        ->alignment('right')
+                        ->alignment(Alignment::End)
                         ->visibleFrom('md'),
                 ])->from('md'),
             ]);

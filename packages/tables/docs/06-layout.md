@@ -170,9 +170,10 @@ Split::make([
 
 #### Aligning stacked content
 
-By default, columns within a stack are aligned to the left. You may choose to align columns within a stack to the `center` or `right`:
+By default, columns within a stack are aligned to the start. You may choose to align columns within a stack to the `Alignment::Center` or `Alignment::End`:
 
 ```php
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
@@ -194,7 +195,7 @@ Split::make([
             ->icon('heroicon-m-envelope')
             ->grow(false),
     ])
-        ->alignment('right')
+        ->alignment(Alignment::End)
         ->visibleFrom('md'),
 ])
 ```

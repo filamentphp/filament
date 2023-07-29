@@ -196,28 +196,30 @@ Actions::make([
 
 #### Controlling the horizontal alignment of independent form actions
 
-Independent form actions are aligned to the start of the component by default. You may change this by passing `center` or `end` to `alignment()`:
+Independent form actions are aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `alignment()`:
 
 ```php
 use Filament\Forms\Components\Actions;
+use Filament\Support\Enums\Alignment;
 
 Actions::make([
     // ...
-])->alignment('center'),
+])->alignment(Alignment::Center),
 ```
 
 <AutoScreenshot name="forms/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" version="3.x" />
 
 #### Controlling the vertical alignment of independent form actions
 
-Independent form actions are vertically aligned to the start of the component by default. You may change this by passing `center` or `end` to `verticalAlignment()`:
+Independent form actions are vertically aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `verticalAlignment()`:
 
 ```php
 use Filament\Forms\Components\Actions;
+use Filament\Support\Enums\VerticalAlignment;
 
 Actions::make([
     // ...
-])->verticalAlignment('end'),
+])->verticalAlignment(VerticalAlignment::End),
 ```
 
 <AutoScreenshot name="forms/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="3.x" />

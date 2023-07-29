@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\Alignment;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\FiltersLayout;
     use Filament\Tables\Enums\RecordCheckboxPosition;
@@ -683,7 +684,7 @@
                                         @if (count($actions))
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="$actionsPosition === ActionsPosition::AfterContent ? 'start' : 'start sm:end'"
+                                                :alignment="$actionsPosition === ActionsPosition::AfterContent ? Alignment::Start : 'start sm:end'"
                                                 :record="$record"
                                                 wrap="-sm"
                                                 @class([
@@ -831,7 +832,7 @@
                             @if (count($actions) && $actionsPosition === ActionsPosition::AfterColumns)
                                 @if ($actionsColumnLabel)
                                     <x-filament-tables::header-cell
-                                        alignment="right"
+                                        :alignment="Alignment::Right"
                                     >
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
@@ -865,7 +866,7 @@
                             @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
                                 @if ($actionsColumnLabel)
                                     <x-filament-tables::header-cell
-                                        alignment="right"
+                                        :alignment="Alignment::Right"
                                     >
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
@@ -1055,7 +1056,7 @@
                                         <x-filament-tables::actions.cell>
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="$actionsAlignment ?? 'end'"
+                                                :alignment="$actionsAlignment ?? Alignment::End"
                                                 :record="$record"
                                             />
                                         </x-filament-tables::actions.cell>
@@ -1082,7 +1083,7 @@
                                         >
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="$actionsAlignment ?? 'end'"
+                                                :alignment="$actionsAlignment ?? Alignment::End"
                                                 :record="$record"
                                             />
                                         </x-filament-tables::actions.cell>

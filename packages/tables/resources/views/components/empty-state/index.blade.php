@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 @props([
     'actions' => [],
     'description' => null,
@@ -33,7 +37,7 @@
         @if ($actions)
             <x-filament-tables::actions
                 :actions="$actions"
-                alignment="center"
+                :alignment="Alignment::Center"
                 wrap
                 class="mt-6"
             />

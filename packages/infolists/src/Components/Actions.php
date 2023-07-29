@@ -4,16 +4,17 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\Actions\Action;
+use Filament\Support\Concerns\HasAlignment;
+use Filament\Support\Concerns\HasVerticalAlignment;
 
 class Actions extends Component
 {
+    use HasAlignment;
+    use HasVerticalAlignment;
+
     protected string $view = 'filament-infolists::components.actions';
 
-    protected string | Closure | null $alignment = null;
-
     protected bool | Closure $isFullWidth = false;
-
-    protected string | Closure | null $verticalAlignment = null;
 
     /**
      * @param  array<Action>  $actions
@@ -44,20 +45,6 @@ class Actions extends Component
         return $this;
     }
 
-    public function alignment(string | Closure | null $alignment): static
-    {
-        $this->alignment = $alignment;
-
-        return $this;
-    }
-
-    public function verticalAlignment(string | Closure | null $alignment): static
-    {
-        $this->verticalAlignment = $alignment;
-
-        return $this;
-    }
-
     public function fullWidth(bool | Closure $isFullWidth = true): static
     {
         $this->isFullWidth = $isFullWidth;
@@ -65,18 +52,8 @@ class Actions extends Component
         return $this;
     }
 
-    public function getAlignment(): ?string
-    {
-        return $this->evaluate($this->alignment);
-    }
-
     public function isFullWidth(): bool
     {
         return (bool) $this->evaluate($this->isFullWidth);
-    }
-
-    public function getVerticalAlignment(): ?string
-    {
-        return $this->evaluate($this->verticalAlignment);
     }
 }

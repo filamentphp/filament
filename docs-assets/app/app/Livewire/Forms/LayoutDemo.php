@@ -20,6 +20,8 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms
@@ -460,7 +462,7 @@ class LayoutDemo extends Component implements HasForms
                             Action::make('resetStars')
                                 ->icon('heroicon-m-x-mark')
                                 ->color('danger'),
-                        ])->alignment('center'),
+                        ])->alignment(Alignment::Center),
                     ]),
                 Group::make()
                     ->id('anonymousActionsVerticallyAlignedEnd')
@@ -478,7 +480,7 @@ class LayoutDemo extends Component implements HasForms
                                     Action::make('resetStars')
                                         ->icon('heroicon-m-x-mark')
                                         ->color('danger'),
-                                ])->verticalAlignment('end'),
+                                ])->verticalAlignment(VerticalAlignment::End),
                             ]),
                     ]),
             ]);

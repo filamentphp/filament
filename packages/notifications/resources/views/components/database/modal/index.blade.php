@@ -4,12 +4,14 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+
     $hasNotifications = $notifications->count();
     $isPaginated = $notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages();
 @endphp
 
 <x-filament::modal
-    :alignment="$hasNotifications ? null : 'center'"
+    :alignment="$hasNotifications ? null : Alignment::Center"
     close-button
     :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
     :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"

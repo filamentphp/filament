@@ -19,7 +19,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms, HasInfolists
@@ -339,7 +341,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             Action::make('resetStars')
                                 ->icon('heroicon-m-x-mark')
                                 ->color('danger'),
-                        ])->alignment('center'),
+                        ])->alignment(Alignment::Center),
                     ]),
                 Group::make()
                     ->id('anonymousActionsVerticallyAlignedEnd')
@@ -358,7 +360,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     Action::make('resetStars')
                                         ->icon('heroicon-m-x-mark')
                                         ->color('danger'),
-                                ])->verticalAlignment('end'),
+                                ])->verticalAlignment(VerticalAlignment::End),
                             ]),
                     ]),
             ])

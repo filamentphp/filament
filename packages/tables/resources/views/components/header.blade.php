@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 @props([
     'actions' => [],
     'actionsPosition',
@@ -36,7 +40,7 @@
     @if ($actions)
         <x-filament-tables::actions
             :actions="$actions"
-            alignment="start"
+            :alignment="Alignment::Start"
             wrap
         />
     @endif

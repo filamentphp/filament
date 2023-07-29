@@ -12,6 +12,7 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
     use Filament\Tables\Enums\ActionsPosition;
     use Filament\Tables\Enums\RecordCheckboxPosition;
 
@@ -49,12 +50,12 @@
                                 'whitespace-nowrap' => ! $column->isHeaderWrapped(),
                                 'whitespace-normal' => $column->isHeaderWrapped(),
                                 match ($column->getAlignment()) {
-                                    'start' => 'text-start',
-                                    'center' => 'text-center',
-                                    'end' => 'text-end',
-                                    'left' => 'text-left',
-                                    'right' => 'text-right',
-                                    'justify' => 'text-justify',
+                                    Alignment::Start, 'start' => 'text-start',
+                                    Alignment::Center, 'center' => 'text-center',
+                                    Alignment::End, 'end' => 'text-end',
+                                    Alignment::Left, 'left' => 'text-left',
+                                    Alignment::Right, 'right' => 'text-right',
+                                    Alignment::Justify, 'justify' => 'text-justify',
                                     default => null,
                                 } => (! ($loop->first && (! $extraHeadingColumn))) && $hasColumnHeaderLabel,
                             ])

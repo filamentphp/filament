@@ -1,5 +1,9 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 @props([
-    'alignment' => 'start',
+    'alignment' => Alignment::Start,
     'ariaLabelledby' => null,
     'closeButton' => \Filament\Support\View\Components\Modal::$hasCloseButton,
     'closeByClickingAway' => \Filament\Support\View\Components\Modal::$isClosedByClickingAway,
@@ -8,7 +12,7 @@
     'displayClasses' => 'inline-block',
     'footer' => null,
     'footerActions' => [],
-    'footerActionsAlignment' => 'start',
+    'footerActionsAlignment' => Alignment::Start,
     'header' => null,
     'heading' => null,
     'icon' => null,
@@ -157,8 +161,8 @@
                             'sticky top-0 z-10 border-b border-gray-200 bg-white bg-white pb-6 dark:border-white/10 dark:bg-gray-900' => $stickyHeader,
                             'rounded-t-xl' => $stickyHeader && ! ($slideOver || ($width === 'screen')),
                             match ($alignment) {
-                                'left', 'start' => 'gap-x-5',
-                                'center' => 'flex-col',
+                                Alignment::Left, Alignment::Start, 'left', 'start' => 'gap-x-5',
+                                Alignment::Center, 'center' => 'flex-col',
                             },
                         ])
                     >
@@ -189,15 +193,15 @@
                             @if ($icon)
                                 <div
                                     @class([
-                                        'mb-5 flex items-center justify-center' => $alignment === 'center',
+                                        'mb-5 flex items-center justify-center' => in_array($alignment, [Alignment::Center, 'center']),
                                     ])
                                 >
                                     <div
                                         @class([
                                             'rounded-full bg-custom-100 dark:bg-custom-500/20',
                                             match ($alignment) {
-                                                'left', 'start' => 'p-2',
-                                                'center' => 'p-3',
+                                                Alignment::Left, Alignment::Start, 'left', 'start' => 'p-2',
+                                                Alignment::Center, 'center' => 'p-3',
                                             },
                                         ])
                                         style="{{ \Filament\Support\get_color_css_variables($iconColor, shades: [100, 500]) }}"
@@ -222,7 +226,7 @@
 
                             <div
                                 @class([
-                                    'text-center' => $alignment === 'center',
+                                    'text-center' => in_array($alignment, [Alignment::Center, 'center']),
                                 ])
                             >
                                 <x-filament::modal.heading>
@@ -244,8 +248,8 @@
                         @class([
                             'fi-modal-content flex flex-col gap-y-4 py-6',
                             'flex-1' => ($width === 'screen') || $slideOver,
-                            'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start'),
-                            'px-6' => ! ($icon && ($alignment === 'start')),
+                            'pe-6 ps-[5.25rem]' => $icon && in_array($alignment, [Alignment::Start, 'start']),
+                            'px-6' => ! ($icon && in_array($alignment, [Alignment::Start, 'start'])),
                         ])
                     >
                         {{ $slot }}
@@ -256,8 +260,8 @@
                     <div
                         @class([
                             'fi-modal-footer w-full',
-                            'pe-6 ps-[5.25rem]' => $icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter),
-                            'px-6' => ! ($icon && ($alignment === 'start') && ($footerActionsAlignment !== 'center') && (! $stickyFooter)),
+                            'pe-6 ps-[5.25rem]' => $icon && in_array($alignment, [Alignment::Start, 'start']) && (! in_array($footerActionsAlignment, [Alignment::Center, 'center'])) && (! $stickyFooter),
+                            'px-6' => ! ($icon && in_array($alignment, [Alignment::Start, 'start']) && (! in_array($footerActionsAlignment, [Alignment::Center, 'center'])) && (! $stickyFooter)),
                             'sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900' => $stickyFooter,
                             'rounded-b-xl' => $stickyFooter && ! ($slideOver || ($width === 'screen')),
                             'pb-6' => ! $stickyFooter,
@@ -272,9 +276,9 @@
                                 @class([
                                     'fi-modal-footer-actions gap-3',
                                     match ($footerActionsAlignment) {
-                                        'center' => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
-                                        'end', 'right' => 'flex flex-row-reverse flex-wrap items-center',
-                                        'left', 'start' => 'flex flex-wrap items-center',
+                                        Alignment::Center, 'center' => 'flex flex-col-reverse sm:grid sm:grid-cols-[repeat(auto-fit,minmax(0,1fr))]',
+                                        Alignment::End, Alignment::Right, 'end', 'right' => 'flex flex-row-reverse flex-wrap items-center',
+                                        Alignment::Left, Alignment::Start, 'left', 'start' => 'flex flex-wrap items-center',
                                     },
                                 ])
                             >

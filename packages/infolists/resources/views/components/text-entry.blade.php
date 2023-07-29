@@ -1,7 +1,9 @@
+@php
+    use Filament\Support\Enums\FontWeight;
+@endphp
+
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
-        use Filament\Support\Enums\FontWeight;
-
         $isBadge = $isBadge();
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();

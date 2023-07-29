@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
@@ -85,11 +89,11 @@
                 ->class([
                     'fi-fo-file-upload flex',
                     match ($getAlignment()) {
-                        'center' => 'justify-center',
-                        'end' => 'justify-end',
-                        'left' => 'justify-left',
-                        'right' => 'justify-right',
-                        'start', null => 'justify-start',
+                        Alignment::Center, 'center' => 'justify-center',
+                        Alignment::End, 'end' => 'justify-end',
+                        Alignment::Left, 'left' => 'justify-left',
+                        Alignment::Right, 'right' => 'justify-right',
+                        Alignment::Start, 'start', null => 'justify-start',
                     },
                 ])
         }}

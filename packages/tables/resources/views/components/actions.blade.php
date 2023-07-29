@@ -6,6 +6,8 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+
     $actions = array_filter(
         $actions,
         function ($action) use ($record): bool {
@@ -25,8 +27,8 @@
             'flex-wrap' => $wrap,
             'sm:flex-nowrap' => $wrap === '-sm',
             match ($alignment) {
-                'center' => 'justify-center',
-                'start', 'left' => 'justify-start',
+                Alignment::Center, 'center' => 'justify-center',
+                Alignment::Start, Alignment::Left, 'start', 'left' => 'justify-start',
                 'start sm:end' => 'justify-start sm:justify-end',
                 default => 'justify-end',
             },

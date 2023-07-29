@@ -5,6 +5,7 @@ namespace Filament\Actions\Concerns;
 use Closure;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -37,7 +38,7 @@ trait CanOpenModal
 
     protected bool | Closure $isModalSlideOver = false;
 
-    protected string | Closure | null $modalAlignment = null;
+    protected Alignment | string | Closure | null $modalAlignment = null;
 
     /**
      * @var array<string, StaticAction>
@@ -49,7 +50,7 @@ trait CanOpenModal
      */
     protected array | Closure | null $modalFooterActions = null;
 
-    protected string | Closure | null $modalFooterActionsAlignment = null;
+    protected Alignment | string | Closure | null $modalFooterActionsAlignment = null;
 
     protected StaticAction | bool | Closure | null $modalCancelAction = null;
 
@@ -90,18 +91,18 @@ trait CanOpenModal
     }
 
     /**
-     * @deprecated Use `modalAlignment('center')` instead.
+     * @deprecated Use `modalAlignment(Alignment::Center)` instead.
      */
     public function centerModal(bool | Closure | null $condition = true): static
     {
         if ($this->evaluate($condition)) {
-            $this->modalAlignment('center');
+            $this->modalAlignment(Alignment::Center);
         }
 
         return $this;
     }
 
-    public function modalAlignment(string | Closure | null $alignment = null): static
+    public function modalAlignment(Alignment | string | Closure | null $alignment = null): static
     {
         $this->modalAlignment = $alignment;
 
@@ -161,7 +162,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalFooterActionsAlignment(string | Closure | null $alignment = null): static
+    public function modalFooterActionsAlignment(Alignment | string | Closure | null $alignment = null): static
     {
         $this->modalFooterActionsAlignment = $alignment;
 
@@ -344,14 +345,14 @@ trait CanOpenModal
             $actions['cancel'] = $cancelAction;
         }
 
-        if ($this->getModalFooterActionsAlignment() === 'center') {
+        if (in_array($this->getModalFooterActionsAlignment(), [Alignment::Center, 'center'])) {
             $actions = array_reverse($actions);
         }
 
         return $this->cachedModalFooterActions = $actions;
     }
 
-    public function getModalFooterActionsAlignment(): ?string
+    public function getModalFooterActionsAlignment(): string | Alignment | null
     {
         return $this->evaluate($this->modalFooterActionsAlignment);
     }
@@ -472,9 +473,9 @@ trait CanOpenModal
         return $this->cachedExtraModalFooterActions = $actions;
     }
 
-    public function getModalAlignment(): string
+    public function getModalAlignment(): Alignment | string
     {
-        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), ['xs', 'sm']) ? 'center' : 'start');
+        return $this->evaluate($this->modalAlignment) ?? (in_array($this->getModalWidth(), ['xs', 'sm']) ? Alignment::Center : Alignment::Start);
     }
 
     public function getModalSubmitActionLabel(): string

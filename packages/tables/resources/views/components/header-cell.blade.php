@@ -7,6 +7,10 @@
     'wrap' => false,
 ])
 
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 <th
     {{
         $attributes
@@ -23,11 +27,11 @@
             'whitespace-nowrap' => ! $wrap,
             'whitespace-normal' => $wrap,
             match ($alignment) {
-                'center' => 'justify-center',
-                'end' => 'justify-end',
-                'left' => 'justify-start rtl:flex-row-reverse',
-                'right' => 'justify-end rtl:flex-row-reverse',
-                'start' => 'justify-start',
+                Alignment::Center, 'center' => 'justify-center',
+                Alignment::End, 'end' => 'justify-end',
+                Alignment::Left, 'left' => 'justify-start rtl:flex-row-reverse',
+                Alignment::Right, 'right' => 'justify-end rtl:flex-row-reverse',
+                Alignment::Start, 'start' => 'justify-start',
                 default => null,
             },
         ])
