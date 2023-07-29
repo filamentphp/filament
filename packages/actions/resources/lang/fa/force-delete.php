@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'رکورد حذف شد',
+
+            'deleted' => [
+                'title' => 'رکورد حذف شد',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'رکوردها حذف شدند',
+
+            'deleted' => [
+                'title' => 'رکوردها حذف شدند',
+            ],
+
         ],
 
     ],

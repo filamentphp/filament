@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'attached' => '추가 완료',
+
+            'attached' => [
+                'title' => '추가 완료',
+            ],
+
         ],
 
     ],

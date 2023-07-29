@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Szétválasztva',
+
+            'dissociated' => [
+                'title' => 'Szétválasztva',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Szétválasztva',
+
+            'dissociated' => [
+                'title' => 'Szétválasztva',
+            ],
+
         ],
 
     ],

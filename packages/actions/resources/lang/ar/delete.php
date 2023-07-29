@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'تم الحذف',
+
+            'deleted' => [
+                'title' => 'تم الحذف',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'تم الحذف',
+
+            'deleted' => [
+                'title' => 'تم الحذف',
+            ],
+
         ],
 
     ],

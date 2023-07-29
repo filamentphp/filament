@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Imetenganishwa',
+
+            'detached' => [
+                'title' => 'Imetenganishwa',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Imetenganishwa',
+
+            'detached' => [
+                'title' => 'Imetenganishwa',
+            ],
+
         ],
 
     ],

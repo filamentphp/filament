@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => '已分离',
+
+            'detached' => [
+                'title' => '已分离',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => '已分离',
+
+            'detached' => [
+                'title' => '已分离',
+            ],
+
         ],
 
     ],

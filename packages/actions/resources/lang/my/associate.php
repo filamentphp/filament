@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'associated' => 'သိမ်းဆည်းပြီး',
+
+            'associated' => [
+                'title' => 'သိမ်းဆည်းပြီး',
+            ],
+
         ],
 
     ],

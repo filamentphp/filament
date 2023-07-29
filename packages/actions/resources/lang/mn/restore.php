@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Сэргээв',
+
+            'restored' => [
+                'title' => 'Сэргээв',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Сэргээв',
+
+            'restored' => [
+                'title' => 'Сэргээв',
+            ],
+
         ],
 
     ],

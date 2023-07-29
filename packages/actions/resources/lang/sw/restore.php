@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Imerudishwa',
+
+            'restored' => [
+                'title' => 'Imerudishwa',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Imerudishwa',
+
+            'restored' => [
+                'title' => 'Imerudishwa',
+            ],
+
         ],
 
     ],

@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Ayrıştırıldı',
+
+            'dissociated' => [
+                'title' => 'Ayrıştırıldı',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Ayrıştırıldı',
+
+            'dissociated' => [
+                'title' => 'Ayrıştırıldı',
+            ],
+
         ],
 
     ],

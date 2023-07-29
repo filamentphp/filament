@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'বিচ্ছিন্ন করা হয়েছে',
+
+            'detached' => [
+                'title' => 'বিচ্ছিন্ন করা হয়েছে',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'বিচ্ছিন্ন করা হয়েছে',
+
+            'detached' => [
+                'title' => 'বিচ্ছিন্ন করা হয়েছে',
+            ],
+
         ],
 
     ],

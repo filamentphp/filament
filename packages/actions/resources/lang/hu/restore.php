@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Visszaállítva',
+
+            'restored' => [
+                'title' => 'Visszaállítva',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Visszaállítva',
+
+            'restored' => [
+                'title' => 'Visszaállítva',
+            ],
+
         ],
 
     ],

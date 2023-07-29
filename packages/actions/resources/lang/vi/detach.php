@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Đã huỷ đính kèm',
+
+            'detached' => [
+                'title' => 'Đã huỷ đính kèm',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Đã huỷ đính kèm',
+
+            'detached' => [
+                'title' => 'Đã huỷ đính kèm',
+            ],
+
         ],
 
     ],

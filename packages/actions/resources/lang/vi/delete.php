@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Đã xóa',
+
+            'deleted' => [
+                'title' => 'Đã xóa',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Đã xóa',
+
+            'deleted' => [
+                'title' => 'Đã xóa',
+            ],
+
         ],
 
     ],

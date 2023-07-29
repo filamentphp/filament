@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Data berhasil dihapus',
+
+            'deleted' => [
+                'title' => 'Data berhasil dihapus',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Data berhasil dihapus',
+
+            'deleted' => [
+                'title' => 'Data berhasil dihapus',
+            ],
+
         ],
 
     ],

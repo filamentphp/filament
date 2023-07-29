@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Hersteld',
+
+            'restored' => [
+                'title' => 'Hersteld',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Hersteld',
+
+            'restored' => [
+                'title' => 'Hersteld',
+            ],
+
         ],
 
     ],

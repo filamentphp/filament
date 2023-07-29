@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Detașat cu succes',
+
+            'detached' => [
+                'title' => 'Detașat cu succes',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Detașat cu succes',
+
+            'detached' => [
+                'title' => 'Detașat cu succes',
+            ],
+
         ],
 
     ],

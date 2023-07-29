@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'Arkartota',
+
+            'replicated' => [
+                'title' => 'Arkartota',
+            ],
+
         ],
 
     ],

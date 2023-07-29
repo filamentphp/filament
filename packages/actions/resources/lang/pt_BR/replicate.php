@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'Replicado',
+
+            'replicated' => [
+                'title' => 'Replicado',
+            ],
+
         ],
 
     ],

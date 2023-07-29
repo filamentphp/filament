@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'প্রতিরূপ তৈরি করা হয়েছে',
+
+            'replicated' => [
+                'title' => 'প্রতিরূপ তৈরি করা হয়েছে',
+            ],
+
         ],
 
     ],

@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => '삭제 완료',
+
+            'deleted' => [
+                'title' => '삭제 완료',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => '삭제 완료',
+
+            'deleted' => [
+                'title' => '삭제 완료',
+            ],
+
         ],
 
     ],

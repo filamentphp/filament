@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Kayıt geri yüklendi',
+
+            'restored' => [
+                'title' => 'Kayıt geri yüklendi',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Kayıtlar geri yüklendi',
+
+            'restored' => [
+                'title' => 'Kayıtlar geri yüklendi',
+            ],
+
         ],
 
     ],

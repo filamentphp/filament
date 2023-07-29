@@ -25,7 +25,11 @@ return [
         ],
 
         'notifications' => [
-            'created' => '已建立',
+
+            'created' => [
+                'title' => '已建立',
+            ],
+
         ],
 
     ],

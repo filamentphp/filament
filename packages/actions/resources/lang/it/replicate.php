@@ -7,7 +7,11 @@ return [
         'label' => 'Duplica',
 
         'notifications' => [
-            'replicated' => 'Duplicato',
+
+            'replicated' => [
+                'title' => 'Duplicato',
+            ],
+
         ],
 
     ],

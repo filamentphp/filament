@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'saved' => 'Opgeslagen',
+
+            'saved' => [
+                'title' => 'Opgeslagen',
+            ],
+
         ],
 
     ],

@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Izbrisano',
+
+            'deleted' => [
+                'title' => 'Izbrisano',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Izbrisano',
+
+            'deleted' => [
+                'title' => 'Izbrisano',
+            ],
+
         ],
 
     ],

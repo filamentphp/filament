@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'attached' => 'Đã đính kèm',
+
+            'attached' => [
+                'title' => 'Đã đính kèm',
+            ],
+
         ],
 
     ],

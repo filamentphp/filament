@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Kayıt kalıcı olarak silindi',
+
+            'deleted' => [
+                'title' => 'Kayıt kalıcı olarak silindi',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Kayıtlar kalıcı olarak silindi',
+
+            'deleted' => [
+                'title' => 'Kayıtlar kalıcı olarak silindi',
+            ],
+
         ],
 
     ],

@@ -25,7 +25,11 @@ return [
         ],
 
         'notifications' => [
-            'created' => 'သိမ်းဆည်းပြီး',
+
+            'created' => [
+                'title' => 'သိမ်းဆည်းပြီး',
+            ],
+
         ],
 
     ],

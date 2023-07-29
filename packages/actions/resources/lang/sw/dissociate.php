@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Imetenganishwa',
+
+            'dissociated' => [
+                'title' => 'Imetenganishwa',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Imetenganishwa',
+
+            'dissociated' => [
+                'title' => 'Imetenganishwa',
+            ],
+
         ],
 
     ],

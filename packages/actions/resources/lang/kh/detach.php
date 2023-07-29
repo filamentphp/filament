@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'បានផ្ដាច់ដោយជោគជ័យ',
+
+            'detached' => [
+                'title' => 'បានផ្ដាច់ដោយជោគជ័យ',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'បានផ្ដាច់',
+
+            'detached' => [
+                'title' => 'បានផ្ដាច់',
+            ],
+
         ],
 
     ],

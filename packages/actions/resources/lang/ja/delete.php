@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => '削除しました',
+
+            'deleted' => [
+                'title' => '削除しました',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => '削除しました',
+
+            'deleted' => [
+                'title' => '削除しました',
+            ],
+
         ],
 
     ],

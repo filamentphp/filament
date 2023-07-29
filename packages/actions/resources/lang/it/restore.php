@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Ripristinato',
+
+            'restored' => [
+                'title' => 'Ripristinato',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Ripristinati',
+
+            'restored' => [
+                'title' => 'Ripristinati',
+            ],
+
         ],
 
     ],

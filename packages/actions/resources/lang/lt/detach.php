@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Atskirta',
+
+            'detached' => [
+                'title' => 'Atskirta',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Atskirta',
+
+            'detached' => [
+                'title' => 'Atskirta',
+            ],
+
         ],
 
     ],

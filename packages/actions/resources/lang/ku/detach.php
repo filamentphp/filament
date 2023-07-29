@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'لێکرایەوە',
+
+            'detached' => [
+                'title' => 'لێکرایەوە',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'لێکرایەوە',
+
+            'detached' => [
+                'title' => 'لێکرایەوە',
+            ],
+
         ],
 
     ],

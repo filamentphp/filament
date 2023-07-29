@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Від’єднано',
+
+            'detached' => [
+                'title' => 'Від’єднано',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Від’єднано',
+
+            'detached' => [
+                'title' => 'Від’єднано',
+            ],
+
         ],
 
     ],

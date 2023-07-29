@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Đã xoá',
+
+            'deleted' => [
+                'title' => 'Đã xoá',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Đã xoá',
+
+            'deleted' => [
+                'title' => 'Đã xoá',
+            ],
+
         ],
 
     ],

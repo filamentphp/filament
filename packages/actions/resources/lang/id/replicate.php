@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'Data berhasil diduplikat',
+
+            'replicated' => [
+                'title' => 'Data berhasil diduplikat',
+            ],
+
         ],
 
     ],

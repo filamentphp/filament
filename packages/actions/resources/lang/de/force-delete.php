@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Eintrag gelöscht',
+
+            'deleted' => [
+                'title' => 'Eintrag gelöscht',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Einträge gelöscht',
+
+            'deleted' => [
+                'title' => 'Einträge gelöscht',
+            ],
+
         ],
 
     ],

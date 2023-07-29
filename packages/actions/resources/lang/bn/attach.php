@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'attached' => 'সংযুক্ত করা হয়েছে',
+
+            'attached' => [
+                'title' => 'সংযুক্ত করা হয়েছে',
+            ],
+
         ],
 
     ],

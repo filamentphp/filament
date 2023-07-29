@@ -25,7 +25,11 @@ return [
         ],
 
         'notifications' => [
-            'created' => 'Oluşturuldu',
+
+            'created' => [
+                'title' => 'Oluşturuldu',
+            ],
+
         ],
 
     ],

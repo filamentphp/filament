@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Przywrócono',
+
+            'restored' => [
+                'title' => 'Przywrócono',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Przywrócono',
+
+            'restored' => [
+                'title' => 'Przywrócono',
+            ],
+
         ],
 
     ],

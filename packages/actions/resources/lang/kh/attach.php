@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'attached' => 'បានភ្ជាប់ជោគជ័យ',
+
+            'attached' => [
+                'title' => 'បានភ្ជាប់ជោគជ័យ',
+            ],
+
         ],
 
     ],

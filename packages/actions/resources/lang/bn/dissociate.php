@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'পৃথক করা হয়েছে',
+
+            'dissociated' => [
+                'title' => 'পৃথক করা হয়েছে',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'পৃথক করা হয়েছে',
+
+            'dissociated' => [
+                'title' => 'পৃথক করা হয়েছে',
+            ],
+
         ],
 
     ],

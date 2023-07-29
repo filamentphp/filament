@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Lampiran berhasil dilepaskan',
+
+            'detached' => [
+                'title' => 'Lampiran berhasil dilepaskan',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Lampiran berhasil dilepaskan',
+
+            'detached' => [
+                'title' => 'Lampiran berhasil dilepaskan',
+            ],
+
         ],
 
     ],

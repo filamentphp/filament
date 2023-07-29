@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'associated' => 'Data berhasil dikaitkan',
+
+            'associated' => [
+                'title' => 'Data berhasil dikaitkan',
+            ],
+
         ],
 
     ],

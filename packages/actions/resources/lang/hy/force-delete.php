@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Գրառումը ջնջվել է',
+
+            'deleted' => [
+                'title' => 'Գրառումը ջնջվել է',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Գրառումները ջնջվել են',
+
+            'deleted' => [
+                'title' => 'Գրառումները ջնջվել են',
+            ],
+
         ],
 
     ],

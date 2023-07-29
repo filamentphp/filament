@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'Imeigwa',
+
+            'replicated' => [
+                'title' => 'Imeigwa',
+            ],
+
         ],
 
     ],

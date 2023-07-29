@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Terpadam',
+
+            'deleted' => [
+                'title' => 'Terpadam',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Terpadam',
+
+            'deleted' => [
+                'title' => 'Terpadam',
+            ],
+
         ],
 
     ],

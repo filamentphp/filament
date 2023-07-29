@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Restaurat cu succes',
+
+            'restored' => [
+                'title' => 'Restaurat cu succes',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Restaurat cu succes',
+
+            'restored' => [
+                'title' => 'Restaurat cu succes',
+            ],
+
         ],
 
     ],

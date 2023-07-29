@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Enregistrement restauré',
+
+            'restored' => [
+                'title' => 'Enregistrement restauré',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Enregistrements restaurés',
+
+            'restored' => [
+                'title' => 'Enregistrements restaurés',
+            ],
+
         ],
 
     ],

@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => '解除しました',
+
+            'dissociated' => [
+                'title' => '解除しました',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => '解除されました',
+
+            'dissociated' => [
+                'title' => '解除されました',
+            ],
+
         ],
 
     ],

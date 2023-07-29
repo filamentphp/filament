@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'تم فك الارتباط',
+
+            'dissociated' => [
+                'title' => 'تم فك الارتباط',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'تم فك الارتباط',
+
+            'dissociated' => [
+                'title' => 'تم فك الارتباط',
+            ],
+
         ],
 
     ],

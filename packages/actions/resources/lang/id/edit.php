@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'saved' => 'Data berhasil disimpan',
+
+            'saved' => [
+                'title' => 'Data berhasil disimpan',
+            ],
+
         ],
 
     ],

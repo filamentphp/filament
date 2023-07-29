@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'جداکردن',
+
+            'dissociated' => [
+                'title' => 'جداکردن',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'جدا شد',
+
+            'dissociated' => [
+                'title' => 'جدا شد',
+            ],
+
         ],
 
     ],

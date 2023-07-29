@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Palautettu',
+
+            'restored' => [
+                'title' => 'Palautettu',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Palautettu',
+
+            'restored' => [
+                'title' => 'Palautettu',
+            ],
+
         ],
 
     ],

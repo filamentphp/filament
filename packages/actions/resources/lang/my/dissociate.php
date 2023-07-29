@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'သိမ်းဆည်းပြီး',
+
+            'dissociated' => [
+                'title' => 'သိမ်းဆည်းပြီး',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Dissociated',
+
+            'dissociated' => [
+                'title' => 'Dissociated',
+            ],
+
         ],
 
     ],

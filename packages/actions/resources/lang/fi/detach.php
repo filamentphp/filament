@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Irrotettu',
+
+            'detached' => [
+                'title' => 'Irrotettu',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Irrotettu',
+
+            'detached' => [
+                'title' => 'Irrotettu',
+            ],
+
         ],
 
     ],

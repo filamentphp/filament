@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Verwijderd',
+
+            'deleted' => [
+                'title' => 'Verwijderd',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Verwijderd',
+
+            'deleted' => [
+                'title' => 'Verwijderd',
+            ],
+
         ],
 
     ],

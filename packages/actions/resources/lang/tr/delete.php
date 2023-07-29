@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Silindi',
+
+            'deleted' => [
+                'title' => 'Silindi',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Silindi',
+
+            'deleted' => [
+                'title' => 'Silindi',
+            ],
+
         ],
 
     ],

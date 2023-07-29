@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Ternyahkait',
+
+            'dissociated' => [
+                'title' => 'Ternyahkait',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Ternyahkait',
+
+            'dissociated' => [
+                'title' => 'Ternyahkait',
+            ],
+
         ],
 
     ],

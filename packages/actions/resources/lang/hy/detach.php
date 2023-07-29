@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Անջատվել է',
+
+            'detached' => [
+                'title' => 'Անջատվել է',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Անջատվել է',
+
+            'detached' => [
+                'title' => 'Անջատվել է',
+            ],
+
         ],
 
     ],

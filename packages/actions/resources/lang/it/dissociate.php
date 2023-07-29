@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Dissociato',
+
+            'dissociated' => [
+                'title' => 'Dissociato',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Dissociato',
+
+            'dissociated' => [
+                'title' => 'Dissociato',
+            ],
+
         ],
 
     ],

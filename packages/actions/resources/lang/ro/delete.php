@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Șters cu succes',
+
+            'deleted' => [
+                'title' => 'Șters cu succes',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Șters cu succes',
+
+            'deleted' => [
+                'title' => 'Șters cu succes',
+            ],
+
         ],
 
     ],

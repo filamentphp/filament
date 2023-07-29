@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Supprimé(e)',
+
+            'deleted' => [
+                'title' => 'Supprimé(e)',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Supprimé(e)s',
+
+            'deleted' => [
+                'title' => 'Supprimé(e)s',
+            ],
+
         ],
 
     ],

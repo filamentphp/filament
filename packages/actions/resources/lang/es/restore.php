@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Registro restaurado',
+
+            'restored' => [
+                'title' => 'Registro restaurado',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Registros restaurados',
+
+            'restored' => [
+                'title' => 'Registros restaurados',
+            ],
+
         ],
 
     ],

@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => '已删除',
+
+            'deleted' => [
+                'title' => '已删除',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => '已删除',
+
+            'deleted' => [
+                'title' => '已删除',
+            ],
+
         ],
 
     ],

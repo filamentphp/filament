@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'attached' => 'Přidáno',
+
+            'attached' => [
+                'title' => 'Přidáno',
+            ],
+
         ],
 
     ],

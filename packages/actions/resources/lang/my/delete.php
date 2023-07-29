@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'ဖျက်ပြီးပါပြီ',
+
+            'deleted' => [
+                'title' => 'ဖျက်ပြီးပါပြီ',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Deleted',
+
+            'deleted' => [
+                'title' => 'Deleted',
+            ],
+
         ],
 
     ],

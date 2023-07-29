@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Đã khôi phục',
+
+            'restored' => [
+                'title' => 'Đã khôi phục',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Đã khôi phục',
+
+            'restored' => [
+                'title' => 'Đã khôi phục',
+            ],
+
         ],
 
     ],

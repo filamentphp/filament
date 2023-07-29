@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'Đã tạo bản sao',
+
+            'replicated' => [
+                'title' => 'Đã tạo bản sao',
+            ],
+
         ],
 
     ],

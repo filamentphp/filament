@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Ištrinta',
+
+            'deleted' => [
+                'title' => 'Ištrinta',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Ištrinta',
+
+            'deleted' => [
+                'title' => 'Ištrinta',
+            ],
+
         ],
 
     ],

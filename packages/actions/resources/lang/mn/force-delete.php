@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Устгасан',
+
+            'deleted' => [
+                'title' => 'Устгасан',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Устгасан',
+
+            'deleted' => [
+                'title' => 'Устгасан',
+            ],
+
         ],
 
     ],

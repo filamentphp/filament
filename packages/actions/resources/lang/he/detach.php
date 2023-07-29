@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'קישור הוסר',
+
+            'detached' => [
+                'title' => 'קישור הוסר',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'קישורים הוסרו',
+
+            'detached' => [
+                'title' => 'קישורים הוסרו',
+            ],
+
         ],
 
     ],

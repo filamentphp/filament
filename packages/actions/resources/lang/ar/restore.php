@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'تم استعادة السجل',
+
+            'restored' => [
+                'title' => 'تم استعادة السجل',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'تم استعادة السجلات',
+
+            'restored' => [
+                'title' => 'تم استعادة السجلات',
+            ],
+
         ],
 
     ],

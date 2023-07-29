@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'رکورد بازگردانی شد',
+
+            'restored' => [
+                'title' => 'رکورد بازگردانی شد',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'رکوردها بازگردانی شدند',
+
+            'restored' => [
+                'title' => 'رکوردها بازگردانی شدند',
+            ],
+
         ],
 
     ],

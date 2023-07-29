@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'associated' => 'Utworzono powiązanie',
+
+            'associated' => [
+                'title' => 'Utworzono powiązanie',
+            ],
+
         ],
 
     ],

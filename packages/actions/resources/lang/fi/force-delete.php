@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Tietue poistettu',
+
+            'deleted' => [
+                'title' => 'Tietue poistettu',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Tietueet poistettu',
+
+            'deleted' => [
+                'title' => 'Tietueet poistettu',
+            ],
+
         ],
 
     ],

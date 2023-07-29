@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'שוחזר',
+
+            'restored' => [
+                'title' => 'שוחזר',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'שוחזר',
+
+            'restored' => [
+                'title' => 'שוחזר',
+            ],
+
         ],
 
     ],

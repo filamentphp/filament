@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'سڕدرایەوە',
+
+            'deleted' => [
+                'title' => 'سڕدرایەوە',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'سڕدرایەوە',
+
+            'deleted' => [
+                'title' => 'سڕدرایەوە',
+            ],
+
         ],
 
     ],

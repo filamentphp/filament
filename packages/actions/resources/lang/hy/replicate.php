@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'Գրառումը կրկնօրինակվել է',
+
+            'replicated' => [
+                'title' => 'Գրառումը կրկնօրինակվել է',
+            ],
+
         ],
 
     ],

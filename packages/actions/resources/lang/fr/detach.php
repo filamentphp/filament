@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Détaché(e)',
+
+            'detached' => [
+                'title' => 'Détaché(e)',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Détaché(e)s',
+
+            'detached' => [
+                'title' => 'Détaché(e)s',
+            ],
+
         ],
 
     ],

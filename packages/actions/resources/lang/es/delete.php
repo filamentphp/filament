@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Borrado',
+
+            'deleted' => [
+                'title' => 'Borrado',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Borrados',
+
+            'deleted' => [
+                'title' => 'Borrados',
+            ],
+
         ],
 
     ],

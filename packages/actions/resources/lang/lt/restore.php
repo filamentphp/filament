@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Atkurta',
+
+            'restored' => [
+                'title' => 'Atkurta',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Atkurta',
+
+            'restored' => [
+                'title' => 'Atkurta',
+            ],
+
         ],
 
     ],

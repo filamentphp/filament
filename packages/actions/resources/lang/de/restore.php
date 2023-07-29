@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Eintrag wiederhergestellt',
+
+            'restored' => [
+                'title' => 'Eintrag wiederhergestellt',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'Einträge wiederhergestellt',
+
+            'restored' => [
+                'title' => 'Einträge wiederhergestellt',
+            ],
+
         ],
 
     ],

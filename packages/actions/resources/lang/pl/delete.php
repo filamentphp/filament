@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Usunięto',
+
+            'deleted' => [
+                'title' => 'Usunięto',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Usunięto',
+
+            'deleted' => [
+                'title' => 'Usunięto',
+            ],
+
         ],
 
     ],

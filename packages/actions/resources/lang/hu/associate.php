@@ -33,7 +33,11 @@ return [
         ],
 
         'notifications' => [
-            'associated' => 'Társítva',
+
+            'associated' => [
+                'title' => 'Társítva',
+            ],
+
         ],
 
     ],

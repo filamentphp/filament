@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Registro eliminado',
+
+            'deleted' => [
+                'title' => 'Registro eliminado',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Registros eliminados',
+
+            'deleted' => [
+                'title' => 'Registros eliminados',
+            ],
+
         ],
 
     ],

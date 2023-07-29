@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'মুছে ফেলা হয়েছে',
+
+            'deleted' => [
+                'title' => 'মুছে ফেলা হয়েছে',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'মুছে ফেলা হয়েছে',
+
+            'deleted' => [
+                'title' => 'মুছে ফেলা হয়েছে',
+            ],
+
         ],
 
     ],

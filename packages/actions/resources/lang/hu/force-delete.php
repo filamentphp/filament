@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Törölve',
+
+            'deleted' => [
+                'title' => 'Törölve',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Elemek törölve',
+
+            'deleted' => [
+                'title' => 'Elemek törölve',
+            ],
+
         ],
 
     ],

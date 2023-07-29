@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'שיוך הוסר',
+
+            'dissociated' => [
+                'title' => 'שיוך הוסר',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'שיוך הוסר',
+
+            'dissociated' => [
+                'title' => 'שיוך הוסר',
+            ],
+
         ],
 
     ],

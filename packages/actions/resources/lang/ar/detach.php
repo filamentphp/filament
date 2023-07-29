@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'تم الفصل',
+
+            'detached' => [
+                'title' => 'تم الفصل',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'تم الفصل',
+
+            'detached' => [
+                'title' => 'تم الفصل',
+            ],
+
         ],
 
     ],

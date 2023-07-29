@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'បានលុបដោយជោគជ័យ',
+
+            'deleted' => [
+                'title' => 'បានលុបដោយជោគជ័យ',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'បានលុបដោយជោគជ័យ',
+
+            'deleted' => [
+                'title' => 'បានលុបដោយជោគជ័យ',
+            ],
+
         ],
 
     ],

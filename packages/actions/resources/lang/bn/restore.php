@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'পুনরুদ্ধার করা হয়েছে',
+
+            'restored' => [
+                'title' => 'পুনরুদ্ধার করা হয়েছে',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => 'পুনরুদ্ধার করা হয়েছে',
+
+            'restored' => [
+                'title' => 'পুনরুদ্ধার করা হয়েছে',
+            ],
+
         ],
 
     ],

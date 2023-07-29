@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'हटा दिया',
+
+            'deleted' => [
+                'title' => 'हटा दिया',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'हटा दिया',
+
+            'deleted' => [
+                'title' => 'हटा दिया',
+            ],
+
         ],
 
     ],

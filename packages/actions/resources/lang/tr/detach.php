@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Ayrıldı',
+
+            'detached' => [
+                'title' => 'Ayrıldı',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'Ayrıldı',
+
+            'detached' => [
+                'title' => 'Ayrıldı',
+            ],
+
         ],
 
     ],

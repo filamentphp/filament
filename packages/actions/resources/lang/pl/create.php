@@ -25,7 +25,11 @@ return [
         ],
 
         'notifications' => [
-            'created' => 'Utworzono',
+
+            'created' => [
+                'title' => 'Utworzono',
+            ],
+
         ],
 
     ],

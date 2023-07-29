@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Đã huỷ liên kết',
+
+            'dissociated' => [
+                'title' => 'Đã huỷ liên kết',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'dissociated' => 'Đã huỷ liên kết',
+
+            'dissociated' => [
+                'title' => 'Đã huỷ liên kết',
+            ],
+
         ],
 
     ],

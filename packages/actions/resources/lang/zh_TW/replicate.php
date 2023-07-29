@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => '已複製資料',
+
+            'replicated' => [
+                'title' => '已複製資料',
+            ],
+
         ],
 
     ],

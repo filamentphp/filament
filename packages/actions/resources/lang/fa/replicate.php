@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'رکورد تکثیر شد',
+
+            'replicated' => [
+                'title' => 'رکورد تکثیر شد',
+            ],
+
         ],
 
     ],

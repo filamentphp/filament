@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => '已還原資料',
+
+            'restored' => [
+                'title' => '已還原資料',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'restored' => '已還原資料',
+
+            'restored' => [
+                'title' => '已還原資料',
+            ],
+
         ],
 
     ],

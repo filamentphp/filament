@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Запись удалена',
+
+            'deleted' => [
+                'title' => 'Запись удалена',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Записи удалены',
+
+            'deleted' => [
+                'title' => 'Записи удалены',
+            ],
+
         ],
 
     ],

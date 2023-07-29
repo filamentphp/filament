@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'replicated' => 'Tietue monistettu',
+
+            'replicated' => [
+                'title' => 'Tietue monistettu',
+            ],
+
         ],
 
     ],

@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'جدا شد',
+
+            'detached' => [
+                'title' => 'جدا شد',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'detached' => 'جدا شد',
+
+            'detached' => [
+                'title' => 'جدا شد',
+            ],
+
         ],
 
     ],

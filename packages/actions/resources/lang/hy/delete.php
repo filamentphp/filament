@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Ջնջվել է',
+
+            'deleted' => [
+                'title' => 'Ջնջվել է',
+            ],
+
         ],
 
     ],
@@ -45,7 +49,11 @@ return [
         ],
 
         'notifications' => [
-            'deleted' => 'Ջնջվել է',
+
+            'deleted' => [
+                'title' => 'Ջնջվել է',
+            ],
+
         ],
 
     ],

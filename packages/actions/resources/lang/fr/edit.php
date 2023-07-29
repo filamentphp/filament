@@ -21,7 +21,11 @@ return [
         ],
 
         'notifications' => [
-            'saved' => 'Sauvegardé(e)',
+
+            'saved' => [
+                'title' => 'Sauvegardé(e)',
+            ],
+
         ],
 
     ],
