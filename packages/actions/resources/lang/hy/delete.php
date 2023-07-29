@@ -20,7 +20,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'deleted' => 'Ջնջվել է',
         ],
 
@@ -44,7 +44,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'deleted' => 'Ջնջվել է',
         ],
 

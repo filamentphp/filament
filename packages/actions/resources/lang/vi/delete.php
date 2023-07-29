@@ -20,7 +20,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'deleted' => 'Đã xóa',
         ],
 
@@ -44,7 +44,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'deleted' => 'Đã xóa',
         ],
 

@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'Essas credenciais não correspondem aos nossos registros.',
         'throttled' => 'Muitas tentativas de login. Por favor, aguarde :seconds segundos para tentar novamente.',
     ],

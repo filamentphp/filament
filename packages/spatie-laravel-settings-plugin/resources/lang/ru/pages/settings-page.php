@@ -14,7 +14,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'saved' => 'Сохранено',
     ],
 

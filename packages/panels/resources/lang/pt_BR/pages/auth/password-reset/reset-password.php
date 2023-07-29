@@ -31,7 +31,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'throttled' => 'Muitas tentativas de redefinição. Por favor tente novamente em :seconds segundos.',
     ],
 

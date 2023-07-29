@@ -20,7 +20,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'restored' => '记录已恢复',
         ],
 
@@ -44,7 +44,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'restored' => '记录已恢复',
         ],
 

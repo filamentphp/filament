@@ -20,7 +20,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'deleted' => 'Silindi',
         ],
 
@@ -44,7 +44,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'deleted' => 'Silindi',
         ],
 

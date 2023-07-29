@@ -44,7 +44,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'throttled' => 'Too many registration attempts. Please try again in :seconds seconds.',
     ],
 

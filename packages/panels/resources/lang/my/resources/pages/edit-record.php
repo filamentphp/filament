@@ -22,7 +22,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'saved' => 'သိမ်းဆည်းထားသည်',
     ],
 

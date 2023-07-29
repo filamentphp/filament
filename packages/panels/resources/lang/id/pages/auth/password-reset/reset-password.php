@@ -31,7 +31,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'throttled' => 'Terlalu banyak permintaan. Silakan coba lagi dalam :seconds detik.',
     ],
 

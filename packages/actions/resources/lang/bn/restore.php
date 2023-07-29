@@ -20,7 +20,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'restored' => 'পুনরুদ্ধার করা হয়েছে',
         ],
 
@@ -44,7 +44,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'restored' => 'পুনরুদ্ধার করা হয়েছে',
         ],
 

@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'saved' => 'Data berhasil disimpan',
     ],
 

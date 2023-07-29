@@ -26,7 +26,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'created' => 'Uspješno kreirano',
     ],
 

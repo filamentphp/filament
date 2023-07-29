@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'throttled' => 'محاولات كثيرة جداً. يرجى المحاولة مرة أخرى بعد :seconds ثواني.',
     ],
 

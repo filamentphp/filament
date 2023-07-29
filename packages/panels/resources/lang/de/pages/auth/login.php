@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'Diese Kombination aus Zugangsdaten wurde nicht in unserer Datenbank gefunden.',
         'throttled' => 'Zu viele Loginversuche. Versuchen Sie es bitte in :seconds Sekunden nochmal.',
     ],

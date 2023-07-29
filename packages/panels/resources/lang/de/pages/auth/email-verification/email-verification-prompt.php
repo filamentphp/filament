@@ -14,7 +14,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'notification_not_received' => 'Keine E-Mail erhalten?',
         'notification_sent' => 'Wir haben eine E-Mail mit Anweisungen zur Bestätigung des Kontos an :email gesendet.',
         'notification_resent' => 'E-Mail erneut gesendet.',

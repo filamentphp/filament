@@ -32,7 +32,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'associated' => 'သိမ်းဆည်းပြီး',
         ],
 

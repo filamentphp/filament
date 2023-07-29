@@ -20,7 +20,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'saved' => 'បានរក្សាទុកដោយជោគជ័យ',
         ],
 

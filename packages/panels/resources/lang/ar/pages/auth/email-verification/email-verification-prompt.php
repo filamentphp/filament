@@ -14,7 +14,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'notification_not_received' => 'لم تستلم البريد الذي قمنا بإرساله؟',
         'notification_sent' => 'قمنا بإرسال بريد إلكتروني إلى :email يحتوي على تعليمات حول طريقة تفعيل بريدك الإلكتروني.',
         'notification_resent' => 'لقد قمنا بإعادة إرسال البريد الإلكتروني.',

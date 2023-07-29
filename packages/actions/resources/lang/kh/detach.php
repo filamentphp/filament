@@ -20,7 +20,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'detached' => 'បានផ្ដាច់ដោយជោគជ័យ',
         ],
 
@@ -44,7 +44,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'detached' => 'បានផ្ដាច់',
         ],
 

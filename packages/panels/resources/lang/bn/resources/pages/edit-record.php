@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'saved' => 'সম্পাদন করা হয়েছে',
     ],
 

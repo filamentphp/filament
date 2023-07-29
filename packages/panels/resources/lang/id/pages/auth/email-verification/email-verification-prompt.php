@@ -14,7 +14,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'notification_not_received' => 'Belum menerima email?',
         'notification_sent' => 'Kami telah mengirimkan email ke :email yang berisikan instruksi cara verifikasi alamat email Anda.',
         'notification_resent' => 'Email telah dikirim ulang.',

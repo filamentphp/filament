@@ -32,7 +32,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'attached' => 'সংযুক্ত করা হয়েছে',
         ],
 

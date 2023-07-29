@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'Neteisingi prisijungimo duomenys.',
         'throttled' => 'Per daug bandymų prisijungti. Bandykite po :seconds sekundžių.',
     ],

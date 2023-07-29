@@ -22,7 +22,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'saved' => '저장 완료',
     ],
 

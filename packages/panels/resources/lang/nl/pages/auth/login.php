@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'Onjuiste inloggegevens.',
         'throttled' => 'Te veel inlogpogingen. Probeer opnieuw over :seconds seconden.',
     ],

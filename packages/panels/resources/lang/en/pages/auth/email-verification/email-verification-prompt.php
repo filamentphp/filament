@@ -14,7 +14,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'notification_not_received' => 'Not received the email we sent?',
         'notification_sent' => 'We\'ve sent an email to :email containing instructions on how to verify your email address.',
         'notification_resent' => 'We\'ve resent the email.',

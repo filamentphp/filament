@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'E-mail hoặc mật khẩu không hợp lệ.',
         'throttled' => 'Đăng nhập sai quá nhiều lần. Vui lòng thử lại sau :seconds giây nữa.',
     ],

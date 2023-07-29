@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'Chybně zadané přihlašovací údaje.',
         'throttled' => 'Příliš mnoho pokusů o přihlášení. Zkuste to znovu za :seconds vteřin.',
     ],

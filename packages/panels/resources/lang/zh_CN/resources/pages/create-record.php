@@ -26,7 +26,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'created' => '已创建',
     ],
 

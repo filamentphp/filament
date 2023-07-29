@@ -20,7 +20,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'replicated' => 'رکورد تکثیر شد',
         ],
 

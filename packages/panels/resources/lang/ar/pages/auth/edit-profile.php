@@ -32,7 +32,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'saved' => 'تم الحفظ',
     ],
 

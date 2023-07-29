@@ -41,7 +41,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'throttled' => 'Demasiados intentos de registro. Por favor, inténtelo de nuevo en :seconds segundos.',
     ],
 

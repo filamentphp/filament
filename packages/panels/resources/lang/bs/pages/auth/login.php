@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'Vaša kombinacija se ne poklapa sa našom evidencijom.',
         'throttled' => 'Previše pokušaja prijave. Pokušajte ponovo za :seconds sekundi.',
     ],

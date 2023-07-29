@@ -26,7 +26,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'created' => 'បានបង្កើត :label បានជោគជ័យ',
     ],
 

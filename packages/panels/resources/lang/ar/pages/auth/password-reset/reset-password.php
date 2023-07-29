@@ -31,7 +31,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'throttled' => 'محاولات إعادة تعيين كثيرة جداً. يرجى المحاولة مرة أخرى بعد :seconds ثواني.',
     ],
 

@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'আপনার নথি পাওয়া যায় নি।',
         'throttled' => 'বহুসংখ্যক চেষ্টা, :seconds সেকেন্ড পরে পুনরায় চেষ্টা করুন।',
     ],

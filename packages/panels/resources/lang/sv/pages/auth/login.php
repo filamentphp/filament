@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'Inloggningen matchar inte våra uppgifter.',
         'throttled' => 'För många inloggningsförsök. Vänligen försök igen om :seconds sekunder.',
     ],

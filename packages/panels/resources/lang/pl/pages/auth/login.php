@@ -43,7 +43,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'Błędny login lub hasło.',
         'throttled' => 'Za dużo nieudanych prób logowania. Proszę spróbować za :seconds sekund.',
     ],

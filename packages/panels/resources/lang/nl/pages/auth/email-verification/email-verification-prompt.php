@@ -14,7 +14,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'notification_not_received' => 'Geen e-mail ontvangen?',
         'notification_sent' => 'We hebben een e-mail gestuurd naar :email met instructies om je e-mailadres te verifiëren.',
         'notification_resent' => 'E-mail opnieuw verzonden.',

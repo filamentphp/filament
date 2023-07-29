@@ -30,7 +30,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'failed' => 'I tuoi dati di accesso non sono corretti.',
         'throttled' => 'Troppi tentativi di accesso. Riprova tra :seconds secondi.',
     ],

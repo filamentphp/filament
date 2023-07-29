@@ -6,7 +6,7 @@ return [
 
         'label' => 'Duplica',
 
-        'messages' => [
+        'notifications' => [
             'replicated' => 'Duplicato',
         ],
 

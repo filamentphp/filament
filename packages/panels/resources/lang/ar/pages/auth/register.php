@@ -44,7 +44,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'throttled' => 'محاولات تسجيل كثيرة جدًا. يرجى المحاولة مرة أخرى بعد:seconds ثواني.',
     ],
 

@@ -14,7 +14,7 @@ return [
 
     ],
 
-    'messages' => [
+    'notifications' => [
         'notification_not_received' => 'Não recebeu o e-mail que enviamos?',
         'notification_sent' => 'Enviamos um e-mail para :email contendo instruções sobre como verificar seu e-mail.',
         'notification_resent' => 'Reenviamos o e-mail.',
