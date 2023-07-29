@@ -271,31 +271,32 @@ TextEntry::make('title')
 
 ## Customizing the font weight
 
-Text entries have regular font weight by default but you may change this to any of the following options: `thin`, `extralight`, `light`, `medium`, `semibold`, `bold`, `extrabold` or `black`.
+Text entries have regular font weight by default but you may change this to any of the following options: `FontWeight::Thin`, `FontWeight::ExtraLight`, `FontWeight::Light`, `FontWeight::Medium`, `FontWeight::SemiBold`, `FontWeight::Bold`, `FontWeight::ExtraBold` or `FontWeight::Black`.
 
-For instance, you may make the font bold using `weight('bold')`:
+For instance, you may make the font bold using `weight(FontWeight::Bold)`:
 
 ```php
-use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\TextEntry;use Filament\Support\Enums\FontWeight;
 
 TextEntry::make('title')
-    ->weight('bold')
+    ->weight(FontWeight::Bold)
 ```
 
 <AutoScreenshot name="infolists/entries/text/bolt" alt="Text entry in a bold font" version="3.x" />
 
 ## Customizing the font family
 
-You can change the text font family to any of the following options: `sans`, `serif` or `mono`.
+You can change the text font family to any of the following options: `FontFamily::Sans`, `FontFamily::Serif` or `FontFamily::Mono`.
 
-For instance, you may make the font monospaced using `fontFamily('mono')`:
+For instance, you may make the font monospaced using `fontFamily(FontFamily::Mono)`:
 
 ```php
+use Filament\Support\Enums\FontFamily;
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->fontFamily('mono')
+    ->fontFamily(FontFamily::Mono)
 ```
 
 <AutoScreenshot name="infolists/entries/text/mono" alt="Text entry in a monospaced font" version="3.x" />

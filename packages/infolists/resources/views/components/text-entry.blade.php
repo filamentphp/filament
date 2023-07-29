@@ -1,5 +1,7 @@
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
+        use Filament\Support\Enums\FontWeight;
+
         $isBadge = $isBadge();
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();
@@ -120,20 +122,20 @@
                                         default => 'text-custom-600 dark:text-custom-400',
                                     },
                                     match ($weight) {
-                                        'thin' => 'font-thin',
-                                        'extralight' => 'font-extralight',
-                                        'light' => 'font-light',
-                                        'medium' => 'font-medium',
-                                        'semibold' => 'font-semibold',
-                                        'bold' => 'font-bold',
-                                        'extrabold' => 'font-extrabold',
-                                        'black' => 'font-black',
+                                        FontWeight::Thin, 'thin' => 'font-thin',
+                                        FontWeight::ExtraLight, 'extralight' => 'font-extralight',
+                                        FontWeight::Light, 'light' => 'font-light',
+                                        FontWeight::Medium, 'medium' => 'font-medium',
+                                        FontWeight::SemiBold, 'semibold' => 'font-semibold',
+                                        FontWeight::Bold, 'bold' => 'font-bold',
+                                        FontWeight::ExtraBold, 'extrabold' => 'font-extrabold',
+                                        FontWeight::Black, 'black' => 'font-black',
                                         default => $weight,
                                     },
                                     match ($fontFamily) {
-                                        'sans' => 'font-sans',
-                                        'serif' => 'font-serif',
-                                        'mono' => 'font-mono',
+                                        FontFamily::Sans, 'sans' => 'font-sans',
+                                        FontFamily::Serif, 'serif' => 'font-serif',
+                                        FontFamily::Mono, 'mono' => 'font-mono',
                                         default => $fontFamily,
                                     },
                                 ])

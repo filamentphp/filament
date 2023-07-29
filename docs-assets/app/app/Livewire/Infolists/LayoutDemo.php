@@ -19,6 +19,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
+use Filament\Support\Enums\FontWeight;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms, HasInfolists
@@ -278,7 +279,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             Card::make([
                                 TextEntry::make('title')
                                     ->state('What is Filament?')
-                                    ->weight('bold'),
+                                    ->weight(FontWeight::Bold),
                                 TextEntry::make('content')
                                     ->state(<<<'MARKDOWN'
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non dui eu augue tempor finibus. Vivamus tincidunt malesuada volutpat. Donec ornare euismod est id cursus. Donec dolor nisl, dignissim vitae vulputate accumsan, consequat a lorem.
