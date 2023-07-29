@@ -7,7 +7,7 @@ Panels are the top-level container in Filament, allowing you to build feature-ri
 
 ## Prerequisites
 
-Before using Filament, you should be familiar with Laravel. Filament build upon many core Laravel concepts, especially [database migrations](https://laravel.com/docs/migrations) and [Eloquent ORM](https://laravel.com/docs/eloquent). If you're new to Laravel, or need a refresher, we highly recommend completing the [Laravel Bootcamp](https://bootcamp.laravel.com), which covers the fundamentals of building Laravel apps.
+Before using Filament, you should be familiar with Laravel. Filament builds upon many core Laravel concepts, especially [database migrations](https://laravel.com/docs/migrations) and [Eloquent ORM](https://laravel.com/docs/eloquent). If you're new to Laravel or need a refresher, we highly recommend completing the [Laravel Bootcamp](https://bootcamp.laravel.com), which covers the fundamentals of building Laravel apps.
 
 ## The demo project
 
@@ -15,7 +15,7 @@ This guide covers building a simple patient management system for a veterinary p
 
 ## Setting up the database and models
 
-This project needs three models and migrations: `Owner`, `Patient` and `Treatment`. Use the following artisan commands to create these:
+This project needs three models and migrations: `Owner`, `Patient`, and `Treatment`. Use the following artisan commands to create these:
 
 ```bash
 php artisan make:model Owner -m
@@ -63,7 +63,7 @@ Run the migrations using `php artisan migrate`.
 
 ### Unguarding all models
 
-For brevity in this guide, we will disable Laravel's [mass assignment protection](https://laravel.com/docs/eloquent#mass-assignment). Since Filament only saves valid data models, the models can be safely unguarded. To unguard all Laravel models at once, add `Model::unguard()` to the `boot()` method of `app/Providers/AppServiceProvider.php`:
+For brevity in this guide, we will disable Laravel's [mass assignment protection](https://laravel.com/docs/eloquent#mass-assignment). Filament only saves valid data to models so the models can be unguarded safely. To unguard all Laravel models at once, add `Model::unguard()` to the `boot()` method of `app/Providers/AppServiceProvider.php`:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -199,7 +199,7 @@ public static function form(Form $form): Form
 }
 ```
 
-The `options()` method of the Select field provides an array of options for the user to choose from. The keys of the array are stored in the database, and the values are used as the label of each option in the form. Feel free to add as many animals to this array as you wish.
+The `options()` method of the Select field accepts an array of options for the user to choose from. The array keys should match the database, and the values are used as the form labels. Feel free to add as many animals to this array as you wish.
 
 Since this field is also required in the database, let's add the `required()` validation rule:
 
@@ -276,9 +276,9 @@ public static function form(Form $form): Form
 }
 ```
 
-The first argument of the `relationship()` method is the name of the relationship method in the model that Filament should use to load the select options. The second argument is the column name in the `owners` table to use for identifying owners. In our case, we want to select from a list of owner names.
+The first argument of the `relationship()` method is the name of the function that defines the relationship in the model (used by Filament to load the select options) — in this case, `owner`. The second argument is the column name to use from the related table — in this case, `name`.
 
-Let's also make the owner field required and `searchable()`. In case the list is long, we can `preload()` the first 50 owners into the searchable list:
+Let's also make the `owner` field required, `searchable()`, and `preload()` the first 50 owners into the searchable list (in case the list is long):
 
 ```php
 use Filament\Forms;
@@ -317,7 +317,7 @@ Forms\Components\Select::make('owner_id')
     ->required()
 ```
 
-A few new methods on the text input were used in this example:
+A few new methods on the TextInput were used in this example:
 
 - `label()` overrides the auto-generated label for each field. In this case, we want the `Email` label to be `Email address`, and the `Phone` label to be `Phone number`.
 - `email()` ensures that only valid email addresses can be input into the field. It also changes the keyboard layout on mobile devices.
@@ -329,11 +329,11 @@ The form should be working now! Try creating a new patient and their owner. Once
 
 Visit the `/admin/patients` page again. If you created a patient, there should be one empty row in the table — with an edit button. Let's add some columns to the table so we can view the actual patient data.
 
-Open the `PatientResource.php` file. You should see a `table()` method with an empty `columns([...])` array. You can use this array to add columns to the patients table.
+Open the `PatientResource.php` file. You should see a `table()` method with an empty `columns([...])` array. You can use this array to add columns to the `patients` table.
 
 #### Adding text columns
 
-Filament bundles a large select of [table columns](../tables/columns). Let's use a simple [text column](../tables/columns/text) for all of the fields in the patients table:
+Filament bundles a large selection of [table columns](../tables/columns). Let's use a simple [text column](../tables/columns/text) for all of the fields in the `patients` table:
 
 ```php
 use Filament\Tables;
@@ -379,7 +379,7 @@ Reload the page and observe a new search input field on the table that filters t
 
 ##### Making the columns sortable
 
-To make the patients table [sortable](../tables/columns/getting-started#sorting) by age, add the `sortable()` method to the `date_of_birth` column:
+To make the `patients` table [sortable](../tables/columns/getting-started#sorting) by age, add the `sortable()` method to the `date_of_birth` column:
 
 ```php
 use Filament\Tables;
@@ -558,7 +558,7 @@ public function form(Form $form): Form
 
 ##### Casting the price to an integer
 
-Filament stores currency values as integers (not floats) to avoid rounding and precision issues — this is the widely-accepted approach in the Laravel community. However, it requires us to create a cast in Laravel that transforms the float into an integer when retrieved and back to an integer when stored in the database. Use the following artisan command to create the cast:
+Filament stores currency values as integers (not floats) to avoid rounding and precision issues — a widely-accepted approach in the Laravel community. However, this requires creating a cast in Laravel that transforms the float into an integer when retrieved and back to an integer when stored in the database. Use the following artisan command to create the cast:
 
 ```bash
 php artisan make:cast MoneyCast
