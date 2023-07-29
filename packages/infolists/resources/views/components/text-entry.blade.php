@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
 @endphp
 

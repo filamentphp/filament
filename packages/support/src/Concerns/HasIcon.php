@@ -3,6 +3,7 @@
 namespace Filament\Support\Concerns;
 
 use Closure;
+use Filament\Support\Enums\IconSize;
 
 trait HasIcon
 {
@@ -10,9 +11,9 @@ trait HasIcon
 
     protected string | Closure | null $iconPosition = null;
 
-    protected string | Closure | null $iconSize = null;
+    protected IconSize | string | Closure | null $iconSize = null;
 
-    public function icon(string | Closure | null $icon): static
+    public function icon(IconSize | string | Closure | null $icon): static
     {
         $this->icon = $icon;
 
@@ -26,7 +27,7 @@ trait HasIcon
         return $this;
     }
 
-    public function iconSize(string | Closure | null $size): static
+    public function iconSize(IconSize | string | Closure | null $size): static
     {
         $this->iconSize = $size;
 
@@ -43,7 +44,7 @@ trait HasIcon
         return $this->evaluate($this->iconPosition) ?? 'before';
     }
 
-    public function getIconSize(): ?string
+    public function getIconSize(): IconSize | string | null
     {
         return $this->evaluate($this->iconSize);
     }

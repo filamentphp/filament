@@ -1,7 +1,11 @@
+@php
+    use Filament\Support\Enums\IconSize;
+@endphp
+
 @props([
     'color' => 'gray',
     'icon',
-    'size' => 'lg',
+    'size' => IconSize::Large,
 ])
 
 <x-filament::icon
@@ -11,9 +15,9 @@
             ->class([
                 'fi-no-notification-icon text-custom-400',
                 match ($size) {
-                    'sm' => 'h-4 w-4',
-                    'md' => 'h-5 w-5',
-                    'lg' => 'h-6 w-6',
+                    IconSize::Small, 'sm' => 'h-4 w-4',
+                    IconSize::Medium, 'md' => 'h-5 w-5',
+                    IconSize::Large, 'lg' => 'h-6 w-6',
                     default => $size,
                 },
             ])

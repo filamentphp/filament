@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\IconSize;
+@endphp
+
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
@@ -73,16 +77,16 @@
     ]);
 
     $iconSize ??= match ($size) {
-        'xs', 'sm' => 'sm',
-        default => 'md',
+        'xs', 'sm' => IconSize::Small,
+        default => IconSize::Medium,
     };
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-icon',
         match ($iconSize) {
-            'sm' => 'h-4 w-4',
-            'md' => 'h-5 w-5',
-            'lg' => 'h-6 w-6',
+            IconSize::Small, 'sm' => 'h-4 w-4',
+            IconSize::Medium, 'md' => 'h-5 w-5',
+            IconSize::Large, 'lg' => 'h-6 w-6',
             default => $iconSize,
         },
         match ($color) {
@@ -90,6 +94,13 @@
             default => null,
         },
     ]);
+
+    $stringIconSize = match ($iconSize) {
+        IconSize::Small => 'sm',
+        IconSize::Medium => 'md',
+        IconSize::Large => 'lg',
+        default => $iconSize,
+    };
 
     $badgeClasses = 'absolute -top-1 start-full z-10 -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
 
@@ -170,8 +181,7 @@
             "
             x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         @endif
-        {{
-            $attributes
+        {{ $attributes
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
@@ -180,8 +190,7 @@
                     'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : false,
                 ], escape: false)
                 ->class([$buttonClasses])
-                ->style([$buttonStyles])
-        }}
+                ->style([$buttonStyles]) }}
     >
         @if ($iconPosition === 'before')
             @if ($icon)
@@ -198,7 +207,7 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $iconSize"
+                    :class="$iconClasses . ' ' . $stringIconSize"
                 />
             @endif
 
@@ -206,7 +215,7 @@
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses . ' ' . $iconSize"
+                    :class="$iconClasses . ' ' . $stringIconSize"
                 />
             @endif
         @endif
@@ -241,7 +250,7 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $iconSize"
+                    :class="$iconClasses . ' ' . $stringIconSize"
                 />
             @endif
 
@@ -249,7 +258,7 @@
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses . ' ' . $iconSize"
+                    :class="$iconClasses . ' ' . $stringIconSize"
                 />
             @endif
         @endif
@@ -276,11 +285,9 @@
                 theme: $store.theme,
             }"
         @endif
-        {{
-            $attributes
+        {{ $attributes
                 ->class([$buttonClasses])
-                ->style([$buttonStyles])
-        }}
+                ->style([$buttonStyles]) }}
     >
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
