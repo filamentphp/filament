@@ -29,16 +29,16 @@ class SupportServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament-support')
+            ->name('filament')
             ->hasCommands([
                 AssetsCommand::class,
                 CheckTranslationsCommand::class,
                 InstallCommand::class,
                 UpgradeCommand::class,
             ])
-            ->hasConfigFile('filament')
+            ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews(namespace: 'filament');
+            ->hasViews();
     }
 
     public function packageRegistered(): void

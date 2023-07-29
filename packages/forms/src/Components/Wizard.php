@@ -88,7 +88,7 @@ class Wizard extends Component
     {
         $action = Action::make($this->getNextActionName())
             ->label(__('filament-forms::components.wizard.actions.next_step.label'))
-            ->icon((__('filament::layout.direction') === 'rtl') ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right')
+            ->icon((__('filament-panels::layout.direction') === 'rtl') ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right')
             ->iconPosition('after')
             ->livewireClickHandlerEnabled(false)
             ->button()
@@ -120,7 +120,7 @@ class Wizard extends Component
     {
         $action = Action::make($this->getPreviousActionName())
             ->label(__('filament-forms::components.wizard.actions.previous_step.label'))
-            ->icon((__('filament::layout.direction') === 'rtl') ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left')
+            ->icon((__('filament-panels::layout.direction') === 'rtl') ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->button()

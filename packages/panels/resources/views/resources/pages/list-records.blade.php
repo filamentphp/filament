@@ -1,4 +1,4 @@
-<x-filament::page
+<x-filament-panels::page
     @class([
         'fi-resource-list-records-page',
         'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
@@ -36,4 +36,4 @@
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.after', scopes: $this->getRenderHookScopes()) }}
     </div>
-</x-filament::page>
+</x-filament-panels::page>

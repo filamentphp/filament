@@ -52,7 +52,7 @@ php artisan vendor:publish --tag=filament-config
 If you wish to translate the package, you may publish the language files using:
 
 ```bash
-php artisan vendor:publish --tag=filament-translations
+php artisan vendor:publish --tag=filament-panels-translations
 ```
 
 Since this package depends on other Filament packages, you may wish to translate those as well:
@@ -62,7 +62,7 @@ php artisan vendor:publish --tag=filament-actions-translations
 php artisan vendor:publish --tag=filament-forms-translations
 php artisan vendor:publish --tag=filament-notifications-translations
 php artisan vendor:publish --tag=filament-tables-translations
-php artisan vendor:publish --tag=filament-support-translations
+php artisan vendor:publish --tag=filament-translations
 ```
 
 ## Upgrading

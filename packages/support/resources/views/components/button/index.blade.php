@@ -222,7 +222,7 @@
 
         @if ($hasFileUploadLoadingIndicator)
             <span x-show="isUploadingFile" x-cloak>
-                {{ __('filament-support::components/button.messages.uploading_file') }}
+                {{ __('filament::components/button.messages.uploading_file') }}
             </span>
         @endif
 

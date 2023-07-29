@@ -20,7 +20,7 @@
         icon="heroicon-o-bars-3"
         icon-alias="panels::topbar.open-mobile-sidebar-button"
         icon-size="lg"
-        :label="__('filament::layout.actions.sidebar.expand.label')"
+        :label="__('filament-panels::layout.actions.sidebar.expand.label')"
         x-cloak
         x-data="{}"
         x-on:click="$store.sidebar.open()"
@@ -33,7 +33,7 @@
         icon="heroicon-o-x-mark"
         icon-alias="panels::topbar.close-mobile-sidebar-button"
         icon-size="lg"
-        :label="__('filament::layout.actions.sidebar.collapse.label')"
+        :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
         x-cloak
         x-data="{}"
         x-on:click="$store.sidebar.close()"
@@ -48,10 +48,10 @@
                     href="{{ $homeUrl }}"
                     {{-- wire:navigate --}}
                 >
-                    <x-filament::logo />
+                    <x-filament-panels::logo />
                 </a>
             @else
-                <x-filament::logo />
+                <x-filament-panels::logo />
             @endif
         </div>
 
@@ -61,12 +61,12 @@
                     @if ($groupLabel = $group->getLabel())
                         <x-filament::dropdown placement="bottom-start">
                             <x-slot name="trigger">
-                                <x-filament::topbar.item
+                                <x-filament-panels::topbar.item
                                     :active="$group->isActive()"
                                     :icon="$group->getIcon()"
                                 >
                                     {{ $groupLabel }}
-                                </x-filament::topbar.item>
+                                </x-filament-panels::topbar.item>
                             </x-slot>
 
                             <x-filament::dropdown.list>
@@ -92,7 +92,7 @@
                         </x-filament::dropdown>
                     @else
                         @foreach ($group->getItems() as $item)
-                            <x-filament::topbar.item
+                            <x-filament-panels::topbar.item
                                 :active="$item->isActive()"
                                 :active-icon="$item->getActiveIcon()"
                                 :badge="$item->getBadge()"
@@ -102,7 +102,7 @@
                                 :url="$item->getUrl()"
                             >
                                 {{ $item->getLabel() }}
-                            </x-filament::topbar.item>
+                            </x-filament-panels::topbar.item>
                         @endforeach
                     @endif
                 @endforeach
@@ -122,7 +122,7 @@
             @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
         @endif
 
-        <x-filament::user-menu />
+        <x-filament-panels::user-menu />
     </div>
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.end') }}

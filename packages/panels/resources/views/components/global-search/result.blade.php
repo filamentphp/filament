@@ -34,6 +34,6 @@
     </a>
 
     @if ($actions)
-        <x-filament::global-search.actions :actions="$actions" />
+        <x-filament-panels::global-search.actions :actions="$actions" />
     @endif
 </li>

@@ -48,8 +48,8 @@
                     class="fi-sidebar-collapse-btn hidden h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10 lg:flex"
                     x-bind:aria-label="
                         $store.sidebar.isOpen
-                            ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
-                            : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
+                            ? '{{ __('filament-panels::layout.actions.sidebar.collapse.label') }}'
+                            : '{{ __('filament-panels::layout.actions.sidebar.expand.label') }}'
                     "
                     x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                     x-transition:enter="delay-100 lg:transition"
@@ -89,10 +89,10 @@
             >
                 @if ($homeUrl = filament()->getHomeUrl())
                     <a href="{{ $homeUrl }}" class="inline-block">
-                        <x-filament::logo />
+                        <x-filament-panels::logo />
                     </a>
                 @else
-                    <x-filament::logo />
+                    <x-filament-panels::logo />
                 @endif
             </div>
         </div>
@@ -103,8 +103,8 @@
                 class="fi-sidebar-close-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10"
                 x-bind:aria-label="
                     $store.sidebar.isOpen
-                        ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
-                        : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
+                        ? '{{ __('filament-panels::layout.actions.sidebar.collapse.label') }}'
+                        : '{{ __('filament-panels::layout.actions.sidebar.expand.label') }}'
                 "
                 x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen && @js(! filament()->isSidebarFullyCollapsibleOnDesktop())"
@@ -128,14 +128,14 @@
 
         @if (filament()->hasTenancy())
             <div class="mx-4">
-                <x-filament::tenant-menu />
+                <x-filament-panels::tenant-menu />
             </div>
         @endif
 
         @if (filament()->hasNavigation())
             <ul class="-mx-3 grid gap-y-3 px-6">
                 @foreach ($navigation as $group)
-                    <x-filament::sidebar.group
+                    <x-filament-panels::sidebar.group
                         :label="$group->getLabel()"
                         :icon="$group->getIcon()"
                         :collapsible="$group->isCollapsible()"

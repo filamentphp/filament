@@ -9,5 +9,5 @@ class FilamentInfoWidget extends Widget
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::widgets.filament-info-widget';
+    protected static string $view = 'filament-panels::widgets.filament-info-widget';
 }

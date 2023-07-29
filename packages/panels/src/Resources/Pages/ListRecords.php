@@ -29,7 +29,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::resources.pages.list-records';
+    protected static string $view = 'filament-panels::resources.pages.list-records';
 
     #[Url]
     public bool $isTableReordering = false;
@@ -75,7 +75,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
 
     public function getBreadcrumb(): ?string
     {
-        return static::$breadcrumb ?? __('filament::resources/pages/list-records.breadcrumb');
+        return static::$breadcrumb ?? __('filament-panels::resources/pages/list-records.breadcrumb');
     }
 
     public function table(Table $table): Table

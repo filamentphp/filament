@@ -4,7 +4,7 @@
 ])
 
 @php
-    $label = __("filament::layout.actions.theme_switcher.{$theme}.label");
+    $label = __("filament-panels::layout.actions.theme_switcher.{$theme}.label");
 @endphp
 
 <button

@@ -23,7 +23,7 @@ class CreateRecord extends Page
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::resources.pages.create-record';
+    protected static string $view = 'filament-panels::resources.pages.create-record';
 
     public ?Model $record = null;
 
@@ -38,7 +38,7 @@ class CreateRecord extends Page
 
     public function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? __('filament::resources/pages/create-record.breadcrumb');
+        return static::$breadcrumb ?? __('filament-panels::resources/pages/create-record.breadcrumb');
     }
 
     public function mount(): void
@@ -149,7 +149,7 @@ class CreateRecord extends Page
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return $this->getCreatedNotificationMessage() ?? __('filament::resources/pages/create-record.messages.created');
+        return $this->getCreatedNotificationMessage() ?? __('filament-panels::resources/pages/create-record.messages.created');
     }
 
     /**
@@ -210,7 +210,7 @@ class CreateRecord extends Page
     protected function getCreateFormAction(): Action
     {
         return Action::make('create')
-            ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
+            ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
             ->submit('create')
             ->keyBindings(['mod+s']);
     }
@@ -223,7 +223,7 @@ class CreateRecord extends Page
     protected function getCreateAnotherFormAction(): Action
     {
         return Action::make('createAnother')
-            ->label(__('filament::resources/pages/create-record.form.actions.create_another.label'))
+            ->label(__('filament-panels::resources/pages/create-record.form.actions.create_another.label'))
             ->action('createAnother')
             ->keyBindings(['mod+shift+s'])
             ->color('gray');
@@ -232,7 +232,7 @@ class CreateRecord extends Page
     protected function getCancelFormAction(): Action
     {
         return Action::make('cancel')
-            ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
+            ->label(__('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
             ->url($this->previousUrl ?? static::getResource()::getUrl())
             ->color('gray');
     }
@@ -243,7 +243,7 @@ class CreateRecord extends Page
             return static::$title;
         }
 
-        return __('filament::resources/pages/create-record.title', [
+        return __('filament-panels::resources/pages/create-record.title', [
             'label' => Str::headline(static::getResource()::getModelLabel()),
         ]);
     }

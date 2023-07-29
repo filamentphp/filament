@@ -17,10 +17,10 @@
 <x-filament::dropdown placement="bottom-end" class="fi-user-menu">
     <x-slot name="trigger">
         <button
-            aria-label="{{ __('filament::layout.actions.open_user_menu.label') }}"
+            aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
             type="button"
         >
-            <x-filament::avatar.user :user="$user" />
+            <x-filament-panels::avatar.user :user="$user" />
         </button>
     </x-slot>
 
@@ -52,7 +52,7 @@
 
     @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
         <x-filament::dropdown.list>
-            <x-filament::theme-switcher />
+            <x-filament-panels::theme-switcher />
         </x-filament::dropdown.list>
     @endif
 
@@ -76,7 +76,7 @@
             method="post"
             tag="form"
         >
-            {{ $logoutItem?->getLabel() ?? __('filament::layout.actions.logout.label') }}
+            {{ $logoutItem?->getLabel() ?? __('filament-panels::layout.actions.logout.label') }}
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
 </x-filament::dropdown>

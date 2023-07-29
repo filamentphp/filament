@@ -45,7 +45,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::resources.relation-manager';
+    protected static string $view = 'filament-panels::resources.relation-manager';
 
     /**
      * @deprecated Override the `table()` method to configure the table.

@@ -2,10 +2,12 @@
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.start') }}
 
     <div class="relative">
-        <x-filament::global-search.field />
+        <x-filament-panels::global-search.field />
 
         @if ($results !== null)
-            <x-filament::global-search.results-container :results="$results" />
+            <x-filament-panels::global-search.results-container
+                :results="$results"
+            />
         @endif
     </div>
 
