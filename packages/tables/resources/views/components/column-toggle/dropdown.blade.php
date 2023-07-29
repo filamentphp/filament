@@ -14,7 +14,13 @@
     {{ $attributes->class(['fi-ta-col-toggle']) }}
 >
     <x-slot name="trigger">
-        {{ $triggerAction }}
+        <span
+            @class([
+                '-mx-2' => $triggerAction->isIconButton(),
+            ])
+        >
+            {{ $triggerAction }}
+        </span>
     </x-slot>
 
     <div class="grid gap-y-4 p-6">

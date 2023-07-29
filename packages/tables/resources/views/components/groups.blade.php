@@ -42,7 +42,13 @@
         "
     >
         <x-slot name="trigger">
-            {{ $triggerAction }}
+            <span
+                @class([
+                    '-mx-2' => $triggerAction->isIconButton(),
+                ])
+            >
+                {{ $triggerAction }}
+            </span>
         </x-slot>
 
         <div class="grid gap-y-6 p-6">

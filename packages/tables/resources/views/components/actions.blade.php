@@ -34,6 +34,12 @@
     }}
 >
     @foreach ($actions as $action)
-        {{ $action }}
+        <span
+            @class([
+                '-mx-2' => $action->isIconButton(),
+            ])
+        >
+            {{ $action }}
+        </span>
     @endforeach
 </div>
