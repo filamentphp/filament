@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\IconPosition;
+@endphp
+
 @props([
     'active' => false,
     'alpineActive' => null,
@@ -10,8 +14,6 @@
 ])
 
 @php
-    use Filament\Support\Enums\IconPosition;
-
     $hasAlpineActiveClasses = filled($alpineActive);
 
     $inactiveItemClasses = 'text-gray-700 dark:text-gray-200';
