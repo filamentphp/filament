@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Colonnes',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -23,6 +29,35 @@ return [
         'search' => [
             'label' => 'Rechercher',
             'placeholder' => 'Rechercher',
+            'indicator' => 'Recherche',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Résumé',
+
+        'subheadings' => [
+            'all' => 'Tous :label',
+            'group' => 'résumé de :group',
+            'page' => 'Cette page',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Moyenne',
+            ],
+
+            'count' => [
+                'label' => 'Compteur',
+            ],
+
+            'sum' => [
+                'label' => 'Somme',
+            ],
+
         ],
 
     ],
@@ -41,6 +76,10 @@ return [
             'label' => 'Filtre',
         ],
 
+        'group' => [
+            'label' => 'Groupe',
+        ],
+
         'open_bulk_actions' => [
             'label' => 'Actions ouvertes',
         ],
@@ -54,6 +93,8 @@ return [
     'empty' => [
 
         'heading' => 'Aucun élément trouvé',
+
+        'description' => 'Créer un(e) :model pour commencer.',
 
     ],
 
@@ -76,6 +117,8 @@ return [
 
         ],
 
+        'heading' => 'Filtres',
+
         'indicator' => 'Filtres actifs',
 
         'multi_select' => [
@@ -95,6 +138,30 @@ return [
             'with_trashed' => 'Avec les enregistrements supprimés',
 
             'without_trashed' => 'Sans les enregistrements supprimés',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Grouper par',
+                'placeholder' => 'Grouper par',
+            ],
+
+            'direction' => [
+
+                'label' => 'Groupe',
+
+                'options' => [
+                    'asc' => 'Croissant',
+                    'desc' => 'Décroissant',
+                ],
+
+            ],
 
         ],
 

@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Connectez-vous à votre compte',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'ou',
+            'label' => 'créer un compte',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Mot de passe oublié ?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
@@ -40,6 +53,7 @@ return [
 
         'throttled' => [
             'title' => 'Tentatives de connexion trop nombreuses. Veuillez essayer de nouveau dans :seconds secondes.',
+            'body' => 'Merci de réessayer dans :seconds secondes.',
         ],
 
     ],
