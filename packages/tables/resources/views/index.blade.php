@@ -147,7 +147,7 @@
         },
 
         toggleSelectRecordsOnPage: function () {
-            let keys = this.getRecordsOnPage()
+            const keys = this.getRecordsOnPage()
 
             if (this.areRecordsSelected(keys)) {
                 this.deselectRecords(keys)
@@ -159,7 +159,7 @@
         },
 
         getRecordsOnPage: function () {
-            let keys = []
+            const keys = []
 
             for (checkbox of $el.getElementsByClassName('fi-ta-record-checkbox')) {
                 keys.push(checkbox.value)
@@ -396,7 +396,7 @@
                             <x-filament-tables::selection.checkbox
                                 :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                 x-bind:checked="
-                                    let recordsOnPage = getRecordsOnPage()
+                                    const recordsOnPage = getRecordsOnPage()
 
                                     if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                         $el.checked = true
@@ -753,6 +753,8 @@
                         />
                     </x-filament-tables::table>
                 @endif
+
+                {{-- TODO: review end --}}
             @elseif (($records !== null) && count($records))
                 <x-filament-tables::table :reorderable="$isReorderable">
                     <x-slot name="header">
@@ -774,7 +776,7 @@
                                     <x-filament-tables::selection.checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
-                                            let recordsOnPage = getRecordsOnPage()
+                                            const recordsOnPage = getRecordsOnPage()
 
                                             if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                 $el.checked = true
@@ -801,8 +803,6 @@
                                 @endif
                             @endif
                         @endif
-
-                        {{-- TODO: review end --}}
 
                         @foreach ($columns as $column)
                             <x-filament-tables::header-cell
@@ -842,7 +842,7 @@
                                     <x-filament-tables::selection.checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
-                                            let recordsOnPage = getRecordsOnPage()
+                                            const recordsOnPage = getRecordsOnPage()
 
                                             if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                 $el.checked = true
@@ -1005,6 +1005,7 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
+                                                    class="fi-ta-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::selection.cell>
@@ -1064,6 +1065,7 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
+                                                    class="fi-ta-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::selection.cell>
