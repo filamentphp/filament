@@ -4,8 +4,8 @@ namespace Filament\Tables\Concerns;
 
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\BaseFilter;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
