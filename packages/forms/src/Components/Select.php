@@ -135,6 +135,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 foreach ($options as $group => $option) {
                     if (is_array($option) && Arr::has($option, $value)) {
                         Arr::set($labels, "$group.$value", $option[$value]);
+
                         continue 2;
                     }
                 }
