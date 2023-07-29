@@ -12,7 +12,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament-forms::affixes
+    <x-filament::input.affixes
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -93,5 +93,5 @@
                 <{{ $tag }} color="{{ $getState() }}" />
             </div>
         </div>
-    </x-filament-forms::affixes>
+    </x-filament::input.affixes>
 </x-dynamic-component>

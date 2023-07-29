@@ -10,7 +10,7 @@
         {{ __('filament-panels::global-search.field.label') }}
     </label>
 
-    <x-filament-forms::affixes
+    <x-filament::input.affixes
         inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
         prefix-icon-alias="panels::global-search.field"
@@ -32,5 +32,5 @@
                 )
             "
         />
-    </x-filament-forms::affixes>
+    </x-filament::input.affixes>
 </div>

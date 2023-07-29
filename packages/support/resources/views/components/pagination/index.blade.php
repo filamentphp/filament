@@ -49,7 +49,7 @@
     @if (count($pageOptions) > 1)
         <div class="col-start-2 justify-self-center">
             <label class="sm:hidden">
-                <x-filament-forms::affixes>
+                <x-filament::input.affixes>
                     <x-filament::input.select
                         wire:model.live="tableRecordsPerPage"
                     >
@@ -59,7 +59,7 @@
                             </option>
                         @endforeach
                     </x-filament::input.select>
-                </x-filament-forms::affixes>
+                </x-filament::input.affixes>
 
                 <span class="sr-only">
                     __('filament::components/pagination.fields.records_per_page.label')
@@ -67,7 +67,7 @@
             </label>
 
             <label class="hidden sm:inline">
-                <x-filament-forms::affixes
+                <x-filament::input.affixes
                     :prefix="__('filament::components/pagination.fields.records_per_page.label')"
                 >
                     <x-filament::input.select
@@ -79,7 +79,7 @@
                             </option>
                         @endforeach
                     </x-filament::input.select>
-                </x-filament-forms::affixes>
+                </x-filament::input.affixes>
             </label>
         </div>
     @endif
