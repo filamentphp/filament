@@ -441,7 +441,7 @@
                                         {{ __('filament-tables::table.sorting.fields.column.label') }}
                                     </span>
 
-                                    <x-filament-forms::affixes>
+                                    <x-filament::input.affixes>
                                         <x-filament::input.select
                                             x-model="column"
                                         >
@@ -455,7 +455,7 @@
                                                 </option>
                                             @endforeach
                                         </x-filament::input.select>
-                                    </x-filament-forms::affixes>
+                                    </x-filament::input.affixes>
                                 </label>
 
                                 <label x-cloak x-show="column">
@@ -463,7 +463,7 @@
                                         {{ __('filament-tables::table.sorting.fields.direction.label') }}
                                     </span>
 
-                                    <x-filament-forms::affixes
+                                    <x-filament::input.affixes
                                         x-model="direction"
                                     >
                                         <x-filament::input.select>
@@ -475,7 +475,7 @@
                                                 {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
                                             </option>
                                         </x-filament::input.select>
-                                    </x-filament-forms::affixes>
+                                    </x-filament::input.affixes>
                                 </label>
                             </div>
                         @endif

@@ -26,7 +26,7 @@
                 @endif
 
                 @if ($filters)
-                    <x-filament-forms::affixes
+                    <x-filament::input.affixes
                         inline-prefix
                         wire:target="filter"
                         class="ms-auto"
@@ -41,7 +41,7 @@
                                 </option>
                             @endforeach
                         </x-filament::input.select>
-                    </x-filament-forms::affixes>
+                    </x-filament::input.affixes>
                 @endif
             </div>
         @endif

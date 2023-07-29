@@ -52,7 +52,7 @@
         x-ref="newState"
     />
 
-    <x-filament-forms::affixes
+    <x-filament::input.affixes
         :alpine-disabled="'isLoading || ' . \Illuminate\Support\Js::from($isDisabled)"
         alpine-valid="error === undefined"
         x-tooltip="
@@ -100,5 +100,5 @@
                 </option>
             @endforeach
         </x-filament::input.select>
-    </x-filament-forms::affixes>
+    </x-filament::input.affixes>
 </div>
