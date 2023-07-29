@@ -492,7 +492,7 @@
                         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         x-sortable
                         @class([
-                            'gap-4 px-4 py-4 sm:px-6' => $contentGrid,
+                            'gap-4 px-4 pb-4 sm:px-6' => $contentGrid,
                             'divide-y divide-gray-200 dark:divide-white/5' => ! $contentGrid,
                         ])
                     >
@@ -569,14 +569,12 @@
                                 <div
                                     x-bind:class="
                                         isRecordSelected('{{ $recordKey }}')
-                                            ? 'bg-gray-50 {{ $contentGrid ? 'dark:bg-white/10' : 'dark:bg-white/5' }} dark:ring-white/20'
-                                            : '{{ $contentGrid ? 'bg-white dark:bg-white/5' : null }} dark:ring-white/10'
+                                            ? 'bg-gray-50 dark:bg-white/10 dark:ring-white/20'
+                                            : 'bg-white dark:bg-white/5 dark:ring-white/10'
                                     "
                                     @class([
                                         'relative h-full transition duration-75',
-                                        'hover:bg-gray-50 dark:hover:ring-white/20' => $recordUrl || $recordAction,
-                                        'dark:hover:bg-white/5' => ($recordUrl || $recordAction) && (! $contentGrid),
-                                        'dark:hover:bg-white/10' => ($recordUrl || $recordAction) && $contentGrid,
+                                        'hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20' => $recordUrl || $recordAction,
                                         'px-3 py-4 sm:px-6' => ! $contentGrid,
                                         'rounded-xl p-4 shadow-sm ring-1 ring-gray-950/5' => $contentGrid,
                                         ...$getRecordClasses($record),
