@@ -97,7 +97,7 @@
             {{
                 $attributes->class([
                     'pointer-events-none relative w-full transition',
-                    'my-auto p-4' => ! $slideOver,
+                    'my-auto p-4' => ! ($slideOver || ($width === 'screen')),
                 ])
             }}
         >
@@ -132,7 +132,8 @@
                 @endif
                 @class([
                     'fi-modal-window pointer-events-auto relative flex w-full cursor-default flex-col bg-white shadow-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
-                    'fi-modal-slide-over-window ms-auto h-screen overflow-y-auto' => $slideOver,
+                    'fi-modal-slide-over-window ms-auto overflow-y-auto' => $slideOver,
+                    'h-screen' => $slideOver || ($width === 'screen'),
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
                     'max-w-xs' => $width === 'xs',
