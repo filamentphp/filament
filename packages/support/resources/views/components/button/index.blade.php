@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
 @endphp
@@ -25,18 +26,27 @@
 ])
 
 @php
+    $stringSize = match ($size) {
+        ActionSize::ExtraSmall => 'xs',
+        ActionSize::Small => 'sm',
+        ActionSize::Medium => 'md',
+        ActionSize::Large => 'lg',
+        ActionSize::ExtraLarge => 'xl',
+        default => $size,
+    };
+
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            "fi-btn fi-btn-size-{$stringSize} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
             is_string($color) ? "fi-btn-color-{$color}" : null,
             match ($size) {
-                'xs' => 'gap-1 px-2 py-1.5 text-xs',
-                'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
-                'md' => 'gap-1.5 px-3 py-2 text-sm',
-                'lg' => 'gap-1.5 px-3.5 py-2.5 text-sm',
-                'xl' => 'gap-1.5 px-4 py-3 text-sm',
+                ActionSize::ExtraSmall, 'xs' => 'gap-1 px-2 py-1.5 text-xs',
+                ActionSize::Small, 'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
+                ActionSize::Medium, 'md' => 'gap-1.5 px-3 py-2 text-sm',
+                ActionSize::Large, 'lg' => 'gap-1.5 px-3.5 py-2.5 text-sm',
+                ActionSize::ExtraLarge, 'xl' => 'gap-1.5 px-4 py-3 text-sm',
             },
             'hidden' => $labeledFrom,
             match ($labeledFrom) {
@@ -78,7 +88,7 @@
     ]);
 
     $iconSize ??= match ($size) {
-        'xs', 'sm' => IconSize::Small,
+        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
         default => IconSize::Medium,
     };
 

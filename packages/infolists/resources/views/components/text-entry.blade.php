@@ -1,4 +1,5 @@
 @php
+    use Filament\Infolists\Components\TextEntry\TextEntrySize;
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
@@ -69,10 +70,10 @@
                             'prose max-w-none dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
                             'pt-2' => ! $isLabelHidden(),
                             match ($size) {
-                                'xs' => 'prose-xs',
-                                'sm', null => 'prose-sm',
-                                'base', 'md' => 'prose-base',
-                                'lg' => 'prose-lg',
+                                TextEntrySize::ExtraSmall, 'xs' => 'prose-xs',
+                                TextEntrySize::Small, 'sm', null => 'prose-sm',
+                                TextEntrySize::Medium, 'base', 'md' => 'prose-base',
+                                TextEntrySize::Large, 'lg' => 'prose-lg',
                                 default => $size,
                             },
                         ]);
@@ -114,10 +115,10 @@
                                     'fi-in-text-item inline-flex items-center gap-1.5',
                                     'transition duration-75 hover:underline focus:underline' => $url,
                                     match ($size) {
-                                        'xs' => 'text-xs',
-                                        'sm', null => 'text-sm leading-6',
-                                        'base', 'md' => 'text-base',
-                                        'lg' => 'text-lg',
+                                        TextEntrySize::ExtraSmall, 'xs' => 'text-xs',
+                                        TextEntrySize::Small, 'sm', null => 'text-sm leading-6',
+                                        TextEntrySize::Medium, 'base', 'md' => 'text-base',
+                                        TextEntrySize::Large, 'lg' => 'text-lg',
                                         default => $size,
                                     },
                                     match ($color) {

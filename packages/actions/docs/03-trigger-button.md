@@ -83,11 +83,13 @@ Action::make('delete')
 
 ## Setting a size
 
-Buttons come in 3 sizes - `sm`, `md` or `lg`. You can change the size of the action's trigger using the `size()` method:
+Buttons come in 3 sizes - `ActionSize::Small`, `ActionSize::Medium` or `ActionSize::Large`. You can change the size of the action's trigger using the `size()` method:
 
 ```php
+use Filament\Support\Enums\ActionSize;
+
 Action::make('create')
-    ->size('lg')
+    ->size(ActionSize::Large)
 ```
 
 <AutoScreenshot name="actions/trigger-button/large" alt="Large trigger" version="3.x" />

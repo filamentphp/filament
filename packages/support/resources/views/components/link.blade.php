@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
 @endphp
@@ -21,18 +22,31 @@
 ])
 
 @php
-    $iconSize ??= $size;
+    $iconSize ??= match ($size) {
+        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
+        ActionSize::Medium, 'md' => IconSize::Medium,
+        ActionSize::Large, ActionSize::ExtraLarge, 'lg', 'xl' => IconSize::Large,
+    };
+
+    $stringSize = match ($size) {
+        ActionSize::ExtraSmall => 'xs',
+        ActionSize::Small => 'sm',
+        ActionSize::Medium => 'md',
+        ActionSize::Large => 'lg',
+        ActionSize::ExtraLarge => 'xl',
+        default => $size,
+    };
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        "fi-link fi-link-size-{$size} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
+        "fi-link fi-link-size-{$stringSize} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         match ($size) {
-            'xs' => 'gap-1 text-xs',
-            'sm' => 'gap-1 text-sm',
-            'md' => 'gap-1.5 text-sm',
-            'lg' => 'gap-1.5 text-sm',
-            'xl' => 'gap-1.5 text-sm',
+            ActionSize::ExtraSmall, 'xs' => 'gap-1 text-xs',
+            ActionSize::Small, 'sm' => 'gap-1 text-sm',
+            ActionSize::Medium, 'md' => 'gap-1.5 text-sm',
+            ActionSize::Large, 'lg' => 'gap-1.5 text-sm',
+            ActionSize::ExtraLarge, 'xl' => 'gap-1.5 text-sm',
         },
         match ($color) {
             'gray' => 'text-gray-700 dark:text-gray-200',

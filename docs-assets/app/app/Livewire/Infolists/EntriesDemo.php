@@ -178,7 +178,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ->schema([
                         TextEntry::make('title')
                             ->state('What is Filament?')
-                            ->size('lg'),
+                            ->size(TextEntry\TextEntrySize::Large),
                     ]),
                 Group::make()
                     ->id('textBold')
@@ -267,7 +267,7 @@ class EntriesDemo extends Component implements HasInfolists
                                 'published' => 'success',
                                 default => 'gray',
                             })
-                            ->size('md'),
+                            ->size(IconEntry\IconEntrySize::Medium),
                     ]),
                 Group::make()
                     ->id('iconBoolean')

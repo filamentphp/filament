@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Forms\Form;
+use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
@@ -138,7 +139,7 @@ trait HasFilters
         }
 
         if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize('sm');
+            $action->defaultSize(ActionSize::Small);
         }
 
         return $action;

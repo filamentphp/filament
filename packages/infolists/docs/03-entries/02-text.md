@@ -258,13 +258,13 @@ TextEntry::make('email')
 
 ## Customizing the text size
 
-You may make the text larger using `size('lg')`:
+You may make the text larger using `size(TextEntrySize::Large)`:
 
 ```php
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('title')
-    ->size('lg')
+    ->size(TextEntry\TextEntrySize::Large)
 ```
 
 <AutoScreenshot name="infolists/entries/text/large" alt="Text entry in a large font size" version="3.x" />

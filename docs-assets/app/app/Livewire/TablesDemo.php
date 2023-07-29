@@ -7,6 +7,7 @@ use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
@@ -355,7 +356,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->postsTable($table)
             ->columns([
                 TextColumn::make('title')
-                    ->size('lg'),
+                    ->size(TextColumn\TextColumnSize::Large),
             ]);
     }
 
@@ -435,7 +436,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         'reviewing' => 'heroicon-o-clock',
                         'published' => 'heroicon-o-check-circle',
                     })
-                    ->size('md'),
+                    ->size(IconColumn\IconColumnSize::Medium),
             ]);
     }
 
@@ -920,7 +921,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
-                ])->size('sm'),
+                ])->size(ActionSize::Small),
             ]);
     }
 

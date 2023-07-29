@@ -2,6 +2,7 @@
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
     use Filament\Support\Enums\IconPosition;
+    use Filament\Tables\Columns\TextColumn\TextColumnSize;
 
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
@@ -112,10 +113,10 @@
                                 'fi-ta-text-item inline-flex items-center gap-1.5',
                                 'transition duration-75 hover:underline focus:underline' => $url,
                                 match ($size) {
-                                    'xs' => 'text-xs',
-                                    'sm', null => 'text-sm',
-                                    'base', 'md' => 'text-base',
-                                    'lg' => 'text-lg',
+                                    TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
+                                    TextColumnSize::Small, 'sm', null => 'text-sm',
+                                    TextColumnSize::Medium, 'base', 'md' => 'text-base',
+                                    TextColumnSize::Large, 'lg' => 'text-lg',
                                     default => $size,
                                 },
                                 match ($color) {

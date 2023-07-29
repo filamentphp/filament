@@ -6,6 +6,7 @@ use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Component as LivewireComponent;
@@ -94,7 +95,7 @@ class Wizard extends Component
             ->livewireClickHandlerEnabled(false)
             ->button()
             ->outlined()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyNextActionUsing) {
             $action = $this->evaluate($this->modifyNextActionUsing, [
@@ -125,7 +126,7 @@ class Wizard extends Component
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->button()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyPreviousActionUsing) {
             $action = $this->evaluate($this->modifyPreviousActionUsing, [

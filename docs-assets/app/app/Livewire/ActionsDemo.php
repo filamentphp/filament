@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
 use Livewire\Component;
 
@@ -50,7 +51,7 @@ class ActionsDemo extends Component implements HasActions, HasForms
     {
         return Action::make('large')
             ->label('Create')
-            ->size('lg');
+            ->size(ActionSize::Large);
     }
 
     public function iconAction(): Action

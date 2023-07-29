@@ -1,3 +1,7 @@
+@php
+    use Filament\Tables\Columns\IconColumn\IconColumnSize;
+@endphp
+
 <div
     {{
         $attributes
@@ -13,7 +17,7 @@
         @if ($icon = $getIcon($state))
             @php
                 $color = $getColor($state) ?? 'gray';
-                $size = $getSize($state) ?? 'lg';
+                $size = $getSize($state) ?? IconColumnSize::Large;
             @endphp
 
             <x-filament::icon
@@ -21,11 +25,11 @@
                 @class([
                     'fi-ta-icon-item',
                     match ($size) {
-                        'xs' => 'fi-ta-icon-item-size-xs h-3 w-3',
-                        'sm' => 'fi-ta-icon-item-size-sm h-4 w-4',
-                        'md' => 'fi-ta-icon-item-size-md h-5 w-5',
-                        'lg' => 'fi-ta-icon-item-size-lg h-6 w-6',
-                        'xl' => 'fi-ta-icon-item-size-xl h-7 w-7',
+                        IconColumnSize::ExtraSmall, 'xs' => 'fi-ta-icon-item-size-xs h-3 w-3',
+                        IconColumnSize::Small, 'sm' => 'fi-ta-icon-item-size-sm h-4 w-4',
+                        IconColumnSize::Medium, 'md' => 'fi-ta-icon-item-size-md h-5 w-5',
+                        IconColumnSize::Large, 'lg' => 'fi-ta-icon-item-size-lg h-6 w-6',
+                        IconColumnSize::ExtraLarge, 'xl' => 'fi-ta-icon-item-size-xl h-7 w-7',
                         default => $size,
                     },
                     match ($color) {

@@ -6,6 +6,7 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
 use function Filament\Tests\livewire;
 use Filament\Tests\TestCase;
@@ -53,7 +54,7 @@ it('can send notifications', function () {
                 ->iconPosition($actionIconPosition = Arr::random([IconPosition::After, IconPosition::Before]))
                 ->label($actionLabel = Str::random())
                 ->outlined($isActionOutlined = (bool) rand(0, 1))
-                ->size($actionSize = Arr::random(['sm', 'md', 'lg']))
+                ->size($actionSize = Arr::random([ActionSize::ExtraSmall, ActionSize::Small, ActionSize::Medium, ActionSize::Large, ActionSize::ExtraLarge]))
                 ->url(
                     $actionUrl = Str::random(),
                     shouldOpenInNewTab: $shouldActionOpenUrlInNewTab = (bool) rand(0, 1),
@@ -107,7 +108,13 @@ it('can send notifications', function () {
         ->label->toBe($actionLabel)
         ->shouldClose->toBe($shouldClose)
         ->shouldOpenUrlInNewTab->toBe($shouldActionOpenUrlInNewTab)
-        ->size->toBe($actionSize)
+        ->size->toBe(match ($actionSize) {
+            ActionSize::ExtraSmall => 'xs',
+            ActionSize::Small => 'sm',
+            ActionSize::Medium => 'md',
+            ActionSize::Large => 'lg',
+            ActionSize::ExtraLarge => 'xl',
+        })
         ->url->toBe($actionUrl);
 
     $component = livewire(Notifications::class);
@@ -154,7 +161,13 @@ it('can send notifications', function () {
         ->getLabel()->toBe($actionLabel)
         ->shouldClose()->toBe($shouldClose)
         ->shouldOpenUrlInNewTab()->toBe($shouldActionOpenUrlInNewTab)
-        ->getSize()->toBe($actionSize)
+        ->getSize()->toBe(match ($actionSize) {
+            ActionSize::ExtraSmall => 'xs',
+            ActionSize::Small => 'sm',
+            ActionSize::Medium => 'md',
+            ActionSize::Large => 'lg',
+            ActionSize::ExtraLarge => 'xl',
+        })
         ->getUrl()->toBe($actionUrl);
 
     expect(session()->get('filament.notifications'))

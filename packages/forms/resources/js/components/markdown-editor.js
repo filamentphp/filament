@@ -167,7 +167,7 @@ export default function markdownEditorFormComponent({
             this.editor.codemirror.on(
                 'change',
                 Alpine.debounce(() => {
-                    if (! this.editor) {
+                    if (!this.editor) {
                         return
                     }
 

@@ -292,13 +292,13 @@ TextColumn::make('email')
 
 ## Customizing the text size
 
-You may make the text larger using `size('lg')`:
+You may make the text larger using `size(TextColumnSize::Large)`:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('title')
-    ->size('lg')
+    ->size(TextColumn\TextColumnSize::Large)
 ```
 
 <AutoScreenshot name="tables/columns/text/large" alt="Text column in a large font size" version="3.x" />

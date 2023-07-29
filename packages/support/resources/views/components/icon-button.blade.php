@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\ActionSize;
     use Filament\Support\Enums\IconSize;
 @endphp
 
@@ -21,19 +22,19 @@
 
 @php
     $iconSize ??= match ($size) {
-        'xs' => IconSize::Small,
-        'sm', 'md' => IconSize::Medium,
-        'lg', 'xl' => IconSize::Large,
+        ActionSize::ExtraSmall, 'xs' => IconSize::Small,
+        ActionSize::Small, ActionSize::Medium, 'sm', 'md' => IconSize::Medium,
+        ActionSize::Large, ActionSize::ExtraLarge, 'lg', 'xl' => IconSize::Large,
     };
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
         match ($size) {
-            'xs' => 'h-7 w-7',
-            'sm' => 'h-8 w-8',
-            'md' => 'h-9 w-9',
-            'lg' => 'h-10 w-10',
-            'xl' => 'h-11 w-11',
+            ActionSize::ExtraSmall, 'xs' => 'h-7 w-7',
+            ActionSize::Small, 'sm' => 'h-8 w-8',
+            ActionSize::Medium, 'md' => 'h-9 w-9',
+            ActionSize::Large, 'lg' => 'h-10 w-10',
+            ActionSize::ExtraLarge, 'xl' => 'h-11 w-11',
             default => $size,
         },
         match ($color) {
