@@ -23,7 +23,7 @@ composer require filament/infolists:"^3.0@beta"
 
 ## New Laravel projects
 
-To get started with Filament quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
+To get started with Filament quickly, you can set up [Livewire](https://livewire.laravel.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
 
 ```bash
 php artisan filament:install --scaffold --infolists

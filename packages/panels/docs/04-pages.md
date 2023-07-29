@@ -16,7 +16,7 @@ php artisan make:filament-page Settings
 
 This command will create two files - a page class in the `/Pages` directory of the Filament directory, and a view in the `/pages` directory of the Filament views directory.
 
-Page classes are all full-page [Livewire](https://laravel-livewire.com) components with a few extra utilities you can use with the panel.
+Page classes are all full-page [Livewire](https://livewire.laravel.com) components with a few extra utilities you can use with the panel.
 
 ## Conditionally hiding pages in navigation
 

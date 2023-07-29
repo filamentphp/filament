@@ -44,7 +44,7 @@ It will also create a view file at `resources/views/filament/forms/components/ra
 
 Livewire components are PHP classes that have their state stored in the user's browser. When a network request is made, the state is sent to the server, and filled into public properties on the Livewire component class, where it can be accessed in the same way as any other class property in PHP can be.
 
-Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: by a the [`wire:model` attribute](https://laravel-livewire.com/docs/properties#data-binding), or by [entangling](https://laravel-livewire.com/docs/2.x/alpine-js#sharing-state) it with an Alpine.js property:
+Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: by a the [`wire:model` attribute](https://livewire.laravel.com/docs/properties#data-binding), or by [entangling](https://livewire.laravel.com/docs/2.x/alpine-js#sharing-state) it with an Alpine.js property:
 
 ```blade
 <input wire:model="name" />
