@@ -765,7 +765,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-5"></th>
+                                    <th class="w-1"></th>
                                 @endif
                             @endif
 
@@ -797,7 +797,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-5"></th>
+                                    <th class="w-1"></th>
                                 @endif
                             @endif
                         @endif
@@ -809,6 +809,8 @@
                                 {{ $group->getLabel() }}
                             </th>
                         @endif
+
+                        {{-- TODO: review end --}}
 
                         @foreach ($columns as $column)
                             <x-filament-tables::header-cell
@@ -839,7 +841,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-5"></th>
+                                    <th class="w-1"></th>
                                 @endif
                             @endif
 
@@ -873,7 +875,7 @@
                                         {{ $actionsColumnLabel }}
                                     </x-filament-tables::header-cell>
                                 @else
-                                    <th class="w-5"></th>
+                                    <th class="w-1"></th>
                                 @endif
                             @endif
                         @endif
@@ -897,7 +899,7 @@
                                 <x-filament-tables::cell
                                     @class([
                                         'fi-table-individual-search-cell-' . str($column->getName())->camel()->kebab(),
-                                        'px-3 py-4',
+                                        'px-3 py-2',
                                     ])
                                 >
                                     @if ($column->isIndividuallySearchable())
@@ -943,12 +945,12 @@
                                         :actions="count($actions)"
                                         :actions-position="$actionsPosition"
                                         :columns="$columns"
-                                        :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                         :groups-only="$isGroupsOnly"
-                                        :selection-enabled="$isSelectionEnabled"
+                                        :heading="$isGroupsOnly ? $previousRecordGroupTitle : __('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
                                         :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
-                                        :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
                                         :record-checkbox-position="$recordCheckboxPosition"
+                                        :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
+                                        :selection-enabled="$isSelectionEnabled"
                                     />
                                 @endif
 
@@ -972,8 +974,6 @@
                                     $isRecordRowStriped = false;
                                 @endphp
                             @endif
-
-                            {{-- TODO: review end --}}
 
                             @if (! $isGroupsOnly)
                                 <x-filament-tables::row

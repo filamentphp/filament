@@ -9,7 +9,7 @@
 >
     @if ($header)
         <thead>
-            <tr class="bg-gray-50 dark:bg-white/5">
+            <tr class="bg-gray-50 dark:bg-transparent">
                 {{ $header }}
             </tr>
         </thead>
