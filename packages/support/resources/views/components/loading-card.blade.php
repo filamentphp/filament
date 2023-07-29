@@ -34,4 +34,3 @@
         </div>
     </x-filament::card>
 </x-filament::grid.column>
-
