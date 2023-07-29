@@ -181,7 +181,8 @@
             "
             x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         @endif
-        {{ $attributes
+        {{
+            $attributes
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
@@ -190,7 +191,8 @@
                     'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : false,
                 ], escape: false)
                 ->class([$buttonClasses])
-                ->style([$buttonStyles]) }}
+                ->style([$buttonStyles])
+        }}
     >
         @if ($iconPosition === 'before')
             @if ($icon)
@@ -285,9 +287,11 @@
                 theme: $store.theme,
             }"
         @endif
-        {{ $attributes
+        {{
+            $attributes
                 ->class([$buttonClasses])
-                ->style([$buttonStyles]) }}
+                ->style([$buttonStyles])
+        }}
     >
         @if ($icon && $iconPosition === 'before')
             <x-filament::icon
