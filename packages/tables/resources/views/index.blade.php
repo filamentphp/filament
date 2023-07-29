@@ -492,7 +492,7 @@
                         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         x-sortable
                         @class([
-                            'gap-4 p-4 sm:p-6' => $contentGrid,
+                            'gap-4 px-4 pb-4 sm:px-6' => $contentGrid,
                             'divide-y divide-gray-200 dark:divide-white/5' => ! $contentGrid,
                         ])
                     >
@@ -513,8 +513,6 @@
                                 $collapsibleColumnsLayout?->record($record);
                                 $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
                             @endphp
-
-                            {{-- TODO: review start --}}
 
                             @if ($recordGroupTitle !== $previousRecordGroupTitle)
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
@@ -537,31 +535,25 @@
                                     </x-filament-tables::table>
                                 @endif
 
-                                <div
+                                <x-filament-tables::group.header
+                                    :collapsible="$group->isCollapsible()"
+                                    :description="$group->getDescription($record, $recordGroupTitle)"
+                                    :label="$group->isTitlePrefixedWithLabel() ? $group->getLabel() : null"
+                                    :title="$recordGroupTitle"
                                     @class([
                                         'col-span-full',
-                                        'rounded-xl shadow-sm' => $contentGrid,
+                                        '-mx-4 w-[calc(100%+2rem)] border-y border-gray-200 first:border-t-0 dark:border-white/5 sm:-mx-6 sm:w-[calc(100%+3rem)]' => $contentGrid,
                                     ])
-                                >
-                                    @php
-                                        $tag = $group->isCollapsible() ? 'button' : 'div';
-                                    @endphp
-
-                                    <x-filament-tables::group.header
-                                        :collapsible="$group->isCollapsible()"
-                                        :description="$group->getDescription($record, $recordGroupTitle)"
-                                        :label="$group->isTitlePrefixedWithLabel() ? $group->getLabel() : null"
-                                        :title="$recordGroupTitle"
-                                    />
-                                </div>
+                                    x-bind:class="{ '-mb-4 border-b-0': isGroupCollapsed('{{ $recordGroupTitle }}') }"
+                                />
                             @endif
 
                             <div
                                 @if ($hasCollapsibleColumnsLayout)
                                     x-data="{ isCollapsed: @js($collapsibleColumnsLayout->isCollapsed()) }"
                                     x-init="$dispatch('collapsible-table-row-initialized')"
-                                    x-on:expand-all-table-rows.window="isCollapsed = false"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
+                                    x-on:expand-all-table-rows.window="isCollapsed = false"
                                 @endif
                                 wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                 @if ($isReordering)
@@ -575,17 +567,21 @@
                                 }"
                             >
                                 <div
-                                    x-bind:class="{
-                                        'bg-gray-50 dark:bg-gray-500/10': isRecordSelected('{{ $recordKey }}'),
-                                    }"
+                                    x-bind:class="
+                                        isRecordSelected('{{ $recordKey }}')
+                                            ? 'bg-gray-50 dark:bg-white/10 dark:ring-white/20'
+                                            : 'bg-white dark:bg-white/5 dark:ring-white/10'
+                                    "
                                     @class([
-                                        'relative h-full px-3 transition sm:px-6',
-                                        'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
-                                        'group' => $isReordering,
-                                        'rounded-xl shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-700/40 dark:ring-white/10' => $contentGrid,
+                                        'relative h-full transition duration-75',
+                                        'hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20' => $recordUrl || $recordAction,
+                                        'px-3 py-4 sm:px-6' => ! $contentGrid,
+                                        'rounded-xl p-4 shadow-sm ring-1 ring-gray-950/5' => $contentGrid,
                                         ...$getRecordClasses($record),
                                     ])
                                 >
+                                    {{-- TODO: review start --}}
+
                                     <div
                                         @class([
                                             'items-center gap-4 md:me-0 md:flex' => (! $contentGrid),
@@ -715,6 +711,8 @@
                                 </div>
                             </div>
 
+                            {{-- TODO: review end --}}
+
                             @php
                                 $previousRecordGroupKey = $recordGroupKey;
                                 $previousRecordGroupTitle = $recordGroupTitle;
@@ -726,11 +724,11 @@
                             <x-filament-tables::table class="col-span-full">
                                 <x-filament-tables::summary.row
                                     :columns="$columns"
+                                    extra-heading-column
                                     :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                    :placeholder-columns="false"
                                     :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                     :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                    extra-heading-column
-                                    :placeholder-columns="false"
                                 />
                             </x-filament-tables::table>
                         @endif
@@ -750,15 +748,13 @@
                     <x-filament-tables::table>
                         <x-filament-tables::summary
                             :columns="$columns"
-                            :plural-model-label="$pluralModelLabel"
-                            :records="$records"
                             extra-heading-column
                             :placeholder-columns="false"
+                            :plural-model-label="$pluralModelLabel"
+                            :records="$records"
                         />
                     </x-filament-tables::table>
                 @endif
-
-                {{-- TODO: review end --}}
             @elseif (($records !== null) && count($records))
                 <x-filament-tables::table :reorderable="$isReorderable">
                     <x-slot name="header">
