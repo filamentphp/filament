@@ -153,30 +153,39 @@
             @endphp
 
             <script>
-                let collapsedGroups = JSON.parse(localStorage.getItem('collapsedGroups'))
+                let collapsedGroups = JSON.parse(
+                    localStorage.getItem('collapsedGroups'),
+                )
 
-                if (
-                    collapsedGroups === null ||
-                    collapsedGroups === 'null'
-                ) {
+                if (collapsedGroups === null || collapsedGroups === 'null') {
                     localStorage.setItem(
                         'collapsedGroups',
                         JSON.stringify(@js($collapsedNavigationGroupLabels)),
                     )
                 }
 
-                collapsedGroups = JSON.parse(localStorage.getItem('collapsedGroups'))
+                collapsedGroups = JSON.parse(
+                    localStorage.getItem('collapsedGroups'),
+                )
 
-                document.querySelectorAll('.fi-sidebar-group').forEach((group) => {
-                    if (! collapsedGroups.includes(group.dataset.groupLabel)) {
-                        return
-                    }
+                document
+                    .querySelectorAll('.fi-sidebar-group')
+                    .forEach((group) => {
+                        if (
+                            !collapsedGroups.includes(group.dataset.groupLabel)
+                        ) {
+                            return
+                        }
 
-                    // Alpine.js loads too slow, so attempt to hide a
-                    // collapsed sidebar group earlier.
-                    group.querySelector('.fi-sidebar-group-items').style.display = 'none'
-                    group.querySelector('.fi-sidebar-group-collapse-button').classList.add('rotate-180')
-                })
+                        // Alpine.js loads too slow, so attempt to hide a
+                        // collapsed sidebar group earlier.
+                        group.querySelector(
+                            '.fi-sidebar-group-items',
+                        ).style.display = 'none'
+                        group
+                            .querySelector('.fi-sidebar-group-collapse-button')
+                            .classList.add('rotate-180')
+                    })
             </script>
         @endif
 
