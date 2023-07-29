@@ -56,10 +56,10 @@
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 wire:ignore
                 x-data="chart({
-                    cachedData: @js($this->getCachedData()),
-                    options: @js($this->getOptions()),
-                    type: @js($this->getType()),
-                })"
+                            cachedData: @js($this->getCachedData()),
+                            options: @js($this->getOptions()),
+                            type: @js($this->getType()),
+                        })"
                 x-ignore
                 @style([
                     \Filament\Support\get_color_css_variables($color, shades: [50, 400, 500]) => $color !== 'gray',
