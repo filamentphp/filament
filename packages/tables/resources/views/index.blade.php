@@ -710,6 +710,8 @@
                                 </div>
                             </div>
 
+                            {{-- TODO: review end --}}
+
                             @php
                                 $previousRecordGroupKey = $recordGroupKey;
                                 $previousRecordGroupTitle = $recordGroupTitle;
@@ -721,11 +723,11 @@
                             <x-filament-tables::table class="col-span-full">
                                 <x-filament-tables::summary.row
                                     :columns="$columns"
+                                    extra-heading-column
                                     :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                    :placeholder-columns="false"
                                     :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                     :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                    extra-heading-column
-                                    :placeholder-columns="false"
                                 />
                             </x-filament-tables::table>
                         @endif
@@ -745,15 +747,13 @@
                     <x-filament-tables::table>
                         <x-filament-tables::summary
                             :columns="$columns"
-                            :plural-model-label="$pluralModelLabel"
-                            :records="$records"
                             extra-heading-column
                             :placeholder-columns="false"
+                            :plural-model-label="$pluralModelLabel"
+                            :records="$records"
                         />
                     </x-filament-tables::table>
                 @endif
-
-                {{-- TODO: review end --}}
             @elseif (($records !== null) && count($records))
                 <x-filament-tables::table :reorderable="$isReorderable">
                     <x-slot name="header">
