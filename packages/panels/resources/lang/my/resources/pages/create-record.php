@@ -26,8 +26,12 @@ return [
 
     ],
 
-    'messages' => [
-        'created' => 'သိမ်းဆည်းပြီး',
+    'notifications' => [
+
+        'created' => [
+            'title' => 'သိမ်းဆည်းပြီး',
+        ],
+
     ],
 
 ];

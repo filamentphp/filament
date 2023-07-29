@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Hibás e-mail cím vagy jelszó.',
-        'throttled' => 'Kérjük várjon :seconds másodpercet a következő próbálkozás előtt.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Kérjük várjon :seconds másodpercet a következő próbálkozás előtt.',
+        ],
+
     ],
 
 ];

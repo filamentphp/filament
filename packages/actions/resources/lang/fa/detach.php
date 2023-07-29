@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'جدا شد',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'جدا شد',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'جدا شد',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'جدا شد',
+            ],
+
         ],
 
     ],

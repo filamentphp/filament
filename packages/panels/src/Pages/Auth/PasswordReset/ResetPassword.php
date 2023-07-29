@@ -67,7 +67,7 @@ class ResetPassword extends SimplePage
             $this->rateLimit(2);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
-                ->title(__('filament-panels::pages/auth/password-reset/reset-password.messages.throttled', [
+                ->title(__('filament-panels::pages/auth/password-reset/reset-password.notifications.throttled.title', [
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]))

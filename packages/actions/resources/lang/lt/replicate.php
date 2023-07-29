@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'Arkartota',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Arkartota',
+            ],
+
         ],
 
     ],

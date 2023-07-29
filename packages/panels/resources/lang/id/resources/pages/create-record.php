@@ -26,8 +26,12 @@ return [
 
     ],
 
-    'messages' => [
-        'created' => 'Data berhasil dibuat',
+    'notifications' => [
+
+        'created' => [
+            'title' => 'Data berhasil dibuat',
+        ],
+
     ],
 
 ];

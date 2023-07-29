@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'প্রতিরূপ তৈরি করা হয়েছে',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'প্রতিরূপ তৈরি করা হয়েছে',
+            ],
+
         ],
 
     ],

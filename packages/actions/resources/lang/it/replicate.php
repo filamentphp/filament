@@ -6,8 +6,12 @@ return [
 
         'label' => 'Duplica',
 
-        'messages' => [
-            'replicated' => 'Duplicato',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Duplicato',
+            ],
+
         ],
 
     ],

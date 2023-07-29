@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => '记录已删除',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => '记录已删除',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => '记录已删除',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => '记录已删除',
+            ],
+
         ],
 
     ],

@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Törölve',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Törölve',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Elemek törölve',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Elemek törölve',
+            ],
+
         ],
 
     ],

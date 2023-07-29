@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'I tuoi dati di accesso non sono corretti.',
-        'throttled' => 'Troppi tentativi di accesso. Riprova tra :seconds secondi.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Troppi tentativi di accesso. Riprova tra :seconds secondi.',
+        ],
+
     ],
 
 ];

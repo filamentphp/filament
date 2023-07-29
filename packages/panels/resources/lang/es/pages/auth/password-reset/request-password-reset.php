@@ -26,8 +26,12 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Demasiadas solicitudes. Por favor, inténtelo de nuevo en :seconds segundos.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Demasiadas solicitudes. Por favor, inténtelo de nuevo en :seconds segundos.',
+        ],
+
     ],
 
 ];

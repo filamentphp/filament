@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'পৃথক করা হয়েছে',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'পৃথক করা হয়েছে',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'পৃথক করা হয়েছে',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'পৃথক করা হয়েছে',
+            ],
+
         ],
 
     ],

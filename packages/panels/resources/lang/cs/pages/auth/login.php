@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Chybně zadané přihlašovací údaje.',
-        'throttled' => 'Příliš mnoho pokusů o přihlášení. Zkuste to znovu za :seconds vteřin.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Příliš mnoho pokusů o přihlášení. Zkuste to znovu za :seconds vteřin.',
+        ],
+
     ],
 
 ];

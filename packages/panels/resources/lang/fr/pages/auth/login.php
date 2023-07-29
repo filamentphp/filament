@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Ces identifiants ne correspondent pas à nos enregistrements.',
-        'throttled' => 'Tentatives de connexion trop nombreuses. Veuillez essayer de nouveau dans :seconds secondes.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Tentatives de connexion trop nombreuses. Veuillez essayer de nouveau dans :seconds secondes.',
+        ],
+
     ],
 
 ];

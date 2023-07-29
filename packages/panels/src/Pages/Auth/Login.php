@@ -53,7 +53,7 @@ class Login extends SimplePage
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
-                ->title(__('filament-panels::pages/auth/login.messages.throttled', [
+                ->title(__('filament-panels::pages/auth/login.notifications.throttled.title', [
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]))

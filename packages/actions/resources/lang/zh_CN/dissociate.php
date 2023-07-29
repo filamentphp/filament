@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => '已解除关联',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => '已解除关联',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => '已解除关联',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => '已解除关联',
+            ],
+
         ],
 
     ],

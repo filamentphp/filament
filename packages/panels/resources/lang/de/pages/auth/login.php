@@ -44,8 +44,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Diese Kombination aus Zugangsdaten wurde nicht in unserer Datenbank gefunden.',
-        'throttled' => 'Zu viele Loginversuche. Versuchen Sie es bitte in :seconds Sekunden nochmal.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Zu viele Loginversuche. Versuchen Sie es bitte in :seconds Sekunden nochmal.',
+        ],
+
     ],
 
 ];

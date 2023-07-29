@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Zapis izbrisan',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Zapis izbrisan',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Zapisi izbrisani',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Zapisi izbrisani',
+            ],
+
         ],
 
     ],

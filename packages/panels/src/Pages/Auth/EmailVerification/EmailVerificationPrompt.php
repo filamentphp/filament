@@ -46,7 +46,7 @@ class EmailVerificationPrompt extends SimplePage
                     $this->rateLimit(2);
                 } catch (TooManyRequestsException $exception) {
                     Notification::make()
-                        ->title(__('filament-panels::pages/auth/email-verification/email-verification-prompt.messages.notification_resend_throttled', [
+                        ->title(__('filament-panels::pages/auth/email-verification/email-verification-prompt.notifications.notification_resend_throttled.title', [
                             'seconds' => $exception->secondsUntilAvailable,
                             'minutes' => ceil($exception->secondsUntilAvailable / 60),
                         ]))
@@ -70,7 +70,7 @@ class EmailVerificationPrompt extends SimplePage
                 $user->notify($notification);
 
                 Notification::make()
-                    ->title(__('filament-panels::pages/auth/email-verification/email-verification-prompt.messages.notification_resent'))
+                    ->title(__('filament-panels::pages/auth/email-verification/email-verification-prompt.notifications.notification_resent.title'))
                     ->success()
                     ->send();
             });

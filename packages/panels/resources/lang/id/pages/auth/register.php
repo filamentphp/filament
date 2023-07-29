@@ -44,8 +44,12 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Terlalu banyak permintaan. Silakan coba lagi dalam :seconds detik.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Terlalu banyak permintaan. Silakan coba lagi dalam :seconds detik.',
+        ],
+
     ],
 
 ];

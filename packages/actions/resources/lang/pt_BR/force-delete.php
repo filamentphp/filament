@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Excluído',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Excluído',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Excluído',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Excluído',
+            ],
+
         ],
 
     ],

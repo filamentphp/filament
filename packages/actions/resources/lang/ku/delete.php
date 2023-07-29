@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'سڕدرایەوە',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'سڕدرایەوە',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'سڕدرایەوە',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'سڕدرایەوە',
+            ],
+
         ],
 
     ],

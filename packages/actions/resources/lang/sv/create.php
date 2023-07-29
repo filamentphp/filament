@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => 'Skapad',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'Skapad',
+            ],
+
         ],
 
     ],

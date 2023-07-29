@@ -30,8 +30,12 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Too many requests. Please try again in :seconds seconds.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Too many requests. Please try again in :seconds seconds.',
+        ],
+
     ],
 
 ];

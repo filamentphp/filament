@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'associated' => 'مرتبط شد',
+        'notifications' => [
+
+            'associated' => [
+                'title' => 'مرتبط شد',
+            ],
+
         ],
 
     ],

@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => 'دروستکرا',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'دروستکرا',
+            ],
+
         ],
 
     ],

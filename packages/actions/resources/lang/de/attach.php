@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'attached' => 'Verknüpft',
+        'notifications' => [
+
+            'attached' => [
+                'title' => 'Verknüpft',
+            ],
+
         ],
 
     ],

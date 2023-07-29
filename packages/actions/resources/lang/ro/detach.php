@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Detașat cu succes',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Detașat cu succes',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Detașat cu succes',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Detașat cu succes',
+            ],
+
         ],
 
     ],

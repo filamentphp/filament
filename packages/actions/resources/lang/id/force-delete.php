@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Data berhasil dihapus',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Data berhasil dihapus',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Data berhasil dihapus',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Data berhasil dihapus',
+            ],
+
         ],
 
     ],

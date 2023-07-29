@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Kirjautuminen epäonnistui.',
-        'throttled' => 'Liian monta kirjautumisyritystä. Yritä uudelleen :seconds sekunnin kuluttua.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Liian monta kirjautumisyritystä. Yritä uudelleen :seconds sekunnin kuluttua.',
+        ],
+
     ],
 
 ];

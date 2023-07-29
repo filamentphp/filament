@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Atskirta',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Atskirta',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Atskirta',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Atskirta',
+            ],
+
         ],
 
     ],
