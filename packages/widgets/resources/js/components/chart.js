@@ -40,6 +40,7 @@ export default function chart({ cachedData, options, type }) {
             Chart.defaults.backgroundColor = getComputedStyle(
                 this.$refs.backgroundColorElement,
             ).color
+
             Chart.defaults.borderColor = getComputedStyle(
                 this.$refs.borderColorElement,
             ).color
