@@ -107,6 +107,9 @@
 @endphp
 
 <div
+    @if (! $isLoaded)
+        wire:init="loadTable"
+    @endif
     x-data="{
         collapsedGroups: [],
 
@@ -223,10 +226,8 @@
         },
     }"
     class="fi-ta"
-    @if (! $isLoaded)
-        wire:init="loadTable"
-    @endif
 >
+    {{-- TODO: review from here --}}
     <x-filament-tables::container>
         <div
             class="fi-ta-header-ctn"
