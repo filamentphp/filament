@@ -1,8 +1,8 @@
 @php
+    $color = $this->getColor();
     $heading = $this->getHeading();
     $description = $this->getDescription();
     $filters = $this->getFilters();
-    $color = $this->getColor();
 @endphp
 
 <x-filament-widgets::widget>
