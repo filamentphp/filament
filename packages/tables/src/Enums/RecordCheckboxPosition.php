@@ -1,6 +1,6 @@
 <?php
 
-namespace Filament\Tables\Actions;
+namespace Filament\Tables\Enums;
 
 enum RecordCheckboxPosition
 {

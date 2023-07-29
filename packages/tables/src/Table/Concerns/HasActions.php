@@ -5,7 +5,7 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\Position;
+use Filament\Tables\Enums\ActionsPosition;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -26,7 +26,7 @@ trait HasActions
 
     protected string | Closure | null $actionsAlignment = null;
 
-    protected Position | Closure | null $actionsPosition = null;
+    protected ActionsPosition | Closure | null $actionsPosition = null;
 
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
@@ -76,7 +76,7 @@ trait HasActions
         return $this;
     }
 
-    public function actionsPosition(Position | Closure | null $position = null): static
+    public function actionsPosition(ActionsPosition | Closure | null $position = null): static
     {
         $this->actionsPosition = $position;
 
@@ -178,7 +178,7 @@ trait HasActions
         return $action;
     }
 
-    public function getActionsPosition(): Position
+    public function getActionsPosition(): ActionsPosition
     {
         $position = $this->evaluate($this->actionsPosition);
 
@@ -187,7 +187,7 @@ trait HasActions
         }
 
         if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
-            return Position::AfterColumns;
+            return ActionsPosition::AfterColumns;
         }
 
         $actions = $this->getActions();
@@ -195,10 +195,10 @@ trait HasActions
         $firstAction = Arr::first($actions);
 
         if ($firstAction instanceof ActionGroup) {
-            return Position::BottomCorner;
+            return ActionsPosition::BottomCorner;
         }
 
-        return Position::AfterContent;
+        return ActionsPosition::AfterContent;
     }
 
     public function getActionsAlignment(): ?string

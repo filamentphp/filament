@@ -6,7 +6,7 @@ use Closure;
 use Filament\Forms\Form;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 
 trait HasFilters
 {
@@ -24,7 +24,7 @@ trait HasFilters
 
     protected string | Closure | null $filtersFormWidth = null;
 
-    protected Layout | Closure | null $filtersLayout = null;
+    protected FiltersLayout | Closure | null $filtersLayout = null;
 
     protected ?Closure $modifyFiltersTriggerActionUsing = null;
 
@@ -79,7 +79,7 @@ trait HasFilters
         return $this;
     }
 
-    public function filtersLayout(Layout | Closure | null $filtersLayout): static
+    public function filtersLayout(FiltersLayout | Closure | null $filtersLayout): static
     {
         $this->filtersLayout = $filtersLayout;
 
@@ -150,7 +150,7 @@ trait HasFilters
     public function getFiltersFormColumns(): int | array
     {
         return $this->evaluate($this->filtersFormColumns) ?? match ($this->getFiltersLayout()) {
-            Layout::AboveContent, Layout::BelowContent => [
+            FiltersLayout::AboveContent, FiltersLayout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
                 'xl' => 4,
@@ -175,9 +175,9 @@ trait HasFilters
         };
     }
 
-    public function getFiltersLayout(): Layout
+    public function getFiltersLayout(): FiltersLayout
     {
-        return $this->evaluate($this->filtersLayout) ?? Layout::Dropdown;
+        return $this->evaluate($this->filtersLayout) ?? FiltersLayout::Dropdown;
     }
 
     public function isFilterable(): bool

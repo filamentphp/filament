@@ -13,8 +13,8 @@
 ])
 
 @php
-    use Filament\Tables\Actions\Position as ActionsPosition;
-    use Filament\Tables\Actions\RecordCheckboxPosition;
+    use Filament\Tables\Enums\ActionsPosition;
+    use Filament\Tables\Enums\RecordCheckboxPosition;
 @endphp
 
 <x-filament-tables::row

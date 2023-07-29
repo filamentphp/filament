@@ -414,7 +414,7 @@ public function table(Table $table): Table
 To render the filters above the table content instead of in a dropdown, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -422,7 +422,7 @@ public function table(Table $table): Table
     return $table
         ->filters([
             // ...
-        ], layout: Layout::AboveContent);
+        ], layout: FiltersLayout::AboveContent);
 }
 ```
 
@@ -433,14 +433,14 @@ public function table(Table $table): Table
 To allow the filters above the table content to be collapsed, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 
 public function table(Table $table): Table
 {
     return $table
         ->filters([
             // ...
-        ], layout: Layout::AboveContentCollapsible);
+        ], layout: FiltersLayout::AboveContentCollapsible);
 }
 ```
 
@@ -449,7 +449,7 @@ public function table(Table $table): Table
 To render the filters below the table content instead of in a dropdown, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -457,7 +457,7 @@ public function table(Table $table): Table
     return $table
         ->filters([
             // ...
-        ], layout: Layout::BelowContent);
+        ], layout: FiltersLayout::BelowContent);
 }
 ```
 

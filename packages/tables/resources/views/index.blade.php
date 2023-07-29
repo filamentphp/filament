@@ -1,7 +1,7 @@
 @php
-    use Filament\Tables\Actions\Position as ActionsPosition;
-    use Filament\Tables\Actions\RecordCheckboxPosition;
-    use Filament\Tables\Filters\Layout as FiltersLayout;
+    use Filament\Tables\Enums\ActionsPosition;
+    use Filament\Tables\Enums\RecordCheckboxPosition;
+    use Filament\Tables\Enums\FiltersLayout;
 
     $actions = $getActions();
     $actionsAlignment = $getActionsAlignment();
@@ -233,7 +233,7 @@
     <x-filament-tables::container>
         <div
             @if (! $hasHeader) x-cloak @endif
-            x-show="@js($hasHeader) || (selectedRecords.length && @js(count($bulkActions)))"
+        x-show="@js($hasHeader) || (selectedRecords.length && @js(count($bulkActions)))"
             class="fi-ta-header-ctn divide-y divide-gray-200 dark:divide-white/10"
         >
             @if ($header)
@@ -280,7 +280,7 @@
 
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
-                x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
+            x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
                 class="fi-ta-header-toolbar flex items-center justify-between gap-3 px-4 py-3 sm:px-6"
             >
                 <div class="flex shrink-0 items-center gap-x-3">
@@ -322,7 +322,7 @@
                         ])
                     >
                         @if ($isGlobalSearchVisible)
-                            <x-filament-tables::search-field />
+                            <x-filament-tables::search-field/>
                         @endif
 
                         @if ($hasFiltersDropdown || $hasColumnToggleDropdown)
@@ -351,7 +351,7 @@
         </div>
 
         @if ($isReordering)
-            <x-filament-tables::reorder.indicator :colspan="$columnsCount" />
+            <x-filament-tables::reorder.indicator :colspan="$columnsCount"/>
         @elseif ($isSelectionEnabled && $isLoaded)
             <x-filament-tables::selection.indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
@@ -558,14 +558,14 @@
                             <div
                                 @if ($hasCollapsibleColumnsLayout)
                                     x-data="{ isCollapsed: @js($collapsibleColumnsLayout->isCollapsed()) }"
-                                    x-init="$dispatch('collapsible-table-row-initialized')"
-                                    x-on:expand-all-table-rows.window="isCollapsed = false"
-                                    x-on:collapse-all-table-rows.window="isCollapsed = true"
+                                x-init="$dispatch('collapsible-table-row-initialized')"
+                                x-on:expand-all-table-rows.window="isCollapsed = false"
+                                x-on:collapse-all-table-rows.window="isCollapsed = true"
                                 @endif
                                 wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                 @if ($isReordering)
                                     x-sortable-item="{{ $recordKey }}"
-                                    x-sortable-handle
+                                x-sortable-handle
                                 @endif
                                 x-bind:class="{
                                     'hidden':
@@ -987,7 +987,7 @@
                                 >
                                     @if ($isReordering)
                                         <x-filament-tables::reorder.cell>
-                                            <x-filament-tables::reorder.handle />
+                                            <x-filament-tables::reorder.handle/>
                                         </x-filament-tables::reorder.cell>
                                     @endif
 
@@ -1144,7 +1144,7 @@
                     <div
                         class="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500 dark:bg-gray-700"
                     >
-                        <x-filament::loading-indicator class="h-6 w-6" />
+                        <x-filament::loading-indicator class="h-6 w-6"/>
                     </div>
                 </div>
             @elseif ($emptyState = $getEmptyState())
@@ -1179,5 +1179,5 @@
         @endif
     </x-filament-tables::container>
 
-    <x-filament-actions::modals />
+    <x-filament-actions::modals/>
 </div>

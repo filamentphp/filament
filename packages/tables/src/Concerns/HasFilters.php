@@ -5,7 +5,7 @@ namespace Filament\Tables\Concerns;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -184,7 +184,7 @@ trait HasFilters
     protected function getTableFiltersFormColumns(): int | array
     {
         return match ($this->getTable()->getFiltersLayout()) {
-            Layout::AboveContent, Layout::BelowContent => [
+            FiltersLayout::AboveContent, FiltersLayout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
                 'xl' => 4,

@@ -6,7 +6,7 @@ use Closure;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\RecordCheckboxPosition;
+use Filament\Tables\Enums\RecordCheckboxPosition;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;

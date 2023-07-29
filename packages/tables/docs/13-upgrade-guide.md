@@ -73,3 +73,11 @@ Filament v2 had a `secondary` color for many components which was gray. All refe
 #### `BadgeColumn::enum()` removed
 
 You can use a `formatStateUsing()` function to transform text.
+
+#### Enum classes moved
+
+The following enum classes have moved:
+
+- `Filament\Tables\Actions\Position` has moved to `Filament\Tables\Enums\ActionsPosition`.
+- `Filament\Tables\Actions\RecordCheckboxPosition` has moved to `Filament\Tables\Enums\RecordCheckboxPosition`.
+- `Filament\Tables\Filters\Layout` has moved to `Filament\Tables\Enums\FiltersLayout`.

@@ -16,7 +16,7 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\Position;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
@@ -35,7 +35,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -711,7 +711,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ])
                     ->columns(2)
                     ->columnSpan(2),
-            ], layout: Layout::AboveContent)
+            ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4);
     }
 
@@ -728,7 +728,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ])
                     ->columns(2)
                     ->columnSpan(2),
-            ], layout: Layout::BelowContent)
+            ], layout: FiltersLayout::BelowContent)
             ->filtersFormColumns(4);
     }
 
@@ -785,7 +785,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ], position: Position::BeforeColumns);
+            ], position: ActionsPosition::BeforeColumns);
     }
 
     public function actionsBeforeCells(Table $table): Table
@@ -794,7 +794,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ], position: Position::BeforeCells)
+            ], position: ActionsPosition::BeforeCells)
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

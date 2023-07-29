@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Tables\Filters;
+namespace Filament\Tables\Enums;
 
-enum Layout
+enum FiltersLayout
 {
     case AboveContent;
 

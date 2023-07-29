@@ -1,8 +1,8 @@
 <?php
 
-namespace Filament\Tables\Actions;
+namespace Filament\Tables\Enums;
 
-enum Position
+enum ActionsPosition
 {
     case AfterCells;
 

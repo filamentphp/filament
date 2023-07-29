@@ -51,7 +51,7 @@ All methods on the action accept callback functions, where you can access the cu
 By default, the row actions in your table are rendered in the final cell of each row. You may move them before the columns by using the `position` argument:
 
 ```php
-use Filament\Tables\Actions\Position;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -59,7 +59,7 @@ public function table(Table $table): Table
     return $table
         ->actions([
             // ...
-        ], position: Position::BeforeColumns);
+        ], position: ActionsPosition::BeforeColumns);
 }
 ```
 
@@ -70,7 +70,7 @@ public function table(Table $table): Table
 By default, the row actions in your table are rendered in the final cell of each row. You may move them before the checkbox column by using the `position` argument:
 
 ```php
-use Filament\Tables\Actions\Position;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -78,7 +78,7 @@ public function table(Table $table): Table
     return $table
         ->actions([
             // ...
-        ], position: Position::BeforeCells);
+        ], position: ActionsPosition::BeforeCells);
 }
 ```
 

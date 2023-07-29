@@ -12,8 +12,8 @@
 ])
 
 @php
-    use Filament\Tables\Actions\Position as ActionsPosition;
-    use Filament\Tables\Actions\RecordCheckboxPosition;
+    use Filament\Tables\Enums\ActionsPosition;
+    use Filament\Tables\Enums\RecordCheckboxPosition;
 
     $hasPageSummary = (! $groupsOnly) && $records instanceof \Illuminate\Contracts\Pagination\Paginator && $records->hasPages();
 @endphp
