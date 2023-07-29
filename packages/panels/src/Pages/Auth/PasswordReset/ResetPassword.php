@@ -71,7 +71,7 @@ class ResetPassword extends SimplePage
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]))
-                ->body(array_key_exists('body', __('filament-panels::pages/auth/password-reset/reset-password.notifications.throttled') ?? []) ? __('filament-panels::pages/auth/password-reset/reset-password.notifications.throttled.body', [
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/password-reset/reset-password.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/password-reset/reset-password.notifications.throttled.body', [
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]) : null)

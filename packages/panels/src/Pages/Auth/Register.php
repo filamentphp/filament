@@ -60,7 +60,7 @@ class Register extends SimplePage
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]))
-                ->body(array_key_exists('body', __('filament-panels::pages/auth/register.notifications.throttled') ?? []) ? __('filament-panels::pages/auth/register.notifications.throttled.body', [
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/register.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/register.notifications.throttled.body', [
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]) : null)
