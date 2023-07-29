@@ -71,6 +71,7 @@
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
+    $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
 
     if (count($actions) && (! $isReordering)) {
@@ -116,8 +117,6 @@
     @endif
     x-data="{
         collapsedGroups: [],
-
-        hasHeader: true,
 
         isLoading: false,
 
@@ -234,7 +233,7 @@
     <x-filament-tables::container>
         <div
             @if (! $hasHeader) x-cloak @endif
-            x-show="hasHeader = @js($hasHeader) || (selectedRecords.length && @js(count($bulkActions)))"
+            x-show="@js($hasHeader) || (selectedRecords.length && @js(count($bulkActions)))"
             class="fi-ta-header-ctn divide-y divide-gray-200 dark:divide-white/10"
         >
             @if ($header)
@@ -253,49 +252,41 @@
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
                     @class([
                         'grid px-4 sm:px-6',
-                        'py-3 sm:py-4' => ! $hasFiltersAboveContentCollapsible,
+                        'py-4' => ! $hasFiltersAboveContentCollapsible,
                         'gap-y-3 py-2.5 sm:gap-y-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
                     ])
                 >
                     @if ($hasFiltersAboveContentCollapsible)
-                        <div class="flex w-full justify-end">
-                            <span
-                                x-on:click="areFiltersOpen = ! areFiltersOpen"
-                                @class([
-                                    'inline-flex',
-                                    '-mx-2' => $filtersTriggerAction->isIconButton(),
-                                ])
-                            >
-                                {{ $filtersTriggerAction->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
-                            </span>
-                        </div>
+                        <span
+                            x-on:click="areFiltersOpen = ! areFiltersOpen"
+                            @class([
+                                'ms-auto inline-flex',
+                                '-mx-2' => $filtersTriggerAction->isIconButton(),
+                            ])
+                        >
+                            {{ $filtersTriggerAction->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
+                        </span>
                     @endif
 
-                    <div
+                    <x-filament-tables::filters
+                        :form="$getFiltersForm()"
                         x-show="areFiltersOpen"
                         @class([
                             'py-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
                         ])
-                    >
-                        <x-filament-tables::filters
-                            :form="$getFiltersForm()"
-                        />
-                    </div>
+                    />
                 </div>
             @endif
 
             <div
                 @if (! $hasHeaderToolbar) x-cloak @endif
                 x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
-                class="fi-ta-header-toolbar flex items-center justify-between px-4 py-3 sm:px-6 gap-3"
+                class="fi-ta-header-toolbar flex items-center justify-between gap-3 px-4 py-3 sm:px-6"
             >
                 <div class="flex shrink-0 items-center gap-x-3">
                     @if ($isReorderable)
-                        @php
-                            $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering)
-                        @endphp
-
                         <span
+                            x-show="! selectedRecords.length"
                             @class([
                                 'inline-flex',
                                 '-mx-2' => $reorderRecordsTriggerAction->isIconButton(),
@@ -305,19 +296,19 @@
                         </span>
                     @endif
 
-                    @if (count($groups))
-                        <x-filament-tables::groups
-                            :dropdown-on-desktop="$areGroupsInDropdownOnDesktop()"
-                            :groups="$groups"
-                            :trigger-action="$getGroupRecordsTriggerAction()"
-                        />
-                    @endif
-
                     @if ((! $isReordering) && count($bulkActions))
                         <x-filament-tables::actions
                             :actions="$bulkActions"
                             x-cloak="x-cloak"
                             x-show="selectedRecords.length"
+                        />
+                    @endif
+
+                    @if (count($groups))
+                        <x-filament-tables::groups
+                            :dropdown-on-desktop="$areGroupsInDropdownOnDesktop()"
+                            :groups="$groups"
+                            :trigger-action="$getGroupRecordsTriggerAction()"
                         />
                     @endif
                 </div>
@@ -359,8 +350,6 @@
             </div>
         </div>
 
-        {{-- TODO: review from here --}}
-
         @if ($isReordering)
             <x-filament-tables::reorder.indicator :colspan="$columnsCount" />
         @elseif ($isSelectionEnabled && $isLoaded)
@@ -371,9 +360,11 @@
             />
         @endif
 
-        <x-filament-tables::filters.indicators
-            :indicators="$filterIndicators"
-        />
+        @if (count($filterIndicators))
+            <x-filament-tables::filters.indicators
+                :indicators="$filterIndicators"
+            />
+        @endif
 
         <div
             @if ($pollingInterval = $getPollingInterval())
@@ -381,11 +372,11 @@
             @endif
             @class([
                 'fi-ta-content overflow-x-auto',
-                'overflow-x-auto' => $content || $hasColumnsLayout,
-                'rounded-t-xl' => ! $hasHeader,
+                '!border-t-0' => ! $hasHeader,
             ])
-            x-bind:class="{ 'rounded-t-xl': ! hasHeader }"
         >
+            {{-- TODO: review start --}}
+
             @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                 @if (! $isReordering)
                     @php
@@ -1178,37 +1169,36 @@
                         <x-filament::loading-indicator class="h-6 w-6" />
                     </div>
                 </div>
+                {{-- TODO: review end --}}
+            @elseif ($emptyState = $getEmptyState())
+                {{ $emptyState }}
             @else
-                @if ($emptyState = $getEmptyState())
-                    {{ $emptyState }}
-                @else
-                    <tr>
-                        <td colspan="{{ $columnsCount }}">
-                            <x-filament-tables::empty-state
-                                :actions="$getEmptyStateActions()"
-                                :description="$getEmptyStateDescription()"
-                                :heading="$getEmptyStateHeading()"
-                                :icon="$getEmptyStateIcon()"
-                            />
-                        </td>
-                    </tr>
-                @endif
+                <tr>
+                    <td colspan="{{ $columnsCount }}">
+                        <x-filament-tables::empty-state
+                            :actions="$getEmptyStateActions()"
+                            :description="$getEmptyStateDescription()"
+                            :heading="$getEmptyStateHeading()"
+                            :icon="$getEmptyStateIcon()"
+                        />
+                    </td>
+                </tr>
             @endif
         </div>
 
         @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
-            <div class="fi-ta-pagination-ctn px-3 py-3 sm:px-6">
-                <x-filament::pagination
-                    :page-options="$getPaginationPageOptions()"
-                    :paginator="$records"
-                />
-            </div>
+            <x-filament::pagination
+                :page-options="$getPaginationPageOptions()"
+                :paginator="$records"
+                class="px-3 py-3 sm:px-6"
+            />
         @endif
 
         @if ($hasFiltersBelowContent)
-            <div class="mt-2 p-6">
-                <x-filament-tables::filters :form="$getFiltersForm()" />
-            </div>
+            <x-filament-tables::filters
+                :form="$getFiltersForm()"
+                class="p-4 sm:px-6"
+            />
         @endif
     </x-filament-tables::container>
 
