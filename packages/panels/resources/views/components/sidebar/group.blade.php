@@ -8,6 +8,7 @@
 
 <li
     x-data="{ label: @js($label) }"
+    data-group-label="{{ $label }}"
     @class([
         'fi-sidebar-group grid gap-y-1',
     ])
@@ -44,11 +45,11 @@
             @if ($collapsible)
                 <x-filament::icon-button
                     color="gray"
-                    icon="heroicon-m-chevron-down"
+                    icon="heroicon-m-chevron-up"
                     icon-alias="panels::sidebar.group.collapse-button"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
-                    x-bind:class="{ 'rotate-180': ! $store.sidebar.groupIsCollapsed(label) }"
-                    class="-my-2 -me-2"
+                    x-bind:class="{ 'rotate-180': $store.sidebar.groupIsCollapsed(label) }"
+                    class="fi-sidebar-group-collapse-button -my-2 -me-2"
                 />
             @endif
         </div>
@@ -62,9 +63,7 @@
             x-transition:enter-end="opacity-100"
         @endif
         x-collapse.duration.200ms
-        @class([
-            'grid gap-y-1',
-        ])
+        class="fi-sidebar-group-items grid gap-y-1"
     >
         @foreach ($items as $item)
             @if ($item->isVisible())

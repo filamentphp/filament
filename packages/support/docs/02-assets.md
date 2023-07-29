@@ -98,17 +98,15 @@ By default, all CSS files registered with the asset system are loaded in the `<h
 </div>
 ```
 
-To prevent the CSS file from being loaded automatically, you can wrap the `FilamentAsset::register()` call in a check to see if the assets are being requested by the console or not. If they are requested by the console, it is safe to assume that the user is currently publishing them, and not requesting them:
+To prevent the CSS file from being loaded automatically, you can use the `loadedOnRequest()` method:
 
 ```php
 use Filament\Support\Assets\Css;
 use Filament\Support\Facades\FilamentAsset;
 
-if (app()->runningInConsole()) {
-    FilamentAsset::register([
-        Css::make('custom-stylesheet', __DIR__ . '/../../resources/css/custom.css'),
-    ]);
-}
+FilamentAsset::register([
+    Css::make('custom-stylesheet', __DIR__ . '/../../resources/css/custom.css')->loadedOnRequest(),
+]);
 ```
 
 If your CSS file was [registered to a plugin](#registering-assets-for-a-plugin), you must pass that in as the second argument to the `FilamentAsset::getStyleHref()` method:
@@ -167,17 +165,15 @@ By default, all JavaScript files registered with the asset system are loaded at 
 </div>
 ```
 
-To prevent the JavaScript file from being loaded automatically, you can wrap the `FilamentAsset::register()` call in a check to see if the assets are being requested by the console or not. If they are requested by the console, it is safe to assume that the user is currently publishing them, and not requesting them:
+To prevent the JavaScript file from being loaded automatically, you can use the `loadedOnRequest()` method:
 
 ```php
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 
-if (app()->runningInConsole()) {
-    FilamentAsset::register([
-        Js::make('custom-script', __DIR__ . '/../../resources/js/custom.js'),
-    ]);
-}
+FilamentAsset::register([
+    Js::make('custom-script', __DIR__ . '/../../resources/js/custom.js')->loadedOnRequest(),
+]);
 ```
 
 If your JavaScript file was [registered to a plugin](#registering-assets-for-a-plugin), you must pass that in as the second argument to the `FilamentAsset::getScriptSrc()` method:
