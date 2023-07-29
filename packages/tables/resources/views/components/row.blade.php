@@ -18,6 +18,7 @@
         x-bind:class="{
             {{ $hasAlpineHiddenClasses ? "'hidden': {$alpineHidden}," : null }}
             {{ $hasAlpineSelectedClasses && (! $striped) ? "'{$stripedClasses}': {$alpineSelected}," : null }}
+            {{ $hasAlpineSelectedClasses ? "'[&>*:first-child]:before:absolute [&>*:first-child]:before:start-0 [&>*:first-child]:before:inset-y-0 [&>*:first-child]:before:w-0.5 [&>*:first-child]:before:bg-primary-600 [&>*:first-child]:dark:before:bg-primary-500': {$alpineSelected}," : null }}
         }"
     @endif
     {{
