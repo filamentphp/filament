@@ -57,15 +57,15 @@
                 @foreach ($getOptions() as $value => $label)
                     @if (is_array($label))
                         <optgroup label="{{ $value }}">
-                            @foreach ($label as $v => $l)
+                            @foreach ($label as $groupedValue => $groupedLabel)
                                 <option
-                                    @disabled($isOptionDisabled($v, $l))
-                                    value="{{ $v }}"
+                                    @disabled($isOptionDisabled($groupedValue, $groupedLabel))
+                                    value="{{ $groupedValue }}"
                                 >
                                     @if ($isHtmlAllowed)
-                                        {!! $l !!}
+                                        {!! $groupedLabel !!}
                                     @else
-                                        {{ $l }}
+                                        {{ $groupedLabel }}
                                     @endif
                                 </option>
                             @endforeach

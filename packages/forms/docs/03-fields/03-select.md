@@ -18,22 +18,6 @@ Select::make('status')
     ])
 ```
 
-You can optionally also add groups by adding an array instead of a label in the options:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('status')
-    ->options([
-        'In Process' => [
-            'draft' => 'Draft',
-            'reviewing' => 'Reviewing',
-        ],
-        'published' => 'Published',
-    ])
-```
-
-
 <AutoScreenshot name="forms/fields/select/simple" alt="Select" version="3.x" />
 
 ## Searching options
@@ -111,6 +95,29 @@ Select::make('technologies')
     ->getSearchResultsUsing(fn (string $search): array => Technology::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
     ->getOptionLabelsUsing(fn (array $values): array => Technology::whereIn('id', $values)->pluck('name', 'id')->toArray()),
 ```
+
+## Grouping options
+
+You can group options together under a label, to organize them better. To do this, you can pass an array of groups to `options()` or wherever you would normally pass an array of options. The keys of the array are used as group labels, and the values are arrays of options in that group:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->searchable()
+    ->options([
+        'In Process' => [
+            'draft' => 'Draft',
+            'reviewing' => 'Reviewing',
+        ],
+        'Reviewed' => [
+            'published' => 'Published',
+            'rejected' => 'Rejected',
+        ],
+    ])
+```
+
+<AutoScreenshot name="forms/fields/select/grouped" alt="Grouped select" version="3.x" />
 
 ## Integrating with an Eloquent relationship
 

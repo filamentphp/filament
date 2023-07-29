@@ -425,6 +425,20 @@ export default {
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
     },
+    'forms/fields/select/grouped': {
+        url: 'forms/fields',
+        selector: '#groupedSelect',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#groupedSelect .choices')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'forms/fields/select/create-option': {
         url: 'forms/fields',
         selector: '#createSelectOption',

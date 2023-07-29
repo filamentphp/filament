@@ -197,6 +197,26 @@ class FieldsDemo extends Component implements HasForms
                             ]),
                     ]),
                 Group::make()
+                    ->id('groupedSelect')
+                    ->extraAttributes([
+                        'class' => 'px-16 pt-16 pb-96 max-w-xl',
+                    ])
+                    ->schema([
+                        Select::make('groupedSelect')
+                            ->label('Status')
+                            ->searchable()
+                            ->options([
+                                'In Process' => [
+                                    'draft' => 'Draft',
+                                    'reviewing' => 'Reviewing',
+                                ],
+                                'Reviewed' => [
+                                    'published' => 'Published',
+                                    'rejected' => 'Rejected',
+                                ],
+                            ]),
+                    ]),
+                Group::make()
                     ->id('createSelectOption')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',

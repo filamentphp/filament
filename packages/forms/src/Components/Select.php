@@ -18,7 +18,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
@@ -119,11 +118,25 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         });
 
         $this->getOptionLabelUsing(static function (Select $component, $value): ?string {
-            if (array_key_exists($value, $options = $component->getOptions())) {
-                return $options[$value];
+            $options = $component->getOptions();
+
+            foreach ($options as $groupedOptions) {
+                if (! is_array($groupedOptions)) {
+                    continue;
+                }
+
+                if (! array_key_exists($value, $groupedOptions)) {
+                    continue;
+                }
+
+                return $groupedOptions[$value];
             }
 
-            return $value;
+            if (! array_key_exists($value, $options)) {
+                return $value;
+            }
+
+            return $options[$value];
         });
 
         $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
@@ -132,12 +145,20 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             $labels = [];
 
             foreach ($values as $value) {
-                foreach ($options as $group => $option) {
-                    if (is_array($option) && Arr::has($option, $value)) {
-                        Arr::set($labels, "$group.$value", $option[$value]);
-                        continue 2;
+                foreach ($options as $groupedOptions) {
+                    if (! is_array($groupedOptions)) {
+                        continue;
                     }
+
+                    if (! array_key_exists($value, $groupedOptions)) {
+                        continue;
+                    }
+
+                    $labels[$value] = $groupedOptions[$value];
+
+                    continue 2;
                 }
+
                 $labels[$value] = $options[$value] ?? $value;
             }
 
@@ -610,8 +631,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     }
 
     /**
-     * @param  array<string>  $options
-     * @return array<array{'label': string, 'value': string}>
+     * @param  array<string | array<string>>  $options
+     * @return array<array<string, mixed>>
      */
     protected function transformOptionsForJs(array $options): array
     {
