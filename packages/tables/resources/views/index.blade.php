@@ -289,7 +289,7 @@
                             x-show="! selectedRecords.length"
                             @class([
                                 'inline-flex',
-                                '-mx-2' => $reorderRecordsTriggerAction->isIconButton(),
+                                '-me-1 -ms-2' => $reorderRecordsTriggerAction->isIconButton(),
                             ])
                         >
                             {{ $reorderRecordsTriggerAction }}
@@ -522,11 +522,16 @@
                                     >
                                         <x-filament-tables::summary.row
                                             :columns="$columns"
-                                            :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                            extra-heading-column
+                                            :heading="
+                                                __('filament-tables::table.summary.subheadings.group', [
+                                                    'group' => $previousRecordGroupTitle,
+                                                    'label' => $pluralModelLabel,
+                                                ])
+                                            "
+                                            :placeholder-columns="false"
                                             :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                             :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                            extra-heading-column
-                                            :placeholder-columns="false"
                                         />
                                     </x-filament-tables::table>
                                 @endif
