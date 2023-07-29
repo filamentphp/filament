@@ -53,6 +53,7 @@
         @class([
             'list-inside list-disc' => $isBulleted(),
             'flex flex-wrap items-center gap-1' => $isBadge,
+            'whitespace-normal' => $canWrap,
         ])
     >
         @foreach ($arrayState as $state)
