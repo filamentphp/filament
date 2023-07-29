@@ -27,7 +27,11 @@ return [
     ],
 
     'notifications' => [
-        'created' => 'تمت الإضافة',
+
+        'created' => [
+            'title' => 'تمت الإضافة',
+        ],
+
     ],
 
 ];

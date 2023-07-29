@@ -43,9 +43,18 @@ return [
 
     ],
 
-    'notifications' => [
+    'messages' => [
+
         'failed' => 'Onjuiste inloggegevens.',
-        'throttled' => 'Te veel inlogpogingen. Probeer opnieuw over :seconds seconden.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Te veel inlogpogingen. Probeer opnieuw over :seconds seconden.',
+        ],
+
     ],
 
 ];

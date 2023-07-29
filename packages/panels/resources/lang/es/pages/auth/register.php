@@ -42,7 +42,11 @@ return [
     ],
 
     'notifications' => [
-        'throttled' => 'Demasiados intentos de registro. Por favor, inténtelo de nuevo en :seconds segundos.',
+
+        'throttled' => [
+            'title' => 'Demasiados intentos de registro. Por favor, inténtelo de nuevo en :seconds segundos.',
+        ],
+
     ],
 
 ];

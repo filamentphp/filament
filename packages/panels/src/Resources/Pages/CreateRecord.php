@@ -149,7 +149,7 @@ class CreateRecord extends Page
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return $this->getCreatedNotificationMessage() ?? __('filament-panels::resources/pages/create-record.messages.created');
+        return $this->getCreatedNotificationMessage() ?? __('filament-panels::resources/pages/create-record.notifications.created.title');
     }
 
     /**

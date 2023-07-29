@@ -24,7 +24,7 @@ class ForceDeleteAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::force-delete.single.modal.actions.delete.label'));
 
-        $this->successNotificationTitle(__('filament-actions::force-delete.single.messages.deleted'));
+        $this->successNotificationTitle(__('filament-actions::force-delete.single.notifications.deleted.title'));
 
         $this->color('danger');
 

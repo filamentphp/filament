@@ -32,7 +32,11 @@ return [
     ],
 
     'notifications' => [
-        'throttled' => 'Muitas tentativas de redefinição. Por favor tente novamente em :seconds segundos.',
+
+        'throttled' => [
+            'title' => 'Muitas tentativas de redefinição. Por favor tente novamente em :seconds segundos.',
+        ],
+
     ],
 
 ];

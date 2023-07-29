@@ -45,7 +45,11 @@ return [
     ],
 
     'notifications' => [
-        'throttled' => 'Muitas tentativas de cadastro. Por favor tente novamente em :seconds segundos.',
+
+        'throttled' => [
+            'title' => 'Muitas tentativas de cadastro. Por favor tente novamente em :seconds segundos.',
+        ],
+
     ],
 
 ];

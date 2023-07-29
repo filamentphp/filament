@@ -23,7 +23,11 @@ return [
     ],
 
     'notifications' => [
-        'saved' => 'सेव हो गया',
+
+        'saved' => [
+            'title' => 'सेव हो गया',
+        ],
+
     ],
 
 ];

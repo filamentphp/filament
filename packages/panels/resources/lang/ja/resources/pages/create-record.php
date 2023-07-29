@@ -27,7 +27,11 @@ return [
     ],
 
     'notifications' => [
-        'created' => '作成しました',
+
+        'created' => [
+            'title' => '作成しました',
+        ],
+
     ],
 
 ];

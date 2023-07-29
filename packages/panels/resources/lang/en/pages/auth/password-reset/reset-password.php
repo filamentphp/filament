@@ -32,7 +32,11 @@ return [
     ],
 
     'notifications' => [
-        'throttled' => 'Too many reset attempts. Please try again in :seconds seconds.',
+
+        'throttled' => [
+            'title' => 'Too many reset attempts. Please try again in :seconds seconds.',
+        ],
+
     ],
 
 ];

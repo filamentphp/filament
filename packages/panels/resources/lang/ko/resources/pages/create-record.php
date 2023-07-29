@@ -27,7 +27,11 @@ return [
     ],
 
     'notifications' => [
-        'created' => '생성 완료',
+
+        'created' => [
+            'title' => '생성 완료',
+        ],
+
     ],
 
 ];

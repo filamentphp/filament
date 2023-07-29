@@ -24,7 +24,7 @@ class RestoreAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::restore.single.modal.actions.restore.label'));
 
-        $this->successNotificationTitle(__('filament-actions::restore.single.messages.restored'));
+        $this->successNotificationTitle(__('filament-actions::restore.single.notifications.restored.title'));
 
         $this->color('gray');
 

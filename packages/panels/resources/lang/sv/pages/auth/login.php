@@ -30,9 +30,18 @@ return [
 
     ],
 
-    'notifications' => [
+    'messages' => [
+
         'failed' => 'Inloggningen matchar inte våra uppgifter.',
-        'throttled' => 'För många inloggningsförsök. Vänligen försök igen om :seconds sekunder.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'För många inloggningsförsök. Vänligen försök igen om :seconds sekunder.',
+        ],
+
     ],
 
 ];

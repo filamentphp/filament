@@ -31,7 +31,11 @@ return [
     ],
 
     'notifications' => [
-        'saved' => '保存しました',
+
+        'saved' => [
+            'title' => '保存しました',
+        ],
+
     ],
 
 ];

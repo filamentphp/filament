@@ -31,7 +31,11 @@ return [
     ],
 
     'notifications' => [
-        'saved' => 'Сохранено',
+
+        'saved' => [
+            'title' => 'Сохранено',
+        ],
+
     ],
 
 ];

@@ -30,9 +30,18 @@ return [
 
     ],
 
-    'notifications' => [
+    'messages' => [
+
         'failed' => 'Šie akreditācijas dati neatbilst mūsu ierakstiem.',
-        'throttled' => 'Pārāk daudz pieteikšanās mēģinājumu. Lūdzu, mēģiniet vēlreiz pēc :seconds sekundēm.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Pārāk daudz pieteikšanās mēģinājumu. Lūdzu, mēģiniet vēlreiz pēc :seconds sekundēm.',
+        ],
+
     ],
 
 ];

@@ -23,7 +23,11 @@ return [
     ],
 
     'notifications' => [
-        'saved' => 'Guardado!',
+
+        'saved' => [
+            'title' => 'Guardado!',
+        ],
+
     ],
 
 ];

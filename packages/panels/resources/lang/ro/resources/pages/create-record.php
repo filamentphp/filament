@@ -27,7 +27,11 @@ return [
     ],
 
     'notifications' => [
-        'created' => 'Creat cu succes',
+
+        'created' => [
+            'title' => 'Creat cu succes',
+        ],
+
     ],
 
 ];

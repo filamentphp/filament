@@ -23,7 +23,11 @@ return [
     ],
 
     'notifications' => [
-        'saved' => '已保存',
+
+        'saved' => [
+            'title' => '已保存',
+        ],
+
     ],
 
 ];

@@ -30,9 +30,18 @@ return [
 
     ],
 
-    'notifications' => [
+    'messages' => [
+
         'failed' => '登录凭证与记录不符。',
-        'throttled' => '尝试登录次数过多，请在 :seconds 秒后重试。',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => '尝试登录次数过多，请在 :seconds 秒后重试。',
+        ],
+
     ],
 
 ];

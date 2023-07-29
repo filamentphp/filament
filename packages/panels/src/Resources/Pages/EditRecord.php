@@ -172,7 +172,7 @@ class EditRecord extends Page
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return $this->getSavedNotificationMessage() ?? __('filament-panels::resources/pages/edit-record.messages.saved');
+        return $this->getSavedNotificationMessage() ?? __('filament-panels::resources/pages/edit-record.notifications.saved.title');
     }
 
     /**

@@ -27,7 +27,11 @@ return [
     ],
 
     'notifications' => [
-        'created' => 'তৈরি হয়েছে',
+
+        'created' => [
+            'title' => 'তৈরি হয়েছে',
+        ],
+
     ],
 
 ];

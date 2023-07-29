@@ -30,9 +30,18 @@ return [
 
     ],
 
-    'notifications' => [
+    'messages' => [
+
         'failed' => 'Hati hizi hazilingani na rekodi zetu.',
-        'throttled' => 'Majaribio mengi sana ya kuingia. Tafadhali jaribu tena ndani ya sekunde :seconds.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Majaribio mengi sana ya kuingia. Tafadhali jaribu tena ndani ya sekunde :seconds.',
+        ],
+
     ],
 
 ];

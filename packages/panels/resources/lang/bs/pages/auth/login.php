@@ -30,9 +30,18 @@ return [
 
     ],
 
-    'notifications' => [
+    'messages' => [
+
         'failed' => 'Vaša kombinacija se ne poklapa sa našom evidencijom.',
-        'throttled' => 'Previše pokušaja prijave. Pokušajte ponovo za :seconds sekundi.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Previše pokušaja prijave. Pokušajte ponovo za :seconds sekundi.',
+        ],
+
     ],
 
 ];

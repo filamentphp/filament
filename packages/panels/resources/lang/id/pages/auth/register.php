@@ -45,7 +45,11 @@ return [
     ],
 
     'notifications' => [
-        'throttled' => 'Terlalu banyak permintaan. Silakan coba lagi dalam :seconds detik.',
+
+        'throttled' => [
+            'title' => 'Terlalu banyak permintaan. Silakan coba lagi dalam :seconds detik.',
+        ],
+
     ],
 
 ];

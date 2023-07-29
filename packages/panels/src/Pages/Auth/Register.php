@@ -56,7 +56,7 @@ class Register extends SimplePage
             $this->rateLimit(2);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
-                ->title(__('filament-panels::pages/auth/register.messages.throttled', [
+                ->title(__('filament-panels::pages/auth/register.notifications.throttled.title', [
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]))

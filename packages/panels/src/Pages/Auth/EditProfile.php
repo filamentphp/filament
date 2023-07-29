@@ -173,7 +173,7 @@ class EditProfile extends SimplePage
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return __('filament-panels::pages/auth/edit-profile.messages.saved');
+        return __('filament-panels::pages/auth/edit-profile.notifications.saved.title');
     }
 
     protected function getRedirectUrl(): ?string

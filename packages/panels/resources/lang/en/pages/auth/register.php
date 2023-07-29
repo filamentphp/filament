@@ -45,7 +45,11 @@ return [
     ],
 
     'notifications' => [
-        'throttled' => 'Too many registration attempts. Please try again in :seconds seconds.',
+
+        'throttled' => [
+            'title' => 'Too many registration attempts. Please try again in :seconds seconds.',
+        ],
+
     ],
 
 ];

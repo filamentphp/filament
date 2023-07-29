@@ -27,7 +27,11 @@ return [
     ],
 
     'notifications' => [
-        'created' => 'Imeundwa',
+
+        'created' => [
+            'title' => 'Imeundwa',
+        ],
+
     ],
 
 ];

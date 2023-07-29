@@ -27,7 +27,11 @@ return [
     ],
 
     'notifications' => [
-        'created' => 'Создано',
+
+        'created' => [
+            'title' => 'Создано',
+        ],
+
     ],
 
 ];

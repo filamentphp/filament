@@ -32,7 +32,11 @@ return [
     ],
 
     'notifications' => [
-        'throttled' => 'Demasiados intentos de restablecimiento. Por favor, inténtelo de nuevo en :seconds segundos.',
+
+        'throttled' => [
+            'title' => 'Demasiados intentos de restablecimiento. Por favor, inténtelo de nuevo en :seconds segundos.',
+        ],
+
     ],
 
 ];

@@ -27,7 +27,11 @@ return [
     ],
 
     'notifications' => [
-        'created' => 'دروستکرا',
+
+        'created' => [
+            'title' => 'دروستکرا',
+        ],
+
     ],
 
 ];

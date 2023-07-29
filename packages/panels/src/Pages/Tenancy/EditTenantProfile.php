@@ -158,7 +158,7 @@ abstract class EditTenantProfile extends Page
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return __('filament-panels::pages/tenancy/edit-tenant-profile.messages.saved');
+        return __('filament-panels::pages/tenancy/edit-tenant-profile.notifications.saved.title');
     }
 
     protected function getRedirectUrl(): ?string

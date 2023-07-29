@@ -30,9 +30,18 @@ return [
 
     ],
 
-    'notifications' => [
+    'messages' => [
+
         'failed' => 'Den adgangskode, du har indtastet, er forkert.',
-        'throttled' => 'For mange loginforsøg. Prøv venligst igen om :seconds sekunder.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'For mange loginforsøg. Prøv venligst igen om :seconds sekunder.',
+        ],
+
     ],
 
 ];

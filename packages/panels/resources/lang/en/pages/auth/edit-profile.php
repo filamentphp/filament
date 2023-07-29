@@ -33,7 +33,11 @@ return [
     ],
 
     'notifications' => [
-        'saved' => 'Saved',
+
+        'saved' => [
+            'title' => 'Saved',
+        ],
+
     ],
 
     'actions' => [
