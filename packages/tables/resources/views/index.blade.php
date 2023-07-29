@@ -64,6 +64,7 @@
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $hasColumnToggleDropdown = $hasToggleableColumns();
+    $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
@@ -227,12 +228,11 @@
     }"
     class="fi-ta"
 >
-    {{-- TODO: review from here --}}
     <x-filament-tables::container>
         <div
-            class="fi-ta-header-ctn"
-            x-show="hasHeader = @js($renderHeader = ($header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $hasColumnToggleDropdown)) || (selectedRecords.length && @js(count($bulkActions)))"
-            @if (! $renderHeader) x-cloak @endif
+            @if (! $hasHeader) x-cloak @endif
+            x-show="hasHeader = @js($hasHeader) || (selectedRecords.length && @js(count($bulkActions)))"
+            class="fi-ta-header-ctn divide-y divide-gray-200 dark:divide-white/10"
         >
             @if ($header)
                 {{ $header }}
@@ -247,27 +247,44 @@
 
             @if ($hasFiltersAboveContent)
                 <div
-                    class="px-2"
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
+                    @class([
+                        'grid px-4 sm:px-6',
+                        'py-2.5 sm:py-4' => ! $hasFiltersAboveContentCollapsible,
+                        'gap-y-3 py-2.5 sm:gap-y-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
+                    ])
                 >
-                    <div class="py-2">
-                        @if ($hasFiltersAboveContentCollapsible)
-                            <div
-                                x-on:click="areFiltersOpen = ! areFiltersOpen"
-                                class="flex w-full justify-end"
-                            >
-                                {{ $getFiltersTriggerAction()->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
-                            </div>
-                        @endif
+                    @if ($hasFiltersAboveContentCollapsible)
+                        <div class="flex w-full justify-end">
+                            @php
+                                $filtersTriggerAction = $getFiltersTriggerAction();
+                            @endphp
 
-                        <div class="p-4" x-show="areFiltersOpen">
-                            <x-filament-tables::filters
-                                :form="$getFiltersForm()"
-                            />
+                            <span
+                                x-on:click="areFiltersOpen = ! areFiltersOpen"
+                                @class([
+                                    '-mx-2' => $filtersTriggerAction->isIconButton(),
+                                ])
+                            >
+                                {{ $filtersTriggerAction->badge(count(\Illuminate\Support\Arr::flatten($filterIndicators))) }}
+                            </span>
                         </div>
+                    @endif
+
+                    <div
+                        x-show="areFiltersOpen"
+                        @class([
+                            'py-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
+                        ])
+                    >
+                        <x-filament-tables::filters
+                            :form="$getFiltersForm()"
+                        />
                     </div>
                 </div>
             @endif
+
+            {{-- TODO: review from here --}}
 
             <div
                 x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)) || (selectedRecords.length && @js(count($bulkActions)))"
@@ -361,7 +378,7 @@
             @class([
                 'fi-ta-content overflow-x-auto',
                 'overflow-x-auto' => $content || $hasColumnsLayout,
-                'rounded-t-xl' => ! $renderHeader,
+                'rounded-t-xl' => ! $hasHeader,
             ])
             x-bind:class="{ 'rounded-t-xl': ! hasHeader }"
         >
