@@ -12,7 +12,7 @@
     $items = \Illuminate\Support\Arr::except($items, ['account', 'logout', 'profile']);
 @endphp
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.start') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.before') }}
 
 <x-filament::dropdown placement="bottom-end" class="fi-user-menu">
     <x-slot name="trigger">
@@ -81,4 +81,4 @@
     </x-filament::dropdown.list>
 </x-filament::dropdown>
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.end') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.after') }}
