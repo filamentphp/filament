@@ -7,6 +7,7 @@ use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasIconColor;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Str;
 
@@ -19,6 +20,7 @@ class Section extends Component
     use HasExtraAlpineAttributes;
     use HasHeading;
     use HasIcon;
+    use HasIconColor;
 
     /**
      * @var view-string
