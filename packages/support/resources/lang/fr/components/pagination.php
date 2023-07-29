@@ -15,6 +15,7 @@ return [
             'options' => [
                 'all' => 'Tous',
             ],
+
         ],
 
     ],

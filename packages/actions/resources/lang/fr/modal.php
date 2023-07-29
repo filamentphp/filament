@@ -2,7 +2,7 @@
 
 return [
 
-    'confirmation' => 'Êtes-vous sûr de vouloir faire cela ?',
+    'confirmation' => 'Êtes-vous sûr de vouloir faire cela ?',
 
     'actions' => [
 
