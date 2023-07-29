@@ -802,14 +802,6 @@
                             @endif
                         @endif
 
-                        @if ($isGroupsOnly)
-                            <th
-                                class="fi-ta-header-cell whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-950 dark:text-white"
-                            >
-                                {{ $group->getLabel() }}
-                            </th>
-                        @endif
-
                         {{-- TODO: review end --}}
 
                         @foreach ($columns as $column)
