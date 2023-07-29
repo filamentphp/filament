@@ -59,16 +59,19 @@
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
     $filtersLayout = $getFiltersLayout();
+    $filtersTriggerAction = $getFiltersTriggerAction();
     $hasFiltersDropdown = $hasFilters && ($filtersLayout === FiltersLayout::Dropdown);
     $hasFiltersAboveContent = $hasFilters && in_array($filtersLayout, [FiltersLayout::AboveContent, FiltersLayout::AboveContentCollapsible]);
     $hasFiltersAboveContentCollapsible = $hasFilters && ($filtersLayout === FiltersLayout::AboveContentCollapsible);
     $hasFiltersBelowContent = $hasFilters && ($filtersLayout === FiltersLayout::BelowContent);
     $hasColumnToggleDropdown = $hasToggleableColumns();
     $hasHeader = $header || $heading || $description || ($headerActions && (! $isReordering)) || $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFilters || $hasColumnToggleDropdown;
+    $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
     $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
+    $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
 
     if (count($actions) && (! $isReordering)) {
         $columnsCount++;
@@ -250,16 +253,12 @@
                     x-data="{ areFiltersOpen: @js(! $hasFiltersAboveContentCollapsible) }"
                     @class([
                         'grid px-4 sm:px-6',
-                        'py-2.5 sm:py-4' => ! $hasFiltersAboveContentCollapsible,
+                        'py-3 sm:py-4' => ! $hasFiltersAboveContentCollapsible,
                         'gap-y-3 py-2.5 sm:gap-y-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
                     ])
                 >
                     @if ($hasFiltersAboveContentCollapsible)
                         <div class="flex w-full justify-end">
-                            @php
-                                $filtersTriggerAction = $getFiltersTriggerAction();
-                            @endphp
-
                             <span
                                 x-on:click="areFiltersOpen = ! areFiltersOpen"
                                 @class([
@@ -284,19 +283,24 @@
                 </div>
             @endif
 
-            {{-- TODO: review from here --}}
-
             <div
-                x-show="@js($shouldRenderHeaderDiv = ($isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)) || (selectedRecords.length && @js(count($bulkActions)))"
-                @if (! $shouldRenderHeaderDiv) x-cloak @endif
-                class="fi-ta-header-toolbar flex h-14 items-center justify-between px-3 py-2"
-                x-bind:class="{
-                    'gap-3': @js($isReorderable) || @js(count($groups)) || (selectedRecords.length && @js(count($bulkActions))),
-                }"
+                @if (! $hasHeaderToolbar) x-cloak @endif
+                x-show="@js($hasHeaderToolbar) || (selectedRecords.length && @js(count($bulkActions)))"
+                class="fi-ta-header-toolbar flex items-center justify-between px-4 py-3 sm:px-6 gap-3"
             >
-                <div class="flex shrink-0 items-center gap-x-1 sm:gap-x-3">
+                <div class="flex shrink-0 items-center gap-x-3">
                     @if ($isReorderable)
-                        {{ $getReorderRecordsTriggerAction($isReordering) }}
+                        @php
+                            $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering)
+                        @endphp
+
+                        <span
+                            @class([
+                                '-mx-2' => $reorderRecordsTriggerAction->isIconButton(),
+                            ])
+                        >
+                            {{ $reorderRecordsTriggerAction }}
+                        </span>
                     @endif
 
                     @if (count($groups))
@@ -310,52 +314,50 @@
                     @if ((! $isReordering) && count($bulkActions))
                         <x-filament-tables::actions
                             :actions="$bulkActions"
-                            x-show="selectedRecords.length"
                             x-cloak="x-cloak"
+                            x-show="selectedRecords.length"
                         />
                     @endif
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)
                     <div
-                        class="flex flex-1 items-center justify-end gap-3 md:max-w-md"
+                        @class([
+                            'ms-auto flex items-center',
+                            'gap-x-3' => ! ($filtersTriggerAction->isIconButton() && $toggleColumnsTriggerAction->isIconButton()),
+                            'gap-x-4' => $filtersTriggerAction->isIconButton() && $toggleColumnsTriggerAction->isIconButton(),
+                        ])
                     >
                         @if ($isGlobalSearchVisible)
-                            <div
-                                class="fi-ta-search-field-ctn flex flex-1 items-center justify-end"
-                            >
-                                <x-filament-tables::search-field />
-                            </div>
+                            <x-filament-tables::search-field />
                         @endif
 
                         @if ($hasFiltersDropdown || $hasColumnToggleDropdown)
-                            <div class="flex items-center gap-x-1">
-                                @if ($hasFiltersDropdown)
-                                    <x-filament-tables::filters.dropdown
-                                        :form="$getFiltersForm()"
-                                        :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
-                                        :max-height="$getFiltersFormMaxHeight()"
-                                        :trigger-action="$getFiltersTriggerAction()"
-                                        :width="$getFiltersFormWidth()"
-                                        class="shrink-0"
-                                    />
-                                @endif
+                            @if ($hasFiltersDropdown)
+                                <x-filament-tables::filters.dropdown
+                                    :form="$getFiltersForm()"
+                                    :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                    :max-height="$getFiltersFormMaxHeight()"
+                                    :trigger-action="$filtersTriggerAction"
+                                    :width="$getFiltersFormWidth()"
+                                />
+                            @endif
 
-                                @if ($hasColumnToggleDropdown)
-                                    <x-filament-tables::column-toggle.dropdown
-                                        :form="$getColumnToggleForm()"
-                                        :max-height="$getColumnToggleFormMaxHeight()"
-                                        :trigger-action="$getToggleColumnsTriggerAction()"
-                                        :width="$getColumnToggleFormWidth()"
-                                        class="shrink-0"
-                                    />
-                                @endif
-                            </div>
+                            @if ($hasColumnToggleDropdown)
+                                <x-filament-tables::column-toggle.dropdown
+                                    :form="$getColumnToggleForm()"
+                                    :max-height="$getColumnToggleFormMaxHeight()"
+                                    :trigger-action="$toggleColumnsTriggerAction"
+                                    :width="$getColumnToggleFormWidth()"
+                                />
+                            @endif
                         @endif
                     </div>
                 @endif
             </div>
         </div>
+
+        {{-- TODO: review from here --}}
 
         @if ($isReordering)
             <x-filament-tables::reorder.indicator :colspan="$columnsCount" />
