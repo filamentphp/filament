@@ -343,16 +343,16 @@ This assumes that you have created a view at `resources/views/filament/resources
 Here's a very simple example of what that view might contain:
 
 ```blade
-<x-filament::page>
-    <x-filament::form wire:submit="create">
+<x-filament-panels::page>
+    <x-filament-panels::form wire:submit="create">
         {{ $this->form }}
 
-        <x-filament::form.actions
+        <x-filament-panels::form.actions
             :actions="$this->getCachedFormActions()"
             :full-width="$this->hasFullWidthFormActions()"
         />
-    </x-filament::form>
-</x-filament::page>
+    </x-filament-panels::form>
+</x-filament-panels::page>
 ```
 
 To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/create-record.blade.php` file in your project.

@@ -44,7 +44,7 @@
             type="button"
             class="group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
         >
-            <x-filament::avatar.tenant :tenant="$currentTenant" />
+            <x-filament-panels::avatar.tenant :tenant="$currentTenant" />
 
             <span
                 @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -92,7 +92,7 @@
                     :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
                     tag="a"
                 >
-                    {{ $billingItem?->getLabel() ?? __('filament::layout.actions.billing.label') }}
+                    {{ $billingItem?->getLabel() ?? __('filament-panels::layout.actions.billing.label') }}
                 </x-filament::dropdown.list.item>
             @endif
         </x-filament::dropdown.list>

@@ -17,13 +17,13 @@ class Dashboard extends Page
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::pages.dashboard';
+    protected static string $view = 'filament-panels::pages.dashboard';
 
     public static function getNavigationLabel(): string
     {
         return static::$navigationLabel ??
             static::$title ??
-            __('filament::pages/dashboard.title');
+            __('filament-panels::pages/dashboard.title');
     }
 
     public static function getNavigationIcon(): ?string
@@ -66,6 +66,6 @@ class Dashboard extends Page
 
     public function getTitle(): string | Htmlable
     {
-        return static::$title ?? __('filament::pages/dashboard.title');
+        return static::$title ?? __('filament-panels::pages/dashboard.title');
     }
 }

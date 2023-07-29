@@ -12,6 +12,9 @@ Filament has a few requirements to run:
 - Laravel v9.0+
 - Livewire v3.0+
 
+> **Livewire v3 is still in beta**
+> While they will attempt to keep breaking changes to a minimum, they could still happen. Filament v3 is also not stable because of that. Therefore, we recommend testing your application thoroughly before using Filament v3 in production.
+
 First, require the actions package using Composer:
 
 ```bash

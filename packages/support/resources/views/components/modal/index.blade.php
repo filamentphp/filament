@@ -174,7 +174,7 @@
                                     icon="heroicon-o-x-mark"
                                     icon-alias="modal.close-button"
                                     icon-size="lg"
-                                    :label="__('filament-support::components/modal.actions.close.label')"
+                                    :label="__('filament::components/modal.actions.close.label')"
                                     tabindex="-1"
                                     :x-on:click="filled($id) ? '$dispatch(' . \Illuminate\Support\Js::from($closeEventName) . ', { id: ' . \Illuminate\Support\Js::from($id) . ' })' : 'close()'"
                                     class="fi-modal-close-btn -m-1.5"

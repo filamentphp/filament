@@ -11,7 +11,7 @@
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
-            <x-filament::header
+            <x-filament-panels::header
                 :actions="$this->getCachedHeaderActions()"
                 :breadcrumbs="filament()->hasBreadcrumbs() ? $this->getBreadcrumbs() : []"
                 :heading="$heading"

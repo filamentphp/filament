@@ -9,6 +9,11 @@ title: Upgrading from v2.x
 - Laravel v9.0+
 - Livewire v3.0+
 
+Please upgrade Filament before upgrading to Livewire v3. Instructions on how to upgrade Livewire can be found [here](https://livewire.laravel.com/docs/upgrading).
+
+> **Livewire v3 is still in beta**
+> While they will attempt to keep breaking changes to a minimum, they could still happen. Filament v3 is also not stable because of that. Therefore, we recommend testing your application thoroughly before using Filament v3 in production.
+
 ## Upgrading automatically
 
 The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament, and make changes to your code which handle most breaking changes.
@@ -168,7 +173,7 @@ A side effect of this change is that all custom icons that you use must now be [
 
 #### Logo customization
 
-In v2, you can customize the logo of the admin panel using a `brand.blade.php` file. In v3, this has been renamed to `logo.blade.php`.
+In v2, you can customize the logo of the admin panel using a `/resources/views/vendor/filament/components/brand.blade.php` file. In v3, this has been moved to `/resources/views/vendor/filament-panels/components/logo.blade.php`.
 
 #### Plugins
 
@@ -187,3 +192,12 @@ When using simple resources, remove the `CanCreateRecords`, `CanDeleteRecords`, 
 We also deprecated type-specific relation manager classes. Any classes extending `BelongsToManyRelationManager`, `HasManyRelationManager`, `HasManyThroughRelationManager`, `MorphManyRelationManager`, or `MorphToManyRelationManager` should now extend `\Filament\Resources\RelationManagers\RelationManager`. You can also remove the `CanAssociateRecords`, `CanAttachRecords`, `CanCreateRecords`, `CanDeleteRecords`, `CanDetachRecords`, `CanDisassociateRecords`, `CanEditRecords`, and `CanViewRecords` traits from relation managers.
 
 To learn more about v2.13 changes, read our [blog post](https://filamentphp.com/blog/v2130-admin-resources).
+
+#### Blade components
+
+Some Blade components have been moved to different namespaces:
+
+- `<x-filament::page>` is now `<x-filament-panels::page>`
+- `<x-filament::widget>` is now `<x-filament-widgets::widget>`
+
+However, aliases have been set up so that you don't need to change your code.

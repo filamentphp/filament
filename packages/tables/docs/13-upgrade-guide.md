@@ -9,6 +9,11 @@ title: Upgrading from v2.x
 - Laravel v9.0+
 - Livewire v3.0+
 
+Please upgrade Filament before upgrading to Livewire v3. Instructions on how to upgrade Livewire can be found [here](https://livewire.laravel.com/docs/upgrading).
+
+> **Livewire v3 is still in beta**
+> While they will attempt to keep breaking changes to a minimum, they could still happen. Filament v3 is also not stable because of that. Therefore, we recommend testing your application thoroughly before using Filament v3 in production.
+
 ## Upgrading automatically
 
 The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament, and make changes to your code which handle most breaking changes.

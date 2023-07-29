@@ -26,7 +26,7 @@ abstract class RegisterTenant extends SimplePage
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::pages.tenancy.register-tenant';
+    protected static string $view = 'filament-panels::pages.tenancy.register-tenant';
 
     /**
      * @var array<string, mixed> | null

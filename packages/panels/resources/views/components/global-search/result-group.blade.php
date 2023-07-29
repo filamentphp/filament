@@ -18,7 +18,7 @@
 
     <ul class="divide-y divide-gray-200 dark:divide-white/10">
         @foreach ($results as $result)
-            <x-filament::global-search.result
+            <x-filament-panels::global-search.result
                 :actions="$result->actions"
                 :details="$result->details"
                 :title="$result->title"

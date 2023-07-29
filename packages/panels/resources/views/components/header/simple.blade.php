@@ -7,7 +7,7 @@
 <header class="fi-simple-header">
     @if ($logo)
         <div class="mb-4 flex justify-center">
-            <x-filament::logo />
+            <x-filament-panels::logo />
         </div>
     @endif
 

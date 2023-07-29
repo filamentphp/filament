@@ -110,9 +110,9 @@ This assumes that you have created a view at `resources/views/filament/resources
 Here's a very simple example of what that view might contain:
 
 ```blade
-<x-filament::page>
+<x-filament-panels::page>
     {{ $this->table }}
-</x-filament::page>
+</x-filament-panels::page>
 ```
 
 To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/list-records.blade.php` file in your project.

@@ -41,9 +41,11 @@ export default function chart({ cachedData, options, type }) {
                 this.$refs.backgroundColorElement,
             ).color
 
-            Chart.defaults.borderColor = getComputedStyle(
+            const borderColor = getComputedStyle(
                 this.$refs.borderColorElement,
             ).color
+
+            Chart.defaults.borderColor = borderColor
 
             Chart.defaults.color = getComputedStyle(
                 this.$refs.textColorElement,
@@ -60,6 +62,7 @@ export default function chart({ cachedData, options, type }) {
 
             options ??= {}
             options.borderWidth ??= 2
+            options.pointBackgroundColor ??= borderColor
             options.pointHitRadius ??= 4
             options.pointRadius ??= 2
             options.scales ??= {}

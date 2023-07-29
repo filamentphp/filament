@@ -29,7 +29,7 @@ abstract class EditTenantProfile extends Page
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::pages.tenancy.edit-tenant-profile';
+    protected static string $view = 'filament-panels::pages.tenancy.edit-tenant-profile';
 
     /**
      * @var array<string, mixed> | null
@@ -158,7 +158,7 @@ abstract class EditTenantProfile extends Page
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return __('filament::pages/tenancy/edit-tenant-profile.messages.saved');
+        return __('filament-panels::pages/tenancy/edit-tenant-profile.messages.saved');
     }
 
     protected function getRedirectUrl(): ?string
@@ -194,7 +194,7 @@ abstract class EditTenantProfile extends Page
     protected function getSaveFormAction(): Action
     {
         return Action::make('save')
-            ->label(__('filament::pages/tenancy/edit-tenant-profile.form.actions.save.label'))
+            ->label(__('filament-panels::pages/tenancy/edit-tenant-profile.form.actions.save.label'))
             ->submit('save')
             ->keyBindings(['mod+s']);
     }

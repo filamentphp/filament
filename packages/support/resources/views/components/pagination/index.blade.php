@@ -4,12 +4,12 @@
 ])
 
 @php
-    $isRtl = __('filament::layout.direction') === 'rtl';
+    $isRtl = __('filament-panels::layout.direction') === 'rtl';
     $isSimple = ! $paginator instanceof \Illuminate\Pagination\LengthAwarePaginator;
 @endphp
 
 <nav
-    aria-label="{{ __('filament-support::components/pagination.label') }}"
+    aria-label="{{ __('filament::components/pagination.label') }}"
     role="navigation"
     {{ $attributes->class(['fi-pagination grid grid-cols-3 items-center']) }}
 >
@@ -24,7 +24,7 @@
             ])
             :wire:key="$this->getId() . '.pagination.previous'"
         >
-            {{ __('filament-support::components/pagination.actions.previous.label') }}
+            {{ __('filament::components/pagination.actions.previous.label') }}
         </x-filament::button>
     @endif
 
@@ -34,7 +34,7 @@
         >
             {{
                 trans_choice(
-                    'filament-support::components/pagination.overview',
+                    'filament::components/pagination.overview',
                     $paginator->total(),
                     [
                         'first' => \Filament\Support\format_number($paginator->firstItem() ?? 0),
@@ -55,27 +55,27 @@
                     >
                         @foreach ($pageOptions as $option)
                             <option value="{{ $option }}">
-                                {{ $option === 'all' ? __('filament-support::components/pagination.fields.records_per_page.options.all') : $option }}
+                                {{ $option === 'all' ? __('filament::components/pagination.fields.records_per_page.options.all') : $option }}
                             </option>
                         @endforeach
                     </x-filament::input.select>
                 </x-filament-forms::affixes>
 
                 <span class="sr-only">
-                    __('filament-support::components/pagination.fields.records_per_page.label')
+                    __('filament::components/pagination.fields.records_per_page.label')
                 </span>
             </label>
 
             <label class="hidden sm:inline">
                 <x-filament-forms::affixes
-                    :prefix="__('filament-support::components/pagination.fields.records_per_page.label')"
+                    :prefix="__('filament::components/pagination.fields.records_per_page.label')"
                 >
                     <x-filament::input.select
                         wire:model.live="tableRecordsPerPage"
                     >
                         @foreach ($pageOptions as $option)
                             <option value="{{ $option }}">
-                                {{ $option === 'all' ? __('filament-support::components/pagination.fields.records_per_page.options.all') : $option }}
+                                {{ $option === 'all' ? __('filament::components/pagination.fields.records_per_page.options.all') : $option }}
                             </option>
                         @endforeach
                     </x-filament::input.select>
@@ -95,7 +95,7 @@
                 'inline-grid md:hidden' => ! $isSimple,
             ])
         >
-            {{ __('filament-support::components/pagination.actions.next.label') }}
+            {{ __('filament::components/pagination.actions.next.label') }}
         </x-filament::button>
     @endif
 
@@ -105,7 +105,7 @@
         >
             @if (! $paginator->onFirstPage())
                 <x-filament::pagination.item
-                    :aria-label="__('filament-support::components/pagination.actions.previous.label')"
+                    :aria-label="__('filament::components/pagination.actions.previous.label')"
                     :icon="$isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left'"
                     icon-alias="pagination.previous-button"
                     rel="prev"
@@ -134,7 +134,7 @@
 
             @if ($paginator->hasMorePages())
                 <x-filament::pagination.item
-                    :aria-label="__('filament-support::components/pagination.actions.next.label')"
+                    :aria-label="__('filament::components/pagination.actions.next.label')"
                     :icon="$isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right'"
                     icon-alias="pagination.next-button"
                     rel="next"

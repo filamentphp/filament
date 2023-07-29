@@ -33,7 +33,7 @@ class EditProfile extends SimplePage
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::pages.auth.edit-profile';
+    protected static string $view = 'filament-panels::pages.auth.edit-profile';
 
     /**
      * @var array<string, mixed> | null
@@ -42,7 +42,7 @@ class EditProfile extends SimplePage
 
     public static function getLabel(): string
     {
-        return __('filament::pages/auth/edit-profile.label');
+        return __('filament-panels::pages/auth/edit-profile.label');
     }
 
     public static function routes(Panel $panel): void
@@ -173,7 +173,7 @@ class EditProfile extends SimplePage
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return __('filament::pages/auth/edit-profile.messages.saved');
+        return __('filament-panels::pages/auth/edit-profile.messages.saved');
     }
 
     protected function getRedirectUrl(): ?string
@@ -195,7 +195,7 @@ class EditProfile extends SimplePage
     protected function getNameFormComponent(): Component
     {
         return TextInput::make('name')
-            ->label(__('filament::pages/auth/edit-profile.form.name.label'))
+            ->label(__('filament-panels::pages/auth/edit-profile.form.name.label'))
             ->required()
             ->maxLength(255)
             ->autofocus();
@@ -204,7 +204,7 @@ class EditProfile extends SimplePage
     protected function getEmailFormComponent(): Component
     {
         return TextInput::make('email')
-            ->label(__('filament::pages/auth/edit-profile.form.email.label'))
+            ->label(__('filament-panels::pages/auth/edit-profile.form.email.label'))
             ->email()
             ->required()
             ->maxLength(255)
@@ -214,7 +214,7 @@ class EditProfile extends SimplePage
     protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
-            ->label(__('filament::pages/auth/edit-profile.form.password.label'))
+            ->label(__('filament-panels::pages/auth/edit-profile.form.password.label'))
             ->password()
             ->rule(Password::default())
             ->autocomplete('new-password')
@@ -227,7 +227,7 @@ class EditProfile extends SimplePage
     protected function getPasswordConfirmationFormComponent(): Component
     {
         return TextInput::make('passwordConfirmation')
-            ->label(__('filament::pages/auth/edit-profile.form.password_confirmation.label'))
+            ->label(__('filament-panels::pages/auth/edit-profile.form.password_confirmation.label'))
             ->password()
             ->required()
             ->visible(fn (Get $get): bool => filled($get('password')))
@@ -262,7 +262,7 @@ class EditProfile extends SimplePage
     protected function getSaveFormAction(): Action
     {
         return Action::make('save')
-            ->label(__('filament::pages/auth/edit-profile.form.actions.save.label'))
+            ->label(__('filament-panels::pages/auth/edit-profile.form.actions.save.label'))
             ->submit('save')
             ->keyBindings(['mod+s']);
     }
@@ -291,8 +291,8 @@ class EditProfile extends SimplePage
     {
         return Action::make('back')
             ->link()
-            ->label(__('filament::pages/auth/edit-profile.actions.back.label'))
-            ->icon(match (__('filament::layout.direction')) {
+            ->label(__('filament-panels::pages/auth/edit-profile.actions.back.label'))
+            ->icon(match (__('filament-panels::layout.direction')) {
                 'rtl' => 'heroicon-m-arrow-right',
                 default => 'heroicon-m-arrow-left',
             })

@@ -113,7 +113,7 @@ This assumes that you have created a view at `resources/views/filament/resources
 Here's a very simple example of what that view might contain:
 
 ```blade
-<x-filament::page>
+<x-filament-panels::page>
     @if ($this->hasInfolist())
         {{ $this->infolist }}
     @else
@@ -121,14 +121,14 @@ Here's a very simple example of what that view might contain:
     @endif
 
     @if (count($relationManagers = $this->getRelationManagers()))
-        <x-filament::resources.relation-managers
+        <x-filament-panels::resources.relation-managers
             :active-manager="$activeRelationManager"
             :managers="$relationManagers"
             :owner-record="$record"
             :page-class="static::class"
         />
     @endif
-</x-filament::page>
+</x-filament-panels::page>
 ```
 
 To see everything that the default view contains, you can check the `vendor/filament/filament/resources/views/resources/pages/view-record.blade.php` file in your project.

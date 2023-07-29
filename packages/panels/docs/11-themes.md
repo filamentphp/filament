@@ -137,7 +137,7 @@ By default, the topbar sticks to the top of the page. You may make the topbar sc
 
 By default, Filament will use your app's name as a logo.
 
-You may create a `resources/views/vendor/filament/components/logo.blade.php` file to provide a custom logo:
+You may create a `resources/views/vendor/filament-panels/components/logo.blade.php` file to provide a custom logo:
 
 ```blade
 <img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">

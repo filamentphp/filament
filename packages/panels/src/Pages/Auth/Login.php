@@ -31,7 +31,7 @@ class Login extends SimplePage
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::pages.auth.login';
+    protected static string $view = 'filament-panels::pages.auth.login';
 
     /**
      * @var array<string, mixed> | null
@@ -53,7 +53,7 @@ class Login extends SimplePage
             $this->rateLimit(5);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
-                ->title(__('filament::pages/auth/login.messages.throttled', [
+                ->title(__('filament-panels::pages/auth/login.messages.throttled', [
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]))
@@ -67,7 +67,7 @@ class Login extends SimplePage
 
         if (! Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
             throw ValidationException::withMessages([
-                'data.email' => __('filament::pages/auth/login.messages.failed'),
+                'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
             ]);
         }
 
@@ -90,7 +90,7 @@ class Login extends SimplePage
     protected function getEmailFormComponent(): Component
     {
         return TextInput::make('email')
-            ->label(__('filament::pages/auth/login.form.email.label'))
+            ->label(__('filament-panels::pages/auth/login.form.email.label'))
             ->email()
             ->required()
             ->autocomplete()
@@ -100,8 +100,8 @@ class Login extends SimplePage
     protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
-            ->label(__('filament::pages/auth/login.form.password.label'))
-            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament::pages/auth/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
+            ->label(__('filament-panels::pages/auth/login.form.password.label'))
+            ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament-panels::layouts/auth/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
             ->password()
             ->required();
     }
@@ -109,25 +109,25 @@ class Login extends SimplePage
     protected function getRememberFormComponent(): Component
     {
         return Checkbox::make('remember')
-            ->label(__('filament::pages/auth/login.form.remember.label'));
+            ->label(__('filament-panels::pages/auth/login.form.remember.label'));
     }
 
     public function registerAction(): Action
     {
         return Action::make('register')
             ->link()
-            ->label(__('filament::pages/auth/login.actions.register.label'))
+            ->label(__('filament-panels::pages/auth/login.actions.register.label'))
             ->url(filament()->getRegistrationUrl());
     }
 
     public function getTitle(): string | Htmlable
     {
-        return __('filament::pages/auth/login.title');
+        return __('filament-panels::pages/auth/login.title');
     }
 
     public function getHeading(): string | Htmlable
     {
-        return __('filament::pages/auth/login.heading');
+        return __('filament-panels::pages/auth/login.heading');
     }
 
     /**
@@ -143,7 +143,7 @@ class Login extends SimplePage
     protected function getAuthenticateFormAction(): Action
     {
         return Action::make('authenticate')
-            ->label(__('filament::pages/auth/login.form.actions.authenticate.label'))
+            ->label(__('filament-panels::pages/auth/login.form.actions.authenticate.label'))
             ->submit('authenticate');
     }
 

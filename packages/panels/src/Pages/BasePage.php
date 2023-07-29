@@ -19,7 +19,7 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
     use InteractsWithActions;
     use InteractsWithForms;
 
-    protected static string $layout = 'filament::components.layout.base';
+    protected static string $layout = 'filament-panels::components.layout.base';
 
     protected static ?string $title = null;
 

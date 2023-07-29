@@ -14,7 +14,7 @@ abstract class Page extends BasePage
     use Concerns\HasRoutes;
     use Concerns\InteractsWithHeaderActions;
 
-    protected static string $layout = 'filament::components.layout.index';
+    protected static string $layout = 'filament-panels::components.layout.index';
 
     protected static bool $isDiscovered = true;
 

@@ -29,7 +29,7 @@ class EditRecord extends Page
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::resources.pages.edit-record';
+    protected static string $view = 'filament-panels::resources.pages.edit-record';
 
     /**
      * @var array<string, mixed> | null
@@ -40,12 +40,12 @@ class EditRecord extends Page
 
     public function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? __('filament::resources/pages/edit-record.breadcrumb');
+        return static::$breadcrumb ?? __('filament-panels::resources/pages/edit-record.breadcrumb');
     }
 
     public function getContentTabLabel(): ?string
     {
-        return __('filament::resources/pages/edit-record.content.tab.label');
+        return __('filament-panels::resources/pages/edit-record.content.tab.label');
     }
 
     public function mount(int | string $record): void
@@ -172,7 +172,7 @@ class EditRecord extends Page
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return $this->getSavedNotificationMessage() ?? __('filament::resources/pages/edit-record.messages.saved');
+        return $this->getSavedNotificationMessage() ?? __('filament-panels::resources/pages/edit-record.messages.saved');
     }
 
     /**
@@ -268,7 +268,7 @@ class EditRecord extends Page
             return static::$title;
         }
 
-        return __('filament::resources/pages/edit-record.title', [
+        return __('filament-panels::resources/pages/edit-record.title', [
             'label' => $this->getRecordTitle(),
         ]);
     }
@@ -287,7 +287,7 @@ class EditRecord extends Page
     protected function getSaveFormAction(): Action
     {
         return Action::make('save')
-            ->label(__('filament::resources/pages/edit-record.form.actions.save.label'))
+            ->label(__('filament-panels::resources/pages/edit-record.form.actions.save.label'))
             ->submit('save')
             ->keyBindings(['mod+s']);
     }
@@ -300,7 +300,7 @@ class EditRecord extends Page
     protected function getCancelFormAction(): Action
     {
         return Action::make('cancel')
-            ->label(__('filament::resources/pages/edit-record.form.actions.cancel.label'))
+            ->label(__('filament-panels::resources/pages/edit-record.form.actions.cancel.label'))
             ->url($this->previousUrl ?? static::getResource()::getUrl())
             ->color('gray');
     }

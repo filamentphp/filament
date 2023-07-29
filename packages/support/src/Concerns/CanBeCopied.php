@@ -60,7 +60,7 @@ trait CanBeCopied
     {
         return $this->evaluate($this->copyMessage, [
             'state' => $state,
-        ]) ?? __('filament-support::components/copyable.messages.copied');
+        ]) ?? __('filament::components/copyable.messages.copied');
     }
 
     public function getCopyMessageDuration(mixed $state): int
