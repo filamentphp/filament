@@ -371,12 +371,10 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'fi-ta-content overflow-x-auto',
+                'fi-ta-content divide-y divide-gray-200 overflow-x-auto dark:divide-white/10',
                 '!border-t-0' => ! $hasHeader,
             ])
         >
-            {{-- TODO: review start --}}
-
             @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                 @if (! $isReordering)
                     @php
@@ -388,11 +386,11 @@
 
                     <div
                         @class([
-                            'flex items-center gap-4 bg-gray-50 px-3 dark:bg-white/5 sm:px-6',
+                            'flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6',
                             'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
                         ])
                     >
-                        @if ($isSelectionEnabled)
+                        @if ($isSelectionEnabled && (! $isReordering))
                             <x-filament-tables::selection.checkbox
                                 :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                 x-bind:checked="
@@ -409,7 +407,7 @@
                                     return null
                                 "
                                 x-on:click="toggleSelectRecordsOnPage"
-                                @class(['hidden' => $isReordering])
+                                class="my-4"
                             />
                         @endif
 
@@ -434,14 +432,12 @@
                                         direction = 'asc'
                                     })
                                 "
-                                class="flex flex-wrap items-center gap-1 py-1 text-xs sm:text-sm"
+                                class="flex gap-x-3 py-3"
                             >
                                 <label>
-                                    <span class="me-1 font-medium">
-                                        {{ __('filament-tables::table.sorting.fields.column.label') }}
-                                    </span>
-
-                                    <x-filament::input.affixes>
+                                    <x-filament::input.affixes
+                                        :prefix="__('filament-tables::table.sorting.fields.column.label')"
+                                    >
                                         <x-filament::input.select
                                             x-model="column"
                                         >
@@ -481,6 +477,8 @@
                         @endif
                     </div>
                 @endif
+
+                {{-- TODO: review start --}}
 
                 @if ($content)
                     {{ $content->with(['records' => $records]) }}
