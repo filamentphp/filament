@@ -22,7 +22,7 @@
             :placeholder="__('filament-panels::global-search.field.placeholder')"
             type="search"
             wire:model.live.debounce.500ms="search"
-            x-bind:for="$id('input')"
+            x-bind:id="$id('input')"
             x-data="{}"
             :attributes="
                 \Filament\Support\prepare_inherited_attributes(

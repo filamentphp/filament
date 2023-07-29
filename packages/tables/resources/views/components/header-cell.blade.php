@@ -13,14 +13,13 @@
             ->class(['fi-ta-header-cell px-3 py-3.5 sm:first-of-type:ps-6 sm:last-of-type:pe-6'])
     }}
 >
-    <button
-        type="button"
+    <{{ $sortable ? 'button' : 'span' }}
         @if ($sortable)
+            type="button"
             wire:click="sortTable('{{ $name }}')"
         @endif
         @class([
             'group flex w-full items-center gap-x-1',
-            'cursor-default' => ! $sortable,
             'whitespace-nowrap' => ! $wrap,
             'whitespace-normal' => $wrap,
             match ($alignment) {
@@ -58,5 +57,5 @@
                 {{ $sortDirection === 'asc' ? __('filament-tables::table.sorting.fields.direction.options.desc') : __('filament-tables::table.sorting.fields.direction.options.asc') }}
             </span>
         @endif
-    </button>
+    </{{ $sortable ? 'button' : 'span' }}>
 </th>

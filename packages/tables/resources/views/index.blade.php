@@ -147,7 +147,7 @@
         },
 
         toggleSelectRecordsOnPage: function () {
-            let keys = this.getRecordsOnPage()
+            const keys = this.getRecordsOnPage()
 
             if (this.areRecordsSelected(keys)) {
                 this.deselectRecords(keys)
@@ -159,7 +159,7 @@
         },
 
         getRecordsOnPage: function () {
-            let keys = []
+            const keys = []
 
             for (checkbox of $el.getElementsByClassName('fi-ta-record-checkbox')) {
                 keys.push(checkbox.value)
@@ -289,7 +289,7 @@
                             x-show="! selectedRecords.length"
                             @class([
                                 'inline-flex',
-                                '-mx-2' => $reorderRecordsTriggerAction->isIconButton(),
+                                '-me-1 -ms-2' => $reorderRecordsTriggerAction->isIconButton(),
                             ])
                         >
                             {{ $reorderRecordsTriggerAction }}
@@ -371,12 +371,10 @@
                 wire:poll.{{ $pollingInterval }}
             @endif
             @class([
-                'fi-ta-content overflow-x-auto',
+                'fi-ta-content divide-y divide-gray-200 overflow-x-auto dark:divide-white/10',
                 '!border-t-0' => ! $hasHeader,
             ])
         >
-            {{-- TODO: review start --}}
-
             @if (($content || $hasColumnsLayout) && ($records !== null) && count($records))
                 @if (! $isReordering)
                     @php
@@ -388,15 +386,15 @@
 
                     <div
                         @class([
-                            'flex items-center gap-4 bg-gray-50 px-3 dark:bg-white/5 sm:px-6',
+                            'flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6',
                             'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
                         ])
                     >
-                        @if ($isSelectionEnabled)
+                        @if ($isSelectionEnabled && (! $isReordering))
                             <x-filament-tables::selection.checkbox
                                 :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                 x-bind:checked="
-                                    let recordsOnPage = getRecordsOnPage()
+                                    const recordsOnPage = getRecordsOnPage()
 
                                     if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                         $el.checked = true
@@ -409,7 +407,7 @@
                                     return null
                                 "
                                 x-on:click="toggleSelectRecordsOnPage"
-                                @class(['hidden' => $isReordering])
+                                class="my-4"
                             />
                         @endif
 
@@ -434,14 +432,12 @@
                                         direction = 'asc'
                                     })
                                 "
-                                class="flex flex-wrap items-center gap-1 py-1 text-xs sm:text-sm"
+                                class="flex gap-x-3 py-3"
                             >
                                 <label>
-                                    <span class="me-1 font-medium">
-                                        {{ __('filament-tables::table.sorting.fields.column.label') }}
-                                    </span>
-
-                                    <x-filament::input.affixes>
+                                    <x-filament::input.affixes
+                                        :prefix="__('filament-tables::table.sorting.fields.column.label')"
+                                    >
                                         <x-filament::input.select
                                             x-model="column"
                                         >
@@ -486,16 +482,16 @@
                     {{ $content->with(['records' => $records]) }}
                 @else
                     <x-filament::grid
-                        x-sortable
-                        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         :default="$contentGrid['default'] ?? 1"
                         :sm="$contentGrid['sm'] ?? null"
                         :md="$contentGrid['md'] ?? null"
                         :lg="$contentGrid['lg'] ?? null"
                         :xl="$contentGrid['xl'] ?? null"
                         :two-xl="$contentGrid['2xl'] ?? null"
+                        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+                        x-sortable
                         @class([
-                            'p-2 gap-2' => $contentGrid,
+                            'gap-4 p-4 sm:p-6' => $contentGrid,
                             'divide-y divide-gray-200 dark:divide-white/5' => ! $contentGrid,
                         ])
                     >
@@ -517,6 +513,8 @@
                                 $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
                             @endphp
 
+                            {{-- TODO: review start --}}
+
                             @if ($recordGroupTitle !== $previousRecordGroupTitle)
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
                                     <x-filament-tables::table
@@ -524,11 +522,16 @@
                                     >
                                         <x-filament-tables::summary.row
                                             :columns="$columns"
-                                            :heading="__('filament-tables::table.summary.subheadings.group', ['group' => $previousRecordGroupTitle, 'label' => $pluralModelLabel])"
+                                            extra-heading-column
+                                            :heading="
+                                                __('filament-tables::table.summary.subheadings.group', [
+                                                    'group' => $previousRecordGroupTitle,
+                                                    'label' => $pluralModelLabel,
+                                                ])
+                                            "
+                                            :placeholder-columns="false"
                                             :query="$group->scopeQuery($this->getAllTableSummaryQuery(), $previousRecord)"
                                             :selected-state="$groupedSummarySelectedState[$previousRecordGroupKey] ?? []"
-                                            extra-heading-column
-                                            :placeholder-columns="false"
                                         />
                                     </x-filament-tables::table>
                                 @endif
@@ -578,7 +581,7 @@
                                         'relative h-full px-3 transition sm:px-6',
                                         'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
                                         'group' => $isReordering,
-                                        'rounded-xl shadow-sm dark:bg-gray-700/40' => $contentGrid,
+                                        'rounded-xl shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-700/40 dark:ring-white/10' => $contentGrid,
                                         ...$getRecordClasses($record),
                                     ])
                                 >
@@ -753,6 +756,8 @@
                         />
                     </x-filament-tables::table>
                 @endif
+
+                {{-- TODO: review end --}}
             @elseif (($records !== null) && count($records))
                 <x-filament-tables::table :reorderable="$isReorderable">
                     <x-slot name="header">
@@ -774,7 +779,7 @@
                                     <x-filament-tables::selection.checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
-                                            let recordsOnPage = getRecordsOnPage()
+                                            const recordsOnPage = getRecordsOnPage()
 
                                             if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                 $el.checked = true
@@ -801,16 +806,6 @@
                                 @endif
                             @endif
                         @endif
-
-                        @if ($isGroupsOnly)
-                            <th
-                                class="fi-ta-header-cell whitespace-nowrap px-4 py-2 text-sm font-medium text-gray-950 dark:text-white"
-                            >
-                                {{ $group->getLabel() }}
-                            </th>
-                        @endif
-
-                        {{-- TODO: review end --}}
 
                         @foreach ($columns as $column)
                             <x-filament-tables::header-cell
@@ -850,7 +845,7 @@
                                     <x-filament-tables::selection.checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
-                                            let recordsOnPage = getRecordsOnPage()
+                                            const recordsOnPage = getRecordsOnPage()
 
                                             if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
                                                 $el.checked = true
@@ -1013,6 +1008,7 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
+                                                    class="fi-ta-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::selection.cell>
@@ -1072,6 +1068,7 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
+                                                    class="fi-ta-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::selection.cell>
