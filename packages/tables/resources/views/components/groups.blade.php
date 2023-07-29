@@ -44,6 +44,7 @@
         <x-slot name="trigger">
             <span
                 @class([
+                    'inline-flex',
                     '-mx-2' => $triggerAction->isIconButton(),
                 ])
             >
