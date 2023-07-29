@@ -22,7 +22,7 @@
             :placeholder="__('filament-tables::table.fields.search.placeholder')"
             type="search"
             :wire:model.live.debounce.500ms="$wireModel"
-            x-bind:for="$id('input')"
+            x-bind:id="$id('input')"
         />
     </x-filament::input.affixes>
 </div>
