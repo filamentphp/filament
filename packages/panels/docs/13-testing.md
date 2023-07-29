@@ -282,6 +282,7 @@ it('can retrieve data', function () {
 To ensure that a relation manager is able to render successfully, mount the Livewire component:
 
 ```php
+use App\Filament\Resources\CategoryResource\Pages\EditCategory;
 use function Pest\Livewire\livewire;
 
 it('can render relation manager', function () {
@@ -291,6 +292,7 @@ it('can render relation manager', function () {
 
     livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
         'ownerRecord' => $category,
+        'pageClass' => EditCategory::class,
     ])
         ->assertSuccessful();
 });
@@ -303,6 +305,7 @@ Filament includes a selection of helpers for testing tables. A full guide to tes
 To use a table [testing helper](../tables/testing), make assertions on the relation manager class, which holds the table:
 
 ```php
+use App\Filament\Resources\CategoryResource\Pages\EditCategory;
 use function Pest\Livewire\livewire;
 
 it('can list posts', function () {
@@ -312,6 +315,7 @@ it('can list posts', function () {
 
     livewire(CategoryResource\RelationManagers\PostsRelationManager::class, [
         'ownerRecord' => $category,
+        'pageClass' => EditCategory::class,
     ])
         ->assertCanSeeTableRecords($category->posts);
 });

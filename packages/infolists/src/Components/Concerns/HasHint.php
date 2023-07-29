@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 use Filament\Infolists\Components\Actions\Action;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
@@ -109,7 +110,7 @@ trait HasHint
             foreach (Arr::wrap($this->evaluate($hintAction)) as $action) {
                 $this->cachedHintActions[$action->getName()] = $this->prepareAction(
                     $action
-                        ->defaultSize('sm')
+                        ->defaultSize(ActionSize::Small)
                         ->defaultView(Action::LINK_VIEW),
                 );
             }

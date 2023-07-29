@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => '作成しました',
+        'notifications' => [
+
+            'created' => [
+                'title' => '作成しました',
+            ],
+
         ],
 
     ],

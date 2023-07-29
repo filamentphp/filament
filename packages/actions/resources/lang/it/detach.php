@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Scollegato',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Scollegato',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Scollegato',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Scollegato',
+            ],
+
         ],
 
     ],

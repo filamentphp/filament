@@ -5,12 +5,13 @@ namespace Filament\Infolists\Components\Concerns;
 use Closure;
 use Filament\Infolists\Components\Component;
 use Filament\Support\Contracts\HasIcon as IconInterface;
+use Filament\Support\Enums\IconPosition;
 
 trait HasIcon
 {
     protected string | bool | Closure | null $icon = null;
 
-    protected string | Closure | null $iconPosition = null;
+    protected IconPosition | string | Closure | null $iconPosition = null;
 
     public function icon(string | bool | Closure | null $icon): static
     {
@@ -45,7 +46,7 @@ trait HasIcon
         return $this;
     }
 
-    public function iconPosition(string | Closure | null $iconPosition): static
+    public function iconPosition(IconPosition | string | Closure | null $iconPosition): static
     {
         $this->iconPosition = $iconPosition;
 
@@ -73,8 +74,8 @@ trait HasIcon
         return $state->getIcon();
     }
 
-    public function getIconPosition(): string
+    public function getIconPosition(): IconPosition | string
     {
-        return $this->evaluate($this->iconPosition) ?? 'before';
+        return $this->evaluate($this->iconPosition) ?? IconPosition::Before;
     }
 }

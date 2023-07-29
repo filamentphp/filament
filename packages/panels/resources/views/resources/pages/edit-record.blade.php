@@ -1,4 +1,4 @@
-<x-filament::page
+<x-filament-panels::page
     @class([
         'fi-resource-edit-record-page',
         'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
@@ -6,17 +6,17 @@
     ])
 >
     @capture($form)
-        <x-filament::form
+        <x-filament-panels::form
             :wire:key="$this->getId() . '.forms.' . $this->getFormStatePath()"
             wire:submit="save"
         >
             {{ $this->form }}
 
-            <x-filament::form.actions
+            <x-filament-panels::form.actions
                 :actions="$this->getCachedFormActions()"
                 :full-width="$this->hasFullWidthFormActions()"
             />
-        </x-filament::form>
+        </x-filament-panels::form>
     @endcapture
 
     @php
@@ -28,7 +28,7 @@
     @endif
 
     @if (count($relationManagers))
-        <x-filament::resources.relation-managers
+        <x-filament-panels::resources.relation-managers
             :active-locale="isset($activeLocale) ? $activeLocale : null"
             :active-manager="$activeRelationManager"
             :content-tab-label="$this->getContentTabLabel()"
@@ -41,6 +41,6 @@
                     {{ $form() }}
                 </x-slot>
             @endif
-        </x-filament::resources.relation-managers>
+        </x-filament-panels::resources.relation-managers>
     @endif
-</x-filament::page>
+</x-filament-panels::page>

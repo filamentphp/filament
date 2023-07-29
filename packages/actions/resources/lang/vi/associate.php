@@ -32,7 +32,7 @@ return [
 
         ],
 
-        'messages' => [
+        'notifications' => [
             'associated' => 'Đã liên kết',
         ],
 

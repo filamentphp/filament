@@ -24,12 +24,14 @@ This page is about customizing the look of the group's trigger button and dropdo
 The button which opens the dropdown may be customized in the same way as a normal action. [All of the methods available for trigger buttons](trigger-button) may be used to customize the group trigger button:
 
 ```php
+use Filament\Support\Enums\ActionSize;
+
 ActionGroup::make([
     // Array of actions
 ])
     ->label('More actions')
     ->icon('heroicon-m-ellipsis-vertical')
-    ->size('sm')
+    ->size(ActionSize::Small)
     ->color('primary')
     ->button()
 ```

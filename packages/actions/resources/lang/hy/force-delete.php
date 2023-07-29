@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Գրառումը ջնջվել է',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Գրառումը ջնջվել է',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Գրառումները ջնջվել են',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Գրառումները ջնջվել են',
+            ],
+
         ],
 
     ],

@@ -288,12 +288,12 @@ These classes are not automatically compiled by Tailwind CSS. If you want to app
 To customize the default configuration that is used for all tables, you can call the static `configureUsing()` method from the `boot()` method of a service provider. The function will be run for each table that gets created:
 
 ```php
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 
 Table::configureUsing(function (Table $table): void {
     $table
-        ->filtersLayout(Layout::AboveContentCollapsible)
+        ->filtersLayout(FiltersLayout::AboveContentCollapsible)
         ->paginationPageOptions([10, 25, 50]);
 });
 ```

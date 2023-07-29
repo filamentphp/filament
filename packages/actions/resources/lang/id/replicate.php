@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'Data berhasil diduplikat',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Data berhasil diduplikat',
+            ],
+
         ],
 
     ],

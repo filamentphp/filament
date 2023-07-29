@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'মুছে ফেলা হয়েছে',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'মুছে ফেলা হয়েছে',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'মুছে ফেলা হয়েছে',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'মুছে ফেলা হয়েছে',
+            ],
+
         ],
 
     ],

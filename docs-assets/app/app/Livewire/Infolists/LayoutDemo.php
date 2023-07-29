@@ -19,6 +19,10 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms, HasInfolists
@@ -109,7 +113,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
-                                    ->iconPosition('after')
+                                    ->iconPosition(IconPosition::After)
                                     ->schema([
                                         IconEntry::make('enabled')
                                             ->boolean()
@@ -123,10 +127,10 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     ->columns(2),
                                 Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                                 Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                             ]),
                     ]),
                 Group::make()
@@ -278,7 +282,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             Card::make([
                                 TextEntry::make('title')
                                     ->state('What is Filament?')
-                                    ->weight('bold'),
+                                    ->weight(FontWeight::Bold),
                                 TextEntry::make('content')
                                     ->state(<<<'MARKDOWN'
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non dui eu augue tempor finibus. Vivamus tincidunt malesuada volutpat. Donec ornare euismod est id cursus. Donec dolor nisl, dignissim vitae vulputate accumsan, consequat a lorem.
@@ -338,7 +342,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             Action::make('resetStars')
                                 ->icon('heroicon-m-x-mark')
                                 ->color('danger'),
-                        ])->alignment('center'),
+                        ])->alignment(Alignment::Center),
                     ]),
                 Group::make()
                     ->id('anonymousActionsVerticallyAlignedEnd')
@@ -357,7 +361,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     Action::make('resetStars')
                                         ->icon('heroicon-m-x-mark')
                                         ->color('danger'),
-                                ])->verticalAlignment('end'),
+                                ])->verticalAlignment(VerticalAlignment::End),
                             ]),
                     ]),
             ])

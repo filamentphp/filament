@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'Запис скопійовано',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Запис скопійовано',
+            ],
+
         ],
 
     ],

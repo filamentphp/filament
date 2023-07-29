@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Տարանջատվել է',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Տարանջատվել է',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Տարանջատվել է',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Տարանջատվել է',
+            ],
+
         ],
 
     ],

@@ -44,4 +44,9 @@ trait HasPlugins
     {
         return $this->getPlugins()[$id] ?? throw new Exception("Plugin [{$id}] is not registered for panel [{$this->getId()}].");
     }
+
+    public function hasPlugin(string $id): bool
+    {
+        return array_key_exists($id, $this->getPlugins());
+    }
 }

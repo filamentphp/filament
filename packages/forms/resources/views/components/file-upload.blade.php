@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
@@ -18,8 +22,8 @@
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
-                    imageEditorEmptyFillColor: '{{ $getImageEditorEmptyFillColor() }}',
-                    imageEditorMode: {{ $getImageEditorMode() }},
+                    imageEditorEmptyFillColor: @js($getImageEditorEmptyFillColor()),
+                    imageEditorMode: @js($getImageEditorMode()),
                     imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
                     imageEditorViewportWidth: @js($getImageEditorViewportWidth()),
                     deleteUploadedFileUsing: async (fileKey) => {
@@ -46,8 +50,8 @@
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
                     placeholder: @js($getPlaceholder()),
-                    maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
-                    minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
+                    maxSize: @js(($size = $getMaxSize()) ? "'{$size} KB'" : null),
+                    minSize: @js(($size = $getMinSize()) ? "'{$size} KB'" : null),
                     removeUploadedFileUsing: async (fileKey) => {
                         return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
                     },
@@ -85,11 +89,11 @@
                 ->class([
                     'fi-fo-file-upload flex',
                     match ($getAlignment()) {
-                        'center' => 'justify-center',
-                        'end' => 'justify-end',
-                        'left' => 'justify-left',
-                        'right' => 'justify-right',
-                        'start', null => 'justify-start',
+                        Alignment::Center, 'center' => 'justify-center',
+                        Alignment::End, 'end' => 'justify-end',
+                        Alignment::Left, 'left' => 'justify-left',
+                        Alignment::Right, 'right' => 'justify-right',
+                        Alignment::Start, 'start', null => 'justify-start',
                     },
                 ])
         }}

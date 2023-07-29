@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => '認証に失敗しました。',
-        'throttled' => 'ログインの試行回数が多すぎます。:seconds 秒後にお試しください。',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'ログインの試行回数が多すぎます。:seconds 秒後にお試しください。',
+        ],
+
     ],
 
 ];

@@ -62,6 +62,33 @@ Below is a list of available chart widget classes which you may extend, and thei
 - `Filament\Widgets\RadarChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/radar)
 - `Filament\Widgets\ScatterChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/scatter)
 
+## Customizing the chart color
+
+You can customize the color of the chart data by setting the `$color` property to either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+
+```php
+protected static string $color = 'info';
+```
+
+If you're looking to customize the color further, or use multiple colors across multiple datasets, you can still make use of Chart.js's [color options](https://www.chartjs.org/docs/latest/general/colors.html) in the data:
+
+```php
+protected function getData(): array
+{
+    return [
+        'datasets' => [
+            [
+                'label' => 'Blog posts created',
+                'data' => [0, 10, 5, 2, 21, 32, 45, 74, 65, 45, 77, 89],
+                'backgroundColor' => '#36A2EB',
+                'borderColor' => '#9BD0F5',
+            ],
+        ],
+        'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    ];
+}
+```
+
 ## Generating chart data from an Eloquent model
 
 To generate chart data from an Eloquent model, Filament recommends that you install the `flowframe/laravel-trend` package. You can view the [documentation](https://github.com/Flowframe/laravel-trend).
@@ -212,4 +239,14 @@ public function getDescription(): ?string
 {
     return 'The number of blog posts published per month.';
 }
+```
+
+## Disabling lazy loading
+
+By default, widgets are lazy loaded. This means that they will only be loaded when they are visible on the page.
+
+To disable this behaviour, you may override the `$isLazy` property on the widget class:
+
+```php
+protected static bool $isLazy = true;
 ```

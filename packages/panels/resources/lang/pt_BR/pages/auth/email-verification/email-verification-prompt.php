@@ -17,8 +17,18 @@ return [
     'messages' => [
         'notification_not_received' => 'Não recebeu o e-mail que enviamos?',
         'notification_sent' => 'Enviamos um e-mail para :email contendo instruções sobre como verificar seu e-mail.',
-        'notification_resent' => 'Reenviamos o e-mail.',
-        'notification_resend_throttled' => 'Muitas tentativas de reenvio. Por favor tente novamente em :seconds segundos.',
+    ],
+
+    'notifications' => [
+
+        'notification_resent' => [
+            'title' => 'Reenviamos o e-mail.',
+        ],
+
+        'notification_resend_throttled' => [
+            'title' => 'Muitas tentativas de reenvio. Por favor tente novamente em :seconds segundos.',
+        ],
+
     ],
 
 ];

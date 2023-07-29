@@ -115,7 +115,7 @@ To create a custom theme for a panel, you can use the `php artisan make:filament
 php artisan make:filament-theme
 ```
 
-If you have more than one panel, you can specify the panel you want to create a theme for:
+If you have multiple panels, you can specify the panel you want to create a theme for:
 
 ```bash
 php artisan make:filament-theme admin
@@ -137,7 +137,7 @@ By default, the topbar sticks to the top of the page. You may make the topbar sc
 
 By default, Filament will use your app's name as a logo.
 
-You may create a `resources/views/vendor/filament/components/logo.blade.php` file to provide a custom logo:
+You may create a `resources/views/vendor/filament-panels/components/logo.blade.php` file to provide a custom logo:
 
 ```blade
 <img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">

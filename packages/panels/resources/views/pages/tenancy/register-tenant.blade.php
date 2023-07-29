@@ -1,12 +1,12 @@
-<x-filament::page.simple>
-    <x-filament::form wire:submit="register">
+<x-filament-panels::page.simple>
+    <x-filament-panels::form wire:submit="register">
         {{ $this->form }}
 
-        <x-filament::form.actions
+        <x-filament-panels::form.actions
             :actions="$this->getCachedFormActions()"
             :full-width="$this->hasFullWidthFormActions()"
         />
-    </x-filament::form>
+    </x-filament-panels::form>
 
     @if (count($tenants = filament()->getUserTenants(filament()->auth()->user())))
         <ul
@@ -18,7 +18,7 @@
                         href="{{ filament()->getUrl($tenant) }}"
                         class="flex items-center gap-4 px-4 py-3 transition hover:bg-gray-500/5 dark:hover:bg-gray-900/50"
                     >
-                        <x-filament::avatar.tenant :tenant="$tenant" />
+                        <x-filament-panels::avatar.tenant :tenant="$tenant" />
 
                         <div class="flex-1">
                             {{ filament()->getTenantName($tenant) }}
@@ -33,4 +33,4 @@
             @endforeach
         </ul>
     @endif
-</x-filament::page.simple>
+</x-filament-panels::page.simple>

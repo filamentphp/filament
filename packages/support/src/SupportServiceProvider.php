@@ -29,16 +29,16 @@ class SupportServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament-support')
+            ->name('filament')
             ->hasCommands([
                 AssetsCommand::class,
                 CheckTranslationsCommand::class,
                 InstallCommand::class,
                 UpgradeCommand::class,
             ])
-            ->hasConfigFile('filament')
+            ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews(namespace: 'filament');
+            ->hasViews();
     }
 
     public function packageRegistered(): void
@@ -76,6 +76,8 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        config()->set('livewire.inject_morph_markers', false);
+
         FilamentAsset::register([
             Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
             Css::make('support', __DIR__ . '/../dist/index.css'),

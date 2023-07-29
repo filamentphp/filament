@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Restaurat cu succes',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Restaurat cu succes',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Restaurat cu succes',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Restaurat cu succes',
+            ],
+
         ],
 
     ],

@@ -48,8 +48,8 @@
                     class="fi-sidebar-collapse-btn hidden h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10 lg:flex"
                     x-bind:aria-label="
                         $store.sidebar.isOpen
-                            ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
-                            : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
+                            ? '{{ __('filament-panels::layout.actions.sidebar.collapse.label') }}'
+                            : '{{ __('filament-panels::layout.actions.sidebar.expand.label') }}'
                     "
                     x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                     x-transition:enter="delay-100 lg:transition"
@@ -89,10 +89,10 @@
             >
                 @if ($homeUrl = filament()->getHomeUrl())
                     <a href="{{ $homeUrl }}" class="inline-block">
-                        <x-filament::logo />
+                        <x-filament-panels::logo />
                     </a>
                 @else
-                    <x-filament::logo />
+                    <x-filament-panels::logo />
                 @endif
             </div>
         </div>
@@ -103,8 +103,8 @@
                 class="fi-sidebar-close-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-primary-500 outline-none hover:bg-gray-500/5 focus:bg-primary-500/10"
                 x-bind:aria-label="
                     $store.sidebar.isOpen
-                        ? '{{ __('filament::layout.actions.sidebar.collapse.label') }}'
-                        : '{{ __('filament::layout.actions.sidebar.expand.label') }}'
+                        ? '{{ __('filament-panels::layout.actions.sidebar.collapse.label') }}'
+                        : '{{ __('filament-panels::layout.actions.sidebar.expand.label') }}'
                 "
                 x-on:click.stop="$store.sidebar.isOpen ? $store.sidebar.close() : $store.sidebar.open()"
                 x-show="! $store.sidebar.isOpen && @js(! filament()->isSidebarFullyCollapsibleOnDesktop())"
@@ -124,37 +124,18 @@
     <nav
         class="fi-sidebar-nav grid flex-1 content-start gap-y-6 overflow-y-auto overflow-x-hidden py-6 shadow-lg lg:shadow-none"
     >
-        {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
 
         @if (filament()->hasTenancy())
             <div class="mx-4">
-                <x-filament::tenant-menu />
+                <x-filament-panels::tenant-menu />
             </div>
         @endif
-
-        @php
-            $collapsedNavigationGroupLabels = collect($navigation)
-                ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
-                ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
-                ->values();
-        @endphp
-
-        <script>
-            if (
-                JSON.parse(localStorage.getItem('collapsedGroups')) === null ||
-                JSON.parse(localStorage.getItem('collapsedGroups')) === 'null'
-            ) {
-                localStorage.setItem(
-                    'collapsedGroups',
-                    JSON.stringify(@js($collapsedNavigationGroupLabels)),
-                )
-            }
-        </script>
 
         @if (filament()->hasNavigation())
             <ul class="-mx-3 grid gap-y-3 px-6">
                 @foreach ($navigation as $group)
-                    <x-filament::sidebar.group
+                    <x-filament-panels::sidebar.group
                         :label="$group->getLabel()"
                         :icon="$group->getIcon()"
                         :collapsible="$group->isCollapsible()"
@@ -163,10 +144,53 @@
                     />
                 @endforeach
             </ul>
+
+            @php
+                $collapsedNavigationGroupLabels = collect($navigation)
+                    ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                    ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                    ->values();
+            @endphp
+
+            <script>
+                let collapsedGroups = JSON.parse(
+                    localStorage.getItem('collapsedGroups'),
+                )
+
+                if (collapsedGroups === null || collapsedGroups === 'null') {
+                    localStorage.setItem(
+                        'collapsedGroups',
+                        JSON.stringify(@js($collapsedNavigationGroupLabels)),
+                    )
+                }
+
+                collapsedGroups = JSON.parse(
+                    localStorage.getItem('collapsedGroups'),
+                )
+
+                document
+                    .querySelectorAll('.fi-sidebar-group')
+                    .forEach((group) => {
+                        if (
+                            !collapsedGroups.includes(group.dataset.groupLabel)
+                        ) {
+                            return
+                        }
+
+                        // Alpine.js loads too slow, so attempt to hide a
+                        // collapsed sidebar group earlier.
+                        group.querySelector(
+                            '.fi-sidebar-group-items',
+                        ).style.display = 'none'
+                        group
+                            .querySelector('.fi-sidebar-group-collapse-button')
+                            .classList.add('rotate-180')
+                    })
+            </script>
         @endif
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.end') }}
     </nav>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.footer') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.footer') }}
 </aside>

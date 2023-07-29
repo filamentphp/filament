@@ -1,4 +1,4 @@
-<x-filament::layout.base :livewire="$livewire">
+<x-filament-panels::layout.base :livewire="$livewire">
     @props([
         'after' => null,
         'heading' => null,
@@ -14,7 +14,7 @@
                     @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
                 @endif
 
-                <x-filament::user-menu />
+                <x-filament-panels::user-menu />
             </div>
         @endif
 
@@ -25,5 +25,7 @@
                 {{ $slot }}
             </main>
         </div>
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
     </div>
-</x-filament::layout.base>
+</x-filament-panels::layout.base>

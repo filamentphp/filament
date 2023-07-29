@@ -44,13 +44,13 @@ In the function, `$state` is the value of the entry, and `$record` can be used t
 
 ## Customizing the size
 
-The default icon size is `lg`, but you may customize the size to be either `xs`, `sm`, `md`, `lg` or `xl`:
+The default icon size is `IconEntrySize::Large`, but you may customize the size to be either `IconEntrySize::ExtraSmall`, `IconEntrySize::Small`, `IconEntrySize::Medium` or `IconEntrySize::ExtraLarge`:
 
 ```php
 use Filament\Infolists\Components\IconEntry;
 
 IconEntry::make('status')
-    ->size('md')
+    ->size(IconEntry\IconEntrySize::Medium)
 ```
 
 <AutoScreenshot name="infolists/entries/icon/medium" alt="Medium-sized icon entry" version="3.x" />
@@ -70,7 +70,7 @@ IconEntry::make('is_featured')
 
 ### Customizing the boolean icons
 
-You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons v1](https://v1.heroicons.com) are installed:
+You may customize the icon representing each state. Icons are the name of a Blade component present. By default, [Heroicons](https://heroicons.com) are installed:
 
 ```php
 use Filament\Infolists\Components\IconEntry;

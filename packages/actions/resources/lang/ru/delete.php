@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Удалено',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Удалено',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Удалено',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Удалено',
+            ],
+
         ],
 
     ],

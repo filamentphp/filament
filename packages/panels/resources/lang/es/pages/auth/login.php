@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Estas credenciales no coinciden con nuestros registros.',
-        'throttled' => 'Demasiados intentos. Intente de nuevo en :seconds segundos.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Demasiados intentos. Intente de nuevo en :seconds segundos.',
+        ],
+
     ],
 
 ];

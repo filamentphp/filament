@@ -88,7 +88,7 @@
     >
         @if (! $isDisabled)
             @if ($isSearchable)
-                <x-filament-forms::affixes
+                <x-filament::input.affixes
                     inline-prefix
                     prefix-icon="heroicon-m-magnifying-glass"
                     prefix-icon-alias="forms:components.checkbox-list.search-field"
@@ -106,7 +106,7 @@
                             )
                         "
                     />
-                </x-filament-forms::affixes>
+                </x-filament::input.affixes>
             @endif
 
             @if ($isBulkToggleable && count($getOptions()))
@@ -175,13 +175,11 @@
                         class="fi-fo-checkbox-list-option-label flex gap-x-3"
                     >
                         <x-filament::input.checkbox
-                            :errors="$errors"
-                            :state-path="$statePath"
+                            :error="$errors->has($statePath)"
                             :attributes="
-                                $getExtraInputAttributeBag()
+                                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
                                         'disabled' => $isDisabled,
-                                        'type' => 'checkbox',
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,

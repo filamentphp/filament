@@ -556,8 +556,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     {
         $columns = $this->searchColumns;
 
-        if ($this->hasRelationship()) {
-            $columns ??= [$this->getRelationshipTitleAttribute()];
+        if ($this->hasRelationship() && (filled($relationshipTitleAttribute = $this->getRelationshipTitleAttribute()))) {
+            $columns ??= [$relationshipTitleAttribute];
         }
 
         return $columns;
@@ -665,7 +665,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (empty($relationshipQuery->getQuery()->orders)) {
+            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
                 $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
@@ -741,7 +741,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (empty($relationshipQuery->getQuery()->orders)) {
+            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
                 $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
@@ -1032,7 +1032,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         );
     }
 
-    public function getRelationshipTitleAttribute(): string
+    public function getRelationshipTitleAttribute(): ?string
     {
         return $this->evaluate($this->relationshipTitleAttribute);
     }

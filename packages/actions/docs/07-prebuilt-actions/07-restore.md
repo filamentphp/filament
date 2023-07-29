@@ -13,7 +13,7 @@ RestoreAction::make()
     ->record($this->post)
 ```
 
-If you want to restore table rows, you can use the `Filament\Tables\Actions\RestoreAction` instead, or `Filament\Tables\Actions\RestoreBulkAction` to restore more than one at once:
+If you want to restore table rows, you can use the `Filament\Tables\Actions\RestoreAction` instead, or `Filament\Tables\Actions\RestoreBulkAction` to restore multiple at once:
 
 ```php
 use Filament\Tables\Actions\BulkActionGroup;

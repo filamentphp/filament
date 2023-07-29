@@ -19,7 +19,7 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
     use InteractsWithActions;
     use InteractsWithForms;
 
-    protected static string $layout = 'filament::components.layout.base';
+    protected static string $layout = 'filament-panels::components.layout.base';
 
     protected static ?string $title = null;
 
@@ -126,7 +126,7 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
         static::$formActionsAlignment = 'center';
     }
 
-    public static function alignFormactionsEnd(): void
+    public static function alignFormActionsEnd(): void
     {
         static::$formActionsAlignment = 'end';
     }
@@ -170,5 +170,13 @@ abstract class BasePage extends Component implements HasForms, HasActions, Rende
     public static function inlineLabels(bool $condition = true): void
     {
         static::$hasInlineLabels = $condition;
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getRenderHookScopes(): array
+    {
+        return [static::class];
     }
 }

@@ -52,7 +52,7 @@ In this example, `500` is the number of milliseconds to wait before sending a ne
 
 ## Form component utility injection
 
-The vast majority of methods used to configure [fields](fields) and [layout components](layout) accept closures as parameters instead of hardcoded values:
+The vast majority of methods used to configure [fields](fields) and [layout components](layout) accept functions as parameters instead of hardcoded values:
 
 ```php
 use App\Models\User;
@@ -230,7 +230,7 @@ TextInput::make('name')
 
 ### Field updates
 
-You may use the `afterStateUpdated()` method to customize what happens after a field is updated by the user. Please note that only changes from the user on the frontend will trigger this function, not manual changes to the state from `$set()` or another PHP function.
+You may use the `afterStateUpdated()` method to customize what happens after a field is updated by the user. Only changes from the user on the frontend will trigger this function, not manual changes to the state from `$set()` or another PHP function.
 
 Inside this function, you can also inject the `$old` value of the field before it was updated, using the `$old` parameter:
 

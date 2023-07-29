@@ -2,7 +2,7 @@
     $navigation = filament()->getNavigation();
 @endphp
 
-<x-filament::layout.base :livewire="$livewire">
+<x-filament-panels::layout.base :livewire="$livewire">
     <div class="fi-layout flex min-h-screen w-full overflow-x-clip">
         <div
             x-cloak
@@ -13,7 +13,7 @@
             class="fi-sidebar-close-overlay fixed inset-0 z-30 bg-gray-950/50 transition duration-500 dark:bg-gray-950/75 lg:hidden"
         ></div>
 
-        <x-filament::sidebar :navigation="$navigation" />
+        <x-filament-panels::sidebar :navigation="$navigation" />
 
         <div
             @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -36,7 +36,7 @@
                 'flex lg:ps-[--sidebar-width]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
             ])
         >
-            <x-filament::topbar :navigation="$navigation" />
+            <x-filament-panels::topbar :navigation="$navigation" />
 
             <main
                 @class([
@@ -54,16 +54,14 @@
                     },
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook('content.start') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.start') }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('content.end') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.end') }}
             </main>
 
-            <div class="shrink-0 py-4">
-                <x-filament::footer />
-            </div>
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
         </div>
     </div>
-</x-filament::layout.base>
+</x-filament-panels::layout.base>

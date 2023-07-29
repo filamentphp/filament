@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => '已分离',
+        'notifications' => [
+
+            'detached' => [
+                'title' => '已分离',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => '已分离',
+        'notifications' => [
+
+            'detached' => [
+                'title' => '已分离',
+            ],
+
         ],
 
     ],

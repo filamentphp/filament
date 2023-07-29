@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'لێکرایەوە',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'لێکرایەوە',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'لێکرایەوە',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'لێکرایەوە',
+            ],
+
         ],
 
     ],

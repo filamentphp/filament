@@ -38,6 +38,14 @@ class Panel extends Component
 
     protected ?Closure $bootUsing = null;
 
+    public static function make(): static
+    {
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
+    }
+
     public function default(bool $condition = true): static
     {
         $this->isDefault = $condition;

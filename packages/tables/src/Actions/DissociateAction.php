@@ -26,7 +26,7 @@ class DissociateAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::dissociate.single.modal.actions.dissociate.label'));
 
-        $this->successNotificationTitle(__('filament-actions::dissociate.single.messages.dissociated'));
+        $this->successNotificationTitle(__('filament-actions::dissociate.single.notifications.dissociated.title'));
 
         $this->color('danger');
 

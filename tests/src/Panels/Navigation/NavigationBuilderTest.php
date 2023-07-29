@@ -44,13 +44,13 @@ it('can register navigation', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Dashboard')
-                        ->getIcon()->toBe('heroicon-m-home'),
+                        ->getIcon()->toBe('heroicon-o-home'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Users')
-                        ->getIcon()->toBe('heroicon-m-user'),
+                        ->getIcon()->toBe('heroicon-o-user'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Settings')
-                        ->getIcon()->toBe('heroicon-m-cog-6-tooth'),
+                        ->getIcon()->toBe('heroicon-o-cog-6-tooth'),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
@@ -60,10 +60,10 @@ it('can register navigation', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Posts')
-                        ->getIcon()->toBe('heroicon-m-document-text'),
+                        ->getIcon()->toBe('heroicon-o-document-text'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Post Categories')
-                        ->getIcon()->toBe('heroicon-m-rectangle-stack'),
+                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
             fn ($group) => $group
@@ -73,7 +73,7 @@ it('can register navigation', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Products')
-                        ->getIcon()->toBe('heroicon-m-shopping-bag'),
+                        ->getIcon()->toBe('heroicon-o-shopping-bag'),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
         );
@@ -97,10 +97,10 @@ it('can register navigation groups individually', function () {
                 ->sequence(
                     fn ($item) => $item
                         ->getLabel()->toBe('Posts')
-                        ->getIcon()->toBe('heroicon-m-document-text'),
+                        ->getIcon()->toBe('heroicon-o-document-text'),
                     fn ($item) => $item
                         ->getLabel()->toBe('Post Categories')
-                        ->getIcon()->toBe('heroicon-m-rectangle-stack'),
+                        ->getIcon()->toBe('heroicon-o-rectangle-stack'),
                 )
                 ->each->toBeInstanceOf(NavigationItem::class),
         );
@@ -137,15 +137,15 @@ it('can register navigation groups with hidden items', function () {
                         ->isHidden()->toBeTrue(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Dashboard')
-                        ->getIcon()->toBe('heroicon-m-home')
+                        ->getIcon()->toBe('heroicon-o-home')
                         ->isVisible()->toBeTrue(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Users')
-                        ->getIcon()->toBe('heroicon-m-user')
+                        ->getIcon()->toBe('heroicon-o-user')
                         ->isHidden()->toBeFalse(),
                     fn ($item) => $item
                         ->getLabel()->toBe('Settings')
-                        ->getIcon()->toBe('heroicon-m-cog-6-tooth')
+                        ->getIcon()->toBe('heroicon-o-cog-6-tooth')
                         ->isVisible()->toBeTrue()
                         ->isHidden()->toBeFalse(),
                 )

@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Bu kimlik bilgileri kayıtlarla eşleşmiyor.',
-        'throttled' => 'Çok fazla giriş denemesi. Lütfen :seconds saniye sonra tekrar deneyin.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Çok fazla giriş denemesi. Lütfen :seconds saniye sonra tekrar deneyin.',
+        ],
+
     ],
 
 ];

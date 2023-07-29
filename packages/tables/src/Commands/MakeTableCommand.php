@@ -70,7 +70,7 @@ class MakeTableCommand extends Command
             ) : '//', 4),
             'model' => $model,
             'modelClass' => $modelClass,
-            'namespace' => 'App\\Http\\Livewire' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
+            'namespace' => 'App\\Livewire' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
             'view' => $view,
         ]);
 

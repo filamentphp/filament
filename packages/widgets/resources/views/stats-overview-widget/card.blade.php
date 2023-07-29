@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Enums\IconPosition;
+
     $chartColor = $getChartColor() ?? 'gray';
     $descriptionColor = $getDescriptionColor() ?? 'gray';
     $descriptionIcon = $getDescriptionIcon();
@@ -26,7 +28,12 @@
             target="_blank"
         @endif
     @endif
-    {{ $getExtraAttributeBag()->class(['fi-wi-stats-overview-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10']) }}
+    {{
+        $getExtraAttributeBag()
+            ->class([
+                'fi-wi-stats-overview-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
+            ])
+    }}
 >
     <div class="grid gap-y-2">
         <div class="flex items-center gap-x-2">
@@ -50,7 +57,7 @@
 
         @if ($description = $getDescription())
             <div class="flex items-center gap-x-1">
-                @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
+                @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
                     <x-filament::icon
                         :icon="$descriptionIcon"
                         :class="$descriptionIconClasses"
@@ -73,7 +80,7 @@
                     {{ $description }}
                 </span>
 
-                @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
+                @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::After, 'after']))
                     <x-filament::icon
                         :icon="$descriptionIcon"
                         :class="$descriptionIconClasses"
@@ -94,9 +101,7 @@
                         values: @js(array_values($chart)),
                     })"
             x-ignore
-            @class([
-                'absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl',
-            ])
+            class="fi-wi-stats-overview-card-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
             @style([
                 \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
             ])
@@ -111,7 +116,6 @@
                         default => 'text-custom-50 dark:text-custom-400/10',
                     },
                 ])
-                class=""
             ></span>
 
             <span

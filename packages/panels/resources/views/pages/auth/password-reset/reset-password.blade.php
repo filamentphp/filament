@@ -1,10 +1,10 @@
-<x-filament::page.simple>
-    <x-filament::form wire:submit="resetPassword">
+<x-filament-panels::page.simple>
+    <x-filament-panels::form wire:submit="resetPassword">
         {{ $this->form }}
 
-        <x-filament::form.actions
+        <x-filament-panels::form.actions
             :actions="$this->getCachedFormActions()"
             :full-width="$this->hasFullWidthFormActions()"
         />
-    </x-filament::form>
-</x-filament::page.simple>
+    </x-filament-panels::form>
+</x-filament-panels::page.simple>

@@ -42,7 +42,7 @@
             wire:key="{{ $attributes->get('wire:key') }}.panel"
         @endif
         @class([
-            'fi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/10 dark:bg-gray-900 dark:ring-white/10',
+            'fi-dropdown-panel absolute z-10 w-screen divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:divide-white/5 dark:bg-gray-900 dark:ring-white/10',
             match ($width) {
                 'xs' => 'max-w-xs',
                 'sm' => 'max-w-sm',

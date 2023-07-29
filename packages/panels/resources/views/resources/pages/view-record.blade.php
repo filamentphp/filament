@@ -1,4 +1,4 @@
-<x-filament::page
+<x-filament-panels::page
     @class([
         'fi-resource-view-record-page',
         'fi-resource-' . str_replace('/', '-', $this->getResource()::getSlug()),
@@ -22,7 +22,7 @@
     @endif
 
     @if (count($relationManagers))
-        <x-filament::resources.relation-managers
+        <x-filament-panels::resources.relation-managers
             :active-locale="isset($activeLocale) ? $activeLocale : null"
             :active-manager="$activeRelationManager"
             :content-tab-label="$this->getContentTabLabel()"
@@ -39,6 +39,6 @@
                     @endif
                 </x-slot>
             @endif
-        </x-filament::resources.relation-managers>
+        </x-filament-panels::resources.relation-managers>
     @endif
-</x-filament::page>
+</x-filament-panels::page>

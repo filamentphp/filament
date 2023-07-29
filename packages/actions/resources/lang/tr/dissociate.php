@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Ayrıştırıldı',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Ayrıştırıldı',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Ayrıştırıldı',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Ayrıştırıldı',
+            ],
+
         ],
 
     ],

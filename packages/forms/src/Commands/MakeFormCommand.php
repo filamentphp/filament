@@ -81,7 +81,7 @@ class MakeFormCommand extends Command
             'class' => $componentClass,
             'model' => $model,
             'modelClass' => $modelClass,
-            'namespace' => 'App\\Http\\Livewire' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
+            'namespace' => 'App\\Livewire' . ($componentNamespace !== '' ? "\\{$componentNamespace}" : ''),
             'schema' => $this->indentString((filled($model) && $this->option('generate')) ? $this->getResourceFormSchema(
                 'App\\Models\\' . $model,
             ) : '//', 4),

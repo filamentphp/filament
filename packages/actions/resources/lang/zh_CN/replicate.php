@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => '记录已复制',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => '记录已复制',
+            ],
+
         ],
 
     ],

@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\VerticalAlignment;
+@endphp
+
 <div
     {{
         $attributes
@@ -8,9 +12,9 @@
             ->class([
                 'fi-in-actions flex h-full flex-col',
                 match ($verticalAlignment = $getVerticalAlignment()) {
-                    'center' => 'justify-center',
-                    'end' => 'justify-end',
-                    'start' => 'justify-start',
+                    VerticalAlignment::Center, 'center' => 'justify-center',
+                    VerticalAlignment::End, 'end' => 'justify-end',
+                    VerticalAlignment::Start, 'start' => 'justify-start',
                     default => $verticalAlignment,
                 },
             ])

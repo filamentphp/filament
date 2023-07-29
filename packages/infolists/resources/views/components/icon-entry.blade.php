@@ -1,10 +1,14 @@
+@php
+    use Filament\Infolists\Components\IconEntry\IconEntrySize;
+@endphp
+
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     <div
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
-                    'fi-in-icon flex flex-wrap gap-1',
+                    'fi-in-icon flex flex-wrap gap-1.5',
                 ])
         }}
     >
@@ -12,19 +16,19 @@
             @if ($icon = $getIcon($state))
                 @php
                     $color = $getColor($state) ?? 'gray';
-                    $size = $getSize($state) ?? 'lg';
+                    $size = $getSize($state) ?? IconEntrySize::Large;
                 @endphp
 
                 <x-filament::icon
                     :icon="$icon"
                     @class([
-                        'fi-in-icon-icon',
+                        'fi-in-icon-item',
                         match ($size) {
-                            'xs' => 'fi-in-icon-size-xs h-3 w-3',
-                            'sm' => 'fi-in-icon-size-sm h-4 w-4',
-                            'md' => 'fi-in-icon-size-md h-5 w-5',
-                            'lg' => 'fi-in-icon-size-lg h-6 w-6',
-                            'xl' => 'fi-in-icon-size-xl h-7 w-7',
+                            IconEntrySize::ExtraSmall, 'xs' => 'fi-in-icon-item-size-xs h-3 w-3',
+                            IconEntrySize::Small, 'sm' => 'fi-in-icon-item-size-sm h-4 w-4',
+                            IconEntrySize::Medium, 'md' => 'fi-in-icon-item-size-md h-5 w-5',
+                            IconEntrySize::Large, 'lg' => 'fi-in-icon-item-size-lg h-6 w-6',
+                            IconEntrySize::ExtraLarge, 'xl' => 'fi-in-icon-item-size-xl h-7 w-7',
                             default => $size,
                         },
                         match ($color) {

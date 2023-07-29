@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Գրառումը վերականգնել է',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Գրառումը վերականգնել է',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Գրառումները վերականգնել են',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Գրառումները վերականգնել են',
+            ],
+
         ],
 
     ],

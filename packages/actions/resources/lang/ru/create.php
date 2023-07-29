@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => 'Создано',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'Создано',
+            ],
+
         ],
 
     ],

@@ -22,7 +22,7 @@ livewire(CreatePost::class)
     ]);
 ```
 
-> Note that if you have multiple forms on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
+> If you have multiple forms on a Livewire component, you can specify which form you want to fill using `fillForm([...], 'createPostForm')`.
 
 To check that a form has data, use `assertFormSet()`:
 
@@ -43,7 +43,7 @@ it('can automatically generate a slug from the title', function () {
 });
 ```
 
-> Note that if you have multiple forms on a Livewire component, you can specify which form you want to check using `assertFormSet([...], 'createPostForm')`.
+> If you have multiple forms on a Livewire component, you can specify which form you want to check using `assertFormSet([...], 'createPostForm')`.
 
 ## Validation
 
@@ -75,7 +75,7 @@ livewire(CreatePost::class)
     ->assertHasNoFormErrors();
 ```
 
-> Note that if you have multiple forms on a Livewire component, you can pass the name of a specific form as the second parameter like `assertHasFormErrors(['title' => 'required'], 'createPostForm')` or `assertHasNoFormErrors([], 'createPostForm')`.
+> If you have multiple forms on a Livewire component, you can pass the name of a specific form as the second parameter like `assertHasFormErrors(['title' => 'required'], 'createPostForm')` or `assertHasNoFormErrors([], 'createPostForm')`.
 
 ## Form existence
 
@@ -90,7 +90,7 @@ it('has a form', function () {
 });
 ```
 
-> Note that if you have multiple forms on a Livewire component, you can pass the name of a specific form like `assertFormExists('createPostForm')`.
+> If you have multiple forms on a Livewire component, you can pass the name of a specific form like `assertFormExists('createPostForm')`.
 
 ## Fields
 
@@ -118,7 +118,7 @@ it('has a title field', function () {
 });
 ```
 
-> Note that if you have multiple forms on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
+> If you have multiple forms on a Livewire component, you can specify which form you want to check for the existence of the field like `assertFormFieldExists('title', 'createPostForm')`.
 
 ### Hidden fields
 
@@ -144,7 +144,7 @@ test('title is hidden', function () {
 });
 ```
 
-> Note that for both `assertFormFieldIsHidden()` and `assertFormFieldIsVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldIsHidden('title', 'createPostForm')`.
+> For both `assertFormFieldIsHidden()` and `assertFormFieldIsVisible()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldIsHidden('title', 'createPostForm')`.
 
 ### Disabled fields
 
@@ -170,4 +170,4 @@ test('title is disabled', function () {
 });
 ```
 
-> Note that for both `assertFormFieldIsEnabled()` and `assertFormFieldIsDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldIsEnabled('title', 'createPostForm')`.
+> For both `assertFormFieldIsEnabled()` and `assertFormFieldIsDisabled()` you can pass the name of a specific form the field belongs to as the second argument like `assertFormFieldIsEnabled('title', 'createPostForm')`.

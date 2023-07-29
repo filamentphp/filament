@@ -12,19 +12,19 @@
     $items = \Illuminate\Support\Arr::except($items, ['account', 'logout', 'profile']);
 @endphp
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.start') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.before') }}
 
 <x-filament::dropdown placement="bottom-end" class="fi-user-menu">
     <x-slot name="trigger">
         <button
-            aria-label="{{ __('filament::layout.actions.open_user_menu.label') }}"
+            aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"
             type="button"
         >
-            <x-filament::avatar.user :user="$user" />
+            <x-filament-panels::avatar.user :user="$user" />
         </button>
     </x-slot>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.profile.before') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.profile.before') }}
 
     @if ($hasProfile)
         <x-filament::dropdown.list>
@@ -48,11 +48,11 @@
         </x-filament::dropdown.header>
     @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.profile.after') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.profile.after') }}
 
     @if (filament()->hasDarkMode() && (! filament()->hasDarkModeForced()))
         <x-filament::dropdown.list>
-            <x-filament::theme-switcher />
+            <x-filament-panels::theme-switcher />
         </x-filament::dropdown.list>
     @endif
 
@@ -76,9 +76,9 @@
             method="post"
             tag="form"
         >
-            {{ $logoutItem?->getLabel() ?? __('filament::layout.actions.logout.label') }}
+            {{ $logoutItem?->getLabel() ?? __('filament-panels::layout.actions.logout.label') }}
         </x-filament::dropdown.list.item>
     </x-filament::dropdown.list>
 </x-filament::dropdown>
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('user-menu.end') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.after') }}

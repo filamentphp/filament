@@ -8,6 +8,8 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+
     $action = $column->getAction();
     $name = $column->getName();
     $shouldOpenUrlInNewTab = $column->shouldOpenUrlInNewTab();
@@ -15,13 +17,13 @@
     $url = $column->getUrl();
 
     $columnClasses = \Illuminate\Support\Arr::toCssClasses([
-        'flex w-full disabled:opacity-70 disabled:pointer-events-none',
+        'flex w-full disabled:pointer-events-none',
         match ($column->getAlignment()) {
-            'center' => 'justify-center text-center',
-            'end' => 'justify-end text-end',
-            'left' => 'justify-start text-left',
-            'right' => 'justify-end text-right',
-            'justify' => 'justify-between text-justify',
+            Alignment::Center, 'center' => 'justify-center text-center',
+            Alignment::End, 'end' => 'justify-end text-end',
+            Alignment::Left, 'left' => 'justify-start text-left',
+            Alignment::Right, 'right' => 'justify-end text-right',
+            Alignment::Justify, 'justify' => 'justify-between text-justify',
             default => 'justify-start text-start',
         },
     ]);
@@ -63,10 +65,10 @@
         @endphp
 
         <button
-            wire:click="{{ $wireClickAction }}"
-            wire:target="{{ $wireClickAction }}"
-            wire:loading.attr="disabled"
             type="button"
+            wire:click="{{ $wireClickAction }}"
+            wire:loading.attr="disabled"
+            wire:target="{{ $wireClickAction }}"
             class="{{ $columnClasses }}"
         >
             {{ $slot }}

@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'تم الحذف',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'تم الحذف',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'تم الحذف',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'تم الحذف',
+            ],
+
         ],
 
     ],

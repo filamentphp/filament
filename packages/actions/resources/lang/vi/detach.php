@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Đã huỷ đính kèm',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Đã huỷ đính kèm',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Đã huỷ đính kèm',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Đã huỷ đính kèm',
+            ],
+
         ],
 
     ],

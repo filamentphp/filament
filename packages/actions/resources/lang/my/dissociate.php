@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'သိမ်းဆည်းပြီး',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'သိမ်းဆည်းပြီး',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Dissociated',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Dissociated',
+            ],
+
         ],
 
     ],

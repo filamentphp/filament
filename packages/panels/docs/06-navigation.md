@@ -28,7 +28,7 @@ public static function getNavigationLabel(): ?string
 To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set=1#search), you may override the `$navigationIcon` property on the [resource](resources) or [page](pages) class:
 
 ```php
-protected static ?string $navigationIcon = 'heroicon-m-document-text';
+protected static ?string $navigationIcon = 'heroicon-o-document-text';
 ```
 
 ### Switching navigation item icon when it is active
@@ -36,7 +36,7 @@ protected static ?string $navigationIcon = 'heroicon-m-document-text';
 You may assign a navigation [icon](https://blade-ui-kit.com/blade-icons?set=1#search) which will only be used for active items using the `$activeNavigationIcon` property:
 
 ```php
-protected static ?string $activeNavigationIcon = 'heroicon-m-document-text';
+protected static ?string $activeNavigationIcon = 'heroicon-o-document-text';
 ```
 
 ## Sorting navigation items
@@ -94,13 +94,13 @@ public function panel(Panel $panel): Panel
         ->navigationGroups([
             NavigationGroup::make()
                  ->label('Shop')
-                 ->icon('heroicon-m-shopping-cart'),
+                 ->icon('heroicon-o-shopping-cart'),
             NavigationGroup::make()
                 ->label('Blog')
-                ->icon('heroicon-m-pencil'),
+                ->icon('heroicon-o-pencil'),
             NavigationGroup::make()
                 ->label('Settings')
-                ->icon('heroicon-m-cog-6-tooth')
+                ->icon('heroicon-o-cog-6-tooth')
                 ->collapsed(),
         ]);
 }
@@ -130,7 +130,7 @@ use Filament\Navigation\NavigationGroup;
 
 NavigationGroup::make()
     ->label('Settings')
-    ->icon('heroicon-m-cog-6-tooth')
+    ->icon('heroicon-o-cog-6-tooth')
     ->collapsible(false);
 ```
 
@@ -190,7 +190,7 @@ public function panel(Panel $panel): Panel
         ->navigationItems([
             NavigationItem::make('Analytics')
                 ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
-                ->icon('heroicon-m-presentation-chart-line')
+                ->icon('heroicon-o-presentation-chart-line')
                 ->group('Reports')
                 ->sort(3),
             // ...
@@ -219,6 +219,21 @@ To prevent resources or pages from showing up in navigation, you may use:
 protected static bool $shouldRegisterNavigation = false;
 ```
 
+## Using top navigation
+
+By default, Filament will use a sidebar navigation. You may use a top navigation instead by using the [configuration](configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->topNavigation();
+}
+```
+
 ## Advanced navigation customization
 
 The `navigation()` method can be called from the [configuration](configuration). It allows you to build a custom navigation that overrides Filament's automatically generated items. This API is designed to give you complete control over the navigation.
@@ -241,7 +256,7 @@ public function panel(Panel $panel): Panel
         ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
             return $builder->items([
                 NavigationItem::make('Dashboard')
-                    ->icon('heroicon-m-home')
+                    ->icon('heroicon-o-home')
                     ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
                     ->url(route('filament.pages.dashboard')),
                 ...UserResource::getNavigationItems(),
@@ -313,7 +328,7 @@ public function panel(Panel $panel): Panel
             MenuItem::make()
                 ->label('Settings')
                 ->url(route('filament.pages.settings'))
-                ->icon('heroicon-m-cog-6-tooth'),
+                ->icon('heroicon-o-cog-6-tooth'),
             // ...
         ]);
 }

@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'ستون‌ها',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -24,44 +30,6 @@ return [
             'label' => 'جستجو',
             'placeholder' => 'جستجو',
             'indicator' => 'جستجو',
-        ],
-
-    ],
-
-    'pagination' => [
-
-        'label' => 'صفحه بندی',
-
-        'overview' => 'در حال نمایش :first به :last از :total نتایج',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'در هر صفحه',
-
-                'options' => [
-                    'all' => 'همه',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'برو به صفحه :page',
-            ],
-
-            'next' => [
-                'label' => 'بعدی',
-            ],
-
-            'previous' => [
-                'label' => 'قبلی',
-            ],
-
         ],
 
     ],
@@ -123,7 +91,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'هیچ رکوردی یافت نشد',
+
+        'heading' => ':model یافت نشد.',
+
+        'description' => 'برای شروع یک :model ایجاد کنید.',
+
     ],
 
     'filters' => [
@@ -144,6 +116,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'فیلترها',
 
         'indicator' => 'فیلترهای فعال',
 
@@ -197,7 +171,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 آیتم انتخاب شده.|:count آیتم انتخاب شده.',
+        'selected_count' => '1 آیتم انتخاب شده|:count آیتم انتخاب شده',
 
         'actions' => [
 

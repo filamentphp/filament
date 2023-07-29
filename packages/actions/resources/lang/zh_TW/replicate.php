@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => '已複製資料',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => '已複製資料',
+            ],
+
         ],
 
     ],

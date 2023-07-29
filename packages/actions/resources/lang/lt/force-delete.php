@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Ištrinta',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Ištrinta',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Ištrinta',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Ištrinta',
+            ],
+
         ],
 
     ],

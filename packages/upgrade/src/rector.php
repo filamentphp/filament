@@ -26,6 +26,9 @@ return static function (RectorConfig $rectorConfig): void {
             'Filament\\Resources\\RelationManagers\\HasManyThroughRelationManager' => 'Filament\\Resources\\RelationManagers\\RelationManager',
             'Filament\\Resources\\RelationManagers\\MorphManyRelationManager' => 'Filament\\Resources\\RelationManagers\\RelationManager',
             'Filament\\Resources\\RelationManagers\\MorphToManyRelationManager' => 'Filament\\Resources\\RelationManagers\\RelationManager',
+            'Filament\\Tables\\Actions\\Position' => 'Filament\\Tables\\Enums\\ActionsPosition',
+            'Filament\\Tables\\Actions\\RecordCheckboxPosition' => 'Filament\\Tables\\Enums\\RecordCheckboxPosition',
+            'Filament\\Tables\\Filters\\Layout' => 'Filament\\Tables\\Enums\\FiltersLayout',
         ],
     );
 

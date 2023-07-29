@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Imefutwa',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Imefutwa',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Imefutwa',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Imefutwa',
+            ],
+
         ],
 
     ],

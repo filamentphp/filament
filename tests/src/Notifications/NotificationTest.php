@@ -6,10 +6,12 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\IconPosition;
+use function Filament\Tests\livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
-use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 
@@ -49,10 +51,10 @@ it('can send notifications', function () {
                 ->dispatch($actionEvent = Str::random(), $actionEventData = [Str::random()])
                 ->extraAttributes($actionExtraAttributes = ['x' . Str::random(15) => Str::random()]) // Attributes must start with a letter
                 ->icon($actionIcon = $getRandomIcon())
-                ->iconPosition($actionIconPosition = Arr::random(['after', 'before']))
+                ->iconPosition($actionIconPosition = Arr::random([IconPosition::After, IconPosition::Before]))
                 ->label($actionLabel = Str::random())
                 ->outlined($isActionOutlined = (bool) rand(0, 1))
-                ->size($actionSize = Arr::random(['sm', 'md', 'lg']))
+                ->size($actionSize = Arr::random([ActionSize::ExtraSmall, ActionSize::Small, ActionSize::Medium, ActionSize::Large, ActionSize::ExtraLarge]))
                 ->url(
                     $actionUrl = Str::random(),
                     shouldOpenInNewTab: $shouldActionOpenUrlInNewTab = (bool) rand(0, 1),
@@ -97,13 +99,22 @@ it('can send notifications', function () {
         ->eventData->toBe($actionEventData)
         ->extraAttributes->toBe($actionExtraAttributes)
         ->icon->toBe($actionIcon)
-        ->iconPosition->toBe($actionIconPosition)
+        ->iconPosition->toBe(match ($actionIconPosition) {
+            IconPosition::After => 'after',
+            IconPosition::Before => 'before',
+        })
         ->isOutlined->toBe($isActionOutlined)
         ->isDisabled->toBe($isActionDisabled)
         ->label->toBe($actionLabel)
         ->shouldClose->toBe($shouldClose)
         ->shouldOpenUrlInNewTab->toBe($shouldActionOpenUrlInNewTab)
-        ->size->toBe($actionSize)
+        ->size->toBe(match ($actionSize) {
+            ActionSize::ExtraSmall => 'xs',
+            ActionSize::Small => 'sm',
+            ActionSize::Medium => 'md',
+            ActionSize::Large => 'lg',
+            ActionSize::ExtraLarge => 'xl',
+        })
         ->url->toBe($actionUrl);
 
     $component = livewire(Notifications::class);
@@ -141,13 +152,22 @@ it('can send notifications', function () {
         ->getEventData()->toBe($actionEventData)
         ->getExtraAttributes()->toBe($actionExtraAttributes)
         ->getIcon()->toBe($actionIcon)
-        ->getIconPosition()->toBe($actionIconPosition)
+        ->getIconPosition()->toBe(match ($actionIconPosition) {
+            IconPosition::After => 'after',
+            IconPosition::Before => 'before',
+        })
         ->isOutlined()->toBe($isActionOutlined)
         ->isDisabled()->toBe($isActionDisabled)
         ->getLabel()->toBe($actionLabel)
         ->shouldClose()->toBe($shouldClose)
         ->shouldOpenUrlInNewTab()->toBe($shouldActionOpenUrlInNewTab)
-        ->getSize()->toBe($actionSize)
+        ->getSize()->toBe(match ($actionSize) {
+            ActionSize::ExtraSmall => 'xs',
+            ActionSize::Small => 'sm',
+            ActionSize::Medium => 'md',
+            ActionSize::Large => 'lg',
+            ActionSize::ExtraLarge => 'xl',
+        })
         ->getUrl()->toBe($actionUrl);
 
     expect(session()->get('filament.notifications'))

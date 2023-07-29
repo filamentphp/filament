@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => '解除しました',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => '解除しました',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => '解除されました',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => '解除されました',
+            ],
+
         ],
 
     ],
