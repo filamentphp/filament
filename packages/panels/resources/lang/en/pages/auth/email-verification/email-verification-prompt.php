@@ -26,7 +26,8 @@ return [
         ],
 
         'notification_resend_throttled' => [
-            'title' => 'Too many resend attempts. Please try again in :seconds seconds.',
+            'title' => 'Too many resend attempts',
+            'body' => 'Please try again in :seconds seconds.',
         ],
 
     ],

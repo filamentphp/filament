@@ -52,7 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Too many login attempts. Please try again in :seconds seconds.',
+            'title' => 'Too many login attempts',
+            'body' => 'Please try again in :seconds seconds.',
         ],
 
     ],

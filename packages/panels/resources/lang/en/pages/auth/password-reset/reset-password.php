@@ -34,7 +34,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Too many reset attempts. Please try again in :seconds seconds.',
+            'title' => 'Too many reset attempts',
+            'body' => 'Please try again in :seconds seconds.',
         ],
 
     ],
