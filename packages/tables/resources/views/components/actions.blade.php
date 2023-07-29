@@ -36,6 +36,7 @@
     @foreach ($actions as $action)
         <span
             @class([
+                'inline-flex',
                 '-mx-2' => $action->isIconButton(),
             ])
         >

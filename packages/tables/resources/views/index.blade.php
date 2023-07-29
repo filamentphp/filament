@@ -262,6 +262,7 @@
                             <span
                                 x-on:click="areFiltersOpen = ! areFiltersOpen"
                                 @class([
+                                    'inline-flex',
                                     '-mx-2' => $filtersTriggerAction->isIconButton(),
                                 ])
                             >
@@ -296,6 +297,7 @@
 
                         <span
                             @class([
+                                'inline-flex',
                                 '-mx-2' => $reorderRecordsTriggerAction->isIconButton(),
                             ])
                         >
