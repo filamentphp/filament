@@ -79,4 +79,15 @@ abstract class Page extends BasePage
     {
         return static::$resource;
     }
+
+    /**
+     * @return array<string>
+     */
+    public function getRenderHookScopes(): array
+    {
+        return [
+            ...parent::getRenderHookScopes(),
+            static::getResource(),
+        ];
+    }
 }

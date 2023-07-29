@@ -4,8 +4,8 @@
     $descriptionBelow = $getDescriptionBelow();
     $isBadge = $isBadge();
     $iconPosition = $getIconPosition();
-    $isClickable = $getAction() || $getUrl();
     $isListWithLineBreaks = $isListWithLineBreaks();
+    $url = $getUrl();
 
     $arrayState = $getState();
 
@@ -38,8 +38,8 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-text',
-                'px-3 py-3.5' => ! $isInline(),
+                'fi-ta-text grid gap-y-1',
+                'px-3 py-4' => ! $isInline(),
             ])
     }}
 >
@@ -87,8 +87,11 @@
                             window.navigator.clipboard.writeText(@js($copyableState))
                             $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                         "
-                        class="cursor-pointer max-w-max"
                     @endif
+                    @class([
+                        'flex max-w-max',
+                        'cursor-pointer' => $itemIsCopyable,
+                    ])
                 >
                     @if ($isBadge)
                         <x-filament::badge
@@ -101,11 +104,11 @@
                     @else
                         <div
                             @class([
-                                'fi-ta-text-item inline-flex items-center gap-1',
+                                'fi-ta-text-item inline-flex items-center gap-1.5',
                                 'transition duration-75 hover:underline focus:underline' => $url,
                                 match ($size) {
                                     'xs' => 'text-xs',
-                                    'sm', null => 'text-sm leading-6',
+                                    'sm', null => 'text-sm',
                                     'base', 'md' => 'text-base',
                                     'lg' => 'text-lg',
                                     default => $size,

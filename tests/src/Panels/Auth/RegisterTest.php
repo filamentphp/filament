@@ -2,12 +2,12 @@
 
 use Filament\Facades\Filament;
 use Filament\Pages\Auth\Register;
+use function Filament\Tests\livewire;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
-use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 

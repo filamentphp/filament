@@ -203,3 +203,33 @@ This class extends the base profile page class from the Filament codebase. Other
 - `Filament\Pages\Auth\PasswordReset\ResetPassword`
 
 In the `form()` method of the example, we call methods like `getNameFormComponent()` to get the default form components for the page. You can customize these components as required. For all the available customization options, see the base `EditProfile` page class in the Filament codebase - it contains all the methods that you can override to make changes.
+
+### Setting the authentication guard
+
+To set the authentication guard that Filament uses, you can pass in the guard name to the `authGuard()` configuration method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->authGuard('web');
+}
+```
+
+### Setting the password broker
+
+To set the password broker that Filament uses, you can pass in the broker name to the `authPasswordBroker()` configuration method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->authPasswordBroker('users');
+}
+```

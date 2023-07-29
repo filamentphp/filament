@@ -105,7 +105,7 @@
                         @else
                             <div
                                 @class([
-                                    'fi-in-text-item inline-flex items-center gap-1',
+                                    'fi-in-text-item inline-flex items-center gap-1.5',
                                     'transition duration-75 hover:underline focus:underline' => $url,
                                     match ($size) {
                                         'xs' => 'text-xs',

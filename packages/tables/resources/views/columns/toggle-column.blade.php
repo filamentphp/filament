@@ -15,7 +15,10 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-ta-toggle'])
+                ->class([
+                    'fi-ta-toggle',
+                    'px-3 py-4' => ! $isInline(),
+                ])
         }}
     >
         @php
@@ -35,7 +38,9 @@
                 state = ! state
 
                 isLoading = true
-                response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+
+                const response = await $wire.updateTableColumnState(@js($getName()), @js($recordKey), state)
+
                 error = response?.error ?? undefined
 
                 if (error) {
@@ -44,10 +49,14 @@
 
                 isLoading = false
             "
-            x-tooltip="{
-                content: error,
-                theme: $store.theme,
-            }"
+            x-tooltip="
+                error === undefined
+                    ? false
+                    : {
+                          content: error,
+                          theme: $store.theme,
+                      }
+            "
             x-bind:class="
                 (state
                     ? '{{

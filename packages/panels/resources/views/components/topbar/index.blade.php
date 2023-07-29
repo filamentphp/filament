@@ -13,7 +13,7 @@
 <nav
     {{ $attributes->class(['fi-topbar sticky top-0 z-20 flex h-16 items-center bg-white px-4 shadow-[0_1px_0_0_theme(colors.gray.950_/_5%)] transition dark:bg-gray-900 dark:shadow-[0_1px_0_0_theme(colors.white_/_10%)] md:px-6 lg:px-8']) }}
 >
-    {{ \Filament\Support\Facades\FilamentView::renderHook('topbar.start') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.start') }}
 
     <x-filament::icon-button
         color="gray"
@@ -74,6 +74,8 @@
                                     @endphp
 
                                     <x-filament::dropdown.list.item
+                                        :badge="$item->getBadge()"
+                                        :badge-color="$item->getBadgeColor()"
                                         :href="$item->getUrl()"
                                         :icon="$item->isActive() ? ($item->getActiveIcon() ?? $icon) : $icon"
                                         tag="a"
@@ -120,5 +122,5 @@
         <x-filament::user-menu />
     </div>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('topbar.end') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.end') }}
 </nav>

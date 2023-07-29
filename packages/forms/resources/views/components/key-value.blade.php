@@ -13,9 +13,13 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
-                    'fi-fo-key-value rounded-lg bg-white shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-gray-900',
-                    'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-600' => ! $errors->has($statePath),
-                    'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-400 dark:focus-within:ring-danger-400' => $errors->has($statePath),
+                    'fi-fo-key-value rounded-lg shadow-sm ring-1 transition duration-75 focus-within:ring-2',
+                    'bg-white dark:bg-white/5' => ! $isDisabled,
+                    'bg-gray-50 dark:bg-transparent' => $isDisabled,
+                    'ring-gray-950/10 focus-within:ring-primary-600 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
+                    'dark:ring-white/20' => (! $errors->has($statePath)) && (! $isDisabled),
+                    'dark:ring-white/10' => (! $errors->has($statePath)) && $isDisabled,
+                    'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-500 dark:focus-within:ring-danger-500' => $errors->has($statePath),
                 ])
         }}
     >
@@ -30,11 +34,11 @@
             {{
                 $attributes
                     ->merge($getExtraAlpineAttributes(), escape: false)
-                    ->class(['divide-y divide-gray-100 dark:divide-white/10'])
+                    ->class(['divide-y divide-gray-200 dark:divide-white/10'])
             }}
         >
             <table
-                class="w-full table-auto divide-y divide-gray-100 dark:divide-white/10"
+                class="w-full table-auto divide-y divide-gray-200 dark:divide-white/5"
             >
                 <thead>
                     <tr>
@@ -48,14 +52,14 @@
 
                         <th
                             scope="col"
-                            class="px-3 py-2 text-start text-sm font-medium text-gray-500 dark:text-gray-400"
+                            class="px-3 py-2 text-start text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
                             {{ $getKeyLabel() }}
                         </th>
 
                         <th
                             scope="col"
-                            class="px-3 py-2 text-start text-sm font-medium text-gray-500 dark:text-gray-400"
+                            class="px-3 py-2 text-start text-sm font-medium text-gray-700 dark:text-gray-200"
                         >
                             {{ $getValueLabel() }}
                         </th>
@@ -75,7 +79,7 @@
                         x-on:end="reorderRows($event)"
                         x-sortable
                     @endif
-                    class="divide-y divide-gray-100 dark:divide-white/10"
+                    class="divide-y divide-gray-200 dark:divide-white/5"
                 >
                     <template
                         x-bind:key="index"
@@ -85,7 +89,7 @@
                             @if ($isReorderable)
                                 x-bind:x-sortable-item="row.key"
                             @endif
-                            class="divide-x divide-gray-100 rtl:divide-x-reverse dark:divide-white/10"
+                            class="divide-x divide-gray-200 rtl:divide-x-reverse dark:divide-white/5"
                         >
                             @if ($isReorderable && (! $isDisabled))
                                 <td class="p-0.5">
@@ -143,7 +147,7 @@
 
             @if ($isAddable && (! $isDisabled))
                 <div class="flex justify-center px-3 py-2">
-                    <span x-on:click="addRow">
+                    <span x-on:click="addRow" class="flex">
                         {{ $getAction('add') }}
                     </span>
                 </div>

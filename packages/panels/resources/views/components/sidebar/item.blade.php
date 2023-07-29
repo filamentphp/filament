@@ -39,17 +39,17 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'relative flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5',
-            'bg-gray-950/5 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
+            'relative flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'bg-gray-100 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
         ])
     >
         @if ($icon)
             <x-filament::icon
                 :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 @class([
-                    'fi-sidebar-item-icon h-5 w-5',
+                    'fi-sidebar-item-icon h-6 w-6',
                     'text-gray-400 dark:text-gray-500' => ! $active,
-                    'text-primary-500' => $active,
+                    'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
         @elseif ($hasGroupedBorder)
@@ -93,7 +93,6 @@
         @if (filled($badge))
             <x-filament::badge
                 :color="$badgeColor"
-                size="sm"
                 :x-show="filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : null"
             >
                 {{ $badge }}

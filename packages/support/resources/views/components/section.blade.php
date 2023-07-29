@@ -129,7 +129,7 @@
         @class([
             'fi-section-content-ctn',
             'md:col-span-2' => $aside,
-            'border-t border-gray-100 dark:border-white/10' => ! $aside,
+            'border-t border-gray-200 dark:border-white/10' => ! $aside,
             'md:order-first' => $contentBefore,
         ])
     >

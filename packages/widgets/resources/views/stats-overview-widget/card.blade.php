@@ -99,9 +99,7 @@
                         values: @js(array_values($chart)),
                     })"
             x-ignore
-            @class([
-                'absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl',
-            ])
+            class="fi-wi-stats-overview-card-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
             @style([
                 \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
             ])
@@ -116,7 +114,6 @@
                         default => 'text-custom-50 dark:text-custom-400/10',
                     },
                 ])
-                class=""
             ></span>
 
             <span

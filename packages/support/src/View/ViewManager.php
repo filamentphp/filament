@@ -4,6 +4,7 @@ namespace Filament\Support\View;
 
 use Closure;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\HtmlString;
 
 class ViewManager
@@ -13,26 +14,52 @@ class ViewManager
      */
     protected array $renderHooks = [];
 
-    public function registerRenderHook(string $name, Closure $hook, ?string $scope = null): void
+    /**
+     * @param  string | array<string> | null  $scopes
+     */
+    public function registerRenderHook(string $name, Closure $hook, string | array | null $scopes = null): void
     {
-        $this->renderHooks[$name][$scope][] = $hook;
+        if (! is_array($scopes)) {
+            $scopes = [$scopes];
+        }
+
+        foreach ($scopes as $scopeName) {
+            $this->renderHooks[$name][$scopeName][] = $hook;
+        }
     }
 
-    public function renderHook(string $name, ?string $scope = null): Htmlable
+    /**
+     * @param  string | array<string> | null  $scopes
+     */
+    public function renderHook(string $name, string | array | null $scopes = null): Htmlable
     {
-        $renderHook = fn (callable $hook): string => (string) app()->call($hook);
+        $renderedHooks = [];
+
+        $scopes = Arr::wrap($scopes);
+
+        $renderHook = function (callable $hook) use (&$renderedHooks, $scopes): ?string {
+            $hookId = spl_object_id($hook);
+
+            if (in_array($hookId, $renderedHooks)) {
+                return null;
+            }
+
+            $renderedHooks[] = $hookId;
+
+            return (string) app()->call($hook, ['scopes' => $scopes]);
+        };
 
         $hooks = array_map(
             $renderHook,
             $this->renderHooks[$name][null] ?? [],
         );
 
-        if (filled($scope)) {
+        foreach ($scopes as $scopeName) {
             $hooks = [
                 ...$hooks,
                 ...array_map(
                     $renderHook,
-                    $this->renderHooks[$name][$scope] ?? [],
+                    $this->renderHooks[$name][$scopeName] ?? [],
                 ),
             ];
         }

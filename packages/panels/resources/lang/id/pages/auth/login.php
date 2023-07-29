@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Masuk ke akun Anda',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'atau',
+            'label' => 'buat akun baru',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Lupa kata sandi?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
@@ -32,7 +45,7 @@ return [
 
     'messages' => [
         'failed' => 'Kredensial yang diberikan tidak dapat ditemukan.',
-        'throttled' => 'Terlalu banyak percobaan masuk. Silakan ulangi dalam :seconds detik.',
+        'throttled' => 'Terlalu banyak permintaan. Silakan coba lagi dalam :seconds detik.',
     ],
 
 ];

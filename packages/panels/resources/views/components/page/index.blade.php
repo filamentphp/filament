@@ -5,7 +5,7 @@
 @endphp
 
 <div {{ $attributes->class(['fi-page']) }}>
-    {{ \Filament\Support\Facades\FilamentView::renderHook('page.start', scope: static::class) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.start', scopes: $this->getRenderHookScopes()) }}
 
     <section class="grid auto-cols-fr gap-y-8 py-8">
         @if ($header = $this->getHeader())
@@ -19,7 +19,7 @@
             />
         @endif
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('page.header-widgets.start', scope: static::class) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header-widgets.before', scopes: $this->getRenderHookScopes()) }}
 
         @if ($headerWidgets = $this->getVisibleHeaderWidgets())
             <x-filament-widgets::widgets
@@ -29,11 +29,11 @@
             />
         @endif
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('page.header-widgets.end', scope: static::class) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header-widgets.after', scopes: $this->getRenderHookScopes()) }}
 
         {{ $slot }}
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('page.footer-widgets.start', scope: static::class) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.footer-widgets.before', scopes: $this->getRenderHookScopes()) }}
 
         @if ($footerWidgets = $this->getVisibleFooterWidgets())
             <x-filament-widgets::widgets
@@ -43,7 +43,7 @@
             />
         @endif
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('page.footer-widgets.end', scope: static::class) }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.footer-widgets.after', scopes: $this->getRenderHookScopes()) }}
 
         @if ($footer = $this->getFooter())
             {{ $footer }}
@@ -54,5 +54,5 @@
         <x-filament-actions::modals />
     @endif
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('page.end', scope: static::class) }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.end', scopes: $this->getRenderHookScopes()) }}
 </div>

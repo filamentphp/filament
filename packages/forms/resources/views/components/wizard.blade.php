@@ -206,7 +206,7 @@
                         aria-hidden="true"
                     >
                         <svg
-                            class="h-full w-full text-gray-300 rtl:rotate-180 dark:text-gray-700"
+                            class="h-full w-full text-gray-200 rtl:rotate-180 dark:text-gray-700"
                             viewBox="0 0 12 82"
                             fill="none"
                             preserveAspectRatio="none"

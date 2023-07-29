@@ -3,9 +3,9 @@
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Tests\Forms\Fixtures\Livewire;
+use function Filament\Tests\livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Contracts\View\View;
-use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 

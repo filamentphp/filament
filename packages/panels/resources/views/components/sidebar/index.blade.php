@@ -124,32 +124,13 @@
     <nav
         class="fi-sidebar-nav grid flex-1 content-start gap-y-6 overflow-y-auto overflow-x-hidden py-6 shadow-lg lg:shadow-none"
     >
-        {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.start') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
 
         @if (filament()->hasTenancy())
             <div class="mx-4">
                 <x-filament::tenant-menu />
             </div>
         @endif
-
-        @php
-            $collapsedNavigationGroupLabels = collect($navigation)
-                ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
-                ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
-                ->values();
-        @endphp
-
-        <script>
-            if (
-                JSON.parse(localStorage.getItem('collapsedGroups')) === null ||
-                JSON.parse(localStorage.getItem('collapsedGroups')) === 'null'
-            ) {
-                localStorage.setItem(
-                    'collapsedGroups',
-                    JSON.stringify(@js($collapsedNavigationGroupLabels)),
-                )
-            }
-        </script>
 
         @if (filament()->hasNavigation())
             <ul class="-mx-3 grid gap-y-3 px-6">
@@ -163,10 +144,44 @@
                     />
                 @endforeach
             </ul>
+
+            @php
+                $collapsedNavigationGroupLabels = collect($navigation)
+                    ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                    ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                    ->values();
+            @endphp
+
+            <script>
+                let collapsedGroups = JSON.parse(localStorage.getItem('collapsedGroups'))
+
+                if (
+                    collapsedGroups === null ||
+                    collapsedGroups === 'null'
+                ) {
+                    localStorage.setItem(
+                        'collapsedGroups',
+                        JSON.stringify(@js($collapsedNavigationGroupLabels)),
+                    )
+                }
+
+                collapsedGroups = JSON.parse(localStorage.getItem('collapsedGroups'))
+
+                document.querySelectorAll('.fi-sidebar-group').forEach((group) => {
+                    if (! collapsedGroups.includes(group.dataset.groupLabel)) {
+                        return
+                    }
+
+                    // Alpine.js loads too slow, so attempt to hide a
+                    // collapsed sidebar group earlier.
+                    group.querySelector('.fi-sidebar-group-items').style.display = 'none'
+                    group.querySelector('.fi-sidebar-group-collapse-button').classList.add('rotate-180')
+                })
+            </script>
         @endif
 
-        {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.end') }}
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.end') }}
     </nav>
 
-    {{ \Filament\Support\Facades\FilamentView::renderHook('sidebar.footer') }}
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.footer') }}
 </aside>

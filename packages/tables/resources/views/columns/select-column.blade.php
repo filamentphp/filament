@@ -40,7 +40,10 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-select px-3 py-2'])
+            ->class([
+                'fi-ta-select',
+                'px-3 py-4' => ! $isInline(),
+            ])
     }}
 >
     <input
@@ -52,6 +55,14 @@
     <x-filament-forms::affixes
         :alpine-disabled="'isLoading || ' . \Illuminate\Support\Js::from($isDisabled)"
         alpine-valid="error === undefined"
+        x-tooltip="
+            error === undefined
+                ? false
+                : {
+                    content: error,
+                    theme: $store.theme,
+                }
+        "
     >
         <x-filament::input.select
             :disabled="$isDisabled"
@@ -60,7 +71,7 @@
             x-on:change="
                 isLoading = true
 
-                response = await $wire.updateTableColumnState(
+                const response = await $wire.updateTableColumnState(
                     name,
                     recordKey,
                     $event.target.value,
@@ -73,14 +84,6 @@
                 }
 
                 isLoading = false
-            "
-            x-tooltip="
-                error === undefined
-                    ? false
-                    : {
-                        content: error,
-                        theme: $store.theme,
-                    }
             "
             :attributes="\Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())"
         >

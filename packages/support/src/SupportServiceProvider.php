@@ -76,6 +76,8 @@ class SupportServiceProvider extends PackageServiceProvider
 
     public function packageBooted(): void
     {
+        config()->set('livewire.inject_morph_markers', false);
+
         FilamentAsset::register([
             Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
             Css::make('support', __DIR__ . '/../dist/index.css'),

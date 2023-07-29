@@ -173,17 +173,20 @@ class AssociateAction extends Action
 
             $relationshipQuery = $relationship->getQuery();
 
-            $titleAttribute = $relationshipQuery->qualifyColumn($this->getRecordTitleAttribute());
-
-            $relationshipQuery->orderBy($titleAttribute);
-
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
 
-            if (filled($search)) {
+            $titleAttribute = $this->getRecordTitleAttribute();
+            $titleAttribute = filled($titleAttribute) ? $relationshipQuery->qualifyColumn($titleAttribute) : null;
+
+            if (empty($relationshipQuery->getQuery()->orders) && filled($titleAttribute)) {
+                $relationshipQuery->orderBy($titleAttribute);
+            }
+
+            if (filled($search) && ($searchColumns || filled($titleAttribute))) {
                 $search = strtolower($search);
 
                 /** @var Connection $databaseConnection */
@@ -213,7 +216,7 @@ class AssociateAction extends Action
                 });
             }
 
-            return $relationshipQuery
+            $relationshipQuery
                 ->whereDoesntHave($table->getInverseRelationship(), function (Builder $query) use ($relationship): Builder {
                     if ($relationship instanceof MorphMany) {
                         return $query
@@ -223,7 +226,7 @@ class AssociateAction extends Action
                             )
                             ->where(
                                 $relationship->getQualifiedForeignKeyName(),
-                                $relationship->getParent()->getKey()
+                                $relationship->getParent()->getKey(),
                             );
                     }
 
@@ -231,10 +234,18 @@ class AssociateAction extends Action
                         $relationship->getParent()->getQualifiedKeyName(),
                         $relationship->getParent()->getKey(),
                     );
-                })
+                });
+
+            if (filled($titleAttribute)) {
+                return $relationshipQuery
+                    ->pluck($titleAttribute, $relationship->getModel()->getQualifiedKeyName())
+                    ->all();
+            }
+
+            return $relationshipQuery
                 ->get()
                 ->mapWithKeys(fn (Model $record): array => [$record->getKey() => $this->getRecordTitle($record)])
-                ->toArray();
+                ->all();
         };
 
         $select = Select::make('recordId')

@@ -23,12 +23,13 @@
     $hasAlpineValidClasses = filled($alpineValid);
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
-    $enabledClasses = 'bg-white focus-within:ring-2 dark:bg-gray-900';
-    $disabledClasses = 'bg-gray-50 dark:bg-gray-950';
-    $validClasses = 'ring-gray-950/10 dark:ring-white/20';
-    $invalidClasses = 'ring-danger-600 dark:ring-danger-400';
-    $enabledValidClasses = 'focus-within:ring-primary-600 dark:focus-within:ring-primary-600';
-    $enabledInvalidClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-400';
+    $enabledAffixesClasses = 'bg-white focus-within:ring-2 dark:bg-white/5';
+    $disabledAffixesClasses = 'bg-gray-50 dark:bg-transparent';
+    $validAffixesClasses = 'ring-gray-950/10';
+    $invalidAffixesClasses = 'ring-danger-600 dark:ring-danger-500';
+    $enabledValidAffixesClasses = 'focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500';
+    $enabledInvalidAffixesClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-500';
+    $disabledValidAffixesClasses = 'dark:ring-white/10';
 
     $affixActionsClasses = '-mx-1.5 flex items-center';
     $affixIconClasses = 'fi-fo-affixes-icon h-5 w-5 text-gray-400 dark:text-gray-500';
@@ -56,25 +57,27 @@
 <div
     @if ($hasAlpineClasses)
         x-bind:class="{
-            {{ $hasAlpineDisabledClasses ? "'{$enabledClasses}': ! ({$alpineDisabled})," : null }}
-            {{ $hasAlpineDisabledClasses ? "'{$disabledClasses}': {$alpineDisabled}," : null }}
-            {{ $hasAlpineValidClasses ? "'{$validClasses}': {$alpineValid}," : null }}
-            {{ $hasAlpineValidClasses ? "'{$invalidClasses}': ! ({$alpineValid})," : null }}
-            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledValidClasses}': ! ({$alpineDisabled}) && {$alpineValid}," : null }}
-            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledInvalidClasses}': ! ({$alpineDisabled}) && ! ({$alpineValid})," : null }}
+            {{ $hasAlpineDisabledClasses ? "'{$enabledAffixesClasses}': ! ({$alpineDisabled})," : null }}
+            {{ $hasAlpineDisabledClasses ? "'{$disabledAffixesClasses}': {$alpineDisabled}," : null }}
+            {{ $hasAlpineValidClasses ? "'{$validAffixesClasses}': {$alpineValid}," : null }}
+            {{ $hasAlpineValidClasses ? "'{$invalidAffixesClasses}': ! ({$alpineValid})," : null }}
+            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledValidAffixesClasses}': ! ({$alpineDisabled}) && {$alpineValid}," : null }}
+            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledInvalidAffixesClasses}': ! ({$alpineDisabled}) && ! ({$alpineValid})," : null }}
+            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$disabledValidAffixesClasses}': {$alpineDisabled} && ! ({$alpineValid})," : null }}
         }"
     @endif
     {{
         $attributes
-            ->except('wire:target')
+            ->except(['wire:target'])
             ->class([
                 'fi-fo-affixes flex rounded-lg shadow-sm ring-1 transition duration-75',
-                $enabledClasses => (! $hasAlpineClasses) && (! $disabled),
-                $disabledClasses => (! $hasAlpineClasses) && $disabled,
-                $validClasses => (! $hasAlpineClasses) && $valid,
-                $invalidClasses => (! $hasAlpineClasses) && (! $valid),
-                $enabledValidClasses => (! $hasAlpineClasses) && (! $disabled) && $valid,
-                $enabledInvalidClasses => (! $hasAlpineClasses) && (! $disabled) && (! $valid),
+                $enabledAffixesClasses => (! $hasAlpineClasses) && (! $disabled),
+                $disabledAffixesClasses => (! $hasAlpineClasses) && $disabled,
+                $validAffixesClasses => (! $hasAlpineClasses) && $valid,
+                $invalidAffixesClasses => (! $hasAlpineClasses) && (! $valid),
+                $enabledValidAffixesClasses => (! $hasAlpineClasses) && (! $disabled) && $valid,
+                $enabledInvalidAffixesClasses => (! $hasAlpineClasses) && (! $disabled) && (! $valid),
+                $disabledValidAffixesClasses => (! $hasAlpineClasses) && $disabled && $valid,
             ])
     }}
 >
@@ -89,7 +92,7 @@
                 'flex items-center gap-x-3 ps-3',
                 'pe-1' => $inlinePrefix && filled($prefix),
                 'pe-2' => $inlinePrefix && blank($prefix),
-                'border-e border-gray-950/10 pe-3 ps-3 dark:border-white/20' => ! $inlinePrefix,
+                'border-e border-gray-200 pe-3 ps-3 dark:border-white/10' => ! $inlinePrefix,
             ])
         >
             @if (count($prefixActions))
@@ -154,7 +157,7 @@
                 'flex items-center gap-x-3 pe-3',
                 'ps-1' => $inlineSuffix && filled($suffix),
                 'ps-2' => $inlineSuffix && blank($suffix),
-                'border-s border-gray-950/10 ps-3 dark:border-white/20' => ! $inlineSuffix,
+                'border-s border-gray-200 ps-3 dark:border-white/10' => ! $inlineSuffix,
             ])
         >
             @if (filled($suffix))

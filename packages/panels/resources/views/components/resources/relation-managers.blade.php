@@ -20,45 +20,48 @@
     @endphp
 
     @if ((count($managers) > 1) || $content)
-        <x-filament::tabs class="self-center">
-            @php
-                $tabs = $managers;
-
-                if ($content) {
-                    $tabs = array_replace([null => null], $tabs);
-                }
-            @endphp
-
-            @foreach ($tabs as $tabKey => $manager)
+        <div
+            class="mx-auto max-w-full rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+        >
+            <x-filament::tabs>
                 @php
-                    $activeManager = strval($activeManager);
-                    $tabKey = strval($tabKey);
-                    $isGroup = $manager instanceof \Filament\Resources\RelationManagers\RelationGroup;
+                    $tabs = $managers;
 
-                    if ($isGroup) {
-                        $manager->ownerRecord($ownerRecord);
-                        $manager->pageClass($pageClass);
-                    } elseif (filled($tabKey)) {
-                        $manager = $normalizeRelationManagerClass($manager);
+                    if ($content) {
+                        $tabs = array_replace([null => null], $tabs);
                     }
                 @endphp
 
-                <x-filament::tabs.item
-                    :active="$activeManager === $tabKey"
-                    :badge="filled($tabKey) ? ($isGroup ? $manager->getBadge() : $manager::getBadge($ownerRecord, $pageClass)) : null"
-                    :icon="filled($tabKey) ? ($isGroup ? $manager->getIcon() : $manager::getIcon($ownerRecord, $pageClass)) : null"
-                    :icon-color="filled($tabKey) ? ($isGroup ? $manager->getIconColor() : $manager::getIconColor($ownerRecord, $pageClass)) : null"
-                    :icon-position="filled($tabKey) ? ($isGroup ? $manager->getIconPosition() : $manager::getIconPosition($ownerRecord, $pageClass)) : null"
-                    :wire:click="'$set(\'activeRelationManager\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
-                >
-                    @if (filled($tabKey))
-                        {{ $isGroup ? $manager->getLabel() : $manager::getTitle($ownerRecord, $pageClass) }}
-                    @elseif ($content)
-                        {{ $contentTabLabel }}
-                    @endif
-                </x-filament::tabs.item>
-            @endforeach
-        </x-filament::tabs>
+                @foreach ($tabs as $tabKey => $manager)
+                    @php
+                        $activeManager = strval($activeManager);
+                        $tabKey = strval($tabKey);
+                        $isGroup = $manager instanceof \Filament\Resources\RelationManagers\RelationGroup;
+
+                        if ($isGroup) {
+                            $manager->ownerRecord($ownerRecord);
+                            $manager->pageClass($pageClass);
+                        } elseif (filled($tabKey)) {
+                            $manager = $normalizeRelationManagerClass($manager);
+                        }
+                    @endphp
+
+                    <x-filament::tabs.item
+                        :active="$activeManager === $tabKey"
+                        :badge="filled($tabKey) ? ($isGroup ? $manager->getBadge() : $manager::getBadge($ownerRecord, $pageClass)) : null"
+                        :icon="filled($tabKey) ? ($isGroup ? $manager->getIcon() : $manager::getIcon($ownerRecord, $pageClass)) : null"
+                        :icon-position="filled($tabKey) ? ($isGroup ? $manager->getIconPosition() : $manager::getIconPosition($ownerRecord, $pageClass)) : null"
+                        :wire:click="'$set(\'activeRelationManager\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                    >
+                        @if (filled($tabKey))
+                            {{ $isGroup ? $manager->getLabel() : $manager::getTitle($ownerRecord, $pageClass) }}
+                        @elseif ($content)
+                            {{ $contentTabLabel }}
+                        @endif
+                    </x-filament::tabs.item>
+                @endforeach
+            </x-filament::tabs>
+        </div>
     @endif
 
     @if (filled($activeManager) && isset($managers[$activeManager]))
@@ -86,7 +89,7 @@
 
                     @livewire(
                         $normalizedGroupedManagerClass,
-                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $groupedManager->props : [])],
+                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $groupedManager->properties : [])],
                         key($normalizedGroupedManagerClass),
                     )
                 @endforeach
@@ -98,7 +101,7 @@
 
                 @livewire(
                     $normalizedManagerClass,
-                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $manager->props : [])],
+                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $manager->properties : [])],
                     key($normalizedManagerClass),
                 )
             @endif

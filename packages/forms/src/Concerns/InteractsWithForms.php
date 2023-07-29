@@ -10,6 +10,7 @@ use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Validation\ValidationException;
+use Livewire\Attributes\Renderless;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 use Livewire\WithFileUploads;
 
@@ -52,10 +53,9 @@ trait InteractsWithForms
         return data_get($this->componentFileAttachments, $statePath);
     }
 
+    #[Renderless]
     public function getFormComponentFileAttachmentUrl(string $statePath): ?string
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             if ($url = $form->getComponentFileAttachmentUrl($statePath)) {
                 return $url;
@@ -68,10 +68,9 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[Renderless]
     public function getFormSelectOptionLabels(string $statePath): array
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             if ($labels = $form->getSelectOptionLabels($statePath)) {
                 return $labels;
@@ -81,10 +80,9 @@ trait InteractsWithForms
         return [];
     }
 
+    #[Renderless]
     public function getFormSelectOptionLabel(string $statePath): ?string
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             if ($label = $form->getSelectOptionLabel($statePath)) {
                 return $label;
@@ -97,10 +95,9 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[Renderless]
     public function getFormSelectOptions(string $statePath): array
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             if ($results = $form->getSelectOptions($statePath)) {
                 return $results;
@@ -113,10 +110,9 @@ trait InteractsWithForms
     /**
      * @return array<array{'label': string, 'value': string}>
      */
+    #[Renderless]
     public function getFormSelectSearchResults(string $statePath, string $search): array
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             if ($results = $form->getSelectSearchResults($statePath, $search)) {
                 return $results;
@@ -136,10 +132,9 @@ trait InteractsWithForms
     /**
      * @return array<array{name: string, size: int, type: string, url: string} | null> | null
      */
+    #[Renderless]
     public function getFormUploadedFiles(string $statePath): ?array
     {
-        $this->skipRender();
-
         foreach ($this->getCachedForms() as $form) {
             if ($files = $form->getUploadedFiles($statePath)) {
                 return $files;

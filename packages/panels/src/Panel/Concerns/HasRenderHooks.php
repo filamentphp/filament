@@ -8,22 +8,33 @@ use Filament\Support\Facades\FilamentView;
 trait HasRenderHooks
 {
     /**
-     * @var array<string, array<Closure>>
+     * @var array<string, array<string, array<Closure>>>
      */
     protected array $renderHooks = [];
 
-    public function renderHook(string $name, Closure $hook): static
+    /**
+     * @param  string | array<string> | null  $scopes
+     */
+    public function renderHook(string $name, Closure $hook, string | array | null $scopes = null): static
     {
-        $this->renderHooks[$name][] = $hook;
+        if (! is_array($scopes)) {
+            $scopes = [$scopes];
+        }
+
+        foreach ($scopes as $scopeName) {
+            $this->renderHooks[$name][$scopeName][] = $hook;
+        }
 
         return $this;
     }
 
     protected function registerRenderHooks(): void
     {
-        foreach ($this->renderHooks as $hookName => $hooks) {
-            foreach ($hooks as $hook) {
-                FilamentView::registerRenderHook($hookName, $hook);
+        foreach ($this->renderHooks as $hookName => $scopedHooks) {
+            foreach ($scopedHooks as $scope => $hooks) {
+                foreach ($hooks as $hook) {
+                    FilamentView::registerRenderHook($hookName, $hook, $scope);
+                }
             }
         }
     }

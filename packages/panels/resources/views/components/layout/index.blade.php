@@ -54,16 +54,14 @@
                     },
                 ])
             >
-                {{ \Filament\Support\Facades\FilamentView::renderHook('content.start') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.start') }}
 
                 {{ $slot }}
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('content.end') }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::content.end') }}
             </main>
 
-            <div class="shrink-0 py-4">
-                <x-filament::footer />
-            </div>
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
         </div>
     </div>
 </x-filament::layout.base>

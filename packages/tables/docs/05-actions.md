@@ -357,3 +357,43 @@ ActionGroup::make([
 ```
 
 <AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="3.x" />
+
+## Table action utility injection
+
+All actions, not just table actions, have access to [many utilities](../actions/advanced#action-utility-injection) within the vast majority of configuration methods. However, in addition to those, table actions have access to a few more:
+
+### Injecting the current Eloquent record
+
+If you wish to access the current Eloquent record of the action, define a `$record` parameter:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+function (Model $record) {
+    // ...
+}
+```
+
+Be aware that bulk actions, header actions, and empty state actions do not have access to the `$record`, as they are not related to any table row.
+
+### Injecting the current Eloquent model class
+
+If you wish to access the current Eloquent model class of the table, define a `$model` parameter:
+
+```php
+function (string $model) {
+    // ...
+}
+```
+
+### Injecting the current table instance
+
+If you wish to access the current table configuration instance that the action belongs to, define a `$table` parameter:
+
+```php
+use Filament\Tables\Table;
+
+function (Table $table) {
+    // ...
+}
+```

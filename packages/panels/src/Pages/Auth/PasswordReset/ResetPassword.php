@@ -82,7 +82,7 @@ class ResetPassword extends SimplePage
         $data['email'] = $this->email;
         $data['token'] = $this->token;
 
-        $status = Password::reset(
+        $status = Password::broker(Filament::getAuthPasswordBroker())->reset(
             $data,
             function (CanResetPassword | Model | Authenticatable $user) use ($data) {
                 $user->forceFill([

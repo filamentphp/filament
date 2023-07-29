@@ -38,11 +38,6 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
 
     protected static ?string $icon = null;
 
-    /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    protected static string | array | null $iconColor = null;
-
     protected static ?string $iconPosition = 'before';
 
     protected static ?string $badge = null;
@@ -178,7 +173,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
     protected function configureViewAction(Tables\Actions\ViewAction $action): void
     {
         $action
-            ->authorize(static fn (RelationManager $livewire, Model $record): bool => (! $livewire->isReadOnly()) && $livewire->canView($record))
+            ->authorize(static fn (RelationManager $livewire, Model $record): bool => $livewire->canView($record))
             ->infolist(fn (Infolist $infolist): Infolist => $this->infolist($infolist->columns(2)))
             ->form(fn (Form $form): Form => $this->form($form->columns(2)));
     }
@@ -308,14 +303,6 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
     public static function getIcon(Model $ownerRecord, string $pageClass): ?string
     {
         return static::$icon;
-    }
-
-    /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    public static function getIconColor(Model $ownerRecord, string $pageClass): string | array | null
-    {
-        return static::$iconColor;
     }
 
     public static function getIconPosition(Model $ownerRecord, string $pageClass): ?string
@@ -550,10 +537,21 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
     }
 
     /**
-     * @param  array<string, mixed>  $props
+     * @param  array<string, mixed>  $properties
      */
-    public static function make(array $props = []): RelationManagerConfiguration
+    public static function make(array $properties = []): RelationManagerConfiguration
     {
-        return app(RelationManagerConfiguration::class, ['relationManager' => static::class, 'props' => $props]);
+        return app(RelationManagerConfiguration::class, ['relationManager' => static::class, 'properties' => $properties]);
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getRenderHookScopes(): array
+    {
+        return [
+            static::class,
+            $this->pageClass,
+        ];
     }
 }

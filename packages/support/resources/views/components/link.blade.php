@@ -19,7 +19,7 @@
     $iconSize ??= $size;
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        "fi-link fi-link-size-{$size} relative inline-flex items-center justify-center font-medium outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
+        "fi-link fi-link-size-{$size} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         match ($size) {
@@ -54,7 +54,7 @@
         },
         match ($color) {
             'gray' => 'text-gray-400 dark:text-gray-500',
-            default => 'text-custom-500',
+            default => 'text-custom-600 dark:text-custom-400',
         },
     ]);
 
@@ -62,7 +62,7 @@
         \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
     ]);
 
-    $badgeClasses = 'absolute -top-1 start-full -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
+    $badgeClasses = 'absolute -top-1 start-full z-10 -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
 
@@ -113,7 +113,7 @@
             />
         @endif
 
-        @if ($badge)
+        @if (filled($badge))
             <div class="{{ $badgeClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
@@ -193,7 +193,7 @@
             @endif
         @endif
 
-        @if ($badge)
+        @if (filled($badge))
             <div class="{{ $badgeClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}

@@ -19,44 +19,6 @@ return [
 
     ],
 
-    'pagination' => [
-
-        'label' => 'Navigazione paginazione',
-
-        'overview' => 'Mostrati :first a :last di :total risultati',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'per pagina',
-
-                'options' => [
-                    'all' => 'Tutti',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'Vai a pagina :page',
-            ],
-
-            'next' => [
-                'label' => 'Successivo',
-            ],
-
-            'previous' => [
-                'label' => 'Precedente',
-            ],
-
-        ],
-
-    ],
-
     'actions' => [
 
         'disable_reordering' => [
@@ -132,7 +94,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selezionato.|:count records selezionati.',
+        'selected_count' => '1 record selezionato|:count records selezionati',
 
         'actions' => [
 

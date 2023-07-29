@@ -13,7 +13,7 @@ DeleteAction::make()
     ->record($this->post)
 ```
 
-If you want to delete table rows, you can use the `Filament\Tables\Actions\DeleteAction` instead, or `Filament\Tables\Actions\DeleteBulkAction` to delete more than one at once:
+If you want to delete table rows, you can use the `Filament\Tables\Actions\DeleteAction` instead, or `Filament\Tables\Actions\DeleteBulkAction` to delete multiple at once:
 
 ```php
 use Filament\Tables\Actions\BulkActionGroup;

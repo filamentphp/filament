@@ -19,44 +19,6 @@ return [
 
     ],
 
-    'pagination' => [
-
-        'label' => 'Navigare',
-
-        'overview' => 'Afișare :first-:last din :total rezultate',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'pe pagină',
-
-                'options' => [
-                    'all' => 'Toate',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'Mergi la pagina :page',
-            ],
-
-            'next' => [
-                'label' => 'Pagina următoare',
-            ],
-
-            'previous' => [
-                'label' => 'Pagina precedentă',
-            ],
-
-        ],
-
-    ],
-
     'actions' => [
 
         'disable_reordering' => [
@@ -132,7 +94,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 element selectat.|:count elemente selectate.',
+        'selected_count' => '1 element selectat|:count elemente selectate',
 
         'actions' => [
 

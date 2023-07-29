@@ -23,7 +23,7 @@
     $items = \Illuminate\Support\Arr::except($items, ['billing', 'profile', 'register']);
 @endphp
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('tenant-menu.before') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('panels::tenant-menu.before') }}
 
 <x-filament::dropdown placement="bottom-start" teleport class="fi-tenant-menu">
     <x-slot name="trigger">
@@ -42,7 +42,7 @@
                 x-tooltip.html="tooltip"
             @endif
             type="button"
-            class="group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5"
+            class="group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
         >
             <x-filament::avatar.tenant :tenant="$currentTenant" />
 
@@ -141,4 +141,4 @@
     @endif
 </x-filament::dropdown>
 
-{{ \Filament\Support\Facades\FilamentView::renderHook('tenant-menu.after') }}
+{{ \Filament\Support\Facades\FilamentView::renderHook('panels::tenant-menu.after') }}

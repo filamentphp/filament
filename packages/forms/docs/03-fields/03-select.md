@@ -119,9 +119,9 @@ Select::make('technologies')
     ->relationship(titleAttribute: 'name')
 ```
 
-### Searching relationship options across more than one column
+### Searching relationship options across multiple columns
 
-By default, if the select is also searchable, Filament will return search results for the relationship based on title column of the relationship. If you'd like to search across more than one column, you can pass an array of columns to the `searchable()` method:
+By default, if the select is also searchable, Filament will return search results for the relationship based on title column of the relationship. If you'd like to search across multiple columns, you can pass an array of columns to the `searchable()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -318,7 +318,7 @@ Be aware that you will need to ensure that the HTML is safe to render, otherwise
 
 ## Disable placeholder selection
 
-You can prevent the placeholder (null option) from being selected using the `disablePlaceholderSelection()` method:
+You can prevent the placeholder (null option) from being selected using the `selectablePlaceholder()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -330,7 +330,7 @@ Select::make('status')
         'published' => 'Published',
     ])
     ->default('draft')
-    ->disablePlaceholderSelection()
+    ->selectablePlaceholder(false)
 ```
 
 ## Disabling specific options

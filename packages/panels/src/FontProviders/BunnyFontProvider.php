@@ -8,10 +8,11 @@ use Illuminate\Support\Str;
 
 class BunnyFontProvider implements Contracts\FontProvider
 {
-    public function getHtml(string $family, ?string $url = null): Htmlable
+    public function getHtml(string $family, array $weights, ?string $url = null): Htmlable
     {
         $family = Str::kebab($family);
-        $url ??= "https://fonts.bunny.net/css?family={$family}:400,500,600,700&display=swap";
+        $weights = implode(',', array_values($weights));
+        $url ??= "https://fonts.bunny.net/css?family={$family}:{$weights}&display=swap";
 
         return new HtmlString("
             <link rel=\"preconnect\" href=\"https://fonts.bunny.net\">

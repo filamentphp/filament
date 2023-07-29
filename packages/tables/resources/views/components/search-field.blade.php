@@ -14,6 +14,7 @@
         inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
         prefix-icon-alias="tables::search-field"
+        :wire:target="$wireModel"
     >
         <x-filament::input
             autocomplete="off"

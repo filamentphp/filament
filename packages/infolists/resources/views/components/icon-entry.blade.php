@@ -4,7 +4,7 @@
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
                 ->class([
-                    'fi-in-icon flex flex-wrap gap-1',
+                    'fi-in-icon flex flex-wrap gap-1.5',
                 ])
         }}
     >

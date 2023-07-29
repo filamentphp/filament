@@ -6,42 +6,37 @@
 ])
 
 <div
-    {{ $attributes->class(['fi-ta-empty-state mx-auto flex flex-1 flex-col items-center justify-center space-y-6 bg-white p-6 text-center dark:bg-gray-900']) }}
+    {{ $attributes->class(['fi-ta-empty-state px-6 py-12']) }}
 >
     <div
-        class="fi-ta-empty-state-icon-ctn flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500 dark:bg-gray-700"
+        class="fi-ta-empty-state-content mx-auto grid max-w-lg justify-items-center text-center"
     >
-        <x-filament::icon
-            :icon="$icon"
-            wire:loading.remove.delay=""
-            :wire:target="implode(',', \Filament\Tables\Table::LOADING_TARGETS)"
-            class="fi-ta-empty-state-icon h-6 w-6"
-        />
+        <div
+            class="fi-ta-empty-state-icon-ctn mb-4 rounded-full bg-gray-100 p-3 dark:bg-gray-500/20"
+        >
+            <x-filament::icon
+                :icon="$icon"
+                class="fi-ta-empty-state-icon h-6 w-6 text-gray-500 dark:text-gray-400"
+            />
+        </div>
 
-        <x-filament::loading-indicator
-            class="h-6 w-6"
-            wire:loading.delay=""
-            wire:target="{{ implode(',', \Filament\Tables\Table::LOADING_TARGETS) }}"
-        />
-    </div>
-
-    <div class="fi-ta-empty-state-textual-content-ctn max-w-md space-y-1">
         <x-filament-tables::empty-state.heading>
             {{ $heading }}
         </x-filament-tables::empty-state.heading>
 
         @if ($description)
-            <x-filament-tables::empty-state.description>
+            <x-filament-tables::empty-state.description class="mt-1">
                 {{ $description }}
             </x-filament-tables::empty-state.description>
         @endif
-    </div>
 
-    @if ($actions)
-        <x-filament-tables::actions
-            :actions="$actions"
-            alignment="center"
-            wrap
-        />
-    @endif
+        @if ($actions)
+            <x-filament-tables::actions
+                :actions="$actions"
+                alignment="center"
+                wrap
+                class="mt-6"
+            />
+        @endif
+    </div>
 </div>

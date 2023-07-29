@@ -2,7 +2,7 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['rounded-lg bg-gray-100 px-4 py-3 dark:bg-gray-900'])
+            ->class(['rounded-lg bg-gray-50 p-4 ring-1 ring-inset ring-gray-950/5 dark:bg-white/5 dark:ring-white/10'])
     }}
 >
     <x-filament-tables::columns.layout

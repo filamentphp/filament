@@ -27,44 +27,6 @@ return [
 
     ],
 
-    'pagination' => [
-
-        'label' => 'Urambazaji wa kurasa',
-
-        'overview' => 'Onesha :first mpaka :last ya :total ya matokeo',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'kwa kurasa',
-
-                'options' => [
-                    'all' => 'Zote',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'Nenda kwenye kurasa :page',
-            ],
-
-            'next' => [
-                'label' => 'Mbele',
-            ],
-
-            'previous' => [
-                'label' => 'Nyuma',
-            ],
-
-        ],
-
-    ],
-
     'actions' => [
 
         'disable_reordering' => [
@@ -140,7 +102,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'Rekodi 1 imeshaguliwa .|Rekodi :count zimeshaguliwa.',
+        'selected_count' => 'Rekodi 1 imeshaguliwa|Rekodi :count zimeshaguliwa',
 
         'actions' => [
 

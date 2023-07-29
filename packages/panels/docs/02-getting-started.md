@@ -1,18 +1,21 @@
 ---
 title: Getting started
 ---
-
 ## Overview
 
-You may be wondering how to get started building a panel with Filament. There are many features, spread across several packages, that compose even the simplest of apps. This guide will teach you a few core concepts of the framework, and give you a glimpse of what is possible.
+Panels are the top-level container in Filament, allowing you to build feature-rich admin panels that include pages, resources, forms, tables, notifications, actions, infolists, and widgets. All Panels include a default dashboard that can include widgets with statistics, charts, tables, and more.
 
-Before using Filament, you need to be familiar with Laravel. Many core Laravel concepts are used within Filament, especially [database migrations](https://laravel.com/docs/migrations) and [Eloquent ORM](https://laravel.com/docs/eloquent). If you've never used Laravel before, or need a refresher, we highly recommend that you follow the [Laravel Bootcamp](https://bootcamp.laravel.com/blade/installation) to build a small app. The guide will give you a great foundation of knowledge that you would otherwise be missing, and you will find Filament much easier and faster to understand and use.
+## Prerequisites
 
-In this guide, we'll be building a small patient management system for a vet practice. Vets will be able to add new patients (cats, dogs, or rabbits) to the system, assign them to an owner, and record which treatments they have received at the practice.
+Before using Filament, you should be familiar with Laravel. Filament builds upon many core Laravel concepts, especially [database migrations](https://laravel.com/docs/migrations) and [Eloquent ORM](https://laravel.com/docs/eloquent). If you're new to Laravel or need a refresher, we highly recommend completing the [Laravel Bootcamp](https://bootcamp.laravel.com), which covers the fundamentals of building Laravel apps.
+
+## The demo project
+
+This guide covers building a simple patient management system for a veterinary practice using Filament. It will support adding new patients (cats, dogs, or rabbits), assigning them to an owner, and recording which treatments they received. The system will have a dashboard with statistics about the types of patients and a chart showing the number of treatments administered over the past year.
 
 ## Setting up the database and models
 
-We'll be needing 3 models and migrations for this project - `Owner`, `Patient` and `Treatment`:
+This project needs three models and migrations: `Owner`, `Patient`, and `Treatment`. Use the following artisan commands to create these:
 
 ```bash
 php artisan make:model Owner -m
@@ -20,16 +23,13 @@ php artisan make:model Patient -m
 php artisan make:model Treatment -m
 ```
 
-Again, if you're not familiar with this process, please follow the [Laravel Bootcamp](https://bootcamp.laravel.com/blade/installation).
-
 ### Defining migrations
 
-Our database migrations will be simple in this guide:
+Use the following basic schemas for your database migrations:
 
 ```php
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 
+// create_owners_table
 Schema::create('owners', function (Blueprint $table) {
     $table->id();
     $table->string('email');
@@ -38,6 +38,7 @@ Schema::create('owners', function (Blueprint $table) {
     $table->timestamps();
 });
 
+// create_patients_table
 Schema::create('patients', function (Blueprint $table) {
     $table->id();
     $table->date('date_of_birth');
@@ -47,6 +48,7 @@ Schema::create('patients', function (Blueprint $table) {
     $table->timestamps();
 });
 
+// create_treatments_table
 Schema::create('treatments', function (Blueprint $table) {
     $table->id();
     $table->string('description');
@@ -57,9 +59,11 @@ Schema::create('treatments', function (Blueprint $table) {
 });
 ```
 
+Run the migrations using `php artisan migrate`.
+
 ### Unguarding all models
 
-For brevity in this guide, we're going to disable Laravel's [mass assignment protection](https://laravel.com/docs/eloquent#mass-assignment). Filament takes mass assignment precautions by only saving valid data, so models can be unguarded without issue. To unguard all models at once, simply add `Model::unguard()` to the `boot()` method of `app/Providers/AppServiceProvider.php`:
+For brevity in this guide, we will disable Laravel's [mass assignment protection](https://laravel.com/docs/eloquent#mass-assignment). Filament only saves valid data to models so the models can be unguarded safely. To unguard all Laravel models at once, add `Model::unguard()` to the `boot()` method of `app/Providers/AppServiceProvider.php`:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -72,7 +76,7 @@ public function boot(): void
 
 ### Setting up relationships between models
 
-Let's set up relationships between the models. Pet owners can own multiple pets (patients), and patients can have many treatments:
+Let's set up relationships between the models. For our system, pet owners can own multiple pets (patients), and patients can have many treatments:
 
 ```php
 use Illuminate\Database\Eloquent\Model;
@@ -111,11 +115,11 @@ class Treatment extends Model
 
 ## Introducing resources
 
-In Filament, resources are static classes that are used to build CRUD interfaces for your Eloquent models. They describe how administrators should be able to interact with data from your panel - using tables and forms.
+In Filament, resources are static classes used to build CRUD interfaces for your Eloquent models. They describe how administrators can interact with data from your panel using tables and forms.
 
-In our vet management panel, patients are at the core of all operations. Patients should be listed in a table, and clicking on a patient should open a new page where their details are editable. Patients should be able to be deleted from this page too. Above the patient list, there should be a button to allow the user to add a new patient to the system.
+Since patients (pets) are the core entity in this system, let's start by creating a patient resource that enables us to build pages for creating, viewing, updating, and deleting patients.
 
-We need to create a new resource for the `Patient` model:
+Use the following artisan command to create a new Filament resource for the `Patient` model:
 
 ```bash
 php artisan make:filament-resource Patient
@@ -133,15 +137,15 @@ This will create several files in the `app/Filament/Resources` directory:
 |   |   +-- ListPatients.php
 ```
 
-Visit `/admin/patients` in your browser and observe that a new page has been added to the sidebar - "Patients".
+Visit `/admin/patients` in your browser and observe a new link called "Patients" in the sidebar. Clicking the link will display an empty table. Let's add a form to create new patients.
 
 ### Setting up the resource form
 
-If you open the `PatientResource.php` file, you can see a `form()` method with an empty `schema([...])` array. You can add form fields to this schema, which will then be used when you add new patients to the system, or edit them.
+If you open the `PatientResource.php` file, there's a `form()` method with an empty `schema([...])` array. Adding form fields to this schema will build a form that can be used to create and edit new patients.
 
 #### "Name" text input
 
-Filament contains a [large selection of form fields](../forms/fields) built-in. The most simple field to start with is the [text input](../forms/fields/text-input):
+Filament bundles a large selection of [form fields](../forms/fields). Let's start with a simple [text input field](../forms/fields/text-input):
 
 ```php
 use Filament\Forms;
@@ -156,9 +160,9 @@ public static function form(Form $form): Form
 }
 ```
 
-Visit `/admin/patients/create` (or click the "New patient" button), and observe that a form field for the patient's name has been added.
+Visit `/admin/patients/create` (or click the "New Patient" button) and observe that a form field for the patient's name was added.
 
-This field is required in the database, and has a maximum length of 255 characters. We can add [validation rules](../forms/validation) to the field to ensure that these constraints are met when the user submits the form:
+Since this field is required in the database and has a maximum length of 255 characters, let's add  two [validation rules](../forms/validation) to the name field:
 
 ```php
 use Filament\Forms;
@@ -168,11 +172,11 @@ Forms\Components\TextInput::make('name')
     ->maxLength(255)
 ```
 
-Attempt to submit the form to create a new patient without a name, and observe that a message is displayed informing you that the name field is required.
+Attempt to submit the form to create a new patient without a name and observe that a message is displayed informing you that the name field is required.
 
 #### "Type" select
 
-Let's add a second field, for the type of patient - either a cat, dog or rabbit. Since there are a set of options that should be chosen from, it's best to use a [select](../forms/fields/select) field for this:
+Let's add a second field for the type of patient: a choice between a cat, dog, or rabbit. Since there's a fixed set of options to choose from, a [select](../forms/fields/select) field works well:
 
 ```php
 use Filament\Forms;
@@ -195,9 +199,9 @@ public static function form(Form $form): Form
 }
 ```
 
-The `options()` method of the Select field provides an array of options that the user may select from. The keys of the array are stored in the database, and the values are used as the label of each option in the app. You can be creative and add as many types of animals to this array as you wish.
+The `options()` method of the Select field accepts an array of options for the user to choose from. The array keys should match the database, and the values are used as the form labels. Feel free to add as many animals to this array as you wish.
 
-Again, this field is also required in the database, so we must add the `required()` validation rule method:
+Since this field is also required in the database, let's add the `required()` validation rule:
 
 ```php
 use Filament\Forms;
@@ -213,7 +217,7 @@ Forms\Components\Select::make('type')
 
 #### "Date of birth" picker
 
-Since we have a `date_of_birth` column in our database, we will need to also add a field for that. A [date picker](../forms/fields/date-time-picker) is suitable:
+Let's add a [date picker field](../forms/fields/date-time-picker) for the `date_of_birth` column along with the validation (the date of birth is required and the date should be no later than the current day).
 
 ```php
 use Filament\Forms;
@@ -240,11 +244,9 @@ public static function form(Form $form): Form
 }
 ```
 
-The field is required, and the date of birth cannot be in the future, so we can set the max date to be today.
-
 #### "Owner" select
 
-When creating a pet, it'll be important to store its owner. This is already set up as a `BelongsTo` relationship, and we can easily load options from the `owners` table by using the [`relationship()` method of the select](../forms/fields/select#integrating-with-an-eloquent-relationship):
+We should also add an owner when creating a new patient. Since we added a `BelongsTo` relationship in the Patient model (associating it to the related `Owner` model), we can use the **[`relationship()` method](../forms/fields/select#integrating-with-an-eloquent-relationship)** from the select field to load a list of owners to choose from:
 
 ```php
 use Filament\Forms;
@@ -274,9 +276,9 @@ public static function form(Form $form): Form
 }
 ```
 
-The first argument of the `relationship()` method is the name of the relationship to load options from, and the second argument is the name of a column on the `owners` table to identify owners by. In our case, we want a list of owner's names to select from. The field is also required, as patients must be associated with an owner.
+The first argument of the `relationship()` method is the name of the function that defines the relationship in the model (used by Filament to load the select options) — in this case, `owner`. The second argument is the column name to use from the related table — in this case, `name`.
 
-Owners should also be `searchable()`, as the list might be quite long, and we can `preload()` the first 50 owners into this searchable list:
+Let's also make the `owner` field required, `searchable()`, and `preload()` the first 50 owners into the searchable list (in case the list is long):
 
 ```php
 use Filament\Forms;
@@ -288,9 +290,8 @@ Forms\Components\Select::make('owner_id')
     ->required()
 ```
 
-##### Creating new owners without leaving the page
-
-At the moment, there aren't any owners in our database, and we need an easy way to add them. Also, patients might need to sign up quickly when the owner doesn't exist yet, and navigating to a separate `OwnerResource` just to do this would definitely slow the process down. Luckily, you can allow owners to be quickly created by clicking on a `+` button next to the select. This button will open a modal that contains a separate form to collect the owner's name, email address, and phone number. We can add these form fields inside the `createOptionForm()` method:
+#### Creating new owners without leaving the page
+Currently, there are no owners in our database. Instead of creating a separate Filament owner resource, let's give users an easier way to add owners via a modal form (accessible as a `+` button next to the select). Use the [`createOptionForm()` method](../forms/fields/select#creating-a-new-option-in-a-modal) to embed a modal form with [`TextInput` fields](../forms/fields/text-input) for the owner's name, email address, and phone number:
 
 ```php
 use Filament\Forms;
@@ -316,23 +317,23 @@ Forms\Components\Select::make('owner_id')
     ->required()
 ```
 
-A few new methods on the text input were used in this example:
+A few new methods on the TextInput were used in this example:
 
-- `label()` overrides the auto-generated label for each field. In this case, we want the `Email` label to be `Email address` instead, and the `Phone` label to be `Phone number`.
-- `email()` validates that only emails may be input into the field. It also changes the keyboard layout on mobile devices.
-- `tel()` validates that only phone numbers may be input into the field. It also changes the keyboard layout on mobile devices.
+- `label()` overrides the auto-generated label for each field. In this case, we want the `Email` label to be `Email address`, and the `Phone` label to be `Phone number`.
+- `email()` ensures that only valid email addresses can be input into the field. It also changes the keyboard layout on mobile devices.
+- `tel()` ensures that only valid phone numbers can be input into the field. It also changes the keyboard layout on mobile devices.
 
-The form should be working now! Go ahead and create a new patient, and their owner. Once they've been created, you will be redirected to the Edit page, where you can update their details.
+The form should be working now! Try creating a new patient and their owner. Once created, you will be redirected to the Edit page, where you can update their details.
 
 ### Setting up the patients table
 
-Visit the `/admin/patients` page again. If you've created a patient, there should now be a row in the table. Unfortunately, there's no information in the table yet, only a button to edit the patient. This is because we haven't configured any table columns yet.
+Visit the `/admin/patients` page again. If you created a patient, there should be one empty row in the table — with an edit button. Let's add some columns to the table so we can view the actual patient data.
 
-If you open the `PatientResource.php` file, you can see a `table()` method with an empty `columns([...])` array. You can add table columns to this schema, which will then be used when you list the patients.
+Open the `PatientResource.php` file. You should see a `table()` method with an empty `columns([...])` array. You can use this array to add columns to the `patients` table.
 
 #### Adding text columns
 
-Filament contains a [selection of table columns](../tables/columns) built-in. The most common column type is the [text column](../tables/columns/text). All of our fields can be added as text columns in our table:
+Filament bundles a large selection of [table columns](../tables/columns). Let's use a simple [text column](../tables/columns/text) for all of the fields in the `patients` table:
 
 ```php
 use Filament\Tables;
@@ -350,11 +351,11 @@ public static function table(Table $table): Table
 }
 ```
 
-Note that for the owner column, we don't use `owner_id` as the text column name. Instead, we use `owner.name`. This dot notation is used by Filament to eager-load the results of that relationship, and render a list of owner names, instead of their IDs. You could add additional columns for the owner's email address and phone number if you wish.
+> Filament uses dot notation to eager-load related data. We used `owner.name` in our table to display a list of owner names instead of less informational ID numbers. You could also add columns for the owner's email address and phone number.
 
 ##### Making columns searchable
 
-[Searching](columns/getting-started#searching) through patients in this table would be useful. Patient results should be found by searching for their name, or their owner's name. You can make these columns `searchable()`:
+The ability to [search](/tables/columns/getting-started#searching) for patients directly in the table would be helpful as a veterinary practice grows. You can make columns searchable by chaining the `searchable()` method to the column. Let's make the patient's name and owner's name searchable.
 
 ```php
 use Filament\Tables;
@@ -374,11 +375,11 @@ public static function table(Table $table): Table
 }
 ```
 
-Now, there will be a search input in the table, and you will be able to filter rows by the value of that column.
+Reload the page and observe a new search input field on the table that filters the table entries using the search criteria.
 
 ##### Making the columns sortable
 
-Patients could be [sorted](columns/getting-started#sorting) by their age, by making the `date_of_birth` column `sortable()`:
+To make the `patients` table [sortable](../tables/columns/getting-started#sorting) by age, add the `sortable()` method to the `date_of_birth` column:
 
 ```php
 use Filament\Tables;
@@ -399,13 +400,15 @@ public static function table(Table $table): Table
 }
 ```
 
-This will add a sort button to the column header, and clicking it will sort the table by that column.
+This will add a sort icon button to the column header. Clicking it will sort the table by date of birth.
 
 #### Filtering the table by patient type
 
-The `type` field could be searchable, but it's probably much better UX to add a select to filter this column with.
+Although you can make the `type` field searchable, making it filterable is a much better user experience.
 
-Filament tables can have [filters](../tables/filters), which are components that allow you to scope the Eloquent query as a way to reduce the number of records in a table. Filters can even contain custom form components, which make them incredibly powerful to build interfaces with. While you could use a custom filter to render a select field, Filament includes a prebuilt [`SelectFilter`](../tables/filters#select-filters) that you can add to the `filters()` of the table:
+Filament tables can have [filters](../tables/filters), which are components that reduce the number of records in a table by adding a scope to the Eloquent query. Filters can even contain custom form components, making them a potent tool for building interfaces.
+
+Filament includes a prebuilt [`SelectFilter`](../tables/filters#select-filters) that you can add to the table's `filters()`:
 
 ```php
 use Filament\Tables;
@@ -428,29 +431,29 @@ public static function table(Table $table): Table
 }
 ```
 
-Now, visit the patients list again. In the top right corner of the table, a new filter icon will open a dropdown which contains your filters. Try filtering your patients by type!
+Reload the page and you should see a new filter icon in the top right corner (next to the search form). The filter opens a select menu with a list of patient types. Try filtering your patients by type.
 
 ## Introducing relation managers
 
-At the moment, patients can be associated with their owners. This is as far as we've gone so far with managing relationships with Filament. But what happens if we want a third level? Patients come to the vet practice for treatment, and the system should be able to record these treatments and associate them with a patient.
+Currently, patients can be associated with their owners in our system. But what happens if we want a third level? Patients come to the vet practice for treatment, and the system should be able to record these treatments and associate them with a patient.
 
-We could create a new `TreatmentResource`, with a select field to associate a treatment with a patient. But the UX of having treatments in a separate place to the rest of the patient information probably isn't that great.
+One option is to create a new `TreatmentResource` with a select field to associate treatments with a patient. However, managing treatments separately from the rest of the patient information is cumbersome for the user. Filament uses "relation managers" to solve this problem.
 
-Filament has a concept called "relation managers". These are tables which you can add to any existing resource, and get rendered on the Edit page. The table will list the records related to the "owner" (the resource you're editing). In our project, you could list a patient's treatments below the patient's edit form.
+Relation managers are tables that display related records for an existing resource on the edit screen for the parent resource. For example, in our project, you could view and manage a patient's treatments directly below their edit form.
 
-Tables in Filament are also very powerful, as they can open modals from any table row, or by clicking on a button in the header of the table. These are called "actions". Using an action with a modal, you can create, edit, and delete treatments without leaving the patient's page.
+> You can also use Filament ["actions"](../actions/modals#modal-forms) to open a modal form to create, edit, and delete treatments directly from the patient's table.
 
-To create a relation manager, you can use the `make:filament-relation-manager` command:
+Use the `make:filament-relation-manager` artisan command to quickly create a relation manager, connecting the patient resource to the related treatments:
 
 ```bash
 php artisan make:filament-relation-manager PatientResource treatments description
 ```
 
-- `PatientResource` is the name of the resource class for the owner model. Treatments belong to patients, and the treatments relation manager should be rendered on the Edit Patient page.
-- `treatments` is the name of the relationship we will manage.
-- `description` is the column that will be used to identify treatments from each other in the table.
+- `PatientResource` is the name of the resource class for the owner model. Since treatments belong to patients, the treatments should be displayed on the Edit Patient page.
+- `treatments` is the name of the relationship in the Patient model we created earlier.
+- `description` is the column to display from the treatments table.
 
-This will create a `PatientResource/RelationManagers/TreatmentsRelationManager.php` file. You must register the new relation manager in the `PatientResource`'s `getRelations()` method:
+This will create a `PatientResource/RelationManagers/TreatmentsRelationManager.php` file. You must register the new relation manager in the `getRelations()` method of the `PatientResource`:
 
 ```php
 use App\Filament\PatientResource\RelationManagers;
@@ -463,7 +466,7 @@ public static function getRelations(): array
 }
 ```
 
-`TreatmentsRelationManager.php` contains a class where you are able to define a form and table for your relation manager, very similar to a resource:
+The `TreatmentsRelationManager.php` file contains a class that is prepopulated with a form and table using the parameters from the `make:filament-relation-manager` artisan command. You can customize the fields and columns in the relation manager similar to how you would in a resource:
 
 ```php
 use Filament\Forms;
@@ -494,7 +497,7 @@ Visit the Edit page for one of your patients. You should already be able to crea
 
 ### Setting up the treatment form
 
-Firstly, the `description` field could contain lots of information. We could make that field span the full-width of the modal instead of only half. You can use the `columnSpan('full')` method to do this:
+By default, text fields only span half the width of the form. Since the `description` field might contain a lot of information, add a `columnSpan('full')` method to make the field span the entire width of the modal form:
 
 ```php
 use Filament\Forms;
@@ -505,7 +508,7 @@ Forms\Components\TextInput::make('description')
     ->columnSpan('full')
 ```
 
-Let's add a `notes` field, which can be used to add more information about the treatment. We can use a [textarea](../forms/fields/textarea) for this:
+Let's add the `notes` field, which can be used to add more details about the treatment. We can use a [textarea](../forms/fields/textarea) field with a `columnSpan('full')`:
 
 ```php
 use Filament\Forms;
@@ -528,7 +531,7 @@ public function form(Form $form): Form
 
 #### Configuring the `price` field
 
-Additionally, we need a `price` field. We can use a text input for this, with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation as well as changing the keyboard layout on mobile devices. We can also add a `prefix('€')` which will render a `€` before the input, while not changing the saved output of the field:
+Let's add a `price` field for the treatment. We can use a text input with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation and changes the keyboard layout on mobile devices. Add your preferred currency prefix using the `prefix()` method; for example, `prefix('$')` will add a `$` before the input without impacting the saved output value:
 
 ```php
 use Filament\Forms;
@@ -547,7 +550,7 @@ public function form(Form $form): Form
                 ->columnSpan('full'),
             Forms\Components\TextInput::make('price')
                 ->numeric()
-                ->prefix('€')
+                ->prefix('$')
                 ->maxValue(42949672.95),
         ]);
 }
@@ -555,7 +558,7 @@ public function form(Form $form): Form
 
 ##### Casting the price to an integer
 
-Eagle-eyed readers will have noticed that our prices are being stored in the database as an integer, not a float (decimal). This is the widely-accepted way of storing money in the Laravel community. It requires us to create a cast for this attribute, which will transform the float into an integer, and back, so that it can be stored in the database. Create the cast:
+Filament stores currency values as integers (not floats) to avoid rounding and precision issues — a widely-accepted approach in the Laravel community. However, this requires creating a cast in Laravel that transforms the float into an integer when retrieved and back to an integer when stored in the database. Use the following artisan command to create the cast:
 
 ```bash
 php artisan make:cast MoneyCast
@@ -595,9 +598,7 @@ class Treatment extends Model
 
 ### Setting up the treatments table
 
-When the relation manager was generated, the `description` text column was already added.
-
-Let's also add a column for the `price`. It should be `sortable()`, and formatted as money with a `$` prefix. Luckily, Filament has a `money()` method for formatting a text column as money - in this case for `usd` (`$`):
+When the relation manager was generated previously, the `description` text column was automatically added. Let's also add a `sortable()` column for the `price` with a currency prefix. Use the Filament `money()` method to format the `price` column as money — in this case for `usd` (`$`):
 
 ```php
 use Filament\Tables;
@@ -615,7 +616,7 @@ public function table(Table $table): Table
 }
 ```
 
-Also, we can add a column to indicate when the treatment was administered. We can use the default `created_at` timestamp for this, but you could add another database column to store this information if you wanted. We can format the text column in a human-readable date-time format using the `dateTime()` method:
+Let's also add a column to indicate when the treatment was administered using the default `created_at` timestamp. Use the `dateTime()` method to display the date-time in a human-readable format:
 
 ```php
 use Filament\Tables;
@@ -635,21 +636,23 @@ public function table(Table $table): Table
 }
 ```
 
+> You can pass any valid [PHP date formatting string](https://www.php.net/manual/en/datetime.format.php) to the `dateTime()` method (e.g. `dateTime('m-d-Y h:i A')`).
+
 ## Introducing widgets
 
-Filament has "widgets" - which are components that you can use to display information, especially statistics. Widgets typically get added to the Dashboard of the panel, but you can add them to any page you wish, including resource pages. Filament includes built-in widgets, like the [stats widget](../stats-overview) to render important statistics in a simple card, [chart widget](../widgets/charts) which can render an interactive chart, and [table widget](../panels/dashboard#table-widgets) which allows you to easily embed the table builder.
+Filament widgets are components that display information on your dashboard, especially statistics. Widgets are typically added to the default [Dashboard](../panels/dashboard) of the panel, but you can add them to any page, including resource pages. Filament includes built-in widgets like the [stats widget](../widgets/stats-overview), to render important statistics in a simple card; [chart widget](../widgets/charts), which can render an interactive chart; and [table widget](../panels/dashboard#table-widgets), which allows you to easily embed the table builder.
 
-In our system, we could add statistics for the type of patient, as well as treatments that are administered over time.
+Let's add a stats widget to our default dashboard page that includes a card for each type of patient and a chart to visualize treatments administered over time.
 
 ### Creating a stats widget
 
-Let's create a [stats widget](../widgets/stats-overview) to render patient types:
+Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command (select "admin" for the location when prompted):
 
 ```bash
 php artisan make:filament-widget PatientTypeOverview --stats-overview
 ```
 
-This will generate a `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Card` instances from the `getCards()` method:
+This will create a new `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Card` instances from the `getCards()` method:
 
 ```php
 <?php
@@ -673,29 +676,29 @@ class PatientTypeOverview extends BaseWidget
 }
 ```
 
-Now, check out your widget in the dashboard. Each card will contain the number of that type of patient.
+Open your dashboard, and you should see your new widget displayed. Each card should show the total number of patients for the specified type.
 
 ### Creating a chart widget
 
-We can add a chart to our dashboard to represent treatments that are administered over time. Start by creating a widget with the command:
+Let's add a chart to the dashboard to visualize the number of treatments administered over time. Use the following artisan command to create a new chart widget:
 
 ```bash
 php artisan make:filament-widget TreatmentsChart --chart
 ```
 
-When prompted for the chart type, choose the "line chart".
+When prompted, select "admin" for the location and "line chart" as the chart type.
 
-You can set the `$heading` of the chart to `'Treatments'`.
+Open `app/Filament/Widgets/TreatmentsChart.php` and set the `$heading` of the chart to "Treatments".
 
-The `getData()` method is used to return an array of datasets and labels. Each dataset is a labeled array of points to plot on the chart, and each label is a string. This structure is identical with the [Chart.js](https://www.chartjs.org/docs) library, which Filament uses to render charts.
+The `getData()` method returns an array of datasets and labels. Each dataset is a labeled array of points to plot on the chart, and each label is a string. This structure is identical to the [Chart.js](https://www.chartjs.org/docs) library, which Filament uses to render charts.
 
-To generate chart data from an Eloquent model, Filament recommends that you install the `flowframe/laravel-trend` package. You can view the [documentation](https://github.com/Flowframe/laravel-trend). Install the package:
+To populate chart data from an Eloquent model, Filament recommends that you install the [flowframe/laravel-trend](https://github.com/Flowframe/laravel-trend) package:
 
 ```bash
 composer require flowframe/laravel-trend
 ```
 
-Now, you can generate the number of treatments per month for this year:
+Update the `getData()` to display the number of treatments per month for the past year:
 
 ```php
 use App\Models\Treatment;
@@ -724,16 +727,18 @@ protected function getData(): array
 }
 ```
 
-Now, check out your widget in the dashboard.
+Now, check out your new chart widget in the dashboard!
+
+> You can [customize your dashboard page](../panels/dashboard#customizing-the-dashboard-page) to change the grid and how many widgets are displayed.
 
 ## Next steps with the panel builder
 
-Now you've finished reading this guide, where to next? Here are some suggestions:
+Congratulations! Now that you know how to build a basic Filament application, here are some suggestions for further learning:
 
 - [Create custom pages in the panel that don't belong to resources.](pages)
-- [Learn more about adding action buttons to pages and resources, with modals to get user input or confirmation.](../actions/overview)
+- [Learn more about adding action buttons to pages and resources, with modals to collect user input or for confirmation.](../actions/overview)
 - [Explore the available fields to collect input from your users.](../forms/fields/getting-started#available-fields)
-- [Check out the list of layout components to craft intuitive form structures with.](../forms/fields/getting-started#available-fields)
+- [Check out the list of form layout components.](../forms/layout/getting-started)
 - [Discover how to build complex, responsive table layouts without touching CSS.](../tables/layout)
-- [Add summaries to your tables, which give an overview of the data inside of them.](../tables/summaries)
+- [Add summaries to your tables](../tables/summaries)
 - [Write automated tests for your panel using our suite of helper methods.](testing)

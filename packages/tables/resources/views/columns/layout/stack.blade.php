@@ -7,7 +7,7 @@
                 match ($getAlignment()) {
                     'center' => 'items-center',
                     'end', 'right' => 'items-end',
-                    'start', 'left', null => 'items-start',
+                    default => 'items-start',
                 },
                 match ($space = $getSpace()) {
                     1 => 'space-y-1',

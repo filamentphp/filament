@@ -2,10 +2,10 @@
 
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use function Filament\Tests\livewire;
 use Filament\Tests\Panels\Fixtures\Pages\Settings;
 use Filament\Tests\Panels\Pages\TestCase;
 use Illuminate\Validation\ValidationException;
-use function Pest\Livewire\livewire;
 
 uses(TestCase::class);
 

@@ -153,6 +153,38 @@ Now, you can define a corresponding public `$stats` array property on the widget
 public $stats = [];
 ```
 
+### Passing properties to widgets on pages
+
+When registering a widget on a page, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
+
+```php
+use App\Filament\Widgets\StatsOverviewWidget;
+
+protected function getHeaderWidgets(): array
+{
+    return [
+        StatsOverviewWidget::make([
+            'status' => 'active',
+        ]),
+    ];
+}
+```
+
+This array of properties gets mapped to [public Livewire properties](https://livewire.laravel.com/docs/properties) on the widget class:
+
+```php
+use Filament\Widgets\Widget;
+
+class StatsOverviewWidget extends Widget
+{
+    public string $status;
+
+    // ...
+}
+```
+
+Now, you can access the `status` in the widget class using `$this->status`.
+
 ## Customizing the page title
 
 By default, Filament will automatically generate a title for your page based on its name. You may override this by defining a `$title` property on your page class:

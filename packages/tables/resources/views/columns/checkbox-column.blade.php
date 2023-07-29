@@ -39,7 +39,10 @@
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-checkbox flex items-center px-3 py-[1.125rem]'])
+            ->class([
+                'fi-ta-checkbox flex items-center',
+                'px-3 py-4' => ! $isInline(),
+            ])
     }}
 >
     <input type="hidden" value="{{ $state ? 1 : 0 }}" x-ref="newState" />
@@ -52,7 +55,7 @@
         x-on:change="
             isLoading = true
 
-            response = await $wire.updateTableColumnState(
+            const response = await $wire.updateTableColumnState(
                 name,
                 recordKey,
                 $event.target.checked,

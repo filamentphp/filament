@@ -25,5 +25,7 @@
                 {{ $slot }}
             </main>
         </div>
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
     </div>
 </x-filament::layout.base>

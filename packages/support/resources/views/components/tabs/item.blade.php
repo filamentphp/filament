@@ -10,28 +10,24 @@
 ])
 
 @php
-    $inactiveItemClasses = 'text-gray-700 dark:text-gray-300';
+    $hasAlpineActiveClasses = filled($alpineActive);
 
-    $activeItemClasses = 'fi-tabs-item-active bg-gray-950/5 text-primary-600 dark:bg-white/5 dark:text-primary-400';
+    $inactiveItemClasses = 'text-gray-700 dark:text-gray-200';
 
-    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-tabs-item-icon h-5 w-5',
-        match ($iconColor) {
-            'gray' => 'text-gray-400 dark:text-gray-500',
-            default => 'text-custom-500',
-        },
-    ]);
+    $activeItemClasses = 'fi-tabs-item-active bg-gray-50 text-primary-600 dark:bg-white/5 dark:text-primary-400';
 
-    $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($iconColor, shades: [500]) => $iconColor !== 'gray',
-    ]);
+    $iconClasses = 'fi-tabs-item-icon h-5 w-5';
+
+    $inactiveIconClasses = 'text-gray-400 dark:text-gray-500';
+
+    $activeIconClasses = 'text-primary-600 dark:text-primary-400';
 @endphp
 
 <{{ $tag }}
     @if ($tag === 'button')
         type="{{ $type }}"
     @endif
-    @if ($alpineActive)
+    @if ($hasAlpineActiveClasses)
         x-bind:class="{
             @js($inactiveItemClasses): ! {{ $alpineActive }},
             @js($activeItemClasses): {{ $alpineActive }},
@@ -44,18 +40,21 @@
                 'role' => 'tab',
             ])
             ->class([
-                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5',
-                $inactiveItemClasses => (! $alpineActive) && (! $active),
-                $activeItemClasses => (! $alpineActive) && $active,
+                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium font-semibold outline-none transition duration-75 hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
+                $inactiveItemClasses => (! $hasAlpineActiveClasses) && (! $active),
+                $activeItemClasses => (! $hasAlpineActiveClasses) && $active,
             ])
     }}
 >
     @if ($icon && $iconPosition === 'before')
         <x-filament::icon
             :icon="$icon"
-            :style="$iconStyles"
-            :class="$iconClasses"
-            :style="$iconStyles"
+            :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"
+            @class([
+                $iconClasses,
+                $inactiveIconClasses => (! $hasAlpineActiveClasses) && (! $active),
+                $activeIconClasses => (! $hasAlpineActiveClasses) && $active,
+            ])
         />
     @endif
 
@@ -66,12 +65,16 @@
     @if ($icon && $iconPosition === 'after')
         <x-filament::icon
             :icon="$icon"
-            :class="$iconClasses"
-            :style="$iconStyles"
+            :x-bind:class="$hasAlpineActiveClasses ? '{ ' . \Illuminate\Support\Js::from($inactiveIconClasses) . ': ! (' . $alpineActive . '), ' . \Illuminate\Support\Js::from($activeIconClasses) . ': ' . $alpineActive . ' }' : null"
+            @class([
+                $iconClasses,
+                $inactiveIconClasses => (! $hasAlpineActiveClasses) && (! $active),
+                $activeIconClasses => (! $hasAlpineActiveClasses) && $active,
+            ])
         />
     @endif
 
-    @if ($badge)
+    @if (filled($badge))
         <x-filament::badge size="sm">
             {{ $badge }}
         </x-filament::badge>

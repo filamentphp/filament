@@ -22,7 +22,7 @@
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center font-medium outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            "fi-btn fi-btn-size-{$size} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
             is_string($color) ? "fi-btn-color-{$color}" : null,
@@ -48,20 +48,20 @@
                 [
                     'fi-btn-outlined ring-1',
                     match ($color) {
-                        'gray' => 'ring-gray-300 text-gray-950 hover:bg-gray-400/10 focus:bg-gray-400/10 focus:ring-gray-400/40 dark:ring-gray-700 dark:text-white',
-                        default => 'ring-custom-600 text-custom-600 hover:bg-custom-400/10 focus:bg-custom-400/10 focus:ring-custom-500/50 dark:ring-custom-400 dark:text-custom-400 dark:focus:ring-custom-400/70',
+                        'gray' => 'text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus:ring-gray-400/40 dark:text-white dark:ring-gray-700',
+                        default => 'text-custom-600 ring-custom-600 hover:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-500',
                     },
                 ] :
                 [
-                    'shadow' => ! $grouped,
+                    'shadow-sm' => ! $grouped,
                     ...match ($color) {
                         'gray' => [
-                            'bg-white text-gray-950 hover:bg-gray-50 focus:bg-gray-50 dark:bg-white/10 dark:text-white dark:hover:bg-white/20 dark:focus:bg-white/20',
-                            'ring-gray-950/10 ring-1 dark:ring-white/20 dark:hover:ring-white/30 dark:focus:ring-white/30' => ! $grouped,
+                            'bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
+                            'ring-1 ring-gray-950/10 dark:ring-white/20' => ! $grouped,
                         ],
                         default => [
-                            'bg-custom-600 text-white hover:bg-custom-500 focus:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400 dark:focus:bg-custom-400',
-                            'focus:ring-custom-400/50' => ! $grouped,
+                            'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400',
+                            'focus:ring-custom-500/50 dark:focus:ring-custom-400/50' => ! $grouped,
                         ],
                     },
                 ]
@@ -91,7 +91,7 @@
         },
     ]);
 
-    $badgeClasses = 'absolute -top-1 start-full -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
+    $badgeClasses = 'absolute -top-1 start-full z-10 -ms-1 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-label',
@@ -254,7 +254,7 @@
             @endif
         @endif
 
-        @if ($badge)
+        @if (filled($badge))
             <div class="{{ $badgeClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
@@ -302,7 +302,7 @@
             />
         @endif
 
-        @if ($badge)
+        @if (filled($badge))
             <div class="{{ $badgeClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}

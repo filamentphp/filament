@@ -11,7 +11,7 @@ class Settings extends Page
 {
     protected static string $view = 'app.fixtures.pages.settings';
 
-    protected static ?string $navigationIcon = 'heroicon-m-cog-6-tooth';
+    protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
 
     protected static ?int $navigationSort = 2;
 

@@ -90,27 +90,21 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 ### Form Builder icon aliases
 
 - `forms:components.checkbox-list.search-field` - Search input in a checkbox list
-- `forms::components.tags-input.delete-button` - Button to delete a tag in a tags input
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
 
 - `tables::columns.collapse-button`
-- `tables::filters.remove-button` - Button to remove a filter
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
-- `tables::header-cell.sort-asc` - Sort button of a column sorted in ascending order
-- `tables::header-cell.sort-desc` - Sort button of a column sorted in descending order
-- `tables::pagination.previous-button` - Button to go to the previous page, used on mobile and by "simple pagination"
-- `tables::pagination.next-button` - Button to go to the next page, used on mobile and by "simple pagination"
+- `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
+- `tables::header-cell.sort-desc-button` - Sort button of a column sorted in descending order
 - `tables::reorder.handle` - Handle to grab in order to reorder a record with drag and drop
 - `tables::search-field` - Search input
 
 ### Notifications icon aliases
 
 - `notifications::database.modal.empty-state` - Empty state of the database notifications modal
-- `notifications::database.modal.pagination.previous-button` - Button to go to the previous page of the database notifications modal
-- `notifications::database.modal.pagination.next-button` - Button to go to the next page of the database notifications modal
 - `notifications::notification.close-button` - Button to close a notification
 
 ### UI components icon aliases
@@ -118,4 +112,6 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `badge.delete-button` - Button to delete a badge
 - `breadcrumbs.separator` - Separator between breadcrumbs
 - `modal.close-button` - Button to close a modal
+- `pagination.previous-button` - Button to go to the previous page
+- `pagination.next-button` - Button to go to the next page
 - `section.collapse-button` - Button to collapse a section

@@ -204,17 +204,20 @@ class AttachAction extends Action
                 $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
-            $titleAttribute = $relationshipQuery->qualifyColumn($this->getRecordTitleAttribute());
-
-            $relationshipQuery->orderBy($titleAttribute);
-
             if ($this->modifyRecordSelectOptionsQueryUsing) {
                 $relationshipQuery = $this->evaluate($this->modifyRecordSelectOptionsQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
             }
 
-            if (filled($search)) {
+            $titleAttribute = $this->getRecordTitleAttribute();
+            $titleAttribute = filled($titleAttribute) ? $relationshipQuery->qualifyColumn($titleAttribute) : null;
+
+            if (empty($relationshipQuery->getQuery()->orders) && filled($titleAttribute)) {
+                $relationshipQuery->orderBy($titleAttribute);
+            }
+
+            if (filled($search) && ($searchColumns || filled($titleAttribute))) {
                 $search = strtolower($search);
 
                 /** @var Connection $databaseConnection */
@@ -244,9 +247,7 @@ class AttachAction extends Action
                 });
             }
 
-            $relatedKeyName = $relationship->getRelatedKeyName();
-
-            return $relationshipQuery
+            $relationshipQuery
                 ->when(
                     ! $table->allowsDuplicates(),
                     fn (Builder $query): Builder => $query->whereDoesntHave(
@@ -256,10 +257,20 @@ class AttachAction extends Action
                             $table->getRelationship()->getParent()->getKey(),
                         ),
                     ),
-                )
+                );
+
+            if (filled($titleAttribute)) {
+                return $relationshipQuery
+                    ->pluck($titleAttribute, $relationship->getQualifiedRelatedKeyName())
+                    ->all();
+            }
+
+            $relatedKeyName = $relationship->getRelatedKeyName();
+
+            return $relationshipQuery
                 ->get()
                 ->mapWithKeys(fn (Model $record): array => [$record->{$relatedKeyName} => $this->getRecordTitle($record)])
-                ->toArray();
+                ->all();
         };
 
         $select = Select::make('recordId')

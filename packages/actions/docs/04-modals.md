@@ -19,7 +19,7 @@ Action::make('delete')
 
 <AutoScreenshot name="actions/modal/confirmation" alt="Confirmation modal" version="3.x" />
 
-> Note: The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
+> The confirmation modal is not available when a `url()` is set instead of an `action()`. Instead, you should redirect to the URL within the `action()` closure.
 
 ## Modal forms
 
@@ -242,18 +242,17 @@ Action::make('advance')
     ->action(fn () => $this->record->advance())
     ->modalContent(fn (Action $action): View => view(
         'filament.pages.actions.advance',
-        ['reportAction' => $action->getModalAction('report')],
+        ['action' => $action],
     ))
 ```
 
-Now, in the view file, you can render the action button using the name that it was passed into the view as:
+Now, in the view file, you can render the action button by calling `getModalAction()`:
 
 ```blade
 <div>
-    {{ $reportAction }}
+    {{ $action->getModalAction('report') }}
 </div>
 ```
-
 
 ## Using a slide-over instead of a modal
 
@@ -273,6 +272,21 @@ Action::make('updateAuthor')
 <AutoScreenshot name="actions/modal/slide-over" alt="Slide over with form" version="3.x" />
 
 Instead of opening in the center of the screen, the modal content will now slide in from the right and consume the entire height of the browser.
+
+## Making the modal header sticky
+
+The header of a modal scrolls out of view with the modal content when it overflows the modal size. However, slide-overs have a sticky modal that's always visible. You may control this behavior using `stickyModalHeader()`:
+
+```php
+Action::make('updateAuthor')
+    ->form([
+        // ...
+    ])
+    ->action(function (array $data): void {
+        // ...
+    })
+    ->stickyModalHeader()
+```
 
 ## Making the modal footer sticky
 
@@ -332,7 +346,7 @@ Action::make('create')
     })
 ```
 
-Please note that the `mountUsing()` method, by default, is used by Filament to initialize the [form](#modal-forms). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillForm()` on the action itself](#filling-the-form-with-existing-data).
+> The `mountUsing()` method, by default, is used by Filament to initialize the [form](#modal-forms). If you override this method, you will need to call `$form->fill()` to ensure the form is initialized correctly. If you wish to populate the form with data, you can do so by passing an array to the `fill()` method, instead of [using `fillForm()` on the action itself](#filling-the-form-with-existing-data).
 
 ## Customizing the action buttons in the footer of the modal
 
@@ -368,6 +382,10 @@ You may pass an array of extra actions to be rendered, between the default actio
 
 ```php
 Action::make('create')
+    ->form([
+        // ...
+    ])
+    // ...
     ->extraModalFooterActions(fn (Action $action): array => [
         $action->makeModalSubmitAction('createAnother', arguments: ['another' => true]),
     ])
@@ -379,6 +397,10 @@ The second parameter of `makeModalSubmitAction()` allows you to pass an array of
 
 ```php
 Action::make('create')
+    ->form([
+        // ...
+    ])
+    // ...
     ->extraModalFooterActions(fn (Action $action): array => [
         $action->makeModalSubmitAction('createAnother', arguments: ['another' => true]),
     ])
@@ -390,6 +412,69 @@ Action::make('create')
         }
     })
 ```
+
+#### Opening another modal from an extra footer action
+
+You can nest actions within each other, allowing you to open a new modal from an extra footer action:
+
+```php
+Action::make('edit')
+    // ...
+    ->extraModalFooterActions([
+        Action::make('delete')
+            ->requiresConfirmation()
+            ->action(function () {
+                // ...
+            }),
+    ])
+```
+
+Now, the edit modal will have a "Delete" button in the footer, which will open a confirmation modal when clicked. This action is completely independent of the `edit` action, and will not run the `edit` action when it is clicked.
+
+In this example though, you probably want to cancel the `edit` action if the `delete` action is run. You can do this using the `cancelParentActions()` method:
+
+```php
+Action::make('delete')
+    ->requiresConfirmation()
+    ->action(function () {
+        // ...
+    })
+    ->cancelParentActions()
+```
+
+If you have deep nesting with multiple parent actions, but you don't want to cancel all of them, you can pass the name of the parent action you want to cancel, including its children, to `cancelParentActions()`:
+
+```php
+Action::make('first')
+    ->requiresConfirmation()
+    ->action(function () {
+        // ...
+    })
+    ->extraModalFooterActions([
+        Action::make('second')
+            ->requiresConfirmation()
+            ->action(function () {
+                // ...
+            })
+            ->extraModalFooterActions([
+                Action::make('third')
+                    ->requiresConfirmation()
+                    ->action(function () {
+                        // ...
+                    })
+                    ->extraModalFooterActions([
+                        Action::make('fourth')
+                            ->requiresConfirmation()
+                            ->action(function () {
+                                // ...
+                            })
+                            ->cancelParentActions('second'),
+                    ]),
+            ]),
+    ])
+```
+
+In this example, if the `fourth` action is run, the `second` action is cancelled, but so is the `third` action since it is a child of `second`. The `first` action is not cancelled, however, since it is the parent of `second`. The `first` action's modal will remain open.
 
 ## Closing the modal by clicking away
 

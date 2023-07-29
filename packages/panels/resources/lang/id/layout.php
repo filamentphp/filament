@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Kelola langganan',
+        ],
+
         'logout' => [
             'label' => 'Keluar',
         ],
@@ -38,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Mode Terang',
+            ],
+
+            'system' => [
+                'label' => 'Sesuai tema perangkat',
             ],
 
         ],

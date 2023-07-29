@@ -7,7 +7,7 @@
     @if ($isDisabled())
         <div
             x-html="state"
-            class="prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-gray-950 dark:text-gray-400 dark:ring-white/20 sm:text-sm"
+            class="prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-transparent dark:text-gray-400 dark:ring-white/10 sm:text-sm"
         ></div>
     @else
         <div
@@ -15,9 +15,9 @@
                 $attributes
                     ->merge($getExtraAttributes(), escape: false)
                     ->class([
-                        'fi-fo-rich-editor max-w-full overflow-x-auto rounded-lg bg-white shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-gray-900',
-                        'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-600' => ! $errors->has($statePath),
-                        'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-400 dark:focus-within:ring-danger-400' => $errors->has($statePath),
+                        'fi-fo-rich-editor max-w-full overflow-x-auto rounded-lg bg-white shadow-sm ring-1 transition duration-75 focus-within:ring-2 dark:bg-white/5',
+                        'ring-gray-950/10 focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500' => ! $errors->has($statePath),
+                        'ring-danger-600 focus-within:ring-danger-600 dark:ring-danger-500 dark:focus-within:ring-danger-500' => $errors->has($statePath),
                     ])
             }}
         >
@@ -62,7 +62,7 @@
                 <trix-toolbar
                     id="trix-toolbar-{{ $id }}"
                     @class([
-                        'relative flex gap-x-3 overflow-x-auto border-b border-gray-100 px-2.5 py-2 dark:border-white/10',
+                        'relative flex gap-x-3 overflow-x-auto border-b border-gray-200 px-2.5 py-2 dark:border-white/10',
                         'hidden' => ! count($getToolbarButtons()),
                     ])
                 >
@@ -475,7 +475,7 @@
                     {{
                         $getExtraInputAttributeBag()
                             ->class([
-                                'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert dark:text-white sm:text-sm sm:leading-6',
+                                'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert focus:outline-none dark:text-white sm:text-sm sm:leading-6',
                             ])
                     }}
                 ></trix-editor>

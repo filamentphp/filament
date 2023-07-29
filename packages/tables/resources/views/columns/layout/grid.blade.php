@@ -1,8 +1,8 @@
-<div {{ $attributes->merge($getExtraAttributes(), escape: false) }}>
-    @php
-        $columns = $getGridColumns();
-    @endphp
+@php
+    $columns = $getGridColumns();
+@endphp
 
+<div {{ $attributes->merge($getExtraAttributes(), escape: false) }}>
     <x-filament::grid
         :default="$columns['default'] ?? 1"
         :sm="$columns['sm'] ?? null"
@@ -21,9 +21,9 @@
     >
         <x-filament-tables::columns.layout
             :components="$getComponents()"
+            grid
             :record="$getRecord()"
             :record-key="$recordKey"
-            grid
         />
     </x-filament::grid>
 </div>

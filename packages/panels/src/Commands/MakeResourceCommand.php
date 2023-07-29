@@ -67,8 +67,18 @@ class MakeResourceCommand extends Command
             )] : Arr::first($panels);
         }
 
-        $path = $panel->getResourceDirectory() ?? app_path('Filament/Resources/');
-        $namespace = $panel->getResourceNamespace() ?? 'App\\Filament\\Resources';
+        $resourceDirectories = $panel->getResourceDirectories();
+        $resourceNamespaces = $panel->getResourceNamespaces();
+
+        $namespace = (count($resourceNamespaces) > 1) ?
+            $this->choice(
+                'Which namespace would you like to create this in?',
+                $resourceNamespaces,
+            ) :
+            (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
+        $path = (count($resourceDirectories) > 1) ?
+            $resourceDirectories[array_search($namespace, $resourceNamespaces)] :
+            (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
@@ -147,6 +157,12 @@ class MakeResourceCommand extends Command
 
         $tableActions = implode(PHP_EOL, $tableActions);
 
+        $tableEmptyStateActions = [];
+
+        $tableEmptyStateActions[] = 'Tables\Actions\CreateAction::make(),';
+
+        $tableEmptyStateActions = implode(PHP_EOL, $tableEmptyStateActions);
+
         $tableBulkActions = [];
 
         $tableBulkActions[] = 'Tables\Actions\DeleteBulkAction::make(),';
@@ -182,6 +198,7 @@ class MakeResourceCommand extends Command
             'resourceClass' => $resourceClass,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
+            'tableEmptyStateActions' => $this->indentString($tableEmptyStateActions, 4),
             'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
                 'App\Models' . ($modelNamespace !== '' ? "\\{$modelNamespace}" : '') . '\\' . $modelClass,
             ) : '//', 4),

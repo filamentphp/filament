@@ -4,6 +4,10 @@
     'triggerAction',
 ])
 
+@php
+    $labelClasses = 'text-sm font-medium leading-6 text-gray-950 dark:text-white';
+@endphp
+
 <div
     x-data="{
         direction: $wire.entangle('tableGroupingDirection').live,
@@ -26,24 +30,30 @@
     "
 >
     <x-filament::dropdown
-        {{
-    $attributes->class([
-        'sm:hidden' => ! $dropdownOnDesktop,
-    ])
-}}
         placement="bottom-start"
         shift
+        width="xs"
         wire:key="{{ $this->getId() }}.table.grouping"
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($attributes)
+                ->class([
+                    'sm:hidden' => ! $dropdownOnDesktop,
+                ])
+        "
     >
         <x-slot name="trigger">
-            {{ $triggerAction }}
+            <span
+                @class([
+                    '-mx-2' => $triggerAction->isIconButton(),
+                ])
+            >
+                {{ $triggerAction }}
+            </span>
         </x-slot>
 
-        <div class="flex flex-col gap-4 px-4 pb-4 pt-3">
-            <label class="space-y-1">
-                <span
-                    class="text-sm font-medium leading-4 text-gray-700 dark:text-gray-300"
-                >
+        <div class="grid gap-y-6 p-6">
+            <label class="grid gap-y-2">
+                <span class="{{ $labelClasses }}">
                     {{ __('filament-tables::table.grouping.fields.group.label') }}
                 </span>
 
@@ -53,6 +63,7 @@
                         x-on:change="resetCollapsedGroups()"
                     >
                         <option value="">-</option>
+
                         @foreach ($groups as $group)
                             <option value="{{ $group->getId() }}">
                                 {{ $group->getLabel() }}
@@ -62,10 +73,8 @@
                 </x-filament-forms::affixes>
             </label>
 
-            <label x-show="group" x-cloak class="space-y-1">
-                <span
-                    class="text-sm font-medium leading-4 text-gray-700 dark:text-gray-300"
-                >
+            <label x-cloak x-show="group" class="grid gap-y-2">
+                <span class="{{ $labelClasses }}">
                     {{ __('filament-tables::table.grouping.fields.direction.label') }}
                 </span>
 
@@ -74,6 +83,7 @@
                         <option value="asc">
                             {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
                         </option>
+
                         <option value="desc">
                             {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
                         </option>
@@ -84,13 +94,13 @@
     </x-filament::dropdown>
 
     @if (! $dropdownOnDesktop)
-        <div class="hidden items-center gap-1 sm:flex">
+        <div class="hidden items-center gap-x-3 sm:flex">
             <label>
                 <span class="sr-only">
                     {{ __('filament-tables::table.grouping.fields.group.label') }}
                 </span>
 
-                <x-filament-forms::affixes class="w-full">
+                <x-filament-forms::affixes>
                     <x-filament::input.select
                         x-model="group"
                         x-on:change="resetCollapsedGroups()"
@@ -98,6 +108,7 @@
                         <option value="">
                             {{ __('filament-tables::table.grouping.fields.group.placeholder') }}
                         </option>
+
                         @foreach ($groups as $group)
                             <option value="{{ $group->getId() }}">
                                 {{ $group->getLabel() }}
@@ -107,7 +118,7 @@
                 </x-filament-forms::affixes>
             </label>
 
-            <label x-show="group" x-cloak>
+            <label x-cloak x-show="group">
                 <span class="sr-only">
                     {{ __('filament-tables::table.grouping.fields.direction.label') }}
                 </span>
@@ -117,6 +128,7 @@
                         <option value="asc">
                             {{ __('filament-tables::table.grouping.fields.direction.options.asc') }}
                         </option>
+
                         <option value="desc">
                             {{ __('filament-tables::table.grouping.fields.direction.options.desc') }}
                         </option>

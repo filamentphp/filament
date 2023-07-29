@@ -115,7 +115,7 @@ To create a custom theme for a panel, you can use the `php artisan make:filament
 php artisan make:filament-theme
 ```
 
-If you have more than one panel, you can specify the panel you want to create a theme for:
+If you have multiple panels, you can specify the panel you want to create a theme for:
 
 ```bash
 php artisan make:filament-theme admin

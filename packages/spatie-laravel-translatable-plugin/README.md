@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-translatable-plugin:"^3.0"
+composer require filament/spatie-laravel-translatable-plugin:"^3.0@beta"
 ```
 
 ## Adding the plugin to a panel

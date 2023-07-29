@@ -89,6 +89,36 @@ Finally, in your Livewire component's view, render the table:
 
 Visit your Livewire component in the browser, and you should see the table.
 
+## Building a table for an Eloquent relationship
+
+If you want to build a table for an Eloquent relationship, you can use the `relationship()` and `inverseRelationship()` methods on the `$table` instead of passing a `query()`. `HasMany`, `HasManyThrough`, `BelongsToMany`, `MorphMany` and `MorphToMany` relationships are compatible:
+
+```php
+use App\Models\Category;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+
+public Category $category;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->relationship(fn (): BelongsToMany => $this->category->products())
+        ->inverseRelationship('categories')
+        ->columns([
+            TextColumn::make('name'),
+        ]);
+}
+```
+
+In this example, we have a `$category` property which holds a `Category` model instance. The category has a relationship named `products`. We use a function to return the relationship instance. This is a many-to-many relationship, so the inverse relationship is called `categories`, and is defined on the `Product` model. We just need to pass the name of this relationship to the `inverseRelationship()` method, not the whole instance.
+
+Now that the table is using a relationship instead of a plain Eloquent query, all actions will be performed on the relationship instead of the query. For example, if you use a [`CreateAction`](../actions/prebuilt-actions/create), the new product will be automatically attached to the category.
+
+If your relationship uses a pivot table, you can use all pivot columns as if they were normal columns on your table, as long as they are listed in the `withPivot()` method of the relationship *and* inverse relationship definition.
+
+Relationship tables are used in the panel builder as ["relation managers"](../panels/resources/relation-managers#creating-a-relation-manager). Most of the documented features for relation managers are also available for relationship tables. For instance, the [attach and detach](../panels/resources/relation-managers#attaching-and-detaching-records) and [associate and dissociate](../panels/resources/relation-managers#associating-and-dissociating-records) actions.
+
 ## Generating table Livewire components with the CLI
 
 It's advised that you learn how to set up a Livewire component with the table builder manually, but once you are confident, you can use the CLI to generate a table for you.
@@ -113,4 +143,4 @@ Now, you can use the `--generate` flag when generating your table:
 php artisan make:livewire-table Products/ListProducts --generate
 ```
 
-> Note: If your table contains ENUM columns, `doctrine/dbal` is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+> If your table contains ENUM columns, `doctrine/dbal` is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
