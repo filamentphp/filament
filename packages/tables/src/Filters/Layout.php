@@ -2,18 +2,13 @@
 
 namespace Filament\Tables\Filters;
 
-class Layout
+enum Layout
 {
-    public const AboveContent = 'above_content';
+    case AboveContent;
 
-    public const AboveContentCollapsible = 'above_content_collapsible';
+    case AboveContentCollapsible;
 
-    public const BelowContent = 'below_content';
+    case BelowContent;
 
-    public const Dropdown = 'dropdown';
-
-    /**
-     * @deprecated Use `Dropdown` instead.
-     */
-    public const Popover = 'dropdown';
+    case Dropdown;
 }

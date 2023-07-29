@@ -183,7 +183,7 @@ trait HasFilters
      */
     protected function getTableFiltersFormColumns(): int | array
     {
-        return match ($this->getTableFiltersLayout()) {
+        return match ($this->getTable()->getFiltersLayout()) {
             Layout::AboveContent, Layout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
@@ -206,14 +206,6 @@ trait HasFilters
      * @deprecated Override the `table()` method to configure the table.
      */
     protected function getTableFiltersFormMaxHeight(): ?string
-    {
-        return null;
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
-    protected function getTableFiltersLayout(): ?string
     {
         return null;
     }

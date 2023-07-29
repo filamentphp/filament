@@ -2,9 +2,9 @@
 
 namespace Filament\Tables\Actions;
 
-class RecordCheckboxPosition
+enum RecordCheckboxPosition
 {
-    public const BeforeCells = 'before_cells';
+    case BeforeCells;
 
-    public const AfterCells = 'after_cells';
+    case AfterCells;
 }

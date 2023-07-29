@@ -24,7 +24,7 @@ trait HasFilters
 
     protected string | Closure | null $filtersFormWidth = null;
 
-    protected string | Closure | null $filtersLayout = null;
+    protected Layout | Closure | null $filtersLayout = null;
 
     protected ?Closure $modifyFiltersTriggerActionUsing = null;
 
@@ -79,7 +79,7 @@ trait HasFilters
         return $this;
     }
 
-    public function filtersLayout(string | Closure | null $filtersLayout): static
+    public function filtersLayout(Layout | Closure | null $filtersLayout): static
     {
         $this->filtersLayout = $filtersLayout;
 
@@ -175,7 +175,7 @@ trait HasFilters
         };
     }
 
-    public function getFiltersLayout(): string
+    public function getFiltersLayout(): Layout
     {
         return $this->evaluate($this->filtersLayout) ?? Layout::Dropdown;
     }

@@ -2,17 +2,17 @@
 
 namespace Filament\Tables\Actions;
 
-class Position
+enum Position
 {
-    public const AfterCells = 'after_cells';
+    case AfterCells;
 
-    public const AfterColumns = 'after_columns';
+    case AfterColumns;
 
-    public const AfterContent = 'after_content';
+    case AfterContent;
 
-    public const BeforeCells = 'before_cells';
+    case BeforeCells;
 
-    public const BeforeColumns = 'before_columns';
+    case BeforeColumns;
 
-    public const BottomCorner = 'bottom_corner';
+    case BottomCorner;
 }

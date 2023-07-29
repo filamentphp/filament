@@ -314,14 +314,6 @@ trait HasActions
     /**
      * @deprecated Override the `table()` method to configure the table.
      */
-    protected function getTableActionsPosition(): ?string
-    {
-        return null;
-    }
-
-    /**
-     * @deprecated Override the `table()` method to configure the table.
-     */
     protected function getTableActionsColumnLabel(): ?string
     {
         return null;

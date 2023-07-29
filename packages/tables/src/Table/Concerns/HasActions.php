@@ -26,7 +26,7 @@ trait HasActions
 
     protected string | Closure | null $actionsAlignment = null;
 
-    protected string | Closure | null $actionsPosition = null;
+    protected Position | Closure | null $actionsPosition = null;
 
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
@@ -76,7 +76,7 @@ trait HasActions
         return $this;
     }
 
-    public function actionsPosition(string | Closure | null $position = null): static
+    public function actionsPosition(Position | Closure | null $position = null): static
     {
         $this->actionsPosition = $position;
 
@@ -178,11 +178,11 @@ trait HasActions
         return $action;
     }
 
-    public function getActionsPosition(): string
+    public function getActionsPosition(): Position
     {
         $position = $this->evaluate($this->actionsPosition);
 
-        if (filled($position)) {
+        if ($position) {
             return $position;
         }
 
