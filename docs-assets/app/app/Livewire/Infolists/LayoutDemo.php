@@ -21,6 +21,7 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Component;
 
@@ -112,7 +113,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
-                                    ->iconPosition('after')
+                                    ->iconPosition(IconPosition::After)
                                     ->schema([
                                         IconEntry::make('enabled')
                                             ->boolean()
@@ -126,10 +127,10 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     ->columns(2),
                                 Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                                 Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                             ]),
                     ]),
                 Group::make()

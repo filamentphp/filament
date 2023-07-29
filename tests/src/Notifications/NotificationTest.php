@@ -6,6 +6,7 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Livewire\Notifications;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\IconPosition;
 use function Filament\Tests\livewire;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Arr;
@@ -49,7 +50,7 @@ it('can send notifications', function () {
                 ->dispatch($actionEvent = Str::random(), $actionEventData = [Str::random()])
                 ->extraAttributes($actionExtraAttributes = ['x' . Str::random(15) => Str::random()]) // Attributes must start with a letter
                 ->icon($actionIcon = $getRandomIcon())
-                ->iconPosition($actionIconPosition = Arr::random(['after', 'before']))
+                ->iconPosition($actionIconPosition = Arr::random([IconPosition::After, IconPosition::Before]))
                 ->label($actionLabel = Str::random())
                 ->outlined($isActionOutlined = (bool) rand(0, 1))
                 ->size($actionSize = Arr::random(['sm', 'md', 'lg']))
@@ -97,7 +98,10 @@ it('can send notifications', function () {
         ->eventData->toBe($actionEventData)
         ->extraAttributes->toBe($actionExtraAttributes)
         ->icon->toBe($actionIcon)
-        ->iconPosition->toBe($actionIconPosition)
+        ->iconPosition->toBe(match ($actionIconPosition) {
+            IconPosition::After => 'after',
+            IconPosition::Before => 'before',
+        })
         ->isOutlined->toBe($isActionOutlined)
         ->isDisabled->toBe($isActionDisabled)
         ->label->toBe($actionLabel)
@@ -141,7 +145,10 @@ it('can send notifications', function () {
         ->getEventData()->toBe($actionEventData)
         ->getExtraAttributes()->toBe($actionExtraAttributes)
         ->getIcon()->toBe($actionIcon)
-        ->getIconPosition()->toBe($actionIconPosition)
+        ->getIconPosition()->toBe(match ($actionIconPosition) {
+            IconPosition::After => 'after',
+            IconPosition::Before => 'before',
+        })
         ->isOutlined()->toBe($isActionOutlined)
         ->isDisabled()->toBe($isActionDisabled)
         ->getLabel()->toBe($actionLabel)

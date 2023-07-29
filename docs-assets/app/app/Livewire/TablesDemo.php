@@ -10,6 +10,7 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
@@ -345,7 +346,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 TextColumn::make('name'),
                 TextColumn::make('email')
                     ->icon('heroicon-m-envelope')
-                    ->iconPosition('after'),
+                    ->iconPosition(IconPosition::After),
             ]);
     }
 

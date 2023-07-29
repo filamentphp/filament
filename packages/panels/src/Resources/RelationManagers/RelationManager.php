@@ -7,6 +7,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
@@ -38,7 +39,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
 
     protected static ?string $icon = null;
 
-    protected static ?string $iconPosition = 'before';
+    protected static IconPosition $iconPosition = IconPosition::Before;
 
     protected static ?string $badge = null;
 
@@ -305,7 +306,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
         return static::$icon;
     }
 
-    public static function getIconPosition(Model $ownerRecord, string $pageClass): ?string
+    public static function getIconPosition(Model $ownerRecord, string $pageClass): IconPosition
     {
         return static::$iconPosition;
     }

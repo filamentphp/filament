@@ -56,9 +56,11 @@ Tab::make()
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
 ```php
+use Filament\Support\Enums\IconPosition;
+
 Tab::make()
     ->icon('heroicon-m-user-group')
-    ->iconPosition('after')
+    ->iconPosition(IconPosition::After)
 ```
 
 ### Adding badges to filter tabs

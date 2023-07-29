@@ -8,6 +8,8 @@
 ])
 
 @php
+    use Filament\Support\Enums\IconPosition;
+
     $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -49,7 +51,7 @@
             ])
     }}
 >
-    @if ($icon && $iconPosition === 'before')
+    @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 
@@ -75,7 +77,7 @@
                 </span>
             @endif
         </button>
-    @elseif ($icon && $iconPosition === 'after')
+    @elseif ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 </div>

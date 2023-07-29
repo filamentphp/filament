@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Enums\IconPosition;
+
     $chartColor = $getChartColor() ?? 'gray';
     $descriptionColor = $getDescriptionColor() ?? 'gray';
     $descriptionIcon = $getDescriptionIcon();
@@ -55,7 +57,7 @@
 
         @if ($description = $getDescription())
             <div class="flex items-center gap-x-1">
-                @if ($descriptionIcon && ($descriptionIconPosition === 'before'))
+                @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::Before, 'before']))
                     <x-filament::icon
                         :icon="$descriptionIcon"
                         :class="$descriptionIconClasses"
@@ -78,7 +80,7 @@
                     {{ $description }}
                 </span>
 
-                @if ($descriptionIcon && ($descriptionIconPosition === 'after'))
+                @if ($descriptionIcon && in_array($descriptionIconPosition, [IconPosition::After, 'after']))
                     <x-filament::icon
                         :icon="$descriptionIcon"
                         :class="$descriptionIconClasses"

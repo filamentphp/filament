@@ -3,6 +3,7 @@
 namespace Filament\Notifications\Actions;
 
 use Filament\Actions\ActionGroup as BaseActionGroup;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -20,7 +21,11 @@ class ActionGroup extends BaseActionGroup implements Arrayable
             'actions' => collect($this->getActions())->toArray(),
             'color' => $this->getColor(),
             'icon' => $this->getIcon(),
-            'iconPosition' => $this->getIconPosition(),
+            'iconPosition' => match ($iconPosition = $this->getIconPosition()) {
+                IconPosition::After => 'after',
+                IconPosition::Before => 'before',
+                default => $iconPosition,
+            },
             'iconSize' => match ($iconSize = $this->getIconSize()) {
                 IconSize::Small => 'sm',
                 IconSize::Medium => 'md',

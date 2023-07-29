@@ -107,10 +107,12 @@ Action::make('edit')
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
 ```php
+use Filament\Support\Enums\IconPosition;
+
 Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
     ->icon('heroicon-m-pencil-square')
-    ->iconPosition('after')
+    ->iconPosition(IconPosition::After)
 ```
 
 <AutoScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="3.x" />

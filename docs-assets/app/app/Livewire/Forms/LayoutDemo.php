@@ -21,6 +21,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Component;
 
@@ -126,7 +127,7 @@ class LayoutDemo extends Component implements HasForms
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
-                                    ->iconPosition('after')
+                                    ->iconPosition(IconPosition::After)
                                     ->schema([
                                         Checkbox::make('enabled')
                                             ->default(true),
@@ -138,10 +139,10 @@ class LayoutDemo extends Component implements HasForms
                                     ]),
                                 Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                                 Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                             ]),
                     ]),
                 Group::make()

@@ -15,6 +15,7 @@ use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Support\Enums\FontFamily;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
 use Livewire\Component;
 
 class EntriesDemo extends Component implements HasInfolists
@@ -167,7 +168,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('email')
                             ->state('dan@filamentphp.com')
                             ->icon('heroicon-m-envelope')
-                            ->iconPosition('after'),
+                            ->iconPosition(IconPosition::After),
                     ]),
                 Group::make()
                     ->id('textLarge')

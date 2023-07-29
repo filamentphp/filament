@@ -5,6 +5,7 @@ namespace Filament\Notifications\Actions;
 use Closure;
 use Filament\Actions\Contracts\Groupable;
 use Filament\Actions\StaticAction;
+use Filament\Support\Enums\IconPosition;
 use Filament\Support\Enums\IconSize;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Str;
@@ -54,7 +55,11 @@ class Action extends StaticAction implements Arrayable, Groupable
             'dispatchToComponent' => $this->getDispatchToComponent(),
             'extraAttributes' => $this->getExtraAttributes(),
             'icon' => $this->getIcon(),
-            'iconPosition' => $this->getIconPosition(),
+            'iconPosition' => match ($iconPosition = $this->getIconPosition()) {
+                IconPosition::After => 'after',
+                IconPosition::Before => 'before',
+                default => $iconPosition,
+            },
             'iconSize' => match ($iconSize = $this->getIconSize()) {
                 IconSize::Small => 'sm',
                 IconSize::Medium => 'md',

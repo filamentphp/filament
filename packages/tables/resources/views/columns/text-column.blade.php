@@ -1,6 +1,7 @@
 @php
     use Filament\Support\Enums\FontFamily;
     use Filament\Support\Enums\FontWeight;
+    use Filament\Support\Enums\IconPosition;
 
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
@@ -144,7 +145,7 @@
                                 \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
                             ])
                         >
-                            @if ($icon && $iconPosition === 'before')
+                            @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
                                 <x-filament::icon
                                     :icon="$icon"
                                     :class="$iconClasses"
@@ -156,7 +157,7 @@
                                 {{ $formattedState }}
                             </div>
 
-                            @if ($icon && $iconPosition === 'after')
+                            @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
                                 <x-filament::icon
                                     :icon="$icon"
                                     :class="$iconClasses"

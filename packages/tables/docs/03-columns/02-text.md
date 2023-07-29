@@ -280,11 +280,12 @@ TextColumn::make('email')
 You may set the position of an icon using `iconPosition()`:
 
 ```php
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Columns\TextColumn;
 
 TextColumn::make('email')
     ->icon('heroicon-m-envelope')
-    ->iconPosition('after') // `before` or `after`
+    ->iconPosition(IconPosition::After) // `IconPosition::Before` or `IconPosition::After`
 ```
 
 <AutoScreenshot name="tables/columns/text/icon-after" alt="Text column with icon after" version="3.x" />

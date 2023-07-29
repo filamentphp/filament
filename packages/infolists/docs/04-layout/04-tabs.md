@@ -128,12 +128,13 @@ The icon of the tab may be positioned before or after the label using the `iconP
 
 ```php
 use Filament\Infolists\Components\Tabs;
+use Filament\Support\Enums\IconPosition;
 
 Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
-            ->iconPosition('after')
+            ->iconPosition(IconPosition::After)
             ->schema([
                 // ...
             ]),

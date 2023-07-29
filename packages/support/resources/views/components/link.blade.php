@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
 @endphp
 
@@ -10,7 +11,7 @@
     'form' => null,
     'icon' => null,
     'iconAlias' => null,
-    'iconPosition' => 'before',
+    'iconPosition' => IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
     'size' => 'md',
@@ -97,7 +98,7 @@
                 ->style([$linkStyles])
         }}
     >
-        @if ($icon && $iconPosition === 'before')
+        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -108,7 +109,7 @@
 
         {{ $slot }}
 
-        @if ($icon && $iconPosition === 'after')
+        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -151,7 +152,7 @@
                 ->style([$linkStyles])
         }}
     >
-        @if ($iconPosition === 'before')
+        @if ($iconPosition === in_array($iconPosition, [IconPosition::Before, 'before']))
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
@@ -175,7 +176,7 @@
 
         {{ $slot }}
 
-        @if ($iconPosition === 'after')
+        @if (in_array($iconPosition, [IconPosition::After, 'after']))
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"

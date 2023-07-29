@@ -1,4 +1,5 @@
 @php
+    use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
 @endphp
 
@@ -11,7 +12,7 @@
     'grouped' => false,
     'icon' => null,
     'iconAlias' => null,
-    'iconPosition' => 'before',
+    'iconPosition' => IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
     'labeledFrom' => null,
@@ -181,7 +182,8 @@
             "
             x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         @endif
-        {{ $attributes
+        {{
+            $attributes
                 ->merge([
                     'disabled' => $disabled,
                     'type' => $type,
@@ -190,9 +192,10 @@
                     'x-bind:disabled' => $hasFileUploadLoadingIndicator ? 'isUploadingFile' : false,
                 ], escape: false)
                 ->class([$buttonClasses])
-                ->style([$buttonStyles]) }}
+                ->style([$buttonStyles])
+        }}
     >
-        @if ($iconPosition === 'before')
+        @if (in_array($iconPosition, [IconPosition::Before, 'before']))
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
@@ -235,7 +238,7 @@
             </span>
         @endif
 
-        @if ($iconPosition === 'after')
+        @if (in_array($iconPosition, [IconPosition::After, 'after']))
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
@@ -285,11 +288,13 @@
                 theme: $store.theme,
             }"
         @endif
-        {{ $attributes
+        {{
+            $attributes
                 ->class([$buttonClasses])
-                ->style([$buttonStyles]) }}
+                ->style([$buttonStyles])
+        }}
     >
-        @if ($icon && $iconPosition === 'before')
+        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -301,7 +306,7 @@
             {{ $slot }}
         </span>
 
-        @if ($icon && $iconPosition === 'after')
+        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
