@@ -2,6 +2,7 @@
     $heading = $this->getHeading();
     $description = $this->getDescription();
     $filters = $this->getFilters();
+    $color = $this->getColor();
 @endphp
 
 <x-filament-widgets::widget>
@@ -55,11 +56,14 @@
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('chart', 'filament/widgets') }}"
                 wire:ignore
                 x-data="chart({
-                            cachedData: @js($this->getCachedData()),
-                            options: @js($this->getOptions()),
-                            type: @js($this->getType()),
-                        })"
+                    cachedData: @js($this->getCachedData()),
+                    options: @js($this->getOptions()),
+                    type: @js($this->getType()),
+                })"
                 x-ignore
+                @style([
+                    \Filament\Support\get_color_css_variables($color, shades: [50, 400, 500]) => $color !== 'gray',
+                ])
             >
                 <canvas
                     x-ref="canvas"
@@ -69,14 +73,23 @@
                 ></canvas>
 
                 <span
-                    x-ref="colorElement"
+                    x-ref="backgroundColorElement"
                     @class([
-                        match ($color = $this->getColor()) {
+                        match ($color) {
+                            'gray' => 'text-gray-100 dark:text-gray-800',
+                            default => 'text-custom-50 dark:text-custom-400/10',
+                        },
+                    ])
+                ></span>
+
+                <span
+                    x-ref="borderColorElement"
+                    @class([
+                        match ($color) {
                             'gray' => 'text-gray-400',
                             default => 'text-custom-500 dark:text-custom-400',
                         },
                     ])
-                    style="{{ \Filament\Support\get_color_css_variables($color, shades: [400, 500]) }}"
                 ></span>
 
                 <span
