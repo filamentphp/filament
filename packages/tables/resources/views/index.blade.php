@@ -342,7 +342,7 @@
         @if ($isReordering)
             <x-filament-tables::reorder.indicator :colspan="$columnsCount" />
         @elseif ($isSelectionEnabled && $isLoaded)
-            <x-filament-tables::selection-indicator
+            <x-filament-tables::selection.indicator
                 :all-selectable-records-count="$allSelectableRecordsCount"
                 :colspan="$columnsCount"
                 x-show="selectedRecords.length"
@@ -380,7 +380,7 @@
                         ])
                     >
                         @if ($isSelectionEnabled)
-                            <x-filament-tables::checkbox
+                            <x-filament-tables::selection.checkbox
                                 :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                 x-bind:checked="
                                     let recordsOnPage = getRecordsOnPage()
@@ -584,7 +584,7 @@
                                         />
 
                                         @if ($isSelectionEnabled && $isRecordSelectable($record))
-                                            <x-filament-tables::checkbox
+                                            <x-filament-tables::selection.checkbox
                                                 :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                 :value="$recordKey"
                                                 x-model="selectedRecords"
@@ -752,8 +752,8 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                <x-filament-tables::actions.cell tag="th">
-                                    <x-filament-tables::checkbox
+                                <x-filament-tables::selection.cell tag="th">
+                                    <x-filament-tables::selection.checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
@@ -770,7 +770,7 @@
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
                                     />
-                                </x-filament-tables::actions.cell>
+                                </x-filament-tables::selection.cell>
                             @endif
 
                             @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
@@ -826,8 +826,8 @@
                             @endif
 
                             @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                <x-filament-tables::actions.cell tag="th">
-                                    <x-filament-tables::checkbox
+                                <x-filament-tables::selection.cell tag="th">
+                                    <x-filament-tables::selection.checkbox
                                         :label="__('filament-tables::table.fields.bulk_select_page.label')"
                                         x-bind:checked="
                                             let recordsOnPage = getRecordsOnPage()
@@ -844,7 +844,7 @@
                                         "
                                         x-on:click="toggleSelectRecordsOnPage"
                                     />
-                                </x-filament-tables::actions.cell>
+                                </x-filament-tables::selection.cell>
                             @endif
 
                             @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
@@ -991,7 +991,7 @@
                                     @endif
 
                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
-                                        <x-filament-tables::actions.cell
+                                        <x-filament-tables::selection.cell
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
@@ -1004,14 +1004,14 @@
                                             "
                                         >
                                             @if ($isRecordSelectable($record))
-                                                <x-filament-tables::checkbox
+                                                <x-filament-tables::selection.checkbox
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
                                                     class="fi-ta-record-checkbox"
                                                 />
                                             @endif
-                                        </x-filament-tables::actions.cell>
+                                        </x-filament-tables::selection.cell>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::BeforeColumns)
@@ -1072,20 +1072,20 @@
                                     @endif
 
                                     @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                        <x-filament-tables::actions.cell
+                                        <x-filament-tables::selection.cell
                                             @class([
                                                 'hidden' => $isReordering,
                                             ])
                                         >
                                             @if ($isRecordSelectable($record))
-                                                <x-filament-tables::checkbox
+                                                <x-filament-tables::selection.checkbox
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
                                                     class="fi-ta-record-checkbox"
                                                 />
                                             @endif
-                                        </x-filament-tables::actions.cell>
+                                        </x-filament-tables::selection.cell>
                                     @endif
 
                                     @if (count($actions) && $actionsPosition === ActionsPosition::AfterCells)
@@ -1176,9 +1176,9 @@
 
         @if ($records instanceof \Illuminate\Contracts\Pagination\Paginator && ((! ($records instanceof \Illuminate\Contracts\Pagination\LengthAwarePaginator)) || $records->total()))
             <div class="fi-ta-pagination-ctn px-3 py-3 sm:px-6">
-                <x-filament-tables::pagination
-                    :paginator="$records"
+                <x-filament::pagination
                     :page-options="$getPaginationPageOptions()"
+                    :paginator="$records"
                 />
             </div>
         @endif

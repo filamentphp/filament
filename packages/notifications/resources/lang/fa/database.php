@@ -23,24 +23,6 @@ return [
             'description' => 'لطفا بعدا مراجعه کنید',
         ],
 
-        'pagination' => [
-
-            'label' => 'ناوبری صفحه‌بندی',
-
-            'actions' => [
-
-                'next' => [
-                    'label' => 'بعدی',
-                ],
-
-                'previous' => [
-                    'label' => 'قبلی',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

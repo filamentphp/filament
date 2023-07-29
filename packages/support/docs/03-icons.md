@@ -97,10 +97,8 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `tables::columns.collapse-button`
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
-- `tables::header-cell.sort-asc` - Sort button of a column sorted in ascending order
-- `tables::header-cell.sort-desc` - Sort button of a column sorted in descending order
-- `tables::pagination.previous-button` - Button to go to the previous page, used by "simple pagination"
-- `tables::pagination.next-button` - Button to go to the next page, used by "simple pagination"
+- `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
+- `tables::header-cell.sort-desc-button` - Sort button of a column sorted in descending order
 - `tables::reorder.handle` - Handle to grab in order to reorder a record with drag and drop
 - `tables::search-field` - Search input
 
@@ -114,4 +112,6 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `badge.delete-button` - Button to delete a badge
 - `breadcrumbs.separator` - Separator between breadcrumbs
 - `modal.close-button` - Button to close a modal
+- `pagination.previous-button` - Button to go to the previous page
+- `pagination.next-button` - Button to go to the next page
 - `section.collapse-button` - Button to collapse a section

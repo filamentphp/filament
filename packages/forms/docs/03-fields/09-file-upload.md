@@ -21,7 +21,7 @@ FileUpload::make('attachment')
 
 By default, files will be uploaded publicly to your storage disk defined in the [configuration file](../installation#publishing-configuration). You can also set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this.
 
-> To correctly preview images and other files, FilePond requires files to be served from the same domain as the app, or the appropriate CORS headers need to be present. Ensure that the `APP_URL` environment variable is correct, or modify the [filesystem](https://laravel.com/docs/10.x/filesystem) driver to set the correct URL. If you're hosting files on a separate domain like S3, ensure that CORS headers are set up.
+> To correctly preview images and other files, FilePond requires files to be served from the same domain as the app, or the appropriate CORS headers need to be present. Ensure that the `APP_URL` environment variable is correct, or modify the [filesystem](https://laravel.com/docs/filesystem) driver to set the correct URL. If you're hosting files on a separate domain like S3, ensure that CORS headers are set up.
 
 To change the disk and directory for a specific field, and the visibility of files, use the `disk()`, `directory()` and `visibility()` methods:
 
@@ -105,9 +105,96 @@ FileUpload::make('attachments')
 
 `attachment_file_names` will now store the original file name/s of your uploaded files, so you can save them to the database when the form is submitted. If you're uploading `multiple()` files, make sure that you add an `array` [cast](https://laravel.com/docs/eloquent-mutators#array-and-json-casting) to this Eloquent model property too.
 
-## Cropping and resizing images
+## Image editor
 
-Filepond allows you to crop and resize images before they are uploaded. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
+You can enable an image editor for your file upload field using the `imageEditor()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageEditor()
+```
+
+You can open the editor once you upload an image by clicking the pencil icon. You can also open the editor by clicking the pencil icon on an existing image, which will remove and re-upload it on save.
+
+### Allowing users to crop images to aspect ratios
+
+You can allow users to crop images to a set of specific aspect ratios using the `imageEditorAspectRatios()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageEditor()
+    ->imageEditorAspectRatios([
+        '16:9',
+        '4:3',
+        '1:1',
+    ])
+```
+
+You can also allow users to choose no aspect ratio, "free cropping", by passing `null` as an option:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageEditor()
+    ->imageEditorAspectRatios([
+        null,
+        '16:9',
+        '4:3',
+        '1:1',
+    ])
+```
+
+### Setting the image editor's mode
+
+You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs#viewmode):
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageEditor()
+    ->imageEditorMode(2)
+```
+
+### Customizing the image editor's empty fill color
+
+By default, the image editor will make the empty space around the image transparent. You can customize this using the `imageEditorEmptyFillColor()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageEditor()
+    ->imageEditorEmptyFillColor('#000000')
+```
+
+### Setting the image editor's viewport size
+
+You can change the size of the image editor's viewport using the `imageEditorViewportWidth()` and `imageEditorViewportHeight()` methods, which generate an aspect ratio to use across device sizes:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageEditor()
+    ->imageEditorViewportWidth('1920')
+    ->imageEditorViewportHeight('1080')
+```
+
+### Cropping and resizing images without the editor
+
+Filepond allows you to crop and resize images before they are uploaded, without the need for a separate editor. You can customize this behaviour using the `imageCropAspectRatio()`, `imageResizeTargetHeight()` and `imageResizeTargetWidth()` methods. `imageResizeMode()` should be set for these methods to have an effect - either [`force`, `cover`, or `contain`](https://pqina.nl/filepond/docs/api/plugins/image-resize).
 
 ```php
 use Filament\Forms\Components\FileUpload;

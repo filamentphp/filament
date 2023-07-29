@@ -54,33 +54,7 @@
 
         @if ($isPaginated)
             <x-slot name="footer">
-                <nav
-                    aria-label="{{ __('filament-notifications::database.modal.pagination.label') }}"
-                    role="navigation"
-                    class="flex items-center justify-between gap-3"
-                >
-                    @if (! $notifications->onFirstPage())
-                        <x-filament::button
-                            color="gray"
-                            rel="prev"
-                            :wire:click="'previousPage(\'' . $notifications->getPageName() . '\')'"
-                            class="me-auto"
-                        >
-                            {{ __('filament-notifications::database.modal.pagination.actions.previous.label') }}
-                        </x-filament::button>
-                    @endif
-
-                    @if ($notifications->hasMorePages())
-                        <x-filament::button
-                            color="gray"
-                            rel="next"
-                            :wire:click="'nextPage(\'' . $notifications->getPageName() . '\')'"
-                            class="ms-auto"
-                        >
-                            {{ __('filament-notifications::database.modal.pagination.actions.next.label') }}
-                        </x-filament::button>
-                    @endif
-                </nav>
+                <x-filament::pagination :paginator="$notifications" />
             </x-slot>
         @endif
     @endif

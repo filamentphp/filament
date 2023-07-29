@@ -23,24 +23,6 @@ return [
             'description' => 'Please check again later.',
         ],
 
-        'pagination' => [
-
-            'label' => 'Pagination navigation',
-
-            'actions' => [
-
-                'next' => [
-                    'label' => 'Next',
-                ],
-
-                'previous' => [
-                    'label' => 'Previous',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

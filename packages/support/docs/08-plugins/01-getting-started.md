@@ -21,7 +21,7 @@ Although these are two different mental contexts to keep in mind when building p
 
 Before we dive into the specifics of building plugins, there are a few concepts that are important to understand. You should familiarize yourself with the following before building a plugin:
 
-1. [Laravel Package Development](https://laravel.com/docs/10.x/packages)
+1. [Laravel Package Development](https://laravel.com/docs/packages)
 2. [Spatie Package Tools](https://github.com/spatie/laravel-package-tools)
 3. [Filament Asset Management](/docs/3.x/support/assets)
 

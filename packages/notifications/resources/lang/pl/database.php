@@ -23,24 +23,6 @@ return [
             'description' => 'Zajrzyj ponownie później',
         ],
 
-        'pagination' => [
-
-            'label' => 'Stronicowanie',
-
-            'actions' => [
-
-                'next' => [
-                    'label' => 'Następna',
-                ],
-
-                'previous' => [
-                    'label' => 'Poprzednia',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

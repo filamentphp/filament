@@ -27,7 +27,7 @@
                     'type' => 'button',
                 ], escape: false)
                 ->class([
-                    'fi-ta-pagination-item relative overflow-hidden p-2 text-sm font-semibold outline-none transition duration-75',
+                    'fi-pagination-item relative overflow-hidden p-2 text-sm font-semibold outline-none transition duration-75',
                     'text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400' => $hasIcon,
                     'text-gray-700 dark:text-gray-200' => $hasLabel && (! ($active || $isDisabled)),
                     'hover:bg-gray-50 dark:hover:bg-white/5' => ! $isDisabled,
@@ -41,7 +41,7 @@
                 :alias="$iconAlias"
                 :icon="$icon"
                 @class([
-                    'fi-ta-pagination-item-icon h-5 w-5',
+                    'fi-pagination-item-icon h-5 w-5',
                 ])
             />
         @endif
