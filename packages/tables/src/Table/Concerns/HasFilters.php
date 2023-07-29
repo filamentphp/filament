@@ -5,8 +5,8 @@ namespace Filament\Tables\Table\Concerns;
 use Closure;
 use Filament\Forms\Form;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Filters\BaseFilter;
 use Filament\Tables\Enums\FiltersLayout;
+use Filament\Tables\Filters\BaseFilter;
 
 trait HasFilters
 {
