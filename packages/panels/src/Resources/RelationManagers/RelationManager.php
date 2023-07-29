@@ -554,4 +554,9 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
             $this->pageClass,
         ];
     }
+
+    public function placeholder(): View
+    {
+        return view('filament::components.loading-card');
+    }
 }
