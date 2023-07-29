@@ -478,22 +478,20 @@
                     </div>
                 @endif
 
-                {{-- TODO: review start --}}
-
                 @if ($content)
                     {{ $content->with(['records' => $records]) }}
                 @else
                     <x-filament::grid
-                        x-sortable
-                        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         :default="$contentGrid['default'] ?? 1"
                         :sm="$contentGrid['sm'] ?? null"
                         :md="$contentGrid['md'] ?? null"
                         :lg="$contentGrid['lg'] ?? null"
                         :xl="$contentGrid['xl'] ?? null"
                         :two-xl="$contentGrid['2xl'] ?? null"
+                        x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
+                        x-sortable
                         @class([
-                            'p-2 gap-2' => $contentGrid,
+                            'gap-4 p-4 sm:p-6' => $contentGrid,
                             'divide-y divide-gray-200 dark:divide-white/5' => ! $contentGrid,
                         ])
                     >
@@ -514,6 +512,8 @@
                                 $collapsibleColumnsLayout?->record($record);
                                 $hasCollapsibleColumnsLayout = (bool) $collapsibleColumnsLayout?->isVisible();
                             @endphp
+
+                            {{-- TODO: review start --}}
 
                             @if ($recordGroupTitle !== $previousRecordGroupTitle)
                                 @if ($hasSummary && (! $isReordering) && filled($previousRecordGroupTitle))
@@ -576,7 +576,7 @@
                                         'relative h-full px-3 transition sm:px-6',
                                         'hover:bg-gray-50 dark:hover:bg-gray-500/10' => $recordUrl || $recordAction,
                                         'group' => $isReordering,
-                                        'rounded-xl shadow-sm dark:bg-gray-700/40' => $contentGrid,
+                                        'rounded-xl shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-700/40 dark:ring-white/10' => $contentGrid,
                                         ...$getRecordClasses($record),
                                     ])
                                 >
