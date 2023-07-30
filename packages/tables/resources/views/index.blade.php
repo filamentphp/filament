@@ -126,7 +126,7 @@
         shouldCheckUniqueSelection: true,
 
         init: function () {
-            $el.addEventListener('deselectAllTableRecords', () =>
+            this.$wire.$on('deselectAllTableRecords', () =>
                 this.deselectAllRecords(),
             )
 
