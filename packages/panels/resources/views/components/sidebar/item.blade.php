@@ -13,7 +13,7 @@
 
 <li
     @class([
-        'fi-sidebar-item overflow-hidden',
+        'fi-sidebar-item',
         'fi-sidebar-item-active' => $active,
     ])
 >
@@ -54,7 +54,7 @@
             />
         @elseif ($groupedWithoutIcon)
             <div
-                class="fi-sidebar-item-grouped-border relative flex h-5 w-5 items-center justify-center"
+                class="fi-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
             >
                 @if (! $first)
                     <div
@@ -72,7 +72,7 @@
                     @class([
                         'relative h-1.5 w-1.5 rounded-full',
                         'bg-gray-400 dark:bg-gray-500' => ! $active,
-                        'bg-primary-500' => $active,
+                        'bg-primary-600 dark:bg-primary-400' => $active,
                     ])
                 ></div>
             </div>
