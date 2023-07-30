@@ -7,13 +7,13 @@
     <div class="flex flex-col gap-y-4">
         @if (count($tabs = $this->getTabs()))
             <div class="flex flex-col max-w-full gap-4 mx-auto md:flex-row">
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.before', scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.tabs.before', scopes: $this->getRenderHookScopes()) }}
 
                 <div
                     class="p-2 bg-white shadow-sm rounded-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
 
                     <x-filament::tabs class="self-center">
-                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.start', scopes: $this->getRenderHookScopes()) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.tabs.start', scopes: $this->getRenderHookScopes()) }}
 
                         @foreach ($tabs as $tabKey => $tab)
                             @php
@@ -32,11 +32,11 @@
                             </x-filament::tabs.item>
                         @endforeach
 
-                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.end', scopes: $this->getRenderHookScopes()) }}
+                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.tabs.end', scopes: $this->getRenderHookScopes()) }}
                     </x-filament::tabs>
                 </div>
 
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.after', scopes: $this->getRenderHookScopes()) }}
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.tabs.after', scopes: $this->getRenderHookScopes()) }}
             </div>
         @endif
 
