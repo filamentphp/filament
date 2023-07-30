@@ -31,7 +31,7 @@
                     'text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400' => $hasIcon,
                     'text-gray-700 dark:text-gray-200' => $hasLabel && (! ($active || $isDisabled)),
                     'hover:bg-gray-50 dark:hover:bg-white/5' => ! $isDisabled,
-                    'text-primary-600 dark:text-primary-400' => $active,
+                    'bg-gray-50 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
                     'cursor-default' => $separator,
                 ])
         }}
