@@ -161,6 +161,18 @@ RichEditor::make('content')
     ->hintColor('primary')
 ```
 
+### Changing the text size of the hint
+
+You can change the text size of the hint. By default, it's small, but you may use `xs`, `base` and `lg`:
+
+```php
+use Filament\Forms\Components\RichEditor;
+
+RichEditor::make('content')
+    ->hint('Translatable')
+    ->hintSize('xs')
+```
+
 <AutoScreenshot name="forms/fields/hint-color" alt="Form field with hint color" version="3.x" />
 
 ### Adding an icon aside the hint

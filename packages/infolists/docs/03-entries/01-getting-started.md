@@ -174,6 +174,19 @@ TextEntry::make('apiKey')
     ->hintColor('primary')
 ```
 
+### Changing the text size of the hint
+
+You can change the text size of the hint. By default, it's small, but you may use `xs`, `base` and `lg`:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('apiKey')
+    ->label('API key')
+    ->hint('[Documentation](/documentation)')
+    ->hintSize('xs')
+```
+
 <AutoScreenshot name="infolists/entries/hint-color" alt="Entry with hint color" version="3.x" />
 
 ### Adding an icon aside the hint
