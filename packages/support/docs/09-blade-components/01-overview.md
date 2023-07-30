@@ -14,6 +14,7 @@ Filament packages consume a set of core Blade components that aim to provide a c
 - [Card](card)
 - [Loading indicator](loading-indicator)
 - [Section](section)
+- [Tabs](tabs)
 
 ### UI components for actions
 
