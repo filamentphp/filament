@@ -646,7 +646,7 @@ Let's add a stats widget to our default dashboard page that includes a card for 
 
 ### Creating a stats widget
 
-Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command (select "admin" for the location when prompted):
+Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command (do not specify a resource and select "admin" for the location when prompted):
 
 ```bash
 php artisan make:filament-widget PatientTypeOverview --stats-overview
