@@ -23,17 +23,17 @@
     $hasAlpineValidClasses = filled($alpineValid);
     $hasAlpineClasses = $hasAlpineDisabledClasses || $hasAlpineValidClasses;
 
-    $enabledAffixesClasses = 'bg-white focus-within:ring-2 dark:bg-white/5';
-    $disabledAffixesClasses = 'bg-gray-50 dark:bg-transparent';
-    $validAffixesClasses = 'ring-gray-950/10';
-    $invalidAffixesClasses = 'ring-danger-600 dark:ring-danger-500';
-    $enabledValidAffixesClasses = 'focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500';
-    $enabledInvalidAffixesClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-500';
-    $disabledValidAffixesClasses = 'dark:ring-white/10';
+    $enabledWrapperClasses = 'bg-white focus-within:ring-2 dark:bg-white/5';
+    $disabledWrapperClasses = 'bg-gray-50 dark:bg-transparent';
+    $validWrapperClasses = 'ring-gray-950/10';
+    $invalidWrapperClasses = 'ring-danger-600 dark:ring-danger-500';
+    $enabledValidWrapperClasses = 'focus-within:ring-primary-600 dark:ring-white/20 dark:focus-within:ring-primary-500';
+    $enabledInvalidWrapperClasses = 'focus-within:ring-danger-600 dark:focus-within:ring-danger-500';
+    $disabledValidWrapperClasses = 'dark:ring-white/10';
 
-    $affixActionsClasses = '-mx-1.5 flex items-center';
-    $affixIconClasses = 'fi-input-wrapper-affix-icon h-5 w-5 text-gray-400 dark:text-gray-500';
-    $affixLabelClasses = 'fi-input-wrapper-affix-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+    $actionsClasses = '-mx-1.5 flex items-center';
+    $iconClasses = 'fi-input-wrapper-icon h-5 w-5 text-gray-400 dark:text-gray-500';
+    $labelClasses = 'fi-input-wrapper-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -57,13 +57,13 @@
 <div
     @if ($hasAlpineClasses)
         x-bind:class="{
-            {{ $hasAlpineDisabledClasses ? "'{$enabledAffixesClasses}': ! ({$alpineDisabled})," : null }}
-            {{ $hasAlpineDisabledClasses ? "'{$disabledAffixesClasses}': {$alpineDisabled}," : null }}
-            {{ $hasAlpineValidClasses ? "'{$validAffixesClasses}': {$alpineValid}," : null }}
-            {{ $hasAlpineValidClasses ? "'{$invalidAffixesClasses}': ! ({$alpineValid})," : null }}
-            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledValidAffixesClasses}': ! ({$alpineDisabled}) && {$alpineValid}," : null }}
-            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledInvalidAffixesClasses}': ! ({$alpineDisabled}) && ! ({$alpineValid})," : null }}
-            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$disabledValidAffixesClasses}': {$alpineDisabled} && ! ({$alpineValid})," : null }}
+            {{ $hasAlpineDisabledClasses ? "'{$enabledWrapperClasses}': ! ({$alpineDisabled})," : null }}
+            {{ $hasAlpineDisabledClasses ? "'{$disabledWrapperClasses}': {$alpineDisabled}," : null }}
+            {{ $hasAlpineValidClasses ? "'{$validWrapperClasses}': {$alpineValid}," : null }}
+            {{ $hasAlpineValidClasses ? "'{$invalidWrapperClasses}': ! ({$alpineValid})," : null }}
+            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledValidWrapperClasses}': ! ({$alpineDisabled}) && {$alpineValid}," : null }}
+            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$enabledInvalidWrapperClasses}': ! ({$alpineDisabled}) && ! ({$alpineValid})," : null }}
+            {{ ($hasAlpineDisabledClasses && $hasAlpineValidClasses) ? "'{$disabledValidWrapperClasses}': {$alpineDisabled} && ! ({$alpineValid})," : null }}
         }"
     @endif
     {{
@@ -71,13 +71,13 @@
             ->except(['wire:target'])
             ->class([
                 'fi-input-wrapper flex rounded-lg shadow-sm ring-1 transition duration-75',
-                $enabledAffixesClasses => (! $hasAlpineClasses) && (! $disabled),
-                $disabledAffixesClasses => (! $hasAlpineClasses) && $disabled,
-                $validAffixesClasses => (! $hasAlpineClasses) && $valid,
-                $invalidAffixesClasses => (! $hasAlpineClasses) && (! $valid),
-                $enabledValidAffixesClasses => (! $hasAlpineClasses) && (! $disabled) && $valid,
-                $enabledInvalidAffixesClasses => (! $hasAlpineClasses) && (! $disabled) && (! $valid),
-                $disabledValidAffixesClasses => (! $hasAlpineClasses) && $disabled && $valid,
+                $enabledWrapperClasses => (! $hasAlpineClasses) && (! $disabled),
+                $disabledWrapperClasses => (! $hasAlpineClasses) && $disabled,
+                $validWrapperClasses => (! $hasAlpineClasses) && $valid,
+                $invalidWrapperClasses => (! $hasAlpineClasses) && (! $valid),
+                $enabledValidWrapperClasses => (! $hasAlpineClasses) && (! $disabled) && $valid,
+                $enabledInvalidWrapperClasses => (! $hasAlpineClasses) && (! $disabled) && (! $valid),
+                $disabledValidWrapperClasses => (! $hasAlpineClasses) && $disabled && $valid,
             ])
     }}
 >
@@ -96,7 +96,7 @@
             ])
         >
             @if (count($prefixActions))
-                <div class="{{ $affixActionsClasses }}">
+                <div class="{{ $actionsClasses }}">
                     @foreach ($prefixActions as $prefixAction)
                         {{ $prefixAction }}
                     @endforeach
@@ -109,7 +109,7 @@
                     :icon="$prefixIcon"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$affixIconClasses"
+                    :class="$iconClasses"
                 />
             @endif
 
@@ -123,12 +123,12 @@
                             ])
                         )
                     "
-                    :class="$affixIconClasses"
+                    :class="$iconClasses"
                 />
             @endif
 
             @if (filled($prefix))
-                <span class="{{ $affixLabelClasses }}">
+                <span class="{{ $labelClasses }}">
                     {{ $prefix }}
                 </span>
             @endif
@@ -161,7 +161,7 @@
             ])
         >
             @if (filled($suffix))
-                <span class="{{ $affixLabelClasses }}">
+                <span class="{{ $labelClasses }}">
                     {{ $suffix }}
                 </span>
             @endif
@@ -170,12 +170,12 @@
                 <x-filament::icon
                     :alias="$suffixIconAlias"
                     :icon="$suffixIcon"
-                    :class="$affixIconClasses"
+                    :class="$iconClasses"
                 />
             @endif
 
             @if (count($suffixActions))
-                <div class="{{ $affixActionsClasses }}">
+                <div class="{{ $actionsClasses }}">
                     @foreach ($suffixActions as $suffixAction)
                         {{ $suffixAction }}
                     @endforeach
