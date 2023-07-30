@@ -439,7 +439,7 @@
                                 class="flex gap-x-3 py-3"
                             >
                                 <label>
-                                    <x-filament::input.affixes
+                                    <x-filament::input.wrapper
                                         :prefix="__('filament-tables::table.sorting.fields.column.label')"
                                     >
                                         <x-filament::input.select
@@ -455,7 +455,7 @@
                                                 </option>
                                             @endforeach
                                         </x-filament::input.select>
-                                    </x-filament::input.affixes>
+                                    </x-filament::input.wrapper>
                                 </label>
 
                                 <label x-cloak x-show="column">
@@ -463,7 +463,7 @@
                                         {{ __('filament-tables::table.sorting.fields.direction.label') }}
                                     </span>
 
-                                    <x-filament::input.affixes
+                                    <x-filament::input.wrapper
                                         x-model="direction"
                                     >
                                         <x-filament::input.select>
@@ -475,7 +475,7 @@
                                                 {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
                                             </option>
                                         </x-filament::input.select>
-                                    </x-filament::input.affixes>
+                                    </x-filament::input.wrapper>
                                 </label>
                             </div>
                         @endif

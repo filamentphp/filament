@@ -60,7 +60,7 @@
         x-ref="newState"
     />
 
-    <x-filament::input.affixes
+    <x-filament::input.wrapper
         :alpine-disabled="'isLoading || ' . \Illuminate\Support\Js::from($isDisabled)"
         alpine-valid="error === undefined"
         x-tooltip="
@@ -118,5 +118,5 @@
             "
         />
         {{-- format-ignore-end --}}
-    </x-filament::input.affixes>
+    </x-filament::input.wrapper>
 </div>

@@ -10,7 +10,7 @@
         {{ __('filament-tables::table.fields.search.label') }}
     </label>
 
-    <x-filament::input.affixes
+    <x-filament::input.wrapper
         inline-prefix
         prefix-icon="heroicon-m-magnifying-glass"
         prefix-icon-alias="tables::search-field"
@@ -24,5 +24,5 @@
             :wire:model.live.debounce.500ms="$wireModel"
             x-bind:id="$id('input')"
         />
-    </x-filament::input.affixes>
+    </x-filament::input.wrapper>
 </div>

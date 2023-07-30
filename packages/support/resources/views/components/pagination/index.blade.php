@@ -50,7 +50,7 @@
     @if (count($pageOptions) > 1)
         <div class="col-start-2 justify-self-center">
             <label class="sm:hidden">
-                <x-filament::input.affixes>
+                <x-filament::input.wrapper>
                     <x-filament::input.select
                         :wire:model.live="$currentPageOptionProperty"
                     >
@@ -60,7 +60,7 @@
                             </option>
                         @endforeach
                     </x-filament::input.select>
-                </x-filament::input.affixes>
+                </x-filament::input.wrapper>
 
                 <span class="sr-only">
                     __('filament::components/pagination.fields.records_per_page.label')
@@ -68,7 +68,7 @@
             </label>
 
             <label class="hidden sm:inline">
-                <x-filament::input.affixes
+                <x-filament::input.wrapper
                     :prefix="__('filament::components/pagination.fields.records_per_page.label')"
                 >
                     <x-filament::input.select
@@ -80,7 +80,7 @@
                             </option>
                         @endforeach
                     </x-filament::input.select>
-                </x-filament::input.affixes>
+                </x-filament::input.wrapper>
             </label>
         </div>
     @endif

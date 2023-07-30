@@ -32,8 +32,8 @@
     $disabledValidAffixesClasses = 'dark:ring-white/10';
 
     $affixActionsClasses = '-mx-1.5 flex items-center';
-    $affixIconClasses = 'fi-input-affixes-icon h-5 w-5 text-gray-400 dark:text-gray-500';
-    $affixLabelClasses = 'fi-input-affixes-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+    $affixIconClasses = 'fi-input-wrapper-affix-icon h-5 w-5 text-gray-400 dark:text-gray-500';
+    $affixLabelClasses = 'fi-input-wrapper-affix-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -70,7 +70,7 @@
         $attributes
             ->except(['wire:target'])
             ->class([
-                'fi-input-affixes flex rounded-lg shadow-sm ring-1 transition duration-75',
+                'fi-input-wrapper flex rounded-lg shadow-sm ring-1 transition duration-75',
                 $enabledAffixesClasses => (! $hasAlpineClasses) && (! $disabled),
                 $disabledAffixesClasses => (! $hasAlpineClasses) && $disabled,
                 $validAffixesClasses => (! $hasAlpineClasses) && $valid,

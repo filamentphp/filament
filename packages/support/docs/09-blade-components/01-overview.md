@@ -28,7 +28,7 @@ Filament packages consume a set of core Blade components that aim to provide a c
 - [Checkbox](checkbox)
 - [Fieldset](fieldset)
 - [Input](input)
-- [Input affixes](input-affixes)
+- [Input wrapper](input-wrapper)
 - [Select](select)
 
 ### UI components for tables

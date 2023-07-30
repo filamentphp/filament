@@ -88,7 +88,7 @@
     >
         @if (! $isDisabled)
             @if ($isSearchable)
-                <x-filament::input.affixes
+                <x-filament::input.wrapper
                     inline-prefix
                     prefix-icon="heroicon-m-magnifying-glass"
                     prefix-icon-alias="forms:components.checkbox-list.search-field"
@@ -106,7 +106,7 @@
                             )
                         "
                     />
-                </x-filament::input.affixes>
+                </x-filament::input.wrapper>
             @endif
 
             @if ($isBulkToggleable && count($getOptions()))
