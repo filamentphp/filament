@@ -395,6 +395,20 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/select/javascript': {
+        url: 'forms/fields',
+        selector: '#javascriptSelect',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#javascriptSelect .choices')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'forms/fields/select/searchable': {
         url: 'forms/fields',
         selector: '#searchableSelect',
