@@ -69,14 +69,14 @@
             @if ($item->isVisible())
                 <x-filament-panels::sidebar.item
                     :active="$item->isActive()"
-                    :has-grouped-border="! $hasItemIcons"
+                    :badge="$item->getBadge()"
+                    :badge-color="$item->getBadgeColor()"
                     :icon="$item->getIcon()"
                     :first="$loop->first"
+                    :grouped-without-icon="! $hasItemIcons"
                     :last="$loop->last"
                     :active-icon="$item->getActiveIcon()"
                     :url="$item->getUrl()"
-                    :badge="$item->getBadge()"
-                    :badge-color="$item->getBadgeColor()"
                     :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                 >
                     {{ $item->getLabel() }}

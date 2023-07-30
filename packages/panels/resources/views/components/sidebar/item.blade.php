@@ -3,7 +3,7 @@
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
-    'hasGroupedBorder' => false,
+    'groupedWithoutIcon' => false,
     'last' => false,
     'first' => false,
     'icon' => null,
@@ -52,7 +52,7 @@
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
-        @elseif ($hasGroupedBorder)
+        @elseif ($groupedWithoutIcon)
             <div
                 class="fi-sidebar-item-grouped-border relative flex h-5 w-5 items-center justify-center"
             >
