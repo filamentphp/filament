@@ -6,11 +6,11 @@
 >
     <div class="flex flex-col gap-y-4">
         @if (count($tabs = $this->getTabs()))
-            <div class="flex max-w-full mx-auto">
+            <div class="flex flex-col max-w-full gap-4 mx-auto md:flex-row">
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.before', scopes: $this->getRenderHookScopes()) }}
 
                 <div
-                    class="p-2 bg-white shadow-sm  rounded-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+                    class="p-2 bg-white shadow-sm rounded-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
 
                     <x-filament::tabs class="self-center">
                         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.start', scopes: $this->getRenderHookScopes()) }}
