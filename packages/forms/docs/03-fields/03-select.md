@@ -27,11 +27,16 @@ By default, Filament uses the native HTML5 select. You may enable a more customi
 ```php
 use Filament\Forms\Components\Select;
 
-Select::make('author_id')
-    ->label('Author')
-    ->options(User::all()->pluck('name', 'id'))
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
     ->native(false)
 ```
+
+<AutoScreenshot name="forms/fields/select/javascript" alt="JavaScript select" version="3.x" />
 
 ## Searching options
 
