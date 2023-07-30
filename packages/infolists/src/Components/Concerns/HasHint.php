@@ -27,6 +27,8 @@ trait HasHint
      */
     protected string | array | Closure | null $hintColor = null;
 
+    protected string | Closure | null $hintSize = null;
+
     protected string | Closure | null $hintIcon = null;
 
     public function hint(string | Htmlable | Closure | null $hint): static
@@ -42,6 +44,13 @@ trait HasHint
     public function hintColor(string | array | Closure | null $color): static
     {
         $this->hintColor = $color;
+
+        return $this;
+    }
+
+    public function hintSize(string | Closure | null $size): static
+    {
+        $this->hintSize = $size;
 
         return $this;
     }
@@ -84,6 +93,11 @@ trait HasHint
     public function getHintColor(): string | array | null
     {
         return $this->evaluate($this->hintColor);
+    }
+
+    public function getHintSize(): string | null
+    {
+        return $this->evaluate($this->hintSize);
     }
 
     public function getHintIcon(): ?string

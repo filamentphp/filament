@@ -7,6 +7,7 @@
     'hint' => null,
     'hintActions' => null,
     'hintColor' => null,
+    'hintSize' => null,
     'hintIcon' => null,
     'id' => null,
     'label' => null,
@@ -30,6 +31,7 @@
         $hint ??= $entry->getHint();
         $hintActions ??= $entry->getHintActions();
         $hintColor ??= $entry->getHintColor();
+        $hintSize ??= $entry->getHintSize();
         $hintIcon ??= $entry->getHintIcon();
         $id ??= $entry->getId();
         $label ??= $entry->getLabel();
@@ -78,6 +80,7 @@
                     <x-filament-infolists::entry-wrapper.hint
                         :actions="$hintActions"
                         :color="$hintColor"
+                        :size="$hintSize"
                         :icon="$hintIcon"
                     >
                         {{ $hint }}

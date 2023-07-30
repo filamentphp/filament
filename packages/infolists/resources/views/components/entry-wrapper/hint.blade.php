@@ -1,6 +1,7 @@
 @props([
     'actions' => [],
     'color' => 'gray',
+    'size' => 'sm',
     'icon' => null,
 ])
 
@@ -8,10 +9,16 @@
     {{
         $attributes
             ->class([
-                'fi-in-entry-wrp-hint flex items-center gap-x-3 text-sm',
+                'fi-in-entry-wrp-hint flex items-center gap-x-3',
                 match ($color) {
                     'gray' => 'text-gray-500',
                     default => 'text-custom-600 dark:text-custom-400',
+                },
+                match ($size) {
+                    'xs' => 'text-xs',
+                    'md' => 'text-md',
+                    'lg' => 'text-lg',
+                    default => 'text-sm',
                 },
             ])
             ->style([

@@ -6,6 +6,7 @@
     'hint' => null,
     'hintActions' => null,
     'hintColor' => null,
+    'hintSize' => null,
     'hintIcon' => null,
     'id' => null,
     'isDisabled' => null,
@@ -26,6 +27,7 @@
         $hint ??= $field->getHint();
         $hintActions ??= $field->getHintActions();
         $hintColor ??= $field->getHintColor();
+        $hintSize ??= $field->getHintSize();
         $hintIcon ??= $field->getHintIcon();
         $id ??= $field->getId();
         $isDisabled ??= $field->isDisabled();
@@ -86,6 +88,7 @@
                     <x-filament-forms::field-wrapper.hint
                         :actions="$hintActions"
                         :color="$hintColor"
+                        :size="$hintSize"
                         :icon="$hintIcon"
                     >
                         {{ $hint }}

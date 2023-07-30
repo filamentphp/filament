@@ -26,6 +26,8 @@ trait HasHint
      * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
      */
     protected string | array | Closure | null $hintColor = null;
+    
+    protected string | Closure | null $hintSize = null;
 
     protected string | Closure | null $hintIcon = null;
 
@@ -42,6 +44,13 @@ trait HasHint
     public function hintColor(string | array | Closure | null $color): static
     {
         $this->hintColor = $color;
+
+        return $this;
+    }
+
+    public function hintSize(string | Closure | null $size): static
+    {
+        $this->hintSize = $size;
 
         return $this;
     }
@@ -84,6 +93,11 @@ trait HasHint
     public function getHintColor(): string | array | null
     {
         return $this->evaluate($this->hintColor);
+    }
+
+    public function getHintSize(): string | null
+    {
+        return $this->evaluate($this->hintSize);
     }
 
     public function getHintIcon(): ?string
