@@ -16,7 +16,7 @@
                 },
                 match ($size) {
                     'xs' => 'text-xs',
-                    'md' => 'text-md',
+                    'base' => 'text-base',
                     'lg' => 'text-lg',
                     default => 'text-sm',
                 },
