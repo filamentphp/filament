@@ -3,7 +3,7 @@
     'activeIcon' => null,
     'badge' => null,
     'badgeColor' => null,
-    'groupedWithoutIcon' => false,
+    'grouped' => false,
     'last' => false,
     'first' => false,
     'icon' => null,
@@ -39,11 +39,12 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'relative flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 text-sm font-semibold text-gray-700 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'relative flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'font-semibold' => ! $grouped,
             'bg-gray-100 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
         ])
     >
-        @if ($icon)
+        @if (filled($icon))
             <x-filament::icon
                 :icon="($active && $activeIcon) ? $activeIcon : $icon"
                 @class([
@@ -52,7 +53,7 @@
                     'text-primary-600 dark:text-primary-400' => $active,
                 ])
             />
-        @elseif ($groupedWithoutIcon)
+        @elseif ($grouped)
             <div
                 class="fi-sidebar-item-grouped-border relative flex h-6 w-6 items-center justify-center"
             >

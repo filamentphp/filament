@@ -136,11 +136,10 @@
             <ul class="-mx-3 grid gap-y-3 px-6">
                 @foreach ($navigation as $group)
                     <x-filament-panels::sidebar.group
-                        :label="$group->getLabel()"
-                        :icon="$group->getIcon()"
                         :collapsible="$group->isCollapsible()"
+                        :icon="$group->getIcon()"
                         :items="$group->getItems()"
-                        :has-item-icons="$group->hasItemIcons()"
+                        :label="$group->getLabel()"
                     />
                 @endforeach
             </ul>

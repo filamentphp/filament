@@ -1,6 +1,5 @@
 @props([
     'collapsible' => true,
-    'hasItemIcons' => false,
     'icon' => null,
     'items' => [],
     'label' => null,
@@ -73,7 +72,7 @@
                     :badge-color="$item->getBadgeColor()"
                     :icon="$item->getIcon()"
                     :first="$loop->first"
-                    :grouped-without-icon="! $hasItemIcons"
+                    :grouped="filled($label)"
                     :last="$loop->last"
                     :active-icon="$item->getActiveIcon()"
                     :url="$item->getUrl()"
