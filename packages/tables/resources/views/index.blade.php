@@ -229,7 +229,10 @@
             this.collapsedGroups = []
         },
     }"
-    class="fi-ta"
+    @class([
+        'fi-ta',
+        'animate-pulse' => $records === null,
+    ])
 >
     <x-filament-tables::container>
         <div
@@ -1141,15 +1144,7 @@
                     @endif
                 </x-filament-tables::table>
             @elseif ($records === null)
-                <div
-                    class="fi-ta-defer-loading-indicator flex items-center justify-center p-6"
-                >
-                    <div
-                        class="flex h-16 w-16 items-center justify-center rounded-full bg-primary-50 text-primary-500 dark:bg-gray-700"
-                    >
-                        <x-filament::loading-indicator class="h-6 w-6" />
-                    </div>
-                </div>
+                <div class="h-32"></div>
             @elseif ($emptyState = $getEmptyState())
                 {{ $emptyState }}
             @else
