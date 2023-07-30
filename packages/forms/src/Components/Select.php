@@ -74,6 +74,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected bool | Closure $isMultiple = false;
 
+    protected bool | Closure $isNative = true;
+
     protected ?Closure $getOptionLabelUsing = null;
 
     protected ?Closure $getOptionLabelsUsing = null;
@@ -521,6 +523,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this;
     }
 
+    public function native(bool | Closure $condition = true): static
+    {
+        $this->isNative = $condition;
+
+        return $this;
+    }
+
     public function position(string | Closure | null $position): static
     {
         $this->position = $position;
@@ -647,6 +656,11 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function isMultiple(): bool
     {
         return (bool) $this->evaluate($this->isMultiple);
+    }
+
+    public function isNative(): bool
+    {
+        return (bool) $this->evaluate($this->isNative);
     }
 
     public function isSearchable(): bool

@@ -27,7 +27,7 @@
         class="fi-fo-select"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        @if (! ($isSearchable() || $isMultiple()))
+        @if ((! ($isSearchable() || $isMultiple()) && $isNative()))
             <x-filament::input.select
                 :autofocus="$isAutofocused()"
                 :disabled="$isDisabled"
@@ -106,6 +106,7 @@
                             },
                             isAutofocused: @js($isAutofocused()),
                             isMultiple: @js($isMultiple()),
+                            isSearchable: @js($isSearchable()),
                             livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
