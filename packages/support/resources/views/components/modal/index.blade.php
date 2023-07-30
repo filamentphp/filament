@@ -68,7 +68,14 @@
         $displayClasses,
     ])
 >
-    {{ $trigger }}
+    @if ($trigger)
+        <div
+            x-on:click="open()"
+            {{ $trigger->attributes->class(['fi-modal-trigger flex cursor-pointer']) }}
+        >
+            {{ $trigger }}
+        </div>
+    @endif
 
     <div
         x-cloak

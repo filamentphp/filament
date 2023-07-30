@@ -1,6 +1,7 @@
 @props([
     'paginator',
     'pageOptions' => [],
+    'currentPageOptionProperty' => 'tableRecordsPerPage',
 ])
 
 @php
@@ -51,7 +52,7 @@
             <label class="sm:hidden">
                 <x-filament::input.affixes>
                     <x-filament::input.select
-                        wire:model.live="tableRecordsPerPage"
+                        :wire:model.live="$currentPageOptionProperty"
                     >
                         @foreach ($pageOptions as $option)
                             <option value="{{ $option }}">
@@ -71,7 +72,7 @@
                     :prefix="__('filament::components/pagination.fields.records_per_page.label')"
                 >
                     <x-filament::input.select
-                        wire:model.live="tableRecordsPerPage"
+                        :wire:model.live="$currentPageOptionProperty"
                     >
                         @foreach ($pageOptions as $option)
                             <option value="{{ $option }}">
