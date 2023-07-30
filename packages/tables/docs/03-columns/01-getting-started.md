@@ -402,7 +402,7 @@ Table columns are aligned to the start (left in LTR interfaces or right in RTL i
 use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('name')
+TextColumn::make('email')
     ->alignment(Alignment::End)
 ```
 

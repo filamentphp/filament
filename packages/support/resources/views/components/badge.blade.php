@@ -3,7 +3,7 @@
     'closeIcon' => null,
     'deleteButton' => null,
     'icon' => null,
-    'iconPosition' => null,
+    'iconPosition' => 'before',
     'size' => 'md',
 ])
 
