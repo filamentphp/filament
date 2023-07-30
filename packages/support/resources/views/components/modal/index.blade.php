@@ -70,7 +70,7 @@
 >
     @if ($trigger)
         <div
-            x-on:click="open()"
+            x-on:click="open"
             {{ $trigger->attributes->class(['fi-modal-trigger flex cursor-pointer']) }}
         >
             {{ $trigger }}
