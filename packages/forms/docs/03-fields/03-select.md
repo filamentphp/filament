@@ -20,6 +20,19 @@ Select::make('status')
 
 <AutoScreenshot name="forms/fields/select/simple" alt="Select" version="3.x" />
 
+## Enabling the JavaScript select
+
+By default, Filament uses the native HTML5 select. You may enable a more customizable JavaScript select using the `native(false)` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->label('Author')
+    ->options(User::all()->pluck('name', 'id'))
+    ->native(false)
+```
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
