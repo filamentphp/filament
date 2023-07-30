@@ -6,27 +6,37 @@
 >
     <div class="flex flex-col gap-y-4">
         @if (count($tabs = $this->getTabs()))
-            <div
-                class="mx-auto max-w-full rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
-            >
-                <x-filament::tabs class="self-center">
-                    @foreach ($tabs as $tabKey => $tab)
-                        @php
-                            $activeTab = strval($activeTab);
-                            $tabKey = strval($tabKey);
-                        @endphp
+            <div class="flex max-w-full mx-auto">
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.before', scopes: $this->getRenderHookScopes()) }}
 
-                        <x-filament::tabs.item
-                            :active="$activeTab === $tabKey"
-                            :badge="$tab->getBadge()"
-                            :icon="$tab->getIcon()"
-                            :icon-position="$tab->getIconPosition()"
-                            :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
-                        >
-                            {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
-                        </x-filament::tabs.item>
-                    @endforeach
-                </x-filament::tabs>
+                <div
+                    class="p-2 bg-white shadow-sm  rounded-xl ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10">
+
+                    <x-filament::tabs class="self-center">
+                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.start', scopes: $this->getRenderHookScopes()) }}
+
+                        @foreach ($tabs as $tabKey => $tab)
+                            @php
+                                $activeTab = strval($activeTab);
+                                $tabKey = strval($tabKey);
+                            @endphp
+
+                            <x-filament::tabs.item
+                                :active="$activeTab === $tabKey"
+                                :badge="$tab->getBadge()"
+                                :icon="$tab->getIcon()"
+                                :icon-position="$tab->getIconPosition()"
+                                :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                            >
+                                {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
+                            </x-filament::tabs.item>
+                        @endforeach
+
+                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.end', scopes: $this->getRenderHookScopes()) }}
+                    </x-filament::tabs>
+                </div>
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.filter-tabs.after', scopes: $this->getRenderHookScopes()) }}
             </div>
         @endif
 
