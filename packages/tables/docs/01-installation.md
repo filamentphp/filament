@@ -15,7 +15,7 @@ Filament requires the following to run:
 > **Livewire v3 is still in beta**
 > Although breaking changes should be minimal, we recommend testing your application thoroughly before using Livewire v3 in production.
 
-First, require the actions package using Composer:
+First, require the Table Builder package using Composer:
 
 ```bash
 composer require filament/tables:"^3.0@beta"
