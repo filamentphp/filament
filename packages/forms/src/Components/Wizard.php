@@ -5,7 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
-use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Concerns;
 use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Htmlable;
@@ -13,7 +13,8 @@ use Livewire\Component as LivewireComponent;
 
 class Wizard extends Component
 {
-    use HasExtraAlpineAttributes;
+    use Concerns\CanBeContained;
+    use Concerns\HasExtraAlpineAttributes;
 
     protected string | Htmlable | null $cancelAction = null;
 
@@ -28,8 +29,6 @@ class Wizard extends Component
     protected ?Closure $modifyPreviousActionUsing = null;
 
     public int | Closure $startStep = 1;
-
-    protected bool | Closure $isWrappedInCard = true;
 
     /**
      * @var view-string
@@ -144,18 +143,6 @@ class Wizard extends Component
         $this->modifyPreviousActionUsing = $callback;
 
         return $this;
-    }
-
-    public function wrappedInCard(bool | Closure $condition = true): static
-    {
-        $this->isWrappedInCard = $condition;
-
-        return $this;
-    }
-
-    public function isWrappedInCard(): bool
-    {
-        return (bool) $this->evaluate($this->isWrappedInCard);
     }
 
     public function getPreviousActionName(): string

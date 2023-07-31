@@ -1112,18 +1112,18 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/placeholder/simple': {
+    'forms/layout/section/without-header': {
         url: 'forms/layout',
-        selector: '#placeholder',
+        selector: '#sectionWithoutHeader',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/card/simple': {
+    'forms/layout/placeholder/simple': {
         url: 'forms/layout',
-        selector: '#card',
+        selector: '#placeholder',
         viewport: {
             width: 1920,
             height: 640,
@@ -1595,9 +1595,9 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'infolists/layout/card/simple': {
+    'infolists/layout/section/without-header': {
         url: 'infolists/layout',
-        selector: '#card',
+        selector: '#sectionWithoutHeader',
         viewport: {
             width: 1920,
             height: 640,

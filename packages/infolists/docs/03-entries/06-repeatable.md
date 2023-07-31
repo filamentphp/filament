@@ -43,9 +43,9 @@ This method accepts the same options as the `columns()` method of the [grid](../
 
 <AutoScreenshot name="infolists/entries/repeatable/grid" alt="Repeatable entry in grid layout" version="3.x" />
 
-## Removing the wrapping card
+## Removing the styled container
 
-By default, each item in a repeatable entry gets wrapped in a card. This behavior can be disabled using `wrappedInCard()`:
+By default, each item in a repeatable entry gets wrapped in a container styled as a card. This behavior can be disabled using `contained()`:
 
 ```php
 use Filament\Infolists\Components\RepeatableEntry;
@@ -54,5 +54,5 @@ RepeatableEntry::make('comments')
     ->schema([
         // ...
     ])
-    ->wrappedInCard(false)
+    ->contained(false)
 ```

@@ -102,7 +102,7 @@ abstract class Widget extends Component
 
     public function placeholder(): View
     {
-        return view('filament::components.loading-card', [
+        return view('filament::components.loading-section', [
             'columnSpan' => $this->getColumnSpan(),
             'columnStart' => $this->getColumnStart(),
         ]);

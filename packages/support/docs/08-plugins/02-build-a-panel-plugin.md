@@ -138,10 +138,10 @@ We are using async Alpine to load our Alpine component, so we'll need to add the
 
 ```blade
 <x-filament-widgets::widget>
-    <x-filament::card>
-        <h2 class="font-bold text-xl mb-4 text-center">
+    <x-filament::section>
+        <x-slot name="heading>
             {{ __('clock-widget::clock-widget.title') }}
-        </h2>
+        </x-slot>
 
         <div
             x-ignore
@@ -153,7 +153,7 @@ We are using async Alpine to load our Alpine component, so we'll need to add the
             <p>{{ __('clock-widget::clock-widget.description') }}</p>
             <p class="text-xl" x-text="time"></p>
         </div>
-    </x-filament::card>
+    </x-filament::section>
 </x-filament-widgets::widget>
 ```
 

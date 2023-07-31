@@ -31,12 +31,20 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     protected bool | Closure $isFormBefore = false;
 
-    final public function __construct(string | Htmlable | Closure $heading)
+    /**
+     * @param string | array<Component> | Htmlable | Closure | null $heading
+     */
+    final public function __construct(string | array | Htmlable | Closure | null $heading = null)
     {
-        $this->heading($heading);
+        is_array($heading)
+            ? $this->childComponents($heading)
+            : $this->heading($heading);
     }
 
-    public static function make(string | Htmlable | Closure $heading): static
+    /**
+     * @param string | array<Component> | Htmlable | Closure | null $heading
+     */
+    public static function make(string | array | Htmlable | Closure | null $heading = null): static
     {
         $static = app(static::class, ['heading' => $heading]);
         $static->configure();
@@ -62,12 +70,20 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     {
         $id = parent::getId();
 
-        if (! $id) {
-            $id = Str::slug($this->getHeading());
+        if (filled($id)) {
+            return $id;
+        }
 
-            if ($statePath = $this->getStatePath()) {
-                $id = "{$statePath}.{$id}";
-            }
+        $heading = $this->getHeading();
+
+        if (blank($heading)) {
+            return null;
+        }
+
+        $id = Str::slug($heading);
+
+        if ($statePath = $this->getStatePath()) {
+            $id = "{$statePath}.{$id}";
         }
 
         return $id;

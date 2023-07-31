@@ -21,7 +21,7 @@ class WidgetsServiceProvider extends PackageServiceProvider
     {
         FilamentAsset::register([
             AlpineComponent::make('chart', __DIR__ . '/../dist/components/chart.js'),
-            AlpineComponent::make('stats-overview/card/chart', __DIR__ . '/../dist/components/stats-overview/card/chart.js'),
+            AlpineComponent::make('stats-overview/stat/chart', __DIR__ . '/../dist/components/stats-overview/stat/chart.js'),
         ], 'filament/widgets');
     }
 

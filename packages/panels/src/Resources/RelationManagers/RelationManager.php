@@ -558,6 +558,6 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
 
     public function placeholder(): View
     {
-        return view('filament::components.loading-card');
+        return view('filament::components.loading-section');
     }
 }

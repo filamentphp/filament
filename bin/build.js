@@ -129,7 +129,7 @@ compile({
 compile({
     ...defaultOptions,
     entryPoints: [
-        `./packages/widgets/resources/js/components/stats-overview/card/chart.js`,
+        `./packages/widgets/resources/js/components/stats-overview/stat/chart.js`,
     ],
-    outfile: `./packages/widgets/dist/components/stats-overview/card/chart.js`,
+    outfile: `./packages/widgets/dist/components/stats-overview/stat/chart.js`,
 })

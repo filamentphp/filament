@@ -9,7 +9,7 @@ You can use the checkbox component to render a checkbox input that can be used t
 ```blade
 <label>
     <x-filament::input.checkbox wire:model="isAdmin" />
-    
+
     <span>
         Is Admin
     </span>
@@ -25,7 +25,7 @@ To trigger the error state using Blade, you can pass the `valid` attribute to th
 ```blade
 <x-filament::input.checkbox
     wire:model="isAdmin"
-    :valid="$errors->has('isAdmin')"
+    :valid="! $errors->has('isAdmin')"
 />
 ```
 
@@ -35,7 +35,7 @@ Alternatively, you can use an Alpine.js expression to trigger the error state, b
 <div x-data="{ errors: ['isAdmin'] }">
     <x-filament::input.checkbox
         x-model="isAdmin"
-        alpine-valid="errors.includes('isAdmin')"
+        alpine-valid="! errors.includes('isAdmin')"
     />
 </div>
 ```

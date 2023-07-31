@@ -25,17 +25,17 @@ In addition to specifying how many columns a layout component should have, you m
 
 ## An example of a responsive grid layout
 
-In this example, we have a form with a [card](card) layout component. Since all layout components support the `columns()` method, we can use it to create a responsive grid layout within the card itself.
+In this example, we have an infolist with a [section](section) layout component. Since all layout components support the `columns()` method, we can use it to create a responsive grid layout within the section itself.
 
 We pass an array to `columns()` as we want to specify different numbers of columns for different breakpoints. On devices smaller than the `sm` [Tailwind breakpoint](https://tailwindcss.com/docs/responsive-design#overview), we want to have 1 column, which is default. On devices larger than the `sm` breakpoint, we want to have 3 columns. On devices larger than the `xl` breakpoint, we want to have 6 columns. On devices larger than the `2xl` breakpoint, we want to have 8 columns.
 
-Inside the card, we have a [text entry](../entries/text). Since text entries are infolist components and all form components have a `columnSpan()` method, we can use it to specify how many columns the text entry should fill. On devices smaller than the `sm` breakpoint, we want the text entry to fill 1 column, which is default. On devices larger than the `sm` breakpoint, we want the text entry to fill 2 columns. On devices larger than the `xl` breakpoint, we want the text entry to fill 3 columns. On devices larger than the `2xl` breakpoint, we want the text entry to fill 4 columns.
+Inside the section, we have a [text entry](../entries/text). Since text entries are infolist components and all form components have a `columnSpan()` method, we can use it to specify how many columns the text entry should fill. On devices smaller than the `sm` breakpoint, we want the text entry to fill 1 column, which is default. On devices larger than the `sm` breakpoint, we want the text entry to fill 2 columns. On devices larger than the `xl` breakpoint, we want the text entry to fill 3 columns. On devices larger than the `2xl` breakpoint, we want the text entry to fill 4 columns.
 
 ```php
-use Filament\Infolists\Components\Card;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 
-Card::make()
+Section::make()
     ->columns([
         'sm' => 3,
         'xl' => 6,
@@ -80,10 +80,10 @@ If you want to start a component in a grid at a specific column, you can use the
 - `columnStart(['md' => 2, 'xl' => 4])` will make the component start at column 2 on medium devices, and at column 4 on extra large devices. The default breakpoint for smaller devices uses 1 column, unless you use a `default` array key.
 
 ```php
-use Filament\Infolists\Components\Card;
+use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 
-Card::make()
+Section::make()
     ->columns([
         'sm' => 3,
         'xl' => 6,

@@ -9,11 +9,19 @@
     'compact' => false,
     'contentBefore' => false,
     'description' => null,
-    'heading',
+    'headerEnd' => null,
+    'heading' => null,
     'icon' => null,
     'iconColor' => 'gray',
     'iconSize' => IconSize::Large,
 ])
+
+@php
+    $hasDescription = filled((string) $description);
+    $hasHeading = filled($heading);
+    $hasIcon = filled($icon);
+    $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
+@endphp
 
 <section
     @if ($collapsible)
@@ -57,21 +65,21 @@
         ])
     }}
 >
-    <div
-        @if ($collapsible)
-            x-on:click="isCollapsed = ! isCollapsed"
-        @endif
-        @class([
-            'fi-section-header-ctn flex items-center overflow-hidden',
-            'cursor-pointer' => $collapsible,
-            match ($compact) {
-                true => 'px-4 py-2.5',
-                false => 'px-6 py-4',
-            } => ! $aside,
-        ])
-    >
-        <div class="fi-section-header flex gap-x-3">
-            @if ($icon)
+    @if ($hasHeader)
+        <header
+            @if ($collapsible)
+                x-on:click="isCollapsed = ! isCollapsed"
+            @endif
+            @class([
+                'flex items-center gap-x-3 overflow-hidden',
+                'cursor-pointer' => $collapsible,
+                match ($compact) {
+                    true => 'px-4 py-2.5',
+                    false => 'px-6 py-4',
+                } => ! $aside,
+            ])
+        >
+            @if ($hasIcon)
                 <x-filament::icon
                     :icon="$icon"
                     @class([
@@ -93,34 +101,36 @@
                 />
             @endif
 
-            <div class="flex-1">
-                <h3
-                    class="fi-section-header-heading text-base font-semibold leading-6 text-gray-950 dark:text-white"
-                >
-                    {{ $heading }}
-                </h3>
+            @if ($hasHeading || $hasDescription)
+                <div class="grid flex-1 gap-y-1">
+                    @if ($hasHeading)
+                        <x-filament::section.heading>
+                            {{ $heading }}
+                        </x-filament::section.heading>
+                    @endif
 
-                @if (filled((string) $description))
-                    <p
-                        class="fi-section-header-description mt-1 text-sm text-gray-500 dark:text-gray-400"
-                    >
-                        {{ $description }}
-                    </p>
-                @endif
-            </div>
-        </div>
+                    @if ($hasDescription)
+                        <x-filament::section.description>
+                            {{ $description }}
+                        </x-filament::section.description>
+                    @endif
+                </div>
+            @endif
 
-        @if ($collapsible)
-            <x-filament::icon-button
-                color="gray"
-                icon="heroicon-m-chevron-down"
-                icon-alias="section.collapse-button"
-                x-on:click.stop="isCollapsed = ! isCollapsed"
-                x-bind:class="{ 'rotate-180': ! isCollapsed }"
-                class="-my-2.5 -me-2.5 ms-auto"
-            />
-        @endif
-    </div>
+            {{ $headerEnd }}
+
+            @if ($collapsible)
+                <x-filament::icon-button
+                    color="gray"
+                    icon="heroicon-m-chevron-down"
+                    icon-alias="section.collapse-button"
+                    x-on:click.stop="isCollapsed = ! isCollapsed"
+                    x-bind:class="{ 'rotate-180': ! isCollapsed }"
+                    class="-m-2"
+                />
+            @endif
+        </header>
+    @endif
 
     <div
         @if ($collapsible)
@@ -133,7 +143,7 @@
         @class([
             'fi-section-content-ctn',
             'md:col-span-2' => $aside,
-            'border-t border-gray-200 dark:border-white/10' => ! $aside,
+            'border-t border-gray-200 dark:border-white/10' => $hasHeader && (! $aside),
             'md:order-first' => $contentBefore,
         ])
     >

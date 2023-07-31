@@ -19,6 +19,19 @@ Section::make('Rate limiting')
 
 <AutoScreenshot name="forms/layout/section/simple" alt="Section" version="3.x" />
 
+You can also use a section without a header, which just wraps the components in a simple card:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make()
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="forms/layout/section/without-header" alt="Section without header" version="3.x" />
+
 ## Adding an icon to the section's header
 
 You may add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to the section's header using the `icon()` method:

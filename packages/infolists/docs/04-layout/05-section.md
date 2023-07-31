@@ -19,6 +19,19 @@ Section::make('Rate limiting')
 
 <AutoScreenshot name="infolists/layout/section/simple" alt="Section" version="3.x" />
 
+You can also use a section without a header, which just wraps the components in a simple card:
+
+```php
+use Filament\Infolists\Components\Section;
+
+Section::make()
+    ->schema([
+        // ...
+    ])
+```
+
+<AutoScreenshot name="infolists/layout/section/without-header" alt="Section without header" version="3.x" />
+
 ## Adding an icon to the section's header
 
 You may add an icon to the section's header using the `icon()` method:

@@ -11,7 +11,6 @@ Filament packages consume a set of core Blade components that aim to provide a c
 - [Avatar](avatar)
 - [Badge](badge)
 - [Breadcrumbs](breadcrumbs)
-- [Card](card)
 - [Loading indicator](loading-indicator)
 - [Section](section)
 - [Tabs](tabs)

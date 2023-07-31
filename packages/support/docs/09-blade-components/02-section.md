@@ -4,7 +4,7 @@ title: Section Blade component
 
 ## Overview
 
-A section can be used to group content together, with a heading:
+A section can be used to group content together, with an optional heading:
 
 ```blade
 <x-filament::section>
@@ -28,20 +28,6 @@ You can add a description below the heading to the section by using the `descrip
 
     <x-slot name="description">
         This is all the information we hold about the user.
-    </x-slot>
-
-    {{-- Content --}}
-</x-filament::section>
-```
-
-## Making the section collapsible
-
-You can make the section collapsible by using the `collapsible` attribute:
-
-```blade
-<x-filament::section collapsible>
-    <x-slot name="heading">
-        User details
     </x-slot>
 
     {{-- Content --}}
@@ -101,6 +87,24 @@ By default, the size of the section icon is "large". You can change it to be "sm
 >
     <x-slot name="heading">
         User details
+    </x-slot>
+
+    {{-- Content --}}
+</x-filament::section>
+```
+
+## Adding content to the end of the header
+
+You may render additional content at the end of the header, next to the heading and description, using the `headerEnd` slot:
+
+```blade
+<x-filament::section>
+    <x-slot name="heading">
+        User details
+    </x-slot>
+
+    <x-slot name="headerEnd">
+        {{-- Input to select the user's ID --}}
     </x-slot>
 
     {{-- Content --}}
