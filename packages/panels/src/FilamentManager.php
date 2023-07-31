@@ -155,14 +155,6 @@ class FilamentManager
     }
 
     /**
-     * @return  array<string, int>
-     */
-    public function getFontWeights(): array
-    {
-        return $this->getCurrentPanel()->getFontWeights();
-    }
-
-    /**
      * @return array<string>
      */
     public function getGlobalSearchKeyBindings(): array

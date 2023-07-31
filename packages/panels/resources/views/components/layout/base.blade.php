@@ -56,11 +56,6 @@
         <style>
             :root {
                 --font-family: {!! filament()->getFontFamily() !!};
-
-                @foreach (filament()->getFontWeights() as $fontWeightKey => $fontWeightValue)
-                    --font-weight-{{ $fontWeightKey }}: {{ $fontWeightValue }};
-                @endforeach
-
                 --sidebar-width: {{ filament()->getSidebarWidth() }};
                 --collapsed-sidebar-width: {{ filament()->getCollapsedSidebarWidth() }};
             }

@@ -40,7 +40,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static Htmlable getFontHtml()
  * @method static string getFontProvider()
  * @method static string | null getFontUrl()
- * @method static array<string, int> getFontWeights()
  * @method static array<string> getGlobalSearchKeyBindings()
  * @method static GlobalSearchProvider | null getGlobalSearchProvider()
  * @method static string | null getHomeUrl()

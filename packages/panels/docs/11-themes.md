@@ -66,7 +66,7 @@ $panel
 
 ## Changing the font
 
-By default, we use the [Be Vietnam Pro](https://fonts.google.com/specimen/Be+Vietnam+Pro) font. You can change this using the `font()` method in the [configuration](configuration) file:
+By default, we use the [Inter](https://fonts.google.com/specimen/Inter) font. You can change this using the `font()` method in the [configuration](configuration) file:
 
 ```php
 use Filament\Panel;
@@ -75,7 +75,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->font('Inter');
+        ->font('Poppins');
 }
 ```
 
