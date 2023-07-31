@@ -622,15 +622,14 @@
                                     @php
                                         $recordContentClasses = \Illuminate\Support\Arr::toCssClasses([
                                             $recordContentHorizontalPaddingClasses,
-                                            'block pt-4',
-                                            'pb-4' => ! $recordHasActions,
+                                            'flex-1 block',
                                         ]);
                                     @endphp
 
                                     <div
                                         @class([
-                                            'grid w-full gap-3',
-                                            'pb-4' => $recordHasActions,
+                                            'flex flex-col md:items-center w-full gap-3 md:flex-row',
+                                            'py-4' => $recordHasActions,
                                         ])
                                     >
                                         @if ($recordUrl)
@@ -692,7 +691,7 @@
                                         @if ($recordHasActions)
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="($actionsPosition === ActionsPosition::AfterContent) ? Alignment::Start : 'start sm:end'"
+                                                :alignment="($actionsPosition === ActionsPosition::BottomCorner) ? Alignment::End : 'start md:end'"
                                                 :record="$record"
                                                 wrap="-sm"
                                                 @class([

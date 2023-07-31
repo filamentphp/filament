@@ -29,7 +29,7 @@
             match ($alignment) {
                 Alignment::Center, 'center' => 'justify-center',
                 Alignment::Start, Alignment::Left, 'start', 'left' => 'justify-start',
-                'start sm:end' => 'justify-start sm:justify-end',
+                'start md:end' => 'justify-start md:justify-end',
                 default => 'justify-end',
             },
         ])

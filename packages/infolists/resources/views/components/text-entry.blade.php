@@ -81,7 +81,7 @@
                         $iconClasses = \Illuminate\Support\Arr::toCssClasses([
                             'fi-in-text-item-icon h-5 w-5',
                             match ($color) {
-                                'gray' => 'text-gray-400 dark:text-gray-500',
+                                'gray', null => 'text-gray-400 dark:text-gray-500',
                                 default => 'text-custom-500',
                             },
                         ]);
