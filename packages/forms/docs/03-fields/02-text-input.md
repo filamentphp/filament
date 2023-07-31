@@ -125,7 +125,6 @@ You may place text before and after the input using the `prefix()` and `suffix()
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('domain')
-    ->url()
     ->prefix('https://')
     ->suffix('.com')
 ```

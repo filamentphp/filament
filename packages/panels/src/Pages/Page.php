@@ -14,7 +14,7 @@ abstract class Page extends BasePage
     use Concerns\HasRoutes;
     use Concerns\InteractsWithHeaderActions;
 
-    protected static string $layout = 'filament::components.layout.index';
+    protected static string $layout = 'filament-panels::components.layout.index';
 
     protected static bool $isDiscovered = true;
 
@@ -59,6 +59,7 @@ abstract class Page extends BasePage
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
+                ->activeIcon(static::getActiveNavigationIcon())
                 ->isActiveWhen(fn (): bool => request()->routeIs(static::getRouteName()))
                 ->sort(static::getNavigationSort())
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())

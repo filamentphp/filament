@@ -1,14 +1,17 @@
 @props([
     'color' => 'primary',
     'closeIcon' => null,
-    'deletable' => false,
     'deleteButton' => null,
     'icon' => null,
-    'iconPosition' => null,
+    'iconPosition' => 'before',
     'size' => 'md',
 ])
 
 @php
+    use Filament\Support\Enums\IconPosition;
+
+    $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;
+
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-badge-icon h-4 w-4',
         match ($color) {
@@ -29,25 +32,26 @@
                     'md' => 'px-2 min-w-[theme(spacing.6)] py-1',
                 },
                 match ($color) {
-                    'gray' => 'bg-gray-300/10 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
-                    default => 'bg-custom-300/10 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
+                    'gray' => 'bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
+                    default => 'bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
                 },
             ])
             ->style([
                 \Filament\Support\get_color_css_variables(
                     $color,
                     shades: [
+                        50,
                         300,
                         400,
                         ...$icon ? [500] : [],
                         600,
-                        ...$deletable ? [700] : [],
+                        ...$isDeletable ? [700] : [],
                     ]
                 ) => $color !== 'gray',
             ])
     }}
 >
-    @if ($icon && $iconPosition === 'before')
+    @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 
@@ -55,19 +59,25 @@
         {{ $slot }}
     </span>
 
-    @if ($deletable)
+    @if ($isDeletable)
         <button
             type="button"
             class="-my-1 -me-2 -ms-1 flex items-center justify-center p-1 text-custom-700/50 outline-none transition duration-75 hover:text-custom-700/75 focus:text-custom-700/75 dark:text-custom-300/50 dark:hover:text-custom-300/75 dark:focus:text-custom-300/75"
-            {{ $deleteButton->attributes }}
+            {{ $deleteButton->attributes->except(['label']) }}
         >
             <x-filament::icon
                 alias="badge.delete-button"
                 icon="heroicon-m-x-mark"
                 class="h-3.5 w-3.5"
             />
+
+            @if (filled($label = $deleteButton->attributes->get('label')))
+                <span class="sr-only">
+                    {{ $label }}
+                </span>
+            @endif
         </button>
-    @elseif ($icon && $iconPosition === 'after')
+    @elseif ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 </div>

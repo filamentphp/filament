@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Str;
 
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
@@ -70,7 +72,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
             ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifySelectAllActionUsing) {
             $action = $this->evaluate($this->modifySelectAllActionUsing, [
@@ -99,7 +101,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
             ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyDeselectAllActionUsing) {
             $action = $this->evaluate($this->modifyDeselectAllActionUsing, [
@@ -154,7 +156,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (empty($relationshipQuery->getQuery()->orders)) {
+            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
                 $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
@@ -162,7 +164,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{$relationship->getQualifiedRelatedKeyName()} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($relationship->getQualifiedRelatedKeyName(), '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -240,7 +242,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         );
     }
 
-    public function getRelationshipTitleAttribute(): string
+    public function getRelationshipTitleAttribute(): ?string
     {
         return $this->evaluate($this->relationshipTitleAttribute);
     }

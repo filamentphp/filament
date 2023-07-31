@@ -1,11 +1,11 @@
-<x-filament::layout.base :livewire="$livewire">
+<x-filament-panels::layout.base :livewire="$livewire">
     @props([
         'after' => null,
         'heading' => null,
         'subheading' => null,
     ])
 
-    <div class="fi-simple-layout flex min-h-full items-center">
+    <div class="fi-simple-layout flex min-h-screen items-center">
         @if (filament()->auth()->check())
             <div
                 class="absolute end-0 top-0 flex h-16 items-center gap-x-4 pe-4 md:pe-6 lg:pe-8"
@@ -14,7 +14,7 @@
                     @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
                 @endif
 
-                <x-filament::user-menu />
+                <x-filament-panels::user-menu />
             </div>
         @endif
 
@@ -25,5 +25,7 @@
                 {{ $slot }}
             </main>
         </div>
+
+        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::footer') }}
     </div>
-</x-filament::layout.base>
+</x-filament-panels::layout.base>

@@ -12,15 +12,18 @@ Filament has a few requirements to run:
 - Laravel v9.0+
 - Livewire v3.0+
 
+> **Livewire v3 is still in beta**
+> While they will attempt to keep breaking changes to a minimum, they could still happen. Filament v3 is also not stable because of that. Therefore, we recommend testing your application thoroughly before using Filament v3 in production.
+
 First, require the actions package using Composer:
 
 ```bash
-composer require filament/widgets:"^3.0"
+composer require filament/widgets:"^3.0@beta"
 ```
 
 ## New Laravel projects
 
-To get started with Filament quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
+To get started with Filament quickly, you can set up [Livewire](https://livewire.laravel.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
 
 ```bash
 php artisan filament:install --scaffold --widgets

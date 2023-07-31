@@ -51,7 +51,7 @@ All methods on the action accept callback functions, where you can access the cu
 By default, the row actions in your table are rendered in the final cell of each row. You may move them before the columns by using the `position` argument:
 
 ```php
-use Filament\Tables\Actions\Position;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -59,7 +59,7 @@ public function table(Table $table): Table
     return $table
         ->actions([
             // ...
-        ], position: Position::BeforeColumns);
+        ], position: ActionsPosition::BeforeColumns);
 }
 ```
 
@@ -70,7 +70,7 @@ public function table(Table $table): Table
 By default, the row actions in your table are rendered in the final cell of each row. You may move them before the checkbox column by using the `position` argument:
 
 ```php
-use Filament\Tables\Actions\Position;
+use Filament\Tables\Enums\ActionsPosition;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -78,7 +78,7 @@ public function table(Table $table): Table
     return $table
         ->actions([
             // ...
-        ], position: Position::BeforeCells);
+        ], position: ActionsPosition::BeforeCells);
 }
 ```
 
@@ -335,11 +335,12 @@ ActionGroup::make([
 Buttons come in 3 sizes - `sm`, `md` or `lg`. You may set the size of the action group button using the `size()` method:
 
 ```php
+use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\ActionGroup;
 
 ActionGroup::make([
     // ...
-])->size('sm');
+])->size(ActionSize::Small);
 ```
 
 <AutoScreenshot name="tables/actions/group-small" alt="Table with small action group" version="3.x" />
@@ -357,3 +358,43 @@ ActionGroup::make([
 ```
 
 <AutoScreenshot name="tables/actions/group-tooltip" alt="Table with action group tooltip" version="3.x" />
+
+## Table action utility injection
+
+All actions, not just table actions, have access to [many utilities](../actions/advanced#action-utility-injection) within the vast majority of configuration methods. However, in addition to those, table actions have access to a few more:
+
+### Injecting the current Eloquent record
+
+If you wish to access the current Eloquent record of the action, define a `$record` parameter:
+
+```php
+use Illuminate\Database\Eloquent\Model;
+
+function (Model $record) {
+    // ...
+}
+```
+
+Be aware that bulk actions, header actions, and empty state actions do not have access to the `$record`, as they are not related to any table row.
+
+### Injecting the current Eloquent model class
+
+If you wish to access the current Eloquent model class of the table, define a `$model` parameter:
+
+```php
+function (string $model) {
+    // ...
+}
+```
+
+### Injecting the current table instance
+
+If you wish to access the current table configuration instance that the action belongs to, define a `$table` parameter:
+
+```php
+use Filament\Tables\Table;
+
+function (Table $table) {
+    // ...
+}
+```

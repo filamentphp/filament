@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => '削除しました',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => '削除しました',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => '削除しました',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => '削除しました',
+            ],
+
         ],
 
     ],

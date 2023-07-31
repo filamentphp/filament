@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Imetenganishwa',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Imetenganishwa',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Imetenganishwa',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Imetenganishwa',
+            ],
+
         ],
 
     ],

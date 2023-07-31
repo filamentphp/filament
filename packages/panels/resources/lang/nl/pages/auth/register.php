@@ -44,8 +44,12 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Te veel pogingen. Probeer het opnieuw over :seconds seconden.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Te veel pogingen. Probeer het opnieuw over :seconds seconden.',
+        ],
+
     ],
 
 ];

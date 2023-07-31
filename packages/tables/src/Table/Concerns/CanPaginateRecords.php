@@ -26,7 +26,7 @@ trait CanPaginateRecords
     }
 
     /**
-     * @param  bool | array<int, string> | Closure  $condition
+     * @param  bool | array<int | string> | Closure  $condition
      */
     public function paginated(bool | array | Closure $condition = true): static
     {
@@ -48,7 +48,7 @@ trait CanPaginateRecords
     }
 
     /**
-     * @param  array<int, string> | Closure | null  $options
+     * @param  array<int | string> | Closure | null  $options
      */
     public function paginationPageOptions(array | Closure | null $options): static
     {

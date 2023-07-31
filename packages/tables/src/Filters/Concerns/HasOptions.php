@@ -10,7 +10,7 @@ use Illuminate\Support\Collection;
 trait HasOptions
 {
     /**
-     * @var array<string> | Arrayable | class-string | Closure | null
+     * @var array<string | array<string>> | Arrayable | class-string | Closure | null
      */
     protected array | Arrayable | string | Closure | null $options = null;
 
@@ -21,7 +21,7 @@ trait HasOptions
     protected ?Closure $getSearchResultsUsing = null;
 
     /**
-     * @param  array<string> | Arrayable | class-string | Closure | null  $options
+     * @param  array<string | array<string>> | Arrayable | class-string | Closure | null  $options
      */
     public function options(array | Arrayable | string | Closure | null $options): static
     {
@@ -31,7 +31,7 @@ trait HasOptions
     }
 
     /**
-     * @return array<string>
+     * @return array<string | array<string>>
      */
     public function getOptions(): array
     {

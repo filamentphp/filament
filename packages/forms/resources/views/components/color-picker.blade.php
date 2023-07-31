@@ -12,8 +12,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament-forms::affixes
-        :state-path="$statePath"
+    <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -23,6 +22,7 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :valid="! $errors->has($statePath)"
         class="fi-fo-color-picker"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
@@ -44,7 +44,7 @@
                 x-on:keydown.enter.stop.prevent="togglePanelVisibility()"
                 x-ref="input"
                 :attributes="
-                    $getExtraInputAttributeBag()
+                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                         ->merge([
                             'autocomplete' => 'off',
                             'disabled' => $isDisabled,
@@ -66,7 +66,10 @@
             >
                 <div
                     x-bind:style="{ 'background-color': state }"
-                    class="h-5 w-5 rounded-full ring-1 ring-inset ring-gray-950/10 dark:ring-white/20"
+                    x-bind:class="{
+                        'ring-1 ring-inset ring-gray-200 dark:ring-white/10': ! state,
+                    }"
+                    class="h-5 w-5 rounded-full"
                 ></div>
             </div>
 
@@ -90,5 +93,5 @@
                 <{{ $tag }} color="{{ $getState() }}" />
             </div>
         </div>
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 </x-dynamic-component>

@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'Đã tạo bản sao',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Đã tạo bản sao',
+            ],
+
         ],
 
     ],

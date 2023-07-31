@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'שיוך הוסר',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'שיוך הוסר',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'שיוך הוסר',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'שיוך הוסר',
+            ],
+
         ],
 
     ],

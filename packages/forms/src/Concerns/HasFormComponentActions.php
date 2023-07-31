@@ -138,7 +138,7 @@ trait HasFormComponentActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->unmountFormComponentAction(shouldCloseParentActions: false);
+            $this->unmountFormComponentAction(shouldCancelParentActions: false);
 
             return null;
         }
@@ -257,23 +257,23 @@ trait HasFormComponentActions
         }
     }
 
-    public function unmountFormComponentAction(bool $shouldCloseParentActions = true): void
+    public function unmountFormComponentAction(bool $shouldCancelParentActions = true): void
     {
         $action = $this->getMountedFormComponentAction();
 
-        if (! ($shouldCloseParentActions && $action)) {
+        if (! ($shouldCancelParentActions && $action)) {
             $this->popMountedFormComponentAction();
-        } elseif ($action->shouldCloseAllParentActions()) {
+        } elseif ($action->shouldCancelAllParentActions()) {
             $this->resetMountedFormComponentActionProperties();
         } else {
-            $parentActionToCloseTo = $action->getParentActionToCloseTo();
+            $parentActionToCancelTo = $action->getParentActionToCancelTo();
 
             while (true) {
                 $recentlyClosedParentAction = $this->popMountedFormComponentAction();
 
                 if (
-                    blank($parentActionToCloseTo) ||
-                    ($recentlyClosedParentAction === $parentActionToCloseTo)
+                    blank($parentActionToCancelTo) ||
+                    ($recentlyClosedParentAction === $parentActionToCancelTo)
                 ) {
                     break;
                 }

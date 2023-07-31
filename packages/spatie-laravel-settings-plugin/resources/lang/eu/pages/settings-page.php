@@ -14,8 +14,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'Gordeta',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'Gordeta',
+        ],
+
     ],
 
 ];

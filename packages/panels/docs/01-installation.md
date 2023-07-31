@@ -10,6 +10,9 @@ Filament has a few requirements to run:
 - Laravel v9.0+
 - Livewire v3.0+
 
+> **Livewire v3 is still in beta**
+> While they will attempt to keep breaking changes to a minimum, they could still happen. Filament v3 is also not stable because of that. Therefore, we recommend testing your application thoroughly before using Filament v3 in production.
+
 This package is compatible with other Filament v3.x products. The [form builder](/docs/forms), [table builder](/docs/tables) and [notifications](/docs/notifications) come pre-installed with the package, and no other installation steps are required to use them within a panel.
 
 ## Installation
@@ -17,9 +20,11 @@ This package is compatible with other Filament v3.x products. The [form builder]
 To get started with a panel, you can install it using the commands:
 
 ```bash
-composer require filament/filament:"^3.0"
+composer require filament/filament:"^3.0@beta"
 php artisan filament:install --panels
 ```
+
+This will create a file at `app/Providers/Filament/AdminPanelProvider.php`. Since this is a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
 
 If you don't have one, you may create a new user account using:
 
@@ -50,7 +55,7 @@ php artisan vendor:publish --tag=filament-config
 If you wish to translate the package, you may publish the language files using:
 
 ```bash
-php artisan vendor:publish --tag=filament-translations
+php artisan vendor:publish --tag=filament-panels-translations
 ```
 
 Since this package depends on other Filament packages, you may wish to translate those as well:
@@ -60,7 +65,7 @@ php artisan vendor:publish --tag=filament-actions-translations
 php artisan vendor:publish --tag=filament-forms-translations
 php artisan vendor:publish --tag=filament-notifications-translations
 php artisan vendor:publish --tag=filament-tables-translations
-php artisan vendor:publish --tag=filament-support-translations
+php artisan vendor:publish --tag=filament-translations
 ```
 
 ## Upgrading

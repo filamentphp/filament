@@ -1,5 +1,10 @@
-<td
-    {{ $attributes->class(['fi-ta-reorder-cell w-4 whitespace-nowrap px-4']) }}
+<x-filament-tables::cell
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes($attributes)
+            ->class(['w-1'])
+    "
 >
-    {{ $slot }}
-</td>
+    <div class="px-1 py-2">
+        {{ $slot }}
+    </div>
+</x-filament-tables::cell>

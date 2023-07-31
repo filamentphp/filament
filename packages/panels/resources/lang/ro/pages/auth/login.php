@@ -31,8 +31,17 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Emailul sau parola nu sunt corecte',
-        'throttled' => 'Te rugăm să aștepți :seconds secunde înainte de a încerca din nou',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Te rugăm să aștepți :seconds secunde înainte de a încerca din nou',
+        ],
+
     ],
 
 ];

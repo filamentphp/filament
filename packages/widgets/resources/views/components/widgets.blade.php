@@ -26,6 +26,6 @@
     @endphp
 
     @foreach ($widgets as $key => $widget)
-        @livewire($normalizeWidgetClass($widget), [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? $widget->props : $widget::getDefaultProps()), ...$data], $key)
+        @livewire($normalizeWidgetClass($widget), [...(($widget instanceof \Filament\Widgets\WidgetConfiguration) ? $widget->properties : $widget::getDefaultProperties()), ...$data], $key)
     @endforeach
 </x-filament::grid>

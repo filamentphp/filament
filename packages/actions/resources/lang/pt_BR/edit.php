@@ -13,15 +13,19 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => 'Salvar',
+                    'label' => 'Salvar alterações',
                 ],
 
             ],
 
         ],
 
-        'messages' => [
-            'saved' => 'Salvo!',
+        'notifications' => [
+
+            'saved' => [
+                'title' => 'Salvo',
+            ],
+
         ],
 
     ],

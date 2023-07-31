@@ -5,7 +5,11 @@
 @import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
 
 .filepond--root {
-    @apply mb-0 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-gray-900 dark:ring-white/20;
+    @apply mb-0 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20;
+}
+
+.filepond--root[data-disabled='disabled'] {
+    @apply bg-gray-50 dark:bg-transparent dark:ring-white/10;
 }
 
 .filepond--panel-root {

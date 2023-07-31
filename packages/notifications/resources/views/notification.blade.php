@@ -1,4 +1,7 @@
 @php
+    use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\VerticalAlignment;
+
     $color = $getColor() ?? 'gray';
     $isInline = $isInline();
 @endphp
@@ -9,13 +12,13 @@
         \Illuminate\Support\Arr::toCssClasses([
             'opacity-0',
             ($this instanceof \Filament\Notifications\Livewire\Notifications)
-            ? match (static::$horizontalAlignment) {
-                'left' => '-translate-x-12',
-                'right' => 'translate-x-12',
-                'center' => match (static::$verticalAlignment) {
-                    'top' => '-translate-y-12',
-                    'bottom' => 'translate-y-12',
-                    'center' => null,
+            ? match (static::$alignment) {
+                Alignment::Start, Alignment::Left => '-translate-x-12',
+                Alignment::End, Alignment::Right => 'translate-x-12',
+                Alignment::Center => match (static::$verticalAlignment) {
+                    VerticalAlignment::Start => '-translate-y-12',
+                    VerticalAlignment::End => 'translate-y-12',
+                    default => null,
                 },
             }
             : null,

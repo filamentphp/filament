@@ -34,7 +34,7 @@
             ->class(['fi-in-tabs rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'])
     }}
 >
-    <div class="border-b border-gray-100 px-3 py-2.5 dark:border-white/10">
+    <div class="border-b border-gray-200 px-3 py-2.5 dark:border-white/10">
         <x-filament::tabs :label="$getLabel()">
             @foreach ($getChildComponentContainer()->getComponents() as $tab)
                 @php
@@ -45,7 +45,6 @@
                     :alpine-active="'tab === \'' . $tabId . '\''"
                     :badge="$tab->getBadge()"
                     :icon="$tab->getIcon()"
-                    :icon-color="$tab->getIconColor()"
                     :icon-position="$tab->getIconPosition()"
                     :x-on:click="'tab = \'' . $tabId . '\''"
                 >

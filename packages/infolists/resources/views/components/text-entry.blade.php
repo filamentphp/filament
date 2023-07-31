@@ -1,8 +1,15 @@
+@php
+    use Filament\Infolists\Components\TextEntry\TextEntrySize;
+    use Filament\Support\Enums\FontFamily;
+    use Filament\Support\Enums\FontWeight;
+    use Filament\Support\Enums\IconPosition;
+@endphp
+
 <x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     @php
         $isBadge = $isBadge();
-        $isListWithLineBreaks = $isListWithLineBreaks();
         $iconPosition = $getIconPosition();
+        $isListWithLineBreaks = $isListWithLineBreaks();
         $isProse = $isProse();
         $url = $getUrl();
 
@@ -36,9 +43,8 @@
         :prefix-actions="$getPrefixActions()"
         :suffix-actions="$getSuffixActions()"
         :attributes="
-            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())->class([
-                'fi-in-text',
-            ])
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class(['fi-in-text'])
         "
     >
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
@@ -50,7 +56,7 @@
             @foreach ($arrayState as $state)
                 @if (filled($formattedState = $formatState($state)))
                     @php
-                        $color = $getColor($state) ?? 'gray';
+                        $color = $getColor($state);
                         $copyableState = $getCopyableState($state) ?? $state;
                         $copyMessage = $getCopyMessage($state);
                         $copyMessageDuration = $getCopyMessageDuration($state);
@@ -64,18 +70,18 @@
                             'prose max-w-none dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0',
                             'pt-2' => ! $isLabelHidden(),
                             match ($size) {
-                                'xs' => 'prose-xs',
-                                'sm', null => 'prose-sm',
-                                'base', 'md' => 'prose-base',
-                                'lg' => 'prose-lg',
+                                TextEntrySize::ExtraSmall, 'xs' => 'prose-xs',
+                                TextEntrySize::Small, 'sm', null => 'prose-sm',
+                                TextEntrySize::Medium, 'base', 'md' => 'prose-base',
+                                TextEntrySize::Large, 'lg' => 'prose-lg',
                                 default => $size,
                             },
                         ]);
 
                         $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-                            'fi-in-text-icon h-5 w-5',
+                            'fi-in-text-item-icon h-5 w-5',
                             match ($color) {
-                                'gray' => 'text-gray-400 dark:text-gray-500',
+                                'gray', null => 'text-gray-400 dark:text-gray-500',
                                 default => 'text-custom-500',
                             },
                         ]);
@@ -106,42 +112,43 @@
                         @else
                             <div
                                 @class([
-                                    'fi-in-text-item inline-flex items-center gap-1',
+                                    'fi-in-text-item inline-flex items-center gap-1.5',
                                     'transition duration-75 hover:underline focus:underline' => $url,
                                     match ($size) {
-                                        'xs' => 'text-xs',
-                                        'sm', null => 'text-sm leading-6',
-                                        'base', 'md' => 'text-base',
-                                        'lg' => 'text-lg',
+                                        TextEntrySize::ExtraSmall, 'xs' => 'text-xs',
+                                        TextEntrySize::Small, 'sm', null => 'text-sm leading-6',
+                                        TextEntrySize::Medium, 'base', 'md' => 'text-base',
+                                        TextEntrySize::Large, 'lg' => 'text-lg',
                                         default => $size,
                                     },
                                     match ($color) {
-                                        'gray' => 'text-gray-950 dark:text-white',
+                                        null => 'text-gray-950 dark:text-white',
+                                        'gray' => 'text-gray-500 dark:text-gray-400',
                                         default => 'text-custom-600 dark:text-custom-400',
                                     },
                                     match ($weight) {
-                                        'thin' => 'font-thin',
-                                        'extralight' => 'font-extralight',
-                                        'light' => 'font-light',
-                                        'medium' => 'font-medium',
-                                        'semibold' => 'font-semibold',
-                                        'bold' => 'font-bold',
-                                        'extrabold' => 'font-extrabold',
-                                        'black' => 'font-black',
+                                        FontWeight::Thin, 'thin' => 'font-thin',
+                                        FontWeight::ExtraLight, 'extralight' => 'font-extralight',
+                                        FontWeight::Light, 'light' => 'font-light',
+                                        FontWeight::Medium, 'medium' => 'font-medium',
+                                        FontWeight::SemiBold, 'semibold' => 'font-semibold',
+                                        FontWeight::Bold, 'bold' => 'font-bold',
+                                        FontWeight::ExtraBold, 'extrabold' => 'font-extrabold',
+                                        FontWeight::Black, 'black' => 'font-black',
                                         default => $weight,
                                     },
                                     match ($fontFamily) {
-                                        'sans' => 'font-sans',
-                                        'serif' => 'font-serif',
-                                        'mono' => 'font-mono',
+                                        FontFamily::Sans, 'sans' => 'font-sans',
+                                        FontFamily::Serif, 'serif' => 'font-serif',
+                                        FontFamily::Mono, 'mono' => 'font-mono',
                                         default => $fontFamily,
                                     },
                                 ])
                                 @style([
-                                    \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => $color !== 'gray',
+                                    \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
                                 ])
                             >
-                                @if ($icon && $iconPosition === 'before')
+                                @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
                                     <x-filament::icon
                                         :icon="$icon"
                                         :class="$iconClasses"
@@ -157,7 +164,7 @@
                                     {{ $formattedState }}
                                 </div>
 
-                                @if ($icon && $iconPosition === 'after')
+                                @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
                                     <x-filament::icon
                                         :icon="$icon"
                                         :class="$iconClasses"
@@ -172,7 +179,7 @@
 
             @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
                 <{{ $isListWithLineBreaks ? 'li' : 'div' }}
-                    class="text-sm text-gray-950 dark:text-white"
+                    class="text-sm text-gray-500 dark:text-gray-400"
                 >
                     {{ trans_choice('filament-infolists::components.text_entry.more_list_items', $limitedArrayStateCount) }}
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>

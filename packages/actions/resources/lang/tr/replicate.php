@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'Kayıt çoğaltıldı',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Kayıt çoğaltıldı',
+            ],
+
         ],
 
     ],

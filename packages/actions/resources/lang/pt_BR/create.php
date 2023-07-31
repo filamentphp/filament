@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'Criar :label',
+        'label' => 'Novo :label',
 
         'modal' => [
 
@@ -17,15 +17,19 @@ return [
                 ],
 
                 'create_another' => [
-                    'label' => 'Salvar e criar novo',
+                    'label' => 'Salvar e criar outro',
                 ],
 
             ],
 
         ],
 
-        'messages' => [
-            'created' => 'Criado!',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'Criado',
+            ],
+
         ],
 
     ],

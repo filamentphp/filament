@@ -288,8 +288,7 @@ export default function fileUploadFormComponent({
         },
 
         destroy: function () {
-            this.editor.destroy()
-            this.editor = null
+            this.destroyEditor()
 
             FilePond.destroy(this.$refs.input)
             this.pond = null
@@ -450,8 +449,7 @@ export default function fileUploadFormComponent({
 
             this.isEditorOpen = false
 
-            this.editor.destroy()
-            this.editor = null
+            this.destroyEditor()
         },
 
         loadEditor: function (file) {
@@ -492,7 +490,7 @@ export default function fileUploadFormComponent({
 
             this.editor
                 .getCroppedCanvas({
-                    fillColor: imageEditorEmptyFillColor,
+                    fillColor: imageEditorEmptyFillColor ?? 'transparent',
                     height: imageResizeTargetHeight,
                     imageSmoothingEnabled: true,
                     imageSmoothingQuality: 'high',
@@ -532,6 +530,14 @@ export default function fileUploadFormComponent({
                             })
                     })
                 }, this.editingFile.type)
+        },
+
+        destroyEditor: function () {
+            if (this.editor && typeof this.editor.destroy === 'function') {
+                this.editor.destroy()
+            }
+
+            this.editor = null
         },
     }
 }

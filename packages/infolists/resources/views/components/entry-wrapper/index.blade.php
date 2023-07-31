@@ -20,6 +20,8 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+
     if ($entry) {
         $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
@@ -93,16 +95,19 @@
             <dd
                 @if ($tooltip)
                     x-data="{}"
-                    x-tooltip.raw="{{ $tooltip }}"
+                    x-tooltip="{
+                        content: @js($tooltip),
+                        theme: $store.theme,
+                    }"
                 @endif
                 @class([
                     match ($alignment) {
-                        'center' => 'text-center',
-                        'end' => 'text-end',
-                        'justify' => 'text-justify',
-                        'left' => 'text-left',
-                        'right' => 'text-right',
-                        'start' => 'text-start',
+                        Alignment::Center, 'center' => 'text-center',
+                        Alignment::End, 'end' => 'text-end',
+                        Alignment::Justify, 'justify' => 'text-justify',
+                        Alignment::Left, 'left' => 'text-left',
+                        Alignment::Right, 'right' => 'text-right',
+                        Alignment::Start, 'start' => 'text-start',
                         default => null,
                     },
                 ])

@@ -21,44 +21,35 @@ return [
         ],
 
         'search' => [
-            'label' => 'Procurar',
-            'placeholder' => 'Procurar',
+            'label' => 'Pesquisar',
+            'placeholder' => 'Pesquisar',
+            'indicator' => 'Pesquisar',
         ],
 
     ],
 
-    'pagination' => [
+    'summary' => [
 
-        'label' => 'Paginação',
+        'heading' => 'Resumo',
 
-        'overview' => '{1} Exibindo 1 resultado|[2,*] Exibindo :first a :last de :total resultados',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'por página',
-
-                'options' => [
-                    'all' => 'Todas',
-                ],
-
-            ],
-
+        'subheadings' => [
+            'all' => 'Todos :label',
+            'group' => ':group resumo',
+            'page' => 'Esta página',
         ],
 
-        'actions' => [
+        'summarizers' => [
 
-            'go_to_page' => [
-                'label' => 'Ir para página :page',
+            'average' => [
+                'label' => 'Média',
             ],
 
-            'next' => [
-                'label' => 'Próximo',
+            'count' => [
+                'label' => 'Contagem',
             ],
 
-            'previous' => [
-                'label' => 'Anterior',
+            'sum' => [
+                'label' => 'Soma',
             ],
 
         ],
@@ -77,6 +68,10 @@ return [
 
         'filter' => [
             'label' => 'Filtrar',
+        ],
+
+        'group' => [
+            'label' => 'Agrupar',
         ],
 
         'open_bulk_actions' => [
@@ -138,11 +133,35 @@ return [
 
     ],
 
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Agrupar por',
+                'placeholder' => 'Agrupar por',
+            ],
+
+            'direction' => [
+
+                'label' => 'Direção do agrupamento',
+
+                'options' => [
+                    'asc' => 'Ascendente',
+                    'desc' => 'Descendente',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'reorder_indicator' => 'Arraste e solte os registros na ordem.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 registro selecionado.|:count registros selecionados.',
+        'selected_count' => '1 registro selecionado|:count registros selecionados',
 
         'actions' => [
 

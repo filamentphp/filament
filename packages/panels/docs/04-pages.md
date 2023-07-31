@@ -16,7 +16,7 @@ php artisan make:filament-page Settings
 
 This command will create two files - a page class in the `/Pages` directory of the Filament directory, and a view in the `/pages` directory of the Filament views directory.
 
-Page classes are all full-page [Livewire](https://laravel-livewire.com) components with a few extra utilities you can use with the panel.
+Page classes are all full-page [Livewire](https://livewire.laravel.com) components with a few extra utilities you can use with the panel.
 
 ## Conditionally hiding pages in navigation
 
@@ -46,7 +46,7 @@ Since all pages are Livewire components, you can [add actions](../actions/adding
 
 ### Header actions
 
-You can also easily add actions to the header of any page, including [resource pages](resources). You don't need to worry about adding anything to the Blade, we handle that for you. Just return your actions from the `getHeaderActions()` method of the page class:
+You can also easily add actions to the header of any page, including [resource pages](resources/getting-started). You don't need to worry about adding anything to the Blade, we handle that for you. Just return your actions from the `getHeaderActions()` method of the page class:
 
 ```php
 use Filament\Actions\Action;
@@ -153,6 +153,38 @@ Now, you can define a corresponding public `$stats` array property on the widget
 public $stats = [];
 ```
 
+### Passing properties to widgets on pages
+
+When registering a widget on a page, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
+
+```php
+use App\Filament\Widgets\StatsOverviewWidget;
+
+protected function getHeaderWidgets(): array
+{
+    return [
+        StatsOverviewWidget::make([
+            'status' => 'active',
+        ]),
+    ];
+}
+```
+
+This array of properties gets mapped to [public Livewire properties](https://livewire.laravel.com/docs/properties) on the widget class:
+
+```php
+use Filament\Widgets\Widget;
+
+class StatsOverviewWidget extends Widget
+{
+    public string $status;
+
+    // ...
+}
+```
+
+Now, you can access the `status` in the widget class using `$this->status`.
+
 ## Customizing the page title
 
 By default, Filament will automatically generate a title for your page based on its name. You may override this by defining a `$title` property on your page class:
@@ -238,7 +270,7 @@ You may replace the default [heading](#customizing-the-page-heading), [subheadin
 ```php
 use Illuminate\Contracts\View\View;
 
-protected function getHeader(): View
+public function getHeader(): ?View
 {
     return view('filament.settings.custom-header');
 }
@@ -253,7 +285,7 @@ You may also add a footer to any page, below its content. You may return it from
 ```php
 use Illuminate\Contracts\View\View;
 
-protected function getFooter(): View
+public function getFooter(): ?View
 {
     return view('filament.settings.custom-footer');
 }

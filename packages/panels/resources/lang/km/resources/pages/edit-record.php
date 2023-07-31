@@ -22,8 +22,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'បានរក្សាទុក',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'បានរក្សាទុក',
+        ],
+
     ],
 
 ];

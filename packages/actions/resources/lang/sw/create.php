@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => 'Imetengenezwa',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'Imetengenezwa',
+            ],
+
         ],
 
     ],

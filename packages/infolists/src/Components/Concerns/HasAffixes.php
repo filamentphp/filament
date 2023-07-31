@@ -4,6 +4,7 @@ namespace Filament\Infolists\Components\Concerns;
 
 use Closure;
 use Filament\Infolists\Components\Actions\Action;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Arr;
 
 trait HasAffixes
@@ -85,7 +86,11 @@ trait HasAffixes
 
         foreach ($this->prefixActions as $prefixAction) {
             foreach (Arr::wrap($this->evaluate($prefixAction)) as $action) {
-                $this->cachedPrefixActions[$action->getName()] = $this->prepareAction($action->defaultSize('sm'));
+                $this->cachedPrefixActions[$action->getName()] = $this->prepareAction(
+                    $action
+                        ->defaultSize(ActionSize::Small)
+                        ->defaultView(Action::ICON_BUTTON_VIEW),
+                );
             }
         }
 
@@ -109,7 +114,11 @@ trait HasAffixes
 
         foreach ($this->suffixActions as $suffixAction) {
             foreach (Arr::wrap($this->evaluate($suffixAction)) as $action) {
-                $this->cachedSuffixActions[$action->getName()] = $this->prepareAction($action->defaultSize('sm'));
+                $this->cachedSuffixActions[$action->getName()] = $this->prepareAction(
+                    $action
+                        ->defaultSize(ActionSize::Small)
+                        ->defaultView(Action::ICON_BUTTON_VIEW),
+                );
             }
         }
 

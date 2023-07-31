@@ -14,8 +14,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'پاشەکەوت کرا',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'پاشەکەوت کرا',
+        ],
+
     ],
 
 ];

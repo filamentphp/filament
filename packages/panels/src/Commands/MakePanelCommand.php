@@ -45,13 +45,14 @@ class MakePanelCommand extends Command
 
         if (! Str::contains($appConfig, "App\\Providers\\Filament\\{$class}::class")) {
             file_put_contents(config_path('app.php'), str_replace(
-                'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
-                "App\\Providers\\Filament\\{$class}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+                'App\\Providers\\RouteServiceProvider::class,',
+                "App\\Providers\\Filament\\{$class}::class," . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
                 $appConfig,
             ));
         }
 
         $this->components->info("Successfully created {$class}!");
+        $this->components->warn("We've attempted to register the {$class} in your [config/app.php] file as a service provider.  If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.");
 
         return static::SUCCESS;
     }

@@ -28,7 +28,7 @@ This will create several files in the `app/Filament/Resources` directory:
 
 Your new resource class lives in `CustomerResource.php`.
 
-The classes in the `Pages` directory are used to customize the pages in the app that interact with your resource. They're all full-page [Livewire](https://laravel-livewire.com) components that you can customize in any way you wish.
+The classes in the `Pages` directory are used to customize the pages in the app that interact with your resource. They're all full-page [Livewire](https://livewire.laravel.com) components that you can customize in any way you wish.
 
 > Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
 
@@ -46,21 +46,13 @@ Additionally, your simple resource will have no `getRelations()` method, as [rel
 
 ### Automatically generating forms and tables
 
-If you'd like to save time, Filament can automatically generate the [form](#resource-forms) and [table](#resource-tables) for you, based on your model's database columns.
-
-The `doctrine/dbal` package is required to use this functionality:
-
-```bash
-composer require doctrine/dbal --dev
-```
-
-When creating your resource, you may now use `--generate`:
+If you'd like to save time, Filament can automatically generate the [form](#resource-forms) and [table](#resource-tables) for you, based on your model's database columns, using `--generate`:
 
 ```bash
 php artisan make:filament-resource Customer --generate
 ```
 
-> Note: If your table contains ENUM columns, `doctrine/dbal` is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
 
 ### Handling soft deletes
 
@@ -258,10 +250,10 @@ public static function getNavigationLabel(): string
 
 ### Setting a resource navigation icon
 
-The `$navigationIcon` property supports the name of any Blade component. By default, the [Blade Heroicons v1](https://github.com/blade-ui-kit/blade-heroicons/tree/1.3.1) package is installed, so you may use the name of any [Heroicons v1](https://v1.heroicons.com) out of the box. However, you may create your own custom icon components or install an alternative library if you wish.
+The `$navigationIcon` property supports the name of any Blade component. By default, [Heroicons](https://heroicons.com) are installed. However, you may create your own custom icon components or install an alternative library if you wish.
 
 ```php
-protected static ?string $navigationIcon = 'heroicon-m-user-group';
+protected static ?string $navigationIcon = 'heroicon-o-user-group';
 ```
 
 Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()` method:
@@ -269,7 +261,7 @@ Alternatively, you may set a dynamic navigation icon in the `getNavigationIcon()
 ```php
 public static function getNavigationIcon(): ?string
 {
-    return 'heroicon-m-user-group';
+    return 'heroicon-o-user-group';
 }
 ```
 

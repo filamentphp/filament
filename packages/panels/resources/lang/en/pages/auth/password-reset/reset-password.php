@@ -31,8 +31,13 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Too many reset attempts. Please try again in :seconds seconds.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Too many reset attempts',
+            'body' => 'Please try again in :seconds seconds.',
+        ],
+
     ],
 
 ];

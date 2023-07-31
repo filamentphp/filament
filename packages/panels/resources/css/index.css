@@ -10,9 +10,4 @@
     :root.dark {
         color-scheme: dark;
     }
-
-    /** Fix extra gap below form elements from default browser stylesheet. */
-    form {
-        margin-block-end: auto;
-    }
 }

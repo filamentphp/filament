@@ -32,7 +32,7 @@ class Register extends SimplePage
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::pages.auth.register';
+    protected static string $view = 'filament-panels::pages.auth.register';
 
     /**
      * @var array<string, mixed> | null
@@ -56,10 +56,14 @@ class Register extends SimplePage
             $this->rateLimit(2);
         } catch (TooManyRequestsException $exception) {
             Notification::make()
-                ->title(__('filament::pages/auth/register.messages.throttled', [
+                ->title(__('filament-panels::pages/auth/register.notifications.throttled.title', [
                     'seconds' => $exception->secondsUntilAvailable,
                     'minutes' => ceil($exception->secondsUntilAvailable / 60),
                 ]))
+                ->body(array_key_exists('body', __('filament-panels::pages/auth/register.notifications.throttled') ?: []) ? __('filament-panels::pages/auth/register.notifications.throttled.body', [
+                    'seconds' => $exception->secondsUntilAvailable,
+                    'minutes' => ceil($exception->secondsUntilAvailable / 60),
+                ]) : null)
                 ->danger()
                 ->send();
 
@@ -98,7 +102,7 @@ class Register extends SimplePage
     protected function getNameFormComponent(): Component
     {
         return TextInput::make('name')
-            ->label(__('filament::pages/auth/register.form.name.label'))
+            ->label(__('filament-panels::pages/auth/register.form.name.label'))
             ->required()
             ->maxLength(255)
             ->autofocus();
@@ -107,7 +111,7 @@ class Register extends SimplePage
     protected function getEmailFormComponent(): Component
     {
         return TextInput::make('email')
-            ->label(__('filament::pages/auth/register.form.email.label'))
+            ->label(__('filament-panels::pages/auth/register.form.email.label'))
             ->email()
             ->required()
             ->maxLength(255)
@@ -117,19 +121,19 @@ class Register extends SimplePage
     protected function getPasswordFormComponent(): Component
     {
         return TextInput::make('password')
-            ->label(__('filament::pages/auth/register.form.password.label'))
+            ->label(__('filament-panels::pages/auth/register.form.password.label'))
             ->password()
             ->required()
             ->rule(Password::default())
             ->dehydrateStateUsing(fn ($state) => Hash::make($state))
             ->same('passwordConfirmation')
-            ->validationAttribute(__('filament::pages/auth/register.form.password.validation_attribute'));
+            ->validationAttribute(__('filament-panels::pages/auth/register.form.password.validation_attribute'));
     }
 
     protected function getPasswordConfirmationFormComponent(): Component
     {
         return TextInput::make('passwordConfirmation')
-            ->label(__('filament::pages/auth/register.form.password_confirmation.label'))
+            ->label(__('filament-panels::pages/auth/register.form.password_confirmation.label'))
             ->password()
             ->required()
             ->dehydrated(false);
@@ -139,7 +143,7 @@ class Register extends SimplePage
     {
         return Action::make('login')
             ->link()
-            ->label(__('filament::pages/auth/register.actions.login.label'))
+            ->label(__('filament-panels::pages/auth/register.actions.login.label'))
             ->url(filament()->getLoginUrl());
     }
 
@@ -160,12 +164,12 @@ class Register extends SimplePage
 
     public function getTitle(): string | Htmlable
     {
-        return __('filament::pages/auth/register.title');
+        return __('filament-panels::pages/auth/register.title');
     }
 
     public function getHeading(): string | Htmlable
     {
-        return __('filament::pages/auth/register.heading');
+        return __('filament-panels::pages/auth/register.heading');
     }
 
     /**
@@ -181,7 +185,7 @@ class Register extends SimplePage
     public function getRegisterFormAction(): Action
     {
         return Action::make('register')
-            ->label(__('filament::pages/auth/register.form.actions.register.label'))
+            ->label(__('filament-panels::pages/auth/register.form.actions.register.label'))
             ->submit('register');
     }
 

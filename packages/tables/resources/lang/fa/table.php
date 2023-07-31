@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'ستون‌ها',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -23,42 +29,33 @@ return [
         'search' => [
             'label' => 'جستجو',
             'placeholder' => 'جستجو',
+            'indicator' => 'جستجو',
         ],
 
     ],
 
-    'pagination' => [
+    'summary' => [
 
-        'label' => 'صفحه بندی',
+        'heading' => 'خلاصه',
 
-        'overview' => 'در حال نمایش :first به :last از :total نتایج',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'در هر صفحه',
-
-                'options' => [
-                    'all' => 'همه',
-                ],
-
-            ],
-
+        'subheadings' => [
+            'all' => 'تمام :label',
+            'group' => ':group خلاصه',
+            'page' => 'این صفحه',
         ],
 
-        'actions' => [
+        'summarizers' => [
 
-            'go_to_page' => [
-                'label' => 'برو به صفحه :page',
+            'average' => [
+                'label' => 'میانگین',
             ],
 
-            'next' => [
-                'label' => 'بعدی',
+            'count' => [
+                'label' => 'تعداد',
             ],
 
-            'previous' => [
-                'label' => 'قبلی',
+            'sum' => [
+                'label' => 'مجموع',
             ],
 
         ],
@@ -79,6 +76,10 @@ return [
             'label' => 'فیلتر',
         ],
 
+        'group' => [
+            'label' => 'گروه',
+        ],
+
         'open_bulk_actions' => [
             'label' => 'بازکردن عملیات',
         ],
@@ -90,7 +91,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'هیچ رکوردی یافت نشد',
+
+        'heading' => ':model یافت نشد.',
+
+        'description' => 'برای شروع یک :model ایجاد کنید.',
+
     ],
 
     'filters' => [
@@ -111,6 +116,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'فیلترها',
 
         'indicator' => 'فیلترهای فعال',
 
@@ -136,11 +143,35 @@ return [
 
     ],
 
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'گروه‌بندی براساس',
+                'placeholder' => 'گروه‌بندی براساس',
+            ],
+
+            'direction' => [
+
+                'label' => 'ترتیب گروه',
+
+                'options' => [
+                    'asc' => 'صعودی',
+                    'desc' => 'نزولی',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'reorder_indicator' => 'برای تغییر ترتیب بکشید و رها کنید.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 آیتم انتخاب شده.|:count آیتم انتخاب شده.',
+        'selected_count' => '1 آیتم انتخاب شده|:count آیتم انتخاب شده',
 
         'actions' => [
 

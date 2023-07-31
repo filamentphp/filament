@@ -158,14 +158,14 @@ You may add any [form components](../forms/getting-started) to the `form()` meth
 Now, we need to tell Filament to use this page. We can do this in the [configuration](configuration):
 
 ```php
-use App\Filament\Pages\Tenancy\RegisterTeam;
+use App\Filament\Pages\Tenancy\EditTeamProfile;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->tenantProfile(RegisterTeam::class);
+        ->tenantProfile(EditTeamProfile::class);
 }
 ```
 
@@ -230,7 +230,7 @@ Now, users will be redirected to the billing page if they don't have an active s
 
 #### Requiring a subscription for specific resources and pages
 
-Sometimes, you may wish to only require a subscription for certain [resources](resources) and [pages](pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
+Sometimes, you may wish to only require a subscription for certain [resources](resources/getting-started) and [pages](pages) in your app. You can do this by returning `true` from the `isTenantSubscriptionRequired()` method on the resource or page class:
 
 ```php
 public static function isTenantSubscriptionRequired(Panel $panel): bool

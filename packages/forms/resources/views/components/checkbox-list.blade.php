@@ -88,7 +88,7 @@
     >
         @if (! $isDisabled)
             @if ($isSearchable)
-                <x-filament-forms::affixes
+                <x-filament::input.wrapper
                     inline-prefix
                     prefix-icon="heroicon-m-magnifying-glass"
                     prefix-icon-alias="forms:components.checkbox-list.search-field"
@@ -106,7 +106,7 @@
                             )
                         "
                     />
-                </x-filament-forms::affixes>
+                </x-filament::input.wrapper>
             @endif
 
             @if ($isBulkToggleable && count($getOptions()))
@@ -157,9 +157,14 @@
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
                         x-show="
-                            $el.querySelector('.fi-fo-checkbox-list-option-label-text')
+                            $el
+                                .querySelector('.fi-fo-checkbox-list-option-label')
                                 .innerText.toLowerCase()
-                                .includes(search.toLowerCase())
+                                .includes(search.toLowerCase()) ||
+                                $el
+                                    .querySelector('.fi-fo-checkbox-list-option-description')
+                                    .innerText.toLowerCase()
+                                    .includes(search.toLowerCase())
                         "
                     @endif
                     @class([
@@ -170,13 +175,11 @@
                         class="fi-fo-checkbox-list-option-label flex gap-x-3"
                     >
                         <x-filament::input.checkbox
-                            :errors="$errors"
-                            :state-path="$statePath"
+                            :error="$errors->has($statePath)"
                             :attributes="
-                                $getExtraInputAttributeBag()
+                                \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
                                         'disabled' => $isDisabled,
-                                        'type' => 'checkbox',
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,

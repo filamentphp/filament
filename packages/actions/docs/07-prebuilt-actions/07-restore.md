@@ -4,7 +4,7 @@ title: Restore action
 
 ## Overview
 
-Filament includes a prebuilt action that is able to restore [soft deleted](https://laravel.com/docs/eloquent#soft-deleting) Eloquent records. When the trigger button is clicked, a modal asking the user for confirmation. You may use it like so:
+Filament includes a prebuilt action that is able to restore [soft deleted](https://laravel.com/docs/eloquent#soft-deleting) Eloquent records. When the trigger button is clicked, a modal asks the user for confirmation. You may use it like so:
 
 ```php
 use Filament\Actions\RestoreAction;
@@ -13,7 +13,7 @@ RestoreAction::make()
     ->record($this->post)
 ```
 
-If you want to restore table rows, you can use the `Filament\Tables\Actions\RestoreAction` instead, or `Filament\Tables\Actions\RestoreBulkAction` to restore more than one at once:
+If you want to restore table rows, you can use the `Filament\Tables\Actions\RestoreAction` instead, or `Filament\Tables\Actions\RestoreBulkAction` to restore multiple at once:
 
 ```php
 use Filament\Tables\Actions\BulkActionGroup;

@@ -59,13 +59,14 @@ class InstallCommand extends Command
 
         if (! Str::contains($appConfig = file_get_contents(config_path('app.php')), 'App\\Providers\\Filament\\AdminPanelProvider::class')) {
             file_put_contents(config_path('app.php'), str_replace(
-                'App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
-                'App\\Providers\\Filament\\AdminPanelProvider::class,' . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,' . PHP_EOL,
+                'App\\Providers\\RouteServiceProvider::class,',
+                'App\\Providers\\Filament\\AdminPanelProvider::class,' . PHP_EOL . '        App\\Providers\\RouteServiceProvider::class,',
                 $appConfig,
             ));
         }
 
         $this->components->info('Successfully created AdminPanelProvider.php!');
+        $this->components->warn('We\'ve attempted to register the AdminPanelProvider in your [config/app.php] file as a service provider. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.');
     }
 
     protected function installScaffolding(): void

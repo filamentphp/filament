@@ -13,8 +13,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament-forms::affixes
-        :state-path="$statePath"
+    <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -24,22 +23,23 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :valid="! $errors->has($statePath)"
         class="fi-fo-select"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        @if (! ($isSearchable() || $isMultiple()))
+        @if ((! ($isSearchable() || $isMultiple()) && $isNative()))
             <x-filament::input.select
                 :autofocus="$isAutofocused()"
-                :can-select-placeholder="$canSelectPlaceholder"
                 :disabled="$isDisabled"
                 :id="$getId()"
                 :inline-prefix="$isPrefixInline && (count($prefixActions) || $prefixIcon || filled($prefixLabel))"
                 :inline-suffix="$isSuffixInline && (count($suffixActions) || $suffixIcon || filled($suffixLabel))"
                 :required="$isRequired() && ((bool) $isConcealed())"
                 :attributes="
-                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())->merge([
-                        $applyStateBindingModifiers('wire:model') => $statePath,
-                    ], escape: false)
+                    $getExtraInputAttributeBag()
+                        ->merge([
+                            $applyStateBindingModifiers('wire:model') => $statePath,
+                        ], escape: false)
                 "
             >
                 @php
@@ -55,16 +55,33 @@
                 @endif
 
                 @foreach ($getOptions() as $value => $label)
-                    <option
-                        value="{{ $value }}"
-                        @disabled($isOptionDisabled($value, $label))
-                    >
-                        @if ($isHtmlAllowed)
-                            {!! $label !!}
-                        @else
-                            {{ $label }}
-                        @endif
-                    </option>
+                    @if (is_array($label))
+                        <optgroup label="{{ $value }}">
+                            @foreach ($label as $groupedValue => $groupedLabel)
+                                <option
+                                    @disabled($isOptionDisabled($groupedValue, $groupedLabel))
+                                    value="{{ $groupedValue }}"
+                                >
+                                    @if ($isHtmlAllowed)
+                                        {!! $groupedLabel !!}
+                                    @else
+                                        {{ $groupedLabel }}
+                                    @endif
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @else
+                        <option
+                            @disabled($isOptionDisabled($value, $label))
+                            value="{{ $value }}"
+                        >
+                            @if ($isHtmlAllowed)
+                                {!! $label !!}
+                            @else
+                                {{ $label }}
+                            @endif
+                        </option>
+                    @endif
                 @endforeach
             </x-filament::input.select>
         @else
@@ -89,6 +106,7 @@
                             },
                             isAutofocused: @js($isAutofocused()),
                             isMultiple: @js($isMultiple()),
+                            isSearchable: @js($isSearchable()),
                             livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
@@ -128,5 +146,5 @@
                 ></select>
             </div>
         @endif
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 </x-dynamic-component>

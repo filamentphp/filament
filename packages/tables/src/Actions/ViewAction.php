@@ -4,6 +4,7 @@ namespace Filament\Tables\Actions;
 
 use Closure;
 use Filament\Actions\StaticAction;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewAction extends Action
@@ -32,8 +33,12 @@ class ViewAction extends Action
 
         $this->disabledForm();
 
-        $this->fillForm(function (Model $record): array {
-            $data = $record->attributesToArray();
+        $this->fillForm(function (Model $record, Table $table): array {
+            if ($translatableContentDriver = $table->makeTranslatableContentDriver()) {
+                $data = $translatableContentDriver->getRecordAttributesToArray($record);
+            } else {
+                $data = $record->attributesToArray();
+            }
 
             if ($this->mutateRecordDataUsing) {
                 $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);

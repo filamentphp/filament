@@ -32,6 +32,7 @@ Thankfully, Filament lets you build responsive table-like interfaces, without to
 Let's introduce a component - `Split`:
 
 ```php
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\TextColumn;
 
@@ -39,7 +40,7 @@ Split::make([
     ImageColumn::make('avatar')
         ->circular(),
     TextColumn::make('name')
-        ->weight('bold')
+        ->weight(FontWeight::Bold)
         ->searchable()
         ->sortable(),
     TextColumn::make('email'),
@@ -55,6 +56,7 @@ A `Split` component is used to wrap around columns, and allow them to stack on m
 By default, columns within a split will appear aside each other all the time. However, you may choose a responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) where this behaviour starts `from()`. Before this point, the columns will stack on top of each other:
 
 ```php
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -63,7 +65,7 @@ Split::make([
     ImageColumn::make('avatar')
         ->circular(),
     TextColumn::make('name')
-        ->weight('bold')
+        ->weight(FontWeight::Bold)
         ->searchable()
         ->sortable(),
     TextColumn::make('email'),
@@ -81,6 +83,7 @@ In this example, the columns will only appear horizontally aside each other from
 Splits, like table columns, will automatically adjust their whitespace to ensure that each column has proportionate separation. You can prevent this from happening, using `grow(false)`. In this example, we will make sure that the avatar image will sit tightly against the name column:
 
 ```php
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -90,7 +93,7 @@ Split::make([
         ->circular()
         ->grow(false),
     TextColumn::make('name')
-        ->weight('bold')
+        ->weight(FontWeight::Bold)
         ->searchable()
         ->sortable(),
     TextColumn::make('email'),
@@ -108,6 +111,7 @@ The other columns which are allowed to `grow()` will adjust to consume the newly
 Inside a split, you may stack multiple columns on top of each other vertically. This allows you to display more data inside fewer columns on desktop:
 
 ```php
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\ImageColumn;
@@ -117,7 +121,7 @@ Split::make([
     ImageColumn::make('avatar')
         ->circular(),
     TextColumn::make('name')
-        ->weight('bold')
+        ->weight(FontWeight::Bold)
         ->searchable()
         ->sortable(),
     Stack::make([
@@ -138,6 +142,7 @@ Split::make([
 Similar to individual columns, you may choose to hide a stack based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. To do this, you may use a `visibleFrom()` method:
 
 ```php
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\ImageColumn;
@@ -147,7 +152,7 @@ Split::make([
     ImageColumn::make('avatar') 
         ->circular(),
     TextColumn::make('name')
-        ->weight('bold')
+        ->weight(FontWeight::Bold)
         ->searchable()
         ->sortable(),
     Stack::make([
@@ -165,9 +170,11 @@ Split::make([
 
 #### Aligning stacked content
 
-By default, columns within a stack are aligned to the left. You may choose to align columns within a stack to the `center` or `right`:
+By default, columns within a stack are aligned to the start. You may choose to align columns within a stack to the `Alignment::Center` or `Alignment::End`:
 
 ```php
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\ImageColumn;
@@ -177,7 +184,7 @@ Split::make([
     ImageColumn::make('avatar')
         ->circular(),
     TextColumn::make('name')
-        ->weight('bold')
+        ->weight(FontWeight::Bold)
         ->searchable()
         ->sortable(),
     Stack::make([
@@ -188,7 +195,7 @@ Split::make([
             ->icon('heroicon-m-envelope')
             ->grow(false),
     ])
-        ->alignment('right')
+        ->alignment(Alignment::End)
         ->visibleFrom('md'),
 ])
 ```
@@ -295,6 +302,7 @@ When you're using a column layout like split or stack, then you can also add col
 Split and stack components can be made `collapsible()`, but there is also a dedicated `Panel` component that provides a pre-styled background color and border radius, to separate the collapsible content from the rest:
 
 ```php
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Panel;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\Stack;
@@ -306,8 +314,8 @@ use Filament\Tables\Columns\TextColumn;
         ImageColumn::make('avatar')
             ->circular(),
         TextColumn::make('name')
-        ->weight('bold')
-        ->searchable()
+            ->weight(FontWeight::Bold)
+            ->searchable()
             ->sortable(),
     ]),
     Panel::make([
@@ -395,6 +403,7 @@ These settings are fully customizable, any [breakpoint](https://tailwindcss.com/
 You may add custom HTML to your table using a `View` component. It can even be `collapsible()`:
 
 ```php
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\View;
 use Filament\Tables\Columns\ImageColumn;
@@ -405,7 +414,7 @@ use Filament\Tables\Columns\TextColumn;
         ImageColumn::make('avatar')
             ->circular(),
         TextColumn::make('name')
-            ->weight('bold')
+            ->weight(FontWeight::Bold)
             ->searchable()
             ->sortable(),
     ]),
@@ -433,6 +442,7 @@ Now, create a `/resources/views/users/table/collapsible-row-content.blade.php` f
 You could even pass in columns or other layout components to the `components()` method:
 
 ```php
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\Layout\Split;
 use Filament\Tables\Columns\Layout\View;
 use Filament\Tables\Columns\ImageColumn;
@@ -443,7 +453,7 @@ use Filament\Tables\Columns\TextColumn;
         ImageColumn::make('avatar')
             ->circular(),
         TextColumn::make('name')
-            ->weight('bold')
+            ->weight(FontWeight::Bold)
             ->searchable()
             ->sortable(),
     ]),

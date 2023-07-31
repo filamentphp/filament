@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'Replicado',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Replicado',
+            ],
+
         ],
 
     ],

@@ -33,13 +33,6 @@ trait CanBeHidden
         return $this;
     }
 
-    public function when(bool | Closure $condition = true): static
-    {
-        $this->visible($condition);
-
-        return $this;
-    }
-
     public function visible(bool | Closure $condition = true): static
     {
         $this->isVisible = $condition;

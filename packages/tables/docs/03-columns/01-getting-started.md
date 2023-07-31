@@ -396,16 +396,17 @@ TextColumn::make('title')
 
 ## Aligning column content
 
-Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `start`, `center`, `end`, `left`, `right` or `justify` options:
+Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `Alignment::Start`, `Alignment::Center`, `Alignment::End` or `Alignment::Justify` options:
 
 ```php
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('name')
-    ->alignment('end')
+TextColumn::make('email')
+    ->alignment(Alignment::End)
 ```
 
-<AutoScreenshot name="tables/columns/alignment" alt="Table with column aligned to the right" version="3.x" />
+<AutoScreenshot name="tables/columns/alignment" alt="Table with column aligned to the end" version="3.x" />
 
 Alternatively, you may use shorthand methods like `alignEnd()`:
 

@@ -20,6 +20,24 @@ Select::make('status')
 
 <AutoScreenshot name="forms/fields/select/simple" alt="Select" version="3.x" />
 
+## Enabling the JavaScript select
+
+By default, Filament uses the native HTML5 select. You may enable a more customizable JavaScript select using the `native(false)` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->options([
+        'draft' => 'Draft',
+        'reviewing' => 'Reviewing',
+        'published' => 'Published',
+    ])
+    ->native(false)
+```
+
+<AutoScreenshot name="forms/fields/select/javascript" alt="JavaScript select" version="3.x" />
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:
@@ -96,6 +114,29 @@ Select::make('technologies')
     ->getOptionLabelsUsing(fn (array $values): array => Technology::whereIn('id', $values)->pluck('name', 'id')->toArray()),
 ```
 
+## Grouping options
+
+You can group options together under a label, to organize them better. To do this, you can pass an array of groups to `options()` or wherever you would normally pass an array of options. The keys of the array are used as group labels, and the values are arrays of options in that group:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('status')
+    ->searchable()
+    ->options([
+        'In Process' => [
+            'draft' => 'Draft',
+            'reviewing' => 'Reviewing',
+        ],
+        'Reviewed' => [
+            'published' => 'Published',
+            'rejected' => 'Rejected',
+        ],
+    ])
+```
+
+<AutoScreenshot name="forms/fields/select/grouped" alt="Grouped select" version="3.x" />
+
 ## Integrating with an Eloquent relationship
 
 > If you're building a form inside your Livewire component, make sure you have set up the [form's model](../adding-a-form-to-a-livewire-component#setting-a-form-model). Otherwise, Filament doesn't know which model to use to retrieve the relationship from.
@@ -119,9 +160,9 @@ Select::make('technologies')
     ->relationship(titleAttribute: 'name')
 ```
 
-### Searching relationship options across more than one column
+### Searching relationship options across multiple columns
 
-By default, if the select is also searchable, Filament will return search results for the relationship based on title column of the relationship. If you'd like to search across more than one column, you can pass an array of columns to the `searchable()` method:
+By default, if the select is also searchable, Filament will return search results for the relationship based on title column of the relationship. If you'd like to search across multiple columns, you can pass an array of columns to the `searchable()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -226,7 +267,7 @@ use Illuminate\Database\Eloquent\Model;
 
 Select::make('author_id')
     ->relationship(name: 'author', titleAttribute: 'name')
-    ->editOptionAction([
+    ->editOptionForm([
         Forms\Components\TextInput::make('name')
             ->required(),
         Forms\Components\TextInput::make('email')
@@ -318,7 +359,7 @@ Be aware that you will need to ensure that the HTML is safe to render, otherwise
 
 ## Disable placeholder selection
 
-You can prevent the placeholder (null option) from being selected using the `disablePlaceholderSelection()` method:
+You can prevent the placeholder (null option) from being selected using the `selectablePlaceholder()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -330,7 +371,7 @@ Select::make('status')
         'published' => 'Published',
     ])
     ->default('draft')
-    ->disablePlaceholderSelection()
+    ->selectablePlaceholder(false)
 ```
 
 ## Disabling specific options
@@ -496,4 +537,25 @@ Select::make('technologies')
     ])
     ->minItems(1)
     ->maxItems(3)
+```
+
+## Customizing the select action objects
+
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button) or [customize its modal](../../actions/modals). The following methods are available to customize the actions:
+
+- `createOptionAction()`
+- `editOptionAction()`
+- `manageOptionActions()` (for customizing both the create and edit option actions at once)
+
+Here is an example of how you might customize an action:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->createOptionAction(
+        fn (Action $action) => $action->modalWidth('3xl'),
+    )
 ```

@@ -3,9 +3,10 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\Position;
+use Filament\Tables\Enums\ActionsPosition;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -26,7 +27,7 @@ trait HasActions
 
     protected string | Closure | null $actionsAlignment = null;
 
-    protected string | Closure | null $actionsPosition = null;
+    protected ActionsPosition | Closure | null $actionsPosition = null;
 
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
@@ -46,7 +47,7 @@ trait HasActions
 
                 $this->mergeCachedFlatActions($flatActions);
             } elseif ($action instanceof Action) {
-                $action->defaultSize('sm');
+                $action->defaultSize(ActionSize::Small);
                 $action->defaultView($action::LINK_VIEW);
 
                 $this->cacheAction($action);
@@ -76,7 +77,7 @@ trait HasActions
         return $this;
     }
 
-    public function actionsPosition(string | Closure | null $position = null): static
+    public function actionsPosition(ActionsPosition | Closure | null $position = null): static
     {
         $this->actionsPosition = $position;
 
@@ -131,6 +132,11 @@ trait HasActions
         return $this->flatActions;
     }
 
+    public function hasAction(string $name): bool
+    {
+        return array_key_exists($name, $this->getFlatActions());
+    }
+
     protected function cacheAction(Action $action): void
     {
         $this->flatActions[$action->getName()] = $action;
@@ -173,27 +179,19 @@ trait HasActions
         return $action;
     }
 
-    public function getActionsPosition(): string
+    public function getActionsPosition(): ActionsPosition
     {
         $position = $this->evaluate($this->actionsPosition);
 
-        if (filled($position)) {
+        if ($position) {
             return $position;
         }
 
         if (! ($this->getContentGrid() || $this->hasColumnsLayout())) {
-            return Position::AfterColumns;
+            return ActionsPosition::AfterColumns;
         }
 
-        $actions = $this->getActions();
-
-        $firstAction = Arr::first($actions);
-
-        if ($firstAction instanceof ActionGroup) {
-            return Position::BottomCorner;
-        }
-
-        return Position::AfterContent;
+        return ActionsPosition::AfterContent;
     }
 
     public function getActionsAlignment(): ?string

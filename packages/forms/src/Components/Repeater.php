@@ -8,6 +8,7 @@ use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -129,7 +130,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
             })
             ->button()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isAddable());
 
         if ($this->modifyAddActionUsing) {
@@ -170,7 +171,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
             })
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isCloneable());
 
         if ($this->modifyCloneActionUsing) {
@@ -207,7 +208,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
@@ -243,7 +244,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyMoveDownActionUsing) {
@@ -279,7 +280,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyMoveUpActionUsing) {
@@ -319,7 +320,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isReorderableWithDragAndDrop());
 
         if ($this->modifyReorderActionUsing) {
@@ -351,7 +352,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyCollapseActionUsing) {
             $action = $this->evaluate($this->modifyCollapseActionUsing, [
@@ -382,7 +383,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyExpandActionUsing) {
             $action = $this->evaluate($this->modifyExpandActionUsing, [
@@ -412,7 +413,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyCollapseAllActionUsing) {
             $action = $this->evaluate($this->modifyCollapseAllActionUsing, [
@@ -442,7 +443,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyExpandAllActionUsing) {
             $action = $this->evaluate($this->modifyExpandAllActionUsing, [

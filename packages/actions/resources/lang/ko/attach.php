@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'attached' => '추가 완료',
+        'notifications' => [
+
+            'attached' => [
+                'title' => '추가 완료',
+            ],
+
         ],
 
     ],

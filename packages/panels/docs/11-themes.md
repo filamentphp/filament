@@ -4,7 +4,7 @@ title: Themes
 
 ## Changing the colors
 
-In the [configuration](configuration), you can easily change the colors that are used. Filament ships with 7 predefined colors that are used everywhere within the framework. They are customizable as follows:
+In the [configuration](configuration), you can easily change the colors that are used. Filament ships with 6 predefined colors that are used everywhere within the framework. They are customizable as follows:
 
 ```php
 use Filament\Panel;
@@ -66,7 +66,7 @@ $panel
 
 ## Changing the font
 
-By default, we use the [Be Vietnam Pro](https://fonts.google.com/specimen/Be+Vietnam+Pro) font. You can change this using the `font()` method in the [configuration](configuration) file:
+By default, we use the [Inter](https://fonts.google.com/specimen/Inter) font. You can change this using the `font()` method in the [configuration](configuration) file:
 
 ```php
 use Filament\Panel;
@@ -75,7 +75,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->font('Inter');
+        ->font('Poppins');
 }
 ```
 
@@ -115,7 +115,7 @@ To create a custom theme for a panel, you can use the `php artisan make:filament
 php artisan make:filament-theme
 ```
 
-If you have more than one panel, you can specify the panel you want to create a theme for:
+If you have multiple panels, you can specify the panel you want to create a theme for:
 
 ```bash
 php artisan make:filament-theme admin
@@ -137,7 +137,7 @@ By default, the topbar sticks to the top of the page. You may make the topbar sc
 
 By default, Filament will use your app's name as a logo.
 
-You may create a `resources/views/vendor/filament/components/logo.blade.php` file to provide a custom logo:
+You may create a `resources/views/vendor/filament-panels/components/logo.blade.php` file to provide a custom logo:
 
 ```blade
 <img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">

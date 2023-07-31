@@ -122,37 +122,19 @@ Tabs::make('Label')
 
 <AutoScreenshot name="forms/layout/tabs/icons" alt="Tabs with icons" version="3.x" />
 
-### Setting the tab icon color
-
-The icon of the tab may have a color to indicate its significance using the `iconColor()` method. It may be either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
-
-```php
-use Filament\Infolists\Components\Tabs;
-
-Tabs::make('Label')
-    ->tabs([
-        Tabs\Tab::make('Notifications')
-            ->icon('heroicon-m-bell')
-            ->iconColor('primary')
-            ->schema([
-                // ...
-            ]),
-        // ...
-    ])
-```
-
 ### Setting the tab icon position
 
 The icon of the tab may be positioned before or after the label using the `iconPosition()` method:
 
 ```php
 use Filament\Infolists\Components\Tabs;
+use Filament\Support\Enums\IconPosition;
 
 Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
-            ->iconPosition('after')
+            ->iconPosition(IconPosition::After)
             ->schema([
                 // ...
             ]),

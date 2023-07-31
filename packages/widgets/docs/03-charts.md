@@ -4,7 +4,7 @@ title: Chart widgets
 
 ## Overview
 
-Filament comes with many "chart" widget template, which you can use to display real-time, interactive charts.
+Filament comes with many "chart" widget templates, which you can use to display real-time, interactive charts.
 
 Start by creating a widget with the command:
 
@@ -16,7 +16,7 @@ There are several chart classes available, but we'll use the `LineChartWidget` c
 
 The `getHeading()` method is used to return a heading that describes the chart.
 
-The `getData()` method is used to return an array of datasets and labels. Each dataset is a labeled array of points to plot on the chart, and each label is a string. This structure is identical with the [Chart.js](https://www.chartjs.org/docs) library, which Filament uses to render charts. You may use the [Chart.js documentation](https://www.chartjs.org/docs) to fully understand the possibilities to return from `getData()`, based on the chart type.
+The `getData()` method is used to return an array of datasets and labels. Each dataset is a labeled array of points to plot on the chart, and each label is a string. This structure is identical to the [Chart.js](https://www.chartjs.org/docs) library, which Filament uses to render charts. You may use the [Chart.js documentation](https://www.chartjs.org/docs) to fully understand the possibilities to return from `getData()`, based on the chart type.
 
 ```php
 <?php
@@ -51,7 +51,7 @@ Now, check out your widget in the dashboard.
 
 ## Available chart types
 
-Below is a list of available chart widget classes which you may extend, and their corresponding [Chart.js](https://www.chartjs.org/docs) documentation page, for inspiration what to return from `getData()`:
+Below is a list of available chart widget classes which you may extend, and their corresponding [Chart.js](https://www.chartjs.org/docs) documentation page, for inspiration on what to return from `getData()`:
 
 - `Filament\Widgets\BarChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/bar)
 - `Filament\Widgets\BubbleChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/bubble)
@@ -61,6 +61,33 @@ Below is a list of available chart widget classes which you may extend, and thei
 - `Filament\Widgets\PolarAreaChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/polar)
 - `Filament\Widgets\RadarChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/radar)
 - `Filament\Widgets\ScatterChartWidget` - [Chart.js documentation](https://www.chartjs.org/docs/latest/charts/scatter)
+
+## Customizing the chart color
+
+You can customize the color of the chart data by setting the `$color` property to either `danger`, `gray`, `info`, `primary`, `success` or `warning`:
+
+```php
+protected static string $color = 'info';
+```
+
+If you're looking to customize the color further, or use multiple colors across multiple datasets, you can still make use of Chart.js's [color options](https://www.chartjs.org/docs/latest/general/colors.html) in the data:
+
+```php
+protected function getData(): array
+{
+    return [
+        'datasets' => [
+            [
+                'label' => 'Blog posts created',
+                'data' => [0, 10, 5, 2, 21, 32, 45, 74, 65, 45, 77, 89],
+                'backgroundColor' => '#36A2EB',
+                'borderColor' => '#9BD0F5',
+            ],
+        ],
+        'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+    ];
+}
+```
 
 ## Generating chart data from an Eloquent model
 
@@ -167,7 +194,7 @@ protected static ?array $options = [
 ];
 ```
 
-Alternative, you can override the `getOptions()` method to return a dynamic array of options:
+Alternatively, you can override the `getOptions()` method to return a dynamic array of options:
 
 ```php
 protected function getOptions(): array
@@ -212,4 +239,14 @@ public function getDescription(): ?string
 {
     return 'The number of blog posts published per month.';
 }
+```
+
+## Disabling lazy loading
+
+By default, widgets are lazy loaded. This means that they will only be loaded when they are visible on the page.
+
+To disable this behaviour, you may override the `$isLazy` property on the widget class:
+
+```php
+protected static bool $isLazy = true;
 ```

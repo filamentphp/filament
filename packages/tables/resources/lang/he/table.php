@@ -19,44 +19,6 @@ return [
 
     ],
 
-    'pagination' => [
-
-        'label' => 'הצגת רשומות',
-
-        'overview' => 'מציג :first - :last מתוך :total תוצאות',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'בעמוד',
-
-                'options' => [
-                    'all' => 'הכל',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'נווט לעמוד :page',
-            ],
-
-            'next' => [
-                'label' => 'הבא',
-            ],
-
-            'previous' => [
-                'label' => 'הקודם',
-            ],
-
-        ],
-
-    ],
-
     'actions' => [
 
         'disable_reordering' => [
@@ -132,7 +94,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => 'רשומה אחת נבחרה.|:count רשומות נבחרו.',
+        'selected_count' => 'רשומה אחת נבחרה|:count רשומות נבחרו',
 
         'actions' => [
 

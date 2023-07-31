@@ -15,7 +15,7 @@ return [
             ],
 
             'save' => [
-                'label' => 'Salvar',
+                'label' => 'Salvar alterações',
             ],
 
         ],
@@ -30,8 +30,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'Salvo!',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'Salvo',
+        ],
+
     ],
 
 ];

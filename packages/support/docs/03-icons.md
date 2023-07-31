@@ -68,48 +68,43 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ### Panel Builder icon aliases
 
+- `panels::global-search.field` - Global search field
 - `panels::pages.dashboard.navigation-item` - Dashboard navigation item
 - `panels::pages.tenancy.register-tenant.open-tenant-button` - Button to open a tenant from the tenant registration page
-- `panels::sidebar.collapse-button` - Desktop sidebar collapse button when it is partially collapsible
-- `panels::sidebar.collapse-button.full` - Desktop sidebar collapse button when it is fully collapsible
+- `panels::sidebar.collapse-button` - Button to collapse the sidebar
+- `panels::sidebar.expand-button` - Button to expand the sidebar
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
-- `panels::topbar.global-search.field` - Global search field
-- `panels::topbar.close-mobile-sidebar-button` - Button to close the mobile sidebar
-- `panels::topbar.open-mobile-sidebar-button` - Button to open the mobile sidebar
+- `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
+- `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
+- `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
+- `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
+- `panels::topbar.close-sidebar-button` - Button to close the sidebar
+- `panels::topbar.open-sidebar-button` - Button to open the sidebar
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
-- `panels::topbar.user-menu.profile-item` - Profile item in the user menu
-- `panels::topbar.user-menu.logout-button` - Button in the user menu to log out
-- `panels::topbar.user-menu.theme-switcher.light-button` - Button in the user menu to switch to the light theme
-- `panels::topbar.user-menu.theme-switcher.dark-button` - Button in the user menu to switch to the dark theme
-- `panels::topbar.user-menu.theme-switcher.system-button` - Button in the user menu to switch to the system theme
+- `panels::user-menu.profile-item` - Profile item in the user menu
+- `panels::user-menu.logout-button` - Button in the user menu to log out
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
-- `panels::widgets.filament-info.documentation-link` - Link to visit the documentation from the Filament info widget
-- `panels::widgets.filament-info.github-link` - Link to visit GitHub from the Filament info widget
+- `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
+- `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
 
 ### Form Builder icon aliases
 
 - `forms:components.checkbox-list.search-field` - Search input in a checkbox list
-- `forms::components.tags-input.delete-button` - Button to delete a tag in a tags input
 - `forms::components.wizard.completed-step` - Completed step in a wizard
 
 ### Table Builder icon aliases
 
 - `tables::columns.collapse-button`
-- `tables::filters.remove-button` - Button to remove a filter
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
-- `tables::header-cell.sort-asc` - Sort button of a column sorted in ascending order
-- `tables::header-cell.sort-desc` - Sort button of a column sorted in descending order
-- `tables::pagination.previous-button` - Button to go to the previous page, used on mobile and by "simple pagination"
-- `tables::pagination.next-button` - Button to go to the next page, used on mobile and by "simple pagination"
+- `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
+- `tables::header-cell.sort-desc-button` - Sort button of a column sorted in descending order
 - `tables::reorder.handle` - Handle to grab in order to reorder a record with drag and drop
 - `tables::search-field` - Search input
 
 ### Notifications icon aliases
 
 - `notifications::database.modal.empty-state` - Empty state of the database notifications modal
-- `notifications::database.modal.pagination.previous-button` - Button to go to the previous page of the database notifications modal
-- `notifications::database.modal.pagination.next-button` - Button to go to the next page of the database notifications modal
 - `notifications::notification.close-button` - Button to close a notification
 
 ### UI components icon aliases
@@ -117,4 +112,6 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `badge.delete-button` - Button to delete a badge
 - `breadcrumbs.separator` - Separator between breadcrumbs
 - `modal.close-button` - Button to close a modal
+- `pagination.previous-button` - Button to go to the previous page
+- `pagination.next-button` - Button to go to the next page
 - `section.collapse-button` - Button to collapse a section

@@ -14,8 +14,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => '已保存',
+    'notifications' => [
+
+        'saved' => [
+            'title' => '已保存',
+        ],
+
     ],
 
 ];

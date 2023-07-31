@@ -39,7 +39,7 @@ class CreateAction extends Action
             ] : [];
         });
 
-        $this->successNotificationTitle(__('filament-actions::create.single.messages.created'));
+        $this->successNotificationTitle(__('filament-actions::create.single.notifications.created.title'));
 
         $this->action(function (array $arguments, Form $form, HasTable $livewire): void {
             $model = $this->getModel();

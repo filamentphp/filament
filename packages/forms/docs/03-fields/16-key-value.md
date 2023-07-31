@@ -138,3 +138,23 @@ KeyValue::make('meta')
 ```
 
 <AutoScreenshot name="forms/fields/key-value/reorderable" alt="Key-value with reorderable rows" version="3.x" />
+
+## Customizing the key-value action objects
+
+This field uses action objects for easy customization of buttons within it. You can customize these buttons by passing a function to an action registration method. The function has access to the `$action` object, which you can use to [customize it](../../actions/trigger-button). The following methods are available to customize the actions:
+
+- `addAction()`
+- `deleteAction()`
+- `reorderAction()`
+
+Here is an example of how you might customize an action:
+
+```php
+use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\KeyValue;
+
+KeyValue::make('meta')
+    ->deleteAction(
+        fn (Action $action) => $action->icon('heroicon-m-x-mark'),
+    )
+```

@@ -3,6 +3,7 @@
 namespace Filament\Tables\Table\Concerns;
 
 use Closure;
+use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Grouping\Group;
 
@@ -82,7 +83,7 @@ trait CanGroupRecords
         }
 
         if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize('sm');
+            $action->defaultSize(ActionSize::Small);
         }
 
         return $action;

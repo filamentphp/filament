@@ -100,7 +100,7 @@ Finally, in your Livewire component's view, render the form:
 </div>
 ```
 
-> Note: `<x-filament-actions::modals />` is used to render form component [action modals](actions). The code can be put anywhere outside of the `<form>` element, as long as it's within the Livewire component.
+> `<x-filament-actions::modals />` is used to render form component [action modals](actions). The code can be put anywhere outside of the `<form>` element, as long as it's within the Livewire component.
 
 Visit your Livewire component in the browser, and you should see the form components from `schema()`:
 
@@ -324,16 +324,10 @@ php artisan make:livewire-form Products/EditProduct --edit
 
 ### Automatically generating form schemas
 
-Filament is also able to guess which form fields you want in the schema, based on the model's database columns. The `doctrine/dbal` package is required to use this functionality:
-
-```bash
-composer require doctrine/dbal --dev
-```
-
-Now, you can use the `--generate` flag when generating your form:
+Filament is also able to guess which form fields you want in the schema, based on the model's database columns. You can use the `--generate` flag when generating your form:
 
 ```bash
 php artisan make:livewire-form Products/CreateProduct --generate
 ```
 
-> Note: If your table contains ENUM columns, `doctrine/dbal` is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).

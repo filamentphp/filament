@@ -6,7 +6,7 @@ title: Testing
 
 All examples in this guide will be written using [Pest](https://pestphp.com). However, you can easily adapt this to PHPUnit.
 
-Since the table builder works on Livewire components, you can use the [Livewire testing helpers](https://laravel-livewire.com/docs/testing). However, we have many custom testing helpers that you can use for tables:
+Since the table builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have many custom testing helpers that you can use for tables:
 
 ## Render
 
@@ -36,9 +36,9 @@ it('cannot display trashed posts by default', function () {
 });
 ```
 
-> Note that if your table uses pagination, `assertCanSeeTableRecords()` will only check for records on the first page. To switch page, call `set('page', 2)`.
+> If your table uses pagination, `assertCanSeeTableRecords()` will only check for records on the first page. To switch page, call `set('page', 2)`.
 
-> Note that if your table uses `deferLoading()`, you should call `loadTable()` before `assertCanSeeTableRecords()`.
+> If your table uses `deferLoading()`, you should call `loadTable()` before `assertCanSeeTableRecords()`.
 
 ## Columns
 

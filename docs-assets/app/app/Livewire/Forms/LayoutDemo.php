@@ -2,9 +2,12 @@
 
 namespace App\Livewire\Forms;
 
+use Filament\Forms\Components\Actions;
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
@@ -17,6 +20,9 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms
@@ -121,7 +127,7 @@ class LayoutDemo extends Component implements HasForms
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
-                                    ->iconPosition('after')
+                                    ->iconPosition(IconPosition::After)
                                     ->schema([
                                         Checkbox::make('enabled')
                                             ->default(true),
@@ -133,10 +139,10 @@ class LayoutDemo extends Component implements HasForms
                                     ]),
                                 Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                                 Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                             ]),
                     ]),
                 Group::make()
@@ -416,6 +422,67 @@ class LayoutDemo extends Component implements HasForms
                         ])
                             ->statePath('card')
                             ->columns(3),
+                    ]),
+                Group::make()
+                    ->id('anonymousActions')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ]),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsFullWidth')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ])->fullWidth(),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsHorizontallyAlignedCenter')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Actions::make([
+                            Action::make('star')
+                                ->icon('heroicon-m-star'),
+                            Action::make('resetStars')
+                                ->icon('heroicon-m-x-mark')
+                                ->color('danger'),
+                        ])->alignment(Alignment::Center),
+                    ]),
+                Group::make()
+                    ->id('anonymousActionsVerticallyAlignedEnd')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-2xl',
+                    ])
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextInput::make('stars')
+                                    ->default('4572100479'),
+                                Actions::make([
+                                    Action::make('star')
+                                        ->icon('heroicon-m-star'),
+                                    Action::make('resetStars')
+                                        ->icon('heroicon-m-x-mark')
+                                        ->color('danger'),
+                                ])->verticalAlignment(VerticalAlignment::End),
+                            ]),
                     ]),
             ]);
     }

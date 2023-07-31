@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'Záznam duplikován',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Záznam duplikován',
+            ],
+
         ],
 
     ],

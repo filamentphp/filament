@@ -1,9 +1,23 @@
 @php
-    $isListWithLineBreaks = $isListWithLineBreaks();
+    use Filament\Support\Enums\FontFamily;
+    use Filament\Support\Enums\FontWeight;
+    use Filament\Support\Enums\IconPosition;
+    use Filament\Tables\Columns\TextColumn\TextColumnSize;
 
+    $canWrap = $canWrap();
+    $descriptionAbove = $getDescriptionAbove();
+    $descriptionBelow = $getDescriptionBelow();
     $isBadge = $isBadge();
+    $iconPosition = $getIconPosition();
+    $isListWithLineBreaks = $isListWithLineBreaks();
+    $url = $getUrl();
 
     $arrayState = $getState();
+
+    if ($arrayState instanceof \Illuminate\Support\Collection) {
+        $arrayState = $arrayState->all();
+    }
+
     if (is_array($arrayState)) {
         if ($listLimit = $getListLimit()) {
             $limitedArrayState = array_slice($arrayState, $listLimit);
@@ -11,20 +25,17 @@
         }
 
         if ((! $isListWithLineBreaks) && (! $isBadge)) {
-            $arrayState = implode(', ', $arrayState);
+            $arrayState = implode(
+                ', ',
+                array_map(
+                    fn ($value) => $value instanceof \Filament\Support\Contracts\HasLabel ? $value->getLabel() : $value,
+                    $arrayState,
+                ),
+            );
         }
     }
+
     $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
-
-    $canWrap = $canWrap();
-
-    $descriptionAbove = $getDescriptionAbove();
-    $descriptionBelow = $getDescriptionBelow();
-
-    $iconPosition = $getIconPosition();
-    $iconClasses = 'fi-ta-text-icon ' . ($isBadge ? 'h-3 w-3' : 'h-4 w-4');
-
-    $isClickable = $getAction() || $getUrl();
 @endphp
 
 <div
@@ -32,128 +43,137 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-text',
-                'px-4 py-3' => ! $isInline(),
-                'text-primary-600 transition hover:text-primary-500 hover:underline focus:text-primary-500 focus:underline' => $isClickable && (! $isBadge),
+                'fi-ta-text grid gap-y-1',
+                'px-3 py-4' => ! $isInline(),
             ])
     }}
 >
     @if (filled($descriptionAbove))
-        <div class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
             {{ $descriptionAbove }}
-        </div>
+        </p>
     @endif
 
     <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
         @class([
             'list-inside list-disc' => $isBulleted(),
-            'flex flex-wrap gap-1' => $isBadge,
+            'flex flex-wrap items-center gap-1' => $isBadge,
+            'whitespace-normal' => $canWrap,
         ])
     >
         @foreach ($arrayState as $state)
-            @php
-                $formattedState = $formatState($state);
+            @if (filled($formattedState = $formatState($state)))
+                @php
+                    $color = $getColor($state);
+                    $copyableState = $getCopyableState($state) ?? $state;
+                    $copyMessage = $getCopyMessage($state);
+                    $copyMessageDuration = $getCopyMessageDuration($state);
+                    $fontFamily = $getFontFamily($state);
+                    $icon = $getIcon($state);
+                    $itemIsCopyable = $isCopyable($state);
+                    $size = $getSize($state);
+                    $weight = $getWeight($state);
 
-                $color = $getColor($state) ?? 'gray';
-                $icon = $getIcon($state);
+                    $iconClasses = \Illuminate\Support\Arr::toCssClasses([
+                        'fi-ta-text-item-icon h-5 w-5',
+                        match ($color) {
+                            'gray', null => 'text-gray-400 dark:text-gray-500',
+                            default => 'text-custom-500',
+                        },
+                    ]);
 
-                $itemIsCopyable = $isCopyable($state);
-                $copyableState = $getCopyableState($state) ?? $state;
-                $copyMessage = $getCopyMessage($state);
-                $copyMessageDuration = $getCopyMessageDuration($state);
-            @endphp
+                    $iconStyles = \Illuminate\Support\Arr::toCssStyles([
+                        \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
+                    ]);
+                @endphp
 
-            @if (filled($formattedState))
-                <{{ $isListWithLineBreaks ? 'li' : 'div' }}>
-                    <div
-                        @class([
-                            'inline-flex items-center gap-x-1',
-                            'fi-ta-text-badge min-h-6 justify-center whitespace-nowrap rounded-xl px-2 py-0.5' => $isBadge,
-                            'whitespace-normal' => $canWrap,
-                            "fi-ta-text-badge-color-{$color}" => $isBadge && is_string($color),
-                            match ($color) {
-                                'gray' => 'bg-gray-500/10 text-gray-700 dark:bg-gray-500/20 dark:text-gray-300',
-                                default => 'bg-custom-500/10 text-custom-700 dark:text-custom-500',
-                            } => $isBadge,
-                            match ($color) {
-                                'gray' => null,
-                                default => 'text-custom-600 dark:text-custom-400',
-                            } => ! ($isBadge || $isClickable),
-                            match ($size = ($isBadge ? 'xs' : $getSize($state))) {
-                                'xs' => 'text-xs',
-                                'sm', null => 'text-sm',
-                                'base', 'md' => 'text-base',
-                                'lg' => 'text-lg',
-                                default => $size,
-                            },
-                            match ($weight = ($isBadge ? 'medium' : $getWeight($state))) {
-                                'thin' => 'font-thin',
-                                'extralight' => 'font-extralight',
-                                'light' => 'font-light',
-                                'medium' => 'font-medium',
-                                'semibold' => 'font-semibold',
-                                'bold' => 'font-bold',
-                                'extrabold' => 'font-extrabold',
-                                'black' => 'font-black',
-                                default => $weight,
-                            },
-                            match ($getFontFamily($state)) {
-                                'sans' => 'font-sans',
-                                'serif' => 'font-serif',
-                                'mono' => 'font-mono',
-                                default => null,
-                            },
-                        ])
-                        @style([
-                            \Filament\Support\get_color_css_variables(
-                                $color,
-                                shades: match (true) {
-                                    $isBadge => [500, 700],
-                                    ! ($isBadge || $isClickable) => [400, 600],
-                                    default => [],
-                                },
-                            ) => $color !== 'gray',
-                        ])
-                    >
-                        @if ($icon && $iconPosition === 'before')
-                            <x-filament::icon
-                                :icon="$icon"
-                                :class="$iconClasses"
-                            />
-                        @endif
-
-                        <span
-                            @if ($itemIsCopyable)
-                                x-on:click="
-                                    window.navigator.clipboard.writeText(@js($copyableState))
-                                    $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
-                                "
-                            @endif
-                            @class([
-                                'fi-ta-text-content',
-                                'cursor-pointer' => $itemIsCopyable,
-                            ])
+                <{{ $isListWithLineBreaks ? 'li' : 'div' }}
+                    @if ($itemIsCopyable)
+                        x-on:click="
+                            window.navigator.clipboard.writeText(@js($copyableState))
+                            $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
+                        "
+                    @endif
+                    @class([
+                        'flex max-w-max',
+                        'cursor-pointer' => $itemIsCopyable,
+                    ])
+                >
+                    @if ($isBadge)
+                        <x-filament::badge
+                            :color="$color"
+                            :icon="$icon"
+                            :icon-position="$iconPosition"
                         >
                             {{ $formattedState }}
-                        </span>
+                        </x-filament::badge>
+                    @else
+                        <div
+                            @class([
+                                'fi-ta-text-item inline-flex items-center gap-1.5',
+                                'transition duration-75 hover:underline focus:underline' => $url,
+                                match ($size) {
+                                    TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
+                                    TextColumnSize::Small, 'sm', null => 'text-sm',
+                                    TextColumnSize::Medium, 'base', 'md' => 'text-base',
+                                    TextColumnSize::Large, 'lg' => 'text-lg',
+                                    default => $size,
+                                },
+                                match ($color) {
+                                    null => 'text-gray-950 dark:text-white',
+                                    'gray' => 'text-gray-500 dark:text-gray-400',
+                                    default => 'text-custom-600 dark:text-custom-400',
+                                },
+                                match ($weight) {
+                                    FontWeight::Thin, 'thin' => 'font-thin',
+                                    FontWeight::ExtraLight, 'extralight' => 'font-extralight',
+                                    FontWeight::Light, 'light' => 'font-light',
+                                    FontWeight::Medium, 'medium' => 'font-medium',
+                                    FontWeight::SemiBold, 'semibold' => 'font-semibold',
+                                    FontWeight::Bold, 'bold' => 'font-bold',
+                                    FontWeight::ExtraBold, 'extrabold' => 'font-extrabold',
+                                    FontWeight::Black, 'black' => 'font-black',
+                                    default => $weight,
+                                },
+                                match ($fontFamily) {
+                                    FontFamily::Sans, 'sans' => 'font-sans',
+                                    FontFamily::Serif, 'serif' => 'font-serif',
+                                    FontFamily::Mono, 'mono' => 'font-mono',
+                                    default => $fontFamily,
+                                },
+                            ])
+                            @style([
+                                \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
+                            ])
+                        >
+                            @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
+                                <x-filament::icon
+                                    :icon="$icon"
+                                    :class="$iconClasses"
+                                    :style="$iconStyles"
+                                />
+                            @endif
 
-                        @if ($icon && $iconPosition === 'after')
-                            <x-filament::icon
-                                :icon="$icon"
-                                :class="$iconClasses"
-                            />
-                        @endif
-                    </div>
+                            <div>
+                                {{ $formattedState }}
+                            </div>
+
+                            @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+                                <x-filament::icon
+                                    :icon="$icon"
+                                    :class="$iconClasses"
+                                    :style="$iconStyles"
+                                />
+                            @endif
+                        </div>
+                    @endif
                 </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
             @endif
         @endforeach
 
         @if ($limitedArrayStateCount = count($limitedArrayState ?? []))
             <{{ $isListWithLineBreaks ? 'li' : 'div' }}
-                @class([
-                    'text-sm' => ! $isBadge,
-                    'text-xs' => $isBadge,
-                ])
+                class="text-sm text-gray-500 dark:text-gray-400"
             >
                 {{ trans_choice('filament-tables::table.columns.text.more_list_items', $limitedArrayStateCount) }}
             </{{ $isListWithLineBreaks ? 'li' : 'div' }}>
@@ -161,8 +181,8 @@
     </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
 
     @if (filled($descriptionBelow))
-        <div class="text-sm text-gray-500 dark:text-gray-400">
+        <p class="text-sm text-gray-500 dark:text-gray-400">
             {{ $descriptionBelow }}
-        </div>
+        </p>
     @endif
 </div>

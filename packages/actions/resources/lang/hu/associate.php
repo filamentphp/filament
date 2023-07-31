@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'associated' => 'Társítva',
+        'notifications' => [
+
+            'associated' => [
+                'title' => 'Társítva',
+            ],
+
         ],
 
     ],

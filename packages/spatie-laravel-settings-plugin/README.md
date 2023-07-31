@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-settings-plugin:"^3.0"
+composer require filament/spatie-laravel-settings-plugin:"^3.0@beta"
 ```
 
 ## Preparing your page class
@@ -32,28 +32,30 @@ protected static string $settings = FooterSettings::class;
 
 ## Building a form
 
-You must define a form schema to interact with your settings class inside the `getFormSchema()` method.
+You must define a form schema to interact with your settings class inside the `form()` method.
 
-Since the [form builder](/docs/forms) is installed in the panel builder by default, you may use any form [fields](/docs/forms/fields) or [layout components](/docs/forms/layout) you like:
+Since the [form builder](https://filamentphp.com/docs/forms) is installed in the panel builder by default, you may use any form [fields](https://filamentphp.com/docs/forms/fields) or [layout components](https://filamentphp.com/docs/forms/layout) you like:
 
 ```php
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
 
-protected function getFormSchema(): array
+public function form(Form $form): Form
 {
-    return [
-        TextInput::make('copyright')
-            ->label('Copyright notice')
-            ->required(),
-        Repeater::make('links')
-            ->schema([
-                TextInput::make('label')->required(),
-                TextInput::make('url')
-                    ->url()
-                    ->required(),
-            ]),
-    ];
+    return $form
+        ->schema([
+            TextInput::make('copyright')
+                ->label('Copyright notice')
+                ->required(),
+            Repeater::make('links')
+                ->schema([
+                    TextInput::make('label')->required(),
+                    TextInput::make('url')
+                        ->url()
+                        ->required(),
+                ]),
+        ]);
 }
 ```
 

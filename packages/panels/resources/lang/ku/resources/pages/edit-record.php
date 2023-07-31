@@ -26,8 +26,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'هەڵگیرا',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'هەڵگیرا',
+        ],
+
     ],
 
 ];

@@ -11,11 +11,12 @@ The `Split` component allows you to define layouts with flexible widths, using f
 use Filament\Infolists\Components\Card;
 use Filament\Infolists\Components\Split;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\FontWeight;
 
 Split::make([
     Card::make([
         TextEntry::make('title')
-            ->weight('bold'),
+            ->weight(FontWeight::Bold),
         TextEntry::make('content')
             ->markdown()
             ->prose(),

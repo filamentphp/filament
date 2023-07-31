@@ -74,6 +74,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected bool | Closure $isMultiple = false;
 
+    protected bool | Closure $isNative = true;
+
     protected ?Closure $getOptionLabelUsing = null;
 
     protected ?Closure $getOptionLabelsUsing = null;
@@ -118,11 +120,25 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         });
 
         $this->getOptionLabelUsing(static function (Select $component, $value): ?string {
-            if (array_key_exists($value, $options = $component->getOptions())) {
-                return $options[$value];
+            $options = $component->getOptions();
+
+            foreach ($options as $groupedOptions) {
+                if (! is_array($groupedOptions)) {
+                    continue;
+                }
+
+                if (! array_key_exists($value, $groupedOptions)) {
+                    continue;
+                }
+
+                return $groupedOptions[$value];
             }
 
-            return $value;
+            if (! array_key_exists($value, $options)) {
+                return $value;
+            }
+
+            return $options[$value];
         });
 
         $this->getOptionLabelsUsing(static function (Select $component, array $values): array {
@@ -131,6 +147,20 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             $labels = [];
 
             foreach ($values as $value) {
+                foreach ($options as $groupedOptions) {
+                    if (! is_array($groupedOptions)) {
+                        continue;
+                    }
+
+                    if (! array_key_exists($value, $groupedOptions)) {
+                        continue;
+                    }
+
+                    $labels[$value] = $groupedOptions[$value];
+
+                    continue 2;
+                }
+
                 $labels[$value] = $options[$value] ?? $value;
             }
 
@@ -493,6 +523,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this;
     }
 
+    public function native(bool | Closure $condition = true): static
+    {
+        $this->isNative = $condition;
+
+        return $this;
+    }
+
     public function position(string | Closure | null $position): static
     {
         $this->position = $position;
@@ -549,8 +586,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     {
         $columns = $this->searchColumns;
 
-        if ($this->hasRelationship()) {
-            $columns ??= [$this->getRelationshipTitleAttribute()];
+        if ($this->hasRelationship() && (filled($relationshipTitleAttribute = $this->getRelationshipTitleAttribute()))) {
+            $columns ??= [$relationshipTitleAttribute];
         }
 
         return $columns;
@@ -603,13 +640,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     }
 
     /**
-     * @param  array<string>  $options
-     * @return array<array{'label': string, 'value': string}>
+     * @param  array<string | array<string>>  $options
+     * @return array<array<string, mixed>>
      */
     protected function transformOptionsForJs(array $options): array
     {
         return collect($options)
-            ->map(fn ($label, $value): array => ['label' => $label, 'value' => strval($value)])
+            ->map(fn ($label, $value): array => is_array($label)
+                ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
+                : ['label' => $label, 'value' => strval($value)])
             ->values()
             ->all();
     }
@@ -617,6 +656,11 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function isMultiple(): bool
     {
         return (bool) $this->evaluate($this->isMultiple);
+    }
+
+    public function isNative(): bool
+    {
+        return (bool) $this->evaluate($this->isNative);
     }
 
     public function isSearchable(): bool
@@ -656,7 +700,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (empty($relationshipQuery->getQuery()->orders)) {
+            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
                 $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
@@ -683,7 +727,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::beforeLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -732,7 +776,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
 
-            if (empty($relationshipQuery->getQuery()->orders)) {
+            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
                 $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
@@ -746,7 +790,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::beforeLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -883,7 +927,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return $relationshipQuery
                     ->get()
                     ->mapWithKeys(static fn (Model $record) => [
-                        $record->{Str::beforeLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
+                        $record->{Str::afterLast($relatedKeyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
             }
@@ -1023,7 +1067,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         );
     }
 
-    public function getRelationshipTitleAttribute(): string
+    public function getRelationshipTitleAttribute(): ?string
     {
         return $this->evaluate($this->relationshipTitleAttribute);
     }

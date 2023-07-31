@@ -18,6 +18,8 @@ abstract class ChartWidget extends Widget
 
     public ?string $filter = null;
 
+    protected static string $color = 'primary';
+
     protected static ?string $heading = null;
 
     protected static ?string $description = null;
@@ -107,5 +109,10 @@ abstract class ChartWidget extends Widget
     public function updatedFilter(): void
     {
         $this->updateChartData();
+    }
+
+    public function getColor(): string
+    {
+        return static::$color;
     }
 }

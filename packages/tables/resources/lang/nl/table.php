@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolommen',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -23,44 +29,6 @@ return [
         'search' => [
             'label' => 'Zoeken',
             'placeholder' => 'Zoeken',
-        ],
-
-    ],
-
-    'pagination' => [
-
-        'label' => 'Paginering navigatie',
-
-        'overview' => '{1} Toont 1 resultaat|[2,*] Toont :first tot :last van :total resultaten',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'per pagina',
-
-                'options' => [
-                    'all' => 'Alles',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'Ga naar pagina :page',
-            ],
-
-            'next' => [
-                'label' => 'Volgende',
-            ],
-
-            'previous' => [
-                'label' => 'Vorige',
-            ],
-
         ],
 
     ],
@@ -122,7 +90,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Geen records gevonden',
+
+        'heading' => 'Geen :model',
+
+        'description' => 'Maak een :model aan om aan de slag te gaan.',
+
     ],
 
     'filters' => [
@@ -139,10 +111,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Filters resetten',
+                'label' => 'Resetten',
             ],
 
         ],
+
+        'heading' => 'Filters',
 
         'indicator' => 'Actieve filters',
 
@@ -196,7 +170,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record geselecteerd.|:count records geselecteerd.',
+        'selected_count' => '1 record geselecteerd|:count records geselecteerd',
 
         'actions' => [
 

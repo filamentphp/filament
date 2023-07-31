@@ -15,8 +15,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament-forms::affixes
-        :state-path="$statePath"
+    <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -26,12 +25,13 @@
         :suffix="$suffixLabel"
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
+        :valid="! $errors->has($statePath)"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
         @if ($isNative())
             <x-filament::input
                 :attributes="
-                    $getExtraInputAttributeBag()
+                    \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                         ->merge($extraAlpineAttributes, escape: false)
                         ->merge([
                             'autofocus' => $isAutofocused(),
@@ -206,9 +206,9 @@
                                                 ! dayIsSelected(day) &&
                                                 focusedDate.date() !== day &&
                                                 ! dayIsDisabled(day),
-                                            'bg-gray-950/5 dark:bg-white/5':
+                                            'bg-gray-50 dark:bg-white/5':
                                                 focusedDate.date() === day && ! dayIsSelected(day),
-                                            'text-primary-600 bg-gray-950/5 dark:bg-white/5 dark:text-primary-400':
+                                            'text-primary-600 bg-gray-50 dark:bg-white/5 dark:text-primary-400':
                                                 dayIsSelected(day),
                                             'pointer-events-none': dayIsDisabled(day),
                                             'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
@@ -272,7 +272,7 @@
                 </div>
             </div>
         @endif
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 
     @if ($datalistOptions)
         <datalist id="{{ $id }}-list">

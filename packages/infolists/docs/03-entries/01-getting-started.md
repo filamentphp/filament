@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Entry classes can be found in the `Filament\Infolists\Components` namespace. You can put them inside the `$infolist->entries()` method:
+Entry classes can be found in the `Filament\Infolists\Components` namespace. You can put them inside the `$infolist->schema()` method:
 
 ```php
 use Filament\Infolists\Infolist;
@@ -13,7 +13,7 @@ use Filament\Infolists\Infolist;
 public function infolist(Infolist $infolist): Infolist
 {
     return $infolist
-        ->entries([
+        ->schema([
             // ...
         ]);
 }

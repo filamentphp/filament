@@ -50,7 +50,7 @@ select:not(.choices) {
 }
 
 .choices__list--multiple {
-    @apply flex flex-wrap gap-1;
+    @apply flex flex-wrap gap-1.5;
 }
 
 .choices__list--multiple:not(:empty) {
@@ -58,7 +58,7 @@ select:not(.choices) {
 }
 
 .choices__list--multiple .choices__item {
-    @apply inline-flex items-center gap-1 break-all rounded-md bg-primary-300/10 px-2 py-1 text-xs font-medium text-primary-600 ring-1 ring-inset ring-primary-600/10 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400/30;
+    @apply inline-flex items-center gap-1 break-all rounded-md bg-primary-50 px-2 py-1 text-xs font-medium text-primary-600 ring-1 ring-inset ring-primary-600/10 dark:bg-primary-400/10 dark:text-primary-400 dark:ring-primary-400/30;
 }
 
 .choices__list--dropdown,
@@ -167,4 +167,8 @@ select:not(.choices) {
 .choices__input::-ms-clear,
 .choices__input::-ms-reveal {
     @apply hidden h-0 w-0;
+}
+
+.choices__group {
+    @apply px-2 pb-2 pt-4 text-gray-500 first:pt-2 dark:text-gray-400;
 }

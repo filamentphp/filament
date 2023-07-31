@@ -6,7 +6,7 @@ title: Getting started
 
 Filament forms are not limited to just displaying fields. You can also use "layout components" to organize them into an infinitely nestable structure.
 
-Layout component classes can be found in the `Filament\Forms\Components` namespace. They reside within the schema of your form, alongside any [fields](fields).
+Layout component classes can be found in the `Filament\Forms\Components` namespace. They reside within the schema of your form, alongside any [fields](fields/getting-started).
 
 Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
 

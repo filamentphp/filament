@@ -3,6 +3,7 @@
 namespace Filament\Widgets\StatsOverviewWidget;
 
 use Closure;
+use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Str;
@@ -32,7 +33,7 @@ class Card extends Component implements Htmlable
 
     protected ?string $descriptionIcon = null;
 
-    protected ?string $descriptionIconPosition = null;
+    protected IconPosition | string | null $descriptionIconPosition = null;
 
     /**
      * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
@@ -118,7 +119,7 @@ class Card extends Component implements Htmlable
         return $this;
     }
 
-    public function descriptionIcon(?string $icon, ?string $position = 'after'): static
+    public function descriptionIcon(?string $icon, IconPosition | string | null $position = null): static
     {
         $this->descriptionIcon = $icon;
         $this->descriptionIconPosition = $position;
@@ -232,9 +233,9 @@ class Card extends Component implements Htmlable
         return $this->descriptionIcon;
     }
 
-    public function getDescriptionIconPosition(): ?string
+    public function getDescriptionIconPosition(): IconPosition | string
     {
-        return $this->descriptionIconPosition;
+        return $this->descriptionIconPosition ?? IconPosition::After;
     }
 
     /**

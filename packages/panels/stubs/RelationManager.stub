@@ -14,8 +14,6 @@ class {{ managerClass }} extends RelationManager
 {
     protected static string $relationship = '{{ relationship }}';
 
-    protected static ?string $recordTitleAttribute = '{{ recordTitleAttribute }}';
-
     public function form(Form $form): Form
     {
         return $form
@@ -29,7 +27,7 @@ class {{ managerClass }} extends RelationManager
     public function table(Table $table): Table
     {
         return $table
-{{ modifyQueryUsing }}
+            ->recordTitleAttribute('{{ recordTitleAttribute }}')
             ->columns([
                 Tables\Columns\TextColumn::make('{{ recordTitleAttribute }}'),
             ])
@@ -46,6 +44,9 @@ class {{ managerClass }} extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
-            ]);
+            ])
+            ->emptyStateActions([
+{{ tableEmptyStateActions }}
+            ]){{ modifyQueryUsing }};
     }
 }
