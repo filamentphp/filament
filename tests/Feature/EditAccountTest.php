@@ -16,7 +16,7 @@ class EditAccountTest extends TestCase
     {
         $user = User::factory()->create();
         $newUserDetails = User::factory()->make();
-//        $newPassword = Str::random();
+        //        $newPassword = Str::random();
 
         $this->be($user);
 
@@ -37,10 +37,10 @@ class EditAccountTest extends TestCase
 
         $this->assertEquals($newUserDetails->email, $user->email);
         $this->assertEquals($newUserDetails->name, $user->name);
-//        $this->assertTrue(Filament::auth()->attempt([
-//            'email' => $newUserDetails->email,
-//            'password' => $newPassword,
-//        ]));
+        //        $this->assertTrue(Filament::auth()->attempt([
+        //            'email' => $newUserDetails->email,
+        //            'password' => $newPassword,
+        //        ]));
     }
 
     /** @test */
@@ -94,18 +94,18 @@ class EditAccountTest extends TestCase
             ->assertHasErrors(['record.name' => 'required']);
     }
 
-//    /** @test */
-//    public function record_password_contains_minimum_8_characters()
-//    {
-//        $user = User::factory()->create();
-//
-//        $this->be($user);
-//
-//        Livewire::test(EditAccount::class)
-//            ->set('record.password', 'pass')
-//            ->call('save')
-//            ->assertHasErrors(['record.password' => 'min']);
-//    }
+    //    /** @test */
+    //    public function record_password_contains_minimum_8_characters()
+    //    {
+    //        $user = User::factory()->create();
+    //
+    //        $this->be($user);
+    //
+    //        Livewire::test(EditAccount::class)
+    //            ->set('record.password', 'pass')
+    //            ->call('save')
+    //            ->assertHasErrors(['record.password' => 'min']);
+    //    }
 
     /** @test */
     public function record_password_is_confirmed()
