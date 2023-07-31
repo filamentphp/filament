@@ -628,7 +628,8 @@
 
                                     <div
                                         @class([
-                                            'flex flex-col md:items-center w-full gap-3 md:flex-row',
+                                            'flex flex-col w-full gap-3',
+                                            'md:items-center md:flex-row' => ! $contentGrid,
                                             'py-4' => $recordHasActions,
                                         ])
                                     >
