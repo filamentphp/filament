@@ -31,7 +31,7 @@
             @if ($icon)
                 <x-filament::icon
                     :icon="$icon"
-                    class="fi-sidebar-group-icon h-6 w-6 text-gray-600 dark:text-gray-400"
+                    class="fi-sidebar-group-icon h-6 w-6 text-gray-400 dark:text-gray-500"
                 />
             @endif
 

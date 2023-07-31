@@ -61,7 +61,10 @@
                 <ul class="me-4 hidden items-center gap-x-4 lg:flex">
                     @foreach ($navigation as $group)
                         @if ($groupLabel = $group->getLabel())
-                            <x-filament::dropdown placement="bottom-start">
+                            <x-filament::dropdown
+                                placement="bottom-start"
+                                teleport
+                            >
                                 <x-slot name="trigger">
                                     <x-filament-panels::topbar.item
                                         :active="$group->isActive()"
