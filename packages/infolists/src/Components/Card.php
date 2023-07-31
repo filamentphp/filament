@@ -5,7 +5,7 @@ namespace Filament\Infolists\Components;
 use Closure;
 
 /**
- * @deprecated Use `Section` with empty heading instead.
+ * @deprecated Use `Section` with an empty heading instead.
  */
 class Card extends Component
 {
