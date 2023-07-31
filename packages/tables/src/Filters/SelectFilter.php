@@ -17,6 +17,8 @@ class SelectFilter extends BaseFilter
 
     protected bool | Closure $isMultiple = false;
 
+    protected bool | Closure $isNative = true;
+
     protected bool | Closure $isStatic = false;
 
     protected bool | Closure $isSearchable = false;
@@ -188,6 +190,7 @@ class SelectFilter extends BaseFilter
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
             ->preload($this->isPreloaded())
+            ->native($this->isNative())
             ->optionsLimit($this->getOptionsLimit());
 
         if ($this->queriesRelationships()) {
@@ -240,5 +243,17 @@ class SelectFilter extends BaseFilter
     public function getOptionsLimit(): int
     {
         return $this->evaluate($this->optionsLimit);
+    }
+
+    public function native(bool | Closure $condition = true): static
+    {
+        $this->isNative = $condition;
+
+        return $this;
+    }
+
+    public function isNative(): bool
+    {
+        return (bool) $this->evaluate($this->isNative);
     }
 }
