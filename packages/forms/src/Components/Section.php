@@ -31,6 +31,9 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     protected bool | Closure $isFormBefore = false;
 
+    /**
+     * @param string | array<Component> | Htmlable | Closure | null $heading
+     */
     final public function __construct(string | array | Htmlable | Closure | null $heading = null)
     {
         is_array($heading)
@@ -38,6 +41,9 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
             : $this->heading($heading);
     }
 
+    /**
+     * @param string | array<Component> | Htmlable | Closure | null $heading
+     */
     public static function make(string | array | Htmlable | Closure | null $heading = null): static
     {
         $static = app(static::class, ['heading' => $heading]);
