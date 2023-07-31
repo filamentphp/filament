@@ -628,8 +628,8 @@
 
                                     <div
                                         @class([
-                                            'flex flex-col w-full gap-3 py-4',
-                                            'md:items-center md:flex-row' => ! $contentGrid,
+                                            'flex w-full flex-col gap-3 py-4',
+                                            'md:flex-row md:items-center' => ! $contentGrid,
                                         ])
                                     >
                                         @if ($recordUrl)
