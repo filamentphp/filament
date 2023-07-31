@@ -4,11 +4,12 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\Tabs\Tab;
-use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Concerns;
 
 class Tabs extends Component
 {
-    use HasExtraAlpineAttributes;
+    use Concerns\CanBeContained;
+    use Concerns\HasExtraAlpineAttributes;
 
     /**
      * @var view-string
@@ -18,8 +19,6 @@ class Tabs extends Component
     public int | Closure $activeTab = 1;
 
     protected string | Closure | null $tabQueryStringKey = null;
-
-    protected bool | Closure $isWrappedInCard = true;
 
     final public function __construct(?string $label = null)
     {
@@ -49,18 +48,6 @@ class Tabs extends Component
         $this->activeTab = $activeTab;
 
         return $this;
-    }
-
-    public function wrappedInCard(bool | Closure $condition = true): static
-    {
-        $this->isWrappedInCard = $condition;
-
-        return $this;
-    }
-
-    public function isWrappedInCard(): bool
-    {
-        return (bool) $this->evaluate($this->isWrappedInCard);
     }
 
     public function getActiveTab(): int
