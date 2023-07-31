@@ -591,31 +591,25 @@
                                         ]);
                                     @endphp
 
-                                    {{-- TODO: review start --}}
-
                                     <div
                                         @class([
-                                            'flex items-center',
+                                            'flex items-center px-1 sm:px-3',
                                         ])
                                     >
-                                        <x-filament-tables::reorder.handle
-                                            @class([
-                                                'absolute top-3 end-3',
-                                                'md:relative md:top-0 end-0' => ! $contentGrid,
-                                                'hidden' => ! $isReordering,
-                                            ])
-                                        />
-
-                                        @if ($isSelectionEnabled && $isRecordSelectable($record) && (! $isReordering))
+                                        @if ($isReordering)
+                                            <x-filament-tables::reorder.handle
+                                                class="mx-1 my-2"
+                                            />
+                                        @elseif ($isSelectionEnabled && $isRecordSelectable($record))
                                             <x-filament-tables::selection.checkbox
                                                 :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                 :value="$recordKey"
                                                 x-model="selectedRecords"
-                                                @class([
-                                                    'fi-ta-record-checkbox ms-4 sm:ms-6 me-3 my-4',
-                                                ])
+                                                class="fi-ta-record-checkbox mx-3 my-4"
                                             />
                                         @endif
+
+                                        {{-- TODO: review collapse button --}}
 
                                         @if ($hasCollapsibleColumnsLayout)
                                             <div
@@ -703,6 +697,7 @@
                                         </div>
                                     </div>
 
+                                    {{-- TODO: review collapsible layout --}}
                                     @if ($hasCollapsibleColumnsLayout)
                                         <div
                                             x-collapse
@@ -719,8 +714,6 @@
                                     @endif
                                 </div>
                             </div>
-
-                            {{-- TODO: review end --}}
 
                             @php
                                 $previousRecordGroupKey = $recordGroupKey;
