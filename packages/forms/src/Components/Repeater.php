@@ -9,10 +9,12 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Repeater extends Field implements Contracts\CanConcealComponents
@@ -21,11 +23,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     use Concerns\CanLimitItemsLength;
     use Concerns\HasContainerGridLayout;
     use Concerns\CanBeCloned;
-
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.repeater';
 
     protected string | Closure | null $addActionLabel = null;
 
@@ -48,6 +45,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     protected string | Closure | null $relationship = null;
 
     protected string | Closure | null $itemLabel = null;
+
+    protected bool | Closure $isSimple = false;
+
+    protected Field | Closure | null $field = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
@@ -85,9 +86,11 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             $items = [];
+            $isSimple = $component->isSimple();
+            $field = $component->getField();
 
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $itemData;
+                $items[(string) Str::uuid()] = $isSimple ? [$field->getName() => $itemData] : $itemData;
             }
 
             $component->state($items);
@@ -106,7 +109,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             fn (Repeater $component): Action => $component->getReorderAction(),
         ]);
 
-        $this->mutateDehydratedStateUsing(static function (?array $state): array {
+        $this->mutateDehydratedStateUsing(static function (Repeater $component, ?array $state): array {
+            if ($component->isSimple()) {
+                return collect($state ?? [])
+                    ->values()
+                    ->pluck($component->getField()->getName())
+                    ->all();
+            }
+
             return array_values($state ?? []);
         });
     }
@@ -576,6 +586,15 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
+    public function getChildComponents(): array
+    {
+        if ($this->isSimple()) {
+            return [$this->getField()];
+        }
+
+        return parent::getChildComponents();
+    }
+
     /**
      * @return array<ComponentContainer>
      */
@@ -867,6 +886,30 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this->itemLabel !== null;
     }
 
+    public function simple(bool | Closure $condition = true): static
+    {
+        $this->isSimple = $condition;
+
+        return $this;
+    }
+
+    public function isSimple(): bool
+    {
+        return (bool) $this->evaluate($this->isSimple);
+    }
+
+    public function field(Field $field): static
+    {
+        $this->field = $field;
+
+        return $this;
+    }
+
+    public function getField(): Field | null
+    {
+        return $this->evaluate($this->field)?->hiddenLabel();
+    }
+
     public function clearCachedExistingRecords(): void
     {
         $this->cachedExistingRecords = null;
@@ -959,5 +1002,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function canConcealComponents(): bool
     {
         return $this->isCollapsible();
+    }
+
+    public function getView(): string
+    {
+        if ($this->isSimple()) {
+            return 'filament-forms::components.simple-repeater';
+        }
+
+        return 'filament-forms::components.repeater';
     }
 }
