@@ -26,5 +26,5 @@
     :xlStart="$columnStart['xl'] ?? null"
     :twoXlStart="$columnStart['2xl'] ?? null"
 >
-    <x-filament::card class="h-32 animate-pulse" />
+    <x-filament::section class="h-32 animate-pulse" />
 </x-filament::grid.column>

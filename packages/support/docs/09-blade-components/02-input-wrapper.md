@@ -30,7 +30,7 @@ The component has special styling that you can use if it is invalid. To trigger 
 To trigger the error state using Blade, you can pass the `valid` attribute to the component, which contains either true or false based on if the input is valid or not:
 
 ```blade
-<x-filament::input.wrapper :valid="$errors->has('name')">
+<x-filament::input.wrapper :valid="! $errors->has('name')">
     <x-filament::input
         type="text"
         wire:model="name"
@@ -42,11 +42,11 @@ Alternatively, you can use an Alpine.js expression to trigger the error state, b
 
 ```blade
 <div x-data="{ errors: ['name'] }">
-    <x-filament::input.wrapper alpine-valid="errors.includes('name')">
+    <x-filament::input.wrapper alpine-valid="! errors.includes('name')">
         <x-filament::input
-        type="text"
-        wire:model="name"
-    />
+            type="text"
+            wire:model="name"
+        />
     </x-filament::input.wrapper>
 </div>
 ```
@@ -79,7 +79,7 @@ You may place text before and after the input using the `prefix` and `suffix` sl
         type="text"
         wire:model="domain"
     />
-    
+
     <x-slot name="suffix">
         .com
     </x-slot>

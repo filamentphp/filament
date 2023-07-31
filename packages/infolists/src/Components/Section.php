@@ -31,12 +31,12 @@ class Section extends Component
 
     protected bool | Closure $isContentBefore = false;
 
-    final public function __construct(string | Htmlable | Closure $heading)
+    final public function __construct(string | Htmlable | Closure | null $heading = null)
     {
         $this->heading($heading);
     }
 
-    public static function make(string | Htmlable | Closure $heading): static
+    public static function make(string | Htmlable | Closure | null $heading = null): static
     {
         $static = app(static::class, ['heading' => $heading]);
         $static->configure();
@@ -62,12 +62,20 @@ class Section extends Component
     {
         $id = parent::getId();
 
-        if (! $id) {
-            $id = Str::slug($this->getHeading());
+        if (filled($id)) {
+            return $id;
+        }
 
-            if ($statePath = $this->getStatePath()) {
-                $id = "{$statePath}.{$id}";
-            }
+        $heading = $this->getHeading();
+
+        if (blank($heading)) {
+            return null;
+        }
+
+        $id = Str::slug($heading);
+
+        if ($statePath = $this->getStatePath()) {
+            $id = "{$statePath}.{$id}";
         }
 
         return $id;

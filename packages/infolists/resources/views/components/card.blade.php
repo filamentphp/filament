@@ -1,4 +1,4 @@
-<x-filament::card
+<x-filament::section
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([
@@ -8,4 +8,4 @@
     "
 >
     {{ $getChildComponentContainer() }}
-</x-filament::card>
+</x-filament::section>

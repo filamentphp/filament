@@ -4,6 +4,9 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 
+/**
+ * @deprecated Use `Section` with empty heading instead.
+ */
 class Card extends Component
 {
     use Concerns\EntanglesStateWithSingularRelationship;

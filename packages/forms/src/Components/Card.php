@@ -5,6 +5,9 @@ namespace Filament\Forms\Components;
 use Closure;
 use Filament\Forms\Components\Contracts\CanEntangleWithSingularRelationships;
 
+/**
+ * @deprecated Use `Section` with empty heading instead.
+ */
 class Card extends Component implements CanEntangleWithSingularRelationships
 {
     use Concerns\EntanglesStateWithSingularRelationship;

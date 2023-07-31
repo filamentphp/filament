@@ -7,7 +7,7 @@ title: Link Blade component
 The link component is used to render a clickable link that can perform an action:
 
 ```blade
-<x-filament::link href="{{ route('users.create') }}">
+<x-filament::link :href="route('users.create')">
     New user
 </x-filament::link>
 ```
@@ -111,7 +111,7 @@ You can render a [badge](badge) on top of a link by using the `badge` slot:
 ```blade
 <x-filament::link>
     Mark notifications as read
-    
+
     <x-slot name="badge">
         3
     </x-slot>
@@ -123,7 +123,7 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
 ```blade
 <x-filament::link badge-color="danger">
     Mark notifications as read
-    
+
     <x-slot name="badge">
         3
     </x-slot>
