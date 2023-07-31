@@ -9,7 +9,7 @@
     $tag = $url ? 'a' : 'div';
 
     $descriptionIconClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-wi-stats-overview-card-description-icon h-5 w-5',
+        'fi-wi-stats-overview-stat-description-icon h-5 w-5',
         match ($descriptionColor) {
             'gray' => 'text-gray-400 dark:text-gray-500',
             default => 'text-custom-500',
@@ -31,7 +31,7 @@
     {{
         $getExtraAttributeBag()
             ->class([
-                'fi-wi-stats-overview-card relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
+                'fi-wi-stats-overview-stat relative rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
             ])
     }}
 >
@@ -40,7 +40,7 @@
             @if ($icon = $getIcon())
                 <x-filament::icon
                     :icon="$icon"
-                    class="fi-wi-stats-overview-card-icon h-5 w-5 text-gray-400 dark:text-gray-500"
+                    class="fi-wi-stats-overview-stat-icon h-5 w-5 text-gray-400 dark:text-gray-500"
                 />
             @endif
 
@@ -67,7 +67,7 @@
 
                 <span
                     @class([
-                        'fi-wi-stats-overview-card-description text-sm',
+                        'fi-wi-stats-overview-stat-description text-sm',
                         match ($descriptionColor) {
                             'gray' => 'text-gray-500 dark:text-gray-400',
                             default => 'text-custom-600 dark:text-custom-400',
@@ -94,14 +94,14 @@
     @if ($chart = $getChart())
         <div
             ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/card/chart', 'filament/widgets') }}"
+            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
             wire:ignore
-            x-data="statsOverviewCardChart({
+            x-data="statsOverviewStatChart({
                         labels: @js(array_keys($chart)),
                         values: @js(array_values($chart)),
                     })"
             x-ignore
-            class="fi-wi-stats-overview-card-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
+            class="fi-wi-stats-overview-stat-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
             @style([
                 \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
             ])

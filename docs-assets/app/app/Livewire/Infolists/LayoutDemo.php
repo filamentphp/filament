@@ -6,7 +6,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Card;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
@@ -254,12 +253,12 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             ->columns(3),
                     ]),
                 Group::make()
-                    ->id('card')
+                    ->id('section')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Card::make([
+                        Section::make([
                             TextEntry::make('hits')
                                 ->state(30),
                             TextEntry::make('period')
@@ -279,7 +278,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                     ])
                     ->schema([
                         Split::make([
-                            Card::make([
+                            Section::make([
                                 TextEntry::make('title')
                                     ->state('What is Filament?')
                                     ->weight(FontWeight::Bold),
@@ -292,7 +291,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     ->markdown()
                                     ->prose(),
                             ]),
-                            Card::make([
+                            Section::make([
                                 TextEntry::make('created_at')
                                     ->dateTime()
                                     ->state('2022-01-01 14:10:32'),

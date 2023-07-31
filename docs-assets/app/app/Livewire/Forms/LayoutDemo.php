@@ -4,7 +4,6 @@ namespace App\Livewire\Forms;
 
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -402,12 +401,12 @@ class LayoutDemo extends Component implements HasForms
                             ->content('May 21, 2021'),
                     ]),
                 Group::make()
-                    ->id('card')
+                    ->id('section')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Card::make([
+                        Section::make([
                             TextInput::make('hits')
                                 ->default(30),
                             Select::make('period')
@@ -420,7 +419,7 @@ class LayoutDemo extends Component implements HasForms
                             Textarea::make('notes')
                                 ->columnSpanFull(),
                         ])
-                            ->statePath('card')
+                            ->statePath('section')
                             ->columns(3),
                     ]),
                 Group::make()

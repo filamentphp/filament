@@ -4,7 +4,7 @@ title: Dashboard
 
 ## Overview
 
-Filament allows you to build dynamic dashboards, comprised of "widget" cards, very easily.
+Filament allows you to build dynamic dashboards, comprised of "widgets", very easily.
 
 The following document will explain how to use these widgets to assemble a dashboard using the panel.
 
@@ -12,7 +12,7 @@ The following document will explain how to use these widgets to assemble a dashb
 
 Filament ships with these widgets:
 
-- [Stats overview](../widgets/stats-overview) widgets display any data, often numeric data, within cards in a row.
+- [Stats overview](../widgets/stats-overview) widgets display any data, often numeric data, as stats in a row.
 - [Chart](../widgets/charts) widgets display numeric data in a visual chart.
 - [Table](#table-widgets) widgets which display a [table](../tables/getting-started) on your dashboard.
 

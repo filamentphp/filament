@@ -3,11 +3,11 @@
 namespace {{ namespace }};
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class {{ class }} extends BaseWidget
 {
-    protected function getCards(): array
+    protected function getStats(): array
     {
         return [
             //

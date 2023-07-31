@@ -1,6 +1,6 @@
 import Chart from 'chart.js/auto'
 
-export default function statsOverviewCardChart({ labels, values }) {
+export default function statsOverviewStatChart({ labels, values }) {
     return {
         init: function () {
             this.initChart()

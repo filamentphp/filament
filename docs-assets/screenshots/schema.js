@@ -1121,15 +1121,6 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/card/simple': {
-        url: 'forms/layout',
-        selector: '#card',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
     'forms/layout/actions/anonymous/simple': {
         url: 'forms/layout',
         selector: '#anonymousActions',
@@ -1589,15 +1580,6 @@ export default {
     'infolists/layout/section/compact': {
         url: 'infolists/layout',
         selector: '#sectionCompact',
-        viewport: {
-            width: 1920,
-            height: 640,
-            deviceScaleFactor: 3,
-        },
-    },
-    'infolists/layout/card/simple': {
-        url: 'infolists/layout',
-        selector: '#card',
         viewport: {
             width: 1920,
             height: 640,

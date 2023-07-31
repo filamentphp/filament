@@ -640,9 +640,9 @@ public function table(Table $table): Table
 
 ## Introducing widgets
 
-Filament widgets are components that display information on your dashboard, especially statistics. Widgets are typically added to the default [Dashboard](../panels/dashboard) of the panel, but you can add them to any page, including resource pages. Filament includes built-in widgets like the [stats widget](../widgets/stats-overview), to render important statistics in a simple card; [chart widget](../widgets/charts), which can render an interactive chart; and [table widget](../panels/dashboard#table-widgets), which allows you to easily embed the table builder.
+Filament widgets are components that display information on your dashboard, especially statistics. Widgets are typically added to the default [Dashboard](../panels/dashboard) of the panel, but you can add them to any page, including resource pages. Filament includes built-in widgets like the [stats widget](../widgets/stats-overview), to render important statistics in a simple overview; [chart widget](../widgets/charts), which can render an interactive chart; and [table widget](../panels/dashboard#table-widgets), which allows you to easily embed the table builder.
 
-Let's add a stats widget to our default dashboard page that includes a card for each type of patient and a chart to visualize treatments administered over time.
+Let's add a stats widget to our default dashboard page that includes a stat for each type of patient and a chart to visualize treatments administered over time.
 
 ### Creating a stats widget
 
@@ -652,7 +652,7 @@ Create a [stats widget](../widgets/stats-overview) to render patient types using
 php artisan make:filament-widget PatientTypeOverview --stats-overview
 ```
 
-This will create a new `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Card` instances from the `getCards()` method:
+This will create a new `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Stat` instances from the `getStats()` method:
 
 ```php
 <?php
@@ -661,22 +661,22 @@ namespace App\Filament\Widgets;
 
 use App\Models\Patient;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class PatientTypeOverview extends BaseWidget
 {
-    protected function getCards(): array
+    protected function getStats(): array
     {
         return [
-            Card::make('Cats', Patient::query()->where('type', 'cat')->count()),
-            Card::make('Dogs', Patient::query()->where('type', 'dog')->count()),
-            Card::make('Rabbits', Patient::query()->where('type', 'rabbit')->count()),
+            Stat::make('Cats', Patient::query()->where('type', 'cat')->count()),
+            Stat::make('Dogs', Patient::query()->where('type', 'dog')->count()),
+            Stat::make('Rabbits', Patient::query()->where('type', 'rabbit')->count()),
         ];
     }
 }
 ```
 
-Open your dashboard, and you should see your new widget displayed. Each card should show the total number of patients for the specified type.
+Open your dashboard, and you should see your new widget displayed. Each stat should show the total number of patients for the specified type.
 
 ### Creating a chart widget
 
