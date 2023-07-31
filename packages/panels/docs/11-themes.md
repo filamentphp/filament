@@ -4,7 +4,7 @@ title: Themes
 
 ## Changing the colors
 
-In the [configuration](configuration), you can easily change the colors that are used. Filament ships with 7 predefined colors that are used everywhere within the framework. They are customizable as follows:
+In the [configuration](configuration), you can easily change the colors that are used. Filament ships with 6 predefined colors that are used everywhere within the framework. They are customizable as follows:
 
 ```php
 use Filament\Panel;
