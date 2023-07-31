@@ -32,7 +32,7 @@ class Section extends Component
     protected bool | Closure $isContentBefore = false;
 
     /**
-     * @param string | array<Component> | Htmlable | Closure | null $heading
+     * @param  string | array<Component> | Htmlable | Closure | null  $heading
      */
     final public function __construct(string | array | Htmlable | Closure | null $heading = null)
     {
@@ -42,7 +42,7 @@ class Section extends Component
     }
 
     /**
-     * @param string | array<Component> | Htmlable | Closure | null $heading
+     * @param  string | array<Component> | Htmlable | Closure | null  $heading
      */
     public static function make(string | array | Htmlable | Closure | null $heading = null): static
     {
