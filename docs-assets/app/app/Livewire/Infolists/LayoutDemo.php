@@ -253,7 +253,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             ->columns(3),
                     ]),
                 Group::make()
-                    ->id('section')
+                    ->id('sectionWithoutHeader')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])

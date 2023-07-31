@@ -401,7 +401,7 @@ class LayoutDemo extends Component implements HasForms
                             ->content('May 21, 2021'),
                     ]),
                 Group::make()
-                    ->id('section')
+                    ->id('sectionWithoutHeader')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
@@ -419,7 +419,7 @@ class LayoutDemo extends Component implements HasForms
                             Textarea::make('notes')
                                 ->columnSpanFull(),
                         ])
-                            ->statePath('section')
+                            ->statePath('sectionWithoutHeader')
                             ->columns(3),
                     ]),
                 Group::make()

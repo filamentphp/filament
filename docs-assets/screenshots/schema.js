@@ -1112,6 +1112,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/layout/section/without-header': {
+        url: 'forms/layout',
+        selector: '#sectionWithoutHeader',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/layout/placeholder/simple': {
         url: 'forms/layout',
         selector: '#placeholder',
@@ -1580,6 +1589,15 @@ export default {
     'infolists/layout/section/compact': {
         url: 'infolists/layout',
         selector: '#sectionCompact',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/layout/section/without-header': {
+        url: 'infolists/layout',
+        selector: '#sectionWithoutHeader',
         viewport: {
             width: 1920,
             height: 640,
