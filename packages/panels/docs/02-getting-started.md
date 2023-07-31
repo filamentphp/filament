@@ -145,7 +145,7 @@ If you open the `PatientResource.php` file, there's a `form()` method with an em
 
 #### "Name" text input
 
-Filament bundles a large selection of [form fields](../forms/fields). Let's start with a simple [text input field](../forms/fields/text-input):
+Filament bundles a large selection of [form fields](../forms/fields/getting-started). Let's start with a simple [text input field](../forms/fields/text-input):
 
 ```php
 use Filament\Forms;

@@ -4,9 +4,9 @@ title: Getting started
 
 ## Overview
 
-Filament's infolist package allows you to [render a read-only list of data about a particular entity](adding-an-infolist-to-a-livewire-component). It's also used within other Filament packages, such as the [panel builder](../panels) for displaying [app resources](../panels/resources) and [relation managers](../panels/resources/relation-managers), as well as for [action modals](../actions). Learning the features of the infolist builder will be incredibly time-saving when both building your own custom Livewire applications and using Filament's other packages.
+Filament's infolist package allows you to [render a read-only list of data about a particular entity](adding-an-infolist-to-a-livewire-component). It's also used within other Filament packages, such as the [panel builder](../panels) for displaying [app resources](../panels/resources/getting-started) and [relation managers](../panels/resources/relation-managers), as well as for [action modals](../actions). Learning the features of the infolist builder will be incredibly time-saving when both building your own custom Livewire applications and using Filament's other packages.
 
-This guide will walk you through the basics of building infolists with Filament's infolist package. If you're planning to add a new infolist to your own Livewire component, you should [do that first](adding-an-infolist-to-a-livewire-component) and then come back. If you're adding an infolist to an [app resource](../panels/resources), or another Filament package, you're ready to go!
+This guide will walk you through the basics of building infolists with Filament's infolist package. If you're planning to add a new infolist to your own Livewire component, you should [do that first](adding-an-infolist-to-a-livewire-component) and then come back. If you're adding an infolist to an [app resource](../panels/resources/getting-started), or another Filament package, you're ready to go!
 
 ## Defining entries
 

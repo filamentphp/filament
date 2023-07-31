@@ -7,7 +7,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Field classes can be found in the `Filament\Form\Components` namespace.
 
-Fields reside within the schema of your form, alongside any [layout components](layout).
+Fields reside within the schema of your form, alongside any [layout components](layout/getting-started).
 
 Fields may be created using the static `make()` method, passing its unique name. The name of the field should correspond to a property on your Livewire component. You may use "dot notation" to bind fields to keys in arrays.
 

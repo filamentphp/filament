@@ -6,7 +6,7 @@ title: Users
 
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
 
-## Authorizing access to the app
+## Authorizing access to the panel
 
 To set up your `App\Models\User` to access Filament in non-local environments, you must implement the `FilamentUser` contract:
 
@@ -30,7 +30,7 @@ class User extends Authenticatable implements FilamentUser
 }
 ```
 
-The `canAccessPanel()` method returns `true` or `false` depending on whether the user is allowed to access Filament. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
+The `canAccessPanel()` method returns `true` or `false` depending on whether the user is allowed to access the `$panel`. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
 
 ## Setting up user avatars
 

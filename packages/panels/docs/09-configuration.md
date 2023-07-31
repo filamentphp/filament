@@ -8,7 +8,7 @@ By default, the configuration file is located at `app/Providers/Filament/AdminPa
 
 ## Introducing panels
 
-By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources), [pages](pages), and [dashboard widgets](dashboard) you create get registered to this panel.
+By default, when you install the package, there is one panel that has been set up for you - and it lives on `/admin`. All the [resources](resources/getting-started), [pages](pages), and [dashboard widgets](dashboard) you create get registered to this panel.
 
 However, you can create as many panels as you want, and each can have its own set of resources, pages and widgets.
 

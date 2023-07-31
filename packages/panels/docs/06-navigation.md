@@ -4,7 +4,7 @@ title: Navigation
 
 ## Overview
 
-By default, Filament will register navigation items for each of your [resources](resources) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item.
+By default, Filament will register navigation items for each of your [resources](resources/getting-started) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item.
 
 ## Customizing a navigation item's label
 
@@ -25,7 +25,7 @@ public static function getNavigationLabel(): ?string
 
 ## Customizing a navigation item's icon
 
-To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set=1#search), you may override the `$navigationIcon` property on the [resource](resources) or [page](pages) class:
+To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set=1#search), you may override the `$navigationIcon` property on the [resource](resources/getting-started) or [page](pages) class:
 
 ```php
 protected static ?string $navigationIcon = 'heroicon-o-document-text';
@@ -71,7 +71,7 @@ public static function getNavigationBadgeColor(): ?string
 
 ## Grouping navigation items
 
-You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources) and [custom page](pages):
+You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources/getting-started) and [custom page](pages):
 
 ```php
 protected static ?string $navigationGroup = 'Settings';

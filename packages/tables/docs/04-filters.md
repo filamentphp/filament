@@ -248,7 +248,7 @@ TernaryFilter::make('trashed')
 
 ### Custom filter forms
 
-You may use components from the [form builder](../forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
+You may use components from the [form builder](../forms/fields/getting-started) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
 use Filament\Forms\Components\DatePicker;

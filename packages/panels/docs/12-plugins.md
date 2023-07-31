@@ -17,7 +17,7 @@ Filament plugins build on top of the concepts of Laravel packages and allow you 
 A plugin class is used to allow your package to interact with a panel [configuration](configuration) file. It's a simple PHP class that implements the `Plugin` interface. 3 methods are required:
 
 - The `getId()` method returns the unique identifier of the plugin amongst other plugins. Please ensure that it is specific enough to not clash with other plugins that might be used in the same project.
-- The `register()` method allows you to use any [configuration](configuration) option that is available to the panel. This includes registering [resources](resources), [pages](pages), [themes](themes), [render hooks](configuration#render-hooks) and more.
+- The `register()` method allows you to use any [configuration](configuration) option that is available to the panel. This includes registering [resources](resources/getting-started), [pages](pages), [themes](themes), [render hooks](configuration#render-hooks) and more.
 - The `boot()` method is run only when the panel that the plugin is being registered to is actually in-use. It is executed by a middleware class.
 
 ```php

@@ -4,7 +4,7 @@ title: Validation
 
 ## Overview
 
-Validation rules may be added to any [field](fields).
+Validation rules may be added to any [field](fields/getting-started).
 
 In Laravel, validation rules are usually defined in arrays like `['required', 'max:255']` or a combined string like `required|max:255`. This is fine if you're exclusively working in the backend with simple form requests. But Filament is also able to give your users frontend validation, so they can fix their mistakes before any backend requests are made.
 

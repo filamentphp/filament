@@ -52,7 +52,7 @@ In this example, `500` is the number of milliseconds to wait before sending a ne
 
 ## Form component utility injection
 
-The vast majority of methods used to configure [fields](fields) and [layout components](layout) accept functions as parameters instead of hardcoded values:
+The vast majority of methods used to configure [fields](fields/getting-started) and [layout components](layout/getting-started) accept functions as parameters instead of hardcoded values:
 
 ```php
 use App\Models\User;
@@ -271,7 +271,7 @@ TextInput::make('password_confirmation')
     ->dehydrated(false)
 ```
 
-If your form auto-saves data to the database, like in a [resource](../panels/resources) or [table action](../tables/actions), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
+If your form auto-saves data to the database, like in a [resource](../panels/resources/getting-started) or [table action](../tables/actions), this is useful to prevent a field from being saved to the database if it is purely used for presentational purposes.
 
 ## Reactive forms cookbook
 
@@ -422,7 +422,7 @@ Select::make('sub_category')
 
 ### Dynamic fields based on a select option
 
-You may wish to render a different set of fields based on the value of a field, like a select. To do this, you can pass a function to the `schema()` method of any [layout component](layout), which checks the value of the field and returns a different schema based on that value. Also, you will need a way to initialise the new fields in the dynamic schema when they are first loaded.
+You may wish to render a different set of fields based on the value of a field, like a select. To do this, you can pass a function to the `schema()` method of any [layout component](layout/getting-started), which checks the value of the field and returns a different schema based on that value. Also, you will need a way to initialise the new fields in the dynamic schema when they are first loaded.
 
 ```php
 use Filament\Forms\Components\FileUpload;
