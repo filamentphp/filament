@@ -628,7 +628,7 @@
 
                                     <div
                                         @class([
-                                            'flex flex-col md:items-center w-full gap-3 md:flex-row',
+                                            'flex w-full flex-col gap-3 md:flex-row md:items-center',
                                             'py-4' => $recordHasActions,
                                         ])
                                     >
