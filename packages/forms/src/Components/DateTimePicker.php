@@ -86,7 +86,13 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
                 try {
                     $state = Carbon::createFromFormat($component->getFormat(), $state);
                 } catch (InvalidFormatException $exception) {
-                    $state = Carbon::parse($state);
+                    try {
+                        $state = Carbon::parse($state);
+                    } catch (InvalidFormatException $exception) {
+                        $component->state(null);
+
+                        return;
+                    }
                 }
             }
 
