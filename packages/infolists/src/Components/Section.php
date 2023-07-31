@@ -31,12 +31,14 @@ class Section extends Component
 
     protected bool | Closure $isContentBefore = false;
 
-    final public function __construct(string | Htmlable | Closure | null $heading = null)
+    final public function __construct(string | array | Htmlable | Closure | null $heading = null)
     {
-        $this->heading($heading);
+        is_array($heading)
+            ? $this->childComponents($heading)
+            : $this->heading($heading);
     }
 
-    public static function make(string | Htmlable | Closure | null $heading = null): static
+    public static function make(string | array | Htmlable | Closure | null $heading = null): static
     {
         $static = app(static::class, ['heading' => $heading]);
         $static->configure();
