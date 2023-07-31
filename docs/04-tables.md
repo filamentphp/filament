@@ -131,7 +131,7 @@ Image::make($name)
 
 ```php
 Text::make($name)
-    ->currency($symbol = '$', $decimalSeparator = '.', $thousandsSeparator = ',', $decimals = 2) // Format values in this column in a currency format.
+    ->currency($symbol = '€', $decimalSeparator = '.', $thousandsSeparator = ',', $decimals = 2) // Format values in this column in a currency format.
     ->date($format = 'F j, Y') // Format values in this column as dates, using PHP date formatting tokens.
     ->dateTime($format = 'F j, Y H:i:s') // Format values in this column as date-times, using PHP date formatting tokens.
     ->default() // Set the default value for when this field does not exist.
