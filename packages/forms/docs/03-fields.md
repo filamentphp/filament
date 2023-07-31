@@ -465,12 +465,12 @@ TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask
 )
 ```
 
-There is also a `money()` method that is able to define easier formatting for currency inputs. This example, the symbol prefix is `$`, there is a `,` thousands separator, and two decimal places:
+There is also a `money()` method that is able to define easier formatting for currency inputs. This example, the symbol prefix is `€`, there is a `,` thousands separator, and two decimal places:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2))
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '€', thousandsSeparator: ',', decimalPlaces: 2))
 ```
 
 You can also control whether the number is signed or not. While the default is to allow both negative and positive numbers, `isSigned: false` allows only positive numbers:
@@ -478,7 +478,7 @@ You can also control whether the number is signed or not. While the default is t
 ```php
 use Filament\Forms\Components\TextInput;
 
-TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '$', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
+TextInput::make('cost')->mask(fn (TextInput\Mask $mask) => $mask->money(prefix: '€', thousandsSeparator: ',', decimalPlaces: 2, isSigned: false))
 ```
 
 ### Datalists
