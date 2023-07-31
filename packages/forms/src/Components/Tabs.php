@@ -19,6 +19,8 @@ class Tabs extends Component
 
     protected string | Closure | null $tabQueryStringKey = null;
 
+    protected bool | Closure $isWrappedInCard = true;
+
     final public function __construct(?string $label = null)
     {
         $this->label($label);
@@ -54,6 +56,18 @@ class Tabs extends Component
         $this->tabQueryStringKey = $key;
 
         return $this;
+    }
+
+    public function wrappedInCard(bool | Closure $condition = true): static
+    {
+        $this->isWrappedInCard = $condition;
+
+        return $this;
+    }
+
+    public function isWrappedInCard(): bool
+    {
+        return (bool) $this->evaluate($this->isWrappedInCard);
     }
 
     public function getActiveTab(): int

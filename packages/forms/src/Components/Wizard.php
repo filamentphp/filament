@@ -29,6 +29,8 @@ class Wizard extends Component
 
     public int | Closure $startStep = 1;
 
+    protected bool | Closure $isWrappedInCard = true;
+
     /**
      * @var view-string
      */
@@ -142,6 +144,18 @@ class Wizard extends Component
         $this->modifyPreviousActionUsing = $callback;
 
         return $this;
+    }
+
+    public function wrappedInCard(bool | Closure $condition = true): static
+    {
+        $this->isWrappedInCard = $condition;
+
+        return $this;
+    }
+
+    public function isWrappedInCard(): bool
+    {
+        return (bool) $this->evaluate($this->isWrappedInCard);
     }
 
     public function getPreviousActionName(): string
