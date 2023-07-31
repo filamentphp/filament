@@ -1,8 +1,8 @@
-<x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
-    @php
-        $isWrappedInCard = $isWrappedInCard();
-    @endphp
+@php
+    $isContained = $isContained();
+@endphp
 
+<x-dynamic-component :component="$getEntryWrapperView()" :entry="$entry">
     <ul
         {{
             $attributes
@@ -26,7 +26,7 @@
                 <li
                     @class([
                         'block',
-                        'rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10' => $isWrappedInCard,
+                        'rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10' => $isContained,
                     ])
                 >
                     {{ $container }}
