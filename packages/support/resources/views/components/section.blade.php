@@ -104,19 +104,15 @@
             @if ($hasHeading || $hasDescription)
                 <div class="grid flex-1 gap-y-1">
                     @if ($hasHeading)
-                        <h3
-                            class="fi-section-header-heading text-base font-semibold leading-6 text-gray-950 dark:text-white"
-                        >
+                        <x-filament::section.heading>
                             {{ $heading }}
-                        </h3>
+                        </x-filament::section.heading>
                     @endif
 
                     @if ($hasDescription)
-                        <p
-                            class="fi-section-header-description text-sm text-gray-500 dark:text-gray-400"
-                        >
+                        <x-filament::section.description>
                             {{ $description }}
-                        </p>
+                        </x-filament::section.description>
                     @endif
                 </div>
             @endif
