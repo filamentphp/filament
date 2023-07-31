@@ -191,14 +191,6 @@ trait HasActions
             return ActionsPosition::AfterColumns;
         }
 
-        $actions = $this->getActions();
-
-        $firstAction = Arr::first($actions);
-
-        if ($firstAction instanceof ActionGroup) {
-            return ActionsPosition::BottomCorner;
-        }
-
         return ActionsPosition::AfterContent;
     }
 

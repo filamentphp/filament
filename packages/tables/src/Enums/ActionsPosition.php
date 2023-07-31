@@ -13,6 +13,4 @@ enum ActionsPosition
     case BeforeCells;
 
     case BeforeColumns;
-
-    case BottomCorner;
 }

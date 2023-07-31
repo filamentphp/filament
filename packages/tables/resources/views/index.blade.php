@@ -628,9 +628,8 @@
 
                                     <div
                                         @class([
-                                            'flex flex-col w-full gap-3',
+                                            'flex flex-col w-full gap-3 py-4',
                                             'md:items-center md:flex-row' => ! $contentGrid,
-                                            'py-4' => $recordHasActions,
                                         ])
                                     >
                                         @if ($recordUrl)
@@ -692,13 +691,10 @@
                                         @if ($recordHasActions)
                                             <x-filament-tables::actions
                                                 :actions="$actions"
-                                                :alignment="($actionsPosition === ActionsPosition::BottomCorner) ? Alignment::End : 'start md:end'"
+                                                :alignment="(! $contentGrid) ? 'start md:end' : Alignment::Start"
                                                 :record="$record"
                                                 wrap="-sm"
-                                                @class([
-                                                    $recordContentHorizontalPaddingClasses,
-                                                    'justify-self-end' => $actionsPosition === ActionsPosition::BottomCorner,
-                                                ])
+                                                :class="$recordContentHorizontalPaddingClasses"
                                             />
                                         @endif
                                     </div>
