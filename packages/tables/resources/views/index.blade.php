@@ -584,16 +584,15 @@
                                     }"
                                 >
                                     @php
-                                        $itemClasses = \Illuminate\Support\Arr::toCssClasses([
-                                            'block flex-1',
-                                            'px-3 py-4 sm:px-6' => ! $contentGrid,
-                                            'p-4' => $contentGrid,
-                                        ]);
+                                        $isRecordContentPadded = ! ($isReordering || ($isSelectionEnabled && $isRecordSelectable($record)));
+                                        $recordHasActions = count($actions) && (! $isReordering);
                                     @endphp
 
                                     <div
                                         @class([
-                                            'flex items-center px-1 sm:px-3',
+                                            'flex items-center',
+                                            'px-1 sm:px-3' => (! $contentGrid) && (! $isRecordContentPadded),
+                                            'ps-1' => $contentGrid && (! $isRecordContentPadded),
                                         ])
                                     >
                                         @if ($isReordering)
@@ -633,11 +632,28 @@
                                             </div>
                                         @endif
 
-                                        <div>
+                                        @php
+                                            $recordContentClasses = \Illuminate\Support\Arr::toCssClasses([
+                                                'block pt-4',
+                                                'pb-4' => (! $contentGrid) && (! $recordHasActions),
+                                                'px-3' => (! $contentGrid) && (! $isRecordContentPadded),
+                                                'px-4 sm:px-6' => (! $contentGrid) && $isRecordContentPadded,
+                                                'ps-2 pe-4' => $contentGrid && (! $isRecordContentPadded),
+                                                'px-4' => $contentGrid && $isRecordContentPadded,
+                                                'pb-4' => $contentGrid && (! $recordHasActions),
+                                            ]);
+                                        @endphp
+
+                                        <div
+                                            @class([
+                                                'grid w-full gap-3',
+                                                'pb-4' => $recordHasActions,
+                                            ])
+                                        >
                                             @if ($recordUrl)
                                                 <a
                                                     href="{{ $recordUrl }}"
-                                                    class="{{ $itemClasses }}"
+                                                    class="{{ $recordContentClasses }}"
                                                 >
                                                     <x-filament-tables::columns.layout
                                                         :components="$getColumnsLayout()"
@@ -658,7 +674,7 @@
                                                     wire:click="{{ $recordWireClickAction }}"
                                                     wire:loading.attr="disabled"
                                                     wire:target="{{ $recordWireClickAction }}"
-                                                    class="{{ $itemClasses }}"
+                                                    class="{{ $recordContentClasses }}"
                                                 >
                                                     <x-filament-tables::columns.layout
                                                         :components="$getColumnsLayout()"
@@ -669,7 +685,7 @@
                                                 </button>
                                             @else
                                                 <div
-                                                    class="{{ $itemClasses }}"
+                                                    class="{{ $recordContentClasses }}"
                                                 >
                                                     <x-filament-tables::columns.layout
                                                         :components="$getColumnsLayout()"
@@ -680,17 +696,18 @@
                                                 </div>
                                             @endif
 
-                                            @if (count($actions) && ! $isReordering)
+                                            @if ($recordHasActions)
                                                 <x-filament-tables::actions
                                                     :actions="$actions"
-                                                    :alignment="$actionsPosition === ActionsPosition::AfterContent ? Alignment::Start : 'start sm:end'"
+                                                    :alignment="($actionsPosition === ActionsPosition::AfterContent) ? Alignment::Start : 'start sm:end'"
                                                     :record="$record"
                                                     wrap="-sm"
                                                     @class([
-                                                        // 'absolute bottom-1 end-1' => $actionsPosition === ActionsPosition::BottomCorner,
-                                                        // 'md:relative md:bottom-0 md:end-0' => $actionsPosition === ActionsPosition::BottomCorner && (! $contentGrid),
-                                                        // 'mb-3' => $actionsPosition === ActionsPosition::AfterContent,
-                                                        // 'md:mb-0' => $actionsPosition === ActionsPosition::AfterContent && (! $contentGrid),
+                                                        'px-3' => (! $contentGrid) && (! $isRecordContentPadded),
+                                                        'px-4 sm:px-6' => (! $contentGrid) && $isRecordContentPadded,
+                                                        'ps-2 pe-4' => $contentGrid && (! $isRecordContentPadded),
+                                                        'px-4' => $contentGrid && $isRecordContentPadded,
+                                                        'justify-self-end' => $actionsPosition === ActionsPosition::BottomCorner,
                                                     ])
                                                 />
                                             @endif
