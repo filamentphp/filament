@@ -166,7 +166,7 @@
                 ->style([$linkStyles])
         }}
     >
-        @if ($iconPosition === in_array($iconPosition, [IconPosition::Before, 'before']))
+        @if (in_array($iconPosition, [IconPosition::Before, 'before']))
             @if ($icon)
                 <x-filament::icon
                     :alias="$iconAlias"
@@ -174,7 +174,6 @@
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                     :class="$iconClasses"
-                    :style="$iconStyles"
                 />
             @endif
 
@@ -183,7 +182,6 @@
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
                     :class="$iconClasses"
-                    :style="$iconStyles"
                 />
             @endif
         @endif
