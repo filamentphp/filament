@@ -166,7 +166,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Support\RawJs;
 
 TextInput::make('cardNumber')
-    ->mask(RawJs::make(<<<JS
+    ->mask(RawJs::make(<<<'JS'
         $input.startsWith('34') || $input.startsWith('37') ? '9999 999999 99999' : '9999 9999 9999 9999'
     JS))
 ```
