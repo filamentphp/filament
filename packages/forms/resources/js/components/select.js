@@ -40,8 +40,6 @@ export default function selectFormComponent({
         state,
 
         init: async function () {
-            console.log(isSearchable)
-
             this.select = new Choices(this.$refs.input, {
                 allowHTML: isHtmlAllowed,
                 duplicateItemsAllowed: false,
