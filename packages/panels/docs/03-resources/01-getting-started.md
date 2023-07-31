@@ -46,21 +46,13 @@ Additionally, your simple resource will have no `getRelations()` method, as [rel
 
 ### Automatically generating forms and tables
 
-If you'd like to save time, Filament can automatically generate the [form](#resource-forms) and [table](#resource-tables) for you, based on your model's database columns.
-
-The `doctrine/dbal` package is required to use this functionality:
-
-```bash
-composer require doctrine/dbal --dev
-```
-
-When creating your resource, you may now use `--generate`:
+If you'd like to save time, Filament can automatically generate the [form](#resource-forms) and [table](#resource-tables) for you, based on your model's database columns, using `--generate`:
 
 ```bash
 php artisan make:filament-resource Customer --generate
 ```
 
-> If your table contains ENUM columns, `doctrine/dbal` is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
 
 ### Handling soft deletes
 
