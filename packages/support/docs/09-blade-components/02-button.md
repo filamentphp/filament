@@ -27,9 +27,13 @@ By default, a button's underlying HTML tag is `<button>`. You can change it to b
 
 ## Setting the size of a button
 
-By default, the size of a button is "medium". You can make it "small", "large", "extra large" or "extra extra large" by using the `size` attribute:
+By default, the size of a button is "medium". You can make it "extra small", "small", "large" or "extra large" by using the `size` attribute:
 
 ```blade
+<x-filament::button size="xs">
+    New user
+</x-filament::button>
+
 <x-filament::button size="sm">
     New user
 </x-filament::button>
@@ -39,10 +43,6 @@ By default, the size of a button is "medium". You can make it "small", "large", 
 </x-filament::button>
 
 <x-filament::button size="xl">
-    New user
-</x-filament::button>
-
-<x-filament::button size="2xl">
     New user
 </x-filament::button>
 ```
