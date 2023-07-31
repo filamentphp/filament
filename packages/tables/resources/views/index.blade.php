@@ -584,15 +584,30 @@
                                     }"
                                 >
                                     @php
-                                        $isRecordContentPadded = ! ($isReordering || ($isSelectionEnabled && $isRecordSelectable($record)));
+                                        $hasItemBeforeRecordContent = $isReordering || ($isSelectionEnabled && $isRecordSelectable($record));
+                                        $isRecordCollapsible = $hasCollapsibleColumnsLayout && (! $isReordering);
+                                        $hasItemAfterRecordContent = $isRecordCollapsible;
                                         $recordHasActions = count($actions) && (! $isReordering);
+
+                                        $recordContentHorizontalPaddingClasses = \Illuminate\Support\Arr::toCssClasses([
+                                            'ps-3' => (! $contentGrid) && $hasItemBeforeRecordContent,
+                                            'ps-4 sm:ps-6' => (! $contentGrid) && (! $hasItemBeforeRecordContent),
+                                            'pe-3' => (! $contentGrid) && $hasItemAfterRecordContent,
+                                            'pe-4 sm:pe-6' => (! $contentGrid) && (! $hasItemAfterRecordContent),
+                                            'ps-2' => $contentGrid && $hasItemBeforeRecordContent,
+                                            'ps-4' => $contentGrid && (! $hasItemBeforeRecordContent),
+                                            'pe-2' => $contentGrid && $hasItemAfterRecordContent,
+                                            'pe-4' => $contentGrid && (! $hasItemAfterRecordContent),
+                                        ]);
                                     @endphp
 
                                     <div
                                         @class([
                                             'flex items-center',
-                                            'px-1 sm:px-3' => (! $contentGrid) && (! $isRecordContentPadded),
-                                            'ps-1' => $contentGrid && (! $isRecordContentPadded),
+                                            'ps-1 sm:ps-3' => (! $contentGrid) && $hasItemBeforeRecordContent,
+                                            'pe-1 sm:pe-3' => (! $contentGrid) && $hasItemAfterRecordContent,
+                                            'ps-1' => $contentGrid && $hasItemBeforeRecordContent,
+                                            'pe-1' => $contentGrid && $hasItemAfterRecordContent,
                                         ])
                                     >
                                         @if ($isReordering)
@@ -608,39 +623,11 @@
                                             />
                                         @endif
 
-                                        {{-- TODO: review collapse button --}}
-
-                                        @if ($hasCollapsibleColumnsLayout)
-                                            <div
-                                                @class([
-                                                    'absolute end-1',
-                                                    'top-10' => $isSelectionEnabled,
-                                                    'top-1' => ! $isSelectionEnabled,
-                                                    'md:relative md:end-0 md:top-0' => ! $contentGrid,
-                                                    'hidden' => $isReordering,
-                                                ])
-                                            >
-                                                <x-filament::icon-button
-                                                    icon="heroicon-m-chevron-down"
-                                                    icon-alias="tables::columns.collapse-button"
-                                                    color="gray"
-                                                    size="sm"
-                                                    x-on:click="isCollapsed = ! isCollapsed"
-                                                    x-bind:class="isCollapsed || '-rotate-180'"
-                                                    class="transition"
-                                                />
-                                            </div>
-                                        @endif
-
                                         @php
                                             $recordContentClasses = \Illuminate\Support\Arr::toCssClasses([
+                                                $recordContentHorizontalPaddingClasses,
                                                 'block pt-4',
-                                                'pb-4' => (! $contentGrid) && (! $recordHasActions),
-                                                'px-3' => (! $contentGrid) && (! $isRecordContentPadded),
-                                                'px-4 sm:px-6' => (! $contentGrid) && $isRecordContentPadded,
-                                                'ps-2 pe-4' => $contentGrid && (! $isRecordContentPadded),
-                                                'px-4' => $contentGrid && $isRecordContentPadded,
-                                                'pb-4' => $contentGrid && (! $recordHasActions),
+                                                'pb-4' => ! $recordHasActions,
                                             ]);
                                         @endphp
 
@@ -696,6 +683,16 @@
                                                 </div>
                                             @endif
 
+                                            @if ($hasCollapsibleColumnsLayout && (! $isReordering))
+                                                <div
+                                                    x-collapse
+                                                    x-show="! isCollapsed"
+                                                    class="{{ $recordContentHorizontalPaddingClasses }}"
+                                                >
+                                                    {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
+                                                </div>
+                                            @endif
+
                                             @if ($recordHasActions)
                                                 <x-filament-tables::actions
                                                     :actions="$actions"
@@ -703,32 +700,24 @@
                                                     :record="$record"
                                                     wrap="-sm"
                                                     @class([
-                                                        'px-3' => (! $contentGrid) && (! $isRecordContentPadded),
-                                                        'px-4 sm:px-6' => (! $contentGrid) && $isRecordContentPadded,
-                                                        'ps-2 pe-4' => $contentGrid && (! $isRecordContentPadded),
-                                                        'px-4' => $contentGrid && $isRecordContentPadded,
+                                                        $recordContentHorizontalPaddingClasses,
                                                         'justify-self-end' => $actionsPosition === ActionsPosition::BottomCorner,
                                                     ])
                                                 />
                                             @endif
                                         </div>
-                                    </div>
 
-                                    {{-- TODO: review collapsible layout --}}
-                                    @if ($hasCollapsibleColumnsLayout)
-                                        <div
-                                            x-collapse
-                                            x-show="! isCollapsed"
-                                            @class([
-                                                '-mx-2 pb-2',
-                                                'md:ps-20' => (! $contentGrid) && $isSelectionEnabled,
-                                                'md:ps-12' => (! $contentGrid) && (! $isSelectionEnabled),
-                                                'hidden' => $isReordering,
-                                            ])
-                                        >
-                                            {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
-                                        </div>
-                                    @endif
+                                        @if ($isRecordCollapsible)
+                                            <x-filament::icon-button
+                                                color="gray"
+                                                icon-alias="tables::columns.collapse-button"
+                                                icon="heroicon-m-chevron-down"
+                                                x-on:click="isCollapsed = ! isCollapsed"
+                                                class="mx-1 my-2 shrink-0"
+                                                x-bind:class="{ 'rotate-180': isCollapsed }"
+                                            />
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
