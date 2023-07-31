@@ -103,7 +103,9 @@
                                 </div>
                             @endif
 
-                            <div class="border-t border-gray-100 p-4 dark:border-white/10">
+                            <div
+                                class="border-t border-gray-100 p-4 dark:border-white/10"
+                            >
                                 {{ $item }}
                             </div>
                         </li>

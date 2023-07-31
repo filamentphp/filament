@@ -9,12 +9,10 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
 class Repeater extends Field implements Contracts\CanConcealComponents
@@ -905,7 +903,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this;
     }
 
-    public function getField(): Field | null
+    public function getField(): ?Field
     {
         return $this->evaluate($this->field)?->hiddenLabel();
     }
