@@ -25,7 +25,14 @@
 
 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::tenant-menu.before') }}
 
-<x-filament::dropdown placement="bottom-start" teleport class="fi-tenant-menu">
+<x-filament::dropdown
+    placement="bottom-start"
+    teleport
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes($attributes)
+            ->class(['fi-tenant-menu'])
+    "
+>
     <x-slot name="trigger">
         <button
             @if (filament()->isSidebarCollapsibleOnDesktop())

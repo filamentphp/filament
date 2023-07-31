@@ -14,7 +14,14 @@
 
 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.before') }}
 
-<x-filament::dropdown placement="bottom-end" class="fi-user-menu">
+<x-filament::dropdown
+    placement="bottom-end"
+    teleport
+    :attributes="
+        \Filament\Support\prepare_inherited_attributes($attributes)
+            ->class(['fi-user-menu'])
+    "
+>
     <x-slot name="trigger">
         <button
             aria-label="{{ __('filament-panels::layout.actions.open_user_menu.label') }}"

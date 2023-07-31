@@ -39,7 +39,7 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'relative flex items-center justify-center gap-x-3 rounded-lg px-3 py-2 text-sm text-gray-700 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm text-gray-700 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:focus:bg-white/5',
             'font-semibold' => ! $grouped,
             'bg-gray-100 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
         ])
@@ -82,7 +82,7 @@
         <span
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
-                x-transition:enter="delay-100 lg:transition"
+                x-transition:enter="lg:transition lg:delay-100"
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
@@ -92,12 +92,18 @@
         </span>
 
         @if (filled($badge))
-            <x-filament::badge
-                :color="$badgeColor"
-                :x-show="filament()->isSidebarCollapsibleOnDesktop() ? '$store.sidebar.isOpen' : null"
+            <span
+                @if (filament()->isSidebarCollapsibleOnDesktop())
+                    x-show="$store.sidebar.isOpen"
+                    x-transition:enter="lg:transition lg:delay-100"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                @endif
             >
-                {{ $badge }}
-            </x-filament::badge>
+                <x-filament::badge :color="$badgeColor">
+                    {{ $badge }}
+                </x-filament::badge>
+            </span>
         @endif
     </a>
 </li>

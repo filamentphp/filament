@@ -68,19 +68,19 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ### Panel Builder icon aliases
 
-- `panels::database-notifications.open-button` - Button to open the database notifications modal
 - `panels::global-search.field` - Global search field
 - `panels::pages.dashboard.navigation-item` - Dashboard navigation item
 - `panels::pages.tenancy.register-tenant.open-tenant-button` - Button to open a tenant from the tenant registration page
-- `panels::sidebar.collapse-button` - Desktop sidebar collapse button when it is partially collapsible
-- `panels::sidebar.collapse-button.full` - Desktop sidebar collapse button when it is fully collapsible
+- `panels::sidebar.collapse-button` - Button to collapse the sidebar
+- `panels::sidebar.expand-button` - Button to expand the sidebar
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
 - `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
 - `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
 - `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
 - `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
-- `panels::topbar.close-mobile-sidebar-button` - Button to close the mobile sidebar
-- `panels::topbar.open-mobile-sidebar-button` - Button to open the mobile sidebar
+- `panels::topbar.close-sidebar-button` - Button to close the sidebar
+- `panels::topbar.open-sidebar-button` - Button to open the sidebar
+- `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::user-menu.profile-item` - Profile item in the user menu
 - `panels::user-menu.logout-button` - Button in the user menu to log out
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
