@@ -7,13 +7,13 @@ use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Expression;
 
 class AssociateAction extends Action
 {
@@ -31,6 +31,8 @@ class AssociateAction extends Action
      * @var array<string> | Closure | null
      */
     protected array | Closure | null $recordSelectSearchColumns = null;
+
+    protected bool | Closure $isSearchForcedCaseInsensitive = false;
 
     public static function getDefaultName(): ?string
     {
@@ -189,23 +191,21 @@ class AssociateAction extends Action
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
                 $search = strtolower($search);
 
-                /** @var Connection $databaseConnection */
-                $databaseConnection = $relationshipQuery->getConnection();
-
-                $searchOperator = match ($databaseConnection->getDriverName()) {
-                    'pgsql' => 'ilike',
-                    default => 'like',
-                };
-
                 $searchColumns ??= [$titleAttribute];
                 $isFirst = true;
+                $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
-                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $search): Builder {
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
+                        $caseAwareSearchColumn = $isForcedCaseInsensitive ?
+                            new Expression("lower({$searchColumn})") :
+                            $searchColumn;
+
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                        $query->{"{$whereClause}Raw"}(
-                            "lower({$searchColumn}) {$searchOperator} ?",
+                        $query->{$whereClause}(
+                            $caseAwareSearchColumn,
+                            'like',
                             "%{$search}%",
                         );
 
@@ -264,5 +264,17 @@ class AssociateAction extends Action
         }
 
         return $select;
+    }
+
+    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    {
+        $this->isSearchForcedCaseInsensitive = $condition;
+
+        return $this;
+    }
+
+    public function isSearchForcedCaseInsensitive(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 }

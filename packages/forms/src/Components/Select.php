@@ -10,13 +10,13 @@ use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -100,6 +100,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     protected string | Closure | null $relationship = null;
 
     protected int | Closure $optionsLimit = 50;
+
+    protected bool | Closure $isSearchForcedCaseInsensitive = false;
 
     protected function setUp(): void
     {
@@ -1012,23 +1014,20 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected function applySearchConstraint(Builder $query, string $search): Builder
     {
-        /** @var Connection $databaseConnection */
-        $databaseConnection = $query->getConnection();
-
-        $searchOperator = match ($databaseConnection->getDriverName()) {
-            'pgsql' => 'ilike',
-            default => 'like',
-        };
-
         $isFirst = true;
+        $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
-        $query->where(function (Builder $query) use ($isFirst, $searchOperator, $search): Builder {
+        $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
             foreach ($this->getSearchColumns() as $searchColumn) {
+                $caseAwareSearchColumn = $isForcedCaseInsensitive ?
+                    new Expression("lower({$searchColumn})") :
+                    $searchColumn;
+
                 $whereClause = $isFirst ? 'where' : 'orWhere';
 
                 $query->{$whereClause}(
-                    $searchColumn,
-                    $searchOperator,
+                    $caseAwareSearchColumn,
+                    'like',
                     "%{$search}%",
                 );
 
@@ -1160,5 +1159,17 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this->evaluate($this->maxItemsMessage) ?? trans_choice('filament-forms::components.select.max_items_message', $maxItems, [
             ':count' => $maxItems,
         ]);
+    }
+
+    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    {
+        $this->isSearchForcedCaseInsensitive = $condition;
+
+        return $this;
+    }
+
+    public function isSearchForcedCaseInsensitive(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 }

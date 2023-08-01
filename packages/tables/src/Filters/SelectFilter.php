@@ -25,6 +25,8 @@ class SelectFilter extends BaseFilter
 
     protected int | Closure $optionsLimit = 50;
 
+    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -182,6 +184,18 @@ class SelectFilter extends BaseFilter
         return $this->getAttribute();
     }
 
+    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    {
+        $this->isSearchForcedCaseInsensitive = $condition;
+
+        return $this;
+    }
+
+    public function isSearchForcedCaseInsensitive(): bool
+    {
+        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+    }
+
     public function getFormField(): Select
     {
         $field = Select::make($this->isMultiple() ? 'values' : 'value')
@@ -199,7 +213,8 @@ class SelectFilter extends BaseFilter
                     $this->getRelationshipName(),
                     $this->getRelationshipTitleAttribute(),
                     $this->modifyRelationshipQueryUsing,
-                );
+                )
+                ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive());
         } else {
             $field->options($this->getOptions());
         }
