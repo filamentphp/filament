@@ -45,7 +45,7 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
-    public function panel(Panel $panel)
+    public function panel(Panel $panel): Panel
     {
         return tap(new static)->setCurrentPanel($panel);
     }
