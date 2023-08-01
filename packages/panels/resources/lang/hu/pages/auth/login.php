@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Bejelentkezés a fiókba',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'vagy',
+            'label' => 'regisztrálj egy fiókot',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Elfelejtetted a jelszavad?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
@@ -39,7 +52,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Kérjük várjon :seconds másodpercet a következő próbálkozás előtt.',
+            'title' => 'Túl sok próbálkozás',
+            'body' => 'Kérjük, próbálja meg újra :second másodperc múlva.',
         ],
 
     ],

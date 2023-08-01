@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Előfizetésem kezelése',
+        ],
+
         'logout' => [
             'label' => 'Kijelentkezés',
         ],
@@ -18,6 +22,18 @@ return [
             'label' => 'felhasználói menü',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Oldsáv becsukása',
+            ],
+
+            'expand' => [
+                'label' => 'Oldalsáv kinyitása',
+            ],
+
+        ],
+
         'theme_switcher' => [
 
             'dark' => [
@@ -26,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Világos mód bekapcsolása',
+            ],
+
+            'system' => [
+                'label' => 'Rendszer alapján',
             ],
 
         ],

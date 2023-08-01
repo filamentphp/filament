@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Oszlopok',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -12,9 +18,46 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Az összes elem kiválasztása/kiválasztásának megszüntetése tömeges műveletekhez.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => ':key elem kiválasztása/kiválasztásának megszüntetése tömeges műveletekhez.',
+        ],
+
         'search' => [
             'label' => 'Keresés',
-            'placeholder' => 'Keres',
+            'placeholder' => 'Keresés',
+            'indicator' => 'Keres',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Összesítés',
+
+        'subheadings' => [
+            'all' => 'Összes :label',
+            'group' => ':group összesítése',
+            'page' => 'Ezen az oldalon',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Átlag',
+            ],
+
+            'count' => [
+                'label' => 'Darab',
+            ],
+
+            'sum' => [
+                'label' => 'Szumma',
+            ],
+
         ],
 
     ],
@@ -33,6 +76,10 @@ return [
             'label' => 'Szűrés',
         ],
 
+        'group' => [
+            'label' => 'Csoport',
+        ],
+
         'open_bulk_actions' => [
             'label' => 'Műveletek magjelenítése',
         ],
@@ -44,7 +91,11 @@ return [
     ],
 
     'empty' => [
+
         'heading' => 'Nincs találat',
+
+        'description' => 'Hozzon létre egy :model a kezdéshez.',
+
     ],
 
     'filters' => [
@@ -66,6 +117,8 @@ return [
 
         ],
 
+        'heading' => 'Szűrők',
+
         'indicator' => 'Aktív szűrők',
 
         'multi_select' => [
@@ -85,6 +138,30 @@ return [
             'with_trashed' => 'A törölt elemekkel',
 
             'without_trashed' => 'A törölt elemek nélkül',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Csoportosítás',
+                'placeholder' => 'Csoportosítás',
+            ],
+
+            'direction' => [
+
+                'label' => 'Csoportosítás iránya',
+
+                'options' => [
+                    'asc' => 'Növekvő',
+                    'desc' => 'Csökkenő',
+                ],
+
+            ],
 
         ],
 
