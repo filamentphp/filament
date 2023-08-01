@@ -53,8 +53,6 @@ FilamentView::registerRenderHook(
 - `panels::page.start` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::resource.pages.list-records.table.after` - After the resource table, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::resource.pages.list-records.table.before` - Before the resource table, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::resource.pages.list-records.tabs.after` - After the resource filter tabs, also [can be scoped](#scoping-render-hooks) to the page or resource class
-- `panels::resource.pages.list-records.tabs.before` - Before the resource filter tabs, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::resource.pages.list-records.tabs.end` - The end of the filter tabs (after the last tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::resource.pages.list-records.tabs.start` - The start of the filter tabs (before the first tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::resource.relation-manager.after` - After the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or relation manager class
