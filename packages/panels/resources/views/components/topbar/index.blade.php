@@ -120,7 +120,11 @@
             class="ms-auto flex items-center gap-x-4"
         >
             @if (filament()->isGlobalSearchEnabled())
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.before') }}
+
                 @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
+
+                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.after') }}
             @endif
 
             @if (filament()->hasDatabaseNotifications())
