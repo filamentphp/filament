@@ -18,7 +18,7 @@ First we'll create the plugin using the steps outlined in the [getting started g
 
 ## Step 2: Clean Up
 
-Next we'll clean up the plugin to remove the boilerplate code we don't need. This will see like a lot, but since this is a simple plugin we can remove a lot of the boilerplate code.
+Next we'll clean up the plugin to remove the boilerplate code we don't need. This will seem like a lot, but since this is a simple plugin we can remove a lot of the boilerplate code.
 
 Remove the following directories and files:
 1. `bin`
