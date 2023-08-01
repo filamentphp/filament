@@ -22,6 +22,7 @@
         "pestphp/pest-plugin-laravel": "^1.4.0|^2.0",
         "phpstan/extension-installer": "^1.1",
         "phpstan/phpstan": "^1.8",
+        "psr/http-message": "^1.1",
         "rector/rector": "^0.15",
         "spatie/laravel-medialibrary": "^9.11|^10.0",
         "spatie/laravel-ray": "^1.29",
