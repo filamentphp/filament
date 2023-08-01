@@ -6,7 +6,6 @@ use Closure;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns;
-use Filament\Support\Enums\ActionSize;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Contracts\Support\Htmlable;
 use Livewire\Component as LivewireComponent;
@@ -91,12 +90,9 @@ class Wizard extends Component
     {
         $action = Action::make($this->getNextActionName())
             ->label(__('filament-forms::components.wizard.actions.next_step.label'))
-            ->icon((__('filament-panels::layout.direction') === 'rtl') ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right')
             ->iconPosition(IconPosition::After)
             ->livewireClickHandlerEnabled(false)
-            ->button()
-            ->outlined()
-            ->size(ActionSize::Small);
+            ->button();
 
         if ($this->modifyNextActionUsing) {
             $action = $this->evaluate($this->modifyNextActionUsing, [
@@ -123,11 +119,9 @@ class Wizard extends Component
     {
         $action = Action::make($this->getPreviousActionName())
             ->label(__('filament-forms::components.wizard.actions.previous_step.label'))
-            ->icon((__('filament-panels::layout.direction') === 'rtl') ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left')
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
-            ->button()
-            ->size(ActionSize::Small);
+            ->button();
 
         if ($this->modifyPreviousActionUsing) {
             $action = $this->evaluate($this->modifyPreviousActionUsing, [
