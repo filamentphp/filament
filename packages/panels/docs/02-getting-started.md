@@ -531,7 +531,7 @@ public function form(Form $form): Form
 
 #### Configuring the `price` field
 
-Let's add a `price` field for the treatment. We can use a text input with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation and changes the keyboard layout on mobile devices. Add your preferred currency prefix using the `prefix()` method; for example, `prefix('€')` will add a `€` before the input without impacting the saved output value:
+Let's add a `price` field for the treatment. We can use a text input with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation and changes the keyboard layout on mobile devices. Add your preferred currency prefix using the `prefix()` method; for example, `prefix('$')` will add a `$` before the input without impacting the saved output value:
 
 ```php
 use Filament\Forms;
@@ -550,7 +550,7 @@ public function form(Form $form): Form
                 ->columnSpan('full'),
             Forms\Components\TextInput::make('price')
                 ->numeric()
-                ->prefix('€')
+                ->prefix('$')
                 ->maxValue(42949672.95),
         ]);
 }
@@ -646,11 +646,13 @@ Let's add a stats widget to our default dashboard page that includes a stat for 
 
 ### Creating a stats widget
 
-Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command (do not specify a resource and select "admin" for the location when prompted):
+Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command:
 
 ```bash
 php artisan make:filament-widget PatientTypeOverview --stats-overview
 ```
+
+When prompted, do not specify a resource, select "admin" for the location.
 
 This will create a new `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Stat` instances from the `getStats()` method:
 
@@ -686,7 +688,7 @@ Let's add a chart to the dashboard to visualize the number of treatments adminis
 php artisan make:filament-widget TreatmentsChart --chart
 ```
 
-When prompted, select "admin" for the location and "line chart" as the chart type.
+When prompted, do not specify a resource, select "admin" for the location and "line chart" as the chart type.
 
 Open `app/Filament/Widgets/TreatmentsChart.php` and set the `$heading` of the chart to "Treatments".
 
