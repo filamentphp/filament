@@ -51,19 +51,12 @@
         </label>
     @endif
 
-    <div
-        @class([
-            'grid gap-y-2',
-            'sm:grid-cols-3 sm:items-start sm:gap-x-4' => $hasInlineLabel,
-        ])
-    >
+    <div class="grid grid-cols-6 gap-y-2 sm:gap-x-4">
         @if (($label && (! $labelSrOnly)) || $labelPrefix || $labelSuffix || filled($hint) || $hintIcon || count($hintActions))
-            <div
-                @class([
-                    'flex items-center justify-between gap-x-3',
-                    'sm:pt-1.5' => $hasInlineLabel,
-                ])
-            >
+            <div @class([
+                'col-span-2 sm:pt-1.5' => $hasInlineLabel,
+                'col-span-3' => ! $hasInlineLabel,
+            ])>
                 @if ($label && (! $labelSrOnly))
                     <x-filament-forms::field-wrapper.label
                         :for="$id"
@@ -81,28 +74,40 @@
                 @elseif ($labelSuffix)
                     {{ $labelSuffix }}
                 @endif
-
-                @if (filled($hint) || $hintIcon || count($hintActions))
-                    <x-filament-forms::field-wrapper.hint
-                        :actions="$hintActions"
-                        :color="$hintColor"
-                        :icon="$hintIcon"
-                    >
-                        {{ $hint }}
-                    </x-filament-forms::field-wrapper.hint>
-                @endif
             </div>
+
+            @if (! \Filament\Support\is_slot_empty($slot))
+                <div @class([
+                    'col-span-4' => $hasInlineLabel,
+                    'order-2 col-span-full' => ! $hasInlineLabel,
+                ])>
+                    {{ $slot }}
+                </div>
+            @endif
+
+            @if (filled($hint) || $hintIcon || count($hintActions))
+                <x-filament-forms::field-wrapper.hint
+                    @class([
+                        'order-1 col-span-3 justify-end' => ! $hasInlineLabel,
+                        'col-span-4 col-start-3' => $hasInlineLabel,
+                    ])
+                    :actions="$hintActions"
+                    :color="$hintColor"
+                    :icon="$hintIcon"
+                >
+                    {{ $hint }}
+                </x-filament-forms::field-wrapper.hint>
+            @endif
         @endif
 
-        @if ((! \Filament\Support\is_slot_empty($slot)) || $hasError || filled($helperText))
+        @if ($hasError || filled($helperText))
             <div
                 @class([
-                    'grid gap-y-2',
-                    'sm:col-span-2' => $hasInlineLabel,
+                    'grid gap-y-2 order-3',
+                    'col-span-full' => ! $hasInlineLabel,
+                    'col-span-4 col-start-3' => $hasInlineLabel,
                 ])
             >
-                {{ $slot }}
-
                 @if ($hasError)
                     <x-filament-forms::field-wrapper.error-message>
                         {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
