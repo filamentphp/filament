@@ -73,7 +73,7 @@ class NotificationsDemo extends Component
         Notification::make()
             ->title('Saved successfully')
             ->success()
-            ->body('Changes to the **post** have been saved.')
+            ->body('Changes to the post have been saved.')
             ->send();
     }
 
@@ -82,7 +82,7 @@ class NotificationsDemo extends Component
         Notification::make()
             ->title('Saved successfully')
             ->success()
-            ->body('Changes to the **post** have been saved.')
+            ->body('Changes to the post have been saved.')
             ->actions([
                 Action::make('view')
                     ->button(),
@@ -120,11 +120,12 @@ class NotificationsDemo extends Component
             ->info()
             ->sendToDatabase($user);
 
-        $this->dispatchBrowserEvent('open-modal', [
-            'id' => 'database-notifications',
-        ]);
+        $this->dispatch(
+            'open-modal',
+            id: 'database-notifications',
+        );
 
-        $this->emit('databaseNotificationsSent');
+        $this->dispatch('databaseNotificationsSent');
     }
 
     public function call(string $method): void

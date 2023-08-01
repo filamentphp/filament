@@ -18,7 +18,7 @@ Filament requires the following to run:
 First, require the Table Builder package using Composer:
 
 ```bash
-composer require filament/tables:"^3.0@beta"
+composer require filament/tables:"^3.0"
 ```
 
 ## New Laravel projects

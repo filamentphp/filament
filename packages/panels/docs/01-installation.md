@@ -20,7 +20,7 @@ Filament requires the following to run:
 To install the Filament Panel Builder, run the following commands in your Laravel project directory:
 
 ```bash
-composer require filament/filament:"^3.0@beta"
+composer require filament/filament:"^3.0"
 
 php artisan filament:install --panels
 ```

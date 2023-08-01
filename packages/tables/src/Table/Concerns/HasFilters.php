@@ -43,7 +43,7 @@ trait HasFilters
     /**
      * @param  array<BaseFilter>  $filters
      */
-    public function filters(array $filters, string | Closure | null $layout = null): static
+    public function filters(array $filters, FiltersLayout | string | Closure | null $layout = null): static
     {
         foreach ($filters as $filter) {
             $filter->table($this);

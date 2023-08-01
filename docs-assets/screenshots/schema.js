@@ -1766,7 +1766,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1832,7 +1832,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-col-toggling button')
+            await page.click('.fi-ta-col-toggle button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         }
@@ -2149,7 +2149,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2163,7 +2163,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2177,7 +2177,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2191,7 +2191,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },

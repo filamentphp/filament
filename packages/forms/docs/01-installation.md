@@ -18,7 +18,7 @@ Filament requires the following to run:
 First, require the Forms Builder package using Composer:
 
 ```bash
-composer require filament/forms:"^3.0@beta"
+composer require filament/forms:"^3.0"
 ```
 
 ## New Laravel projects

@@ -32,7 +32,7 @@ trait HasActions
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
-    public function actions(array | ActionGroup $actions, string | Closure | null $position = null): static
+    public function actions(array | ActionGroup $actions, ActionsPosition | string | Closure | null $position = null): static
     {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);

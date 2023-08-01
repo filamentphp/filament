@@ -143,7 +143,7 @@ use Filament\Notifications\Notification;
 Notification::make()
     ->title('Saved successfully')
     ->success()
-    ->body('Changes to the **post** have been saved.')
+    ->body('Changes to the post have been saved.')
     ->actions([
         Action::make('view')
             ->button()
@@ -161,7 +161,7 @@ use Filament\Notifications\Notification;
 Notification::make()
     ->title('Saved successfully')
     ->success()
-    ->body('Changes to the **post** have been saved.')
+    ->body('Changes to the post have been saved.')
     ->actions([
         Action::make('markAsUnread')
             ->button()

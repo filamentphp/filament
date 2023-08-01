@@ -186,7 +186,6 @@ trait InteractsWithTable
             ->emptyStateHeading($this->getTableEmptyStateHeading())
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->filters($this->getTableFilters())
-            ->filtersFormColumns($this->getTableFiltersFormColumns())
             ->filtersFormMaxHeight($this->getTableFiltersFormMaxHeight())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
             ->header($this->getTableHeader())

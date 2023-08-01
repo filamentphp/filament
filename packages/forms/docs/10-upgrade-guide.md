@@ -19,7 +19,7 @@ Please upgrade Filament before upgrading to Livewire v3. Instructions on how to 
 The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament, and make changes to your code which handle most breaking changes.
 
 ```bash
-composer require filament/upgrade:"^3.0@beta" --dev
+composer require filament/upgrade:"^3.0" --dev
 vendor/bin/filament-v3
 ```
 

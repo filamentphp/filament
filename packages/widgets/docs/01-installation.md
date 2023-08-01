@@ -18,7 +18,7 @@ Filament requires the following to run:
 First, require the Widgets package using Composer:
 
 ```bash
-composer require filament/widgets:"^3.0@beta"
+composer require filament/widgets:"^3.0"
 ```
 
 ## New Laravel projects

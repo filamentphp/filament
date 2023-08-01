@@ -368,7 +368,7 @@ foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $pa
         continue;
     }
 
-    $requireCommands[] = "composer require {$package}:\"^3.0@beta\" --no-update";
+    $requireCommands[] = "composer require {$package}:\"^3.0\" --no-update";
 }
 
 $requireCommands = implode("</strong><br /><strong>", $requireCommands);

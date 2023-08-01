@@ -519,7 +519,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->usersTable($table)
             ->columns([
                 TextColumn::make('name'),
-                ImageColumn::make('avatars')
+                ImageColumn::make('colleagues')
                     ->circular()
                     ->stacked()
                     ->limit(3),
@@ -531,7 +531,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->usersTable($table)
             ->columns([
                 TextColumn::make('name'),
-                ImageColumn::make('avatars')
+                ImageColumn::make('colleagues')
                     ->circular()
                     ->stacked()
                     ->limit(3)
@@ -544,7 +544,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->usersTable($table)
             ->columns([
                 TextColumn::make('name'),
-                ImageColumn::make('avatars')
+                ImageColumn::make('colleagues')
                     ->circular()
                     ->stacked()
                     ->limit(3)

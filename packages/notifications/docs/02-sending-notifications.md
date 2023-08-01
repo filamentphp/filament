@@ -203,7 +203,7 @@ use Filament\Notifications\Notification;
 Notification::make()
     ->title('Saved successfully')
     ->success()
-    ->body('Changes to the **post** have been saved.')
+    ->body('Changes to the post have been saved.')
     ->send();
 ```
 
@@ -213,7 +213,7 @@ Or with JavaScript:
 new FilamentNotification()
     .title('Saved successfully')
     .success()
-    .body('Changes to the **post** have been saved.')
+    .body('Changes to the post have been saved.')
     .send()
 ```
 
@@ -230,7 +230,7 @@ use Filament\Notifications\Notification;
 Notification::make()
     ->title('Saved successfully')
     ->success()
-    ->body('Changes to the **post** have been saved.')
+    ->body('Changes to the post have been saved.')
     ->actions([
         Action::make('view')
             ->button(),
@@ -246,7 +246,7 @@ Or with JavaScript:
 new FilamentNotification()
     .title('Saved successfully')
     .success()
-    .body('Changes to the **post** have been saved.')
+    .body('Changes to the post have been saved.')
     .actions([
         new FilamentNotificationAction('view')
             .button(),
@@ -271,7 +271,7 @@ use Filament\Notifications\Notification;
 Notification::make()
     ->title('Saved successfully')
     ->success()
-    ->body('Changes to the **post** have been saved.')
+    ->body('Changes to the post have been saved.')
     ->actions([
         Action::make('view')
             ->button()
@@ -288,7 +288,7 @@ Or with JavaScript:
 new FilamentNotification()
     .title('Saved successfully')
     .success()
-    .body('Changes to the **post** have been saved.')
+    .body('Changes to the post have been saved.')
     .actions([
         new FilamentNotificationAction('view')
             .button()
@@ -311,7 +311,7 @@ use Filament\Notifications\Notification;
 Notification::make()
     ->title('Saved successfully')
     ->success()
-    ->body('Changes to the **post** have been saved.')
+    ->body('Changes to the post have been saved.')
     ->actions([
         Action::make('view')
             ->button()
@@ -341,7 +341,7 @@ Or with JavaScript:
 new FilamentNotification()
     .title('Saved successfully')
     .success()
-    .body('Changes to the **post** have been saved.')
+    .body('Changes to the post have been saved.')
     .actions([
         new FilamentNotificationAction('view')
             .button()
@@ -377,7 +377,7 @@ use Filament\Notifications\Notification;
 Notification::make()
     ->title('Saved successfully')
     ->success()
-    ->body('Changes to the **post** have been saved.')
+    ->body('Changes to the post have been saved.')
     ->actions([
         Action::make('view')
             ->button()
@@ -396,7 +396,7 @@ Or with JavaScript:
 new FilamentNotification()
     .title('Saved successfully')
     .success()
-    .body('Changes to the **post** have been saved.')
+    .body('Changes to the post have been saved.')
     .actions([
         new FilamentNotificationAction('view')
             .button()
