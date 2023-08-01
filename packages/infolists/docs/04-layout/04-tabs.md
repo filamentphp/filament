@@ -181,3 +181,28 @@ Tabs::make('Label')
         // ...
     ])
 ```
+
+## Removing the styled container
+
+By default, tabs and their content are wrapped in a container styled as a card. You may remove the styled container using `contained()`:
+
+```php
+use Filament\Infolists\Components\Tabs;
+
+Tabs::make('Label')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->contained(false)
+```

@@ -45,7 +45,7 @@ This method accepts the same options as the `columns()` method of the [grid](../
 
 ## Removing the styled container
 
-By default, each item in a repeatable entry gets wrapped in a container styled as a card. This behavior can be disabled using `contained()`:
+By default, each item in a repeatable entry is wrapped in a container styled as a card. You may remove the styled container using `contained()`:
 
 ```php
 use Filament\Infolists\Components\RepeatableEntry;
