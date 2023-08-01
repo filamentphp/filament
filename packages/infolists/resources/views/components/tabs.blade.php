@@ -1,3 +1,7 @@
+@php
+    $isContained = $isContained();
+@endphp
+
 <div
     x-cloak
     x-data="{
@@ -31,10 +35,18 @@
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['fi-in-tabs rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10'])
+            ->class([
+                'fi-in-tabs',
+                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
+            ])
     }}
 >
-    <div class="border-b border-gray-200 px-3 py-2.5 dark:border-white/10">
+    <div
+        @class([
+            'border-b border-gray-200 px-3 py-2.5 dark:border-white/10' => $isContained,
+            'rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => ! $isContained,
+        ])
+    >
         <x-filament::tabs :label="$getLabel()">
             @foreach ($getChildComponentContainer()->getComponents() as $tab)
                 @php
