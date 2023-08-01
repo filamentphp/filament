@@ -68,6 +68,7 @@ class SupportServiceProvider extends PackageServiceProvider
             fn (): HtmlSanitizer => new HtmlSanitizer(
                 (new HtmlSanitizerConfig())
                     ->allowSafeElements()
+                    ->allowRelativeLinks()
                     ->allowAttribute('class', allowedElements: '*')
                     ->allowAttribute('style', allowedElements: '*')
                     ->withMaxInputLength(200000),
