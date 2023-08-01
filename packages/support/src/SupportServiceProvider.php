@@ -69,6 +69,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 (new HtmlSanitizerConfig())
                     ->allowSafeElements()
                     ->allowRelativeLinks()
+                    ->allowRelativeMedias()
                     ->allowAttribute('class', allowedElements: '*')
                     ->allowAttribute('style', allowedElements: '*')
                     ->withMaxInputLength(200000),
