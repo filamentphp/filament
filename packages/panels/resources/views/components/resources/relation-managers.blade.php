@@ -20,7 +20,7 @@
     @endphp
 
     @if ((count($managers) > 1) || $content)
-        <x-filament::tabs class="mx-auto">
+        <x-filament::tabs>
             @php
                 $tabs = $managers;
 
