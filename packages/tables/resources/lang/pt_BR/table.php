@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Colunas',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -88,6 +94,7 @@ return [
 
         'heading' => 'Sem registros',
 
+        'description' => 'Crie um :model para começar.',
     ],
 
     'filters' => [
@@ -108,6 +115,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'Filtros',
 
         'indicator' => 'Filtros ativos',
 
