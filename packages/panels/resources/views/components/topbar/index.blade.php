@@ -119,9 +119,13 @@
             {{-- x-persist="topbar.end" --}}
             class="ms-auto flex items-center gap-x-4"
         >
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.before') }}
+
             @if (filament()->isGlobalSearchEnabled())
                 @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
             @endif
+
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.after') }}
 
             @if (filament()->hasDatabaseNotifications())
                 @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
