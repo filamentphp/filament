@@ -41,30 +41,23 @@
             ])
     }}
 >
-    <div
-        @class([
-            'border-b border-gray-200 px-3 py-2.5 dark:border-white/10' => $isContained,
-            'rounded-xl bg-white p-2 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => ! $isContained,
-        ])
-    >
-        <x-filament::tabs :label="$getLabel()">
-            @foreach ($getChildComponentContainer()->getComponents() as $tab)
-                @php
-                    $tabId = $tab->getId();
-                @endphp
+    <x-filament::tabs :contained="$isContained" :label="$getLabel()">
+        @foreach ($getChildComponentContainer()->getComponents() as $tab)
+            @php
+                $tabId = $tab->getId();
+            @endphp
 
-                <x-filament::tabs.item
-                    :alpine-active="'tab === \'' . $tabId . '\''"
-                    :badge="$tab->getBadge()"
-                    :icon="$tab->getIcon()"
-                    :icon-position="$tab->getIconPosition()"
-                    :x-on:click="'tab = \'' . $tabId . '\''"
-                >
-                    {{ $tab->getLabel() }}
-                </x-filament::tabs.item>
-            @endforeach
-        </x-filament::tabs>
-    </div>
+            <x-filament::tabs.item
+                :alpine-active="'tab === \'' . $tabId . '\''"
+                :badge="$tab->getBadge()"
+                :icon="$tab->getIcon()"
+                :icon-position="$tab->getIconPosition()"
+                :x-on:click="'tab = \'' . $tabId . '\''"
+            >
+                {{ $tab->getLabel() }}
+            </x-filament::tabs.item>
+        @endforeach
+    </x-filament::tabs>
 
     @foreach ($getChildComponentContainer()->getComponents() as $tab)
         {{ $tab }}
