@@ -72,7 +72,7 @@ class SupportServiceProvider extends PackageServiceProvider
                     ->allowRelativeMedias()
                     ->allowAttribute('class', allowedElements: '*')
                     ->allowAttribute('style', allowedElements: '*')
-                    ->withMaxInputLength(200000),
+                    ->withMaxInputLength(500000),
             ),
         );
     }
