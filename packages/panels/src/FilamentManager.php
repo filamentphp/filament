@@ -45,6 +45,11 @@ class FilamentManager
 
     protected ?Model $tenant = null;
 
+    public function panel(Panel $panel)
+    {
+        return tap(new static)->setCurrentPanel($panel);
+    }
+
     public function auth(): Guard
     {
         return $this->getCurrentPanel()->auth();
