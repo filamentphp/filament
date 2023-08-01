@@ -26,7 +26,7 @@ First, since Livewire v3 is still in beta, make sure that the `minimum-stability
 Then, to install the Filament Panel Builder, run the following commands in your Laravel project directory:
 
 ```bash
-composer require filament/filament:"^3.0"
+composer require filament/filament:"^3.0-stable" -W
 
 php artisan filament:install --panels
 ```

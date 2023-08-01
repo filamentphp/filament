@@ -24,7 +24,7 @@ First, since Livewire v3 is still in beta, make sure that the `minimum-stability
 Then, require the Infolist Builder package using Composer:
 
 ```bash
-composer require filament/infolists:"^3.0"
+composer require filament/infolists:"^3.0-stable" -W
 ```
 
 ## New Laravel projects
