@@ -119,13 +119,13 @@
             {{-- x-persist="topbar.end" --}}
             class="ms-auto flex items-center gap-x-4"
         >
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.before') }}
+
             @if (filament()->isGlobalSearchEnabled())
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.before') }}
-
                 @livewire(Filament\Livewire\GlobalSearch::class, ['lazy' => true])
-
-                {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.after') }}
             @endif
+
+            {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.after') }}
 
             @if (filament()->hasDatabaseNotifications())
                 @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
