@@ -1,4 +1,3 @@
-
 <div class="fi-global-search flex items-center">
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.start') }}
 
@@ -14,4 +13,3 @@
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.end') }}
 </div>
-
