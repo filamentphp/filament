@@ -17,7 +17,13 @@ Filament requires the following to run:
 
 > If you are upgrading from Filament v2, please review the [upgrade guide](upgrade-guide).
 
-To install the Filament Panel Builder, run the following commands in your Laravel project directory:
+First, since Livewire v3 is still in beta, make sure that the `minimum-stability` in your `composer.json` is set to `dev`:
+
+```json
+"minimum-stability": "dev",
+```
+
+Then, to install the Filament Panel Builder, run the following commands in your Laravel project directory:
 
 ```bash
 composer require filament/filament:"^3.0"

@@ -15,7 +15,13 @@ Filament requires the following to run:
 > **Livewire v3 is still in beta**
 > Although breaking changes should be minimal, we recommend testing your application thoroughly before using Livewire v3 in production.
 
-First, require the Actions package using Composer:
+First, since Livewire v3 is still in beta, make sure that the `minimum-stability` in your `composer.json` is set to `dev`:
+
+```json
+"minimum-stability": "dev",
+```
+
+Then, require the Actions package using Composer:
 
 ```bash
 composer require filament/actions:"^3.0"
