@@ -33,7 +33,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Muitas solicitações.',
+            'title' => 'Muitas solicitações',
             'body' => 'Por favor tente novamente em :seconds segundos.',
         ],
 
