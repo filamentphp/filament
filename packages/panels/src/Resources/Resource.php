@@ -27,6 +27,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
@@ -99,6 +100,8 @@ abstract class Resource
     protected static bool $shouldCheckPolicyExistence = true;
 
     protected static bool $shouldSkipAuthorization = false;
+
+    protected static bool $isGlobalSearchForcedCaseInsensitive = false;
 
     public static function form(Form $form): Form
     {
@@ -607,6 +610,11 @@ abstract class Resource
         return static::getRecordTitleAttribute() !== null;
     }
 
+    public static function isGlobalSearchForcedCaseInsensitive(): bool
+    {
+        return static::$isGlobalSearchForcedCaseInsensitive;
+    }
+
     /**
      * @param  array<string>  $searchAttributes
      */
@@ -615,11 +623,6 @@ abstract class Resource
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
 
-        $searchOperator = match ($databaseConnection->getDriverName()) {
-            'pgsql' => 'ilike',
-            default => 'like',
-        };
-
         $model = $query->getModel();
 
         foreach ($searchAttributes as $searchAttribute) {
@@ -627,30 +630,49 @@ abstract class Resource
 
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
-                function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $search, $whereClause): Builder {
+                function (Builder $query) use ($databaseConnection, $searchAttribute, $search, $whereClause): Builder {
                     $searchColumn = match ($databaseConnection->getDriverName()) {
                         'pgsql' => "{$searchAttribute}::text",
                         default => $searchAttribute,
                     };
 
-                    return $query->{"{$whereClause}Raw"}(
-                        "lower({$searchColumn}) {$searchOperator} ?",
+                    $caseAwareSearchColumn = static::isGlobalSearchForcedCaseInsensitive() ?
+                        new Expression("lower({$searchColumn})") :
+                        $searchColumn;
+
+                    return $query->$whereClause(
+                        $caseAwareSearchColumn,
+                        'like',
                         "%{$search}%",
                     );
                 },
                 fn (Builder $query): Builder => $query->when(
                     str($searchAttribute)->contains('.'),
-                    fn ($query) => $query->{"{$whereClause}Relation"}(
-                        (string) str($searchAttribute)->beforeLast('.'),
-                        (string) str($searchAttribute)->afterLast('.'),
-                        $searchOperator,
-                        "%{$search}%",
-                    ),
-                    fn ($query) => $query->{$whereClause}(
-                        $searchAttribute,
-                        $searchOperator,
-                        "%{$search}%",
-                    ),
+                    function ($query) use ($whereClause, $searchAttribute, $search) {
+                        $searchColumn = (string) str($searchAttribute)->afterLast('.');
+
+                        $caseAwareSearchColumn = static::isGlobalSearchForcedCaseInsensitive() ?
+                            new Expression("lower({$searchColumn})") :
+                            $searchColumn;
+
+                        return $query->{"{$whereClause}Relation"}(
+                            (string) str($searchAttribute)->beforeLast('.'),
+                            $caseAwareSearchColumn,
+                            'like',
+                            "%{$search}%",
+                        );
+                    },
+                    function ($query) use ($whereClause, $searchAttribute, $search) {
+                        $caseAwareSearchColumn = static::isGlobalSearchForcedCaseInsensitive() ?
+                            new Expression("lower({$searchAttribute})") :
+                            $searchAttribute;
+
+                        return $query->{$whereClause}(
+                            $caseAwareSearchColumn,
+                            'like',
+                            "%{$search}%",
+                        );
+                    },
                 ),
             );
 

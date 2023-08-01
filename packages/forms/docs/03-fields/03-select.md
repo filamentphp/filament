@@ -300,7 +300,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-### Customizing the option labels for each morphed type
+#### Customizing the option labels for each morphed type
 
 The `titleAttribute()` is used to extract the titles out of each product or post. If you'd like to customize the label of each option, you can use the `getOptionLabelFromRecordUsing()` method to transform the Eloquent model into a label:
 
@@ -316,7 +316,7 @@ MorphToSelect::make('commentable')
     ])
 ```
 
-### Customizing the relationship query for each morphed type
+#### Customizing the relationship query for each morphed type
 
 You may customize the database query that retrieves options using the `modifyOptionsQueryUsing()` method:
 
@@ -336,6 +336,19 @@ MorphToSelect::make('commentable')
 ```
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
+
+### Forcing case-insensitive search
+
+By default, searching will use the sensitivity settings from the database table column. This is to avoid unnecessary performance overhead when searching large datasets that would arise if we were to force insensitivity for all users. However, if your database does not search case-insensitively by default, you can force it to by using the `forceSearchCaseInsensitive()` method:
+
+```php
+use Filament\Forms\Components\Select;
+
+Select::make('author_id')
+    ->relationship(name: 'author', titleAttribute: 'name')
+    ->searchable()
+    ->forceSearchCaseInsensitive()
+```
 
 ## Allowing HTML in the option labels
 

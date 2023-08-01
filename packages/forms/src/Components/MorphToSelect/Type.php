@@ -6,9 +6,9 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\Select;
 use function Filament\Support\get_model_label;
-use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 
 class Type
@@ -35,6 +35,8 @@ class Type
     protected int $optionsLimit = 50;
 
     protected string $model;
+
+    protected bool $isSearchForcedCaseInsensitive = false;
 
     final public function __construct(string $model)
     {
@@ -65,23 +67,20 @@ class Type
 
             $search = strtolower($search);
 
-            /** @var Connection $databaseConnection */
-            $databaseConnection = $query->getConnection();
-
-            $searchOperator = match ($databaseConnection->getDriverName()) {
-                'pgsql' => 'ilike',
-                default => 'like',
-            };
-
             $isFirst = true;
+            $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
 
-            $query->where(function (Builder $query) use ($isFirst, $searchOperator, $search): Builder {
+            $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
                 foreach ($this->getSearchColumns() as $searchColumn) {
+                    $caseAwareSearchColumn = $isForcedCaseInsensitive ?
+                        new Expression("lower({$searchColumn})") :
+                        $searchColumn;
+
                     $whereClause = $isFirst ? 'where' : 'orWhere';
 
                     $query->{$whereClause}(
-                        $searchColumn,
-                        $searchOperator,
+                        $caseAwareSearchColumn,
+                        'like',
                         "%{$search}%",
                     );
 
@@ -294,5 +293,17 @@ class Type
     public function getOptionsLimit(): int
     {
         return $this->optionsLimit;
+    }
+
+    public function forceSearchCaseInsensitive(bool $condition = true): static
+    {
+        $this->isSearchForcedCaseInsensitive = $condition;
+
+        return $this;
+    }
+
+    public function isSearchForcedCaseInsensitive(): bool
+    {
+        return $this->isSearchForcedCaseInsensitive;
     }
 }
