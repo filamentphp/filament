@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 trait HasHeading
 {
-    protected string | Htmlable | Closure | null $heading;
+    protected string | Htmlable | Closure | null $heading = null;
 
     public function heading(string | Htmlable | Closure | null $heading = null): static
     {
