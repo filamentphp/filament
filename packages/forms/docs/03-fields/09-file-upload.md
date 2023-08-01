@@ -15,7 +15,7 @@ FileUpload::make('attachment')
 
 <AutoScreenshot name="forms/fields/file-upload/simple" alt="File upload" version="3.x" />
 
-> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/spatie-media-library) for more information.
+> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/filament-spatie-media-library) for more information.
 
 ## Configuring the storage disk and directory
 
