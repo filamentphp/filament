@@ -14,6 +14,10 @@ return [
                 'label' => 'Új :label',
             ],
 
+            'add_between' => [
+                'label' => 'Beillesztés közé',
+            ],
+
             'delete' => [
                 'label' => 'Törlés',
             ],
@@ -44,6 +48,141 @@ return [
 
             'expand_all' => [
                 'label' => 'Kibont minden',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'actions' => [
+
+            'deselect_all' => [
+                'label' => 'Törölje az összes jelölést',
+            ],
+
+            'select_all' => [
+                'label' => 'Összes kijelölése',
+            ],
+
+        ],
+
+    ],
+
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Mégse',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Drag mode "crop"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Drag mode "move"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'A kép vízszintes tükrözése',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'A kép függőleges tükrözése',
+                ],
+
+                'move_down' => [
+                    'label' => 'Lefele mozgatás',
+                ],
+
+                'move_left' => [
+                    'label' => 'Balra mozgatás',
+                ],
+
+                'move_right' => [
+                    'label' => 'Jobbra mozgatás',
+                ],
+
+                'move_up' => [
+                    'label' => 'Felfele mozgatás',
+                ],
+
+                'reset' => [
+                    'label' => 'Újra tölt',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Kép elforgatása balra',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Kép elforgatása jobbra',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Állítsa be a képarányt :ratio értékre',
+                ],
+
+                'save' => [
+                    'label' => 'Mentés',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Kép nagyítása 100%-ra',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Nagyítás',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Kicsinyítés',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Magasság',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Forgatás',
+                    'unit' => 'fok',
+                ],
+
+                'width' => [
+                    'label' => 'Szélesség',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Képarányok',
+
+                'no_fixed' => [
+                    'label' => 'Szabad',
+                ],
+
             ],
 
         ],
@@ -85,16 +224,19 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Fileok csatolása',
+            'attach_files' => 'Fájlok csatolása',
+            'blockquote' => 'Idézet',
             'bold' => 'Félkövér',
             'bullet_list' => 'Felsorolás',
             'code_block' => 'Kódblokk',
-            'edit' => 'Szerkesztés',
+            'heading' => 'Cím',
             'italic' => 'Dőlt',
             'link' => 'Hivatkozás',
             'ordered_list' => 'Számozott lista',
-            'preview' => 'Előnézet',
+            'redo' => 'Előre',
             'strike' => 'Áthúzott',
+            'table' => 'Táblázat',
+            'undo' => 'Vissza',
         ],
 
     ],
@@ -167,7 +309,7 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Fileok csatolása',
+            'attach_files' => 'Fájlok csatolása',
             'blockquote' => 'Idézet',
             'bold' => 'Félkövér',
             'bullet_list' => 'Felsorolás',
@@ -178,8 +320,9 @@ return [
             'italic' => 'Dőlt',
             'link' => 'Hivatkozás',
             'ordered_list' => 'Számozott lista',
-            'redo' => 'Újra',
+            'redo' => 'Előre',
             'strike' => 'Áthúzott',
+            'underline' => 'Alázhúzott',
             'undo' => 'Vissza',
         ],
 
@@ -199,6 +342,28 @@ return [
 
                         'create' => [
                             'label' => 'Hozzáadás',
+                        ],
+
+                        'create_another' => [
+                            'label' => 'Hozzáadás és másik hozzáadása',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Szerkesztés',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Mentés',
                         ],
 
                     ],
