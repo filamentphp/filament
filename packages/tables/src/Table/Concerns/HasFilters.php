@@ -51,8 +51,10 @@ trait HasFilters
             $this->filters[$filter->getName()] = $filter;
         }
 
-        $this->filtersLayout($layout);
-
+        if($layout !== null) {
+            $this->filtersLayout($layout);
+        }
+        
         return $this;
     }
 
