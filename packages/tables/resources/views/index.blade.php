@@ -635,7 +635,7 @@
                                     @php
                                         $recordContentClasses = \Illuminate\Support\Arr::toCssClasses([
                                             $recordContentHorizontalPaddingClasses,
-                                            'flex-1 block',
+                                            'block',
                                         ]);
                                     @endphp
 
@@ -645,61 +645,63 @@
                                             'md:flex-row md:items-center' => ! $contentGrid,
                                         ])
                                     >
-                                        @if ($recordUrl)
-                                            <a
-                                                href="{{ $recordUrl }}"
-                                                class="{{ $recordContentClasses }}"
-                                            >
-                                                <x-filament-tables::columns.layout
-                                                    :components="$getColumnsLayout()"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                    :row-loop="$loop"
-                                                />
-                                            </a>
-                                        @elseif ($recordAction)
-                                            @php
-                                                $recordWireClickAction = $getAction($recordAction)
-                                                    ? "mountTableAction('{$recordAction}', '{$recordKey}')"
-                                                    : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
-                                            @endphp
+                                        <div class="flex-1">
+                                            @if ($recordUrl)
+                                                <a
+                                                    href="{{ $recordUrl }}"
+                                                    class="{{ $recordContentClasses }}"
+                                                >
+                                                    <x-filament-tables::columns.layout
+                                                        :components="$getColumnsLayout()"
+                                                        :record="$record"
+                                                        :record-key="$recordKey"
+                                                        :row-loop="$loop"
+                                                    />
+                                                </a>
+                                            @elseif ($recordAction)
+                                                @php
+                                                    $recordWireClickAction = $getAction($recordAction)
+                                                        ? "mountTableAction('{$recordAction}', '{$recordKey}')"
+                                                        : $recordWireClickAction = "{$recordAction}('{$recordKey}')";
+                                                @endphp
 
-                                            <button
-                                                type="button"
-                                                wire:click="{{ $recordWireClickAction }}"
-                                                wire:loading.attr="disabled"
-                                                wire:target="{{ $recordWireClickAction }}"
-                                                class="{{ $recordContentClasses }}"
-                                            >
-                                                <x-filament-tables::columns.layout
-                                                    :components="$getColumnsLayout()"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                    :row-loop="$loop"
-                                                />
-                                            </button>
-                                        @else
-                                            <div
-                                                class="{{ $recordContentClasses }}"
-                                            >
-                                                <x-filament-tables::columns.layout
-                                                    :components="$getColumnsLayout()"
-                                                    :record="$record"
-                                                    :record-key="$recordKey"
-                                                    :row-loop="$loop"
-                                                />
-                                            </div>
-                                        @endif
+                                                <button
+                                                    type="button"
+                                                    wire:click="{{ $recordWireClickAction }}"
+                                                    wire:loading.attr="disabled"
+                                                    wire:target="{{ $recordWireClickAction }}"
+                                                    class="{{ $recordContentClasses }}"
+                                                >
+                                                    <x-filament-tables::columns.layout
+                                                        :components="$getColumnsLayout()"
+                                                        :record="$record"
+                                                        :record-key="$recordKey"
+                                                        :row-loop="$loop"
+                                                    />
+                                                </button>
+                                            @else
+                                                <div
+                                                    class="{{ $recordContentClasses }}"
+                                                >
+                                                    <x-filament-tables::columns.layout
+                                                        :components="$getColumnsLayout()"
+                                                        :record="$record"
+                                                        :record-key="$recordKey"
+                                                        :row-loop="$loop"
+                                                    />
+                                                </div>
+                                            @endif
 
-                                        @if ($hasCollapsibleColumnsLayout && (! $isReordering))
-                                            <div
-                                                x-collapse
-                                                x-show="! isCollapsed"
-                                                class="{{ $recordContentHorizontalPaddingClasses }}"
-                                            >
-                                                {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
-                                            </div>
-                                        @endif
+                                            @if ($hasCollapsibleColumnsLayout && (! $isReordering))
+                                                <div
+                                                    x-collapse
+                                                    x-show="! isCollapsed"
+                                                    class="{{ $recordContentHorizontalPaddingClasses }}"
+                                                >
+                                                    {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
+                                                </div>
+                                            @endif
+                                        </div>
 
                                         @if ($recordHasActions)
                                             <x-filament-tables::actions
