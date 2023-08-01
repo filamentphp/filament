@@ -54,7 +54,7 @@ trait HasFilters
         if ($layout) {
             $this->filtersLayout($layout);
         }
-        
+
         return $this;
     }
 
