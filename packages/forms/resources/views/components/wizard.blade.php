@@ -1,8 +1,10 @@
 @php
+    $isContained = $isContained();
     $statePath = $getStatePath();
 @endphp
 
 <div
+    x-cloak
     x-data="{
         step: null,
 
@@ -82,7 +84,6 @@
         },
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $statePath }}') nextStep()"
-    x-cloak
     {{
         $attributes
             ->merge([
@@ -90,7 +91,10 @@
             ], escape: false)
             ->merge($getExtraAttributes(), escape: false)
             ->merge($getExtraAlpineAttributes(), escape: false)
-            ->class(['fi-fo-wizard grid gap-y-6'])
+            ->class([
+                'fi-fo-wizard',
+                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $isContained,
+            ])
     }}
 >
     <input
@@ -106,116 +110,114 @@
     />
 
     <ol
-        @if ($label = $getLabel()) aria-label="{{ $label }}" @endif
+        @if (filled($label = $getLabel()))
+            aria-label="{{ $label }}"
+        @endif
         role="list"
-        class="fi-fo-wizard-header divide-y divide-gray-300 overflow-hidden rounded-xl border border-gray-300 bg-white shadow-sm dark:divide-gray-700 dark:border-gray-800 dark:bg-gray-900 md:flex md:divide-y-0"
+        @class([
+            'fi-fo-wizard-header grid divide-y divide-gray-200 dark:divide-white/5 md:grid-flow-col md:divide-y-0',
+            'border-b border-gray-200 dark:border-white/10' => $isContained,
+            'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => ! $isContained,
+        ])
     >
         @foreach ($getChildComponentContainer()->getComponents() as $step)
-            <li
-                class="fi-fo-wizard-header-step group relative overflow-hidden md:flex-1"
-            >
+            <li class="fi-fo-wizard-header-step relative flex">
                 <button
                     type="button"
-                    x-on:click="if (isStepAccessible(step, {{ $loop->index }})) step = '{{ $step->getId() }}'"
                     x-bind:aria-current="getStepIndex(step) === {{ $loop->index }} ? 'step' : null"
-                    x-bind:class="{
-                        'pointer-events-none': ! isStepAccessible(step, {{ $loop->index }}),
-                    }"
+                    x-on:click="step = @js($step->getId())"
+                    x-bind:disabled="! isStepAccessible(step, {{ $loop->index }})"
                     role="step"
-                    class="flex h-full w-full items-center text-start"
+                    class="flex h-full w-full items-center gap-x-4 px-6 py-4"
                 >
                     <div
+                        class="fi-fo-wizard-header-step-icon-ctn flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
                         x-bind:class="{
-                            'bg-primary-600': getStepIndex(step) === {{ $loop->index }},
-                            'bg-transparent group-hover:bg-gray-200 dark:group-hover:bg-gray-600':
+                            'bg-primary-600 dark:bg-primary-500':
                                 getStepIndex(step) > {{ $loop->index }},
+                            'border-2': getStepIndex(step) <= {{ $loop->index }},
+                            'border-primary-600 dark:border-primary-500':
+                                getStepIndex(step) === {{ $loop->index }},
+                            'border-gray-300 dark:border-gray-600':
+                                getStepIndex(step) < {{ $loop->index }},
                         }"
-                        class="absolute start-0 top-0 h-full w-1 md:bottom-0 md:top-auto md:h-1 md:w-full"
-                        aria-hidden="true"
-                    ></div>
-
-                    <div
-                        class="flex items-center gap-3 px-5 py-4 text-sm font-medium"
                     >
-                        <div class="shrink-0">
-                            <div
+                        <x-filament::icon
+                            alias="forms::components.wizard.completed-step"
+                            icon="heroicon-o-check"
+                            x-cloak="x-cloak"
+                            x-show="getStepIndex(step) > {{ $loop->index }}"
+                            class="fi-fo-wizard-header-step-icon h-6 w-6 text-white"
+                        />
+
+                        @if (filled($icon = $step->getIcon()))
+                            <x-filament::icon
+                                :icon="$icon"
+                                x-cloak="x-cloak"
+                                x-show="getStepIndex(step) <= {{ $loop->index }}"
+                                class="fi-fo-wizard-header-step-icon h-6 w-6"
                                 x-bind:class="{
-                                    'bg-primary-600': getStepIndex(step) > {{ $loop->index }},
-                                    'border-2': getStepIndex(step) <= {{ $loop->index }},
-                                    'border-primary-500': getStepIndex(step) === {{ $loop->index }},
-                                    'border-gray-300 dark:border-gray-500':
-                                        getStepIndex(step) < {{ $loop->index }},
+                                    'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
+                                    'text-primary-600 dark:text-primary-500': getStepIndex(step) === {{ $loop->index }},
                                 }"
-                                class="fi-fo-wizard-header-step-icon-ctn flex h-10 w-10 items-center justify-center rounded-full"
+                            />
+                        @else
+                            <span
+                                x-show="getStepIndex(step) <= {{ $loop->index }}"
+                                class="text-sm font-medium"
+                                x-bind:class="{
+                                    'text-gray-500 dark:text-gray-400':
+                                        getStepIndex(step) !== {{ $loop->index }},
+                                    'text-primary-600 dark:text-primary-500':
+                                        getStepIndex(step) === {{ $loop->index }},
+                                }"
                             >
-                                <x-filament::icon
-                                    alias="forms::components.wizard.completed-step"
-                                    icon="heroicon-m-check"
-                                    x-show="getStepIndex(step) > {{ $loop->index }}"
-                                    x-cloak="x-cloak"
-                                    class="fi-fo-wizard-header-step-icon h-5 w-5 text-white"
-                                />
+                                {{ str_pad($loop->index + 1, 2, '0', STR_PAD_LEFT) }}
+                            </span>
+                        @endif
+                    </div>
 
-                                @if ($icon = $step->getIcon())
-                                    <x-filament::icon
-                                        :icon="$icon"
-                                        x-show="getStepIndex(step) <= {{ $loop->index }}"
-                                        x-cloak="x-cloak"
-                                        x-bind:class="{
-                                            'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
-                                            'text-primary-500': getStepIndex(step) === {{ $loop->index }},
-                                        }"
-                                        class="fi-fo-wizard-header-step-icon h-5 w-5"
-                                    />
-                                @else
-                                    <span
-                                        x-show="getStepIndex(step) <= {{ $loop->index }}"
-                                        x-bind:class="{
-                                            'text-gray-500 dark:text-gray-400':
-                                                getStepIndex(step) !== {{ $loop->index }},
-                                            'text-primary-500': getStepIndex(step) === {{ $loop->index }},
-                                        }"
-                                    >
-                                        {{ str_pad($loop->index + 1, 2, '0', STR_PAD_LEFT) }}
-                                    </span>
-                                @endif
-                            </div>
-                        </div>
+                    <div class="grid justify-items-start">
+                        <span
+                            class="fi-fo-wizard-header-step-label text-sm font-medium"
+                            x-bind:class="{
+                                'text-gray-500 dark:text-gray-400':
+                                    getStepIndex(step) < {{ $loop->index }},
+                                'text-primary-600 dark:text-primary-400':
+                                    getStepIndex(step) === {{ $loop->index }},
+                                'text-gray-950 dark:text-white': getStepIndex(step) > {{ $loop->index }},
+                            }"
+                        >
+                            {{ $step->getLabel() }}
+                        </span>
 
-                        <div class="flex flex-col items-start justify-center">
-                            <div
-                                class="fi-fo-wizard-header-step-label text-sm font-medium"
+                        @if (filled($description = $step->getDescription()))
+                            <span
+                                class="fi-fo-wizard-header-step-description text-sm text-gray-500 dark:text-gray-400"
                             >
-                                {{ $step->getLabel() }}
-                            </div>
-
-                            @if (filled($description = $step->getDescription()))
-                                <div
-                                    class="fi-fo-wizard-header-step-description text-sm font-medium leading-4 text-gray-500 dark:text-gray-400"
-                                >
-                                    {{ $description }}
-                                </div>
-                            @endif
-                        </div>
+                                {{ $description }}
+                            </span>
+                        @endif
                     </div>
                 </button>
 
-                @if (! $loop->first)
+                @if (! $loop->last)
                     <div
-                        class="absolute inset-0 start-0 top-0 hidden w-3 md:block"
                         aria-hidden="true"
+                        class="absolute end-0 hidden w-5 md:block"
                     >
                         <svg
-                            class="h-full w-full text-gray-200 rtl:rotate-180 dark:text-gray-700"
-                            viewBox="0 0 12 82"
                             fill="none"
                             preserveAspectRatio="none"
+                            viewBox="0 0 22 80"
+                            class="h-full w-full text-gray-200 rtl:rotate-180 dark:text-white/5"
                         >
                             <path
-                                d="M0.5 0V31L10.5 41L0.5 51V82"
+                                d="M0 -2L20 40L0 82"
+                                stroke-linejoin="round"
                                 stroke="currentcolor"
                                 vector-effect="non-scaling-stroke"
-                            />
+                            ></path>
                         </svg>
                     </div>
                 @endif
@@ -223,45 +225,41 @@
         @endforeach
     </ol>
 
-    <div>
-        @foreach ($getChildComponentContainer()->getComponents() as $step)
-            {{ $step }}
-        @endforeach
-    </div>
+    @foreach ($getChildComponentContainer()->getComponents() as $step)
+        {{ $step }}
+    @endforeach
 
-    <div class="flex items-center justify-between">
-        <div>
-            <div
-                x-on:click="previousStep"
-                x-show="! isFirstStep()"
-                x-cloak
-            >
-                {{ $getAction('previous') }}
-            </div>
+    <div
+        @class([
+            'flex items-center justify-between gap-x-3',
+            'px-6 pb-6' => $isContained,
+            'mt-6' => ! $isContained,
+        ])
+    >
+        <span x-cloak x-on:click="previousStep" x-show="! isFirstStep()">
+            {{ $getAction('previous') }}
+        </span>
 
-            <div x-show="isFirstStep()">
-                {{ $getCancelAction() }}
-            </div>
-        </div>
+        <span x-show="isFirstStep()">
+            {{ $getCancelAction() }}
+        </span>
 
-        <div>
-            <div
-                x-on:click="
-                    $wire.dispatchFormEvent(
-                        'wizard::nextStep',
-                        '{{ $statePath }}',
-                        getStepIndex(step),
-                    )
-                "
-                x-show="! isLastStep()"
-                x-cloak
-            >
-                {{ $getAction('next') }}
-            </div>
+        <span
+            x-cloak
+            x-on:click="
+                $wire.dispatchFormEvent(
+                    'wizard::nextStep',
+                    '{{ $statePath }}',
+                    getStepIndex(step),
+                )
+            "
+            x-show="! isLastStep()"
+        >
+            {{ $getAction('next') }}
+        </span>
 
-            <div x-show="isLastStep()">
-                {{ $getSubmitAction() }}
-            </div>
-        </div>
+        <span x-show="isLastStep()">
+            {{ $getSubmitAction() }}
+        </span>
     </div>
 </div>

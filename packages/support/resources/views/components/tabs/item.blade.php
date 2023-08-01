@@ -16,7 +16,7 @@
 @php
     $hasAlpineActiveClasses = filled($alpineActive);
 
-    $inactiveItemClasses = 'text-gray-700 dark:text-gray-200';
+    $inactiveItemClasses = 'text-gray-500 hover:text-gray-700 focus:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-gray-200';
 
     $activeItemClasses = 'fi-tabs-item-active bg-gray-50 text-primary-600 dark:bg-white/5 dark:text-primary-400';
 
@@ -44,7 +44,7 @@
                 'role' => 'tab',
             ])
             ->class([
-                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium font-semibold outline-none transition duration-75 hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
+                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium font-medium outline-none transition duration-75 hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
                 $inactiveItemClasses => (! $hasAlpineActiveClasses) && (! $active),
                 $activeItemClasses => (! $hasAlpineActiveClasses) && $active,
             ])
