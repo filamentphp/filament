@@ -54,7 +54,7 @@
         },
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
 
     $hasLoadingIndicator = filled($wireTarget);
 

@@ -120,7 +120,7 @@
         'sr-only' => $labelSrOnly,
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
 
     $hasFileUploadLoadingIndicator = $type === 'submit' && filled($form);
     $hasLoadingIndicator = filled($wireTarget) || $hasFileUploadLoadingIndicator;

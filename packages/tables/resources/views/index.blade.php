@@ -144,7 +144,8 @@
         },
 
         mountBulkAction: function (name) {
-            $wire.mountTableBulkAction(name, this.selectedRecords)
+            $wire.set('selectedTableRecords', this.selectedRecords, false)
+            $wire.mountTableBulkAction(name)
         },
 
         toggleSelectRecordsOnPage: function () {

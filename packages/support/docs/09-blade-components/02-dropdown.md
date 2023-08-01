@@ -14,17 +14,19 @@ The dropdown component allows you to render a dropdown menu with a button that t
         </x-filament::button>
     </x-slot>
     
-    <x-filament::dropdown-item wire:click="openViewModal">
-        View
-    </x-filament::dropdown-item>
-    
-    <x-filament::dropdown-item wire:click="openEditModal">
-        Edit
-    </x-filament::dropdown-item>
-    
-    <x-filament::dropdown-item wire:click="openDeleteModal">
-        Delete
-    </x-filament::dropdown-item>
+    <x-filament::dropdown.list>
+        <x-filament::dropdown.list.item wire:click="openViewModal">
+            View
+        </x-filament::dropdown.list.item>
+        
+        <x-filament::dropdown.list.item wire:click="openEditModal">
+            Edit
+        </x-filament::dropdown.list.item>
+        
+        <x-filament::dropdown.list.item wire:click="openDeleteModal">
+            Delete
+        </x-filament::dropdown.list.item>
+    </x-filament::dropdown.list>
 </x-filament::dropdown>
 ```
 
@@ -33,12 +35,12 @@ The dropdown component allows you to render a dropdown menu with a button that t
 By default, a dropdown item's underlying HTML tag is `<button>`. You can change it to be an `<a>` tag by using the `tag` attribute:
 
 ```blade
-<x-filament::dropdown-item
+<x-filament::dropdown.list.item
     href="https://filamentphp.com"
     tag="a"
 >
     Filament
-</x-filament::dropdown-item>
+</x-filament::dropdown.list.item>
 ```
 
 ## Changing the color of a dropdown item
@@ -46,23 +48,23 @@ By default, a dropdown item's underlying HTML tag is `<button>`. You can change 
 By default, the color of a dropdown item is "gray". You can change it to be `danger`, `info`, `primary`, `success` or `warning` by using the `color` attribute:
 
 ```blade
-<x-filament::dropdown.item color="danger">
+<x-filament::dropdown.list.item color="danger">
     Edit
 </x-filament::button>
 
-<x-filament::dropdown.item color="info">
+<x-filament::dropdown.list.item color="info">
     Edit
 </x-filament::button>
 
-<x-filament::dropdown.item color="primary">
+<x-filament::dropdown.list.item color="primary">
     Edit
 </x-filament::button>
 
-<x-filament::dropdown.item color="success">
+<x-filament::dropdown.list.item color="success">
     Edit
 </x-filament::button>
 
-<x-filament::dropdown.item color="warning">
+<x-filament::dropdown.list.item color="warning">
     Edit
 </x-filament::button>
 ```
@@ -72,9 +74,9 @@ By default, the color of a dropdown item is "gray". You can change it to be `dan
 You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a dropdown item by using the `icon` attribute:
 
 ```blade
-<x-filament::dropdown item icon="heroicon-m-pencil">
+<x-filament::dropdown.list.item icon="heroicon-m-pencil">
     Edit
-</x-filament::dropdown item>
+</x-filament::dropdown.list.item>
 ```
 
 ## Adding an image to a dropdown item
@@ -82,9 +84,9 @@ You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a dr
 You can add a circular image to a dropdown item by using the `image` attribute:
 
 ```blade
-<x-filament::dropdown-item image="https://filamentphp.com/dan.jpg">
+<x-filament::dropdown.list.item image="https://filamentphp.com/dan.jpg">
     Dan Harrin
-</x-filament::dropdown-item>
+</x-filament::dropdown.list.item>
 ```
 
 ## Adding a badge to a dropdown item
@@ -92,25 +94,25 @@ You can add a circular image to a dropdown item by using the `image` attribute:
 You can render a [badge](badge) on top of a dropdown item by using the `badge` slot:
 
 ```blade
-<x-filament::dropdown-item>
+<x-filament::dropdown.list.item>
     Mark notifications as read
     
     <x-slot name="badge">
         3
     </x-slot>
-</x-filament::dropdown-item>
+</x-filament::dropdown.list.item>
 ```
 
 You can [change the color](badge#changing-the-color-of-the-badge) of the badge using the `badge-color` attribute:
 
 ```blade
-<x-filament::dropdown item badge-color="danger">
+<x-filament::dropdown.list.item badge-color="danger">
     Mark notifications as read
     
     <x-slot name="badge">
         3
     </x-slot>
-</x-filament::dropdown item>
+</x-filament::dropdown.list.item>
 ```
 
 ## Setting the placement of a dropdown
