@@ -56,9 +56,9 @@ Firstly, you must [replace the original Dashboard page](#customizing-the-dashboa
 Now, in your new `app/Filament/Pages/Dashboard.php` file, you may override the `getColumns()` method to return a number of grid columns to use:
 
 ```php
-protected function getColumns(): int | array
+public function getColumns(): int | string | array
 {
-    return 3;
+    return 2;
 }
 ```
 
@@ -67,7 +67,7 @@ protected function getColumns(): int | array
 You may wish to change the number of widget grid columns based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. You can do this using an array that contains the number of columns that should be used at each breakpoint:
 
 ```php
-protected function getColumns(): int | array
+public function getColumns(): int | string | array
 {
     return [
         'md' => 4,
