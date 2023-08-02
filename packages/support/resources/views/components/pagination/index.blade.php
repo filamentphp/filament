@@ -63,7 +63,7 @@
                 </x-filament::input.wrapper>
 
                 <span class="sr-only">
-                    __('filament::components/pagination.fields.records_per_page.label')
+                    {{ __('filament::components/pagination.fields.records_per_page.label') }}
                 </span>
             </label>
 
