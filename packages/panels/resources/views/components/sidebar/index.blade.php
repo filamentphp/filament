@@ -3,7 +3,8 @@
 ])
 
 @php
-    $openSidebarClasses = 'fi-sidebar-open max-w-none translate-x-0 shadow-xl ring-1 ring-gray-950/5 dark:ring-white/10';
+    $openSidebarClasses = 'fi-sidebar-open max-w-none translate-x-0 shadow-xl ring-1 ring-gray-950/5 rtl:-translate-x-0 dark:ring-white/10';
+    $isRtl = __('filament-panels::layout.direction') === 'rtl';
 @endphp
 
 <aside
@@ -13,7 +14,7 @@
         x-bind:class="
             $store.sidebar.isOpen
                 ? @js($openSidebarClasses)
-                : 'lg:max-w-[--collapsed-sidebar-width] -translate-x-full rtl:translate-x-full lg:translate-x-0'
+                : 'lg:max-w-[--collapsed-sidebar-width] -translate-x-full rtl:translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0'
         "
     @else
         @if (filament()->hasTopNavigation() || filament()->isSidebarFullyCollapsibleOnDesktop())
@@ -54,7 +55,7 @@
         @if (filament()->isSidebarCollapsibleOnDesktop())
             <x-filament::icon-button
                 color="gray"
-                icon="heroicon-o-chevron-right"
+                :icon="$isRtl ? 'heroicon-o-chevron-left' : 'heroicon-o-chevron-right'"
                 icon-alias="panels::sidebar.expand-button"
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.expand.label')"
@@ -69,7 +70,7 @@
         @if (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop())
             <x-filament::icon-button
                 color="gray"
-                icon="heroicon-o-chevron-left"
+                :icon="$isRtl ? 'heroicon-o-chevron-right' : 'heroicon-o-chevron-left'"
                 icon-alias="panels::sidebar.collapse-button"
                 icon-size="lg"
                 :label="__('filament-panels::layout.actions.sidebar.collapse.label')"
