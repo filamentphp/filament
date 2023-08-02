@@ -5,8 +5,8 @@ use Filament\Http\Controllers\Auth\EmailVerificationController;
 use Filament\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\RedirectToHomeController;
 use Filament\Http\Controllers\RedirectToTenantController;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
     ->group(function () {
