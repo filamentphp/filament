@@ -652,7 +652,7 @@ Create a [stats widget](../widgets/stats-overview) to render patient types using
 php artisan make:filament-widget PatientTypeOverview --stats-overview
 ```
 
-When prompted, do not specify a resource, select "admin" for the location.
+When prompted, do not specify a resource, and select "admin" for the location.
 
 This will create a new `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Stat` instances from the `getStats()` method:
 
