@@ -696,7 +696,7 @@
                                                 <div
                                                     x-collapse
                                                     x-show="! isCollapsed"
-                                                    class="mt-3 {{ $recordContentHorizontalPaddingClasses }}"
+                                                    class="{{ $recordContentHorizontalPaddingClasses }} mt-3"
                                                 >
                                                     {{ $collapsibleColumnsLayout->viewData(['recordKey' => $recordKey]) }}
                                                 </div>
