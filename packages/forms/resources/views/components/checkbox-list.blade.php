@@ -181,7 +181,7 @@
                                     ->merge([
                                         'disabled' => $isDisabled,
                                         'value' => $value,
-                                        'wire:loading.attr' => 'disabled',
+                                        'wire:loading.attr' => 'readonly',
                                         $applyStateBindingModifiers('wire:model') => $statePath,
                                         'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)
