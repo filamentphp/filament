@@ -20,6 +20,9 @@ trait HasRoutes
 
     protected string | Closure | null $homeUrl = null;
 
+    /**
+     * @var string|array<string>|null
+     */
     protected string | array | null $domain = null;
 
     protected string $path = '';
@@ -31,6 +34,9 @@ trait HasRoutes
         return $this;
     }
 
+    /**
+     * @param string|array<string>|null $domain
+     */
     public function domain(string | array | null $domain = null): static
     {
         $this->domain = $domain;
@@ -98,6 +104,9 @@ trait HasRoutes
         return $this->evaluate($this->homeUrl);
     }
 
+    /**
+     * @return string|array<string>|null
+     */
     public function getDomain(): string | array | null
     {
         return $this->domain;
