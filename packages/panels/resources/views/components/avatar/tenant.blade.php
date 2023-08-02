@@ -6,6 +6,6 @@
     :src="filament()->getTenantAvatarUrl($tenant)"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
-            ->class(['fi-tenant-avatar rounded-md'])
+            ->class(['fi-tenant-avatar rounded-md shrink-0'])
     "
 />
