@@ -11,12 +11,12 @@ title: Upgrading from v2.x
 
 Please upgrade Filament before upgrading to Livewire v3. Instructions on how to upgrade Livewire can be found [here](https://livewire.laravel.com/docs/upgrading).
 
-> **Livewire v3 is still in beta**
-> While they will attempt to keep breaking changes to a minimum, they could still happen. Filament v3 is also not stable because of that. Therefore, we recommend testing your application thoroughly before using Filament v3 in production.
+> **Livewire v3 is still in beta!**<br>
+> Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Upgrading automatically
 
-Since Livewire v3 is still in beta, make sure that the `minimum-stability` in your `composer.json` is set to `dev`:
+Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
 
 ```json
 "minimum-stability": "dev",
@@ -39,7 +39,7 @@ You can now `composer remove filament/upgrade` as you don't need it any more.
 
 ## Upgrading manually
 
-Since Livewire v3 is still in beta, make sure that the `minimum-stability` in your `composer.json` is set to `dev`:
+Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
 
 ```json
 "minimum-stability": "dev",

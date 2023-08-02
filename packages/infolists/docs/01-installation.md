@@ -12,16 +12,18 @@ Filament requires the following to run:
 - Laravel v9.0+
 - Livewire v3.0+
 
-> **Livewire v3 is still in beta**
-> Although breaking changes should be minimal, we recommend testing your application thoroughly before using Livewire v3 in production.
+> **Livewire v3 is still in beta!**<br>
+> Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
 
-First, since Livewire v3 is still in beta, make sure that the `minimum-stability` in your `composer.json` is set to `dev`:
+## Installation
+
+Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
 
 ```json
 "minimum-stability": "dev",
 ```
 
-Then, require the Infolist Builder package using Composer:
+Require the Infolist Builder package using Composer:
 
 ```bash
 composer require filament/infolists:"^3.0-stable" -W
