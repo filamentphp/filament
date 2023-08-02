@@ -44,7 +44,7 @@
                             name="{{ $id }}"
                             type="radio"
                             value="{{ $value }}"
-                            wire:loading.attr="readonly"
+                            wire:loading.attr="disabled"
                             {{ $applyStateBindingModifiers('wire:model') }}="{{ $statePath }}"
                             {{
                                 $getExtraInputAttributeBag()

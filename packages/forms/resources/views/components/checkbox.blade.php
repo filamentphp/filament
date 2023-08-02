@@ -13,7 +13,7 @@
                         'disabled' => $isDisabled(),
                         'id' => $getId(),
                         'required' => $isRequired() && (! $isConcealed()),
-                        'wire:loading.attr' => 'readonly',
+                        'wire:loading.attr' => 'disabled',
                         $applyStateBindingModifiers('wire:model') => $statePath,
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)

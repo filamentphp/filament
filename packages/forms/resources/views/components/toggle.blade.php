@@ -41,7 +41,7 @@
                         'id' => $getId(),
                         'role' => 'switch',
                         'type' => 'button',
-                        'wire:loading.attr' => 'readonly',
+                        'wire:loading.attr' => 'disabled',
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
