@@ -12,4 +12,14 @@ class SelectAction extends Action
 
         $this->view('filament-actions::select-action');
     }
+
+    public function getExtraAttributes(): array
+    {
+        return array_merge(
+            parent::getExtraAttributes(),
+            [
+                'wire:model.live' => $this->getName(),
+            ]
+        );
+    }
 }

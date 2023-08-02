@@ -12,7 +12,7 @@
         <x-filament::input.select
             :disabled="$isDisabled"
             :id="$id"
-            :wire:model.live="$getName()"
+            :attributes="$getExtraAttributeBag()"
         >
             @if (($placeholder = $getPlaceholder()) !== null)
                 <option value="">{{ $placeholder }}</option>
