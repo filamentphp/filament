@@ -598,7 +598,7 @@ class Treatment extends Model
 
 ### Setting up the treatments table
 
-When the relation manager was generated previously, the `description` text column was automatically added. Let's also add a `sortable()` column for the `price` with a currency prefix. Use the Filament `money()` method to format the `price` column as money — in this case for `usd` (`$`):
+When the relation manager was generated previously, the `description` text column was automatically added. Let's also add a `sortable()` column for the `price` with a currency prefix. Use the Filament `money()` method to format the `price` column as money — in this case for `EUR` (`€`):
 
 ```php
 use Filament\Tables;
@@ -610,7 +610,7 @@ public function table(Table $table): Table
         ->columns([
             Tables\Columns\TextColumn::make('description'),
             Tables\Columns\TextColumn::make('price')
-                ->money('usd')
+                ->money('EUR')
                 ->sortable(),
         ]);
 }
@@ -628,7 +628,7 @@ public function table(Table $table): Table
         ->columns([
             Tables\Columns\TextColumn::make('description'),
             Tables\Columns\TextColumn::make('price')
-                ->money('usd')
+                ->money('EUR')
                 ->sortable(),
             Tables\Columns\TextColumn::make('created_at')
                 ->dateTime(),
@@ -646,11 +646,13 @@ Let's add a stats widget to our default dashboard page that includes a stat for 
 
 ### Creating a stats widget
 
-Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command (do not specify a resource and select "admin" for the location when prompted):
+Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command:
 
 ```bash
 php artisan make:filament-widget PatientTypeOverview --stats-overview
 ```
+
+When prompted, do not specify a resource, and select "admin" for the location.
 
 This will create a new `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Stat` instances from the `getStats()` method:
 
@@ -686,7 +688,7 @@ Let's add a chart to the dashboard to visualize the number of treatments adminis
 php artisan make:filament-widget TreatmentsChart --chart
 ```
 
-When prompted, select "admin" for the location and "line chart" as the chart type.
+When prompted, do not specify a resource, select "admin" for the location, and choose "line chart" as the chart type.
 
 Open `app/Filament/Widgets/TreatmentsChart.php` and set the `$heading` of the chart to "Treatments".
 
