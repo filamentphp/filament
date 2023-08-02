@@ -35,7 +35,7 @@ trait HasRoutes
     }
 
     /**
-     * @param string|array<string>|null $domain
+     * @param  string|array<string>|null  $domain
      */
     public function domain(string | array | null $domain = null): static
     {
