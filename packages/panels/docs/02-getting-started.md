@@ -598,7 +598,7 @@ class Treatment extends Model
 
 ### Setting up the treatments table
 
-When the relation manager was generated previously, the `description` text column was automatically added. Let's also add a `sortable()` column for the `price` with a currency prefix. Use the Filament `money()` method to format the `price` column as money — in this case for `euro` (`€`):
+When the relation manager was generated previously, the `description` text column was automatically added. Let's also add a `sortable()` column for the `price` with a currency prefix. Use the Filament `money()` method to format the `price` column as money — in this case for `EUR` (`€`):
 
 ```php
 use Filament\Tables;
