@@ -225,6 +225,7 @@ Actions::make([
 <AutoScreenshot name="forms/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="3.x" />
 
 ## Form component Select action
+
 You may also use a SelectAction in your component's affix/suffix actions.
 
 This is useful for selects with a small number of options that are directly dependent to their form field, such as currency selectors for a price field.
