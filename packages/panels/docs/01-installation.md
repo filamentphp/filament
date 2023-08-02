@@ -10,7 +10,7 @@ Filament requires the following to run:
 - Laravel v9.0+
 - Livewire v3.0+
 
-> **Livewire v3 is still in beta!<br>**
+> **Livewire v3 is still in beta!**<br>
 > Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Installation
