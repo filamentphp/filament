@@ -23,7 +23,7 @@
             type="search"
             wire:model.live.debounce.500ms="search"
             x-bind:id="$id('input')"
-            wire:key="globalSearchFieldInput"
+            wire:key="global-search.field.input"
             x-data="{}"
             :attributes="
                 \Filament\Support\prepare_inherited_attributes(

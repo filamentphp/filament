@@ -23,6 +23,7 @@
             type="search"
             :wire:model.live.debounce.500ms="$wireModel"
             x-bind:id="$id('input')"
+            :wire:key="$this->getId() . '.table.' . $wireModel . '.field.input'"
         />
     </x-filament::input.wrapper>
 </div>
