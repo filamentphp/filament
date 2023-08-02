@@ -5,7 +5,6 @@ use Filament\Http\Controllers\Auth\EmailVerificationController;
 use Filament\Http\Controllers\Auth\LogoutController;
 use Filament\Http\Controllers\RedirectToHomeController;
 use Filament\Http\Controllers\RedirectToTenantController;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 
 Route::name('filament.')
@@ -16,7 +15,7 @@ Route::name('filament.')
             $hasTenancy = $panel->hasTenancy();
             $tenantSlugAttribute = $panel->getTenantSlugAttribute();
 
-            foreach (Arr::wrap($panel->getDomain()) as $domain) {
+            foreach ($panel->getDomains() as $domain) {
                 Route::domain($domain)
                     ->middleware($panel->getMiddleware())
                     ->name("{$panelId}.")

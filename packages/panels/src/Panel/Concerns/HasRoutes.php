@@ -105,11 +105,13 @@ trait HasRoutes
     }
 
     /**
-     * @return string|array<string>|null
+     * @return array<string>
      */
-    public function getDomain(): string | array | null
+    public function getDomains(): array
     {
-        return $this->domain;
+        return is_null($this->domain)
+            ? [null]
+            : Arr::wrap($this->domain);
     }
 
     public function getPath(): string
