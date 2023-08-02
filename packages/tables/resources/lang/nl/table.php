@@ -29,6 +29,7 @@ return [
         'search' => [
             'label' => 'Zoeken',
             'placeholder' => 'Zoeken',
+            'indicator' => 'Zoekopdracht',
         ],
 
     ],
