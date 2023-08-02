@@ -1,3 +1,3 @@
 .fi-fo-field-wrp .fi-ac-select-action .fi-input-wrapper {
-    @apply bg-transparent ring-0;
+    @apply bg-transparent ring-0 shadow-none;
 }
