@@ -610,7 +610,7 @@ public function table(Table $table): Table
         ->columns([
             Tables\Columns\TextColumn::make('description'),
             Tables\Columns\TextColumn::make('price')
-                ->money('euro')
+                ->money('EUR')
                 ->sortable(),
         ]);
 }
