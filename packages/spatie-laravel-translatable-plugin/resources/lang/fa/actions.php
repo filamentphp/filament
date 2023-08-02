@@ -3,7 +3,7 @@
 return [
 
     'active_locale' => [
-        'label' => 'موقعیت',
+        'label' => 'زبان',
     ],
 
 ];
