@@ -32,7 +32,7 @@ class SelectAction extends Action
         return array_merge(
             parent::getExtraAttributes(),
             [
-                $this->applyStateBindingModifiers('wire:model') => $this->getStatePath()
+                $this->applyStateBindingModifiers('wire:model') => $this->getStatePath(),
             ]
         );
     }
