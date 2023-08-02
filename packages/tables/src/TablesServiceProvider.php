@@ -11,6 +11,7 @@ use Filament\Tables\Testing\TestsFilters;
 use Filament\Tables\Testing\TestsRecords;
 use Filament\Tables\Testing\TestsSummaries;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Facades\Blade;
 use Livewire\Features\SupportTesting\Testable;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -39,6 +40,37 @@ class TablesServiceProvider extends PackageServiceProvider
                 ], 'filament-stubs');
             }
         }
+
+        Blade::directive('table', function ($table) {
+            $result = Blade::render(<<<BLADE
+                @volt
+                    <?php
+
+                    use Filament\Tables\Table;
+
+                    Livewire\Volt\uses([
+                        Filament\Forms\Concerns\InteractsWithForms::class,
+                        Filament\Forms\Contracts\HasForms::class,
+                        Filament\Tables\Concerns\InteractsWithTable::class,
+                        Filament\Tables\Contracts\HasTable::class,
+                    ]);
+
+                    \$table = fn (Table \$table): Table => {$table};
+
+                    ?>
+
+                    <div>
+                        <div>
+                            {{ \$this->table }}
+                        </div>
+                    </div>
+                @endvolt
+            BLADE);
+
+            // dd($result);
+
+            return $result;
+        });
 
         Testable::mixin(new TestsActions());
         Testable::mixin(new TestsBulkActions());
