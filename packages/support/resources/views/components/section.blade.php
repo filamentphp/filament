@@ -14,6 +14,7 @@
     'icon' => null,
     'iconColor' => 'gray',
     'iconSize' => IconSize::Large,
+    'persistCollapseState' => false,
 ])
 
 @php
@@ -26,7 +27,7 @@
 <section
     @if ($collapsible)
         x-data="{
-            isCollapsed: @js($collapsed),
+            isCollapsed: @js($persistCollapseState) ? $persist(@js($collapsed)).as($el.id) : @js($collapsed),
         }"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
@@ -135,7 +136,7 @@
     <div
         @if ($collapsible)
             x-bind:aria-expanded="(! isCollapsed).toString()"
-            @if ($collapsed)
+            @if ($collapsed || $persistCollapseState)
                 x-cloak
             @endif
             x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
