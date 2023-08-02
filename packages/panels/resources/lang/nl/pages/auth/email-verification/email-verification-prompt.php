@@ -27,7 +27,8 @@ return [
         ],
 
         'notification_resend_throttled' => [
-            'title' => 'Te veel pogingen. Probeer het opnieuw over :seconds seconden.',
+            'title' => 'Te veel verzendpogingen',
+            'body' => 'Probeer het opnieuw over :seconds seconden.',
         ],
 
     ],

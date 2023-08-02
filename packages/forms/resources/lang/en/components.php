@@ -89,11 +89,11 @@ return [
                 ],
 
                 'flip_horizontal' => [
-                    'label' => 'Flip image horizontal',
+                    'label' => 'Flip image horizontally',
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'Flip image vertical',
+                    'label' => 'Flip image vertically',
                 ],
 
                 'move_down' => [
