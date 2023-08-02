@@ -224,6 +224,24 @@ Actions::make([
 
 <AutoScreenshot name="forms/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="3.x" />
 
+## Form component Select action
+You may also use a SelectAction in your component's affix/suffix actions.
+
+This is useful for selects with a small number of options that are directly dependent to their form field, such as currency selectors for a price field.
+
+```php
+use Filament\Forms\Components\Actions\SelectAction;
+
+\Filament\Forms\Components\TextInput::make('price')
+->suffixAction(SelectAction::make('currency')
+    ->options([
+        'USD' => '$',
+        'EUR' => '€',
+        'GBP' => '£',
+    ])
+])
+```
+
 ## Form component action utility injection
 
 If an action is attached to a form component, the `action()` function is able to [inject utilities](advanced#form-component-utility-injection) directly from that form component. For instance, you can inject [`$set`](advanced#injecting-a-function-to-set-the-state-of-another-field) and [`$state`](advanced#injecting-the-current-state-of-a-field):
