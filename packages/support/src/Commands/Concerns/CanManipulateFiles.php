@@ -57,8 +57,7 @@ trait CanManipulateFiles
         $filesystem = app(Filesystem::class);
 
         $filesystem->ensureDirectoryExists(
-            (string) str($path)
-                ->beforeLast('/'),
+            pathinfo($path, PATHINFO_DIRNAME),
         );
 
         $filesystem->put($path, $contents);
