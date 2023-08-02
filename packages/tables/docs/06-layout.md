@@ -350,23 +350,6 @@ Panel::make([
 
 <AutoScreenshot name="tables/layout/collapsible/mobile" alt="Table with collapsible content on mobile" version="3.x" />
 
-### Adding a collapse animation
-
-If you're not using the table builder within the panel builder, you may find that there is no animation when collapsing or expanding the content. You can enable this by installing the [Alpine.js Collapse Plugin](https://alpinejs.dev/plugins/collapse):
-
-```bash
-npm install @alpinejs/collapse --save-dev
-```
-
-Finally, import `@alpinejs/collapse` as an Alpine.js plugin in your JavaScript file:
-
-```js
-import Alpine from 'alpinejs'
-import Collapse from '@alpinejs/collapse'
-
-Alpine.plugin(Collapse)
-```
-
 ## Arranging records into a grid
 
 Sometimes, you may find that your data fits into a grid format better than a list. Filament can handle that too!
