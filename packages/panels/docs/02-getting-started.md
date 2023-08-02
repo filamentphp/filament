@@ -688,7 +688,7 @@ Let's add a chart to the dashboard to visualize the number of treatments adminis
 php artisan make:filament-widget TreatmentsChart --chart
 ```
 
-When prompted, do not specify a resource, select "admin" for the location and "line chart" as the chart type.
+When prompted, do not specify a resource, select "admin" for the location, and choose "line chart" as the chart type.
 
 Open `app/Filament/Widgets/TreatmentsChart.php` and set the `$heading` of the chart to "Treatments".
 
