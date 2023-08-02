@@ -205,6 +205,7 @@ class SelectFilter extends BaseFilter
             ->searchable($this->isSearchable())
             ->preload($this->isPreloaded())
             ->native($this->isNative())
+            ->afterStateHydrated(fn ($component, $state) => $component->state($state ?? ($component->isMultiple() ? [] : '')))
             ->optionsLimit($this->getOptionsLimit());
 
         if ($this->queriesRelationships()) {
