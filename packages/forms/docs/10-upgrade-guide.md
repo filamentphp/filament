@@ -127,20 +127,21 @@ If you were using input masks for money related fields, Alpine already has [buil
 JS))
 ```
 
-#### Action class namespace deprecations
+#### Action execution with forms
 
-Actions under the `Filament\Pages\Actions\` have been deprecated, but not yet removed. Please use `Filament\Actions\` for page actions and `Filament\Tables\Actions\` for Table and Bulk actions.
-
-#### Action execution via function call no longer works
-
-In v2, you were able to place Action logic in external methods and call them, like so:
+In v2, you were able to externalise action logic to a function, like so:
 ```
  Action::make('import_data')
     ->action('importData')
+    ->form([
+        FileUpload::make('file'),
+    ])
 ```
-This was never [officially supported](https://github.com/filamentphp/filament/issues/7324#issuecomment-1659312359), but due to changes in how actions are called with Livewire, it no longer works. It is recommended to place your logic in an Action closure. See the [Action documentation](https://filamentphp.com/docs/3.x/actions/overview) for more information.
+In v3, if your Action uses a form like the above example, you'll need to change how your action logic is called. Otherwise, the function will be called when the action modal attempts to load, which may cause errors. 
 
-If you absolutely need the action logic to be in a separate function, you can call it as a closure:
+It is recommended to place your logic in a closure instead. See the [Action documentation](https://filamentphp.com/docs/3.x/actions/overview) for more information.
+
+If you absolutely need the action logic to be in a separate function, you can use `Closure::fromCallable()`:
 ```
 Action::make('import_data')
     ->action(Closure::fromCallable([$this, 'importData']))
