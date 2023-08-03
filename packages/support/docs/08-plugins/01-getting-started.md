@@ -44,7 +44,7 @@ While you can certainly build plugins from scratch, we recommend using the [Fila
 
 ### Usage
 
-To use the skeleton, simply go to the GitHub repo and click the "Use this template" button (***While Filament is in v3 Beta make sure you switch to the 3.x branch before using the template***). This will create a new repo in your account with the skeleton code. After that you can clone the repo to your machine. Once you have the code on your machine, navigate to the root of the project and run the following command:
+To use the skeleton, simply go to the GitHub repo and click the "Use this template" button. This will create a new repo in your account with the skeleton code. After that you can clone the repo to your machine. Once you have the code on your machine, navigate to the root of the project and run the following command:
 
 ```bash
 php ./configure.php
