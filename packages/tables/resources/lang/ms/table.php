@@ -118,7 +118,7 @@ return [
         ],
 
         'heading' => 'Penapis',
-        
+
         'indicator' => 'Penapis aktif',
 
         'multi_select' => [
