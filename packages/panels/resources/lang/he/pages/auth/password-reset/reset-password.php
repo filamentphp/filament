@@ -14,17 +14,17 @@ return [
 
         'password' => [
             'label' => 'סיסמה',
-            'validation_attribute' => 'סיסמא',
+            'validation_attribute' => 'סיסמה',
         ],
 
         'password_confirmation' => [
-            'label' => 'אימות סיסמא',
+            'label' => 'אימות סיסמה',
         ],
 
         'actions' => [
 
             'reset' => [
-                'label' => 'איפוס סיסמא',
+                'label' => 'איפוס סיסמה',
             ],
 
         ],

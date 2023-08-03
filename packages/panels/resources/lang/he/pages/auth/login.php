@@ -26,7 +26,7 @@ return [
         ],
 
         'password' => [
-            'label' => 'סיסמא',
+            'label' => 'סיסמה',
         ],
 
         'remember' => [
