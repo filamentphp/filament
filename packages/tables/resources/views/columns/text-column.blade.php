@@ -36,6 +36,10 @@
     }
 
     $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
+
+    if (blank($arrayState) && filled($placeholder)) {
+        $arrayState = \Illuminate\Support\Arr::prepend($arrayState, '');
+    }
 @endphp
 
 <div
