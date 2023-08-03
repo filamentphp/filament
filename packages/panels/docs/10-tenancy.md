@@ -403,7 +403,7 @@ use Filament\Resources\Resource;
 
 class PostResource extends Resource
 {
-    protected static ?string $tenantOwnershipRelationshipName = 'blogPosts';
+    protected static ?string $tenantRelationshipName = 'blogPosts';
 
     // ...
 }
