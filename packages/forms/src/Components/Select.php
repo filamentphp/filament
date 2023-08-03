@@ -691,7 +691,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($modifyQueryUsing) {
@@ -767,7 +769,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($modifyQueryUsing) {
@@ -879,7 +883,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             $relationshipQuery->where(
@@ -912,7 +918,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
