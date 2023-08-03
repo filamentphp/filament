@@ -1,5 +1,6 @@
 <?php
 
+
 return [
 
     'builder' => [
@@ -12,6 +13,10 @@ return [
 
             'add' => [
                 'label' => 'הוסף ל :label',
+            ],
+
+            'add_between' => [
+                'label' => 'הכנס בין הבלוקים',
             ],
 
             'delete' => [
@@ -50,6 +55,139 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'actions' => [
+
+            'deselect_all' => [
+                'label' => 'בטל בחירה בהכל',
+            ],
+
+            'select_all' => [
+                'label' => 'בחר הכל',
+            ],
+
+        ],
+
+    ],
+
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'ביטול',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'מצב גרירה "חיתוך"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'מצב גרירה "הזזה"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'היפוך אופקי של התמונה',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'היפוך אנכי של התמונה',
+                ],
+
+                'move_down' => [
+                    'label' => 'הזזת התמונה למטה',
+                ],
+
+                'move_left' => [
+                    'label' => 'הזזת התמונה לשמאל',
+                ],
+
+                'move_right' => [
+                    'label' => 'הזזת התמונה לימין',
+                ],
+
+                'move_up' => [
+                    'label' => 'הזזת התמונה למעלה',
+                ],
+
+                'reset' => [
+                    'label' => 'איפוס',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'סיבוב התמונה שמאלה',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'סיבוב התמונה ימינה',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'הגדר יחס צדדי לתמונה :ratio',
+                ],
+
+                'save' => [
+                    'label' => 'שמור',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'התמונה עם זום 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'התקרב',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'התרחק',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'גובה',
+                    'unit' => 'פיקסלים',
+                ],
+
+                'rotation' => [
+                    'label' => 'סיבוב',
+                    'unit' => 'מעלות',
+                ],
+
+                'width' => [
+                    'label' => 'רוחב',
+                    'unit' => 'פיקסלים',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'פיקסלים',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'פיקסלים',
+                ],
+            ],
+            'aspect_ratios' => [
+
+                'label' => 'יחסי ציר',
+
+                'no_fixed' => [
+                    'label' => 'חופשי',
+                ],
+
+            ],
+
+        ],
+    ],
+
+
     'key_value' => [
 
         'actions' => [
@@ -60,6 +198,10 @@ return [
 
             'delete' => [
                 'label' => 'מחק שורה',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder row',
             ],
 
         ],
@@ -82,15 +224,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'הוסף קבצים',
-            'bold' => 'הדגש',
+            'blockquote' => 'בלוק ציטוט',
+            'bold' => 'מודגש',
             'bullet_list' => 'רשימת נקודות',
-            'code_block' => 'קטע קוד',
-            'edit' => 'ערוך',
+            'code_block' => 'בלוק קוד',
+            'heading' => 'כותרת',
             'italic' => 'נטוי',
             'link' => 'קישור',
             'ordered_list' => 'רשימה ממוספרת',
-            'preview' => 'תצוגה מקדימה',
-            'strike' => 'קו חוצה',
+            'strike' => 'כתיב מחדל',
+            'redo' => 'שחזור',
+            'table' => 'טבלה',
+            'undo' => 'ביטול שחזור',
         ],
 
     ],
@@ -151,12 +296,12 @@ return [
 
                 'actions' => [
                     'link' => 'קישור',
-                    'unlink' => 'הסר קישור',
+                    'unlink' => 'בטל קישור',
                 ],
 
                 'label' => 'כתובת',
 
-                'placeholder' => 'הקלד כתובת',
+                'placeholder' => 'הכנס כתובת',
 
             ],
 
@@ -164,19 +309,20 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'הוסף קבצים',
-            'blockquote' => 'ציטוט',
-            'bold' => 'הדגש',
+            'blockquote' => 'בלוק ציטוט',
+            'bold' => 'מודגש',
             'bullet_list' => 'רשימת נקודות',
-            'code_block' => 'שדה קוד',
-            'h1' => 'כותרת',
-            'h2' => 'כותרת משנה',
-            'h3' => 'כותרת קטנה',
+            'code_block' => 'בלוק קוד',
+            'h1' => 'כותרת 1',
+            'h2' => 'כותרת 2',
+            'h3' => 'כותרת 3',
             'italic' => 'נטוי',
             'link' => 'קישור',
             'ordered_list' => 'רשימה ממוספרת',
-            'redo' => 'בצע שוב',
-            'strike' => 'קו חוצה',
-            'undo' => 'בטל ביצוע',
+            'redo' => 'חזור על',
+            'strike' => 'כתיב מחדל',
+            'underline' => 'קו תחתון',
+            'undo' => 'בטל',
         ],
 
     ],
@@ -195,6 +341,27 @@ return [
 
                         'create' => [
                             'label' => 'צור',
+                        ],
+                        'create_another' => [
+                            'label' => 'צור וצור עוד אחת',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'עריכה',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'שמור',
                         ],
 
                     ],
