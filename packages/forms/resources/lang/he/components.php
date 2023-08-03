@@ -201,7 +201,7 @@ return [
             ],
 
             'reorder' => [
-                'label' => 'Reorder row',
+                'label' => 'סדר רשומה מחדש',
             ],
 
         ],
