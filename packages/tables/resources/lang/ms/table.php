@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolum',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -88,6 +94,8 @@ return [
 
         'heading' => 'Tiada rekod dijumpai',
 
+        'description' => 'Cipta :model untuk bermula.',
+
     ],
 
     'filters' => [
@@ -109,6 +117,8 @@ return [
 
         ],
 
+        'heading' => 'Penapis',
+        
         'indicator' => 'Penapis aktif',
 
         'multi_select' => [
