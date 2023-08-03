@@ -4,12 +4,8 @@ namespace Filament\Support\Components;
 
 use Closure;
 use Exception;
-use Filament\Support\Concerns\Configurable;
-use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Support\Concerns\Macroable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\ComponentAttributeBag;
 use ReflectionClass;
 use ReflectionMethod;
