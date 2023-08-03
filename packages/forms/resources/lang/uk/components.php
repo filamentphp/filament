@@ -14,9 +14,9 @@ return [
                 'label' => 'Додати до :label',
             ],
 
-                'add_between' => [
-                    'label' => 'Вставити між',
-                ],
+            'add_between' => [
+                'label' => 'Вставити між',
+            ],
 
             'delete' => [
                 'label' => 'Видалити',
@@ -48,7 +48,7 @@ return [
 
             'expand_all' => [
                 'label' => 'Розгорнути все',
-    ],
+            ],
 
         ],
 
@@ -236,7 +236,7 @@ return [
             'strike' => 'Закреслений',
             'table' => 'Таблиця',
             'undo' => 'Скасувати',
-       ],
+        ],
 
     ],
 
@@ -341,26 +341,26 @@ return [
                         'create' => [
                             'label' => 'Створити',
                         ],
-                            'create_another' => [
-                                'label' => 'Створити ще один',
-                            ],
-
+                        'create_another' => [
+                            'label' => 'Створити ще один',
                         ],
 
                     ],
 
                 ],
 
-                'edit_option' => [
+            ],
 
-                    'modal' => [
+            'edit_option' => [
 
-                        'heading' => 'Змінити',
+                'modal' => [
 
-                        'actions' => [
+                    'heading' => 'Змінити',
 
-                            'save' => [
-                                'label' => 'Зберегти',
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Зберегти',
                         ],
 
                     ],
