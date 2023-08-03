@@ -61,7 +61,7 @@ class CheckTranslationsCommand extends Command
             ->each(function (string $locale, string $localeDir) use ($filesystem, $localeRootDirectory, $package) {
                 $files = $filesystem->allFiles($localeDir);
                 $baseFiles = $filesystem->allFiles(implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en']));
-                
+
                 $localeFiles = collect($files)->map(fn ($file) => (string) str($file->getPathname())->after("/{$locale}/"));
                 $englishFiles = collect($baseFiles)->map(fn ($file) => (string) str($file->getPathname())->after('/en/'));
                 $missingFiles = $englishFiles->diff($localeFiles);
@@ -69,15 +69,15 @@ class CheckTranslationsCommand extends Command
                 $path = implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, $locale]);
 
                 if ($missingFiles->count() > 0 && $removedFiles->count() > 0) {
-                    $this->warn("[!] Package filament/{$package} has {$missingFiles->count()} missing translation " . Str::plural('file', $missingFiles->count()) . " and {$removedFiles->count()} removed translation " . Str::plural('file', $missingFiles->count()) . " for " . locale_get_display_name($locale, 'en') . ".\n");
+                    $this->warn("[!] Package filament/{$package} has {$missingFiles->count()} missing translation " . Str::plural('file', $missingFiles->count()) . " and {$removedFiles->count()} removed translation " . Str::plural('file', $missingFiles->count()) . ' for ' . locale_get_display_name($locale, 'en') . ".\n");
 
                     $this->newLine();
-                } else if ($missingFiles->count() > 0) {
-                    $this->warn("[!] Package filament/{$package} has {$missingFiles->count()} missing translation " . Str::plural('file', $missingFiles->count()) . " for " . locale_get_display_name($locale, 'en') . ".\n");
+                } elseif ($missingFiles->count() > 0) {
+                    $this->warn("[!] Package filament/{$package} has {$missingFiles->count()} missing translation " . Str::plural('file', $missingFiles->count()) . ' for ' . locale_get_display_name($locale, 'en') . ".\n");
 
                     $this->newLine();
-                } else if ($removedFiles->count() > 0) {
-                    $this->warn("[!] Package filament/{$package} has {$removedFiles->count()} removed translation " . Str::plural('file', $removedFiles->count()) . " for " . locale_get_display_name($locale, 'en') . ".\n");
+                } elseif ($removedFiles->count() > 0) {
+                    $this->warn("[!] Package filament/{$package} has {$removedFiles->count()} removed translation " . Str::plural('file', $removedFiles->count()) . ' for ' . locale_get_display_name($locale, 'en') . ".\n");
 
                     $this->newLine();
                 }
