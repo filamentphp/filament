@@ -310,7 +310,7 @@ Repeater::make('qualifications')
     ->schema([
         // ...
     ])
-    ->mutateRelationshipDataBeforeFillUsing(fn (array $data): array {
+    ->mutateRelationshipDataBeforeFillUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
 
         return $data;
