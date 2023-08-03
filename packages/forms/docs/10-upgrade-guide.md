@@ -56,6 +56,10 @@ php artisan vendor:publish --tag=filament-config --force
 rm config/forms.php
 ```
 
+#### Panel configuration is now in each AppPanelProvider
+
+By moving to a provider-per-panel system in V3, the old configuration method with `Filament::serving` for theme customisation, navigation groups, user menu items, etc in the AppServiceProvider has changed. Consult the [Configuration](https://filamentphp.com/docs/3.x/panels/configuration), [Navigation](https://filamentphp.com/docs/3.x/panels/navigation) and [Themes](https://filamentphp.com/docs/3.x/panels/themes) documentation for the new syntax.
+
 #### `FORMS_FILESYSTEM_DRIVER` .env variable
 
 The `FORMS_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILESYSTEM_DISK`. This is to make it more consistent with Laravel, as Laravel 9 introduced this change as well. Please ensure that you update your .env files accordingly, and don't forget production!
@@ -101,3 +105,43 @@ An easy way to upgrade your code quickly is to find and replace:
 
 - `Closure $get` to `\Filament\Forms\Get $get`
 - `Closure $set` to `\Filament\Forms\Set $set`
+
+#### TextInput numeric masks are replaced with Alpine.js masks
+
+Filament v2 had a fluent closure mask syntax for managing more complex input masks. In v3 you can use Alpine.js masking instead. So instead of 
+```
+->mask(fn (TextInput\Mask $mask) => $mask
+    ->numeric() // And any other transformations needed
+)
+```
+You can do:
+```
+->mask(RawJs::make(<<<'JS'
+    $input.startsWith('34') || $input.startsWith('37') ? '9999 999999 99999' : '9999 9999 9999 9999'
+JS))
+```
+If you were using input masks for money related fields, Alpine already has [builtin helpers](https://alpinejs.dev/plugins/mask#money-inputs) for it:
+```
+->mask(RawJs::make(<<<'JS'
+    $money($input, '.', ',', 2)
+JS))
+```
+
+#### Action class namespace deprecations
+
+Actions under the `Filament\Pages\Actions\` have been deprecated, but not yet removed. Please use `Filament\Actions\` for page actions and `Filament\Tables\Actions\` for Table and Bulk actions.
+
+#### Action execution via function call no longer works
+
+In v2, you were able to place Action logic in external methods and call them, like so:
+```
+ Action::make('import_data')
+    ->action('importData')
+```
+This was never [officially supported](https://github.com/filamentphp/filament/issues/7324#issuecomment-1659312359), but due to changes in how actions are called with Livewire, it no longer works. It is recommended to place your logic in an Action closure. See the [Action documentation](https://filamentphp.com/docs/3.x/actions/overview) for more information.
+
+If you absolutely need the action logic to be in a separate function, you can call it as a closure:
+```
+Action::make('import_data')
+    ->action(Closure::fromCallable([$this, 'importData']))
+```
