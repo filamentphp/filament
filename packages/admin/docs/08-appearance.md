@@ -158,7 +158,7 @@ mix.postCss('resources/css/filament.css', 'public/css', [
 In `/resources/css/filament.css`, import Filament's vendor CSS:
 
 ```css
-@import '../../vendor/filament/filament/resources/css/app.css';
+@import '../../vendor/filament/filament/resources/css/index.css';
 ```
 
 Now, you may register the theme file in a service provider's `boot()` method:
