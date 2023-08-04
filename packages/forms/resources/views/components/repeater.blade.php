@@ -81,7 +81,7 @@
 
                                 setTimeout(
                                     () =>
-                                        $el.scrollIntoView({
+                                        $root.scrollIntoView({
                                             behavior: 'smooth',
                                             block: 'start',
                                             inline: 'start',
