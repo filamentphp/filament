@@ -208,7 +208,7 @@ use Filament\Navigation\NavigationItem;
 NavigationItem::make('Analytics')
     ->visible(fn(): bool => auth()->user()->can('view-analytics'))
     // or
-    ->hidden(fn() => ! auth()->user()->can('view-analytics')),
+    ->hidden(fn(): bool => ! auth()->user()->can('view-analytics')),
 ```
 
 ## Disabling resource or page navigation items
