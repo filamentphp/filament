@@ -206,9 +206,9 @@ You can also conditionally hide a navigation item by using the `visible()` or `h
 use Filament\Navigation\NavigationItem;
 
 NavigationItem::make('Analytics')
-    ->visible(auth()->user()->can('view-analytics'))
+    ->visible(fn(): bool => auth()->user()->can('view-analytics'))
     // or
-    ->hidden(! auth()->user()->can('view-analytics')),
+    ->hidden(fn(): bool => ! auth()->user()->can('view-analytics')),
 ```
 
 ## Disabling resource or page navigation items
