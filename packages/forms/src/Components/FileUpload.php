@@ -78,6 +78,8 @@ class FileUpload extends BaseFileUpload
         $this->isAvatar = true;
 
         $this->image();
+        $this->imageResizeMode('cover');
+        $this->imageResizeUpscale(false);
         $this->imageCropAspectRatio('1:1');
         $this->imageResizeTargetHeight('500');
         $this->imageResizeTargetWidth('500');
