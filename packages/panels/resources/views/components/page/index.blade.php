@@ -19,7 +19,7 @@
             />
         @endif
 
-        @if($description = $this->getDescription())
+        @if ($description = $this->getDescription())
             <x-filament::section.description>
                 {{ $description }}
             </x-filament::section.description>
