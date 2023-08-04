@@ -18,9 +18,9 @@
             </div>
         @endif
 
-        <div class="fi-simple-main-ctn w-full flex items-center flex-grow">
+        <div class="fi-simple-main-ctn w-full flex items-center justify-center flex-grow">
             <main
-                class="fi-simple-main mx-auto my-16 w-full bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:max-w-lg sm:rounded-xl sm:px-12"
+                class="fi-simple-main my-16 w-full bg-white px-6 py-12 shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 sm:max-w-lg sm:rounded-xl sm:px-12"
             >
                 {{ $slot }}
             </main>
