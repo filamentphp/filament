@@ -298,7 +298,7 @@ This example assumes you have a Blade view at `resources/views/filament/settings
 By default, Filament will restrict the width of the content on the page so it doesn't become too wide on large screens. To change this, you may override the `getContentMaxWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, and `full`. The default is `7xl`:
 
 ```php
-public function getContentMaxWidth(): ?string
+public function getMaxContentWidth(): ?string
 {
     return 'full';
 }
