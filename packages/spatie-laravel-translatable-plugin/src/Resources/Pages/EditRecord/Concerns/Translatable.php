@@ -81,5 +81,24 @@ trait Translatable
         }
 
         $this->setActiveLocale($newActiveLocale);
+
+        if (blank($this->oldActiveLocale)) {
+            return;
+        }
+
+        $translatableAttributes = app(static::getModel())->getTranslatableAttributes();
+
+        $this->data[$newActiveLocale] = array_merge(
+            $this->data[$newActiveLocale] ?? [],
+            Arr::except(
+                $this->data[$this->oldActiveLocale] ?? [],
+                $translatableAttributes,
+            ),
+        );
+
+        $this->data[$this->oldActiveLocale] = Arr::only(
+            $this->data[$this->oldActiveLocale] ?? [],
+            $translatableAttributes,
+        );
     }
 }
