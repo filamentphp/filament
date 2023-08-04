@@ -19,6 +19,12 @@
             />
         @endif
 
+        @if($description = $this->getDescription())
+            <x-filament::section.description>
+                {{ $description }}
+            </x-filament::section.description>
+        @endif
+
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header-widgets.before', scopes: $this->getRenderHookScopes()) }}
 
         @if ($headerWidgets = $this->getVisibleHeaderWidgets())

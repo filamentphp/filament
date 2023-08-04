@@ -4,6 +4,8 @@ namespace Filament\Pages;
 
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Concerns\EvaluatesClosures;
+use Filament\Support\Concerns\HasDescription;
 use Filament\Widgets\Widget;
 use Filament\Widgets\WidgetConfiguration;
 use Illuminate\Contracts\View\View;
@@ -13,6 +15,8 @@ abstract class Page extends BasePage
 {
     use Concerns\HasRoutes;
     use Concerns\InteractsWithHeaderActions;
+    use HasDescription;
+    use EvaluatesClosures;
 
     protected static string $layout = 'filament-panels::components.layout.index';
 
