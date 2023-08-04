@@ -70,8 +70,12 @@
                             class="hidden"
                         >
                             <x-filament::badge>
+                                {{ $getPrefixTag() }}
+
                                 <span class="text-start" x-text="tag"></span>
 
+                                {{ $getSuffixTag() }}
+                                
                                 @if (! $isDisabled)
                                     <x-slot
                                         name="deleteButton"
