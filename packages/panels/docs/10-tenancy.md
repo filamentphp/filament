@@ -46,7 +46,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     {
         return $this->teams;
     }
-    
+
     public function teams(): BelongsToMany
     {
         return $this->belongsToMany(Team::class);
@@ -55,6 +55,8 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 ```
 
 In this example, users belong to many teams, so there is a `teams()` relationship. The `getTenants()` method returns the teams that the user belongs to. Filament uses this to list the tenants that the user has access to.
+
+When an authenticated user visits a multi-tenant panel and the user model does not implement the `HasTenants` contract, a `NonTenantModelException` exception is thrown. The contract has a `canAccessTenant` method that should return a boolean. If a tenant user visits a panel and access is denied, a `TenantAuthorizationException` exception is thrown.
 
 You'll also want users to be able to [register new teams](#adding-a-tenant-registration-page).
 
@@ -80,7 +82,7 @@ class RegisterTeam extends RegisterTenant
     {
         return 'Register team';
     }
-    
+
     public function form(Form $form): Form
     {
         return $form
@@ -89,13 +91,13 @@ class RegisterTeam extends RegisterTenant
                 // ...
             ]);
     }
-    
+
     protected function handleRegistration(array $data): Team
     {
         $team = Team::create($data);
-        
+
         $team->members()->attach(auth()->user());
-        
+
         return $team;
     }
 }
@@ -141,7 +143,7 @@ class EditTeamProfile extends EditTenantProfile
     {
         return 'Team profile';
     }
-    
+
     public function form(Form $form): Form
     {
         return $form
@@ -264,7 +266,7 @@ class ExampleBillingProvider implements Provider
             return redirect('https://billing.example.com');
         };
     }
-    
+
     public function getSubscribedMiddleware(): string
     {
         return RedirectIfUserNotSubscribed::class;
@@ -464,7 +466,7 @@ use Illuminate\Database\Eloquent\Model;
 class Team extends Model implements HasCurrentTenantLabel
 {
     // ...
-    
+
     public function getCurrentTenantLabel(): string
     {
         return 'Active team';
@@ -494,12 +496,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 {
     // ...
-    
+
     public function getDefaultTenant(): ?Model
     {
         return $this->latestTeam;
     }
-    
+
     public function latestTeam(): BelongsTo
     {
         return $this->belongsTo(Team::class, 'latest_team_id');
@@ -592,7 +594,7 @@ class ApplyTenantScopes
         Author::addGlobalScope(
             fn (Builder $query) => $query->whereBelongsTo(Filament::getTenant()),
         );
-        
+
         return $next($request);
     }
 }
