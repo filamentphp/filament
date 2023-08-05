@@ -67,7 +67,7 @@ class MakePageCommand extends Command
 
             $resourceClass = (string)str($resource)
                 ->afterLast('\\');
-            
+
             $resourcePage = $this->option('type') ??
 
                 select(
@@ -104,7 +104,7 @@ class MakePageCommand extends Command
             )] : Arr::first($panels);
         }
 
-        if ($resource === null) {
+        if (empty($resource)) {
             $pageDirectories = $panel->getPageDirectories();
             $pageNamespaces = $panel->getPageNamespaces();
 
@@ -134,7 +134,7 @@ class MakePageCommand extends Command
 
         $view = str($page)
             ->prepend(
-                (string) str($resource === null ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
+                (string) str(empty($resource) ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
                     ->replaceFirst('App\\', '')
             )
             ->replace('\\', '/')
@@ -144,7 +144,7 @@ class MakePageCommand extends Command
 
         $path = (string) str($page)
             ->prepend('/')
-            ->prepend($resource === null ? $path : "{$resourcePath}\\{$resource}\\Pages\\")
+            ->prepend( empty($resource) ? $path : "{$resourcePath}\\{$resource}\\Pages\\")
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');
@@ -183,7 +183,7 @@ class MakePageCommand extends Command
             ]);
         }
 
-        if ($resource === null || $resourcePage === 'custom') {
+        if ( empty($resource) || $resourcePage === 'custom') {
             $this->copyStubToApp('PageView', $viewPath);
         }
 
