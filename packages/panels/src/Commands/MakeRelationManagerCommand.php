@@ -9,6 +9,8 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 class MakeRelationManagerCommand extends Command
 {
@@ -22,24 +24,40 @@ class MakeRelationManagerCommand extends Command
 
     public function handle(): int
     {
-        $resource = (string) str($this->argument('resource') ?? $this->askRequired('Resource (e.g. `DepartmentResource`)', 'resource'))
+        $resource = (string) str(
+            $this->argument('resource') ??
+            text(
+                label: 'What is the Resource name?',
+                placeholder: 'Resource (e.g. `DepartmentResource`)',
+                required: true
+            ))
             ->studly()
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
 
-        if (! str($resource)->endsWith('Resource')) {
+        if (!str($resource)->endsWith('Resource')) {
             $resource .= 'Resource';
         }
 
-        $relationship = (string) str($this->argument('relationship') ?? $this->askRequired('Relationship (e.g. `members`)', 'relationship'))
+        $relationship = (string) str($this->argument('relationship') ??
+            text(
+                label: 'What is the Relationship?',
+                placeholder: 'Relationship (e.g. `members`)',
+                required: true
+            ))
             ->trim(' ');
         $managerClass = (string) str($relationship)
             ->studly()
             ->append('RelationManager');
 
-        $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ?? $this->askRequired('Title attribute (e.g. `name`)', 'title attribute'))
+        $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ??
+            text(
+                label: 'What is the Title attribute?',
+                placeholder: 'Title attribute (e.g. `name`)',
+                required: true
+            ))
             ->trim(' ');
 
         $panel = $this->option('panel');
@@ -52,13 +70,13 @@ class MakeRelationManagerCommand extends Command
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[$this->choice(
-                'Which panel would you like to create this in?',
-                array_map(
-                    fn (Panel $panel): string => $panel->getId(),
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
+                    fn(Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
-                Filament::getDefaultPanel()->getId(),
+                default: Filament::getDefaultPanel()->getId()
             )] : Arr::first($panels);
         }
 
@@ -66,9 +84,9 @@ class MakeRelationManagerCommand extends Command
         $resourceNamespaces = $panel->getResourceNamespaces();
 
         $resourceNamespace = (count($resourceNamespaces) > 1) ?
-            $this->choice(
-                'Which namespace would you like to create this in?',
-                $resourceNamespaces,
+            select(
+                label: 'Which namespace would you like to create this in?',
+                options: $resourceNamespaces
             ) :
             (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
         $resourcePath = (count($resourceDirectories) > 1) ?
@@ -81,8 +99,8 @@ class MakeRelationManagerCommand extends Command
             ->append('.php');
 
         if (! $this->option('force') && $this->checkForCollision([
-            $path,
-        ])) {
+                $path,
+            ])) {
             return static::INVALID;
         }
 

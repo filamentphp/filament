@@ -6,6 +6,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\text;
 
 class MakePanelCommand extends Command
 {
@@ -18,7 +19,12 @@ class MakePanelCommand extends Command
 
     public function handle(): int
     {
-        $id = Str::lcfirst($this->argument('id') ?? $this->askRequired('ID (e.g. `app`)', 'id'));
+        $id = Str::lcfirst($this->argument('id') ??
+            text(
+                label: 'What is the ID?',
+                placeholder: 'ID (e.g. `app`)',
+                required: true
+            ));
 
         $class = (string) str($id)
             ->studly()

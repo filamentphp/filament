@@ -12,6 +12,8 @@ use Filament\Support\Commands\Concerns\CanValidateInput;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 class MakeResourceCommand extends Command
 {
@@ -28,7 +30,12 @@ class MakeResourceCommand extends Command
 
     public function handle(): int
     {
-        $model = (string) str($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
+        $model = (string) str($this->argument('name') ??
+            text(
+                label: 'Model name?',
+                placeholder: 'Model (e.g. `BlogPost`)',
+                required: true
+            ))
             ->studly()
             ->beforeLast('Resource')
             ->trim('/')
@@ -53,17 +60,17 @@ class MakeResourceCommand extends Command
             $panel = Filament::getPanel($panel);
         }
 
-        if (! $panel) {
+        if (!$panel) {
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[$this->choice(
-                'Which panel would you like to create this in?',
-                array_map(
-                    fn (Panel $panel): string => $panel->getId(),
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
+                    fn(Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
-                Filament::getDefaultPanel()->getId(),
+                default: Filament::getDefaultPanel()->getId()
             )] : Arr::first($panels);
         }
 
@@ -71,9 +78,9 @@ class MakeResourceCommand extends Command
         $resourceNamespaces = $panel->getResourceNamespaces();
 
         $namespace = (count($resourceNamespaces) > 1) ?
-            $this->choice(
-                'Which namespace would you like to create this in?',
-                $resourceNamespaces,
+            select(
+                label: 'Which namespace would you like to create this in?',
+                options: $resourceNamespaces
             ) :
             (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
         $path = (count($resourceDirectories) > 1) ?
@@ -106,13 +113,13 @@ class MakeResourceCommand extends Command
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
         if (! $this->option('force') && $this->checkForCollision([
-            $resourcePath,
-            $listResourcePagePath,
-            $manageResourcePagePath,
-            $createResourcePagePath,
-            $editResourcePagePath,
-            $viewResourcePagePath,
-        ])) {
+                $resourcePath,
+                $listResourcePagePath,
+                $manageResourcePagePath,
+                $createResourcePagePath,
+                $editResourcePagePath,
+                $viewResourcePagePath,
+            ])) {
             return static::INVALID;
         }
 

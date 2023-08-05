@@ -9,6 +9,8 @@ use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 class MakePageCommand extends Command
 {
@@ -19,9 +21,18 @@ class MakePageCommand extends Command
 
     protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--panel=} {--F|force}';
 
+
     public function handle(): int
     {
-        $page = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Settings`)', 'name'))
+
+
+        $page = (string)str(
+            $this->argument('name') ??
+            text(
+                label: 'What is the page name?',
+                placeholder: 'Settings Page',
+                required: true
+            ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -35,7 +46,12 @@ class MakePageCommand extends Command
         $resourceClass = null;
         $resourcePage = null;
 
-        $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `UserResource`)');
+        $resourceInput = $this->option('resource') ??
+            text(
+                label: 'Make Page For Resource?',
+                placeholder: '(Optional) Resource (e.g. `UserResource`)',
+            );
+
 
         if ($resourceInput !== null) {
             $resource = (string) str($resourceInput)
@@ -49,21 +65,24 @@ class MakePageCommand extends Command
                 $resource .= 'Resource';
             }
 
-            $resourceClass = (string) str($resource)
+            $resourceClass = (string)str($resource)
                 ->afterLast('\\');
 
-            $resourcePage = $this->option('type') ?? $this->choice(
-                'Which type of page would you like to create?',
-                [
-                    'custom' => 'Custom',
                     'ListRecords' => 'List',
-                    'CreateRecord' => 'Create',
-                    'EditRecord' => 'Edit',
-                    'ViewRecord' => 'View',
-                    'ManageRecords' => 'Manage',
-                ],
-                'custom',
-            );
+            $resourcePage = $this->option('type') ??
+
+                select(
+                    label: 'Which type of page would you like to create?',
+                    options: [
+                        'custom' => 'Custom',
+                        'ListRecords' => 'List',
+                        'CreateRecord' => 'Create',
+                        'EditRecord' => 'Edit',
+                        'ViewRecord' => 'View',
+                        'ManageRecords' => 'Manage',
+                    ],
+                    default: 'custom'
+                );
         }
 
         $panel = $this->option('panel');
@@ -72,17 +91,17 @@ class MakePageCommand extends Command
             $panel = Filament::getPanel($panel);
         }
 
-        if (! $panel) {
+        if (!$panel) {
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[$this->choice(
-                'Which panel would you like to create this in?',
-                array_map(
-                    fn (Panel $panel): string => $panel->getId(),
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
+                    fn(Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
-                Filament::getDefaultPanel()->getId(),
+                default: Filament::getDefaultPanel()->getId()
             )] : Arr::first($panels);
         }
 
@@ -91,9 +110,9 @@ class MakePageCommand extends Command
             $pageNamespaces = $panel->getPageNamespaces();
 
             $namespace = (count($pageNamespaces) > 1) ?
-                $this->choice(
-                    'Which namespace would you like to create this in?',
-                    $pageNamespaces,
+                select(
+                    label: 'Which namespace would you like to create this in?',
+                    options: $pageNamespaces
                 ) :
                 (Arr::first($pageNamespaces) ?? 'App\\Filament\\Pages');
             $path = (count($pageDirectories) > 1) ?
@@ -104,9 +123,9 @@ class MakePageCommand extends Command
             $resourceNamespaces = $panel->getResourceNamespaces();
 
             $resourceNamespace = (count($resourceNamespaces) > 1) ?
-                $this->choice(
-                    'Which namespace would you like to create this in?',
-                    $resourceNamespaces,
+                select(
+                    label: 'Which namespace would you like to create this in?',
+                    options: $resourceNamespaces
                 ) :
                 (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
             $resourcePath = (count($resourceDirectories) > 1) ?
