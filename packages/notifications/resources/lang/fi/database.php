@@ -23,24 +23,6 @@ return [
             'description' => 'Tarkista myöhemmin uudestaan',
         ],
 
-        'pagination' => [
-
-            'label' => 'Sivujen navigointi',
-
-            'actions' => [
-
-                'next' => [
-                    'label' => 'Seuraava',
-                ],
-
-                'previous' => [
-                    'label' => 'Edellinen',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

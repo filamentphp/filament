@@ -31,8 +31,13 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Liian monta palautukse yritystä. Yritä uudelleen :seconds sekunnin kuluttua.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Liian monta palautuksen yritystä',
+            'body' => 'Yritä uudelleen :seconds sekunnin kuluttua.',
+        ],
+
     ],
 
 ];

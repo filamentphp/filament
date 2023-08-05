@@ -44,8 +44,12 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Liian monta tilin luomisen yritystä. Yritä uudelleen :seconds sekunnin päästä.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Liian monta tilin luomisen yritystä',
+            'body' => 'Yritä uudelleen :seconds sekunnin päästä.',
+        ],
     ],
 
 ];

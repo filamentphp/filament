@@ -30,8 +30,13 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Liian monta pyyntöä. Yritä uudelleen :seconds sekunnin kuluttua.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Liian monta pyyntöä',
+            'body' => 'Yritä uudelleen :seconds sekunnin kuluttua.',
+        ],
+
     ],
 
 ];
