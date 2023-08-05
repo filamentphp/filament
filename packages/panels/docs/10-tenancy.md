@@ -60,6 +60,19 @@ You'll also want users to be able to [register new teams](#adding-a-tenant-regis
 
 ## Adding a tenant registration page
 
+Note: If you have multiple panels, change the page directory to the panel directory. 
+
+For example, if you have two panels (Admin & Employers), the structure is:
+```
+.
++-- Filament
+|   +-- Pages
+|   |   +-- ....
+|   +-- Employers
+|   |   +-- RegisterEmployers.php
+|   |   +-- EditEmployersProfile.php
+```
+
 A registration page will allow users to create a new tenant.
 
 When visiting your app after logging in, users will be redirected to this page if they don't already have a tenant.
