@@ -60,7 +60,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Make sure your `web.php` file doesn't already define the `''` or `'/'` route, as it will take presedence. 
+Make sure your `routes/web.php` file doesn't already define the `''` or `'/'` route, as it will take precedence.
 
 ## Render hooks
 
