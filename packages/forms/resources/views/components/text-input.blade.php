@@ -68,9 +68,9 @@
             "
         />
         @if ($shouldShowReveal)
-            <a class="absolute px-3 inset-y-0 end-0 cursor-pointer select-none" x-on:click="inputType = (inputType === 'password') ? 'text' : 'password'">
+            <a class="absolute flex items-center px-3 inset-y-0 end-0 cursor-pointer select-none" x-on:click="inputType = (inputType === 'password') ? 'text' : 'password'">
                 <x-filament::icon icon="heroicon-o-eye" class="h-5 w-5" x-show="inputType === 'password'"/>
-                <x-filament::icon icon="heroicon-o-eye-slash" class="h-5 w-5" x-show="inputType !== 'password'"/>
+                <x-filament::icon icon="heroicon-o-eye-slash" class="h-5 w-5" x-cloak x-show="inputType !== 'password'"/>
             </a>
         @endif
     </x-filament::input.wrapper>
