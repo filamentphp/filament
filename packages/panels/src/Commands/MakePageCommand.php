@@ -144,7 +144,7 @@ class MakePageCommand extends Command
 
         $path = (string) str($page)
             ->prepend('/')
-            ->prepend( empty($resource) ? $path : "{$resourcePath}\\{$resource}\\Pages\\")
+            ->prepend( empty($resource) ? ($path??'') : ($resourcePath??'')."\\{$resource}\\Pages\\")
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');
@@ -165,18 +165,18 @@ class MakePageCommand extends Command
             return static::INVALID;
         }
 
-        if ($resource === null) {
+        if (empty($resource)) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => $namespace . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => str($namespace??'') . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);
         } else {
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => "{$resourceNamespace}\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-                'resource' => "{$resourceNamespace}\\{$resource}",
+                'namespace' => ($resourceNamespace??'')."\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => ($resourceNamespace??'')."\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'view' => $view,
