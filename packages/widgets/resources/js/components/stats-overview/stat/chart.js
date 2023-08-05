@@ -3,11 +3,13 @@ import Chart from 'chart.js/auto'
 export default function statsOverviewStatChart({ labels, values }) {
     return {
         init: function () {
-
             Alpine.effect(() => {
                 Alpine.store('theme')
-                if(this.getChart()) {
-                    this.getChart().destroy()
+
+                const chart = this.getChart()
+                
+                if (chart) {
+                    chart.destroy()
                 }
                 
                 this.initChart()
@@ -21,8 +23,10 @@ export default function statsOverviewStatChart({ labels, values }) {
                     }
 
                     this.$nextTick(() => {
-                        if(this.getChart()) {
-                            this.getChart().destroy()
+                        const chart = this.getChart()
+                
+                        if (chart) {
+                            chart.destroy()
                         }
                         
                         this.initChart()
