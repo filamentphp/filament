@@ -148,13 +148,6 @@ Resource classes and all page classes, including resource pages, custom pages, s
 
 - `$middlewares` is now `$routeMiddleware`
 
-#### Validation changes
-
-The closure callback parameter has been renamed: `modifyRuleUsing` which affects:
-
-- `exists()`
-- `unique()`
-
 #### Heroicons have been updated to v2
 
 The Heroicons library has been updated to v2. This means that any icons you use in your app may have changed names. You can find a list of changes [here](https://github.com/tailwindlabs/heroicons/releases/tag/v2.0.0).
