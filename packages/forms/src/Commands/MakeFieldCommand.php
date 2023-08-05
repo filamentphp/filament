@@ -6,6 +6,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\text;
 
 class MakeFieldCommand extends Command
 {
@@ -18,7 +19,12 @@ class MakeFieldCommand extends Command
 
     public function handle(): int
     {
-        $field = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `RangeSlider`)', 'name'))
+        $field = (string) str($this->argument('name') ??
+            text(
+                label: 'What is the field name?',
+                placeholder: 'Name (e.g. `RangeSlider`)',
+                required: true
+            ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

@@ -9,6 +9,8 @@ use Filament\Support\Commands\Concerns\CanReadModelSchemas;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 class MakeFormCommand extends Command
 {
@@ -24,7 +26,12 @@ class MakeFormCommand extends Command
 
     public function handle(): int
     {
-        $component = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Products/CreateProduct`)', 'name'))
+        $component = (string) str($this->argument('name') ??
+            text(
+                label: 'What is the form name?',
+                placeholder: 'Name (e.g. `Products/CreateProduct`)',
+                required: true
+            ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -41,20 +48,24 @@ class MakeFormCommand extends Command
             ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $model = (string) str($this->argument('model') ?? (
-            $this->option('edit') ?
-            $this->askRequired('Model (e.g. `Product`)', 'model') :
-            $this->ask('(Optional) Model (e.g. `Product`)')
-        ))->replace('/', '\\');
+        $model = (string) str($this->argument('model') ??
+                text(
+                    label: 'What is the model name?',
+                    placeholder: 'Model (e.g. `Product`)',
+                    required: $this->option('edit')
+                ))->replace('/', '\\');
         $modelClass = (string) str($model)->afterLast('\\');
 
         if ($this->option('edit')) {
             $isEditForm = true;
         } elseif (filled($model)) {
-            $isEditForm = $this->choice('Operation', [
-                'Create',
-                'Edit',
-            ]) === 'Edit';
+            $isEditForm = select(
+                label: 'Which namespace would you like to create this in?',
+                options: [
+                    'Create',
+                    'Edit',
+                ]
+            )  === 'Edit';
         } else {
             $isEditForm = false;
         }
