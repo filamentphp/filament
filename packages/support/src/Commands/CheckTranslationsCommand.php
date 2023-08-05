@@ -62,8 +62,8 @@ class CheckTranslationsCommand extends Command
                 $files = $filesystem->allFiles($localeDir);
                 $baseFiles = $filesystem->allFiles(implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en']));
 
-                $localeFiles = collect($files)->map(fn ($file) => (string) str($file->getPathname())->after("/{$locale}/"));
-                $englishFiles = collect($baseFiles)->map(fn ($file) => (string) str($file->getPathname())->after('/en/'));
+                $localeFiles = collect($files)->map(fn ($file) => (string) str($file->getPathname())->after(DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR));
+                $englishFiles = collect($baseFiles)->map(fn ($file) => (string) str($file->getPathname())->after(DIRECTORY_SEPARATOR . 'en' . DIRECTORY_SEPARATOR));
                 $missingFiles = $englishFiles->diff($localeFiles);
                 $removedFiles = $localeFiles->diff($englishFiles);
                 $path = implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, $locale]);
