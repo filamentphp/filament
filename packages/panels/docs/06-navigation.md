@@ -374,6 +374,21 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Conditionally hiding user menus
+
+You can also conditionally hide a user item by using the visible() or hidden() methods, passing in a condition to check:
+
+```php
+use Filament\Navigation\MenuItem;
+use App\Models\Payment;
+
+MenuItem::make()
+    ->label('Payments')
+    ->visible(auth()->user()->can('viewAny', Payment::class))
+    // or
+    ->hidden(! auth()->user()->can('viewAny', Payment::class))
+```
+
 ## Disabling breadcrumbs
 
 The default layout will show breadcrumbs to indicate the location of the current page within the hierarchy of the app.
