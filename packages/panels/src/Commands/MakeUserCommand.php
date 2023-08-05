@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
+use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
 class MakeUserCommand extends Command
@@ -49,7 +50,7 @@ class MakeUserCommand extends Command
                 ), 'email', ['required', 'email', 'unique:' . $this->getUserModel()], fn () => $this->options['email'] = null),
 
             'password' => Hash::make($this->validateInput(fn () => $this->options['password'] ??
-                text(
+                password(
                     label: 'What is the password?',
                     placeholder: 'Password',
                     required: true
