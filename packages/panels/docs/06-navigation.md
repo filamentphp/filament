@@ -327,7 +327,7 @@ public function panel(Panel $panel): Panel
         ->userMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(route('filament.pages.settings'))
+                ->url(route('filament.admin.pages.settings'))
                 ->icon('heroicon-o-cog-6-tooth'),
             // ...
         ]);
