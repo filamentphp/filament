@@ -171,6 +171,27 @@ TextInput::make('cardNumber')
     JS))
 ```
 
+## Revealable password input
+
+You may use the `revealable()` method on a password field to make it revealable. It will display an eye icon at the end of the input field. Clicking on it will toggle the input type between `text` and `password`.
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('api_key')
+    ->password()
+    ->revealable()
+```
+
+You can also pass a second parameter to `password()` method instead:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('api_key')
+    ->password(revealable: true)
+```
+
 ## Text input validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to text inputs.
