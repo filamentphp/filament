@@ -92,7 +92,7 @@
     </div>
 
     @if ($chart = $getChart())
-        {{-- An empty function to initialise the Alpine component with, until it is loaded with `ax-load`. This allows `x-ignore` to be removed. --}}
+        {{-- An empty function to initialise the Alpine component with, until it is loaded with `ax-load`. This removes the need for `x-ignore`, allowing the chart to be updated via Livewire polling. --}}
         <div x-data="{ statsOverviewStatChart: function () {} }">
             <div
                 ax-load
