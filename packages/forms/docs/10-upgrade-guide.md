@@ -101,3 +101,10 @@ An easy way to upgrade your code quickly is to find and replace:
 
 - `Closure $get` to `\Filament\Forms\Get $get`
 - `Closure $set` to `\Filament\Forms\Set $set`
+
+### Low impact changes
+
+The closure callback parameter has been renamed: `modifyRuleUsing` which affects:
+
+- `exists()`
+- `unique()`
