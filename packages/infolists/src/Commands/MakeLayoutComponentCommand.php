@@ -6,6 +6,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\text;
 
 class MakeLayoutComponentCommand extends Command
 {
@@ -18,7 +19,12 @@ class MakeLayoutComponentCommand extends Command
 
     public function handle(): int
     {
-        $component = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Wizard`)', 'name'))
+        $component = (string) str($this->argument('name') ??
+            text(
+                label: 'What is the layout name?',
+                placeholder: 'Name (e.g. `Wizard`)',
+                required: true
+            ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
