@@ -34,6 +34,8 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
 
     protected bool | Closure $isPassword = false;
 
+    protected bool | Closure $isRevealable = false;
+
     protected bool | Closure $isTel = false;
 
     protected bool | Closure $isUrl = false;
@@ -127,9 +129,17 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
         return $this;
     }
 
-    public function password(bool | Closure $condition = true): static
+    public function password(bool | Closure $condition = true, bool | Closure $revealable = false): static
     {
         $this->isPassword = $condition;
+        $this->revealable($revealable);
+
+        return $this;
+    }
+
+    public function revealable(bool | Closure $condition = true): static
+    {
+        $this->isRevealable = $condition;
 
         return $this;
     }
@@ -224,6 +234,11 @@ class TextInput extends Field implements Contracts\CanBeLengthConstrained, CanHa
     public function isPassword(): bool
     {
         return (bool) $this->evaluate($this->isPassword);
+    }
+
+    public function isRevealable(): bool
+    {
+        return (bool) $this->evaluate($this->isRevealable);
     }
 
     public function isTel(): bool

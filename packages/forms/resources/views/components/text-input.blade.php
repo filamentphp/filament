@@ -10,6 +10,7 @@
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
+    $shouldShowReveal = $isPassword() && $isRevealable();
     $suffixActions = $getSuffixActions();
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
@@ -31,12 +32,14 @@
         class="fi-fo-text-input"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
-                ->class(['overflow-hidden'])
+                ->class(['overflow-hidden', 'relative'])
         "
+        x-data="{inputType: '{{ $getType() }}'}"
     >
         <x-filament::input
             :attributes="
                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
+                    ->class(['pe-8' => $shouldShowReveal])
                     ->merge($extraAlpineAttributes, escape: false)
                     ->merge([
                         'autocapitalize' => $getAutocapitalize(),
@@ -60,9 +63,16 @@
                         $applyStateBindingModifiers('wire:model') => $statePath,
                         'x-data' => (count($extraAlpineAttributes) || filled($mask)) ? '{}' : null,
                         'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
+                        'x-bind:type' => 'inputType',
                     ], escape: false)
             "
         />
+        @if ($shouldShowReveal)
+            <a class="absolute px-3 inset-y-0 end-0 cursor-pointer select-none" x-on:click="inputType = (inputType === 'password') ? 'text' : 'password'">
+                <x-filament::icon icon="heroicon-o-eye" class="h-5 w-5" x-show="inputType === 'password'"/>
+                <x-filament::icon icon="heroicon-o-eye-slash" class="h-5 w-5" x-show="inputType !== 'password'"/>
+            </a>
+        @endif
     </x-filament::input.wrapper>
 
     @if ($datalistOptions)
