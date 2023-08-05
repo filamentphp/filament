@@ -5,6 +5,7 @@
 @endphp
 
 <div
+    wire:ignore.self
     x-data="{
         step: null,
 
