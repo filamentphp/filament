@@ -305,14 +305,14 @@ AttachAction::make()
 
 ### Customizing the select field in the attach modal
 
-You may customize the select field object that is used during attachment by passing a function to the `modifyRecordSelectUsing()` method:
+You may customize the select field object that is used during attachment by passing a function to the `recordSelect()` method:
 
 ```php
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\AttachAction;
 
 AttachAction::make()
-    ->modifyRecordSelectUsing(
+    ->recordSelect(
         fn (Select $select) => $select->placeholder('Select a post'),
     )
 ```
@@ -404,14 +404,14 @@ AssociateAction::make()
 
 ### Customizing the select field in the associate modal
 
-You may customize the select field object that is used during association by passing a function to the `modifyRecordSelectUsing()` method:
+You may customize the select field object that is used during association by passing a function to the `recordSelect()` method:
 
 ```php
 use Filament\Forms\Components\Select;
 use Filament\Tables\Actions\AssociateAction;
 
 AssociateAction::make()
-    ->modifyRecordSelectUsing(
+    ->recordSelect(
         fn (Select $select) => $select->placeholder('Select a post'),
     )
 ```
