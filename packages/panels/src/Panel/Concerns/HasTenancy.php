@@ -190,6 +190,7 @@ trait HasTenancy
     public function getTenantMenuItems(): array
     {
         return collect($this->tenantMenuItems)
+            ->reject(fn (MenuItem $item): bool => $item->isHidden())
             ->sort(fn (MenuItem $item): int => $item->getSort())
             ->all();
     }
