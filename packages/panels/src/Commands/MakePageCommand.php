@@ -67,8 +67,7 @@ class MakePageCommand extends Command
 
             $resourceClass = (string)str($resource)
                 ->afterLast('\\');
-
-                    'ListRecords' => 'List',
+            
             $resourcePage = $this->option('type') ??
 
                 select(
