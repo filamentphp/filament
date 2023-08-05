@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Profile',
+    'label' => 'Profil',
 
     'form' => [
 
