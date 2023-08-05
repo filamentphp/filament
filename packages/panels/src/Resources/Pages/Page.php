@@ -72,7 +72,7 @@ abstract class Page extends BasePage
         return static::getResource()::getModel();
     }
 
-    public function callModelStaticMethod(string $method, ...$parameters) 
+    public function callModelStaticMethod(string $method, mixed ...$parameters): mixed 
     {
         return $this->getModel()::$method(...$parameters);
     }
