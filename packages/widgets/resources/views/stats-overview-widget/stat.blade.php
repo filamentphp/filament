@@ -92,15 +92,15 @@
     </div>
 
     @if ($chart = $getChart())
-        {{-- An empty function to initialise the Alpine component with, until it is loaded with `ax-load`. This removes the need for `x-ignore`, allowing the chart to be updated via Livewire polling. --}}
+        {{-- An empty function to initialize the Alpine component with until it's loaded with `ax-load`. This removes the need for `x-ignore`, allowing the chart to be updated via Livewire polling. --}}
         <div x-data="{ statsOverviewStatChart: function () {} }">
             <div
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
                 x-data="statsOverviewStatChart({
-                    labels: @js(array_keys($chart)),
-                    values: @js(array_values($chart)),
-                })"
+                            labels: @js(array_keys($chart)),
+                            values: @js(array_values($chart)),
+                        })"
                 class="fi-wi-stats-overview-stat-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
                 @style([
                     \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
