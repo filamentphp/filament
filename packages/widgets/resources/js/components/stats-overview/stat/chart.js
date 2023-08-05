@@ -7,11 +7,11 @@ export default function statsOverviewStatChart({ labels, values }) {
                 Alpine.store('theme')
 
                 const chart = this.getChart()
-                
+
                 if (chart) {
                     chart.destroy()
                 }
-                
+
                 this.initChart()
             })
 
@@ -24,11 +24,11 @@ export default function statsOverviewStatChart({ labels, values }) {
 
                     this.$nextTick(() => {
                         const chart = this.getChart()
-                
+
                         if (chart) {
                             chart.destroy()
                         }
-                        
+
                         this.initChart()
                     })
                 })
