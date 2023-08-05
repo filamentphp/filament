@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
+use function Laravel\Prompts\text;
 
 class MakeUserCommand extends Command
 {
@@ -33,9 +34,26 @@ class MakeUserCommand extends Command
     protected function getUserData(): array
     {
         return [
-            'name' => $this->validateInput(fn () => $this->options['name'] ?? $this->ask('Name'), 'name', ['required'], fn () => $this->options['name'] = null),
-            'email' => $this->validateInput(fn () => $this->options['email'] ?? $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()], fn () => $this->options['email'] = null),
-            'password' => Hash::make($this->validateInput(fn () => $this->options['password'] ?? $this->secret('Password'), 'password', ['required', 'min:8'], fn () => $this->options['password'] = null)),
+            'name' => $this->validateInput(fn () => $this->options['name'] ??
+                text(
+                    label: 'What is the user name?',
+                    placeholder: 'Name',
+                    required: true
+                ), 'name', ['required'], fn () => $this->options['name'] = null),
+
+            'email' => $this->validateInput(fn () => $this->options['email'] ??
+                text(
+                    label: 'What is the user email?',
+                    placeholder: 'Email Address',
+                    required: true
+                ), 'email', ['required', 'email', 'unique:' . $this->getUserModel()], fn () => $this->options['email'] = null),
+
+            'password' => Hash::make($this->validateInput(fn () => $this->options['password'] ??
+                text(
+                    label: 'What is the password?',
+                    placeholder: 'Password',
+                    required: true
+                ), 'password', ['required', 'min:8'], fn () => $this->options['password'] = null)),
         ];
     }
 
