@@ -20,7 +20,10 @@ trait HasRoutes
 
     protected string | Closure | null $homeUrl = null;
 
-    protected ?string $domain = null;
+    /**
+     * @var array<string>
+     */
+    protected array $domains = [];
 
     protected string $path = '';
 
@@ -31,14 +34,24 @@ trait HasRoutes
         return $this;
     }
 
-    public function domain(?string $domain = null): static
+    public function domain(?string $domain): static
     {
-        $this->domain = $domain;
+        $this->domains(filled($domain) ? [$domain] : []);
 
         return $this;
     }
 
-    public function homeUrl(string | Closure | null $url = null): static
+    /**
+     * @param  array<string>  $domains
+     */
+    public function domains(array $domains): static
+    {
+        $this->domains = $domains;
+
+        return $this;
+    }
+
+    public function homeUrl(string | Closure | null $url): static
     {
         $this->homeUrl = $url;
 
@@ -98,9 +111,12 @@ trait HasRoutes
         return $this->evaluate($this->homeUrl);
     }
 
-    public function getDomain(): ?string
+    /**
+     * @return array<string>
+     */
+    public function getDomains(): array
     {
-        return $this->domain;
+        return Arr::wrap($this->domains);
     }
 
     public function getPath(): string
@@ -121,7 +137,9 @@ trait HasRoutes
         }
 
         if ((! $tenant) && $hasTenancy) {
-            return $this->hasTenantRegistration() ? $this->getTenantRegistrationUrl() : null;
+            return ($this->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView()) ?
+                $this->getTenantRegistrationUrl() :
+                null;
         }
 
         if ($tenant) {

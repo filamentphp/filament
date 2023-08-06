@@ -172,7 +172,7 @@ export default function clockWidget() {
 }
 ```
 
-We should also add translations for the text in the widget so user's can translate the widget into their language. We'll add the translations to `resources/lang/en/widget.php`.
+We should also add translations for the text in the widget so users can translate the widget into their language. We'll add the translations to `resources/lang/en/widget.php`.
 
 ```php
 return [

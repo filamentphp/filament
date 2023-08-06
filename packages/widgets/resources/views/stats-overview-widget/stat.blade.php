@@ -92,41 +92,42 @@
     </div>
 
     @if ($chart = $getChart())
-        <div
-            ax-load
-            ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
-            wire:ignore
-            x-data="statsOverviewStatChart({
-                        labels: @js(array_keys($chart)),
-                        values: @js(array_values($chart)),
-                    })"
-            x-ignore
-            class="fi-wi-stats-overview-stat-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
-            @style([
-                \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
-            ])
-        >
-            <canvas x-ref="canvas" class="h-6"></canvas>
-
-            <span
-                x-ref="backgroundColorElement"
-                @class([
-                    match ($chartColor) {
-                        'gray' => 'text-gray-100 dark:text-gray-800',
-                        default => 'text-custom-50 dark:text-custom-400/10',
-                    },
+        {{-- An empty function to initialize the Alpine component with until it's loaded with `ax-load`. This removes the need for `x-ignore`, allowing the chart to be updated via Livewire polling. --}}
+        <div x-data="{ statsOverviewStatChart: function () {} }">
+            <div
+                ax-load
+                ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
+                x-data="statsOverviewStatChart({
+                            labels: @js(array_keys($chart)),
+                            values: @js(array_values($chart)),
+                        })"
+                class="fi-wi-stats-overview-stat-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
+                @style([
+                    \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
                 ])
-            ></span>
+            >
+                <canvas x-ref="canvas" class="h-6"></canvas>
 
-            <span
-                x-ref="borderColorElement"
-                @class([
-                    match ($chartColor) {
-                        'gray' => 'text-gray-400',
-                        default => 'text-custom-500 dark:text-custom-400',
-                    },
-                ])
-            ></span>
+                <span
+                    x-ref="backgroundColorElement"
+                    @class([
+                        match ($chartColor) {
+                            'gray' => 'text-gray-100 dark:text-gray-800',
+                            default => 'text-custom-50 dark:text-custom-400/10',
+                        },
+                    ])
+                ></span>
+
+                <span
+                    x-ref="borderColorElement"
+                    @class([
+                        match ($chartColor) {
+                            'gray' => 'text-gray-400',
+                            default => 'text-custom-500 dark:text-custom-400',
+                        },
+                    ])
+                ></span>
+            </div>
         </div>
     @endif
 </{!! $tag !!}>

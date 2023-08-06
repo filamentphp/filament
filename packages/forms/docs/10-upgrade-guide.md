@@ -6,12 +6,12 @@ title: Upgrading from v2.x
 
 ## New requirements
 
-- Laravel v9.0+
+- Laravel v10.0+
 - Livewire v3.0+
 
 Please upgrade Filament before upgrading to Livewire v3. Instructions on how to upgrade Livewire can be found [here](https://livewire.laravel.com/docs/upgrading).
 
-> **Livewire v3 is still in beta!**<br>
+> **Livewire v3 is still in beta!**<br />
 > Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Upgrading automatically
@@ -58,7 +58,7 @@ rm config/forms.php
 
 #### `FORMS_FILESYSTEM_DRIVER` .env variable
 
-The `FORMS_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILESYSTEM_DISK`. This is to make it more consistent with Laravel, as Laravel 9 introduced this change as well. Please ensure that you update your .env files accordingly, and don't forget production!
+The `FORMS_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILESYSTEM_DISK`. This is to make it more consistent with Laravel, as Laravel v9 introduced this change as well. Please ensure that you update your .env files accordingly, and don't forget production!
 
 #### New `@filamentScripts` and `@filamentStyles` Blade directives
 
@@ -101,3 +101,12 @@ An easy way to upgrade your code quickly is to find and replace:
 
 - `Closure $get` to `\Filament\Forms\Get $get`
 - `Closure $set` to `\Filament\Forms\Set $set`
+
+### Low impact changes
+
+#### Rule modification callback parameter renamed
+
+The parameter for modifying rule objects has been renamed to `modifyRuleUsing()`, affecting:
+
+- `exists()`
+- `unique()`

@@ -9,7 +9,7 @@
 
     $registrationItem = $items['register'] ?? null;
     $registrationItemUrl = $registrationItem?->getUrl();
-    $hasTenantRegistration = filament()->hasTenantRegistration() || filled($registrationItemUrl);
+    $hasTenantRegistration = (filament()->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView()) || filled($registrationItemUrl);
 
     $profileItem = $items['profile'] ?? null;
     $profileItemUrl = $profileItem?->getUrl();
