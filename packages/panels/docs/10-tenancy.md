@@ -296,20 +296,6 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Conditionally hiding tenant menus
-
-You can also conditionally hide a tenant item by using the visible() or hidden() methods, passing in a condition to check:
-
-```php
-use Filament\Navigation\MenuItem;
-
-MenuItem::make()
-    ->label('Settings')
-    ->visible(auth()->user()->can('manage-team'))
-    // or
-    ->hidden(! auth()->user()->can('manage-team'))
-```
-
 ### Customizing the registration link
 
 To customize the registration link on the tenant menu, register a new item with the `register` array key:
@@ -346,6 +332,20 @@ public function panel(Panel $panel): Panel
             // ...
         ]);
 }
+```
+
+### Conditionally hiding tenant menu items
+
+You can also conditionally hide a tenant menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
+
+```php
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->label('Settings')
+    ->visible(fn (): bool => auth()->user()->can('manage-team'))
+    // or
+    ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
 ```
 
 ## Setting up avatars
