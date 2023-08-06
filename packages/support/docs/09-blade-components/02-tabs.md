@@ -36,7 +36,12 @@ By default tabs do not appear "active". To make a tab appear active, you can use
 </x-filament::tabs>
 ```
 
-You can also use the `active` attribute to make a tab appear active conditionally:
+You can also use the `active` attribute to make a tab appear active conditionally. You should also add the attribute to the `Page` in the /Pages directory of the Filament directory
+
+```php
+public string $activeTab;
+```
+
 
 ```blade
 <x-filament::tabs>
