@@ -33,9 +33,11 @@ return [
         ],
 
         'notifications' => [
+    
             'associated' => [
                 'title' => 'Đã liên kết',
             ],
+    
         ],
 
     ],
