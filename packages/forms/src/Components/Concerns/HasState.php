@@ -85,10 +85,6 @@ trait HasState
 
     public function default(mixed $state): static
     {
-        if (is_bool($state)) {
-            $state = $state ? '1' : '0';
-        }
-
         $this->defaultState = $state;
         $this->hasDefaultState = true;
 
