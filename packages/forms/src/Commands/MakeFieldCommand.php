@@ -3,14 +3,13 @@
 namespace Filament\Forms\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\text;
 
 class MakeFieldCommand extends Command
 {
     use CanManipulateFiles;
-    use CanValidateInput;
 
     protected $description = 'Create a new form field class and view';
 
@@ -18,7 +17,11 @@ class MakeFieldCommand extends Command
 
     public function handle(): int
     {
-        $field = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `RangeSlider`)', 'name'))
+        $field = (string) str($this->argument('name') ?? text(
+            label: 'What is the field name?',
+            placeholder: 'RangeSlider',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

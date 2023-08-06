@@ -3,14 +3,13 @@
 namespace Filament\Tables\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\text;
 
 class MakeColumnCommand extends Command
 {
     use CanManipulateFiles;
-    use CanValidateInput;
 
     protected $description = 'Create a new table column class and cell view';
 
@@ -18,7 +17,11 @@ class MakeColumnCommand extends Command
 
     public function handle(): int
     {
-        $column = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `StatusSwitcher`)', 'name'))
+        $column = (string) str($this->argument('name') ?? text(
+            label: 'What is the column name?',
+            placeholder: 'StatusSwitcher',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
