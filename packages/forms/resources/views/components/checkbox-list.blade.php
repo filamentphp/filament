@@ -178,10 +178,10 @@
                             :error="$errors->has($statePath)"
                             :attributes="
                                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
+                                    ->merge($isDisabled ? [] : ['wire:loading.attr' => 'disabled'])
                                     ->merge([
                                         'disabled' => $isDisabled,
                                         'value' => $value,
-                                        'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,
                                         'x-on:change' => $isBulkToggleable ? 'checkIfAllCheckboxesAreChecked()' : null,
                                     ], escape: false)

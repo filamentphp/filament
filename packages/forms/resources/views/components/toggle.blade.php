@@ -41,8 +41,8 @@
                         'id' => $getId(),
                         'role' => 'switch',
                         'type' => 'button',
-                        'wire:loading.attr' => 'disabled',
                     ], escape: false)
+                    ->merge($isDisabled() ? [] : ['wire:loading.attr' => 'disabled'])
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
                     ->class(['fi-fo-toggle relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent outline-none transition-colors duration-200 ease-in-out disabled:pointer-events-none disabled:opacity-70'])
