@@ -42,7 +42,7 @@ trait HasRoutes
     }
 
     /**
-     * @param array<string> $domains
+     * @param  array<string>  $domains
      */
     public function domains(array $domains): static
     {
