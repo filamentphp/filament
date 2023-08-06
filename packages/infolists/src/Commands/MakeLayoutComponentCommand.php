@@ -3,7 +3,6 @@
 namespace Filament\Infolists\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 use function Laravel\Prompts\text;
@@ -11,7 +10,6 @@ use function Laravel\Prompts\text;
 class MakeLayoutComponentCommand extends Command
 {
     use CanManipulateFiles;
-    use CanValidateInput;
 
     protected $description = 'Create a new infolist layout component class and view';
 

@@ -6,15 +6,15 @@ use Filament\Facades\Filament;
 use Filament\Panel;
 use Filament\Resources\Resource;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 class MakeWidgetCommand extends Command
 {
     use CanManipulateFiles;
-    use CanValidateInput;
 
     protected $description = 'Create a new Filament widget class';
 
@@ -22,7 +22,10 @@ class MakeWidgetCommand extends Command
 
     public function handle(): int
     {
-        $widget = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `BlogPostsChart`)', 'name'))
+        $widget = (string) str($this->argument('name') ?? text(
+            label: 'Name (e.g. `BlogPostsChart`)',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -36,7 +39,9 @@ class MakeWidgetCommand extends Command
         $resourceClass = null;
 
         if (class_exists(Resource::class)) {
-            $resourceInput = $this->option('resource') ?? $this->ask('(Optional) Resource (e.g. `BlogPostResource`)');
+            $resourceInput = $this->option('resource') ?? text(
+                label: '(Optional) Resource (e.g. `BlogPostResource`)',
+            );
 
             if ($resourceInput !== null) {
                 $resource = (string) str($resourceInput)
@@ -68,9 +73,9 @@ class MakeWidgetCommand extends Command
                 $panels = Filament::getPanels();
 
                 /** @var ?Panel $panel */
-                $panel = $panels[$this->choice(
-                    'Where would you like to create this?',
-                    array_unique([
+                $panel = $panels[select(
+                    label: 'Where would you like to create this?',
+                    options: array_unique([
                         ...array_map(
                             fn (Panel $panel): string => "The [{$panel->getId()}] panel",
                             $panels,
@@ -94,9 +99,9 @@ class MakeWidgetCommand extends Command
             $widgetNamespaces = $panel->getWidgetNamespaces();
 
             $namespace = (count($widgetNamespaces) > 1) ?
-                $this->choice(
-                    'Which namespace would you like to create this in?',
-                    $widgetNamespaces,
+                select(
+                    label: 'Which namespace would you like to create this in?',
+                    options: $widgetNamespaces,
                 ) :
                 (Arr::first($widgetNamespaces) ?? 'App\\Filament\\Widgets');
             $path = (count($widgetDirectories) > 1) ?
@@ -107,9 +112,9 @@ class MakeWidgetCommand extends Command
             $resourceNamespaces = $panel->getResourceNamespaces();
 
             $resourceNamespace = (count($resourceNamespaces) > 1) ?
-                $this->choice(
-                    'Which namespace would you like to create this in?',
-                    $resourceNamespaces,
+                select(
+                    label: 'Which namespace would you like to create this in?',
+                    options: $resourceNamespaces,
                 ) :
                 (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
             $resourcePath = (count($resourceDirectories) > 1) ?
@@ -148,9 +153,9 @@ class MakeWidgetCommand extends Command
         }
 
         if ($this->option('chart')) {
-            $chart = $this->choice(
-                'Chart type',
-                [
+            $chart = select(
+                label: 'Chart type',
+                options: [
                     'Bar chart',
                     'Bubble chart',
                     'Doughnut chart',
