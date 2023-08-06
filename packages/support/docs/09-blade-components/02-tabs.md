@@ -56,6 +56,48 @@ public string $activeTab;
 </x-filament::tabs>
 ```
 
+The name of the active tab, will be stored in the attribute `$activeTab`. We can make the tabs interactive by passing the attribute to the Livewire Component of the blade file.
+
+```php
+    public function selectTab(?string $tab): ?string{
+        return "You selected tab: ".$tab;
+    }
+```
+
+```blade
+    <x-filament::section>
+
+        <x-filament::tabs>
+            <x-filament::tabs.item
+                :active="$activeTab === 'tab1'"
+                wire:click="$set('activeTab', 'tab1')"
+            >
+                Tab 1
+            </x-filament::tabs.item>
+
+            <x-filament::tabs.item
+                :active="$activeTab === 'tab2'"
+                wire:click="$set('activeTab', 'tab2')"
+            >
+                Tab 2
+            </x-filament::tabs.item>
+
+            <x-filament::tabs.item
+                :active="$activeTab === 'tab3'"
+                wire:click="$set('activeTab', 'tab3')"
+            >
+                Tab 3
+            </x-filament::tabs.item>
+
+        </x-filament::tabs>
+
+        <x-filament::section>
+            {{$this->selectTab($activeTab)}}
+        </x-filament::section>
+
+    </x-filament::section>
+```
+
 Or you can use the `alpine-active` attribute to make a tab appear active conditionally using Alpine.js:
 
 ```blade
