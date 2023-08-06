@@ -29,7 +29,10 @@ trait Translatable
 
         $originalActiveLocale = $this->activeLocale;
 
-        $translatableAttributes = $this->getRecord()->getTranslatableAttributes();
+        $nonTranslatableData = Arr::except(
+            $this->data[$originalActiveLocale] ?? [],
+            $this->getRecord()->getTranslatableAttributes(),
+        );
 
         try {
             foreach ($this->getTranslatableLocales() as $locale) {
@@ -37,7 +40,7 @@ trait Translatable
 
                 $this->data[$locale] = array_merge(
                     $this->data[$locale] ?? [],
-                    Arr::except($this->data[$originalActiveLocale], $translatableAttributes),
+                    $nonTranslatableData,
                 );
 
                 /** @internal Read the DocBlock above the following method. */

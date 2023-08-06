@@ -54,6 +54,11 @@ trait Translatable
 
             $translatableAttributes = app(static::getModel())->getTranslatableAttributes();
 
+            $nonTranslatableData = Arr::except(
+                $this->data[$originalActiveLocale] ?? [],
+                $translatableAttributes,
+            );
+
             foreach ($this->getTranslatableLocales() as $locale) {
                 if ($locale === $originalActiveLocale) {
                     continue;
@@ -64,10 +69,7 @@ trait Translatable
 
                     $this->data[$locale] = array_merge(
                         $this->data[$locale] ?? [],
-                        Arr::except(
-                            $this->data[$originalActiveLocale] ?? [],
-                            $translatableAttributes,
-                        ),
+                        $nonTranslatableData,
                     );
 
                     $this->callHook('beforeValidate');
