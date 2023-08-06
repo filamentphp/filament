@@ -9,6 +9,7 @@ use Filament\Support\Commands\Concerns\CanValidateInput;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\text;
 
 class MakeTableCommand extends Command
 {
@@ -24,7 +25,12 @@ class MakeTableCommand extends Command
 
     public function handle(): int
     {
-        $component = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `Products/ListProducts`)', 'name'))
+        $component = (string) str($this->argument('name') ??
+            text(
+                label: 'What is the table name?',
+                placeholder: 'Products/ListProducts`)',
+                required: true
+            ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -41,7 +47,12 @@ class MakeTableCommand extends Command
             ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $model = (string) str($this->argument('model') ?? $this->askRequired('Model (e.g. `Product`)', 'model'))
+        $model = (string) str($this->argument('model') ??
+            text(
+                label: 'What is the model name?',
+                placeholder: 'Model (e.g. `Product`)',
+                required: true
+            ))
             ->replace('/', '\\');
         $modelClass = (string) str($model)->afterLast('\\');
 

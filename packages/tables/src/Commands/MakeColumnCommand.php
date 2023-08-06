@@ -6,6 +6,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\text;
 
 class MakeColumnCommand extends Command
 {
@@ -18,7 +19,12 @@ class MakeColumnCommand extends Command
 
     public function handle(): int
     {
-        $column = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `StatusSwitcher`)', 'name'))
+        $column = (string) str($this->argument('name') ??
+            text(
+                label: 'What is the column name?',
+                placeholder: 'Name (e.g. `StatusSwitcher`)',
+                required: true
+            ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
