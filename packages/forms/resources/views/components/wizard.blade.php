@@ -5,7 +5,6 @@
 @endphp
 
 <div
-    wire:ignore.self
     x-data="{
         step: null,
 
@@ -86,6 +85,7 @@
     }"
     x-on:next-wizard-step.window="if ($event.detail.statePath === '{{ $getStatePath() }}') nextStep()"
     x-cloak
+    wire:ignore.self
     {!! $getId() ? "id=\"{$getId()}\"" : null !!}
     {{ $attributes->merge($getExtraAttributes())->class(['filament-forms-wizard-component grid gap-y-6']) }}
     {{ $getExtraAlpineAttributeBag() }}
