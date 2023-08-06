@@ -62,8 +62,6 @@ trait Translatable
                 try {
                     $this->setActiveLocale($locale);
 
-                    $this->callHook('beforeValidate');
-
                     $this->data[$locale] = array_merge(
                         $this->data[$locale] ?? [],
                         Arr::except(
@@ -71,6 +69,8 @@ trait Translatable
                             $translatableAttributes,
                         ),
                     );
+
+                    $this->callHook('beforeValidate');
 
                     $data[$locale] = $this->form->getState();
 
