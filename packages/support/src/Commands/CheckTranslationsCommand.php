@@ -60,8 +60,44 @@ class CheckTranslationsCommand extends Command
             )
             ->each(function (string $locale, string $localeDir) use ($filesystem, $localeRootDirectory, $package) {
                 $files = $filesystem->allFiles($localeDir);
+                $baseFiles = $filesystem->allFiles(implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en']));
+
+                $localeFiles = collect($files)->map(fn ($file) => (string) str($file->getPathname())->after(DIRECTORY_SEPARATOR . $locale . DIRECTORY_SEPARATOR));
+                $englishFiles = collect($baseFiles)->map(fn ($file) => (string) str($file->getPathname())->after(DIRECTORY_SEPARATOR . 'en' . DIRECTORY_SEPARATOR));
+                $missingFiles = $englishFiles->diff($localeFiles);
+                $removedFiles = $localeFiles->diff($englishFiles);
+                $path = implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, $locale]);
+
+                if ($missingFiles->count() > 0 && $removedFiles->count() > 0) {
+                    $this->warn("[!] Package filament/{$package} has {$missingFiles->count()} missing translation " . Str::plural('file', $missingFiles->count()) . " and {$removedFiles->count()} removed translation " . Str::plural('file', $missingFiles->count()) . ' for ' . locale_get_display_name($locale, 'en') . ".\n");
+
+                    $this->newLine();
+                } elseif ($missingFiles->count() > 0) {
+                    $this->warn("[!] Package filament/{$package} has {$missingFiles->count()} missing translation " . Str::plural('file', $missingFiles->count()) . ' for ' . locale_get_display_name($locale, 'en') . ".\n");
+
+                    $this->newLine();
+                } elseif ($removedFiles->count() > 0) {
+                    $this->warn("[!] Package filament/{$package} has {$removedFiles->count()} removed translation " . Str::plural('file', $removedFiles->count()) . ' for ' . locale_get_display_name($locale, 'en') . ".\n");
+
+                    $this->newLine();
+                }
+
+                if ($missingFiles->count() > 0 || $removedFiles->count() > 0) {
+                    $this->table(
+                        [$path, ''],
+                        array_merge(
+                            array_map(fn (string $file): array => [$file, 'Missing'], $missingFiles->toArray()),
+                            array_map(fn (string $file): array => [$file, 'Removed'], $removedFiles->toArray()),
+                        ),
+                    );
+
+                    $this->newLine();
+                }
 
                 collect($files)
+                    ->reject(function ($file) use ($localeRootDirectory) {
+                        return ! file_exists(implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en', $file->getRelativePathname()]));
+                    })
                     ->mapWithKeys(function (SplFileInfo $file) use ($localeDir, $localeRootDirectory) {
                         $expectedKeys = require implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en', $file->getRelativePathname()]);
                         $actualKeys = require $file->getPathname();

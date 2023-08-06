@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Scollega selezionato',
+        'label' => 'Scollega selezionati',
 
         'modal' => [
 
-            'heading' => 'Scollega selezionato :label',
+            'heading' => 'Scollega :label selezionati',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Scollega selezionato',
+                    'label' => 'Scollega',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'detached' => [
-                'title' => 'Scollegato',
+                'title' => 'Scollegati',
             ],
 
         ],

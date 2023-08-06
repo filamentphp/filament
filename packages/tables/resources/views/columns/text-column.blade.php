@@ -61,7 +61,7 @@
     <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
         @class([
             'list-inside list-disc' => $isBulleted(),
-            'flex flex-wrap items-center gap-1' => $isBadge,
+            'flex flex-wrap items-center gap-1.5' => $isBadge,
             'whitespace-normal' => $canWrap,
         ])
     >

@@ -206,9 +206,9 @@ You can also conditionally hide a navigation item by using the `visible()` or `h
 use Filament\Navigation\NavigationItem;
 
 NavigationItem::make('Analytics')
-    ->visible(auth()->user()->can('view-analytics'))
+    ->visible(fn(): bool => auth()->user()->can('view-analytics'))
     // or
-    ->hidden(! auth()->user()->can('view-analytics')),
+    ->hidden(fn(): bool => ! auth()->user()->can('view-analytics')),
 ```
 
 ## Disabling resource or page navigation items
@@ -257,8 +257,8 @@ public function panel(Panel $panel): Panel
             return $builder->items([
                 NavigationItem::make('Dashboard')
                     ->icon('heroicon-o-home')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
-                    ->url(route('filament.pages.dashboard')),
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
+                    ->url(route('filament.admin.pages.dashboard')),
                 ...UserResource::getNavigationItems(),
                 ...Settings::getNavigationItems(),
             ]);
@@ -327,7 +327,7 @@ public function panel(Panel $panel): Panel
         ->userMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(route('filament.pages.settings'))
+                ->url(route('filament.admin.pages.settings'))
                 ->icon('heroicon-o-cog-6-tooth'),
             // ...
         ]);
@@ -372,6 +372,21 @@ public function panel(Panel $panel): Panel
             // ...
         ]);
 }
+```
+
+### Conditionally hiding user menu items
+
+You can also conditionally hide a user menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
+
+```php
+use App\Models\Payment;
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->label('Payments')
+    ->visible(fn (): bool => auth()->user()->can('viewAny', Payment::class))
+    // or
+    ->hidden(fn (): bool => ! auth()->user()->can('viewAny', Payment::class))
 ```
 
 ## Disabling breadcrumbs

@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Elimina selezionato',
+        'label' => 'Elimina selezionati',
 
         'modal' => [
 
-            'heading' => 'Elimina selezionato :label',
+            'heading' => 'Elimina :label selezionati',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Elimina selezionato',
+                    'label' => 'Elimina',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Eliminato',
+                'title' => 'Eliminati',
             ],
 
         ],

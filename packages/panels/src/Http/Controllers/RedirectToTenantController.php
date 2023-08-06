@@ -28,7 +28,7 @@ class RedirectToTenantController
 
     protected function redirectToTenantRegistration(Panel $panel): RedirectResponse
     {
-        if (! $panel->hasTenantRegistration()) {
+        if (! ($panel->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView())) {
             abort(404);
         }
 

@@ -1,4 +1,5 @@
 <?php
+
 return [
 
     'direction' => 'rtl',
@@ -52,4 +53,3 @@ return [
     ],
 
 ];
-
