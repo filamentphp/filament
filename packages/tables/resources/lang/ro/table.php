@@ -2,7 +2,6 @@
 
 return [
 
-
     'column_toggle' => [
 
         'heading' => 'Coloane',
