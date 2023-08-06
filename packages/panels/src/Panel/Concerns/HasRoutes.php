@@ -21,9 +21,9 @@ trait HasRoutes
     protected string | Closure | null $homeUrl = null;
 
     /**
-     * @var string|array<string>|null
+     * @var array<string>
      */
-    protected string | array | null $domain = null;
+    protected array $domains = [null];
 
     protected string $path = '';
 
@@ -34,17 +34,24 @@ trait HasRoutes
         return $this;
     }
 
-    /**
-     * @param  string|array<string>|null  $domain
-     */
-    public function domain(string | array | null $domain = null): static
+    public function domain(?string $domain): static
     {
-        $this->domain = $domain;
+        $this->domains(filled($domain) ? [$domain] : []);
 
         return $this;
     }
 
-    public function homeUrl(string | Closure | null $url = null): static
+    /**
+     * @param array<string> $domains
+     */
+    public function domains(array $domains): static
+    {
+        $this->domains = $domain;
+
+        return $this;
+    }
+
+    public function homeUrl(string | Closure | null $url): static
     {
         $this->homeUrl = $url;
 
@@ -109,9 +116,7 @@ trait HasRoutes
      */
     public function getDomains(): array
     {
-        return is_null($this->domain)
-            ? [null]
-            : Arr::wrap($this->domain);
+        return Arr::wrap($this->domains);
     }
 
     public function getPath(): string
