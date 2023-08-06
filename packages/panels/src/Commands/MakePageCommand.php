@@ -21,18 +21,17 @@ class MakePageCommand extends Command
 
     protected $signature = 'make:filament-page {name?} {--R|resource=} {--T|type=} {--panel=} {--F|force}';
 
-
     public function handle(): int
     {
 
-
-        $page = (string)str(
+        $page = (string) str(
             $this->argument('name') ??
             text(
                 label: 'What is the page name?',
                 placeholder: 'Settings Page',
                 required: true
-            ))
+            )
+        )
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -52,7 +51,6 @@ class MakePageCommand extends Command
                 placeholder: '(Optional) Resource (e.g. `UserResource`)',
             );
 
-
         if ($resourceInput !== null) {
             $resource = (string) str($resourceInput)
                 ->studly()
@@ -65,7 +63,7 @@ class MakePageCommand extends Command
                 $resource .= 'Resource';
             }
 
-            $resourceClass = (string)str($resource)
+            $resourceClass = (string) str($resource)
                 ->afterLast('\\');
 
             $resourcePage = $this->option('type') ??
@@ -90,14 +88,14 @@ class MakePageCommand extends Command
             $panel = Filament::getPanel($panel);
         }
 
-        if (!$panel) {
+        if (! $panel) {
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
             $panel = (count($panels) > 1) ? $panels[select(
                 label: 'Which panel would you like to create this in?',
                 options: array_map(
-                    fn(Panel $panel): string => $panel->getId(),
+                    fn (Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
                 default: Filament::getDefaultPanel()->getId()
@@ -144,7 +142,7 @@ class MakePageCommand extends Command
 
         $path = (string) str($page)
             ->prepend('/')
-            ->prepend( empty($resource) ? ($path??'') : ($resourcePath??'')."\\{$resource}\\Pages\\")
+            ->prepend(empty($resource) ? ($path ?? '') : ($resourcePath ?? '') . "\\{$resource}\\Pages\\")
             ->replace('\\', '/')
             ->replace('//', '/')
             ->append('.php');
@@ -168,22 +166,22 @@ class MakePageCommand extends Command
         if (empty($resource)) {
             $this->copyStubToApp('Page', $path, [
                 'class' => $pageClass,
-                'namespace' => str($namespace??'') . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'namespace' => str($namespace ?? '') . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
                 'view' => $view,
             ]);
         } else {
             $this->copyStubToApp($resourcePage === 'custom' ? 'CustomResourcePage' : 'ResourcePage', $path, [
                 'baseResourcePage' => 'Filament\\Resources\\Pages\\' . ($resourcePage === 'custom' ? 'Page' : $resourcePage),
                 'baseResourcePageClass' => $resourcePage === 'custom' ? 'Page' : $resourcePage,
-                'namespace' => ($resourceNamespace??'')."\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
-                'resource' => ($resourceNamespace??'')."\\{$resource}",
+                'namespace' => ($resourceNamespace ?? '') . "\\{$resource}\\Pages" . ($pageNamespace !== '' ? "\\{$pageNamespace}" : ''),
+                'resource' => ($resourceNamespace ?? '') . "\\{$resource}",
                 'resourceClass' => $resourceClass,
                 'resourcePageClass' => $pageClass,
                 'view' => $view,
             ]);
         }
 
-        if ( empty($resource) || $resourcePage === 'custom') {
+        if (empty($resource) || $resourcePage === 'custom') {
             $this->copyStubToApp('PageView', $viewPath);
         }
 

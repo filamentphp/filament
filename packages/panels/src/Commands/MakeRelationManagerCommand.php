@@ -30,14 +30,15 @@ class MakeRelationManagerCommand extends Command
                 label: 'What is the Resource name?',
                 placeholder: 'Resource (e.g. `DepartmentResource`)',
                 required: true
-            ))
+            )
+        )
             ->studly()
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
 
-        if (!str($resource)->endsWith('Resource')) {
+        if (! str($resource)->endsWith('Resource')) {
             $resource .= 'Resource';
         }
 
@@ -73,7 +74,7 @@ class MakeRelationManagerCommand extends Command
             $panel = (count($panels) > 1) ? $panels[select(
                 label: 'Which panel would you like to create this in?',
                 options: array_map(
-                    fn(Panel $panel): string => $panel->getId(),
+                    fn (Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
                 default: Filament::getDefaultPanel()->getId()
@@ -99,8 +100,8 @@ class MakeRelationManagerCommand extends Command
             ->append('.php');
 
         if (! $this->option('force') && $this->checkForCollision([
-                $path,
-            ])) {
+            $path,
+        ])) {
             return static::INVALID;
         }
 

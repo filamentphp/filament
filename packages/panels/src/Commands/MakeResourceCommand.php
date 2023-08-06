@@ -60,14 +60,14 @@ class MakeResourceCommand extends Command
             $panel = Filament::getPanel($panel);
         }
 
-        if (!$panel) {
+        if (! $panel) {
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
             $panel = (count($panels) > 1) ? $panels[select(
                 label: 'Which panel would you like to create this in?',
                 options: array_map(
-                    fn(Panel $panel): string => $panel->getId(),
+                    fn (Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
                 default: Filament::getDefaultPanel()->getId()
@@ -113,13 +113,13 @@ class MakeResourceCommand extends Command
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
         if (! $this->option('force') && $this->checkForCollision([
-                $resourcePath,
-                $listResourcePagePath,
-                $manageResourcePagePath,
-                $createResourcePagePath,
-                $editResourcePagePath,
-                $viewResourcePagePath,
-            ])) {
+            $resourcePath,
+            $listResourcePagePath,
+            $manageResourcePagePath,
+            $createResourcePagePath,
+            $editResourcePagePath,
+            $viewResourcePagePath,
+        ])) {
             return static::INVALID;
         }
 

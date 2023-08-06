@@ -65,7 +65,7 @@ class MakeFormCommand extends Command
                     'Create',
                     'Edit',
                 ]
-            )  === 'Edit';
+            ) === 'Edit';
         } else {
             $isEditForm = false;
         }
