@@ -23,7 +23,7 @@ trait HasRoutes
     /**
      * @var array<string>
      */
-    protected array $domains = [null];
+    protected array $domains = [];
 
     protected string $path = '';
 
@@ -46,7 +46,7 @@ trait HasRoutes
      */
     public function domains(array $domains): static
     {
-        $this->domains = $domain;
+        $this->domains = $domains;
 
         return $this;
     }
