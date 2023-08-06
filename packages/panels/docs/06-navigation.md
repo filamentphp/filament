@@ -379,8 +379,8 @@ public function panel(Panel $panel): Panel
 You can also conditionally hide a user menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
 
 ```php
-use Filament\Navigation\MenuItem;
 use App\Models\Payment;
+use Filament\Navigation\MenuItem;
 
 MenuItem::make()
     ->label('Payments')
