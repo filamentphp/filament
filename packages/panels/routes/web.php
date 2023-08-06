@@ -14,8 +14,9 @@ Route::name('filament.')
             $panelId = $panel->getId();
             $hasTenancy = $panel->hasTenancy();
             $tenantSlugAttribute = $panel->getTenantSlugAttribute();
+            $domains = $panel->getDomains();
 
-            foreach ($panel->getDomains() as $domain) {
+            foreach ((empty($domains) ? [null] : $domains) as $domain) {
                 Route::domain($domain)
                     ->middleware($panel->getMiddleware())
                     ->name("{$panelId}.")
