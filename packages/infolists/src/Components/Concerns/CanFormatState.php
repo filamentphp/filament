@@ -281,4 +281,9 @@ trait CanFormatState
     {
         return (bool) $this->evaluate($this->isMarkdown);
     }
+
+    public function getPlaceholder(): ?string
+    {
+        return $this->evaluate($this->placeholder);
+    }
 }

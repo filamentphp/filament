@@ -37,7 +37,7 @@
 
     $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
 
-    if (blank($arrayState) && filled($placeholder)) {
+    if (blank($arrayState) && filled($getPlaceholder())) {
         $arrayState = \Illuminate\Support\Arr::prepend($arrayState, '');
     }
 @endphp
