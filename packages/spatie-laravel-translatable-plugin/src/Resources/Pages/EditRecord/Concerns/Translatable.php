@@ -33,6 +33,11 @@ trait Translatable
             foreach ($this->getTranslatableLocales() as $locale) {
                 $this->setActiveLocale($locale);
 
+                $this->data[$locale] = array_merge(
+                    $this->data[$locale] ?? [],
+                    Arr::except($this->data[$originalActiveLocale], app(static::getModel())->getTranslatableAttributes()),
+                );
+                
                 /** @internal Read the DocBlock above the following method. */
                 $this->validateFormAndUpdateRecordAndCallHooks();
             }
