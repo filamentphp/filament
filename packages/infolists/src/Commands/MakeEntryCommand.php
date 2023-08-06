@@ -17,12 +17,11 @@ class MakeEntryCommand extends Command
 
     public function handle(): int
     {
-        $entry = (string) str($this->argument('name') ??
-            text(
-                label: 'What is the infolist name?',
-                placeholder: 'Name (e.g. `StatusSwitcher`)',
-                required: true
-            ))
+        $entry = (string) str($this->argument('name') ?? text(
+            label: 'What is the infolist name?',
+            placeholder: 'StatusSwitcher',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

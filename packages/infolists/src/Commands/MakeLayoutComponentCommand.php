@@ -17,12 +17,11 @@ class MakeLayoutComponentCommand extends Command
 
     public function handle(): int
     {
-        $component = (string) str($this->argument('name') ??
-            text(
-                label: 'What is the layout name?',
-                placeholder: 'Name (e.g. `Wizard`)',
-                required: true
-            ))
+        $component = (string) str($this->argument('name') ?? text(
+            label: 'What is the layout name?',
+            placeholder: 'Wizard',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

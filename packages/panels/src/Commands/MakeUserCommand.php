@@ -34,7 +34,7 @@ class MakeUserCommand extends Command
         return [
             'name' => $this->options['name'] ?? text(
                 label: 'Name',
-                required: true
+                required: true,
             ),
 
             'email' => $this->options['email'] ?? text(
@@ -49,7 +49,7 @@ class MakeUserCommand extends Command
 
             'password' => Hash::make($this->options['password'] ?? password(
                 label: 'Password',
-                required: true
+                required: true,
             )),
         ];
     }

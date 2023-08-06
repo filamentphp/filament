@@ -17,12 +17,11 @@ class MakeColumnCommand extends Command
 
     public function handle(): int
     {
-        $column = (string) str($this->argument('name') ??
-            text(
-                label: 'What is the column name?',
-                placeholder: 'Name (e.g. `StatusSwitcher`)',
-                required: true
-            ))
+        $column = (string) str($this->argument('name') ?? text(
+            label: 'What is the column name?',
+            placeholder: 'StatusSwitcher',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

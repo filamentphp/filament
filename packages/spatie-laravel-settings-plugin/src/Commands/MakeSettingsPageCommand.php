@@ -16,12 +16,11 @@ class MakeSettingsPageCommand extends Command
 
     public function handle(): int
     {
-        $page = (string) str($this->argument('name') ??
-            text(
-                label: 'What is the page name?',
-                placeholder: 'Page name (e.g. `ManageFooter`)',
-                required: true
-            ))
+        $page = (string) str($this->argument('name') ?? text(
+            label: 'What is the page name?',
+            placeholder: 'ManageFooter',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -31,12 +30,11 @@ class MakeSettingsPageCommand extends Command
             (string) str($page)->beforeLast('\\') :
             '';
 
-        $settingsClass = (string) str($this->argument('settingsClass') ??
-            text(
-                label: 'What is the settings name?',
-                placeholder: 'Settings class (e.g. `FooterSettings`)',
-                required: true
-            ))
+        $settingsClass = (string) str($this->argument('settingsClass') ?? text(
+            label: 'What is the settings name?',
+            placeholder: 'FooterSettings',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ');

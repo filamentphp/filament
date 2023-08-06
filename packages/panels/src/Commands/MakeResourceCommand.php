@@ -28,12 +28,11 @@ class MakeResourceCommand extends Command
 
     public function handle(): int
     {
-        $model = (string) str($this->argument('name') ??
-            text(
-                label: 'Model name?',
-                placeholder: 'Model (e.g. `BlogPost`)',
-                required: true
-            ))
+        $model = (string) str($this->argument('name') ?? text(
+            label: 'What is the model name?',
+            placeholder: 'BlogPost',
+            required: true,
+        ))
             ->studly()
             ->beforeLast('Resource')
             ->trim('/')

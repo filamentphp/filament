@@ -23,12 +23,11 @@ class MakeRelationManagerCommand extends Command
     public function handle(): int
     {
         $resource = (string) str(
-            $this->argument('resource') ??
-            text(
-                label: 'What is the Resource name?',
-                placeholder: 'Resource (e.g. `DepartmentResource`)',
-                required: true
-            )
+            $this->argument('resource') ?? text(
+                label: 'What is the resource you would like to create this in?',
+                placeholder: 'DepartmentResource',
+                required: true,
+            ),
         )
             ->studly()
             ->trim('/')
@@ -40,23 +39,21 @@ class MakeRelationManagerCommand extends Command
             $resource .= 'Resource';
         }
 
-        $relationship = (string) str($this->argument('relationship') ??
-            text(
-                label: 'What is the Relationship?',
-                placeholder: 'Relationship (e.g. `members`)',
-                required: true
-            ))
+        $relationship = (string) str($this->argument('relationship') ?? text(
+            label: 'What is the relationship?',
+            placeholder: 'members',
+            required: true,
+        ))
             ->trim(' ');
         $managerClass = (string) str($relationship)
             ->studly()
             ->append('RelationManager');
 
-        $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ??
-            text(
-                label: 'What is the Title attribute?',
-                placeholder: 'Title attribute (e.g. `name`)',
-                required: true
-            ))
+        $recordTitleAttribute = (string) str($this->argument('recordTitleAttribute') ?? text(
+            label: 'What is the title attribute?',
+            placeholder: 'name',
+            required: true,
+        ))
             ->trim(' ');
 
         $panel = $this->option('panel');

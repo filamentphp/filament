@@ -17,12 +17,11 @@ class MakePanelCommand extends Command
 
     public function handle(): int
     {
-        $id = Str::lcfirst($this->argument('id') ??
-            text(
-                label: 'What is the ID?',
-                placeholder: 'ID (e.g. `app`)',
-                required: true
-            ));
+        $id = Str::lcfirst($this->argument('id') ?? text(
+            label: 'What is the ID?',
+            placeholder: 'app',
+            required: true,
+        ));
 
         $class = (string) str($id)
             ->studly()

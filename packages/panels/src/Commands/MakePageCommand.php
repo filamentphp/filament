@@ -26,9 +26,9 @@ class MakePageCommand extends Command
             $this->argument('name') ??
             text(
                 label: 'What is the page name?',
-                placeholder: 'Settings Page',
-                required: true
-            )
+                placeholder: 'EditSettings',
+                required: true,
+            ),
         )
             ->trim('/')
             ->trim('\\')
@@ -43,13 +43,12 @@ class MakePageCommand extends Command
         $resourceClass = null;
         $resourcePage = null;
 
-        $resourceInput = $this->option('resource') ??
-            text(
-                label: 'Make Page For Resource?',
-                placeholder: '(Optional) Resource (e.g. `UserResource`)',
-            );
+        $resourceInput = $this->option('resource') ?? text(
+            label: 'Would you like to create the page inside a resource?',
+            placeholder: '[Optional] UserResource',
+        );
 
-        if ($resourceInput !== null) {
+        if (filled($resourceInput)) {
             $resource = (string) str($resourceInput)
                 ->studly()
                 ->trim('/')
@@ -64,20 +63,18 @@ class MakePageCommand extends Command
             $resourceClass = (string) str($resource)
                 ->afterLast('\\');
 
-            $resourcePage = $this->option('type') ??
-
-                select(
-                    label: 'Which type of page would you like to create?',
-                    options: [
-                        'custom' => 'Custom',
-                        'ListRecords' => 'List',
-                        'CreateRecord' => 'Create',
-                        'EditRecord' => 'Edit',
-                        'ViewRecord' => 'View',
-                        'ManageRecords' => 'Manage',
-                    ],
-                    default: 'custom'
-                );
+            $resourcePage = $this->option('type') ?? select(
+                label: 'Which type of page would you like to create?',
+                options: [
+                    'custom' => 'Custom',
+                    'ListRecords' => 'List',
+                    'CreateRecord' => 'Create',
+                    'EditRecord' => 'Edit',
+                    'ViewRecord' => 'View',
+                    'ManageRecords' => 'Manage',
+                ],
+                default: 'custom'
+            );
         }
 
         $panel = $this->option('panel');

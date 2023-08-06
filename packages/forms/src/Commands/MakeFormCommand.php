@@ -24,12 +24,11 @@ class MakeFormCommand extends Command
 
     public function handle(): int
     {
-        $component = (string) str($this->argument('name') ??
-            text(
-                label: 'What is the form name?',
-                placeholder: 'Name (e.g. `Products/CreateProduct`)',
-                required: true
-            ))
+        $component = (string) str($this->argument('name') ?? text(
+            label: 'What is the form name?',
+            placeholder: 'Products/CreateProduct',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
@@ -49,7 +48,7 @@ class MakeFormCommand extends Command
         $model = (string) str($this->argument('model') ??
                 text(
                     label: 'What is the model name?',
-                    placeholder: 'Model (e.g. `Product`)',
+                    placeholder: 'Product',
                     required: $this->option('edit')
                 ))->replace('/', '\\');
         $modelClass = (string) str($model)->afterLast('\\');

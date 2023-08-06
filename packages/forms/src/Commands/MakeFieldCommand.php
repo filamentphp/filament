@@ -17,12 +17,11 @@ class MakeFieldCommand extends Command
 
     public function handle(): int
     {
-        $field = (string) str($this->argument('name') ??
-            text(
-                label: 'What is the field name?',
-                placeholder: 'Name (e.g. `RangeSlider`)',
-                required: true
-            ))
+        $field = (string) str($this->argument('name') ?? text(
+            label: 'What is the field name?',
+            placeholder: 'RangeSlider',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

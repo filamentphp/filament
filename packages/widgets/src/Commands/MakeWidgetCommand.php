@@ -23,7 +23,8 @@ class MakeWidgetCommand extends Command
     public function handle(): int
     {
         $widget = (string) str($this->argument('name') ?? text(
-            label: 'Name (e.g. `BlogPostsChart`)',
+            label: 'What is the widget name?',
+            placeholder: 'BlogPostsChart',
             required: true,
         ))
             ->trim('/')
@@ -40,10 +41,11 @@ class MakeWidgetCommand extends Command
 
         if (class_exists(Resource::class)) {
             $resourceInput = $this->option('resource') ?? text(
-                label: '(Optional) Resource (e.g. `BlogPostResource`)',
+                label: 'Would you like to create the page inside a resource?',
+                placeholder: '[Optional] BlogPostResource',
             );
 
-            if ($resourceInput !== null) {
+            if (filled($resourceInput)) {
                 $resource = (string) str($resourceInput)
                     ->studly()
                     ->trim('/')
@@ -154,7 +156,7 @@ class MakeWidgetCommand extends Command
 
         if ($this->option('chart')) {
             $chart = select(
-                label: 'Chart type',
+                label: 'Which type of chart would you like to create?',
                 options: [
                     'Bar chart',
                     'Bubble chart',
