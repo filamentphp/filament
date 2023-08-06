@@ -3,18 +3,17 @@
 namespace Filament\Commands;
 
 use Filament\Facades\Filament;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Support\Facades\Hash;
+use function Laravel\Prompts\password;
+use function Laravel\Prompts\text;
 
 class MakeUserCommand extends Command
 {
-    use CanValidateInput;
-
     protected $description = 'Create a new Filament user';
 
     protected $signature = 'make:filament-user
@@ -33,9 +32,25 @@ class MakeUserCommand extends Command
     protected function getUserData(): array
     {
         return [
-            'name' => $this->validateInput(fn () => $this->options['name'] ?? $this->ask('Name'), 'name', ['required'], fn () => $this->options['name'] = null),
-            'email' => $this->validateInput(fn () => $this->options['email'] ?? $this->ask('Email address'), 'email', ['required', 'email', 'unique:' . $this->getUserModel()], fn () => $this->options['email'] = null),
-            'password' => Hash::make($this->validateInput(fn () => $this->options['password'] ?? $this->secret('Password'), 'password', ['required', 'min:8'], fn () => $this->options['password'] = null)),
+            'name' => $this->options['name'] ?? text(
+                label: 'Name',
+                required: true,
+            ),
+
+            'email' => $this->options['email'] ?? text(
+                label: 'Email address',
+                required: true,
+                validate: fn (string $email): ?string => match (true) {
+                    ! filter_var($email, FILTER_VALIDATE_EMAIL) => 'The email address must be valid.',
+                    static::getUserModel()::where('email', $email)->exists() => 'A user with this email address already exists',
+                    default => null,
+                },
+            ),
+
+            'password' => Hash::make($this->options['password'] ?? password(
+                label: 'Password',
+                required: true,
+            )),
         ];
     }
 
