@@ -374,9 +374,9 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Conditionally hiding user menus
+### Conditionally hiding user menu items
 
-You can also conditionally hide a user item by using the visible() or hidden() methods, passing in a condition to check:
+You can also conditionally hide a user menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
 
 ```php
 use Filament\Navigation\MenuItem;
@@ -384,9 +384,9 @@ use App\Models\Payment;
 
 MenuItem::make()
     ->label('Payments')
-    ->visible(auth()->user()->can('viewAny', Payment::class))
+    ->visible(fn (): bool => auth()->user()->can('viewAny', Payment::class))
     // or
-    ->hidden(! auth()->user()->can('viewAny', Payment::class))
+    ->hidden(fn (): bool => ! auth()->user()->can('viewAny', Payment::class))
 ```
 
 ## Disabling breadcrumbs
