@@ -206,9 +206,9 @@ You can also conditionally hide a navigation item by using the `visible()` or `h
 use Filament\Navigation\NavigationItem;
 
 NavigationItem::make('Analytics')
-    ->visible(auth()->user()->can('view-analytics'))
+    ->visible(fn(): bool => auth()->user()->can('view-analytics'))
     // or
-    ->hidden(! auth()->user()->can('view-analytics')),
+    ->hidden(fn(): bool => ! auth()->user()->can('view-analytics')),
 ```
 
 ## Disabling resource or page navigation items
@@ -257,8 +257,8 @@ public function panel(Panel $panel): Panel
             return $builder->items([
                 NavigationItem::make('Dashboard')
                     ->icon('heroicon-o-home')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
-                    ->url(route('filament.pages.dashboard')),
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
+                    ->url(route('filament.admin.pages.dashboard')),
                 ...UserResource::getNavigationItems(),
                 ...Settings::getNavigationItems(),
             ]);
@@ -327,7 +327,7 @@ public function panel(Panel $panel): Panel
         ->userMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(route('filament.pages.settings'))
+                ->url(route('filament.admin.pages.settings'))
                 ->icon('heroicon-o-cog-6-tooth'),
             // ...
         ]);

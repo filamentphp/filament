@@ -66,8 +66,7 @@ class SpatieTagsInput extends TagsInput
         return $tagClass::query()
             ->when(
                 filled($type),
-                fn (Builder $query) => $query->where('type', $type),
-                fn (Builder $query) => $query->where('type', null),
+                fn (Builder $query) => $query->where('type', $type)
             )
             ->pluck('name')
             ->toArray();

@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Cột',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -88,6 +94,7 @@ return [
 
         'heading' => 'Không có dữ liệu nào',
 
+        'description' => 'Tạo một :model để bắt đầu.',
     ],
 
     'filters' => [
@@ -108,6 +115,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'Bộ lọc',
 
         'indicator' => 'Bộ lọc đang kích hoạt',
 
