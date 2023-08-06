@@ -137,7 +137,9 @@ trait HasRoutes
         }
 
         if ((! $tenant) && $hasTenancy) {
-            return $this->hasTenantRegistration() ? $this->getTenantRegistrationUrl() : null;
+            return ($this->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView()) ?
+                $this->getTenantRegistrationUrl() :
+                null;
         }
 
         if ($tenant) {
