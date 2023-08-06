@@ -10,7 +10,7 @@
     }}
 >
     @if (filled($label))
-        <legend class="text-sm font-medium leading-6">
+        <legend class="-ml-2 px-2 text-sm font-medium leading-6">
             {{ $label }}
         </legend>
     @endif
