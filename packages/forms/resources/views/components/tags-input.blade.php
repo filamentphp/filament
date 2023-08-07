@@ -70,11 +70,11 @@
                             class="hidden"
                         >
                             <x-filament::badge>
-                                {{ $getPrefixTag() }}
+                                {{ $getTagPrefix() }}
 
                                 <span class="text-start" x-text="tag"></span>
 
-                                {{ $getSuffixTag() }}
+                                {{ $getTagSuffix() }}
                                 
                                 @if (! $isDisabled)
                                     <x-slot
