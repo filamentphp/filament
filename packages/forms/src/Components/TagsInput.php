@@ -30,9 +30,9 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
      */
     protected array | Arrayable | Closure | null $suggestions = null;
 
-    protected string | Closure | null $prefixTag = null;
+    protected string | Closure | null $tagPrefix = null;
 
-    protected string | Closure | null $suffixTag = null;
+    protected string | Closure | null $tagSuffix = null;
 
     protected function setUp(): void
     {
@@ -71,16 +71,16 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         $this->placeholder(__('filament-forms::components.tags_input.placeholder'));
     }
 
-    public function prefixTag(string | Closure $prefix): static
+    public function tagPrefix(string | Closure $prefix): static
     {
-        $this->prefixTag = $prefix;
+        $this->tagPrefix = $prefix;
 
         return $this;
     }
 
-    public function suffixTag(string | Closure $suffix): static
+    public function tagSuffix(string | Closure $suffix): static
     {
-        $this->suffixTag = $suffix;
+        $this->tagSuffix = $suffix;
 
         return $this;
     }
@@ -112,14 +112,14 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         return $this;
     }
 
-    public function getPrefixTag(): ?string
+    public function getTagPrefix(): ?string
     {
-        return $this->evaluate($this->prefixTag);
+        return $this->evaluate($this->tagPrefix);
     }
 
-    public function getSuffixTag(): ?string
+    public function getTagSuffix(): ?string
     {
-        return $this->evaluate($this->suffixTag);
+        return $this->evaluate($this->tagSuffix);
     }
 
     public function getSeparator(): ?string
