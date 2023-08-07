@@ -1180,4 +1180,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     {
         return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
+
+    public function getDefaultState(): mixed
+    {
+        $state = parent::getDefaultState();
+
+        if (is_bool($state)) {
+            return $state ? 1 : 0;
+        }
+
+        return $state;
+    }
 }
