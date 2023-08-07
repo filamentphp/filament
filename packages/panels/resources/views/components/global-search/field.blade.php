@@ -28,7 +28,7 @@
             :attributes="
                 \Filament\Support\prepare_inherited_attributes(
                     new \Illuminate\View\ComponentAttributeBag([
-                        'x-mousetrap.global.' . collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') => $keyBindings ? 'document.getElementById($id(&quot;input&quot;)).focus()' : null,
+                        'x-mousetrap.global.' . collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') => $keyBindings ? 'document.getElementById($id(\'input\')).focus()' : null,
                     ])
                 )
             "
