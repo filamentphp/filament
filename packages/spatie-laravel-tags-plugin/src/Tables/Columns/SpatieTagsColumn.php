@@ -24,11 +24,12 @@ class SpatieTagsColumn extends TagsColumn
             $record = $record->getRelationValue($this->getRelationshipName());
         }
 
+        $type = $this->getType();
+        
         if (! method_exists($record, $type ? 'tagsWithType' : 'tags')) {
             return [];
         }
 
-        $type = $this->getType();
         $tags = $type ? $record->tagsWithType($type) : $record->tags();
 
         return $tags->pluck('name')->toArray();
