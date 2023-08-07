@@ -19,7 +19,7 @@ return [
         ],
 
         'open_user_menu' => [
-            'label' => 'منو کاربر',
+            'label' => 'منوی کاربر',
         ],
 
         'sidebar' => [
