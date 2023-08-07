@@ -74,7 +74,7 @@
                             },
                             error,
                             (progressEvent) => {
-                                progress(true, progressEvent.detail.progress, 100);
+                                progress(true, progressEvent.detail.progress, 100)
                             },
                         )
                     },
