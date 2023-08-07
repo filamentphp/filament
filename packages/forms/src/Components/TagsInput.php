@@ -71,14 +71,14 @@ class TagsInput extends Field implements Contracts\HasNestedRecursiveValidationR
         $this->placeholder(__('filament-forms::components.tags_input.placeholder'));
     }
 
-    public function prefixTag(string | Closure | null $prefix = ''): static
+    public function prefixTag(string | Closure $prefix): static
     {
         $this->prefixTag = $prefix;
 
         return $this;
     }
 
-    public function suffixTag(string | Closure | null $suffix = ''): static
+    public function suffixTag(string | Closure $suffix): static
     {
         $this->suffixTag = $suffix;
 
