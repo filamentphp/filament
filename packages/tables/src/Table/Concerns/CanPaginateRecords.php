@@ -7,7 +7,7 @@ use Illuminate\Support\Arr;
 
 trait CanPaginateRecords
 {
-    protected int | string | Closure | null $defaultPaginationPageOption = 10;
+    protected int | string | Closure | null $defaultPaginationPageOption = null;
 
     protected bool | Closure $isPaginated = true;
 
