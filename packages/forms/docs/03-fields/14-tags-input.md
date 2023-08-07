@@ -74,6 +74,17 @@ TagsInput::make('tags')
 
 You can [read more about possible options for keys](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key).
 
+## Defining tags prefix and suffix
+You can add prefix and suffix to tags without modifying the real values. This can be useful if you need to show presentational values to users, without having to add those prefixes manually.
+
+```php
+use Filament\Forms\Components\TagsInput;
+
+TagsInput::make('tags')
+    ->tagPrefix('$')
+    ->tagSuffix('USD')
+```
+
 ## Tags validation
 
 You may add validation rules for each tag by passing an array of rules to the `nestedRecursiveRules()` method:
