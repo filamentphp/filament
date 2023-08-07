@@ -35,7 +35,7 @@ class SpatieTagsColumn extends TextColumn
         }
 
         $type = $this->getType();
-        
+
         if (! method_exists($record, $type ? 'tagsWithType' : 'tags')) {
             return [];
         }
