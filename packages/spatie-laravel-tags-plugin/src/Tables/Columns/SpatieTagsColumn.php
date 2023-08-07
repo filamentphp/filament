@@ -24,7 +24,7 @@ class SpatieTagsColumn extends TagsColumn
             $record = $record->getRelationValue($this->getRelationshipName());
         }
 
-        if (! method_exists($record, 'tagsWithType')) {
+        if (! method_exists($record, $type ? 'tagsWithType' : 'tags')) {
             return [];
         }
 
