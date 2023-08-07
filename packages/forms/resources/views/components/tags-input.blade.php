@@ -75,7 +75,7 @@
                                 <span class="text-start" x-text="tag"></span>
 
                                 {{ $getTagSuffix() }}
-                                
+
                                 @if (! $isDisabled)
                                     <x-slot
                                         name="deleteButton"
