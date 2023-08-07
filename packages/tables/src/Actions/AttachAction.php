@@ -81,12 +81,16 @@ class AttachAction extends Action
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching records to attach.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
+            $isMultiple = is_array($data['recordId']);
+
             $record = $relationshipQuery
-                ->{is_array($data['recordId']) ? 'whereIn' : 'where'}($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
-                ->first();
+                ->{$isMultiple ? 'whereIn' : 'where'}($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
+                ->{$isMultiple ? 'get' : 'first'}();
 
             $this->process(function () use ($data, $record, $relationship) {
                 $relationship->attach(
@@ -203,7 +207,9 @@ class AttachAction extends Action
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($this->modifyRecordSelectOptionsQueryUsing) {
@@ -294,7 +300,9 @@ class AttachAction extends Action
                         $firstRelationshipJoinClause->type = 'left';
                     }
 
-                    $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                    $relationshipQuery
+                        ->distinct() // Ensure that results are unique when fetching options.
+                        ->select($relationshipQuery->getModel()->getTable() . '.*');
                 }
 
                 return $this->getRecordTitle($relationshipQuery->find($value));

@@ -60,6 +60,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+Make sure your `routes/web.php` file doesn't already define the `''` or `'/'` route, as it will take precedence.
+
 ## Render hooks
 
 [Render hooks](../support/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](../support/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:

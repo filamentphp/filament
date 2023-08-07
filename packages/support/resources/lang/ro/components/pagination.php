@@ -10,7 +10,7 @@ return [
 
         'records_per_page' => [
 
-            'label' => 'pe pagină',
+            'label' => 'Pe pagină',
 
             'options' => [
                 'all' => 'Toate',

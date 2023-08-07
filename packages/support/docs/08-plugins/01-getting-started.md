@@ -44,7 +44,7 @@ While you can certainly build plugins from scratch, we recommend using the [Fila
 
 ### Usage
 
-To use the skeleton, simply go to the GitHub repo and click the "Use this template" button (***While Filament is in v3 Beta make sure you switch to the 3.x branch before using the template***). This will create a new repo in your account with the skeleton code. After that you can clone the repo to your machine. Once you have the code on your machine, navigate to the root of the project and run the following command:
+To use the skeleton, simply go to the GitHub repo and click the "Use this template" button. This will create a new repo in your account with the skeleton code. After that you can clone the repo to your machine. Once you have the code on your machine, navigate to the root of the project and run the following command:
 
 ```bash
 php ./configure.php
@@ -56,7 +56,7 @@ This will ask you a series of questions to configure the plugin. Once you've ans
 
 Since every plugin varies greatly in its scope of use and functionality, there is no one size fits all approach to upgrading existing plugins. However, one thing to note, that is consistent to all plugins is the deprecation of the `PluginServiceProvider`.
 
-In you plugin service provider you will need to change it to extend the PackageServiceProvider instead. You will also need to add a static `$name` property to the service provider. This property is used to register the plugin with Filament. Here is an example of what your service provider might look like:
+In your plugin service provider you will need to change it to extend the PackageServiceProvider instead. You will also need to add a static `$name` property to the service provider. This property is used to register the plugin with Filament. Here is an example of what your service provider might look like:
 
 ```php
 class MyPluginServiceProvider extends PackageServiceProvider

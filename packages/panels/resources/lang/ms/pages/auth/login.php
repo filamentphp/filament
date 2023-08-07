@@ -53,6 +53,7 @@ return [
 
         'throttled' => [
             'title' => 'Terlalu banyak percubaan log masuk. Sila cuba lagi dalam :seconds saat.',
+            'body' => 'Sila cuba lagi dalam masa :seconds saat.',
         ],
 
     ],

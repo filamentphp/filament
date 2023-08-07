@@ -9,7 +9,7 @@
     },
     "require": {
         "php": "^8.1",
-        "illuminate/database": "^9.0|^10.0",
+        "illuminate/database": "^10.0",
         "spatie/laravel-tags": "^4.0"
     },
     "autoload": {

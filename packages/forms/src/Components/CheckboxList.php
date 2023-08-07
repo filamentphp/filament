@@ -145,7 +145,9 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($modifyQueryUsing) {

@@ -691,7 +691,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($modifyQueryUsing) {
@@ -767,7 +769,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($modifyQueryUsing) {
@@ -879,7 +883,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             $relationshipQuery->where(
@@ -912,7 +918,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
@@ -1171,5 +1179,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     public function isSearchForcedCaseInsensitive(): bool
     {
         return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+    }
+
+    public function getDefaultState(): mixed
+    {
+        $state = parent::getDefaultState();
+
+        if (is_bool($state)) {
+            return $state ? 1 : 0;
+        }
+
+        return $state;
     }
 }

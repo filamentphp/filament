@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Dissocia selezionato',
+        'label' => 'Dissocia selezionati',
 
         'modal' => [
 
-            'heading' => 'Dissocia selezionato :label',
+            'heading' => 'Dissocia :label selezionati',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Dissocia selezionato',
+                    'label' => 'Dissocia',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'dissociated' => [
-                'title' => 'Dissociato',
+                'title' => 'Dissociati',
             ],
 
         ],

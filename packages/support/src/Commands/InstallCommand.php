@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\confirm;
 
 class InstallCommand extends Command
 {
@@ -30,7 +31,10 @@ class InstallCommand extends Command
 
         $this->installUpgradeCommand();
 
-        if ($this->confirm('All done! Would you like to show some love by starring the Filament repo on GitHub?', true)) {
+        if (confirm(
+            label: 'All done! Would you like to show some love by starring the Filament repo on GitHub?',
+            default: true,
+        )) {
             if (PHP_OS_FAMILY === 'Darwin') {
                 exec('open https://github.com/filamentphp/filament');
             }
