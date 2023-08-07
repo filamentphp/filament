@@ -466,10 +466,10 @@
                                         {{ __('filament-tables::table.sorting.fields.direction.label') }}
                                     </span>
 
-                                    <x-filament::input.wrapper
-                                        x-model="direction"
-                                    >
-                                        <x-filament::input.select>
+                                    <x-filament::input.wrapper>
+                                        <x-filament::input.select
+                                            x-model="direction"
+                                        >
                                             <option value="asc">
                                                 {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
                                             </option>
