@@ -76,7 +76,7 @@ You can [read more about possible options for keys](https://developer.mozilla.or
 
 ## Adding a prefix and suffix to individual tags
 
-You can add prefix and suffix to tags without modifying the real state of the field. This can be useful if you need to show presentational formatting to users, without saving it:
+You can add prefix and suffix to tags without modifying the real state of the field. This can be useful if you need to show presentational formatting to users, without saving it. This is done with the `tagPrefix()` or `tagSuffix()` method:
 
 ```php
 use Filament\Forms\Components\TagsInput;
