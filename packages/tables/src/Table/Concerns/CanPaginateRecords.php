@@ -59,7 +59,19 @@ trait CanPaginateRecords
 
     public function getDefaultPaginationPageOption(): int | string | null
     {
-        return $this->evaluate($this->defaultPaginationPageOption) ?? Arr::first($this->getPaginationPageOptions());
+        $option = $this->evaluate($this->defaultPaginationPageOption);
+
+        if ($option) {
+            return $option;
+        }
+
+        $options = $this->getPaginationPageOptions();
+
+        if (in_array(10, $options)) {
+            return 10;
+        }
+
+        return Arr::first($options);
     }
 
     /**
