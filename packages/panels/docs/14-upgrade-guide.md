@@ -64,6 +64,8 @@ A new `app/Providers/Filament/AdminPanelProvider.php` file will be created, read
 
 Most configuration transfer is very self-explanatory, but if you get stuck please refer to the [configuration documentation](configuration).
 
+For configuration done via `Filament::serving` (for theme customisation, navigation groups, user menu items, etc), this will need to be ported to the new panel provider. Consult the [Configuration](https://filamentphp.com/docs/3.x/panels/configuration), [Navigation](https://filamentphp.com/docs/3.x/panels/navigation) and [Themes](https://filamentphp.com/docs/3.x/panels/themes) documentation for the new syntax.
+
 Finally, you can run the following command to replace the old config file with the shiny new one:
 
 ```bash

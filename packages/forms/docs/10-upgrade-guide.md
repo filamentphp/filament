@@ -56,10 +56,6 @@ php artisan vendor:publish --tag=filament-config --force
 rm config/forms.php
 ```
 
-#### Panel configuration is now in each AppPanelProvider
-
-By moving to a provider-per-panel system in V3, the old configuration method with `Filament::serving` for theme customisation, navigation groups, user menu items, etc in the AppServiceProvider has changed. Consult the [Configuration](https://filamentphp.com/docs/3.x/panels/configuration), [Navigation](https://filamentphp.com/docs/3.x/panels/navigation) and [Themes](https://filamentphp.com/docs/3.x/panels/themes) documentation for the new syntax.
-
 #### `FORMS_FILESYSTEM_DRIVER` .env variable
 
 The `FORMS_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILESYSTEM_DISK`. This is to make it more consistent with Laravel, as Laravel 9 introduced this change as well. Please ensure that you update your .env files accordingly, and don't forget production!
@@ -106,43 +102,23 @@ An easy way to upgrade your code quickly is to find and replace:
 - `Closure $get` to `\Filament\Forms\Get $get`
 - `Closure $set` to `\Filament\Forms\Set $set`
 
-#### TextInput numeric masks are replaced with Alpine.js masks
+#### TextInput masks are replaced with Alpine.js masks
 
 Filament v2 had a fluent closure mask syntax for managing more complex input masks. In v3 you can use Alpine.js masking instead. So instead of 
-```
+```php
 ->mask(fn (TextInput\Mask $mask) => $mask
     ->numeric() // And any other transformations needed
 )
 ```
 You can do:
-```
+```php
 ->mask(RawJs::make(<<<'JS'
     $input.startsWith('34') || $input.startsWith('37') ? '9999 999999 99999' : '9999 9999 9999 9999'
 JS))
 ```
 If you were using input masks for money related fields, Alpine already has [builtin helpers](https://alpinejs.dev/plugins/mask#money-inputs) for it:
-```
+```php
 ->mask(RawJs::make(<<<'JS'
     $money($input, '.', ',', 2)
 JS))
-```
-
-#### Action execution with forms
-
-In v2, you were able to externalise action logic to a function, like so:
-```
- Action::make('import_data')
-    ->action('importData')
-    ->form([
-        FileUpload::make('file'),
-    ])
-```
-In v3, if your Action uses a form like the above example, you'll need to change how your action logic is called. Otherwise, the function will be called when the action modal attempts to load, which may cause errors. 
-
-It is recommended to place your logic in a closure instead. See the [Action documentation](https://filamentphp.com/docs/3.x/actions/overview) for more information.
-
-If you absolutely need the action logic to be in a separate function, you can use `Closure::fromCallable()`:
-```
-Action::make('import_data')
-    ->action(Closure::fromCallable([$this, 'importData']))
 ```
