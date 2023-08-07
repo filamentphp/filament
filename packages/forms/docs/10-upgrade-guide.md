@@ -102,7 +102,7 @@ An easy way to upgrade your code quickly is to find and replace:
 - `Closure $get` to `\Filament\Forms\Get $get`
 - `Closure $set` to `\Filament\Forms\Set $set`
 
-#### TextInput masks are replaced with Alpine.js masks
+#### `TextInput` masks are replaced with Alpine.js masks
 
 Filament v2 had a fluent closure mask syntax for managing more complex input masks. In v3 you can use Alpine.js masking instead. So instead of 
 ```php
