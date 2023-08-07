@@ -64,12 +64,15 @@ class ColorManager
     public function getColors(): array
     {
         return [
-            'danger' => Color::Red,
-            'gray' => Color::Zinc,
-            'info' => Color::Blue,
-            'primary' => Color::Amber,
-            'success' => Color::Green,
-            'warning' => Color::Amber,
+            ...[
+                'danger' => Color::Red,
+                'gray' => Color::Zinc,
+                'info' => Color::Blue,
+                'primary' => Color::Amber,
+                'success' => Color::Green,
+                'warning' => Color::Amber,
+            ],
+            ...Color::getColors(),
             ...$this->colors,
         ];
     }
