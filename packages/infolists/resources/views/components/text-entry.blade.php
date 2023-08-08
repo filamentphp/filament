@@ -36,11 +36,7 @@
             }
         }
 
-        $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
-
-        if (blank($arrayState) && filled($getPlaceholder())) {
-            $arrayState = \Illuminate\Support\Arr::prepend($arrayState, '');
-        }
+        $arrayState = is_array($arrayState) ? $arrayState : [$arrayState];
     @endphp
 
     <x-filament-infolists::affixes

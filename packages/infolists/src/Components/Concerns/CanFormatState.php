@@ -224,7 +224,7 @@ trait CanFormatState
         }
 
         if (blank($state)) {
-            $state = $this->evaluate($this->placeholder);
+            $state = $this->getPlaceholder();
         }
 
         if ($this->isHtml()) {
