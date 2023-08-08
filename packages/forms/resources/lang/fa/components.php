@@ -15,7 +15,7 @@ return [
             ],
 
             'add_between' => [
-                'label' => 'قرار دادن',
+                'label' => 'قراردادن',
             ],
 
             'delete' => [
