@@ -1,30 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit
-    backupGlobals="false"
-    backupStaticAttributes="false"
-    bootstrap="vendor/autoload.php"
-    colors="true"
-    convertErrorsToExceptions="true"
-    convertNoticesToExceptions="true"
-    convertWarningsToExceptions="true"
-    processIsolation="false"
-    stopOnFailure="false"
-    verbose="true"
->
-    <testsuites>
-        <testsuite name="Tests">
-            <directory suffix=".php">./tests/</directory>
-        </testsuite>
-    </testsuites>
-
-    <logging>
-        <junit outputFile="build/report.junit.xml"/>
-    </logging>
-
-    <php>
-        <env name="APP_ENV" value="self-testing"/>
-        <env name="APP_KEY" value="base64:yk+bUVuZa1p86Dqjk9OjVK2R1pm6XHxC6xEKFq8utH0="/>
-        <env name="DB_CONNECTION" value="testing"/>
-    </php>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" backupGlobals="false" bootstrap="vendor/autoload.php" colors="true" processIsolation="false" stopOnFailure="false" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.3/phpunit.xsd" cacheDirectory=".phpunit.cache" backupStaticProperties="false">
+  <testsuites>
+    <testsuite name="Tests">
+      <directory suffix=".php">./tests/</directory>
+    </testsuite>
+  </testsuites>
+  <logging>
+    <junit outputFile="build/report.junit.xml"/>
+  </logging>
+  <php>
+    <env name="APP_ENV" value="self-testing"/>
+    <env name="APP_KEY" value="base64:yk+bUVuZa1p86Dqjk9OjVK2R1pm6XHxC6xEKFq8utH0="/>
+    <env name="DB_CONNECTION" value="testing"/>
+  </php>
 </phpunit>

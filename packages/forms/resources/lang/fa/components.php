@@ -336,16 +336,16 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'ساختن',
+                    'heading' => 'ایجاد',
 
                     'actions' => [
 
                         'create' => [
-                            'label' => 'ساختن',
+                            'label' => 'ایجاد',
                         ],
 
                         'create_another' => [
-                            'label' => 'ساختن و ساختن یکی دیگر',
+                            'label' => 'ایجاد و ایجاد یکی دیگر',
                         ],
 
                     ],

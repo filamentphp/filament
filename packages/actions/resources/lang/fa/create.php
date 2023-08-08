@@ -4,20 +4,20 @@ return [
 
     'single' => [
 
-        'label' => 'ساختن :label',
+        'label' => 'ایجاد :label',
 
         'modal' => [
 
-            'heading' => 'ساختن :label',
+            'heading' => 'ایجاد :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'ساختن',
+                    'label' => 'ایجاد',
                 ],
 
                 'create_another' => [
-                    'label' => 'ساختن و ساختن یکی دیگر',
+                    'label' => 'ایجاد و ایجاد یکی دیگر',
                 ],
 
             ],
@@ -27,7 +27,7 @@ return [
         'notifications' => [
 
             'created' => [
-                'title' => 'ساخته شد',
+                'title' => 'ایجاد شد',
             ],
 
         ],

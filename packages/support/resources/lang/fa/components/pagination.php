@@ -4,7 +4,7 @@ return [
 
     'label' => 'صفحه بندی',
 
-    'overview' => 'در حال نمایش :first به :last از :total نتایج',
+    'overview' => 'در حال نمایش :first به :last از :total نتیجه',
 
     'fields' => [
 
