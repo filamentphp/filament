@@ -265,7 +265,7 @@ trait HasComponents
     {
         return collect($this->widgets)
             ->unique()
-            ->sortBy(fn (string $widget): int => $this->normalizeWidgetClass($widget)::getSort())
+            ->sortBy(fn (string | WidgetConfiguration $widget): int => $this->normalizeWidgetClass($widget)::getSort())
             ->all();
     }
 
