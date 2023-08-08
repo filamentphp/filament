@@ -215,7 +215,7 @@ class AssetManager
 
     public function getTheme(?string $id): ?Theme
     {
-        return $this->themes[$id] ?? null;
+        return $this->getThemes()[$id] ?? null;
     }
 
     /**

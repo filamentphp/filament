@@ -11,10 +11,8 @@ abstract class PanelProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->resolving('filament', function () {
-            Filament::registerPanel(
-                $this->panel(Panel::make()),
-            );
-        });
+        Filament::registerPanel(
+            $this->panel(Panel::make()),
+        );
     }
 }
