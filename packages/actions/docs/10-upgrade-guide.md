@@ -32,8 +32,6 @@ vendor/bin/filament-v3
 
 Make sure to carefully follow the instructions, and review the changes made by the script. You may need to make some manual changes to your code afterwards, but the script should handle most of the repetitive work for you.
 
-A new `app/Providers/Filament/*PanelProvider.php` file will be created, and the configuration from your old `config/filament.php` file should be copied. Since this is a [Laravel service provider](https://laravel.com/docs/providers), it needs to be registered in `config/app.php`. Filament will attempt to do this for you, but if you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the `providers` array.
-
 Finally, you must run `php artisan filament:install` to finalize the Filament v3 installation. This command must be run for all new Filament projects.
 
 You can now `composer remove filament/upgrade` as you don't need it any more.
@@ -52,7 +50,8 @@ Since Livewire v3 is still in beta, set the `minimum-stability` in your `compose
 
 #### Action execution with forms
 
-In v2, you were able to externalise action logic to a function, like so:
+In v2, if you passed a string to the `action()` function, and used a modal, the method with that name on the class would be run when the modal was submitted:
+
 ```php
  Action::make('import_data')
     ->action('importData')
@@ -60,11 +59,13 @@ In v2, you were able to externalise action logic to a function, like so:
         FileUpload::make('file'),
     ])
 ```
-In v3, if your Action uses a form like the above example, you'll need to change how your action logic is called. Otherwise, the function will be called when the action modal attempts to load, which may cause errors. 
 
-It is recommended to place your logic in a closure instead. See the [Action documentation](https://filamentphp.com/docs/3.x/actions/overview) for more information.
+In v3, passing a string to the `action()` hard-wires it to run that action when the trigger button is clicked, so it does not open a modal.
 
-If you absolutely need the action logic to be in a separate function, you can use `Closure::fromCallable()`:
+It is recommended to place your logic in a closure function instead. See the [documentation](overview) for more information.
+
+One easy alternative is using `Closure::fromCallable()`:
+
 ```php
 Action::make('import_data')
     ->action(Closure::fromCallable([$this, 'importData']))

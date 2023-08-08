@@ -104,24 +104,7 @@ An easy way to upgrade your code quickly is to find and replace:
 
 #### `TextInput` masks are replaced with Alpine.js masks
 
-Filament v2 had a fluent closure mask syntax for managing more complex input masks. In v3 you can use Alpine.js masking instead. So instead of 
-```php
-->mask(fn (TextInput\Mask $mask) => $mask
-    ->numeric() // And any other transformations needed
-)
-```
-You can do:
-```php
-->mask(RawJs::make(<<<'JS'
-    $input.startsWith('34') || $input.startsWith('37') ? '9999 999999 99999' : '9999 9999 9999 9999'
-JS))
-```
-If you were using input masks for money related fields, Alpine already has [builtin helpers](https://alpinejs.dev/plugins/mask#money-inputs) for it:
-```php
-->mask(RawJs::make(<<<'JS'
-    $money($input, '.', ',', 2)
-JS))
-```
+Filament v2 had a fluent mask object syntax for managing input masks. In v3 you can use Alpine.js' masking syntax instead. Please see the [input masking documentation](fields/text-input#input-masking) for more information.
 
 ### Low impact changes
 
