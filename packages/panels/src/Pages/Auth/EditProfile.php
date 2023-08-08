@@ -220,7 +220,7 @@ class EditProfile extends SimplePage
             ->autocomplete('new-password')
             ->dehydrated(fn ($state): bool => filled($state))
             ->dehydrateStateUsing(fn ($state): string => Hash::make($state))
-            ->live()
+            ->live(debounce: 500)
             ->same('passwordConfirmation');
     }
 

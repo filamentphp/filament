@@ -73,7 +73,9 @@
                                 success(fileKey)
                             },
                             error,
-                            progress,
+                            (progressEvent) => {
+                                progress(true, progressEvent.detail.progress, 100)
+                            },
                         )
                     },
                 })"
