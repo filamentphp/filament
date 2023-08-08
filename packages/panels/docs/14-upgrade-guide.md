@@ -64,6 +64,8 @@ A new `app/Providers/Filament/AdminPanelProvider.php` file will be created, read
 
 Most configuration transfer is very self-explanatory, but if you get stuck please refer to the [configuration documentation](configuration).
 
+This will especially affect configuration done via the `Filament::serving()` method, which was used for theme customization, navigation and menu registration. Consult the [configuration](configuration), [navigation](navigation) and [themes](themes) documentation sections.
+
 Finally, you can run the following command to replace the old config file with the shiny new one:
 
 ```bash

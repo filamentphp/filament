@@ -102,6 +102,10 @@ An easy way to upgrade your code quickly is to find and replace:
 - `Closure $get` to `\Filament\Forms\Get $get`
 - `Closure $set` to `\Filament\Forms\Set $set`
 
+#### `TextInput` masks now use Alpine.js' masking package
+
+Filament v2 had a fluent mask object syntax for managing input masks. In v3 you can use Alpine.js' masking syntax instead. Please see the [input masking documentation](fields/text-input#input-masking) for more information.
+
 ### Low impact changes
 
 #### Rule modification callback parameter renamed
