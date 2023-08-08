@@ -149,17 +149,17 @@ return [
             'fields' => [
 
                 'height' => [
-                    'label' => 'Height',
+                    'label' => 'Korkeus',
                     'unit' => 'px',
                 ],
 
                 'rotation' => [
-                    'label' => 'Rotation',
+                    'label' => 'Kierre',
                     'unit' => 'deg',
                 ],
 
                 'width' => [
-                    'label' => 'Width',
+                    'label' => 'Leveys',
                     'unit' => 'px',
                 ],
 
@@ -177,10 +177,10 @@ return [
 
             'aspect_ratios' => [
 
-                'label' => 'Aspect ratios',
+                'label' => 'Kuvasuhde',
 
                 'no_fixed' => [
-                    'label' => 'Free',
+                    'label' => 'Vapaa',
                 ],
 
             ],
