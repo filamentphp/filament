@@ -42,13 +42,14 @@
             </span>
 
             @if ($collapsible)
-                <x-filament::icon-button
+                <x-filament::link
                     color="gray"
+                    tag="button"
                     icon="heroicon-m-chevron-up"
                     icon-alias="panels::sidebar.group.collapse-button"
                     x-on:click.stop="$store.sidebar.toggleCollapsedGroup(label)"
                     x-bind:class="{ 'rotate-180': $store.sidebar.groupIsCollapsed(label) }"
-                    class="fi-sidebar-group-collapse-button -my-2 -me-2"
+                    class="fi-sidebar-group-collapse-button -my-2"
                 />
             @endif
         </div>
