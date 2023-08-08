@@ -74,6 +74,6 @@ test('get colors', function () {
         $colors[strtolower($name)] = $color;
     }
 
-    expect(Color::colors())
+    expect(Color::all())
         ->toBe($colors);
 });
