@@ -125,7 +125,7 @@ return [
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => 'Aseta kuvasuhteeeksi :ratio',
+                    'label' => 'Aseta kuvasuhteeksi :ratio',
                 ],
 
                 'save' => [
