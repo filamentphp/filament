@@ -37,9 +37,27 @@
     @endif
 
     @if (count($actions))
-        <div class="fi-fo-field-wrp-hint-action -m-1.5 flex gap-x-3 items-center">
+        <div class="fi-fo-field-wrp-hint-action -m-1.5 flex gap-3 items-center">
             @foreach ($actions as $action)
-                {{ $action }}
+                @php
+                    $labeledFromBreakpoint = $action->getLabeledFromBreakpoint();
+                @endphp
+                <span
+                    @class([
+                        'inline-flex',
+                        '-mx-2' => $action->isIconButton() || $labeledFromBreakpoint,
+                        match ($labeledFromBreakpoint) {
+                            'sm' => 'sm:mx-0',
+                            'md' => 'md:mx-0',
+                            'lg' => 'lg:mx-0',
+                            'xl' => 'xl:mx-0',
+                            '2xl' => '2xl:mx-0',
+                            default => null,
+                        },
+                    ])
+                >
+                    {{ $action }}
+                </span>
             @endforeach
         </div>
     @endif
