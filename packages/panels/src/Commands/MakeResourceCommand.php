@@ -8,10 +8,11 @@ use Filament\Panel;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 class MakeResourceCommand extends Command
 {
@@ -20,48 +21,17 @@ class MakeResourceCommand extends Command
     use CanIndentStrings;
     use CanManipulateFiles;
     use CanReadModelSchemas;
-    use CanValidateInput;
 
     protected $description = 'Create a new Filament resource class and default page classes';
 
-    protected $signature = 'make:filament-resource {name?} {--namespace=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
-
-    protected function getModelForResource($modelName, $modelNamespace)
-    {
-        if ($modelNamespace) {
-            $model = $this->getModelFromNamespace($modelNamespace, $modelName);
-            if ($model) {
-                return $model;
-            }
-        }
-
-        // If model not found in the provided namespace, use default logic
-        $model = (string) str($modelName)
-            ->studly()
-            ->beforeLast('Resource')
-            ->trim('/')
-            ->trim('\\')
-            ->trim(' ')
-            ->studly()
-            ->replace('/', '\\');
-
-        if (blank($model)) {
-            $model = 'Resource';
-        }
-
-        return $model;
-    }
+    protected $signature = 'make:filament-resource {name?} {--model=} {--soft-deletes} {--view} {--G|generate} {--S|simple} {--panel=} {--F|force}';
 
     public function handle(): int
     {
         $modelName = $this->argument('name');
-        $modelNamespace = $this->option('namespace');
-
-        if (empty($modelName)) {
-            $modelName = $this->askRequired('Model (e.g. `BlogPost`)', 'name');
-        }
-
-        $model = $this->getModelForResource($modelName, $modelNamespace);
+        $modelNamespace = $this->option('model');
+        
+        $model = $modelNamespace ? $this->getModelFromNamespace($modelNamespace) : $this->getModelFromNamespace($modelName);
 
         $modelClass = (string) str($model)->afterLast('\\');
         $modelNamespace = str($model)->contains('\\') ?
@@ -75,17 +45,17 @@ class MakeResourceCommand extends Command
             $panel = Filament::getPanel($panel);
         }
 
-        if (!$panel) {
+        if (! $panel) {
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[$this->choice(
-                'Which panel would you like to create this in?',
-                array_map(
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
                     fn (Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
-                Filament::getDefaultPanel()->getId(),
+                default: Filament::getDefaultPanel()->getId()
             )] : Arr::first($panels);
         }
 
@@ -93,12 +63,14 @@ class MakeResourceCommand extends Command
         $resourceNamespaces = $panel->getResourceNamespaces();
 
         $namespace = (count($resourceNamespaces) > 1) ?
-            $this->choice(
-                'Which namespace would you like to create this in?',
-                $resourceNamespaces,
-            ) : (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
+            select(
+                label: 'Which namespace would you like to create this in?',
+                options: $resourceNamespaces
+            ) :
+            (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
         $path = (count($resourceDirectories) > 1) ?
-            $resourceDirectories[array_search($namespace, $resourceNamespaces)] : (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
+            $resourceDirectories[array_search($namespace, $resourceNamespaces)] :
+            (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";
@@ -125,7 +97,7 @@ class MakeResourceCommand extends Command
         $editResourcePagePath = "{$resourcePagesDirectory}/{$editResourcePageClass}.php";
         $viewResourcePagePath = "{$resourcePagesDirectory}/{$viewResourcePageClass}.php";
 
-        if (!$this->option('force') && $this->checkForCollision([
+        if (! $this->option('force') && $this->checkForCollision([
             $resourcePath,
             $listResourcePagePath,
             $manageResourcePagePath,
@@ -139,7 +111,7 @@ class MakeResourceCommand extends Command
         $pages = '';
         $pages .= '\'index\' => Pages\\' . ($this->option('simple') ? $manageResourcePageClass : $listResourcePageClass) . '::route(\'/\'),';
 
-        if (!$this->option('simple')) {
+        if (! $this->option('simple')) {
             $pages .= PHP_EOL . "'create' => Pages\\{$createResourcePageClass}::route('/create'),";
 
             if ($this->option('view')) {
@@ -204,14 +176,12 @@ class MakeResourceCommand extends Command
 
         $tableBulkActions = implode(PHP_EOL, $tableBulkActions);
 
-        // dd($this->getResourceTableColumns("\\{$modelNamespace}\\{$modelClass}"));
-
         $this->copyStubToApp('Resource', $resourcePath, [
             'eloquentQuery' => $this->indentString($eloquentQuery, 1),
             'formSchema' => $this->indentString($this->option('generate') ? $this->getResourceFormSchema(
-                ($modelNamespace !== '' ? "\\{$modelNamespace}" : 'App\Models') . '\\' . $modelClass,
+                ($modelNamespace !== '' ? "\\{$modelNamespace}" : 'App\\Models') . '\\' . $modelClass,
             ) : '//', 4),
-            'model' => $model === 'Resource' ? 'Resource as ResourceModel' : $model,
+            'model' => $model === 'Resource' ? 'Resource as ResourceModel' : (($this->option('model')) ? $model : "App\Models\\" . $model),
             'modelClass' => $model === 'Resource' ? 'ResourceModel' : $modelClass,
             'namespace' => $namespace,
             'pages' => $this->indentString($pages, 3),
@@ -222,7 +192,7 @@ class MakeResourceCommand extends Command
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
             'tableEmptyStateActions' => $this->indentString($tableEmptyStateActions, 4),
             'tableColumns' => $this->indentString($this->option('generate') ? $this->getResourceTableColumns(
-                ($modelNamespace !== '' ? "\\{$modelNamespace}" : 'App\Models') . '\\' . $modelClass,
+                ($modelNamespace !== '' ? "\\{$modelNamespace}" : 'App\\Models') . '\\' . $modelClass,
             ) : '//', 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make(),' : '//',
@@ -289,15 +259,26 @@ class MakeResourceCommand extends Command
 
         return static::SUCCESS;
     }
-
-    protected function getModelFromNamespace($modelNamespace, $modelName)
+    
+    protected function getModelFromNamespace($modelName)
     {
-        $modelClass = "{$modelNamespace}\\{$modelName}";
-
-        if (class_exists($modelClass)) {
-            return $modelClass;
+        if (class_exists($modelName)) {
+            return $modelName;
         }
 
-        return null;
+        $model = (string) str($modelName)
+            ->studly()
+            ->beforeLast('Resource')
+            ->trim('/')
+            ->trim('\\')
+            ->trim(' ')
+            ->studly()
+            ->replace('/', '\\');
+            
+        if (blank($model)) {
+            $model = 'Resource';
+        }
+        
+        return $model;
     }
 }

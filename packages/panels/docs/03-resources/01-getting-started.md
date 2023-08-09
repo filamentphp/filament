@@ -33,9 +33,9 @@ The classes in the `Pages` directory are used to customize the pages in the app 
 > Have you created a resource, but it's not appearing in the navigation menu? If you have a [model policy](#authorization), make sure you return `true` from the `viewAny()` method.
 
 ### Custom Namespaces for existing models
-In some cases, you may wish to specify a model under a different namespace to the original \App\Models. In this case, you can pass a namespace for your resource
+In some cases, you may wish to specify a model under a different namespace to the original \App\Models. In this case, you can pass a model for your resource, make sure that when you add --model, you include the full namespace path to the model and include the model class name.
 ```bash
-php artisan make:filament-resource Customer --namespace=Path\To\Customer\Model
+php artisan make:filament-resource Customer --model=Path\To\Customer\Model
 ```
 
 Now when paired with the likes of the --generate flag, it will be able to automatically generate table and form from the right model.
