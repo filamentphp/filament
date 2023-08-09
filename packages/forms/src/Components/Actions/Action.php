@@ -40,7 +40,7 @@ class Action extends MountableAction
 
     public function toFormComponent(): ActionContainer
     {
-        return ActionContainer::make($this);
+        return $this->component = ActionContainer::make($this);
     }
 
     /**
