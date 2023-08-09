@@ -202,3 +202,15 @@ Wizard::make([
         fn (Action $action) => $action->label('Next step'),
     )
 ```
+
+## Hiding the header
+
+The whole header of the wizard can be hidden by using `hiddenHeader()` analog to `hiddenLabel()`
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->hiddenHeader()
+```

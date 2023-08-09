@@ -235,13 +235,13 @@ class Wizard extends Component
 
     public function hiddenHeader(bool | Closure | null $condition = true): static
     {
-        $this->isHeadderHidden = $condition;
+        $this->isHeaderHidden = $condition;
 
         return $this;
     }
 
     public function isHeaderHidden(): bool
     {
-        return (bool) $this->evaluate($this->isHeadderHidden);
+        return (bool) $this->evaluate($this->isHeaderHidden);
     }
 }
