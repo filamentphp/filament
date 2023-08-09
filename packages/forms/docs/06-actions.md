@@ -239,5 +239,23 @@ Action::make('copyCostToPrice')
         $set('price', $state);
     })
 ```
-
 Form component actions also have access to [all utilities that apply to actions](../actions/advanced#action-utility-injection) in general.
+
+
+## How to add an action button not related with any form's component
+
+When needed a form's global action not linked to any form's component you could write something like this:
+
+```php
+->schema([
+    \Filament\Forms\Components\Actions::make([
+        \Filament\Forms\Components\Actions\Action::make('myAction')
+            ->action(function ($data, $record) {
+                // $data will return the submitted form data
+                // $record will return the model if you are editing 
+            })
+    ])
+
+```
+NOTE: $data and $record are the vars needed to share the current record data with any controller, service or any class called into the action function.
+
