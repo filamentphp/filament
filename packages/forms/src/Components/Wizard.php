@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\Concerns\CanBeCompacted;
 use Filament\Forms\Components\Wizard\Step;
 use Filament\Support\Concerns;
 use Filament\Support\Enums\IconPosition;
@@ -14,6 +15,7 @@ class Wizard extends Component
 {
     use Concerns\CanBeContained;
     use Concerns\HasExtraAlpineAttributes;
+    use CanBeCompacted;
 
     protected string | Htmlable | null $cancelAction = null;
 

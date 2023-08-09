@@ -202,3 +202,15 @@ Wizard::make([
         fn (Action $action) => $action->label('Next step'),
     )
 ```
+
+## Compact header
+
+By default, the header and steps labels are quite big. For a more compact header (e.g. for use in restricted spaces) use `compact()`. But beware that step descriptions might not fit anymore.
+
+```php
+use Filament\Forms\Components\Wizard;
+
+Wizard::make([
+    // ...
+])->compact()
+```

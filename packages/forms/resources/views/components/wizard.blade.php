@@ -1,6 +1,7 @@
 @php
     $isContained = $isContained();
     $statePath = $getStatePath();
+    $isCompact = $isCompact();
 @endphp
 
 <div
@@ -128,10 +129,18 @@
                     x-on:click="step = @js($step->getId())"
                     x-bind:disabled="! isStepAccessible(step, {{ $loop->index }})"
                     role="step"
-                    class="flex h-full w-full items-center gap-x-4 px-6 py-4"
+                    @class([
+                        "flex h-full w-full items-center",
+                        "gap-x-4 px-6 py-4" => ! $isCompact,
+                        "gap-x-2 px-2 py-2" => $isCompact,
+                    ])
                 >
                     <div
-                        class="fi-fo-wizard-header-step-icon-ctn flex h-10 w-10 shrink-0 items-center justify-center rounded-full"
+                        @class([
+                            "fi-fo-wizard-header-step-icon-ctn flex shrink-0 items-center justify-center rounded-full",
+                            "h-10 w-10" => ! $isCompact,
+                            "h-6 w-6" => $isCompact,
+                        ])
                         x-bind:class="{
                             'bg-primary-600 dark:bg-primary-500':
                                 getStepIndex(step) > {{ $loop->index }},
@@ -147,7 +156,11 @@
                             icon="heroicon-o-check"
                             x-cloak="x-cloak"
                             x-show="getStepIndex(step) > {{ $loop->index }}"
-                            class="fi-fo-wizard-header-step-icon h-6 w-6 text-white"
+                            @class([
+                                "fi-fo-wizard-header-step-icon text-white",
+                                "h-6 w-6" => ! $isCompact,
+                                "h-4 w-4" => $isCompact,
+                            ])
                         />
 
                         @if (filled($icon = $step->getIcon()))
@@ -155,7 +168,11 @@
                                 :icon="$icon"
                                 x-cloak="x-cloak"
                                 x-show="getStepIndex(step) <= {{ $loop->index }}"
-                                class="fi-fo-wizard-header-step-icon h-6 w-6"
+                                @class([
+                                    "fi-fo-wizard-header-step-icon",
+                                    "h-6 w-6" => ! $isCompact,
+                                    "h-4 w-4" => $isCompact,
+                                ])
                                 x-bind:class="{
                                     'text-gray-500 dark:text-gray-400': getStepIndex(step) !== {{ $loop->index }},
                                     'text-primary-600 dark:text-primary-500': getStepIndex(step) === {{ $loop->index }},
@@ -164,7 +181,7 @@
                         @else
                             <span
                                 x-show="getStepIndex(step) <= {{ $loop->index }}"
-                                class="text-sm font-medium"
+                                class="text-xs font-medium"
                                 x-bind:class="{
                                     'text-gray-500 dark:text-gray-400':
                                         getStepIndex(step) !== {{ $loop->index }},
@@ -209,11 +226,11 @@
                         <svg
                             fill="none"
                             preserveAspectRatio="none"
-                            viewBox="0 0 22 80"
+                            viewBox="0 0 10 20"
                             class="h-full w-full text-gray-200 rtl:rotate-180 dark:text-white/5"
                         >
                             <path
-                                d="M0 -2L20 40L0 82"
+                                d="M0 -2L5 10L0 21"
                                 stroke-linejoin="round"
                                 stroke="currentcolor"
                                 vector-effect="non-scaling-stroke"
