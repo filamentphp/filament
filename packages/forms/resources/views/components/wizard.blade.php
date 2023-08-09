@@ -226,11 +226,19 @@
                         <svg
                             fill="none"
                             preserveAspectRatio="none"
-                            viewBox="0 0 10 20"
+                            @if ($isCompact)
+                                viewBox="0 0 10 20"
+                            @else
+                                viewBox="0 0 22 80"
+                            @endif
                             class="h-full w-full text-gray-200 rtl:rotate-180 dark:text-white/5"
                         >
                             <path
-                                d="M0 -2L5 10L0 21"
+                                @if ($isCompact)
+                                    d="M0 -2L5 10L0 21"
+                                @else
+                                    d="M0 -2L20 40L0 82"
+                                @endif
                                 stroke-linejoin="round"
                                 stroke="currentcolor"
                                 vector-effect="non-scaling-stroke"
