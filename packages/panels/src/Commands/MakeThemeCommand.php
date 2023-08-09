@@ -28,7 +28,7 @@ class MakeThemeCommand extends Command
             return static::FAILURE;
         }
 
-        $this->info("Using Node.js v{$npmVersion[0]}");
+        $this->info("Using NPM v{$npmVersion[0]}");
 
         exec('npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev');
 
