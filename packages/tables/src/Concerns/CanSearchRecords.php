@@ -40,8 +40,8 @@ trait CanSearchRecords
      */
     public function updatedTableColumnSearches($value = null, ?string $key = null): void
     {
-        if (blank($value) && ! str($key)->contains('.')) {
-            unset($this->tableColumnSearches[$key]);
+        if (blank($value) && filled($key)) {
+            Arr::forget($this->tableColumnSearches, $key);
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
