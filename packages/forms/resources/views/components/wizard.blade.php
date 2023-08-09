@@ -237,7 +237,7 @@
     @foreach ($getChildComponentContainer()->getComponents() as $step)
         @if ($isHeaderHidden && $isStepLabelAsHeading)
             <div
-                class="text-lg border-b border-gray-950/5 dark:border-white-/10 text-primary-600 dark:text-primary-500"
+                class="text-lg border-b border-b-gray-950/5 dark:border-b-white/10 text-primary-600 dark:text-primary-500"
                 x-bind:class="step === @js($step->getId()) ? @js($visibleStepLabelClasses) : @js($invisibleStepLabelClasses)
             ">
                 @if (filled($icon = $step->getIcon()))
