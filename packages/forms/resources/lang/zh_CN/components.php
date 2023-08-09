@@ -224,7 +224,7 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => '附加文件',
+            'attach_files' => '附件',
             'blockquote' => '引用',
             'bold' => '加粗',
             'bullet_list' => '普通列表',
@@ -379,11 +379,11 @@ return [
             'false' => '否',
         ],
 
-        'loading_message' => '正在加载...',
+        'loading_message' => '加载中...',
 
         'max_items_message' => '只能选择 :count 个。',
 
-        'no_search_results_message' => '没有匹配您搜索的选项。',
+        'no_search_results_message' => '没有选项匹配您的搜索',
 
         'placeholder' => '选择选项',
 
