@@ -5,7 +5,7 @@ use Filament\Tests\TestCase;
 
 uses(TestCase::class);
 
-test('get color from hex', function () {
+it('generates colors from a HEX value', function () {
     expect(Color::hex('#49D359'))
         ->toBe([
             50 => '246, 253, 247',
@@ -36,7 +36,7 @@ test('get color from hex', function () {
         ]);
 });
 
-test('get color from rgb', function () {
+it('generates colors from an RGB value', function () {
     expect(Color::rgb('rgb(73, 211, 89)'))
         ->toBe([
             50 => '246, 253, 247',
@@ -68,8 +68,9 @@ test('get color from rgb', function () {
 
 });
 
-test('get colors', function () {
+it('returns all colors', function () {
     $colors = [];
+    
     foreach ((new ReflectionClass(Color::class))->getConstants() as $name => $color) {
         $colors[strtolower($name)] = $color;
     }
