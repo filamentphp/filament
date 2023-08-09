@@ -6,14 +6,17 @@
     $billingItem = $items['billing'] ?? null;
     $billingItemUrl = $billingItem?->getUrl();
     $hasTenantBilling = filament()->hasTenantBilling() || filled($billingItemUrl);
+    $tenantBillingIsVisible = isset($items['billing']) ? $items['billing']->isVisible() : true;
 
     $registrationItem = $items['register'] ?? null;
     $registrationItemUrl = $registrationItem?->getUrl();
     $hasTenantRegistration = (filament()->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView()) || filled($registrationItemUrl);
+    $tenantRegistrationIsVisible = isset($items['register']) ? $items['register']->isVisible() : true;
 
     $profileItem = $items['profile'] ?? null;
     $profileItemUrl = $profileItem?->getUrl();
     $hasTenantProfile = (filament()->hasTenantProfile() && filament()->getTenantProfilePage()::canView($currentTenant)) || filled($profileItemUrl);
+    $tenantProfileIsVisible = isset($items['profile']) ? $items['profile']->isVisible() : true;
 
     $canSwitchTenants = count($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
@@ -81,7 +84,7 @@
 
     @if ($hasTenantProfile || $hasTenantBilling)
         <x-filament::dropdown.list>
-            @if ($hasTenantProfile)
+            @if ($hasTenantProfile && $tenantProfileIsVisible)
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
                     :href="$profileItemUrl ?? filament()->getTenantProfileUrl()"
@@ -92,7 +95,7 @@
                 </x-filament::dropdown.list.item>
             @endif
 
-            @if ($hasTenantBilling)
+            @if ($hasTenantBilling && $tenantBillingIsVisible)
                 <x-filament::dropdown.list.item
                     :color="$billingItem?->getColor() ?? 'gray'"
                     :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
@@ -134,7 +137,7 @@
         </x-filament::dropdown.list>
     @endif
 
-    @if ($hasTenantRegistration)
+    @if ($hasTenantRegistration && $tenantRegistrationIsVisible)
         <x-filament::dropdown.list>
             <x-filament::dropdown.list.item
                 :color="$registrationItem?->getColor()"
