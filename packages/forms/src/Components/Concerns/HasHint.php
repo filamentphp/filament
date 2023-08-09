@@ -29,6 +29,8 @@ trait HasHint
 
     protected string | Closure | null $hintIcon = null;
 
+    protected string | Closure | null $hintIconTooltip = null;
+
     public function hint(string | Htmlable | Closure | null $hint): static
     {
         $this->hint = $hint;
@@ -46,9 +48,10 @@ trait HasHint
         return $this;
     }
 
-    public function hintIcon(string | Closure | null $hintIcon): static
+    public function hintIcon(string | Closure | null $hintIcon, string | Closure | null $hintIconTooltip = null): static
     {
         $this->hintIcon = $hintIcon;
+        $this->hintIconTooltip = $hintIconTooltip;
 
         return $this;
     }
@@ -89,6 +92,11 @@ trait HasHint
     public function getHintIcon(): ?string
     {
         return $this->evaluate($this->hintIcon);
+    }
+
+    public function getHintIconTooltip(): ?string
+    {
+        return $this->evaluate($this->hintIconTooltip);
     }
 
     /**

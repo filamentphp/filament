@@ -2,6 +2,7 @@
     'actions' => [],
     'color' => 'gray',
     'icon' => null,
+    'tooltip' => null,
 ])
 
 <div
@@ -26,6 +27,7 @@
     @if ($icon)
         <x-filament::icon
             :icon="$icon"
+            :x-tooltip.raw="$tooltip"
             @class([
                 'fi-fo-field-wrp-hint-icon h-5 w-5',
                 match ($color) {
