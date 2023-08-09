@@ -193,6 +193,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 protected function applySearchToTableQuery(Builder $query): Builder
 {
+    $this->applyColumnSearchesToTableQuery($query);
+    
     if (filled($search = $this->getTableSearch())) {
         $query->whereIn('id', Post::search($search)->keys());
     }
