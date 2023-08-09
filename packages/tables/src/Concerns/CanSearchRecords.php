@@ -44,6 +44,10 @@ trait CanSearchRecords
             unset($this->tableColumnSearches[$key]);
         }
 
+        if (blank($value) && str($key)->contains('.')) {
+            Arr::forget($this->tableColumnSearches, $key);
+        }
+
         if ($this->getTable()->persistsColumnSearchesInSession()) {
             session()->put(
                 $this->getTableColumnSearchesSessionKey(),
