@@ -97,3 +97,27 @@ SpatieMediaLibraryFileUpload::make('attachments')
         'thumb' => ['orientation' => '90'],
     ]),
 ```
+
+## Optimizing images
+
+Before uploading your image, you may choose to optimize it by converting to your chosen format. The file saved to your disk will be the converted version only.
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachment')
+    ->image()
+    ->optimize('webp'),
+```
+
+### Resizing images
+
+You may also want to resize an image by passing in a percentage you would like to reduce the image by. This will also maintain aspect ratio.
+
+```php
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
+
+SpatieMediaLibraryFileUpload::make('attachment')
+    ->image()
+    ->resize(50),
+```

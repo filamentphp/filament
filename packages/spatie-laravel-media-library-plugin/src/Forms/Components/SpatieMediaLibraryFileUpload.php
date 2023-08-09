@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Intervention\Image\ImageManagerStatic as InterventionImage;
 use League\Flysystem\UnableToCheckFileExistence;
 use Livewire\TemporaryUploadedFile;
 use Spatie\MediaLibrary\HasMedia;
@@ -28,7 +29,11 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
     protected array | Closure | null $manipulations = null;
 
+    protected string | Closure | null $optimize = null;
+
     protected array | Closure | null $properties = null;
+
+    protected int | Closure | null $resize = null;
 
     protected function setUp(): void
     {
@@ -106,10 +111,45 @@ class SpatieMediaLibraryFileUpload extends FileUpload
                 return null;
             }
 
-            /** @var FileAdder $mediaAdder */
-            $mediaAdder = $record->addMediaFromString($file->get());
-
+            $compressedImage = null;
             $filename = $component->getUploadedFileNameForStorage($file);
+            $originalBinaryFile = $file->get();
+
+            if (
+                str_contains($file->getMimeType(), 'image') &&
+                ($component->getOptimization() || $component->getResize())
+            ) {
+                $image = InterventionImage::make($originalBinaryFile);
+
+                if ($component->getOptimization()) {
+                    $quality = $component->getOptimization() === 'jpeg' ||
+                        $component->getOptimization() === 'jpg' ? 70 : null;
+
+                    $image->encode($component->getOptimization(), $quality);
+                }
+
+                if ($component->getResize()) {
+                    $height = null;
+                    $width = null;
+
+                    if ($image->height() > $image->width()) {
+                        $height = $image->height() - ($image->height() * ($component->getResize() / 100));
+                    } else {
+                        $width = $image->width() - ($image->width() * ($component->getResize() / 100));
+                    }
+
+                    $image->resize($width, $height, function ($constraint) {
+                        $constraint->aspectRatio();
+                    });
+                }
+
+                $compressedImage = $image->encode();
+
+                $filename = self::formatFileName($filename, $component->getOptimization());
+            }
+
+            /** @var FileAdder $mediaAdder */
+            $mediaAdder = $record->addMediaFromString($compressedImage ?? $originalBinaryFile);
 
             $media = $mediaAdder
                 ->usingFileName($filename)
@@ -172,6 +212,13 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    public function optimize(string | Closure | null $optimize): static
+    {
+        $this->optimize = $optimize;
+
+        return $this;
+    }
+
     public function properties(array | Closure | null $properties): static
     {
         $this->properties = $properties;
@@ -186,6 +233,13 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this;
     }
 
+    public function resize(int | Closure | null $reductionPercentage): static
+    {
+        $this->resize = $reductionPercentage;
+
+        return $this;
+    }
+
     public function deleteAbandonedFiles(): void
     {
         /** @var Model&HasMedia $record */
@@ -195,6 +249,21 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             ->getMedia($this->getCollection())
             ->whereNotIn('uuid', array_keys($this->getState() ?? []))
             ->each(fn (Media $media) => $media->delete());
+    }
+
+    public static function formatFilename(string $filename, ?string $format): string
+    {
+        if (! $format) {
+            return $filename;
+        }
+
+        $extension = strrpos($filename, '.');
+
+        if ($extension !== false) {
+            return substr($filename, 0, $extension + 1) . $format;
+        }
+
+        return $filename;
     }
 
     public function getCollection(): string
@@ -222,9 +291,19 @@ class SpatieMediaLibraryFileUpload extends FileUpload
         return $this->evaluate($this->manipulations) ?? [];
     }
 
+    public function getOptimization(): ?string
+    {
+        return $this->evaluate($this->optimize);
+    }
+
     public function getProperties(): array
     {
         return $this->evaluate($this->properties) ?? [];
+    }
+
+    public function getResize(): ?int
+    {
+        return $this->evaluate($this->resize);
     }
 
     public function hasResponsiveImages(): bool
