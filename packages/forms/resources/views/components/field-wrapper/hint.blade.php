@@ -37,7 +37,7 @@
     @endif
 
     @if (count($actions))
-        <div class="fi-fo-field-wrp-hint-action -m-1.5 flex items-center">
+        <div class="fi-fo-field-wrp-hint-action -m-1.5 flex gap-x-3 items-center">
             @foreach ($actions as $action)
                 {{ $action }}
             @endforeach
