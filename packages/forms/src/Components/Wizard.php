@@ -29,7 +29,9 @@ class Wizard extends Component
 
     public int | Closure $startStep = 1;
 
-    public bool | Closure | null $isHeaderHidden = null;
+    protected bool | Closure | null $headerHidden = null;
+
+    protected bool $stepLabelAsHeading = false;
 
     /**
      * @var view-string
@@ -233,15 +235,21 @@ class Wizard extends Component
         return filled($this->getStepQueryStringKey());
     }
 
-    public function hiddenHeader(bool | Closure | null $condition = true): static
+    public function hiddenHeader(bool | Closure | null $condition = true, bool $stepLabelAsHeading = false): static
     {
-        $this->isHeaderHidden = $condition;
+        $this->headerHidden = $condition;
+        $this->stepLabelAsHeading = $stepLabelAsHeading;
 
         return $this;
     }
 
     public function isHeaderHidden(): bool
     {
-        return (bool) $this->evaluate($this->isHeaderHidden);
+        return (bool) $this->evaluate($this->headerHidden);
+    }
+
+    public function isStepLabelAsHeading(): bool
+    {
+        return $this->stepLabelAsHeading;
     }
 }

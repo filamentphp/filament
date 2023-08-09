@@ -205,12 +205,12 @@ Wizard::make([
 
 ## Hiding the header
 
-The whole header of the wizard can be hidden by using `hiddenHeader()` analog to `hiddenLabel()`
+The whole header of the wizard can be hidden by using `hiddenHeader()` analog to `hiddenLabel()`. If you want to still show the current step's label, you can set the `stepLabelAsHeading` parameter to true.
 
 ```php
 use Filament\Forms\Components\Wizard;
 
 Wizard::make([
     // ...
-])->hiddenHeader()
+])->hiddenHeader(stepLabelAsHeading: true)
 ```

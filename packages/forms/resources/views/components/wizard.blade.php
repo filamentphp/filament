@@ -227,7 +227,32 @@
         </ol>
     @endif
 
+    <?php
+    $isHeaderHidden = $isHeaderHidden();
+    $isStepLabelAsHeading = $isStepLabelAsHeading();
+
+    $isContained = false;
+
+    $visibleStepLabelClasses = \Illuminate\Support\Arr::toCssClasses([
+        'text-lg border-b block px-6 pt-4 pb-4 text-primary-600 dark:text-primary-500'
+    ]);
+
+    $invisibleStepLabelClasses = 'invisible h-0 overflow-y-hidden p-0';
+    ?>
     @foreach ($getChildComponentContainer()->getComponents() as $step)
+        @if ($isHeaderHidden && $isStepLabelAsHeading)
+            <div x-bind:class="step === @js($step->getId()) ? @js($visibleStepLabelClasses) : @js($invisibleStepLabelClasses)">
+                @if (filled($icon = $step->getIcon()))
+                    <x-filament::icon
+                        :icon="$icon"
+                        x-cloak="x-cloak"
+                        x-show="getStepIndex(step) <= {{ $loop->index }}"
+                        class="h-6 w-6 inline-block pr-4"
+                    />
+                @endif
+                {{ $step->getLabel() }}
+            </div>
+        @endif
         {{ $step }}
     @endforeach
 
