@@ -1,6 +1,5 @@
 @props([
     'label' => null,
-    'isLabelHidden' => false,
 ])
 
 <fieldset
@@ -10,7 +9,7 @@
         ])
     }}
 >
-    @if (filled($label) && ! $isLabelHidden)
+    @if (filled($label))
         <legend class="text-sm font-medium leading-6">
             {{ $label }}
         </legend>

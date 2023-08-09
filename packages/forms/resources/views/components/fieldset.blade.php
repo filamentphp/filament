@@ -1,6 +1,5 @@
 <x-filament::fieldset
-    :label="$getLabel()"
-    :isLabelHidden="$isLabelHidden()"
+    :label="$isLabelHidden() ? null : $getLabel()"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([
