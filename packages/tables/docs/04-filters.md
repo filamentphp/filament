@@ -248,7 +248,7 @@ TernaryFilter::make('trashed')
 
 ### Custom filter forms
 
-You may use components from the [form builder](../forms/fields/getting-started) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
+You may use components from the [Form Builder](../forms/fields/getting-started) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
 use Filament\Forms\Components\DatePicker;
@@ -394,7 +394,7 @@ public function table(Table $table): Table
 
 ## Controlling the maximum height of the filters dropdown
 
-To add a maximum height to the filters dropdown content, so that they scroll, you may use the `filtersFormMaxHeight()` method, passing a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
+To add a maximum height to the filters' dropdown content, so that they scroll, you may use the `filtersFormMaxHeight()` method, passing a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
 
 ```php
 use Filament\Tables\Table;
@@ -519,7 +519,7 @@ TernaryFilter::make('trashed')
 
 ## Customizing the filters dropdown trigger action
 
-To customize the filters dropdown trigger button, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+To customize the filters' dropdown trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
 
 ```php
 use Filament\Tables\Actions\Action;

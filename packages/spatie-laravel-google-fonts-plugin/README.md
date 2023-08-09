@@ -12,7 +12,7 @@ Please [follow Spatie's documentation about how to set up their package](https:/
 
 ## Using the font provider
 
-In your [panel builder configuration](https://filamentphp.com/docs/panels/configuration), you can use the `font()` method, passing a `provider`:
+In your [Panel Builder configuration](https://filamentphp.com/docs/panels/configuration), you can use the `font()` method, passing a `provider`:
 
 ```php
 use Filament\FontProviders\SpatieGoogleFontProvider;

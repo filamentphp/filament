@@ -248,7 +248,7 @@ it('when enabled the send button has correct icon', function () {
 });
 ```
 
-To ensure an action's button is displaying the right color, you can use `assertActionHasColor()` or `assertActionDoesNotHaveColor()`:
+To ensure that an action's button is displaying the right color, you can use `assertActionHasColor()` or `assertActionDoesNotHaveColor()`:
 
 ```php
 use function Pest\Livewire\livewire;

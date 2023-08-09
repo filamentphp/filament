@@ -103,7 +103,7 @@ FilamentView::registerRenderHook(
 );
 ```
 
-Some render hooks for the [panel builder](#panel-builder-render-hooks) allow you to scope hooks to all pages in a resource:
+Some render hooks for the [Panel Builder](#panel-builder-render-hooks) allow you to scope hooks to all pages in a resource:
 
 ```php
 use Filament\Support\Facades\FilamentView;

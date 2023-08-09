@@ -162,7 +162,7 @@ public static function form(Form $form): Form
 
 Visit `/admin/patients/create` (or click the "New Patient" button) and observe that a form field for the patient's name was added.
 
-Since this field is required in the database and has a maximum length of 255 characters, let's add  two [validation rules](../forms/validation) to the name field:
+Since this field is required in the database and has a maximum length of 255 characters, let's add two [validation rules](../forms/validation) to the name field:
 
 ```php
 use Filament\Forms;
@@ -327,13 +327,13 @@ The form should be working now! Try creating a new patient and their owner. Once
 
 ### Setting up the patients table
 
-Visit the `/admin/patients` page again. If you created a patient, there should be one empty row in the table — with an edit button. Let's add some columns to the table so we can view the actual patient data.
+Visit the `/admin/patients` page again. If you have created a patient, there should be one empty row in the table — with an edit button. Let's add some columns to the table, so we can view the actual patient data.
 
 Open the `PatientResource.php` file. You should see a `table()` method with an empty `columns([...])` array. You can use this array to add columns to the `patients` table.
 
 #### Adding text columns
 
-Filament bundles a large selection of [table columns](../tables/columns). Let's use a simple [text column](../tables/columns/text) for all of the fields in the `patients` table:
+Filament bundles a large selection of [table columns](../tables/columns). Let's use a simple [text column](../tables/columns/text) for all the fields in the `patients` table:
 
 ```php
 use Filament\Tables;
@@ -431,7 +431,7 @@ public static function table(Table $table): Table
 }
 ```
 
-Reload the page and you should see a new filter icon in the top right corner (next to the search form). The filter opens a select menu with a list of patient types. Try filtering your patients by type.
+Reload the page, and you should see a new filter icon in the top right corner (next to the search form). The filter opens a select menu with a list of patient types. Try filtering your patients by type.
 
 ## Introducing relation managers
 
@@ -640,7 +640,7 @@ public function table(Table $table): Table
 
 ## Introducing widgets
 
-Filament widgets are components that display information on your dashboard, especially statistics. Widgets are typically added to the default [Dashboard](../panels/dashboard) of the panel, but you can add them to any page, including resource pages. Filament includes built-in widgets like the [stats widget](../widgets/stats-overview), to render important statistics in a simple overview; [chart widget](../widgets/charts), which can render an interactive chart; and [table widget](../panels/dashboard#table-widgets), which allows you to easily embed the table builder.
+Filament widgets are components that display information on your dashboard, especially statistics. Widgets are typically added to the default [Dashboard](../panels/dashboard) of the panel, but you can add them to any page, including resource pages. Filament includes built-in widgets like the [stats widget](../widgets/stats-overview), to render important statistics in a simple overview; [chart widget](../widgets/charts), which can render an interactive chart; and [table widget](../panels/dashboard#table-widgets), which allows you to easily embed the Table Builder.
 
 Let's add a stats widget to our default dashboard page that includes a stat for each type of patient and a chart to visualize treatments administered over time.
 
@@ -733,7 +733,7 @@ Now, check out your new chart widget in the dashboard!
 
 > You can [customize your dashboard page](../panels/dashboard#customizing-the-dashboard-page) to change the grid and how many widgets are displayed.
 
-## Next steps with the panel builder
+## Next steps with the Panel Builder
 
 Congratulations! Now that you know how to build a basic Filament application, here are some suggestions for further learning:
 

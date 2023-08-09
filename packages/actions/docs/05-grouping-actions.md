@@ -21,7 +21,7 @@ This page is about customizing the look of the group's trigger button and dropdo
 
 ## Customizing the group trigger style
 
-The button which opens the dropdown may be customized in the same way as a normal action. [All of the methods available for trigger buttons](trigger-button) may be used to customize the group trigger button:
+The button which opens the dropdown may be customized in the same way as a normal action. [All the methods available for trigger buttons](trigger-button) may be used to customize the group trigger button:
 
 ```php
 use Filament\Support\Enums\ActionSize;
