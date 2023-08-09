@@ -1,7 +1,7 @@
 <x-filament-panels::page class="fi-dashboard-page">
     <x-filament-widgets::widgets
-        :widgets="$this->getVisibleWidgets()"
-        :data="$this->getWidgetData()"
         :columns="$this->getColumns()"
+        :data="$this->getWidgetData()"
+        :widgets="$this->getVisibleWidgets()"
     />
 </x-filament-panels::page>
