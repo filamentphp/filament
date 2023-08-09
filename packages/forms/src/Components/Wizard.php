@@ -29,6 +29,8 @@ class Wizard extends Component
 
     public int | Closure $startStep = 1;
 
+    public bool | Closure | null $isHeaderHidden = null;
+
     /**
      * @var view-string
      */
@@ -229,5 +231,17 @@ class Wizard extends Component
     public function isStepPersistedInQueryString(): bool
     {
         return filled($this->getStepQueryStringKey());
+    }
+
+    public function hiddenHeader(bool | Closure | null $condition = true): static
+    {
+        $this->isHeadderHidden = $condition;
+
+        return $this;
+    }
+
+    public function isHeaderHidden(): bool
+    {
+        return (bool) $this->evaluate($this->isHeadderHidden);
     }
 }
