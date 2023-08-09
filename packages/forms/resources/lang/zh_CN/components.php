@@ -11,7 +11,7 @@ return [
             ],
 
             'add' => [
-                'label' => '添加到 :label',
+                'label' => '添加 :label',
             ],
 
             'add_between' => [
@@ -27,15 +27,15 @@ return [
             ],
 
             'move_down' => [
-                'label' => '向下移动',
+                'label' => '下移',
             ],
 
             'move_up' => [
-                'label' => '向上移动',
+                'label' => '上移',
             ],
 
             'collapse' => [
-                'label' => '折叠',
+                'label' => '收起',
             ],
 
             'expand' => [
@@ -43,7 +43,7 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => '全部折叠',
+                'label' => '全部收起',
             ],
 
             'expand_all' => [
@@ -210,7 +210,7 @@ return [
         'fields' => [
 
             'key' => [
-                'label' => '键',
+                'label' => '键名',
             ],
 
             'value' => [
@@ -227,12 +227,12 @@ return [
             'attach_files' => '附加文件',
             'blockquote' => '引用',
             'bold' => '加粗',
-            'bullet_list' => '无序列表',
-            'code_block' => '代码块',
+            'bullet_list' => '普通列表',
+            'code_block' => '代码',
             'heading' => '标题',
             'italic' => '斜体',
             'link' => '链接',
-            'ordered_list' => '有序列表',
+            'ordered_list' => '数字列表',
             'redo' => '重做',
             'strike' => '删除线',
             'table' => '表格',
@@ -246,7 +246,7 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => '添加到 :label',
+                'label' => '添加 :label',
             ],
 
             'delete' => [
@@ -262,15 +262,15 @@ return [
             ],
 
             'move_down' => [
-                'label' => '向下移动',
+                'label' => '下移',
             ],
 
             'move_up' => [
-                'label' => '向上移动',
+                'label' => '上移',
             ],
 
             'collapse' => [
-                'label' => '折叠',
+                'label' => '收起',
             ],
 
             'expand' => [
@@ -278,7 +278,7 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => '全部折叠',
+                'label' => '全部收起',
             ],
 
             'expand_all' => [
@@ -309,17 +309,17 @@ return [
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => '附加文件',
+            'attach_files' => '附件',
             'blockquote' => '引用',
             'bold' => '加粗',
-            'bullet_list' => '无序列表',
-            'code_block' => '代码块',
+            'bullet_list' => '普通列表',
+            'code_block' => '代码',
             'h1' => '标题',
             'h2' => '标题',
             'h3' => '副标题',
             'italic' => '斜体',
             'link' => '链接',
-            'ordered_list' => '有序列表',
+            'ordered_list' => '数字列表',
             'redo' => '重做',
             'strike' => '删除线',
             'underline' => '下划线',
@@ -385,11 +385,11 @@ return [
 
         'no_search_results_message' => '没有匹配您搜索的选项。',
 
-        'placeholder' => '选择一个选项',
+        'placeholder' => '选择选项',
 
-        'searching_message' => '正在搜索...',
+        'searching_message' => '搜索中...',
 
-        'search_prompt' => '开始输入以搜索...',
+        'search_prompt' => '输入内容以搜索...',
 
     ],
 
@@ -402,7 +402,7 @@ return [
         'actions' => [
 
             'previous_step' => [
-                'label' => '返回',
+                'label' => '上一步',
             ],
 
             'next_step' => [
