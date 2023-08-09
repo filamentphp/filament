@@ -375,4 +375,35 @@ class Color
 
         return $colors;
     }
+
+    /**
+     * @return array<string, array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string}>
+     */
+    public static function all(): array
+    {
+        return [
+            'slate' => static::Slate,
+            'gray' => static::Gray,
+            'zinc' => static::Zinc,
+            'neutral' => static::Neutral,
+            'stone' => static::Stone,
+            'red' => static::Red,
+            'orange' => static::Orange,
+            'amber' => static::Amber,
+            'yellow' => static::Yellow,
+            'lime' => static::Lime,
+            'green' => static::Green,
+            'emerald' => static::Emerald,
+            'teal' => static::Teal,
+            'cyan' => static::Cyan,
+            'sky' => static::Sky,
+            'blue' => static::Blue,
+            'indigo' => static::Indigo,
+            'violet' => static::Violet,
+            'purple' => static::Purple,
+            'fuchsia' => static::Fuchsia,
+            'pink' => static::Pink,
+            'rose' => static::Rose,
+        ];
+    }
 }
