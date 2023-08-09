@@ -231,17 +231,15 @@
     $isHeaderHidden = $isHeaderHidden();
     $isStepLabelAsHeading = $isStepLabelAsHeading();
 
-    $isContained = false;
-
-    $visibleStepLabelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'text-lg border-b block px-6 pt-4 pb-4 text-primary-600 dark:text-primary-500'
-    ]);
-
+    $visibleStepLabelClasses = 'block px-6 pt-4 pb-4';
     $invisibleStepLabelClasses = 'invisible h-0 overflow-y-hidden p-0';
     ?>
     @foreach ($getChildComponentContainer()->getComponents() as $step)
         @if ($isHeaderHidden && $isStepLabelAsHeading)
-            <div x-bind:class="step === @js($step->getId()) ? @js($visibleStepLabelClasses) : @js($invisibleStepLabelClasses)">
+            <div
+                class="text-lg border-b border-gray-950/5 dark:border-white-/10 text-primary-600 dark:text-primary-500"
+                x-bind:class="step === @js($step->getId()) ? @js($visibleStepLabelClasses) : @js($invisibleStepLabelClasses)
+            ">
                 @if (filled($icon = $step->getIcon()))
                     <x-filament::icon
                         :icon="$icon"
