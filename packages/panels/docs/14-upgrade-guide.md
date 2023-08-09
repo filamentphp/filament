@@ -6,7 +6,7 @@ title: Upgrading from v2.x
 
 ## New requirements
 
-- Laravel v9.0+
+- Laravel v10.0+
 - Livewire v3.0+
 
 Please upgrade Filament before upgrading to Livewire v3. Instructions on how to upgrade Livewire can be found [here](https://livewire.laravel.com/docs/upgrading).
@@ -64,6 +64,8 @@ A new `app/Providers/Filament/AdminPanelProvider.php` file will be created, read
 
 Most configuration transfer is very self-explanatory, but if you get stuck please refer to the [configuration documentation](configuration).
 
+This will especially affect configuration done via the `Filament::serving()` method, which was used for theme customization, navigation and menu registration. Consult the [configuration](configuration), [navigation](navigation) and [themes](themes) documentation sections.
+
 Finally, you can run the following command to replace the old config file with the shiny new one:
 
 ```bash
@@ -72,7 +74,7 @@ php artisan vendor:publish --tag=filament-config --force
 
 #### `FILAMENT_FILESYSTEM_DRIVER` .env variable
 
-The `FILAMENT_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILESYSTEM_DISK`. This is to make it more consistent with Laravel, as Laravel 9 introduced this change as well. Please ensure that you update your .env files accordingly, and don't forget production!
+The `FILAMENT_FILESYSTEM_DRIVER` .env variable has been renamed to `FILAMENT_FILESYSTEM_DISK`. This is to make it more consistent with Laravel, as Laravel v9 introduced this change as well. Please ensure that you update your .env files accordingly, and don't forget production!
 
 #### Resource and relation manager imports
 

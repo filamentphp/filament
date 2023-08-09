@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolumnit',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -20,9 +26,38 @@ return [
             'label' => 'Aseta/poista massatoiminnon valinta kohteelle :key.',
         ],
 
-        'search_query' => [
+        'search' => [
             'label' => 'Etsi',
             'placeholder' => 'Etsi',
+            'indicator' => 'Etsi',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Yhteenveto',
+
+        'subheadings' => [
+            'all' => 'Kaikki :label',
+            'group' => ':group yhteenveto',
+            'page' => 'Tämä sivu',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Keskiarvo',
+            ],
+
+            'count' => [
+                'label' => 'Määrä',
+            ],
+
+            'sum' => [
+                'label' => 'Summa',
+            ],
+
         ],
 
     ],
@@ -41,6 +76,10 @@ return [
             'label' => 'Suodata',
         ],
 
+        'group' => [
+            'label' => 'Ryhmä',
+        ],
+
         'open_bulk_actions' => [
             'label' => 'Avaa toiminnot',
         ],
@@ -53,7 +92,9 @@ return [
 
     'empty' => [
 
-        'heading' => 'Tietueita ei löytynyt',
+        'heading' => 'Ei :model',
+
+        'description' => 'Luo :model aloittaaksesi.',
 
     ],
 
@@ -76,6 +117,8 @@ return [
 
         ],
 
+        'heading' => 'Suodattimet',
+
         'indicator' => 'Aktiiviset suodattimet',
 
         'multi_select' => [
@@ -95,6 +138,30 @@ return [
             'with_trashed' => 'Poistettujen tietueiden kanssa',
 
             'without_trashed' => 'Ilman poistettuja tietueita',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Ryhmittele',
+                'placeholder' => 'Ryhmittele',
+            ],
+
+            'direction' => [
+
+                'label' => 'Ryhmittelyn suunta',
+
+                'options' => [
+                    'asc' => 'Nousevasti',
+                    'desc' => 'Laskevasti',
+                ],
+
+            ],
 
         ],
 

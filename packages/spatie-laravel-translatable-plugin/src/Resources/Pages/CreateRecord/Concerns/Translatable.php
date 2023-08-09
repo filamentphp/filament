@@ -28,7 +28,7 @@ trait Translatable
 
     public function getTranslatableLocales(): array
     {
-        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
+        return static::getResource()::getTranslatableLocales();
     }
 
     protected function setActiveLocale(?string $locale = null): void

@@ -34,6 +34,7 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Support\Collection;
@@ -51,10 +52,17 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     {
         return $this->belongsToMany(Team::class);
     }
+
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->teams->contains($tenant);
+    }
 }
 ```
 
 In this example, users belong to many teams, so there is a `teams()` relationship. The `getTenants()` method returns the teams that the user belongs to. Filament uses this to list the tenants that the user has access to.
+
+For security, you also need to implement the `canAccessTenant()` method of the `HasTenants` interface to prevent users from accessing the data of other tenants by guessing their tenant ID and putting it into the URL.
 
 You'll also want users to be able to [register new teams](#adding-a-tenant-registration-page).
 
@@ -332,6 +340,20 @@ public function panel(Panel $panel): Panel
             // ...
         ]);
 }
+```
+
+### Conditionally hiding tenant menu items
+
+You can also conditionally hide a tenant menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
+
+```php
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->label('Settings')
+    ->visible(fn (): bool => auth()->user()->can('manage-team'))
+    // or
+    ->hidden(fn (): bool => ! auth()->user()->can('manage-team'))
 ```
 
 ## Setting up avatars

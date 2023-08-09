@@ -178,18 +178,20 @@
                     </div>
 
                     <div class="grid justify-items-start">
-                        <span
-                            class="fi-fo-wizard-header-step-label text-sm font-medium"
-                            x-bind:class="{
-                                'text-gray-500 dark:text-gray-400':
-                                    getStepIndex(step) < {{ $loop->index }},
-                                'text-primary-600 dark:text-primary-400':
-                                    getStepIndex(step) === {{ $loop->index }},
-                                'text-gray-950 dark:text-white': getStepIndex(step) > {{ $loop->index }},
-                            }"
-                        >
-                            {{ $step->getLabel() }}
-                        </span>
+                        @if (! $step->isLabelHidden())
+                            <span
+                                class="fi-fo-wizard-header-step-label text-sm font-medium"
+                                x-bind:class="{
+                                    'text-gray-500 dark:text-gray-400':
+                                        getStepIndex(step) < {{ $loop->index }},
+                                    'text-primary-600 dark:text-primary-400':
+                                        getStepIndex(step) === {{ $loop->index }},
+                                    'text-gray-950 dark:text-white': getStepIndex(step) > {{ $loop->index }},
+                                }"
+                            >
+                                {{ $step->getLabel() }}
+                            </span>
+                        @endif
 
                         @if (filled($description = $step->getDescription()))
                             <span
