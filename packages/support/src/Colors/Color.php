@@ -344,6 +344,7 @@ class Color
             200 => 0.75,
             300 => 0.6,
             400 => 0.3,
+            500 => 1.0,
             600 => 0.9,
             700 => 0.75,
             800 => 0.6,
@@ -351,26 +352,18 @@ class Color
             950 => 0.3,
         ];
 
-        foreach ([50, 100, 200, 300, 400] as $shade) {
-            $intensity = $intensityMap[$shade];
+        foreach ($intensityMap as $shade => $intensity) {
+            if ($shade < 500) {
+                $red = ((255 - $color->red()) * $intensity) + $color->red();
+                $green = ((255 - $color->green()) * $intensity) + $color->green();
+                $blue = ((255 - $color->blue()) * $intensity) + $color->blue();
+            } else {
+                $red = $color->red() * $intensity;
+                $green = $color->green() * $intensity;
+                $blue = $color->blue() * $intensity;
+            }
 
-            $red = round(intval($color->red()) + (255 - intval($color->red())) * $intensity);
-            $green = round(intval($color->green()) + (255 - intval($color->green())) * $intensity);
-            $blue = round(intval($color->blue()) + (255 - intval($color->blue())) * $intensity);
-
-            $colors[$shade] = "{$red}, {$green}, {$blue}";
-        }
-
-        $colors[500] = "{$color->red()}, {$color->green()}, {$color->blue()}";
-
-        foreach ([600, 700, 800, 900, 950] as $shade) {
-            $intensity = $intensityMap[$shade];
-
-            $red = round(intval($color->red()) * $intensity);
-            $green = round(intval($color->green()) * $intensity);
-            $blue = round(intval($color->blue()) * $intensity);
-
-            $colors[$shade] = "{$red}, {$green}, {$blue}";
+            $colors[$shade] = sprintf('%s, %s, %s', round($red), round($green), round($blue));
         }
 
         return $colors;
