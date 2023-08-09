@@ -70,7 +70,7 @@ it('generates colors from an RGB value', function () {
 
 it('returns all colors', function () {
     $colors = [];
-    
+
     foreach ((new ReflectionClass(Color::class))->getConstants() as $name => $color) {
         $colors[strtolower($name)] = $color;
     }
