@@ -91,6 +91,8 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 - `forms:components.checkbox-list.search-field` - Search input in a checkbox list
 - `forms::components.wizard.completed-step` - Completed step in a wizard
+- `forms::components.text-input.show-password` - Show the value of revealable password input
+- `forms::components.text-input.hide-password` - Hide the value of revealable password input
 
 ### Table Builder icon aliases
 
