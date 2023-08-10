@@ -154,7 +154,7 @@ Resource classes and all page classes, including resource pages, custom pages, s
 
 The Heroicons library has been updated to v2. This means that any icons you use in your app may have changed names. You can find a list of changes [here](https://github.com/tailwindlabs/heroicons/releases/tag/v2.0.0).
 
-### Medium impact changes
+### Medium-impact changes
 
 #### Date-time pickers
 
