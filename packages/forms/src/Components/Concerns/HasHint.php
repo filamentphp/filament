@@ -51,6 +51,13 @@ trait HasHint
     public function hintIcon(string | Closure | null $icon, string | Closure | null $tooltip = null): static
     {
         $this->hintIcon = $icon;
+        $this->hintIconTooltip($tooltip);
+
+        return $this;
+    }
+
+    public function hintIconTooltip(string | Closure | null $tooltip): static
+    {
         $this->hintIconTooltip = $tooltip;
 
         return $this;

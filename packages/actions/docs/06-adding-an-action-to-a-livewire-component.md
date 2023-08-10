@@ -197,4 +197,4 @@ public function publishAction(): Action
 
 Now, when the first action is submitted, the second action will open in its place. The [arguments](#passing-action-arguments) that were originally passed to the first action get passed to the second action, so you can use them to persist data between requests.
 
-If the first action is cancelled, the second one is not opened. If the second action is cancelled, the first one has already run and cannot be cancelled.
+If the first action is canceled, the second one is not opened. If the second action is canceled, the first one has already run and cannot be cancelled.

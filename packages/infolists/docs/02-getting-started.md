@@ -4,7 +4,7 @@ title: Getting started
 
 ## Overview
 
-Filament's infolist package allows you to [render a read-only list of data about a particular entity](adding-an-infolist-to-a-livewire-component). It's also used within other Filament packages, such as the [panel builder](../panels) for displaying [app resources](../panels/resources/getting-started) and [relation managers](../panels/resources/relation-managers), as well as for [action modals](../actions). Learning the features of the infolist builder will be incredibly time-saving when both building your own custom Livewire applications and using Filament's other packages.
+Filament's infolist package allows you to [render a read-only list of data about a particular entity](adding-an-infolist-to-a-livewire-component). It's also used within other Filament packages, such as the [Panel Builder](../panels) for displaying [app resources](../panels/resources/getting-started) and [relation managers](../panels/resources/relation-managers), as well as for [action modals](../actions). Learning the features of the Infolist Builder will be incredibly time-saving when both building your own custom Livewire applications and using Filament's other packages.
 
 This guide will walk you through the basics of building infolists with Filament's infolist package. If you're planning to add a new infolist to your own Livewire component, you should [do that first](adding-an-infolist-to-a-livewire-component) and then come back. If you're adding an infolist to an [app resource](../panels/resources/getting-started), or another Filament package, you're ready to go!
 
@@ -25,7 +25,7 @@ $infolist
 
 Each entry is a piece of information that should be displayed in the infolist. The `TextEntry` is used for displaying text, but there are [other entry types available](entries/getting-started#available-entries).
 
-Infolists within the panel builder and other packages usually have 2 columns by default. For custom infolists, you can use the `columns()` method to achieve the same effect:
+Infolists within the Panel Builder and other packages usually have 2 columns by default. For custom infolists, you can use the `columns()` method to achieve the same effect:
 
 ```php
 $infolist
@@ -52,7 +52,7 @@ You can learn more about columns and spans in the [layout documentation](layout/
 
 ## Using layout components
 
-The infolist builder allows you to use [layout components](layout/getting-started#available-layout-components) inside the schema array to control how entries are displayed. `Section` is a layout component, and it allows you to add a heading and description to a set of entries. It can also allow entries inside it to collapse, which saves space in long infolists.
+The Infolist Builder allows you to use [layout components](layout/getting-started#available-layout-components) inside the schema array to control how entries are displayed. `Section` is a layout component, and it allows you to add a heading and description to a set of entries. It can also allow entries inside it to collapse, which saves space in long infolists.
 
 ```php
 use Filament\Infolists\Components\Section;

@@ -26,6 +26,7 @@
 
     @if ($icon)
         <x-filament::icon
+            x-data="{}"
             :icon="$icon"
             x-tooltip="{
                 content: {{ \Illuminate\Support\Js::from($tooltip) }},

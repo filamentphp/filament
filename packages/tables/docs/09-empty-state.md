@@ -59,7 +59,7 @@ public function table(Table $table): Table
 
 ## Adding empty state actions
 
-You can add [actions](actions) to the empty state to prompt users to take action. Pass these to the `emptyStateActions()` method:
+You can add [Actions](actions) to the empty state to prompt users to take action. Pass these to the `emptyStateActions()` method:
 
 ```php
 use Filament\Tables\Actions\Action;

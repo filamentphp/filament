@@ -53,7 +53,7 @@ Alternatively, you can use an Alpine.js expression to trigger the error state, b
 
 ## Disabling the input
 
-To disable the input, you must also pass the `disabled` attribute to the affixes component:
+To disable the input, you must also pass the `disabled` attribute to the wrapper component:
 
 ```blade
 <x-filament::input.wrapper disabled>

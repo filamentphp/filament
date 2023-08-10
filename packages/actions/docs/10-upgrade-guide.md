@@ -22,7 +22,7 @@ Since Livewire v3 is still in beta, set the `minimum-stability` in your `compose
 "minimum-stability": "dev",
 ```
 
-The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code which handle most breaking changes.
+The easiest way to upgrade your app is to run the automated upgrade script. This script will automatically upgrade your application to the latest version of Filament and make changes to your code, which handles most breaking changes.
 
 ```bash
 composer require filament/upgrade:"^3.0-stable" -W --dev
@@ -34,7 +34,7 @@ Make sure to carefully follow the instructions, and review the changes made by t
 
 Finally, you must run `php artisan filament:install` to finalize the Filament v3 installation. This command must be run for all new Filament projects.
 
-You can now `composer remove filament/upgrade` as you don't need it any more.
+You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 > Some plugins you're using may not be available in v3 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v3-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
@@ -46,7 +46,7 @@ Since Livewire v3 is still in beta, set the `minimum-stability` in your `compose
 "minimum-stability": "dev",
 ```
 
-### Low impact changes
+### Low-impact changes
 
 #### Action execution with forms
 

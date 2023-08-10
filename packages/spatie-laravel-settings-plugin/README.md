@@ -34,7 +34,7 @@ protected static string $settings = FooterSettings::class;
 
 You must define a form schema to interact with your settings class inside the `form()` method.
 
-Since the [form builder](https://filamentphp.com/docs/forms) is installed in the panel builder by default, you may use any form [fields](https://filamentphp.com/docs/forms/fields) or [layout components](https://filamentphp.com/docs/forms/layout) you like:
+Since the [Form Builder](https://filamentphp.com/docs/forms) is installed in the Panel Builder by default, you may use any form [fields](https://filamentphp.com/docs/forms/fields) or [layout components](https://filamentphp.com/docs/forms/layout) you like:
 
 ```php
 use Filament\Forms\Components\Repeater;

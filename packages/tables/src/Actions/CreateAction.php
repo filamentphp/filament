@@ -9,6 +9,7 @@ use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Arr;
 
 class CreateAction extends Action
@@ -63,7 +64,10 @@ class CreateAction extends Action
                     $record->fill($data);
                 }
 
-                if (! $relationship) {
+                if (
+                    (! $relationship) ||
+                    $relationship instanceof HasManyThrough
+                ) {
                     $record->save();
 
                     return $record;
