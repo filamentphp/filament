@@ -133,7 +133,7 @@ TextColumn::make('description')
             return null;
         }
 
-        // Only render the tooltip if the column contents exceeds the length limit.
+        // Only render the tooltip if the column content exceeds the length limit.
         return $state;
     })
 ```
@@ -305,7 +305,7 @@ TextColumn::make('title')
 
 ## Customizing the font weight
 
-Text columns have regular font weight by default but you may change this to any of the the following options: `FontWeight::Thin`, `FontWeight::ExtraLight`, `FontWeight::Light`, `FontWeight::Medium`, `FontWeight::SemiBold`, `FontWeight::Bold`, `FontWeight::ExtraBold` or `FontWeight::Black`.
+Text columns have regular font weight by default, but you may change this to any of the following options: `FontWeight::Thin`, `FontWeight::ExtraLight`, `FontWeight::Light`, `FontWeight::Medium`, `FontWeight::SemiBold`, `FontWeight::Bold`, `FontWeight::ExtraBold` or `FontWeight::Black`.
 
 For instance, you may make the font bold using `weight(FontWeight::Bold)`:
 

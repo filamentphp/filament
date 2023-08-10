@@ -36,7 +36,7 @@ use Filament\Forms\Components\SpatieTagsInput;
 SpatieTagsInput::make('tags')
 ```
 
-> The field will automatically load and save its tags to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](https://filamentphp.com/docs/forms/getting-started#field-relationships) section**. If you're using the [panel builder](../panels), you can skip this step.
+> The field will automatically load and save its tags to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](https://filamentphp.com/docs/forms/getting-started#field-relationships) section**. If you're using the [Panel Builder](../panels), you can skip this step.
 
 Optionally, you may pass a [`type()`](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections:
 

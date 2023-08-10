@@ -8,17 +8,17 @@ Please read the docs on [panel plugin development](/docs/3.x/panels/plugins/) an
 
 ## Overview
 
-In this walkthrough we'll build a simple plugin that adds a new form component that can be used in forms. This also means it will be available to users in their panels.
+In this walkthrough, we'll build a simple plugin that adds a new form component that can be used in forms. This also means it will be available to users in their panels.
 
 You can find the final code for this plugin at [https://github.com/awcodes/headings](https://github.com/awcodes/headings).
 
 ## Step 1: Create the plugin
 
-First we'll create the plugin using the steps outlined in the [getting started guide](/docs/3.x/support/plugins/getting-started#creating-a-plugin).
+First, we'll create the plugin using the steps outlined in the [getting started guide](/docs/3.x/support/plugins/getting-started#creating-a-plugin).
 
 ## Step 2: Clean Up
 
-Next we'll clean up the plugin to remove the boilerplate code we don't need. This will seem like a lot, but since this is a simple plugin we can remove a lot of the boilerplate code.
+Next, we'll clean up the plugin to remove the boilerplate code we don't need. This will seem like a lot, but since this is a simple plugin, we can remove a lot of the boilerplate code.
 
 Remove the following directories and files:
 1. `bin`
@@ -88,9 +88,9 @@ You may also remove the testing directories and files, but we'll leave them in f
 
 ## Step 3: Setting up the Provider
 
-Now that we have our plugin cleaned up we can start adding our code. The boilerplate in the `src/HeadingsServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
+Now that we have our plugin cleaned up, we can start adding our code. The boilerplate in the `src/HeadingsServiceProvider.php` file has a lot going on so, let's delete everything and start from scratch.
 
-We need to be able to register our stylesheet with the Filament Asset Manager so that we can load it on demand in our blade view. To do this we'll need to add the following to the `packageBooted` method in our service provider. 
+We need to be able to register our stylesheet with the Filament Asset Manager so that we can load it on demand in our blade view. To do this, we'll need to add the following to the `packageBooted` method in our service provider. 
 
 ***Note the `loadedOnRequest()` method. This is important, because it tells Filament to only load the stylesheet when it's needed.***
 
@@ -123,7 +123,7 @@ class HeadingsServiceProvider extends PackageServiceProvider
 
 ## Step 4: Creating our component
 
-Next we'll need to create our component. Create a new file at `src/Heading.php` and add the following code.
+Next, we'll need to create our component. Create a new file at `src/Heading.php` and add the following code.
 
 ```php
 namespace Awcodes\Headings;
@@ -193,9 +193,9 @@ class Heading extends Component
 
 ## Step 5: Rendering our component
 
-Next we'll need to create the view for our component. Create a new file at `resources/views/heading.blade.php` and add the following code.
+Next, we'll need to create the view for our component. Create a new file at `resources/views/heading.blade.php` and add the following code.
 
-We are using x-load to asynchronously load or stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](docs/3.x/support/assets#lazy-loading-css) section of the docs.
+We are using x-load to asynchronously load stylesheet, so it's only loaded when necessary. You can learn more about this in the [Core Concepts](docs/3.x/support/assets#lazy-loading-css) section of the docs.
 
 ```blade
 @php

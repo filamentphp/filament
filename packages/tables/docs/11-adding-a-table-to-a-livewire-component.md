@@ -117,11 +117,11 @@ Now that the table is using a relationship instead of a plain Eloquent query, al
 
 If your relationship uses a pivot table, you can use all pivot columns as if they were normal columns on your table, as long as they are listed in the `withPivot()` method of the relationship *and* inverse relationship definition.
 
-Relationship tables are used in the panel builder as ["relation managers"](../panels/resources/relation-managers#creating-a-relation-manager). Most of the documented features for relation managers are also available for relationship tables. For instance, the [attach and detach](../panels/resources/relation-managers#attaching-and-detaching-records) and [associate and dissociate](../panels/resources/relation-managers#associating-and-dissociating-records) actions.
+Relationship tables are used in the Panel Builder as ["relation managers"](../panels/resources/relation-managers#creating-a-relation-manager). Most of the documented features for relation managers are also available for relationship tables. For instance, [attaching and detaching](../panels/resources/relation-managers#attaching-and-detaching-records) and [associating and dissociating](../panels/resources/relation-managers#associating-and-dissociating-records) actions.
 
 ## Generating table Livewire components with the CLI
 
-It's advised that you learn how to set up a Livewire component with the table builder manually, but once you are confident, you can use the CLI to generate a table for you.
+It's advised that you learn how to set up a Livewire component with the Table Builder manually, but once you are confident, you can use the CLI to generate a table for you.
 
 ```bash
 php artisan make:livewire-table Products/ListProducts
@@ -137,4 +137,4 @@ Filament is also able to guess which table columns you want in the table, based 
 php artisan make:livewire-table Products/ListProducts --generate
 ```
 
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).

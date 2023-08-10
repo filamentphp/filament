@@ -60,7 +60,7 @@ CheckboxList::make('technologies')
 
 <AutoScreenshot name="forms/fields/checkbox-list/option-descriptions" alt="Checkbox list with option descriptions" version="3.x" />
 
-Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
+Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
 
 ## Splitting options into columns
 
@@ -218,7 +218,7 @@ CheckboxList::make('technologies')
 
 ## Tweaking the search debounce
 
-By default, Filament will wait 1000 milliseconds (1 second) before searching for options when the user types in a searchable checkbox list. It will also wait 1000 milliseconds between searches, if the user is continuously typing into the search input. You can change this using the `searchDebounce()` method:
+By default, Filament will wait 1000 milliseconds (1 second) before searching for options when the user types in a searchable checkbox list. It will also wait 1000 milliseconds between searches if the user is continuously typing into the search input. You can change this using the `searchDebounce()` method:
 
 ```php
 use Filament\Forms\Components\CheckboxList;

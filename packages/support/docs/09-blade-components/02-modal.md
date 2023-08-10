@@ -86,7 +86,7 @@ You can add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) to a mo
 </x-filament::modal>
 ```
 
-By default, the color of a icon is "primary". You can change it to be `danger`, `gray`, `info`, `success` or `warning` by using the `icon-color` attribute:
+By default, the color of an icon is "primary". You can change it to be `danger`, `gray`, `info`, `success` or `warning` by using the `icon-color` attribute:
 
 ```blade
 <x-filament::modal

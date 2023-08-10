@@ -6,7 +6,7 @@ title: Testing
 
 All examples in this guide will be written using [Pest](https://pestphp.com). However, you can easily adapt this to PHPUnit.
 
-Since the table builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have many custom testing helpers that you can use for tables:
+Since the Table Builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have many custom testing helpers that you can use for tables:
 
 ## Render
 
@@ -20,7 +20,7 @@ it('can render page', function () {
 });
 ```
 
-To to test which records are shown, you can use `assertCanSeeTableRecords()`, `assertCanNotSeeTableRecords()` and `assertCountTableRecords()`:
+To test which records are shown, you can use `assertCanSeeTableRecords()`, `assertCanNotSeeTableRecords()` and `assertCountTableRecords()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -70,7 +70,7 @@ it('can not render post comments', function () {
 });
 ```
 
-This helper will assert that the HTML for this column, is not shown by default in the present table.
+This helper will assert that the HTML for this column is not shown by default in the present table.
 
 ### Sorting
 
@@ -209,7 +209,7 @@ it('has the correct descriptions above and below author', function () {
 
 ### Extra Attributes
 
-To ensure that a column has the correct extra attributes you can use the `assertTableColumnHasExtraAttributes()` and `assertTableColumnDoesNotHaveExtraAttributes()` methods:
+To ensure that a column has the correct extra attributes, you can use the `assertTableColumnHasExtraAttributes()` and `assertTableColumnDoesNotHaveExtraAttributes()` methods:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -570,7 +570,7 @@ it('delete actions have correct icons', function () {
 });
 ```
 
-To ensure an action or bulk action's button is displaying the right color, you can use `assertTableActionHasColor()` / `assertTableBulkActionHasColor()` or `assertTableActionDoesNotHaveColor()` / `assertTableBulkActionDoesNotHaveColor()`:
+To ensure that an action or bulk action's button is displaying the right color, you can use `assertTableActionHasColor()` / `assertTableBulkActionHasColor()` or `assertTableActionDoesNotHaveColor()` / `assertTableBulkActionDoesNotHaveColor()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -619,7 +619,7 @@ it('can average values in a column', function () {
 });
 ```
 
-The first argument is the column name, the second is the summarizer ID and the third is the expected value.
+The first argument is the column name, the second is the summarizer ID, and the third is the expected value.
 
 You may set a summarizer ID by passing it to the `make()` method:
 

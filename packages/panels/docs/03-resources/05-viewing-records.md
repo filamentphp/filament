@@ -12,7 +12,7 @@ php artisan make:filament-resource User --view
 
 ## Using an infolist instead of a disabled form
 
-By default, the View page will display a disabled form with the record's data. If you would prefer to display the record's data in an "infolist", you can use define an `infolist()` method on the resource class:
+By default, the View page will display a disabled form with the record's data. If you preferred to display the record's data in an "infolist", you can use define an `infolist()` method on the resource class:
 
 ```php
 use Filament\Infolists;
@@ -92,7 +92,7 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
-Alternatively, if you're viewing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/view#customizing-data-before-filling-the-form).
+Alternatively, if you're viewing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/view#customizing-data-before-filling-the-form).
 
 ## Authorization
 
@@ -110,7 +110,7 @@ protected static string $view = 'filament.resources.users.pages.view-user';
 
 This assumes that you have created a view at `resources/views/filament/resources/users/pages/view-user.blade.php`.
 
-Here's a very simple example of what that view might contain:
+Here's a basic example of what that view might contain:
 
 ```blade
 <x-filament-panels::page>

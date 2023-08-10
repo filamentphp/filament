@@ -29,7 +29,7 @@ public static function getGlobalSearchResultTitle(Model $record): string
 
 ## Globally searching across multiple columns
 
-If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot notation" allows you to search inside of relationships:
+If you would like to search across multiple columns of your resource, you may override the `getGloballySearchableAttributes()` method. "Dot notation" allows you to search inside relationships:
 
 ```php
 public static function getGloballySearchableAttributes(): array
@@ -105,7 +105,7 @@ Action::make('view')
 
 ### Dispatching Livewire events from global search actions
 
-Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be dispatchted on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
+Sometimes you want to execute additional code when a global search result action is clicked. This can be achieved by setting a Livewire event which should be dispatched on clicking the action. You may optionally pass an array of data, which will be available as parameters in the event listener on your Livewire component:
 
 ```php
 use Filament\GlobalSearch\Actions\Action;

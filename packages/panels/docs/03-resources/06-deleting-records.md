@@ -4,7 +4,7 @@ title: Deleting records
 
 ## Handling soft deletes
 
-## Creating a resource with soft deletes
+## Creating a resource with soft delete
 
 By default, you will not be able to interact with deleted records in the app. If you'd like to add functionality to restore, force delete and filter trashed records in your resource, use the `--soft-deletes` flag when generating the resource:
 
@@ -62,7 +62,7 @@ public static function getEloquentQuery(): Builder
 }
 ```
 
-Now, update the Edit page class, if you have one:
+Now, update the Edit page class if you have one:
 
 ```php
 use Filament\Actions;

@@ -227,9 +227,9 @@
                                                             <x-filament::button
                                                                 :x-tooltip="
                                                                     '{
-                                                                                                                                            content: ' . \Illuminate\Support\Js::from($action['label']) . ',
-                                                                                                                                            theme: $store.theme,
-                                                                                                                                        }'
+                                                                        content: ' . \Illuminate\Support\Js::from($action['label']) . ',
+                                                                        theme: $store.theme,
+                                                                    }'
                                                                 "
                                                                 x-on:click.stop.prevent="{{ $action['alpineClickHandler'] }}"
                                                                 color="gray"
@@ -264,9 +264,9 @@
                                                                 <x-filament::button
                                                                     :x-tooltip="
                                                                         '{
-                                                                                                                                                    content: ' . \Illuminate\Support\Js::from(__('filament-forms::components.file_upload.editor.actions.set_aspect_ratio.label', ['ratio' => $label])) . ',
-                                                                                                                                                    theme: $store.theme,
-                                                                                                                                                }'
+                                                                            content: ' . \Illuminate\Support\Js::from(__('filament-forms::components.file_upload.editor.actions.set_aspect_ratio.label', ['ratio' => $label])) . ',
+                                                                            theme: $store.theme,
+                                                                        }'
                                                                     "
                                                                     x-on:click.stop.prevent="currentRatio = '{{ $label }}'; editor.setAspectRatio({{ $ratio }})"
                                                                     color="gray"

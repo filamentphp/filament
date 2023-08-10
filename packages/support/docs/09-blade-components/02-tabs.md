@@ -24,7 +24,7 @@ The tabs component allows you to render a set of tabs, which can be used to togg
 
 ## Triggering the active state of the tab
 
-By default tabs do not appear "active". To make a tab appear active, you can use the `active` attribute:
+By default, tabs do not appear "active". To make a tab appear active, you can use the `active` attribute:
 
 ```blade
 <x-filament::tabs>
