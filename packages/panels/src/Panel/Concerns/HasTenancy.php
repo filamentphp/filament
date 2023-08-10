@@ -195,7 +195,7 @@ trait HasTenancy
                     return true;
                 }
 
-                return $item->isVisible()
+                return $item->isVisible();
             })
             ->sort(fn (MenuItem $item): int => $item->getSort())
             ->all();
