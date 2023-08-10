@@ -48,10 +48,10 @@ trait HasHint
         return $this;
     }
 
-    public function hintIcon(string | Closure | null $hintIcon, string | Closure | null $hintIconTooltip = null): static
+    public function hintIcon(string | Closure | null $icon, string | Closure | null $tooltip = null): static
     {
-        $this->hintIcon = $hintIcon;
-        $this->hintIconTooltip = $hintIconTooltip;
+        $this->hintIcon = $icon;
+        $this->hintIconTooltip = $tooltip;
 
         return $this;
     }
