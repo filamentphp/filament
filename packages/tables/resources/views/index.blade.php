@@ -500,7 +500,7 @@
                         @class([
                             'gap-4 p-4 sm:px-6' => $contentGrid,
                             'pt-0' => $contentGrid && $this->getTableGrouping(),
-                            '[&>*:not(:first-child)]:border-t-[0.5px] [&>*:not(:last-child)]:border-b-[0.5px] [&>*]:border-gray-200 dark:[&>*]:border-white/5' => ! $contentGrid,
+                            'divide-y divide-gray-200 dark:divide-white/5' => ! $contentGrid,
                         ])
                     >
                         @php
