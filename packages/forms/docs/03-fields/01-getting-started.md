@@ -175,6 +175,17 @@ RichEditor::make('content')
     ->hintIcon('heroicon-m-language')
 ```
 
+### Adding a tooltip to an hint icon
+
+Additionally, you can add a tooltip to display when you hover over the hint icon.
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Tooltip helper text')
+```
+
 <AutoScreenshot name="forms/fields/hint-icon" alt="Form field with hint icon" version="3.x" />
 
 ## Adding extra HTML attributes
