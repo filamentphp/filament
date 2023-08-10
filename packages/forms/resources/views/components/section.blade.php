@@ -13,7 +13,7 @@
     :icon="$getIcon()"
     :icon-color="$getIconColor()"
     :icon-size="$getIconSize()"
-    :persistCollapseState="$shouldPersistCollapseState()"
+    :persist-collapse-state="$shouldPersistCollapseState()"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([
