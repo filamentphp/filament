@@ -191,6 +191,19 @@ TextEntry::make('apiKey')
 
 <AutoScreenshot name="infolists/entries/hint-icon" alt="Entry with hint icon" version="3.x" />
 
+#### Adding a tooltip to a hint icon
+
+Additionally, you can add a tooltip to display when you hover over the hint icon, using the `tooltip` parameter of `hintIcon()`:
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('apiKey')
+    ->label('API key')
+    ->hint('[Documentation](/documentation)')
+    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Read it!')
+```
+
 ## Hiding entries
 
 To hide an entry conditionally, you may use the `hidden()` and `visible()` methods, whichever you prefer:

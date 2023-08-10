@@ -177,6 +177,17 @@ RichEditor::make('content')
 
 <AutoScreenshot name="forms/fields/hint-icon" alt="Form field with hint icon" version="3.x" />
 
+#### Adding a tooltip to a hint icon
+
+Additionally, you can add a tooltip to display when you hover over the hint icon, using the `tooltip` parameter of `hintIcon()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Need some more information?')
+```
+
 ## Adding extra HTML attributes
 
 You can pass extra HTML attributes to the field, which will be merged onto the outer DOM element. Pass an array of attributes to the `extraAttributes()` method, where the key is the attribute name and the value is the attribute value:
