@@ -33,7 +33,7 @@ Make sure to carefully follow the instructions, and review the changes made by t
 
 Finally, you must run `php artisan filament:install` to finalize the Filament v3 installation. This command must be run for all new Filament projects.
 
-You can now `composer remove filament/upgrade` as you don't need it any more.
+You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 > Some plugins you're using may not be available in v3 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v3-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
@@ -45,7 +45,7 @@ Since Livewire v3 is still in beta, set the `minimum-stability` in your `compose
 "minimum-stability": "dev",
 ```
 
-### High impact changes
+### High-impact changes
 
 #### Config file renamed and combined with other Filament packages
 
@@ -95,7 +95,7 @@ Filament v2 had a `secondary` color for many components which was gray. All refe
 
 #### `$get` and `$set` closure parameters
 
-`$get` and `$set` parameters now use a type of either `\Filament\Forms\Get` or `\Filament\Forms\Set` instead of `\Closure`. This allows for better IDE autocomplete support of the parameters of each function.
+`$get` and `$set` parameters now use a type of either `\Filament\Forms\Get` or `\Filament\Forms\Set` instead of `\Closure`. This allows for better IDE autocomplete support of each function's parameters.
 
 An easy way to upgrade your code quickly is to find and replace:
 
@@ -104,9 +104,9 @@ An easy way to upgrade your code quickly is to find and replace:
 
 #### `TextInput` masks now use Alpine.js' masking package
 
-Filament v2 had a fluent mask object syntax for managing input masks. In v3 you can use Alpine.js' masking syntax instead. Please see the [input masking documentation](fields/text-input#input-masking) for more information.
+Filament v2 had a fluent mask object syntax for managing input masks. In v3, you can use Alpine.js's masking syntax instead. Please see the [input masking documentation](fields/text-input#input-masking) for more information.
 
-### Low impact changes
+### Low-impact changes
 
 #### Rule modification callback parameter renamed
 

@@ -33,7 +33,7 @@ Make sure to carefully follow the instructions, and review the changes made by t
 
 Finally, you must run `php artisan filament:install` to finalize the Filament v3 installation. This command must be run for all new Filament projects.
 
-You can now `composer remove filament/upgrade` as you don't need it any more.
+You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 > Some plugins you're using may not be available in v3 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v3-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
@@ -45,7 +45,7 @@ Since Livewire v3 is still in beta, set the `minimum-stability` in your `compose
 "minimum-stability": "dev",
 ```
 
-### High impact changes
+### High-impact changes
 
 #### Config file renamed and combined with other Filament packages
 

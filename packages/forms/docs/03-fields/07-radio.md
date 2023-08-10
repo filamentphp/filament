@@ -42,7 +42,7 @@ Radio::make('status')
 
 <AutoScreenshot name="forms/fields/radio/option-descriptions" alt="Radio with option descriptions" version="3.x" />
 
-Be sure to use the same `key` in the descriptions array as the `key` in the options array so the right description matches the right option.
+Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
 
 ## Boolean options
 
@@ -87,7 +87,7 @@ Radio::make('status')
 
 <AutoScreenshot name="forms/fields/radio/disabled-option" alt="Radio with disabled option" version="3.x" />
 
-If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
+If you want to retrieve the options that have not been disabled, e.g., for validation purposes, you can do so using `getEnabledOptions()`:
 
 ```php
 use Filament\Forms\Components\Radio;
