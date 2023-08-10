@@ -64,7 +64,10 @@ class CreateAction extends Action
                     $record->fill($data);
                 }
 
-                if (! $relationship || $relationship instanceof HasManyThrough) {
+                if (
+                    (! $relationship) ||
+                    $relationship instanceof HasManyThrough
+                ) {
                     $record->save();
 
                     return $record;
