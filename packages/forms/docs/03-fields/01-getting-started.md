@@ -185,7 +185,7 @@ Additionally, you can add a tooltip to display when you hover over the hint icon
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('name')
-    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Tooltip helper text')
+    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Need some more information?')
 ```
 
 ## Adding extra HTML attributes

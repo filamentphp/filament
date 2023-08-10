@@ -7,6 +7,7 @@
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'hintIconTooltip' => null,
     'id' => null,
     'isDisabled' => null,
     'isMarkedAsRequired' => null,
