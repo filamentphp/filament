@@ -205,6 +205,8 @@ protected function applySearchToTableQuery(Builder $query): Builder
 
 Scout uses this `whereIn()` method to retrieve results internally, so there is no performance penalty for using it.
 
+The `applyColumnSearchesToTableQuery()` method ensures that searching individual columns will still work. You can replace that method with your own implementation if you want to use Scout for those search inputs as well.
+
 ## Query string
 
 Livewire ships with a feature to store data in the URL's query string, to access across requests.
