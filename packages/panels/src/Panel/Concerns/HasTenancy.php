@@ -62,6 +62,8 @@ trait HasTenancy
     public function tenantRoutePrefix(string $prefix): static
     {
         $this->tenantRoutePrefix = $prefix;
+
+        return $this;
     }
 
     public function tenantBillingProvider(?BillingProvider $provider): static
