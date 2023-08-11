@@ -446,25 +446,6 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Configuring the tenant route prefix
-
-By default the URL structure will put the tenant ID or slug immediately after the panel path. If you wish to prefix it with another URL segment, use the `tenantRoutePrefix()` method:
-
-```php
-use Filament\Panel;
-
-public function panel(Panel $panel): Panel
-{
-    return $panel
-        // ...
-        ->path('admin'}
-        ->tenant(Team::class)
-        ->tenantRoutePrefix('team');
-}
-```
-
-Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
-
 ## Configuring the name attribute
 
 By default, Filament will use Filament\Resources\Pages\CreateRecord;use the `name` attribute of the tenant to display its name in the app. To change this, you can implement the `HasName` contract:
@@ -579,6 +560,25 @@ public function panel(Panel $panel): Panel
         ], isPersistent: true);
 }
 ```
+
+## Adding a tenant route prefix
+
+By default the URL structure will put the tenant ID or slug immediately after the panel path. If you wish to prefix it with another URL segment, use the `tenantRoutePrefix()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->path('admin')
+        ->tenant(Team::class)
+        ->tenantRoutePrefix('team');
+}
+```
+
+Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
 
 ## Tenancy security
 
