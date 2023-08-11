@@ -11,6 +11,8 @@ trait HasTenancy
 {
     protected ?BillingProvider $tenantBillingProvider = null;
 
+    protected ?string $tenantRoutePrefix = null;
+    
     protected ?string $tenantModel = null;
 
     protected ?string $tenantProfilePage = null;
@@ -57,6 +59,11 @@ trait HasTenancy
         return $this;
     }
 
+    public function tenantRoutePrefix(string $prefix): static
+    {
+        $this->tenantRoutePrefix = $prefix;
+    }
+
     public function tenantBillingProvider(?BillingProvider $provider): static
     {
         $this->tenantBillingProvider = $provider;
@@ -101,6 +108,16 @@ trait HasTenancy
     public function hasTenantRegistration(): bool
     {
         return filled($this->getTenantRegistrationPage());
+    }
+
+    public function hasTenantRoutePrefix(): bool
+    {
+        return filled($this->getTenantRoutePrefix());
+    }
+
+    public function getTenantRoutePrefix(): ?string
+    {
+        return $this->tenantRoutePrefix;
     }
 
     public function getTenantBillingProvider(): ?BillingProvider
