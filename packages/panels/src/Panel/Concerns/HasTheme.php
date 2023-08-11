@@ -11,6 +11,9 @@ trait HasTheme
 {
     protected string | Htmlable | Theme | null $theme = null;
 
+    /**
+     * @var string | array<string>
+     */
     protected string | array | null $viteTheme = null;
 
     protected ?string $viteThemeBuildDirectory = null;
@@ -21,7 +24,7 @@ trait HasTheme
     public function viteTheme(string | array $theme, ?string $buildDirectory = null): static
     {
         $this->viteTheme = $theme;
-        $this->viteBuildDirectory = $buildDirectory;
+        $this->viteThemeBuildDirectory = $buildDirectory;
 
         return $this;
     }
