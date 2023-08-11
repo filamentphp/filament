@@ -38,9 +38,9 @@ Action::make('updateAuthor')
             ->options(User::query()->pluck('name', 'id'))
             ->required(),
     ])
-    ->action(function (array $data): void {
-        $this->record->author()->associate($data['authorId']);
-        $this->record->save();
+    ->action(function (array $data, Model $record): void {
+        $record->author()->associate($data['authorId']);
+        $record->save();
     })
 ```
 
