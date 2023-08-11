@@ -59,7 +59,7 @@ trait HasTenancy
         return $this;
     }
 
-    public function tenantRoutePrefix(string $prefix): static
+    public function tenantRoutePrefix(?string $prefix): static
     {
         $this->tenantRoutePrefix = $prefix;
 
