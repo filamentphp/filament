@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 trait HasTenancy
 {
+    protected bool $showTenantMenu = true;
+    
     protected ?BillingProvider $tenantBillingProvider = null;
 
     protected ?string $tenantModel = null;
@@ -44,6 +46,13 @@ trait HasTenancy
             ...$this->tenantMenuItems,
             ...$items,
         ];
+
+        return $this;
+    }
+
+    public function hideTenantMenu(): static
+    {
+        $this->showTenantMenu = false;
 
         return $this;
     }
@@ -184,6 +193,11 @@ trait HasTenancy
         return route("filament.{$this->getId()}.tenant.registration", $parameters);
     }
 
+    public function getTenantMenuVisible(): bool
+    {
+        return $this->showTenantMenu;
+    }
+    
     /**
      * @return array<MenuItem>
      */
