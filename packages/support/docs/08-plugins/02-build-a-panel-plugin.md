@@ -139,7 +139,7 @@ We are using async Alpine to load our Alpine component, so we'll need to add the
 ```blade
 <x-filament-widgets::widget>
     <x-filament::section>
-        <x-slot name="heading>
+        <x-slot name="heading">
             {{ __('clock-widget::clock-widget.title') }}
         </x-slot>
 
