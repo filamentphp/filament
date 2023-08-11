@@ -262,7 +262,7 @@ public function panel(Panel $panel): Panel
                 NavigationItem::make('Dashboard')
                     ->icon('heroicon-o-home')
                     ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
-                    ->url(route('filament.admin.pages.dashboard')),
+                    ->url(fn() => route('filament.admin.pages.dashboard')),
                 ...UserResource::getNavigationItems(),
                 ...Settings::getNavigationItems(),
             ]);
@@ -331,7 +331,7 @@ public function panel(Panel $panel): Panel
         ->userMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(route('filament.admin.pages.settings'))
+                ->url(fn() => route('filament.admin.pages.settings'))
                 ->icon('heroicon-o-cog-6-tooth'),
             // ...
         ]);
