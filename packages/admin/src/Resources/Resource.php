@@ -6,8 +6,6 @@ use Closure;
 use Filament\Facades\Filament;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Navigation\NavigationItem;
-use function Filament\Support\get_model_label;
-use function Filament\Support\locale_has_pluralization;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
@@ -18,6 +16,9 @@ use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Traits\Macroable;
+
+use function Filament\Support\get_model_label;
+use function Filament\Support\locale_has_pluralization;
 
 class Resource
 {
@@ -460,6 +461,10 @@ class Resource
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
 
+        // Get database collation (mysql only)
+        $collation = config('database.connections.'.$databaseConnection->getDriverName().'.collation');
+        $collation = $collation ? 'COLLATE '.$collation : '';
+
         $searchOperator = match ($databaseConnection->getDriverName()) {
             'pgsql' => 'ilike',
             default => 'like',
@@ -472,14 +477,14 @@ class Resource
 
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
-                function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $searchQuery, $whereClause): Builder {
+                function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $searchQuery, $whereClause, $collation): Builder {
                     $searchColumn = match ($databaseConnection->getDriverName()) {
                         'pgsql' => "{$searchAttribute}::text",
-                        default => "json_extract({$searchAttribute}, '$')",
+                        default => "json_extract({$searchAttribute}, '$') {$collation}",
                     };
 
                     return $query->{"{$whereClause}Raw"}(
-                        "lower({$searchColumn}) {$searchOperator} ?",
+                        "lower({$searchColumn}) {$searchOperator} lower(?)",
                         "%{$searchQuery}%",
                     );
                 },
@@ -487,14 +492,14 @@ class Resource
                     Str::of($searchAttribute)->contains('.'),
                     fn ($query) => $query->{"{$whereClause}Relation"}(
                         (string) Str::of($searchAttribute)->beforeLast('.'),
-                        (string) Str::of($searchAttribute)->afterLast('.'),
-                        $searchOperator,
-                        "%{$searchQuery}%",
+                        fn ($query) => $query->whereRaw(
+                            Str::of($searchAttribute)->afterLast('.')." {$collation} {$searchOperator} ?",
+                            "%{$searchQuery}%",
+                        ),
                     ),
-                    fn ($query) => $query->{$whereClause}(
-                        $searchAttribute,
-                        $searchOperator,
-                        "%{$searchQuery}%",
+                    fn ($query) => $query->{"{$whereClause}Raw"}(
+                        "{$searchAttribute} {$collation} {$searchOperator} ?",
+                        "%{$searchQuery}%"
                     ),
                 ),
             );
