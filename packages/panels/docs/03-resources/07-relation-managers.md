@@ -134,7 +134,7 @@ You can find out more about soft deleting [here](#deleting-records).
 
 ## Listing related records
 
-Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
+Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-related-records), [edit](#editing-related-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
 You may use any features of the [Table Builder](../../tables) to customize relation managers.
 
