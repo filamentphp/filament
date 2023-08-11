@@ -11,10 +11,12 @@
     }}
 >
     @if (filled($label))
-        <legend @class([
-            '-ms-2 px-2 text-sm font-medium leading-6',
-            'sr-only' => $labelHidden,
-        ])>
+        <legend
+            @class([
+                '-ms-2 px-2 text-sm font-medium leading-6',
+                'sr-only' => $labelHidden,
+            ])
+        >
             {{ $label }}
         </legend>
     @endif
