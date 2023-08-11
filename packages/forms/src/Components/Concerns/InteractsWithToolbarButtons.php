@@ -20,10 +20,10 @@ trait InteractsWithToolbarButtons
      */
     public function disableToolbarButtons(array $buttonsToDisable = []): static
     {
-        $this->toolbarButtons = array_filter(
+        $this->toolbarButtons = array_values(array_filter(
             $this->getToolbarButtons(),
             static fn ($button) => ! in_array($button, $buttonsToDisable),
-        );
+        ));
 
         return $this;
     }
