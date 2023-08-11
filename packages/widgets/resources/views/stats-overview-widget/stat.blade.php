@@ -99,7 +99,7 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
                 x-data="statsOverviewStatChart({
-                            dataChecksum: '{{ $dataChecksum }}',
+                            dataChecksum: @js($dataChecksum),
                             labels: @js(array_keys($chart)),
                             values: @js(array_values($chart)),
                         })"
