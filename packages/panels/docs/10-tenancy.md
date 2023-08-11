@@ -561,6 +561,25 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+## Adding a tenant route prefix
+
+By default the URL structure will put the tenant ID or slug immediately after the panel path. If you wish to prefix it with another URL segment, use the `tenantRoutePrefix()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->path('admin')
+        ->tenant(Team::class)
+        ->tenantRoutePrefix('team');
+}
+```
+
+Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
+
 ## Tenancy security
 
 It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure.
