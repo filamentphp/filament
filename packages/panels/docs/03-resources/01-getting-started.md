@@ -390,3 +390,17 @@ public static function getPages(): array
 }
 ```
 
+Also, you should delete the `New customer` button on the top-right by removing the `CreateAction` from the `ListCustomer` page:
+
+```php
+class ListCustomers extends ListRecords
+{
+    protected function getHeaderActions(): array
+    {
+        return [
+            // Delete this one
+            Actions\CreateAction::make(),
+        ];
+    }
+}
+```
