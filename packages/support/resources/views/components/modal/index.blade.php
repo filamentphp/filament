@@ -263,7 +263,7 @@
                     </div>
                 @endif
 
-                @if (count($footerActions) || (! \Filament\Support\is_slot_empty($footer)))
+                @if ($footerActions || (! \Filament\Support\is_slot_empty($footer)))
                     <div
                         @class([
                             'fi-modal-footer w-full',
@@ -278,7 +278,7 @@
                     >
                         @if (! \Filament\Support\is_slot_empty($footer))
                             {{ $footer }}
-                        @elseif (count($footerActions))
+                        @elseif ($footerActions)
                             <div
                                 @class([
                                     'fi-modal-footer-actions gap-3',
@@ -289,9 +289,13 @@
                                     },
                                 ])
                             >
-                                @foreach ($footerActions as $action)
-                                    {{ $action }}
-                                @endforeach
+                                @if (is_array($footerActions))
+                                    @foreach ($footerActions as $action)
+                                        {{ $action }}
+                                    @endforeach
+                                @else
+                                    {{ $footerActions }}
+                                @endif
                             </div>
                         @endif
                     </div>
