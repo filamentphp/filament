@@ -448,7 +448,7 @@ public function panel(Panel $panel): Panel
 
 ## Configuring the tenant route prefix
 
-By default the URL structure will put the tenant id or slug immediately after the panel path. If you wish to prefix the tenant id or slug with a value to tenant routes you may do so by using the `tenantRoutePrefix()` method.
+By default the URL structure will put the tenant ID or slug immediately after the panel path. If you wish to prefix it with another URL segment, use the `tenantRoutePrefix()` method:
 
 ```php
 use Filament\Panel;
