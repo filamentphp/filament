@@ -101,7 +101,7 @@ public static function getRelations(): array
 }
 ```
 
-Once a table and form have been defined for the relation manager, visit the [Edit](editing-related-records) or [View](viewing-records) page of your resource to see it in action.
+Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
 ### Unconventional inverse relationship names
 
