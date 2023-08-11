@@ -12,7 +12,7 @@ trait HasTenancy
     protected ?BillingProvider $tenantBillingProvider = null;
 
     protected ?string $tenantRoutePrefix = null;
-    
+
     protected ?string $tenantModel = null;
 
     protected ?string $tenantProfilePage = null;
