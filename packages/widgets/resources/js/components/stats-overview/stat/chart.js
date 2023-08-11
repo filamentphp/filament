@@ -1,8 +1,13 @@
 import Chart from 'chart.js/auto'
 
-export default function statsOverviewStatChart({ dataChecksum, labels, values }) {
+export default function statsOverviewStatChart({
+    dataChecksum,
+    labels,
+    values,
+}) {
     return {
         dataChecksum: dataChecksum,
+        
         init: function () {
             Alpine.effect(() => {
                 Alpine.store('theme')
