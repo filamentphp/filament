@@ -463,7 +463,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-Without this the URL structure will be `https://example.com/admin/1` for tenant id 1, but with the route prefix it will become `https://example.com/admin/team/1`.
+Before, the URL structure was `/admin/1` for tenant 1. Now, it is `/admin/team/1`.
 
 ## Configuring the name attribute
 
