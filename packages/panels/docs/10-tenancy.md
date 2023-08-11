@@ -418,7 +418,7 @@ class PostResource extends Resource
 
 ### Customizing the resource relationship name
 
-You can set the `$tenantRelationshipName` static property on the resource class, can then be used to customize the relationship name that is used to fetch that resource. In this example, the tenant model class has an `blogPosts` relationship defined:
+You can set the `$tenantRelationshipName` static property on the resource class, which can then be used to customize the relationship name that is used to fetch that resource. In this example, the tenant model class has an `blogPosts` relationship defined:
 
 ```php
 use Filament\Resources\Resource;
