@@ -141,7 +141,7 @@ public function table(Table $table): Table
 
 ## Searching
 
-Columns may be searchable, by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
+Columns may be searchable by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
 
 ```php
 use Filament\Tables\Columns\TextColumn;

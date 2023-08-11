@@ -2,6 +2,7 @@
     'actions' => [],
     'color' => 'gray',
     'icon' => null,
+    'tooltip' => null,
 ])
 
 <div
@@ -25,7 +26,9 @@
 
     @if ($icon)
         <x-filament::icon
+            x-data="{}"
             :icon="$icon"
+            :x-tooltip="'{ content: ' . \Illuminate\Support\Js::from($tooltip) . ', theme: $store.theme }'"
             @class([
                 'fi-fo-field-wrp-hint-icon h-5 w-5',
                 match ($color) {

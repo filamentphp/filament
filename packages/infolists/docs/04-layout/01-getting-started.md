@@ -29,7 +29,7 @@ Filament ships with some layout components, suitable for arranging your form fie
 - [Section](section)
 - [Split](split)
 
-You may also [create your own custom layout components](custom) to organize fields however you wish.
+You may also [create your own custom layout components](custom) to organize fields in whatever way you wish.
 
 ## Setting an ID
 

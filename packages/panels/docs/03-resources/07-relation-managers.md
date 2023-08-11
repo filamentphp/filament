@@ -32,7 +32,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), [Section](../../forms/layout/section), etc) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), [Section](../../forms/layout/section), etc.) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\Fieldset;
@@ -136,7 +136,7 @@ You can find out more about soft deleting [here](#deleting-records).
 
 Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
-You may may use any of the features of the [table builder](../../tables) to customize relation managers.
+You may use any features of the [Table Builder](../../tables) to customize relation managers.
 
 ### Listing with pivot attributes
 
@@ -182,7 +182,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `CreateAction`
 
-To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/create).
+To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/create).
 
 ## Editing related records
 
@@ -209,7 +209,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `EditAction`
 
-To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/edit).
+To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/edit).
 
 ## Attaching and detaching records
 
@@ -303,7 +303,7 @@ AttachAction::make()
     ->recordSelectSearchColumns(['title', 'description'])
 ```
 
-### Customizing the select field in the attach modal
+### Customizing the select field in the attached modal
 
 You may customize the select field object that is used during attachment by passing a function to the `recordSelect()` method:
 
@@ -491,7 +491,7 @@ public function table(Table $table): Table
 
 ### Customizing the `DeleteAction`
 
-To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/delete).
+To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/delete).
 
 ## Accessing the relationship's owner record
 
@@ -722,7 +722,7 @@ AttachAction::make()
 
 ## Read-only mode
 
-Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit and delete. However, you can disable this behaviour, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
+Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit, and delete. However, you can disable this behaviour, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
 
 ```php
 public function isReadOnly(): bool

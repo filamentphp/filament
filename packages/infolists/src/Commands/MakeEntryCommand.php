@@ -18,7 +18,7 @@ class MakeEntryCommand extends Command
     public function handle(): int
     {
         $entry = (string) str($this->argument('name') ?? text(
-            label: 'What is the infolist name?',
+            label: 'What is the entry name?',
             placeholder: 'StatusSwitcher',
             required: true,
         ))

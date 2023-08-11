@@ -109,7 +109,7 @@ protected static string $view = 'filament.resources.users.pages.list-users';
 
 This assumes that you have created a view at `resources/views/filament/resources/users/pages/list-users.blade.php`.
 
-Here's a very simple example of what that view might contain:
+Here's a basic example of what that view might contain:
 
 ```blade
 <x-filament-panels::page>

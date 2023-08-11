@@ -6,7 +6,7 @@ title: Testing
 
 All examples in this guide will be written using [Pest](https://pestphp.com). However, you can easily adapt this to PHPUnit.
 
-Since the form builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have custom testing helpers that you can use with forms:
+Since the Form Builder works on Livewire components, you can use the [Livewire testing helpers](https://livewire.laravel.com/docs/testing). However, we have custom testing helpers that you can use with forms:
 
 ## Filling a form
 
@@ -94,7 +94,7 @@ it('has a form', function () {
 
 ## Fields
 
-To ensure that a form has a given field pass the field name to `assertFormFieldExists()`:
+To ensure that a form has a given field, pass the field name to `assertFormFieldExists()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -122,7 +122,7 @@ it('has a title field', function () {
 
 ### Hidden fields
 
-To ensure that a field is visible pass the name to `assertFormFieldIsVisible()`:
+To ensure that a field is visible, pass the name to `assertFormFieldIsVisible()`:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -148,7 +148,7 @@ test('title is hidden', function () {
 
 ### Disabled fields
 
-To ensure that a field is enabled pass the name to `assertFormFieldIsEnabled()`:
+To ensure that a field is enabled, pass the name to `assertFormFieldIsEnabled()`:
 
 ```php
 use function Pest\Livewire\livewire;

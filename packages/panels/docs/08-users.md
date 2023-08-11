@@ -102,7 +102,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Configuring the user name attribute
+## Configuring the user's name attribute
 
 By default, Filament will use the `name` attribute of the user to display their name in the app. To change this, you can implement the `HasName` contract:
 
