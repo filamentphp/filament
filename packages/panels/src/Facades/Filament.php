@@ -119,8 +119,9 @@ class Filament extends Facade
 
     public static function registerPanel(Panel $panel): void
     {
-        static::resolved(function (FilamentManager $filamentManager) use ($panel) {
-            $filamentManager->registerPanel($panel);
-        });
+        static::getFacadeApplication()->resolving(
+            static::getFacadeAccessor(),
+            fn (FilamentManager $filamentManager) => $filamentManager->registerPanel($panel),
+        );
     }
 }
