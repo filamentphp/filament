@@ -6,7 +6,7 @@ export default function statsOverviewStatChart({
     values,
 }) {
     return {
-        dataChecksum: dataChecksum,
+        dataChecksum,
         
         init: function () {
             Alpine.effect(() => {
