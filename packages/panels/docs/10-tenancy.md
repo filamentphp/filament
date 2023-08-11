@@ -371,6 +371,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+This may be desirable in simple multitenant setups where a user can only belong to one tenant and therefore there is no need for a menu to switch tenants.
+
 ## Setting up avatars
 
 Out of the box, Filament uses [ui-avatars.com](https://ui-avatars.com) to generate avatars based on a user's name. However, if you user model has an `avatar_url` attribute, that will be used instead. To customize how Filament gets a user's avatar URL, you can implement the `HasAvatar` contract:
