@@ -143,7 +143,6 @@ return [
 
     ],
 
-
     'grouping' => [
 
         'fields' => [
