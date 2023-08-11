@@ -202,6 +202,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+**NOTE:** When using Laravel's `route()` helper to access a named route be sure to include it in a closure to ensure the route will be found. Otherwise you may get a Route Not Defined Exception.
+
 ## Conditionally hiding navigation items
 
 You can also conditionally hide a navigation item by using the `visible()` or `hidden()` methods, passing in a condition to check:
