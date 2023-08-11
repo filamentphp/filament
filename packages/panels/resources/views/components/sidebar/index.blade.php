@@ -88,7 +88,7 @@
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
 
-        @if (filament()->hasTenancy())
+        @if (filament()->hasTenancy() && filament()->getCurrentPanel()->getTenantMenuVisible())
             <div
                 @if (filament()->isSidebarCollapsibleOnDesktop())
                     x-bind:class="$store.sidebar.isOpen ? '-mx-2' : '-mx-4'"
