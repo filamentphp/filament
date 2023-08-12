@@ -568,7 +568,7 @@
                                     x-sortable-handle
                                 @endif
                                 @class([
-                                    'relative h-full transition duration-75 bg-white dark:bg-gray-900',
+                                    'relative h-full bg-white transition duration-75 dark:bg-gray-900',
                                     'hover:bg-gray-50 dark:hover:bg-white/5' => ($recordUrl || $recordAction) && (! $contentGrid),
                                     'hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20' => ($recordUrl || $recordAction) && $contentGrid,
                                     'rounded-xl shadow-sm ring-1 ring-gray-950/5' => $contentGrid,
