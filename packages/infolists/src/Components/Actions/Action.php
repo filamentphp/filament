@@ -46,7 +46,7 @@ class Action extends MountableAction
     {
         return match ($parameterName) {
             'record' => [$this->getInfolistComponent()->getRecord()],
-            'infolist' => [$this->getInfolistComponent()->getInfolist()],
+            'infolist' => [$this->getInfolist()],
             'infolistComponent' => [$this->getInfolistComponent()],
             default => parent::resolveDefaultClosureDependencyForEvaluationByName($parameterName),
         };
