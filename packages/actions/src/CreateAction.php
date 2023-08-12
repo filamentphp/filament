@@ -38,7 +38,7 @@ class CreateAction extends Action
         $this->successNotificationTitle(__('filament-actions::create.single.messages.created'));
 
         $this->groupedIcon('heroicon-m-plus');
-        
+
         $this->record(null);
 
         $this->action(function (array $arguments, Form $form): void {
