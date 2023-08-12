@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands;
 
+use Filament\PanelProvider;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -20,7 +21,9 @@ class InstallCommand extends Command
     public function __invoke(): int
     {
         if ($this->option('panels')) {
-            $this->installAdminPanel();
+            if (! $this->installAdminPanel()) {
+                return static::FAILURE;
+            }
         }
 
         if ($this->option('scaffold')) {
@@ -51,12 +54,18 @@ class InstallCommand extends Command
         return static::SUCCESS;
     }
 
-    protected function installAdminPanel(): void
+    protected function installAdminPanel(): bool
     {
         $path = app_path('Providers/Filament/AdminPanelProvider.php');
 
         if (! $this->option('force') && $this->checkForCollision([$path])) {
-            return;
+            return true;
+        }
+
+        if (! class_exists(PanelProvider::class)) {
+            $this->components->error('Please require [filament/filament] before attempting to install the Panel Builder.');
+
+            return false;
         }
 
         $this->copyStubToApp('AdminPanelProvider', $path);
@@ -71,6 +80,8 @@ class InstallCommand extends Command
 
         $this->components->info('Successfully created AdminPanelProvider.php!');
         $this->components->warn('We\'ve attempted to register the AdminPanelProvider in your [config/app.php] file as a service provider. If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.');
+
+        return true;
     }
 
     protected function installScaffolding(): void
