@@ -391,95 +391,98 @@
                         );
                     @endphp
 
-                    @if ($isSelectionEnabled || count($sortableColumns))
-                        <div class="flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6">
-                            @if ($isSelectionEnabled && (! $isReordering))
-                                <x-filament-tables::selection.checkbox
-                                    :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                    x-bind:checked="
-                                        const recordsOnPage = getRecordsOnPage()
+                    <div
+                        @class([
+                            'flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6',
+                            'hidden' => (! $isSelectionEnabled) && (! count($sortableColumns)),
+                        ])
+                    >
+                        @if ($isSelectionEnabled && (! $isReordering))
+                            <x-filament-tables::selection.checkbox
+                                :label="__('filament-tables::table.fields.bulk_select_page.label')"
+                                x-bind:checked="
+                                    const recordsOnPage = getRecordsOnPage()
 
-                                        if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
-                                            $el.checked = true
+                                    if (recordsOnPage.length && areRecordsSelected(recordsOnPage)) {
+                                        $el.checked = true
 
-                                            return 'checked'
+                                        return 'checked'
+                                    }
+
+                                    $el.checked = false
+
+                                    return null
+                                "
+                                x-on:click="toggleSelectRecordsOnPage"
+                                class="my-4"
+                            />
+                        @endif
+
+                        @if (count($sortableColumns))
+                            <div
+                                x-data="{
+                                    column: $wire.entangle('tableSortColumn').live,
+                                    direction: $wire.entangle('tableSortDirection').live,
+                                }"
+                                x-init="
+                                    $watch('column', function (newColumn, oldColumn) {
+                                        if (! newColumn) {
+                                            direction = null
+
+                                            return
                                         }
 
-                                        $el.checked = false
+                                        if (oldColumn) {
+                                            return
+                                        }
 
-                                        return null
-                                    "
-                                    x-on:click="toggleSelectRecordsOnPage"
-                                    class="my-4"
-                                />
-                            @endif
-
-                            @if (count($sortableColumns))
-                                <div
-                                    x-data="{
-                                        column: $wire.entangle('tableSortColumn').live,
-                                        direction: $wire.entangle('tableSortDirection').live,
-                                    }"
-                                    x-init="
-                                        $watch('column', function (newColumn, oldColumn) {
-                                            if (! newColumn) {
-                                                direction = null
-
-                                                return
-                                            }
-
-                                            if (oldColumn) {
-                                                return
-                                            }
-
-                                            direction = 'asc'
-                                        })
-                                    "
-                                    class="flex gap-x-3 py-3"
-                                >
-                                    <label>
-                                        <x-filament::input.wrapper
-                                            :prefix="__('filament-tables::table.sorting.fields.column.label')"
+                                        direction = 'asc'
+                                    })
+                                "
+                                class="flex gap-x-3 py-3"
+                            >
+                                <label>
+                                    <x-filament::input.wrapper
+                                        :prefix="__('filament-tables::table.sorting.fields.column.label')"
+                                    >
+                                        <x-filament::input.select
+                                            x-model="column"
                                         >
-                                            <x-filament::input.select
-                                                x-model="column"
-                                            >
-                                                <option value="">-</option>
+                                            <option value="">-</option>
 
-                                                @foreach ($sortableColumns as $column)
-                                                    <option
-                                                        value="{{ $column->getName() }}"
-                                                    >
-                                                        {{ $column->getLabel() }}
-                                                    </option>
-                                                @endforeach
-                                            </x-filament::input.select>
-                                        </x-filament::input.wrapper>
-                                    </label>
-
-                                    <label x-cloak x-show="column">
-                                        <span class="sr-only">
-                                            {{ __('filament-tables::table.sorting.fields.direction.label') }}
-                                        </span>
-
-                                        <x-filament::input.wrapper>
-                                            <x-filament::input.select
-                                                x-model="direction"
-                                            >
-                                                <option value="asc">
-                                                    {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
+                                            @foreach ($sortableColumns as $column)
+                                                <option
+                                                    value="{{ $column->getName() }}"
+                                                >
+                                                    {{ $column->getLabel() }}
                                                 </option>
+                                            @endforeach
+                                        </x-filament::input.select>
+                                    </x-filament::input.wrapper>
+                                </label>
 
-                                                <option value="desc">
-                                                    {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
-                                                </option>
-                                            </x-filament::input.select>
-                                        </x-filament::input.wrapper>
-                                    </label>
-                                </div>
-                            @endif
-                        </div>
-                    @endif
+                                <label x-cloak x-show="column">
+                                    <span class="sr-only">
+                                        {{ __('filament-tables::table.sorting.fields.direction.label') }}
+                                    </span>
+
+                                    <x-filament::input.wrapper>
+                                        <x-filament::input.select
+                                            x-model="direction"
+                                        >
+                                            <option value="asc">
+                                                {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
+                                            </option>
+
+                                            <option value="desc">
+                                                {{ __('filament-tables::table.sorting.fields.direction.options.desc') }}
+                                            </option>
+                                        </x-filament::input.select>
+                                    </x-filament::input.wrapper>
+                                </label>
+                            </div>
+                        @endif
+                    </div>
                 @endif
 
                 @if ($content)
