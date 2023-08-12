@@ -7,7 +7,7 @@ export default function statsOverviewStatChart({
 }) {
     return {
         dataChecksum,
-        
+
         init: function () {
             Alpine.effect(() => {
                 Alpine.store('theme')
@@ -64,7 +64,7 @@ export default function statsOverviewStatChart({
                 },
                 options: {
                     animation: {
-                        duration: 0,    
+                        duration: 0,
                     },
                     elements: {
                         point: {
