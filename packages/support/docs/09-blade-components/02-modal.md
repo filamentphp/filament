@@ -115,6 +115,18 @@ You can add a footer to a modal by using the `footer` slot:
 </x-filament::modal>
 ```
 
+Alternatively, you can add actions into the footer by using the `footerActions` slot:
+
+```blade
+<x-filament::modal>
+    {{-- Modal content --}}
+    
+    <x-slot name="footerActions">
+        {{-- Modal footer actions --}}
+    </x-slot>
+</x-filament::modal>
+```
+
 ## Changing the modal's alignment
 
 By default, modal content will be aligned to the start, or centered if the modal is `xs` or `sm` in [width](#changing-the-modal-width). If you wish to change the alignment of content in a modal, you can use the `alignment` attribute and pass it `start` or `center`:
