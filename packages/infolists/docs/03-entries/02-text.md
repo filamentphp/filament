@@ -282,7 +282,7 @@ TextEntry::make('title')
     ->weight(FontWeight::Bold)
 ```
 
-<AutoScreenshot name="infolists/entries/text/bolt" alt="Text entry in a bold font" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/bold" alt="Text entry in a bold font" version="3.x" />
 
 ## Customizing the font family
 
