@@ -75,14 +75,14 @@ TextInput::make('password')
     ->autocomplete('new-password')
 ```
 
-As a shortcut for `autocomplete="off"`, you may `disableAutocomplete()`:
+As a shortcut for `autocomplete="off"`, you may use `autocomplete(false)`:
 
 ```php
 use Filament\Forms\Components\TextInput;
 
 TextInput::make('password')
     ->password()
-    ->disableAutocomplete()
+    ->autocomplete(false)
 ```
 
 For more complex autocomplete options, text inputs also support [datalists](#autocompleting-text-with-a-datalist).
