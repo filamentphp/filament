@@ -288,4 +288,9 @@ class Stat extends Component implements Htmlable
     {
         return view('filament-widgets::stats-overview-widget.stat', $this->data());
     }
+
+    public function generateDataChecksum(): string
+    {
+        return md5(json_encode($this->getChart()) . now());
+    }
 }
