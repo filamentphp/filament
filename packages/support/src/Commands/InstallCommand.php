@@ -2,6 +2,7 @@
 
 namespace Filament\Support\Commands;
 
+use Filament\PanelProvider;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
@@ -61,8 +62,8 @@ class InstallCommand extends Command
             return true;
         }
 
-        if (! class_exists('Filament\PanelProvider')) {
-            $this->components->error('Error installing panels. Did you require "filament/filament"?');
+        if (! class_exists(PanelProvider::class)) {
+            $this->components->error('Please require [filament/filament] before attempting to install the Panel Builder.');
 
             return false;
         }
