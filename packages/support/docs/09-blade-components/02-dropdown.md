@@ -115,6 +115,18 @@ You can [change the color](badge#changing-the-color-of-the-badge) of the badge u
 </x-filament::dropdown.list.item>
 ```
 
+## Setting the dropdown item alignment
+
+By default, dropdown item will be aligned to the start. If you wish to change the alignment pass it `end` or `center`:
+
+You can also change the icon's position to be last by passing `end`, this will also change the position of the badge to be at the start.
+
+```blade
+<x-filament::dropdown.list.item alignment="end" icon="heroicon-m-pencil" iconPosition="end">
+    Edit
+</x-filament::dropdown>
+```
+
 ## Setting the placement of a dropdown
 
 The dropdown may be positioned relative to the trigger button by using the `placement` attribute:

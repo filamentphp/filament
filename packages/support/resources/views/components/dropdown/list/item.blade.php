@@ -1,14 +1,18 @@
 @php
+    use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\IconPosition;
     use Filament\Support\Enums\IconSize;
 @endphp
 
 @props([
+    'alignment' => null,
     'badge' => null,
     'badgeColor' => null,
     'color' => 'gray',
     'disabled' => false,
     'icon' => null,
     'iconAlias' => null,
+    'iconPosition' => IconPosition::Before,
     'iconSize' => IconSize::Medium,
     'image' => null,
     'keyBindings' => null,
@@ -47,10 +51,17 @@
     $imageClasses = 'fi-dropdown-list-item-image h-5 w-5 rounded-full bg-cover bg-center';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-dropdown-list-item-label flex-1 truncate text-start',
+        'fi-dropdown-list-item-label flex-1 truncate',
+        match ($alignment) {
+            Alignment::Center, 'center' => 'text-center',
+            Alignment::End, 'end' => 'text-end',
+            Alignment::Left, 'left' => 'text-start',
+            Alignment::Right, 'right' => 'text-end',
+            default => 'text-start',
+        },
         match ($color) {
             'gray' => 'text-gray-700 dark:text-gray-200',
-            default => 'text-custom-600 dark:text-custom-400 ',
+            default => 'text-custom-600 dark:text-custom-400',
         },
     ]);
 
@@ -81,7 +92,7 @@
                 ->style([$buttonStyles])
         }}
     >
-        @if ($icon)
+        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
@@ -89,6 +100,12 @@
                 :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
                 :class="$iconClasses"
             />
+        @endif
+
+        @if (filled($badge) && in_array($iconPosition, [IconPosition::After, 'after']))
+            <x-filament::badge :color="$badgeColor" size="sm">
+                {{ $badge }}
+            </x-filament::badge>
         @endif
 
         @if ($image)
@@ -110,10 +127,18 @@
             {{ $slot }}
         </span>
 
-        @if (filled($badge))
+        @if (filled($badge) && in_array($iconPosition, [IconPosition::Before, 'before']))
             <x-filament::badge :color="$badgeColor" size="sm">
                 {{ $badge }}
             </x-filament::badge>
+        @endif
+
+        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+            <x-filament::icon
+                :alias="$iconAlias"
+                :icon="$icon"
+                :class="$iconClasses"
+            />
         @endif
     </button>
 @elseif ($tag === 'a')
@@ -128,12 +153,18 @@
                 ->style([$buttonStyles])
         }}
     >
-        @if ($icon)
+        @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
             <x-filament::icon
                 :alias="$iconAlias"
                 :icon="$icon"
                 :class="$iconClasses"
             />
+        @endif
+
+        @if (filled($badge) && in_array($iconPosition, [IconPosition::After, 'after']))
+            <x-filament::badge :color="$badgeColor" size="sm">
+                {{ $badge }}
+            </x-filament::badge>
         @endif
 
         @if ($image)
@@ -147,10 +178,18 @@
             {{ $slot }}
         </span>
 
-        @if (filled($badge))
+        @if (filled($badge) && in_array($iconPosition, [IconPosition::Before, 'before']))
             <x-filament::badge :color="$badgeColor" size="sm">
                 {{ $badge }}
             </x-filament::badge>
+        @endif
+
+        @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+            <x-filament::icon
+                :alias="$iconAlias"
+                :icon="$icon"
+                :class="$iconClasses"
+            />
         @endif
     </a>
 @elseif ($tag === 'form')
@@ -172,7 +211,7 @@
                     ->style([$buttonStyles])
             }}
         >
-            @if ($icon)
+            @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
                 <x-filament::icon
                     :alias="$iconAlias"
                     :icon="$icon"
@@ -180,14 +219,28 @@
                 />
             @endif
 
+            @if (filled($badge) && in_array($iconPosition, [IconPosition::After, 'after']))
+                <x-filament::badge :color="$badgeColor" size="sm">
+                    {{ $badge }}
+                </x-filament::badge>
+            @endif
+
             <span class="{{ $labelClasses }}">
                 {{ $slot }}
             </span>
 
-            @if (filled($badge))
+            @if (filled($badge) && in_array($iconPosition, [IconPosition::Before, 'before']))
                 <x-filament::badge :color="$badgeColor" size="sm">
                     {{ $badge }}
                 </x-filament::badge>
+            @endif
+
+            @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
+                <x-filament::icon
+                    :alias="$iconAlias"
+                    :icon="$icon"
+                    :class="$iconClasses"
+                />
             @endif
         </button>
     </form>
