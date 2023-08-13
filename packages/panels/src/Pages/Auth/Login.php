@@ -99,7 +99,7 @@ class Login extends SimplePage
             ->required()
             ->autocomplete()
             ->autofocus()
-            ->extraInputAttributes(['tabindex' => '1']);
+            ->extraInputAttributes(['tabindex' => 1]);
     }
 
     protected function getPasswordFormComponent(): Component
@@ -110,7 +110,7 @@ class Login extends SimplePage
             ->password()
             ->autocomplete('current-password')
             ->required()
-            ->extraInputAttributes(['tabindex' => '2']);;
+            ->extraInputAttributes(['tabindex' => 2]);;
     }
 
     protected function getRememberFormComponent(): Component
