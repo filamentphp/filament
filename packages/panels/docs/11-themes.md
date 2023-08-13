@@ -105,7 +105,7 @@ $panel->font(
 
 ## Creating a custom theme
 
-Filament allows you to change the CSS used to render the UI, by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
+Filament allows you to change the CSS used to render the UI by compiling a custom stylesheet to replace the default one. This custom stylesheet is called a "theme".
 
 Themes use [Tailwind CSS](https://tailwindcss.com), the Tailwind Forms plugin, the Tailwind Typography plugin, and [Autoprefixer](https://github.com/postcss/autoprefixer).
 
@@ -121,7 +121,15 @@ If you have multiple panels, you can specify the panel you want to create a them
 php artisan make:filament-theme admin
 ```
 
-The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also give you instructions on how to compile the theme and register it in Filament. **Please follow the instructions in the command to complete the setup process.**
+The command will create a CSS file and Tailwind Configuration file in the `/resources/css/filament` directory. You can then customize the theme by editing these files. It will also give you instructions on how to compile the theme and register it in Filament. **Please follow the instructions in the command to complete the setup process:**
+
+```
+⇂ First, add a new item to the `input` array of `vite.config.js`: `resources/css/filament/admin/theme.css`  
+⇂ Next, register the theme in the admin panel provider using `->viteTheme('resources/css/filament/admin/theme.css')`  
+⇂ Finally, run `npm run build` to compile the theme
+```
+
+Please reference the command to see the exact file names that you need to register, they may not be `admim/theme.css`.
 
 ## Non-sticky topbar
 

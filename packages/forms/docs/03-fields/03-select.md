@@ -162,7 +162,7 @@ Select::make('technologies')
 
 ### Searching relationship options across multiple columns
 
-By default, if the select is also searchable, Filament will return search results for the relationship based on title column of the relationship. If you'd like to search across multiple columns, you can pass an array of columns to the `searchable()` method:
+By default, if the select is also searchable, Filament will return search results for the relationship based on the title column of the relationship. If you'd like to search across multiple columns, you can pass an array of columns to the `searchable()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -404,7 +404,7 @@ Select::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
+If you want to retrieve the options that have not been disabled, e.g., for validation purposes, you can do so using `getEnabledOptions()`:
 
 ```php
 use Filament\Forms\Components\Select;

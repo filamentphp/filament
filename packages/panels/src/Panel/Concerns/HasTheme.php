@@ -12,11 +12,19 @@ trait HasTheme
     protected string | Htmlable | Theme | null $theme = null;
 
     /**
+     * @var string | array<string>
+     */
+    protected string | array | null $viteTheme = null;
+
+    protected ?string $viteThemeBuildDirectory = null;
+
+    /**
      * @param  string | array<string>  $theme
      */
     public function viteTheme(string | array $theme, ?string $buildDirectory = null): static
     {
-        $this->theme(app(Vite::class)($theme, $buildDirectory));
+        $this->viteTheme = $theme;
+        $this->viteThemeBuildDirectory = $buildDirectory;
 
         return $this;
     }
@@ -30,6 +38,10 @@ trait HasTheme
 
     public function getTheme(): Theme
     {
+        if (filled($this->viteTheme)) {
+            $this->theme = app(Vite::class)($this->viteTheme, $this->viteThemeBuildDirectory);
+        }
+
         if (blank($this->theme)) {
             return $this->getDefaultTheme();
         }

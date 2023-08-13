@@ -52,7 +52,7 @@ If you'd like to save time, Filament can automatically generate the [form](#reso
 php artisan make:filament-resource Customer --generate
 ```
 
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the schema for your resource if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
 
 ### Handling soft deletes
 
@@ -390,3 +390,4 @@ public static function getPages(): array
 }
 ```
 
+Deleting a page will not delete any actions that link to that page. Any actions will open a modal instead of sending the user to the non-existant page. For instance, the `CreateAction` on the List page, the `EditAction` on the table or View page, or the `ViewAction` on the table or Edit page. If you want to remove those buttons, you must delete the actions as well.

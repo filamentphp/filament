@@ -346,7 +346,7 @@ FileUpload::make('image')
 
 ### File size validation
 
-You may also restrict the size of uploaded files, in kilobytes:
+You may also restrict the size of uploaded files in kilobytes:
 
 ```php
 use Filament\Forms\Components\FileUpload;

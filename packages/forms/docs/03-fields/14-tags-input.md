@@ -63,7 +63,7 @@ TagsInput::make('tags')
 
 ## Defining split keys
 
-Split keys allow you to map specific buttons on your user's keyboard to create a new tag. By default, when the user presses "Enter" a new tag is created in the input. You may also define other keys to create new tags, such as "Tab" or " ". To do this, pass an array of keys to the `splitKeys()` method:
+Split keys allow you to map specific buttons on your user's keyboard to create a new tag. By default, when the user presses "Enter", a new tag is created in the input. You may also define other keys to create new tags, such as "Tab" or " ". To do this, pass an array of keys to the `splitKeys()` method:
 
 ```php
 use Filament\Forms\Components\TagsInput;
@@ -76,7 +76,7 @@ You can [read more about possible options for keys](https://developer.mozilla.or
 
 ## Adding a prefix and suffix to individual tags
 
-You can add prefix and suffix to tags without modifying the real state of the field. This can be useful if you need to show presentational formatting to users, without saving it. This is done with the `tagPrefix()` or `tagSuffix()` method:
+You can add prefix and suffix to tags without modifying the real state of the field. This can be useful if you need to show presentational formatting to users without saving it. This is done with the `tagPrefix()` or `tagSuffix()` method:
 
 ```php
 use Filament\Forms\Components\TagsInput;

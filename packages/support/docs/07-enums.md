@@ -42,7 +42,7 @@ enum Status: string implements HasLabel
 
 ### Using the enum label with form field options
 
-The `HasLabel` interface can be used to generate an array of options from an enum, where the enum's value is the key and the enum's label is the value. This applies to form builder fields like [`Select`](../forms/fields/select) and [`CheckboxList`](../forms/fields/checkbox-list), as well as the table builder's [`SelectColumn`](../tables/columns/select) and [`SelectFilter`](../tables/filters#select-filters):
+The `HasLabel` interface can be used to generate an array of options from an enum, where the enum's value is the key and the enum's label is the value. This applies to Form Builder fields like [`Select`](../forms/fields/select) and [`CheckboxList`](../forms/fields/checkbox-list), as well as the Table Builder's [`SelectColumn`](../tables/columns/select) and [`SelectFilter`](../tables/filters#select-filters):
 
 ```php
 use Filament\Forms\Components\CheckboxList;
@@ -76,15 +76,15 @@ In these examples, `Status::class` is the enum class which implements `HasLabel`
 
 ### Using the enum label with a text column in your table
 
-If you use a [`TextColumn`](../tables/columns/text) with the table builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasLabel` interface to display the enum's label instead of its raw value.
+If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasLabel` interface to display the enum's label instead of its raw value.
 
 ### Using the enum label as a group title in your table
 
-If you use a [grouping](../tables/grouping) with the table builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasLabel` interface to display the enum's label instead of its raw value. The label will be displayed as the [title of each group](../tables/grouping#setting-a-group-title).
+If you use a [grouping](../tables/grouping) with the Table Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasLabel` interface to display the enum's label instead of its raw value. The label will be displayed as the [title of each group](../tables/grouping#setting-a-group-title).
 
 ### Using the enum label with a text entry in your infolist
 
-If you use a [`TextColumn`](../infolists/entries/text) with the infolist builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasLabel` interface to display the enum's label instead of its raw value.
+If you use a [`TextColumn`](../infolists/entries/text) with the Infolist Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasLabel` interface to display the enum's label instead of its raw value.
 
 ## Enum colors
 
@@ -114,11 +114,11 @@ enum Status: string implements HasColor
 
 ### Using the enum color with a text column in your table
 
-If you use a [`TextColumn`](../tables/columns/text) with the table builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../tables/columns/text#displaying-as-a-badge) method on the column.
+If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../tables/columns/text#displaying-as-a-badge) method on the column.
 
 ### Using the enum color with a text column in your infolist
 
-If you use a [`TextEntry`](../infolists/entries/text) with the infolist builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/entries/text#displaying-as-a-badge) method on the entry.
+If you use a [`TextEntry`](../infolists/entries/text) with the Infolist Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasColor` interface to display the enum label in its color. This works best if you use the [`badge()`](../infolists/entries/text#displaying-as-a-badge) method on the entry.
 
 ## Enum icons
 
@@ -148,8 +148,8 @@ enum Status: string implements HasIcon
 
 ### Using the enum icon with a text column in your table
 
-If you use a [`TextColumn`](../tables/columns/text) with the table builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../tables/columns/text#displaying-as-a-badge) method on the column.
+If you use a [`TextColumn`](../tables/columns/text) with the Table Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../tables/columns/text#displaying-as-a-badge) method on the column.
 
 ### Using the enum icon with a text entry in your infolist
 
-If you use a [`TextEntry`](../infolists/entries/text) with the infolist builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/entries/text#displaying-as-a-badge) method on the entry.
+If you use a [`TextEntry`](../infolists/entries/text) with the Infolist Builder, and it is cast to an enum in your Eloquent model, Filament will automatically use the `HasIcon` interface to display the enum's icon aside its label. This works best if you use the [`badge()`](../infolists/entries/text#displaying-as-a-badge) method on the entry.

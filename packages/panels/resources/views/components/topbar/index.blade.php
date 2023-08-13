@@ -57,6 +57,10 @@
                 @endif
             </div>
 
+            @if (filament()->hasTenancy())
+                <x-filament-panels::tenant-menu class="hidden lg:block" />
+            @endif
+
             @if (filament()->hasNavigation())
                 <ul class="me-4 hidden items-center gap-x-4 lg:flex">
                     @foreach ($navigation as $group)

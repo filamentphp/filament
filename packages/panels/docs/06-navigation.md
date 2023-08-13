@@ -99,7 +99,7 @@ public function panel(Panel $panel): Panel
                 ->label('Blog')
                 ->icon('heroicon-o-pencil'),
             NavigationGroup::make()
-                ->label('Settings')
+                ->label(fn (): string => __('navigation.settings'))
                 ->icon('heroicon-o-cog-6-tooth')
                 ->collapsed(),
         ]);
@@ -193,6 +193,10 @@ public function panel(Panel $panel): Panel
                 ->icon('heroicon-o-presentation-chart-line')
                 ->group('Reports')
                 ->sort(3),
+            NavigationItem::make('dashboard')
+                ->label(fn (): string => __('filament-panels::pages/dashboard.title'))
+                ->url(fn () => route('filament.admin.pages.dashboard'))
+                ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.dashboard')),
             // ...
         ]);
 }
