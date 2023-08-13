@@ -74,7 +74,7 @@ class RelationshipJoiner
                 );
 
                 if (filled($relationshipQueryWheres)) {
-                    $firstRelationshipJoinClause->wheres   = array_merge($firstRelationshipJoinClause->wheres, $relationshipQueryWheres);
+                    $firstRelationshipJoinClause->wheres = array_merge($firstRelationshipJoinClause->wheres, $relationshipQueryWheres);
                     $relationshipQuery->getQuery()->wheres = Arr::except($relationshipQuery->getQuery()->wheres, array_keys($relationshipQueryWheres));
                 }
             }
