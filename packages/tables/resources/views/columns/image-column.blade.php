@@ -4,6 +4,7 @@
     $limitedState = array_slice($state, 0, $limit);
     $isCircular = $isCircular();
     $isSquare = $isSquare();
+    $isSquareRounded = $isSquareRounded();
     $isStacked = $isStacked();
     $overlap = $isStacked ? ($getOverlap() ?? 2) : null;
     $ring = $isStacked ? ($getRing() ?? 2) : null;
@@ -77,6 +78,7 @@
                                 ->class([
                                     'max-w-none object-cover object-center',
                                     'rounded-full' => $isCircular,
+                                    'rounded-xl' => $isSquareRounded,
                                     $ringClasses,
                                 ])
                                 ->style([
@@ -96,6 +98,7 @@
                         @class([
                             'flex items-center justify-center bg-gray-100 font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400',
                             'rounded-full' => $isCircular,
+                            'rounded-xl' => $isSquareRounded,
                             $limitedRemainingTextSizeClasses,
                             $ringClasses,
                         ])

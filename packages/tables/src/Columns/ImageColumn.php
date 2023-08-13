@@ -50,6 +50,8 @@ class ImageColumn extends Column
 
     protected string | Closure | null $limitedRemainingTextSize = null;
 
+    protected bool $isSquareRounded = false;
+
     public function disk(string | Closure | null $disk): static
     {
         $this->disk = $disk;
@@ -79,9 +81,10 @@ class ImageColumn extends Column
         return $this->circular($condition);
     }
 
-    public function square(bool | Closure $condition = true): static
+    public function square(bool | Closure $condition = true, bool $rounded = false): static
     {
         $this->isSquare = $condition;
+        $this->isSquareRounded = $rounded;
 
         return $this;
     }
@@ -331,5 +334,10 @@ class ImageColumn extends Column
     public function getLimitedRemainingTextSize(): ?string
     {
         return $this->evaluate($this->limitedRemainingTextSize);
+    }
+
+    public function isSquareRounded(): bool
+    {
+        return $this->isSquareRounded;
     }
 }
