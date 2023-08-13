@@ -145,7 +145,7 @@
             wire:target="{{ $loadingIndicatorTarget }}"
         @endif
         @class([
-            'min-w-0 flex-1 relative',
+            'min-w-0 flex-1',
             'ps-3' => $hasLoadingIndicator && (! $hasPrefix) && $inlinePrefix,
         ])
     >
