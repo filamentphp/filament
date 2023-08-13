@@ -66,7 +66,7 @@ class AttachAction extends Action
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             $record = $relationshipQuery
                 ->{is_array($data['recordId']) ? 'whereIn' : 'where'}($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
@@ -174,7 +174,7 @@ class AttachAction extends Action
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             $titleAttribute = $relationshipQuery->qualifyColumn($this->getRecordTitleAttribute());
 
@@ -242,7 +242,7 @@ class AttachAction extends Action
             ->getOptionLabelUsing(function ($value) use ($table): string {
                 $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 
-                $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+                $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
                 return $this->getRecordTitle($relationshipQuery->find($value));
             })

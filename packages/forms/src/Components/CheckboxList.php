@@ -123,7 +123,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         $this->options(static function (CheckboxList $component) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [

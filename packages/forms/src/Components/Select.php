@@ -633,7 +633,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -695,7 +695,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -793,7 +793,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             $relationshipQuery->where(
                 $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName(),
@@ -812,7 +812,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
 

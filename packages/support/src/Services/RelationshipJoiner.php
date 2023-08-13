@@ -43,7 +43,7 @@ class RelationshipJoiner
         return $query->toBase()->joins;
     }
 
-    public function getConvertedQuery(Relation $relationship): Builder
+    public function prepareQueryForNoConstraints(Relation $relationship): Builder
     {
         ray($relationship);
 

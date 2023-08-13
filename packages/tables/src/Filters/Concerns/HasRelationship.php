@@ -78,7 +78,7 @@ trait HasRelationship
     {
         $relationship = Relation::noConstraints(fn () => $this->getRelationship());
 
-        $relationshipQuery = (new RelationshipJoiner())->getConvertedQuery($relationship);
+        $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
         if ($this->getModifyRelationshipQueryUsing()) {
             $relationshipQuery = $this->evaluate($this->modifyRelationshipQueryUsing, [
