@@ -68,6 +68,16 @@ ImageEntry::make('author.avatar')
     ->square()
 ```
 
+For rounded corners set parameter `rounded` to `true`:
+
+```php
+use Filament\Infolists\Components\ImageEntry;
+
+ImageEntry::make('author.avatar')
+    ->height(40)
+    ->square(rounded: true)
+```
+
 <AutoScreenshot name="infolists/entries/image/square" alt="Square image entry" version="3.x" />
 
 ## Circular image

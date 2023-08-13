@@ -67,6 +67,15 @@ ImageColumn::make('avatar')
     ->square()
 ```
 
+For rounded corners use the `rounded` parameter:
+
+```php
+use Filament\Tables\Columns\ImageColumn;
+
+ImageColumn::make('avatar')
+    ->square(rounded: true)
+```
+
 <AutoScreenshot name="tables/columns/image/square" alt="Square image column" version="3.x" />
 
 ## Circular image

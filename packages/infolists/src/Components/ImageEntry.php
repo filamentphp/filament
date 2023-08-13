@@ -50,6 +50,8 @@ class ImageEntry extends Entry
 
     protected string | Closure | null $limitedRemainingTextSize = null;
 
+    protected bool $isSquareRounded = false;
+
     public function disk(string | Closure | null $disk): static
     {
         $this->disk = $disk;
@@ -71,9 +73,10 @@ class ImageEntry extends Entry
         return $this;
     }
 
-    public function square(bool | Closure $condition = true): static
+    public function square(bool | Closure $condition = true, bool $rounded = false): static
     {
         $this->isSquare = $condition;
+        $this->isSquareRounded = $rounded;
 
         return $this;
     }
@@ -305,5 +308,10 @@ class ImageEntry extends Entry
     public function getLimitedRemainingTextSize(): ?string
     {
         return $this->evaluate($this->limitedRemainingTextSize);
+    }
+
+    public function isSquareRounded(): bool
+    {
+        return $this->isSquareRounded;
     }
 }

@@ -68,6 +68,7 @@
                                 ->class([
                                     'max-w-none object-cover object-center',
                                     'rounded-full' => $isCircular,
+                                    'rouneded-xl' => $isSquareRounded,
                                     $ringClasses,
                                 ])
                                 ->style([
@@ -87,6 +88,7 @@
                         @class([
                             'flex items-center justify-center bg-gray-100 font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400',
                             'rounded-full' => $isCircular,
+                            'rouneded-xl' => $isSquareRounded,
                             $limitedRemainingTextSizeClasses,
                             $ringClasses,
                         ])
