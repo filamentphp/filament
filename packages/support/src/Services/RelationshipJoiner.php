@@ -68,7 +68,7 @@ class RelationshipJoiner
                 $relationshipQueryWheres = $relationshipQuery->getQuery()->wheres;
 
                 if (filled($relationshipQueryWheres)) {
-                    $firstRelationshipJoinClause->wheres   = array_merge($firstRelationshipJoinClause->wheres, $relationshipQueryWheres);
+                    $firstRelationshipJoinClause->wheres = array_merge($firstRelationshipJoinClause->wheres, $relationshipQueryWheres);
                     $relationshipQuery->getQuery()->wheres = [];
                 }
             }
