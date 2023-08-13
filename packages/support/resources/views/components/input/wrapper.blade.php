@@ -162,11 +162,13 @@
             <x-filament::icon-button
                 icon-alias="forms::components.text-input.show-password"
                 icon="heroicon-o-eye"
+                color="gray"
                 x-on:click="inputType = 'text'"
                 x-show="inputType === 'password'"/>
             <x-filament::icon-button
                 icon-alias="forms::components.text-input.hide-password"
                 icon="heroicon-o-eye-slash"
+                color="gray"
                 x-on:click="inputType = 'password'"
                 x-show="inputType !== 'password'" x-cloak/>
         </div>
