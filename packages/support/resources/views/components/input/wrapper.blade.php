@@ -4,6 +4,7 @@
     'disabled' => false,
     'inlinePrefix' => false,
     'inlineSuffix' => false,
+    'isRevealable' => false,
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
@@ -150,6 +151,26 @@
     >
         {{ $slot }}
     </div>
+
+    @if ($isRevealable)
+        <div @class([
+            $actionsClasses,
+            'px-2' => $hasSuffix,
+            'ps-2 pe-3' => !$hasSuffix,
+            'select-none'
+        ]) >
+            <x-filament::icon-button
+                icon-alias="forms::components.text-input.show-password"
+                icon="heroicon-o-eye"
+                x-on:click="inputType = 'text'"
+                x-show="inputType === 'password'"/>
+            <x-filament::icon-button
+                icon-alias="forms::components.text-input.hide-password"
+                icon="heroicon-o-eye-slash"
+                x-on:click="inputType = 'password'"
+                x-show="inputType !== 'password'" x-cloak/>
+        </div>
+    @endif
 
     @if ($hasSuffix)
         <div

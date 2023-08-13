@@ -10,7 +10,7 @@
     $prefixActions = $getPrefixActions();
     $prefixIcon = $getPrefixIcon();
     $prefixLabel = $getPrefixLabel();
-    $shouldShowReveal = $isPassword() && $isRevealable();
+    $isRevealable = $isPassword() && $isRevealable();
     $suffixActions = $getSuffixActions();
     $suffixIcon = $getSuffixIcon();
     $suffixLabel = $getSuffixLabel();
@@ -29,6 +29,7 @@
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
         :valid="! $errors->has($statePath)"
+        :is-revealable="$isRevealable"
         class="fi-fo-text-input"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
