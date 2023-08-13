@@ -110,7 +110,7 @@ class Login extends SimplePage
             ->password()
             ->autocomplete('current-password')
             ->required()
-            ->extraInputAttributes(['tabindex' => 2]);;
+            ->extraInputAttributes(['tabindex' => 2]);
     }
 
     protected function getRememberFormComponent(): Component
