@@ -5,6 +5,7 @@
         $limitedState = array_slice($state, 0, $limit);
         $isCircular = $isCircular();
         $isSquare = $isSquare();
+        $isSquareRounded = $isSquareRounded();
         $isStacked = $isStacked();
         $overlap = $isStacked ? ($getOverlap() ?? 2) : null;
         $ring = $isStacked ? ($getRing() ?? 2) : null;
