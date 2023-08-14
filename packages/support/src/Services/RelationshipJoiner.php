@@ -59,24 +59,29 @@ class RelationshipJoiner
             if ($firstRelationshipJoinClause) {
                 $firstRelationshipJoinClause->type = 'left';
 
-                // We need to move any where clauses added by pivotWhere() et al in to the join's where clauses
-                // so they are only filtering the join itself, not the entire result set, and the final query looks like ...
-                //   SELECT table.* FROM table LEFT JOIN pivot_table ON table.id = pivot.parent_id AND [pivot clauses] WHERE [query clauses]
-                // ... instead of ...
-                //   SELECT table.* FROM table LEFT JOIN pivot_table ON table.id = pivot.parent_id WHERE [pivot clauses] AND [query clauses]
-                // As far as I can tell, all clauses added with wherePivot and orWherePivot, and variants thereof, are always
-                // "Basic" with a column.  Anything added to a relationship with where(), rather than wherePivot(), will be a
-                // nested where (so no 'column').  So we don't have to check anything that doesn't have a 'column' attribute.
-                $relationshipQueryWheres = Arr::where(
+                // Any where clauses that are scope the pivot table need to be moved to the join.
+                // It's expected that any scopes that don't apply to the pivot table do not have
+                // a `column` attribute set.
+                $relationshipQueryPivotWheres = Arr::where(
                     $relationshipQuery->getQuery()->wheres,
-                    fn (array $where) => array_key_exists('column', $where)
-                        && Str::startsWith($where['column'], $relationship->getTable() . '.')
+                    function (array $where): bool {
+                        if (array_key_exists('column', $where)) {
+                            return true;
+                        }
+
+                        return Str::startsWith($where['column'], "{$relationship->getTable()}.");
+                    },
                 );
 
-                if (filled($relationshipQueryWheres)) {
-                    $firstRelationshipJoinClause->wheres = array_merge($firstRelationshipJoinClause->wheres, $relationshipQueryWheres);
-                    $relationshipQuery->getQuery()->wheres = Arr::except($relationshipQuery->getQuery()->wheres, array_keys($relationshipQueryWheres));
-                }
+                $firstRelationshipJoinClause->wheres = array_merge(
+                    $firstRelationshipJoinClause->wheres,
+                    $relationshipQueryPivotWheres,
+                );
+                
+                $relationshipQuery->getQuery()->wheres = Arr::except(
+                    $relationshipQuery->getQuery()->wheres,
+                    array_keys($relationshipQueryPivotWheres),
+                );
             }
 
             $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
