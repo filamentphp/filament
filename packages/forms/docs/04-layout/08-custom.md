@@ -63,3 +63,25 @@ Inside your view, you may access the Eloquent record using the `$getRecord()` fu
     {{ $getRecord()->name }}
 </div>
 ```
+
+## Livewire components
+
+You may use the Livewire component directly from the form. Optionally, you can pass an array of parameters.
+You can access the Eloquent record in the Livewire component as the first parameter.
+
+```php
+use Filament\Forms\Components\Livewire;
+
+Forms\Components\Livewire::make('foo', ['bar' => 'qux'])
+```
+
+```php
+// Livewire component
+class Foo extends Component
+{
+    public function mount(Model $record, ?array $data): void
+    {
+        $this->record = $record;
+        $this->data = $data;
+    }
+```
