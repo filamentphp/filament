@@ -13,7 +13,7 @@ trait HasRelationship
 
     protected bool | Closure $isPreloaded = false;
 
-    public function relationship(string $name, string $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string $name, string $titleAttribute = null, Closure $modifyQueryUsing = null): static
     {
         $this->attribute("{$name}.{$titleAttribute}");
 

@@ -138,7 +138,7 @@ class TestsForms
 
     public function assertFormFieldExists(): Closure
     {
-        return function (string $fieldName, string | Closure $formName = 'form', ?Closure $checkFieldUsing = null): static {
+        return function (string $fieldName, string | Closure $formName = 'form', Closure $checkFieldUsing = null): static {
             if ($formName instanceof Closure) {
                 $checkFieldUsing = $formName;
                 $formName = 'form';

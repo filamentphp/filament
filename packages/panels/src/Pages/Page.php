@@ -37,7 +37,7 @@ abstract class Page extends BasePage
     /**
      * @param  array<mixed>  $parameters
      */
-    public static function getUrl(array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    public static function getUrl(array $parameters = [], bool $isAbsolute = true, string $panel = null, Model $tenant = null): string
     {
         $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
 
@@ -70,7 +70,7 @@ abstract class Page extends BasePage
         ];
     }
 
-    public static function getRouteName(?string $panel = null): string
+    public static function getRouteName(string $panel = null): string
     {
         $panel ??= Filament::getCurrentPanel()->getId();
 

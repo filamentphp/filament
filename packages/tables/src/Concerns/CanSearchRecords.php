@@ -38,7 +38,7 @@ trait CanSearchRecords
     /**
      * @param  string | null  $value
      */
-    public function updatedTableColumnSearches($value = null, ?string $key = null): void
+    public function updatedTableColumnSearches($value = null, string $key = null): void
     {
         if (blank($value) && ! str($key)->contains('.')) {
             unset($this->tableColumnSearches[$key]);

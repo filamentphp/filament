@@ -170,7 +170,7 @@ class AttachAction extends Action
     {
         $table = $this->getTable();
 
-        $getOptions = function (?string $search = null, ?array $searchColumns = []) use ($table): array {
+        $getOptions = function (string $search = null, ?array $searchColumns = []) use ($table): array {
             /** @var BelongsToMany $relationship */
             $relationship = Relation::noConstraints(fn () => $table->getRelationship());
 

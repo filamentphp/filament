@@ -155,7 +155,7 @@ trait HasBulkActions
         return $this->checkIfRecordIsSelectableUsing !== null;
     }
 
-    public function recordCheckboxPosition(string | Closure | null $position = null): static
+    public function recordCheckboxPosition(string | Closure $position = null): static
     {
         $this->recordCheckboxPosition = $position;
 

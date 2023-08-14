@@ -124,7 +124,7 @@ trait InteractsWithInfolists
         return $result;
     }
 
-    public function mountInfolistAction(string $name, ?string $component = null, ?string $infolist = null): mixed
+    public function mountInfolistAction(string $name, string $component = null, string $infolist = null): mixed
     {
         $this->mountedInfolistActions[] = $name;
         $this->mountedInfolistActionsData[] = [];

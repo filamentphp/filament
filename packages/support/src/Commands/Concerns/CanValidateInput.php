@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Validator;
 
 trait CanValidateInput
 {
-    protected function askRequired(string $question, string $field, ?string $default = null): string
+    protected function askRequired(string $question, string $field, string $default = null): string
     {
         return $this->validateInput(fn () => $this->ask($question, $default), $field, ['required']);
     }
@@ -15,7 +15,7 @@ trait CanValidateInput
     /**
      * @param  array<array-key>  $rules
      */
-    protected function validateInput(Closure $askUsing, string $field, array $rules, ?Closure $onError = null): string
+    protected function validateInput(Closure $askUsing, string $field, array $rules, Closure $onError = null): string
     {
         $input = $askUsing();
 

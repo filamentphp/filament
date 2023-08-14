@@ -181,7 +181,7 @@ trait HasFormComponentActions
         return (bool) count($this->getMountedFormComponentActionForm()?->getComponents() ?? []);
     }
 
-    public function getMountedFormComponentAction(?int $actionNestingIndex = null): ?Action
+    public function getMountedFormComponentAction(int $actionNestingIndex = null): ?Action
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
         $actionName = $this->mountedFormComponentActions[$actionNestingIndex] ?? null;
@@ -193,7 +193,7 @@ trait HasFormComponentActions
         return $this->getMountedFormComponentActionComponent($actionNestingIndex)?->getAction($actionName);
     }
 
-    protected function getMountedFormComponentActionForm(?int $actionNestingIndex = null): ?Form
+    protected function getMountedFormComponentActionForm(int $actionNestingIndex = null): ?Form
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
 
@@ -215,7 +215,7 @@ trait HasFormComponentActions
         );
     }
 
-    public function getMountedFormComponentActionComponent(?int $actionNestingIndex = null): ?Component
+    public function getMountedFormComponentActionComponent(int $actionNestingIndex = null): ?Component
     {
         $actionNestingIndex ??= array_key_last($this->mountedFormComponentActions);
         $componentKey = $this->mountedFormComponentActionsComponents[$actionNestingIndex] ?? null;

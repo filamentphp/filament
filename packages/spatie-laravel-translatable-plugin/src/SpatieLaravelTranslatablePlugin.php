@@ -49,7 +49,7 @@ class SpatieLaravelTranslatablePlugin implements Plugin
     /**
      * @param  array<string> | null  $defaultLocales
      */
-    public function defaultLocales(?array $defaultLocales = null): static
+    public function defaultLocales(array $defaultLocales = null): static
     {
         $this->defaultLocales = $defaultLocales;
 
@@ -61,7 +61,7 @@ class SpatieLaravelTranslatablePlugin implements Plugin
         $this->getLocaleLabelUsing = $callback;
     }
 
-    public function getLocaleLabel(string $locale, ?string $displayLocale = null): ?string
+    public function getLocaleLabel(string $locale, string $displayLocale = null): ?string
     {
         $displayLocale ??= app()->getLocale();
 

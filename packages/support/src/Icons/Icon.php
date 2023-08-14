@@ -17,12 +17,12 @@ class Icon
      */
     public array $class = [];
 
-    final public function __construct(?string $name = null)
+    final public function __construct(string $name = null)
     {
         $this->name = $name;
     }
 
-    public static function make(?string $name = null): static
+    public static function make(string $name = null): static
     {
         return app(static::class, ['name' => $name]);
     }

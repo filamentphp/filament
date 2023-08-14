@@ -144,7 +144,7 @@ trait InteractsWithTableQuery
     /**
      * @param  array<string> | null  $relationships
      */
-    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, ?array $relationships = null): string | Builder
+    protected function getSortColumnForQuery(EloquentBuilder $query, string $sortColumn, array $relationships = null): string | Builder
     {
         $relationships ??= ($relationshipName = $this->getRelationshipName()) ?
             explode('.', $relationshipName) :
@@ -179,7 +179,7 @@ trait InteractsWithTableQuery
         return $this->getRelationship($record) !== null;
     }
 
-    public function getRelationship(Model $record, ?string $name = null): ?Relation
+    public function getRelationship(Model $record, string $name = null): ?Relation
     {
         if (blank($name) && (! str($this->getName())->contains('.'))) {
             return null;
@@ -205,7 +205,7 @@ trait InteractsWithTableQuery
      * @param  array<string> | null  $relationships
      * @return array<Model>
      */
-    public function getRelationshipResults(Model $record, ?array $relationships = null): array
+    public function getRelationshipResults(Model $record, array $relationships = null): array
     {
         $results = [];
 
@@ -255,7 +255,7 @@ trait InteractsWithTableQuery
         return $results;
     }
 
-    public function getRelationshipAttribute(?string $name = null): string
+    public function getRelationshipAttribute(string $name = null): string
     {
         $name ??= $this->getName();
 
@@ -306,7 +306,7 @@ trait InteractsWithTableQuery
         return implode('.', $inverseRelationships);
     }
 
-    public function getRelationshipName(?string $name = null): ?string
+    public function getRelationshipName(string $name = null): ?string
     {
         $name ??= $this->getName();
 

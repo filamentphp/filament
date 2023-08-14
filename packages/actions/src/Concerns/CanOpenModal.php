@@ -99,7 +99,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalAlignment(string | Closure | null $alignment = null): static
+    public function modalAlignment(string | Closure $alignment = null): static
     {
         $this->modalAlignment = $alignment;
 
@@ -113,7 +113,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalIcon(string | Closure | null $icon = null): static
+    public function modalIcon(string | Closure $icon = null): static
     {
         $this->modalIcon = $icon;
 
@@ -123,7 +123,7 @@ trait CanOpenModal
     /**
      * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
      */
-    public function modalIconColor(string | array | Closure | null $color = null): static
+    public function modalIconColor(string | array | Closure $color = null): static
     {
         $this->modalIconColor = $color;
 
@@ -142,7 +142,7 @@ trait CanOpenModal
      *
      * @param  array<StaticAction> | Closure | null  $actions
      */
-    public function modalActions(array | Closure | null $actions = null): static
+    public function modalActions(array | Closure $actions = null): static
     {
         $this->modalFooterActions($actions);
 
@@ -152,14 +152,14 @@ trait CanOpenModal
     /**
      * @param  array<StaticAction> | Closure | null  $actions
      */
-    public function modalFooterActions(array | Closure | null $actions = null): static
+    public function modalFooterActions(array | Closure $actions = null): static
     {
         $this->modalFooterActions = $actions;
 
         return $this;
     }
 
-    public function modalFooterActionsAlignment(string | Closure | null $alignment = null): static
+    public function modalFooterActionsAlignment(string | Closure $alignment = null): static
     {
         $this->modalFooterActionsAlignment = $alignment;
 
@@ -201,28 +201,28 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalSubmitAction(StaticAction | bool | Closure | null $action = null): static
+    public function modalSubmitAction(StaticAction | bool | Closure $action = null): static
     {
         $this->modalSubmitAction = $action;
 
         return $this;
     }
 
-    public function modalCancelAction(StaticAction | bool | Closure | null $action = null): static
+    public function modalCancelAction(StaticAction | bool | Closure $action = null): static
     {
         $this->modalCancelAction = $action;
 
         return $this;
     }
 
-    public function modalSubmitActionLabel(string | Closure | null $label = null): static
+    public function modalSubmitActionLabel(string | Closure $label = null): static
     {
         $this->modalSubmitActionLabel = $label;
 
         return $this;
     }
 
-    public function modalCancelActionLabel(string | Closure | null $label = null): static
+    public function modalCancelActionLabel(string | Closure $label = null): static
     {
         $this->modalCancelActionLabel = $label;
 
@@ -232,14 +232,14 @@ trait CanOpenModal
     /**
      * @deprecated Use `modalSubmitActionLabel()` instead.
      */
-    public function modalButton(string | Closure | null $label = null): static
+    public function modalButton(string | Closure $label = null): static
     {
         $this->modalSubmitActionLabel($label);
 
         return $this;
     }
 
-    public function modalContent(View | Htmlable | Closure | null $content = null): static
+    public function modalContent(View | Htmlable | Closure $content = null): static
     {
         $this->modalContent = $content;
 
@@ -249,26 +249,26 @@ trait CanOpenModal
     /**
      * @deprecated Use `modalContentFooter()` instead.
      */
-    public function modalFooter(View | Htmlable | Closure | null $footer = null): static
+    public function modalFooter(View | Htmlable | Closure $footer = null): static
     {
         return $this->modalContentFooter($footer);
     }
 
-    public function modalContentFooter(View | Htmlable | Closure | null $footer = null): static
+    public function modalContentFooter(View | Htmlable | Closure $footer = null): static
     {
         $this->modalContentFooter = $footer;
 
         return $this;
     }
 
-    public function modalHeading(string | Htmlable | Closure | null $heading = null): static
+    public function modalHeading(string | Htmlable | Closure $heading = null): static
     {
         $this->modalHeading = $heading;
 
         return $this;
     }
 
-    public function modalDescription(string | Htmlable | Closure | null $description = null): static
+    public function modalDescription(string | Htmlable | Closure $description = null): static
     {
         $this->modalDescription = $description;
 
@@ -278,14 +278,14 @@ trait CanOpenModal
     /**
      * @deprecated Use `modalDescription()` instead.
      */
-    public function modalSubheading(string | Htmlable | Closure | null $subheading = null): static
+    public function modalSubheading(string | Htmlable | Closure $subheading = null): static
     {
         $this->modalDescription($subheading);
 
         return $this;
     }
 
-    public function modalWidth(string | Closure | null $width = null): static
+    public function modalWidth(string | Closure $width = null): static
     {
         $this->modalWidth = $width;
 
@@ -540,7 +540,7 @@ trait CanOpenModal
      *
      * @param  array<string, mixed> | null  $arguments
      */
-    public function makeExtraModalAction(string $name, ?array $arguments = null): StaticAction
+    public function makeExtraModalAction(string $name, array $arguments = null): StaticAction
     {
         return $this->makeModalSubmitAction($name, $arguments);
     }
@@ -548,7 +548,7 @@ trait CanOpenModal
     /**
      * @param  array<string, mixed> | null  $arguments
      */
-    public function makeModalSubmitAction(string $name, ?array $arguments = null): StaticAction
+    public function makeModalSubmitAction(string $name, array $arguments = null): StaticAction
     {
         return static::makeModalAction($name)
             ->callParent($this->getLivewireCallMountedActionName())

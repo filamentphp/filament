@@ -16,7 +16,7 @@ trait Configurable
      */
     protected static array $importantConfigurations = [];
 
-    public static function configureUsing(Closure $modifyUsing, ?Closure $during = null, bool $isImportant = false): mixed
+    public static function configureUsing(Closure $modifyUsing, Closure $during = null, bool $isImportant = false): mixed
     {
         if ($isImportant) {
             static::$importantConfigurations[static::class] ??= [];

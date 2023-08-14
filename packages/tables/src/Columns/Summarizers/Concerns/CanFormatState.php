@@ -46,7 +46,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
+    public function money(string | Closure $currency = null, int $divideBy = 0): static
     {
         $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($currency, $divideBy) {
             $isArrayState = is_array($state);
@@ -71,7 +71,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    public function numeric(int | Closure $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
         $this->formatStateUsing(static function ($state, Summarizer $summarizer) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator) {
             $isArrayState = is_array($state);

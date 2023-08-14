@@ -31,7 +31,7 @@ trait HasContainerGridLayout
     /**
      * @return array<string, int | string | null> | int | string | null
      */
-    public function getGridColumns(?string $breakpoint = null): array | int | string | null
+    public function getGridColumns(string $breakpoint = null): array | int | string | null
     {
         $columns = $this->gridColumns ?? [
             'default' => 1,

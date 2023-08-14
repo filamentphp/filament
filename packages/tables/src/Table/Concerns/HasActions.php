@@ -31,7 +31,7 @@ trait HasActions
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
-    public function actions(array | ActionGroup $actions, string | Closure | null $position = null): static
+    public function actions(array | ActionGroup $actions, string | Closure $position = null): static
     {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);
@@ -69,14 +69,14 @@ trait HasActions
         return $this;
     }
 
-    public function actionsAlignment(string | Closure | null $alignment = null): static
+    public function actionsAlignment(string | Closure $alignment = null): static
     {
         $this->actionsAlignment = $alignment;
 
         return $this;
     }
 
-    public function actionsPosition(string | Closure | null $position = null): static
+    public function actionsPosition(string | Closure $position = null): static
     {
         $this->actionsPosition = $position;
 
@@ -150,7 +150,7 @@ trait HasActions
     /**
      * @param  array<string>  $modalActionNames
      */
-    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName, ?Model $mountedRecord = null): ?Action
+    protected function getMountableModalActionFromAction(Action $action, array $modalActionNames, string $parentActionName, Model $mountedRecord = null): ?Action
     {
         foreach ($modalActionNames as $modalActionName) {
             $action = $action->getMountableModalAction($modalActionName);

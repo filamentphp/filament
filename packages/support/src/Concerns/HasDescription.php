@@ -9,7 +9,7 @@ trait HasDescription
 {
     protected string | Htmlable | Closure | null $description = null;
 
-    public function description(string | Htmlable | Closure | null $description = null): static
+    public function description(string | Htmlable | Closure $description = null): static
     {
         $this->description = $description;
 

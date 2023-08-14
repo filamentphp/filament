@@ -130,7 +130,7 @@ trait HasState
     /**
      * @param  array<string, mixed> | null  $state
      */
-    public function fill(?array $state = null): static
+    public function fill(array $state = null): static
     {
         $hydratedDefaultState = null;
 

@@ -224,7 +224,7 @@ class FilamentManager
         return $this->getCurrentPanel()->getPages();
     }
 
-    public function getPanel(?string $id = null): Panel
+    public function getPanel(string $id = null): Panel
     {
         return $this->panels[$id] ?? $this->getDefaultPanel();
     }
@@ -307,7 +307,7 @@ class FilamentManager
     /**
      * @param  array<mixed>  $parameters
      */
-    public function getTenantBillingUrl(array $parameters = [], ?Model $tenant = null): ?string
+    public function getTenantBillingUrl(array $parameters = [], Model $tenant = null): ?string
     {
         return $this->getCurrentPanel()->getTenantBillingUrl($tenant ?? $this->getTenant(), $parameters);
     }
@@ -421,7 +421,7 @@ class FilamentManager
         return $tenants;
     }
 
-    public function getUrl(?Model $tenant = null): ?string
+    public function getUrl(Model $tenant = null): ?string
     {
         return $this->getCurrentPanel()->getUrl($tenant);
     }
@@ -682,7 +682,7 @@ class FilamentManager
      *
      * @param  string | array<string>  $theme
      */
-    public function registerViteTheme(string | array $theme, ?string $buildDirectory = null): void
+    public function registerViteTheme(string | array $theme, string $buildDirectory = null): void
     {
         try {
             $this->getDefaultPanel()->viteTheme($theme, $buildDirectory);
