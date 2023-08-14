@@ -59,12 +59,12 @@ class RelationshipJoiner
             if ($firstRelationshipJoinClause) {
                 $firstRelationshipJoinClause->type = 'left';
 
-                // Any where clauses that are scope the pivot table need to be moved to the join.
+                // Any "where" clauses that are scope the pivot table need to be moved to the join.
                 // It's expected that any scopes that don't apply to the pivot table do not have
                 // a `column` attribute set.
                 $relationshipQueryPivotWheres = Arr::where(
                     $relationshipQuery->getQuery()->wheres,
-                    function (array $where): bool {
+                    function (array $where) use ($relationship): bool {
                         if (array_key_exists('column', $where)) {
                             return true;
                         }
@@ -77,7 +77,7 @@ class RelationshipJoiner
                     $firstRelationshipJoinClause->wheres,
                     $relationshipQueryPivotWheres,
                 );
-                
+
                 $relationshipQuery->getQuery()->wheres = Arr::except(
                     $relationshipQuery->getQuery()->wheres,
                     array_keys($relationshipQueryPivotWheres),
