@@ -24,7 +24,7 @@ return [
         'actions' => [
 
             'reset' => [
-                 'label' => 'Restablecer contraseña',
+                'label' => 'Restablecer contraseña',
             ],
 
         ],
