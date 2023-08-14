@@ -307,6 +307,17 @@ FileUpload::make('attachment')
 
 When the form is submitted a temporary file upload object will be returned instead of a permanently stored file path. This is perfect for temporary files like imported CSVs.
 
+## Disable form file Exist detection
+
+By default, the form automatically detects whether the local/remote file exists and detects the size and META information. For remote storage, it will be time-consuming in some cases. Use the `fileExistDetection(false)` method to disable this feature.
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->fileExistDetection(false)
+```
+
 ## Orienting images from their EXIF data
 
 By default, FilePond will automatically orient images based on their EXIF data. If you wish to disable this behaviour, you can use the `orientImagesFromExif(false)` method:
