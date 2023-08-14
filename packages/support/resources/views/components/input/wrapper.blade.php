@@ -161,11 +161,25 @@
                 'border-s border-gray-200 ps-3 dark:border-white/10' => ! $inlineSuffix,
             ])
         >
+            @if (filled($suffix))
+                <span class="{{ $labelClasses }}">
+                    {{ $suffix }}
+                </span>
+            @endif
+
+            @if ($suffixIcon)
+                <x-filament::icon
+                    :alias="$suffixIconAlias"
+                    :icon="$suffixIcon"
+                    :class="$iconClasses"
+                />
+            @endif
+
             @if ($isRevealable)
                 <div @class([
-                    $actionsClasses,
-                    'select-none'
-                ]) >
+                $actionsClasses,
+                'select-none'
+            ]) >
                     <x-filament::icon-button
                         icon-alias="forms::components.text-input.show-password"
                         icon="heroicon-o-eye"
@@ -179,20 +193,6 @@
                         x-on:click="inputType = 'password'"
                         x-show="inputType !== 'password'" x-cloak/>
                 </div>
-            @endif
-
-            @if (filled($suffix))
-                <span class="{{ $labelClasses }}">
-                    {{ $suffix }}
-                </span>
-            @endif
-
-            @if ($suffixIcon)
-                <x-filament::icon
-                    :alias="$suffixIconAlias"
-                    :icon="$suffixIcon"
-                    :class="$iconClasses"
-                />
             @endif
 
             @if (count($suffixActions))
