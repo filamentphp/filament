@@ -77,7 +77,7 @@ class RelationshipJoiner
                     $firstRelationshipJoinClause->wheres,
                     $relationshipQueryPivotWheres,
                 );
-                
+
                 $relationshipQuery->getQuery()->wheres = Arr::except(
                     $relationshipQuery->getQuery()->wheres,
                     array_keys($relationshipQueryPivotWheres),
