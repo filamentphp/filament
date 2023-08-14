@@ -51,6 +51,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $shouldStoreFiles = true;
 
+    protected bool | Closure $shouldFileExistDetection = true;
+
     protected string | Closure | null $fileNamesStatePath = null;
 
     protected string | Closure $visibility = 'public';
@@ -79,7 +81,9 @@ class BaseFileUpload extends Field
             $files = collect(Arr::wrap($state))
                 ->filter(static function (string $file) use ($component): bool {
                     try {
-                        return blank($file) || $component->getDisk()->exists($file);
+                        return filled($file)
+                            && (! $component->shouldFileExistDetection()
+                            || $component->getDisk()->exists($file));
                     } catch (UnableToCheckFileExistence $exception) {
                         return false;
                     }
@@ -123,9 +127,10 @@ class BaseFileUpload extends Field
         $this->getUploadedFileUsing(static function (BaseFileUpload $component, string $file, string | array | null $storedFileNames): ?array {
             /** @var FilesystemAdapter $storage */
             $storage = $component->getDisk();
+            $FileDetection  = $component->shouldFileExistDetection();
 
             try {
-                if (! $storage->exists($file)) {
+                if ($FileDetection && ! $storage->exists($file)) {
                     return null;
                 }
             } catch (UnableToCheckFileExistence $exception) {
@@ -149,8 +154,8 @@ class BaseFileUpload extends Field
 
             return [
                 'name' => ($component->isMultiple() ? ($storedFileNames[$file] ?? null) : $storedFileNames) ?? basename($file),
-                'size' => $storage->size($file),
-                'type' => $storage->mimeType($file),
+                'size' => $FileDetection ? $storage->size($file) : 0,
+                'type' => $FileDetection ? $storage->mimeType($file) : '',
                 'url' => $url,
             ];
         });
@@ -329,6 +334,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function fileExistDetection(bool | Closure $condition = true): static
+    {
+        $this->shouldFileExistDetection = $condition;
+
+        return $this;
+    }
+
     public function maxSize(int | Closure | null $size): static
     {
         $this->maxSize = $size;
@@ -464,7 +476,7 @@ class BaseFileUpload extends Field
 
     public function getDirectory(): ?string
     {
-        return $this->evaluate($this->directory);
+        return (string) $this->evaluate($this->directory);
     }
 
     public function getDisk(): Filesystem
@@ -479,17 +491,17 @@ class BaseFileUpload extends Field
 
     public function getMaxSize(): ?int
     {
-        return $this->evaluate($this->maxSize);
+        return (int) $this->evaluate($this->maxSize);
     }
 
     public function getMinSize(): ?int
     {
-        return $this->evaluate($this->minSize);
+        return (int) $this->evaluate($this->minSize);
     }
 
     public function getVisibility(): string
     {
-        return $this->evaluate($this->visibility);
+        return (string) $this->evaluate($this->visibility);
     }
 
     public function shouldPreserveFilenames(): bool
@@ -499,12 +511,17 @@ class BaseFileUpload extends Field
 
     public function shouldMoveFiles(): bool
     {
-        return $this->evaluate($this->shouldMoveFiles);
+        return (bool) $this->evaluate($this->shouldMoveFiles);
+    }
+
+    public function shouldFileExistDetection(): bool
+    {
+        return (bool) $this->evaluate($this->shouldFileExistDetection);
     }
 
     public function shouldStoreFiles(): bool
     {
-        return $this->evaluate($this->shouldStoreFiles);
+        return (bool) $this->evaluate($this->shouldStoreFiles);
     }
 
     public function getFileNamesStatePath(): ?string
@@ -775,7 +792,7 @@ class BaseFileUpload extends Field
 
     public function getUploadedFileNameForStorage(TemporaryUploadedFile $file): string
     {
-        return $this->evaluate($this->getUploadedFileNameForStorageUsing, [
+        return (string) $this->evaluate($this->getUploadedFileNameForStorageUsing, [
             'file' => $file,
         ]);
     }
