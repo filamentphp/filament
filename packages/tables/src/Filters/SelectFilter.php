@@ -187,6 +187,7 @@ class SelectFilter extends BaseFilter
             ->multiple($this->isMultiple())
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
+            ->preload($this->isPreloaded())
             ->optionsLimit($this->getOptionsLimit());
 
         if ($this->queriesRelationships()) {
