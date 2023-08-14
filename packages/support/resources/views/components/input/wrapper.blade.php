@@ -177,9 +177,9 @@
 
             @if ($isRevealable)
                 <div @class([
-                $actionsClasses,
-                'select-none'
-            ]) >
+                    $actionsClasses,
+                    'select-none'
+                ]) >
                     <x-filament::icon-button
                         icon-alias="forms::components.text-input.show-password"
                         icon="heroicon-o-eye"
