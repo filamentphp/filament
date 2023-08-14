@@ -212,7 +212,7 @@ abstract class EditTenantProfile extends Page
     public static function canView(Model $tenant): bool
     {
         try {
-            return authorize('edit', $tenant)->allowed();
+            return authorize('update', $tenant)->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }
