@@ -18,7 +18,7 @@ trait CanBeSortable
     /**
      * @param  bool | array<string>  $condition
      */
-    public function sortable(bool | array $condition = true, ?Closure $query = null): static
+    public function sortable(bool | array $condition = true, Closure $query = null): static
     {
         if (is_array($condition)) {
             $this->isSortable = true;

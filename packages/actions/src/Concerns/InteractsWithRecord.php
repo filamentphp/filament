@@ -69,12 +69,12 @@ trait InteractsWithRecord
         return $this->evaluate($this->record);
     }
 
-    public function getRecordTitle(?Model $record = null): ?string
+    public function getRecordTitle(Model $record = null): ?string
     {
         return $this->getCustomRecordTitle($record) ?? $this->getModelLabel();
     }
 
-    public function getCustomRecordTitle(?Model $record = null): ?string
+    public function getCustomRecordTitle(Model $record = null): ?string
     {
         $record ??= $this->getRecord();
 

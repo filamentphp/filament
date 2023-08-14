@@ -19,7 +19,7 @@ trait HasHeaderActions
 
     protected string | Closure | null $headerActionsPosition = null;
 
-    public function headerActionsPosition(string | Closure | null $position = null): static
+    public function headerActionsPosition(string | Closure $position = null): static
     {
         $this->headerActionsPosition = $position;
 
@@ -29,7 +29,7 @@ trait HasHeaderActions
     /**
      * @param  array<Action | BulkAction | ActionGroup> | ActionGroup  $actions
      */
-    public function headerActions(array | ActionGroup $actions, string | Closure | null $position = null): static
+    public function headerActions(array | ActionGroup $actions, string | Closure $position = null): static
     {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);

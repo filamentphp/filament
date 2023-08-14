@@ -39,7 +39,7 @@ trait CanBeMounted
 
     public function getMountUsing(): Closure
     {
-        return $this->mountUsing ?? static function (?ComponentContainer $form = null): void {
+        return $this->mountUsing ?? static function (ComponentContainer $form = null): void {
             if (! $form) {
                 return;
             }

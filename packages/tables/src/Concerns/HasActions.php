@@ -97,7 +97,7 @@ trait HasActions
         $this->mountedTableActionRecord = $record;
     }
 
-    public function mountTableAction(string $name, ?string $record = null): mixed
+    public function mountTableAction(string $name, string $record = null): mixed
     {
         $this->mountedTableActions[] = $name;
         $this->mountedTableActionsData[] = [];

@@ -145,7 +145,7 @@ abstract class Resource
             ->first();
     }
 
-    public static function can(string $action, ?Model $record = null): bool
+    public static function can(string $action, Model $record = null): bool
     {
         if (static::shouldSkipAuthorization()) {
             return true;
@@ -163,7 +163,7 @@ abstract class Resource
     /**
      * @throws AuthorizationException
      */
-    public static function authorize(string $action, ?Model $record = null): ?Response
+    public static function authorize(string $action, Model $record = null): ?Response
     {
         if (static::shouldSkipAuthorization()) {
             return null;
@@ -473,7 +473,7 @@ abstract class Resource
         return [];
     }
 
-    public static function getRouteBaseName(?string $panel = null): string
+    public static function getRouteBaseName(string $panel = null): string
     {
         $panel ??= Filament::getCurrentPanel()->getId();
 
@@ -564,7 +564,7 @@ abstract class Resource
     /**
      * @param  array<mixed>  $parameters
      */
-    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, ?string $panel = null, ?Model $tenant = null): string
+    public static function getUrl(string $name = 'index', array $parameters = [], bool $isAbsolute = true, string $panel = null, Model $tenant = null): string
     {
         $parameters['tenant'] ??= ($tenant ?? Filament::getTenant());
 

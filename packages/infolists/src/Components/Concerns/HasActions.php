@@ -49,7 +49,7 @@ trait HasActions
     /**
      * @param  string | array<string> | null  $name
      */
-    public function getAction(string | array | null $name = null): ?Action
+    public function getAction(string | array $name = null): ?Action
     {
         $actions = $this->cacheActions();
 

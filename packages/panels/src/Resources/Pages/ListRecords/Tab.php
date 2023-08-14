@@ -17,12 +17,12 @@ class Tab extends Component
 
     protected ?Closure $modifyQueryUsing = null;
 
-    public function __construct(string | Closure | null $label = null)
+    public function __construct(string | Closure $label = null)
     {
         $this->label($label);
     }
 
-    public static function make(string | Closure | null $label = null): static
+    public static function make(string | Closure $label = null): static
     {
         $static = app(static::class, ['label' => $label]);
         $static->configure();

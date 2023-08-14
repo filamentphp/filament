@@ -33,7 +33,7 @@ trait HasColumns
     /**
      * @return array<string, int | string | null> | int | string | null
      */
-    public function getColumns(?string $breakpoint = null): array | int | string | null
+    public function getColumns(string $breakpoint = null): array | int | string | null
     {
         $columns = $this->getColumnsConfig();
 

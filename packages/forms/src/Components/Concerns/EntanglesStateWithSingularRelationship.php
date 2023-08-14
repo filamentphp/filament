@@ -16,7 +16,7 @@ trait EntanglesStateWithSingularRelationship
 {
     protected ?Model $cachedExistingRecord = null;
 
-    protected string | null $relationship = null;
+    protected ?string $relationship = null;
 
     protected ?Closure $mutateRelationshipDataBeforeCreateUsing = null;
 

@@ -31,14 +31,14 @@ trait HasRoutes
         return $this;
     }
 
-    public function domain(?string $domain = null): static
+    public function domain(string $domain = null): static
     {
         $this->domain = $domain;
 
         return $this;
     }
 
-    public function homeUrl(string | Closure | null $url = null): static
+    public function homeUrl(string | Closure $url = null): static
     {
         $this->homeUrl = $url;
 
@@ -108,7 +108,7 @@ trait HasRoutes
         return $this->path;
     }
 
-    public function getUrl(?Model $tenant = null): ?string
+    public function getUrl(Model $tenant = null): ?string
     {
         if (! $this->auth()->check()) {
             return $this->hasLogin() ? $this->getLoginUrl() : url($this->getPath());

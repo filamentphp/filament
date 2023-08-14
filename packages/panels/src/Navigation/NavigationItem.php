@@ -34,14 +34,14 @@ class NavigationItem extends Component
 
     protected bool | Closure $isVisible = true;
 
-    final public function __construct(string | Closure | null $label = null)
+    final public function __construct(string | Closure $label = null)
     {
         if (filled($label)) {
             $this->label($label);
         }
     }
 
-    public static function make(string | Closure | null $label = null): static
+    public static function make(string | Closure $label = null): static
     {
         return app(static::class, ['label' => $label]);
     }
@@ -49,7 +49,7 @@ class NavigationItem extends Component
     /**
      * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
      */
-    public function badge(string | Closure | null $badge, string | array | Closure | null $color = null): static
+    public function badge(string | Closure | null $badge, string | array | Closure $color = null): static
     {
         $this->badge = $badge;
         $this->badgeColor = $color;

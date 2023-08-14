@@ -48,7 +48,7 @@ class Notification extends ViewComponent implements Arrayable
         $this->id($id);
     }
 
-    public static function make(?string $id = null): static
+    public static function make(string $id = null): static
     {
         $static = app(static::class, ['id' => $id ?? Str::orderedUuid()]);
         $static->configure();

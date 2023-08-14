@@ -145,7 +145,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         ]);
     }
 
-    public function boolean(?string $trueLabel = null, ?string $falseLabel = null, ?string $placeholder = null): static
+    public function boolean(string $trueLabel = null, string $falseLabel = null, string $placeholder = null): static
     {
         $this->options([
             1 => $trueLabel ?? __('filament-forms::components.select.boolean.true'),
@@ -625,7 +625,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;

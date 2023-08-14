@@ -222,7 +222,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
             ->authorize(static fn (RelationManager $livewire): bool => (! $livewire->isReadOnly()) && $livewire->canRestoreAny());
     }
 
-    protected function can(string $action, ?Model $record = null): bool
+    protected function can(string $action, Model $record = null): bool
     {
         if (static::shouldSkipAuthorization()) {
             return true;

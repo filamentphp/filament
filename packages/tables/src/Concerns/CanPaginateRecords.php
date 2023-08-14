@@ -80,7 +80,7 @@ trait CanPaginateRecords
         return "tables.{$table}_per_page";
     }
 
-    public function resetPage(?string $pageName = null): void
+    public function resetPage(string $pageName = null): void
     {
         $this->livewireResetPage($pageName ?? $this->getTablePaginationPageName());
     }

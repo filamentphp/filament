@@ -27,7 +27,7 @@ trait CanSummarizeRecords
     /**
      * @return array<string, mixed>
      */
-    public function getTableSummarySelectedState(Builder $query, ?Closure $modifyQueryUsing = null): array
+    public function getTableSummarySelectedState(Builder $query, Closure $modifyQueryUsing = null): array
     {
         $selects = [];
 

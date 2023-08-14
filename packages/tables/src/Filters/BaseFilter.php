@@ -28,7 +28,7 @@ class BaseFilter extends Component
         $this->name($name);
     }
 
-    public static function make(?string $name = null): static
+    public static function make(string $name = null): static
     {
         $filterClass = static::class;
 

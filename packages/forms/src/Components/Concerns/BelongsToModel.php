@@ -17,7 +17,7 @@ trait BelongsToModel
 
     protected bool | Closure $shouldSaveRelationshipsWhenHidden = false;
 
-    public function model(Model | string | Closure | null $model = null): static
+    public function model(Model | string | Closure $model = null): static
     {
         $this->model = $model;
 

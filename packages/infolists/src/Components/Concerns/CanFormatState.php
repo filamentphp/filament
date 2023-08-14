@@ -44,7 +44,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function date(?string $format = null, ?string $timezone = null): static
+    public function date(string $format = null, string $timezone = null): static
     {
         $format ??= Infolist::$defaultDateDisplayFormat;
 
@@ -61,7 +61,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function dateTime(?string $format = null, ?string $timezone = null): static
+    public function dateTime(string $format = null, string $timezone = null): static
     {
         $format ??= Infolist::$defaultDateTimeDisplayFormat;
 
@@ -70,7 +70,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function since(?string $timezone = null): static
+    public function since(string $timezone = null): static
     {
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($timezone): ?string {
             if (blank($state)) {
@@ -85,7 +85,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function money(string | Closure | null $currency = null, int $divideBy = 0): static
+    public function money(string | Closure $currency = null, int $divideBy = 0): static
     {
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($currency, $divideBy): ?string {
             if (blank($state)) {
@@ -100,7 +100,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function numeric(int | Closure | null $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
+    public function numeric(int | Closure $decimalPlaces = null, string | Closure | null $decimalSeparator = '.', string | Closure | null $thousandsSeparator = ','): static
     {
         $this->formatStateUsing(static function (TextEntry $component, $state) use ($decimalPlaces, $decimalSeparator, $thousandsSeparator): ?string {
             if (blank($state)) {
@@ -126,7 +126,7 @@ trait CanFormatState
         return $this;
     }
 
-    public function time(?string $format = null, ?string $timezone = null): static
+    public function time(string $format = null, string $timezone = null): static
     {
         $format ??= Infolist::$defaultTimeDisplayFormat;
 

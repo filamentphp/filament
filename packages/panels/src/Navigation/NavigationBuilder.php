@@ -17,7 +17,7 @@ class NavigationBuilder
     /**
      * @param  array<NavigationItem>  $items
      */
-    public function group(NavigationGroup | string $group, array $items = [], ?bool $collapsible = null): static
+    public function group(NavigationGroup | string $group, array $items = [], bool $collapsible = null): static
     {
         if ($group instanceof NavigationGroup) {
             $this->groups[] = $group;
