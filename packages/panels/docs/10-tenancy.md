@@ -8,6 +8,47 @@ Multi-tenancy is a concept where a single instance of an application serves mult
 
 Multi-tenancy is a very sensitive topic. It's important to understand the security implications of multi-tenancy and how to properly implement it. If implemented partially or incorrectly, data belonging to one tenant may be exposed to another tenant. Filament provides a set of tools to help you implement multi-tenancy in your application, but it is up to you to understand how to use them. Filament does not provide any guarantees about the security of your application. It is your responsibility to ensure that your application is secure. Please see the [security](#tenancy-security) section for more information.
 
+## Simplified Multi-Tenancy in Eloquent
+
+The term "multi-tenancy" is broad and may mean different things in different contexts. Filament implies that the User may belong to **many** tenants (*organizations, teams, companies*) and may switch between them. 
+
+If your case is simpler and you don't need a many-to-many relationship, then you don't need to set up the tenancy in Filament. You should use [Eloquent Observers](https://laravel.com/docs/eloquent#observers) and [Global Scopes](https://laravel.com/docs/eloquent#global-scopes) instead.
+
+Let's say you have a database field `users.team_id`. Then you should add the same `team_id` field to all the tables you want to scope by the team and add a Global Scope to filter by it:
+
+**app/Models/Post.php**:
+```php
+use Illuminate\Database\Eloquent\Builder;
+
+// ...
+
+class Post extends Model
+{
+    protected static function booted(): void
+    {
+        if (auth()->check()) {
+            static::addGlobalScope('by_user', function (Builder $builder) {
+                $builder->where('team_id', auth()->user()->team_id);
+            });
+        }
+    }
+}
+```
+
+To automatically set the `team_id` to the Model, you should create an Observer:
+
+```php
+class PostObserver
+{
+    public function creating(Post $post)
+    {
+        if (auth()->check()) {
+            $post->team_id = auth()->user()->team_id;
+        }
+    }
+}
+```
+
 ## Setting up tenancy
 
 To set up tenancy, you'll need to specify the "tenant" (like team or organization) model in the [configuration](configuration):
