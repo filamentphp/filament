@@ -176,7 +176,7 @@
             @endif
 
             @if ($revealable)
-                <div :class="$actionsClasses">
+                <div class="{{ $actionsClasses }}">
 
                     <x-filament::icon-button
                         color="gray"
