@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class AttachAction extends Action
 {
@@ -226,7 +227,7 @@ class AttachAction extends Action
             }
 
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
-                $search = strtolower($search);
+                $search = Str::lower($search);
 
                 $searchColumns ??= [$titleAttribute];
                 $isFirst = true;
