@@ -175,11 +175,8 @@
                 />
             @endif
 
-                <div @class([
-                    $actionsClasses,
-                    'select-none'
-                ]) >
             @if ($revealable)
+                <div :class="$actionsClasses">
                     <x-filament::icon-button
                         icon-alias="forms::components.text-input.show-password"
                         icon="heroicon-o-eye"
