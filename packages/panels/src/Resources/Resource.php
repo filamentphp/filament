@@ -386,7 +386,7 @@ abstract class Resource
 
     public static function getGlobalSearchResults(string $search): Collection
     {
-        $search = strtolower($search);
+        $search = Str::lower($search);
 
         $query = static::getGlobalSearchEloquentQuery();
 

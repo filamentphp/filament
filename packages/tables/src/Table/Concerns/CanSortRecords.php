@@ -4,6 +4,7 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Tables\Columns\Column;
+use Illuminate\Support\Str;
 
 trait CanSortRecords
 {
@@ -23,7 +24,7 @@ trait CanSortRecords
             $this->defaultSortColumn = $column;
         }
 
-        $this->defaultSortDirection = strtolower($direction);
+        $this->defaultSortDirection = Str::lower($direction);
 
         return $this;
     }
