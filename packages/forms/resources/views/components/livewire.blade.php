@@ -1,3 +1,3 @@
 <div>
-    @livewire($component, ['record' => $getRecord(), 'data' => $componentData])
+    @livewire($component, compact('componentData'))
 </div>
