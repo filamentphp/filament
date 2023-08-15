@@ -290,6 +290,9 @@
                 class="fi-ta-header-toolbar flex items-center justify-between gap-3 px-4 py-3 sm:px-6"
             >
                 <div class="flex shrink-0 items-center gap-x-3">
+
+                    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.toolbar.reorder.start', scopes: $this->getRenderHookScopes()) }}
+
                     @if ($isReorderable)
                         <span
                             x-show="! selectedRecords.length"
@@ -302,6 +305,8 @@
                         </span>
                     @endif
 
+                    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.toolbar.actions.start', scopes: $this->getRenderHookScopes()) }}
+
                     @if ((! $isReordering) && count($bulkActions))
                         <x-filament-tables::actions
                             :actions="$bulkActions"
@@ -310,6 +315,8 @@
                         />
                     @endif
 
+                    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.toolbar.actions.end', scopes: $this->getRenderHookScopes()) }}
+
                     @if (count($groups))
                         <x-filament-tables::groups
                             :dropdown-on-desktop="$areGroupsInDropdownOnDesktop()"
@@ -317,6 +324,9 @@
                             :trigger-action="$getGroupRecordsTriggerAction()"
                         />
                     @endif
+
+                    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.toolbar.groups.end', scopes: $this->getRenderHookScopes()) }}
+
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)
@@ -327,30 +337,38 @@
                             'gap-x-4' => $filtersTriggerAction->isIconButton() && $toggleColumnsTriggerAction->isIconButton(),
                         ])
                     >
+
+                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.toolbar.search.start', scopes: $this->getRenderHookScopes()) }}
+
                         @if ($isGlobalSearchVisible)
                             <x-filament-tables::search-field />
                         @endif
 
-                        @if ($hasFiltersDropdown || $hasColumnToggleDropdown)
-                            @if ($hasFiltersDropdown)
-                                <x-filament-tables::filters.dropdown
-                                    :form="$getFiltersForm()"
-                                    :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
-                                    :max-height="$getFiltersFormMaxHeight()"
-                                    :trigger-action="$filtersTriggerAction"
-                                    :width="$getFiltersFormWidth()"
-                                />
-                            @endif
+                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.toolbar.search.end', scopes: $this->getRenderHookScopes()) }}
 
-                            @if ($hasColumnToggleDropdown)
-                                <x-filament-tables::column-toggle.dropdown
-                                    :form="$getColumnToggleForm()"
-                                    :max-height="$getColumnToggleFormMaxHeight()"
-                                    :trigger-action="$toggleColumnsTriggerAction"
-                                    :width="$getColumnToggleFormWidth()"
-                                />
-                            @endif
+                        @if ($hasFiltersDropdown)
+                            <x-filament-tables::filters.dropdown
+                                :form="$getFiltersForm()"
+                                :indicators-count="count(\Illuminate\Support\Arr::flatten($filterIndicators))"
+                                :max-height="$getFiltersFormMaxHeight()"
+                                :trigger-action="$filtersTriggerAction"
+                                :width="$getFiltersFormWidth()"
+                            />
                         @endif
+
+                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.toolbar.column-toggle.start', scopes: $this->getRenderHookScopes()) }}
+
+                        @if ($hasColumnToggleDropdown)
+                            <x-filament-tables::column-toggle.dropdown
+                                :form="$getColumnToggleForm()"
+                                :max-height="$getColumnToggleFormMaxHeight()"
+                                :trigger-action="$toggleColumnsTriggerAction"
+                                :width="$getColumnToggleFormWidth()"
+                            />
+                        @endif
+
+                        {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.table.toolbar.column-toggle.end', scopes: $this->getRenderHookScopes()) }}
+                       
                     </div>
                 @endif
             </div>
