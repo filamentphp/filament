@@ -66,22 +66,21 @@ Inside your view, you may access the Eloquent record using the `$getRecord()` fu
 
 ## Livewire components
 
-You may use the Livewire component directly from the form. Optionally, you can pass an array of parameters.
-You can access the Eloquent record in the Livewire component as the first parameter.
+You may use the Livewire component directly from the infolist. 
+Optionally, you can pass an array of parameters, including record.
 
 ```php
 use Filament\Forms\Components\Livewire;
 
-Forms\Components\Livewire::make('foo', ['bar' => 'qux'])
+Forms\Components\Livewire::make('foo', ['record' => $infolist->getRecord(), 'bar' => 'qux'])
 ```
 
 ```php
 // Livewire component
 class Foo extends Component
 {
-    public function mount(Model $record, ?array $data): void
+    public function mount(array $componentData = []): void
     {
-        $this->record = $record;
-        $this->data = $data;
+        $this->data = $componentData;       
     }
 ```
