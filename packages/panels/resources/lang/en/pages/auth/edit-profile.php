@@ -43,7 +43,7 @@ return [
     'actions' => [
 
         'back' => [
-            'label' => 'back',
+            'label' => 'Back',
         ],
 
     ],
