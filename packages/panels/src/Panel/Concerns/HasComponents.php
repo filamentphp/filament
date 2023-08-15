@@ -149,7 +149,7 @@ trait HasComponents
         return $widget;
     }
 
-    public function discoverPages(string $in, string $for): static
+    public function discoverPages(string $in, string $for, bool $all=false): static
     {
         $this->pageDirectories[] = $in;
         $this->pageNamespaces[] = $for;
@@ -159,6 +159,7 @@ trait HasComponents
             $this->pages,
             directory: $in,
             namespace: $for,
+            all: $all,
         );
 
         return $this;
@@ -180,7 +181,7 @@ trait HasComponents
         return $this->pageNamespaces;
     }
 
-    public function discoverResources(string $in, string $for): static
+    public function discoverResources(string $in, string $for, bool $all=false): static
     {
         $this->resourceDirectories[] = $in;
         $this->resourceNamespaces[] = $for;
@@ -190,6 +191,7 @@ trait HasComponents
             $this->resources,
             directory: $in,
             namespace: $for,
+            all: $all,
         );
 
         return $this;
@@ -211,7 +213,7 @@ trait HasComponents
         return $this->resourceNamespaces;
     }
 
-    public function discoverWidgets(string $in, string $for): static
+    public function discoverWidgets(string $in, string $for, bool $all=false): static
     {
         $this->widgetDirectories[] = $in;
         $this->widgetNamespaces[] = $for;
@@ -221,6 +223,7 @@ trait HasComponents
             $this->widgets,
             directory: $in,
             namespace: $for,
+            all: $all,
         );
 
         return $this;
@@ -272,7 +275,7 @@ trait HasComponents
     /**
      * @param  array<string, class-string<Component>>  $register
      */
-    protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace): void
+    protected function discoverComponents(string $baseClass, array &$register, ?string $directory, ?string $namespace, bool $all=false): void
     {
         if (blank($directory) || blank($namespace)) {
             return;
@@ -287,6 +290,10 @@ trait HasComponents
         $namespace = str($namespace);
 
         foreach ($filesystem->allFiles($directory) as $file) {
+            if (!$all && $file->getExtension() !== 'php') {
+                continue;
+            }
+            
             $variableNamespace = $namespace->contains('*') ? str_ireplace(
                 ['\\' . $namespace->before('*'), $namespace->after('*')],
                 ['', ''],
