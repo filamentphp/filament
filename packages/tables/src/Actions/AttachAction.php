@@ -93,16 +93,18 @@ class AttachAction extends Action
                 ->{$isMultiple ? 'whereIn' : 'where'}($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
                 ->{$isMultiple ? 'get' : 'first'}();
 
+            if ($record instanceof Model) {
+                $this->record($record);
+            }
+
             $this->process(function () use ($data, $record, $relationship) {
                 $relationship->attach(
                     $record,
                     Arr::only($data, $relationship->getPivotColumns()),
                 );
-            });
-
-            if ($record instanceof Model) {
-                $this->record($record);
-            }
+            }, [
+                'relationship' => $relationship,
+            ]);
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
