@@ -252,11 +252,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         }
 
         $action = Action::make($this->getCreateOptionActionName())
-            ->form(function (Select $component, Form $form): array | Form | null {
-                return $component->getCreateOptionActionForm($form->model(
-                    $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
-                ));
-            })
+            ->form(fn (Select $component, Form $form): array | Form | null => $component->getCreateOptionActionForm($form->model(
+                $component->getRelationship() ? $component->getRelationship()->getModel()::class : null,
+            )))
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 if (! $component->getCreateOptionUsing()) {
                     throw new Exception("Select field [{$component->getStatePath()}] must have a [createOptionUsing()] closure set.");
@@ -406,11 +404,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         }
 
         $action = Action::make($this->getEditOptionActionName())
-            ->form(function (Select $component, Form $form): array | Form | null {
-                return $component->getEditOptionActionForm(
-                    $form->model($component->getSelectedRecord()),
-                );
-            })
+            ->form(fn (Select $component, Form $form): array | Form | null => $component->getEditOptionActionForm(
+                $form->model($component->getSelectedRecord()),
+            ))
             ->fillForm($this->getEditOptionActionFormData())
             ->action(static function (Action $action, array $arguments, Select $component, array $data, ComponentContainer $form) {
                 $statePath = $component->getStatePath();
@@ -1004,9 +1000,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $record->getKey();
         });
 
-        $this->fillEditOptionActionFormUsing(static function (Select $component): ?array {
-            return $component->getSelectedRecord()?->attributesToArray();
-        });
+        $this->fillEditOptionActionFormUsing(static fn (Select $component): ?array => $component->getSelectedRecord()?->attributesToArray());
 
         $this->updateOptionUsing(static function (array $data, Form $form) {
             $form->getRecord()?->update($data);

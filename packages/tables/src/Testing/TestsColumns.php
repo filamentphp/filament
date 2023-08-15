@@ -25,9 +25,7 @@ class TestsColumns
             $column = $this->instance()->getTable()->getColumn($name);
 
             $html = array_map(
-                function ($record) use ($column) {
-                    return $column->record($record)->toHtml();
-                },
+                fn ($record) => $column->record($record)->toHtml(),
                 $this->instance()->getTableRecords()->all(),
             );
 
@@ -46,9 +44,7 @@ class TestsColumns
             $column = $this->instance()->getTable()->getColumn($name);
 
             $html = array_map(
-                function ($record) use ($column) {
-                    return $column->record($record)->toHtml();
-                },
+                fn ($record) => $column->record($record)->toHtml(),
                 $this->instance()->getTableRecords()->all(),
             );
 

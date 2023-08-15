@@ -21,9 +21,7 @@ trait CanBeAutocapitalized
      */
     public function disableAutocapitalize(bool | Closure $condition = true): static
     {
-        $this->autocapitalize(static function (Field $component) use ($condition): ?bool {
-            return $component->evaluate($condition) ? false : null;
-        });
+        $this->autocapitalize(static fn (Field $component): ?bool => $component->evaluate($condition) ? false : null);
 
         return $this;
     }

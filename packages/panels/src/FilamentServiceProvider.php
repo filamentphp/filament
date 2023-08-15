@@ -43,9 +43,7 @@ class FilamentServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->scoped('filament', function (): FilamentManager {
-            return new FilamentManager();
-        });
+        $this->app->scoped('filament', fn (): FilamentManager => new FilamentManager());
 
         $this->app->bind(EmailVerificationResponseContract::class, EmailVerificationResponse::class);
         $this->app->bind(LoginResponseContract::class, LoginResponse::class);

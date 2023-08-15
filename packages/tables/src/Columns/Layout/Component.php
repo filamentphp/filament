@@ -109,9 +109,7 @@ class Component extends ViewComponent
      */
     public function getComponents(): array
     {
-        return array_map(function (Component | Column $component): Component | Column {
-            return $component->layout($this);
-        }, $this->evaluate($this->components));
+        return array_map(fn (Component | Column $component): Component | Column => $component->layout($this), $this->evaluate($this->components));
     }
 
     public function isCollapsible(): bool

@@ -87,26 +87,17 @@ class SupportServiceProvider extends PackageServiceProvider
             Js::make('support', __DIR__ . '/../dist/index.js'),
         ], 'filament/support');
 
-        Blade::directive('captureSlots', function (string $expression): string {
-            return "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>";
-        });
+        Blade::directive('captureSlots', fn (string $expression): string => "<?php \$slotContents = get_defined_vars(); \$slots = collect({$expression})->mapWithKeys(fn (string \$slot): array => [\$slot => \$slotContents[\$slot] ?? null])->all(); unset(\$slotContents) ?>");
 
-        Blade::directive('filamentScripts', function (string $expression): string {
-            return "<?php echo \Filament\Support\Facades\FilamentAsset::renderScripts({$expression}) ?>";
-        });
+        Blade::directive('filamentScripts', fn (string $expression): string => "<?php echo \Filament\Support\Facades\FilamentAsset::renderScripts({$expression}) ?>");
 
-        Blade::directive('filamentStyles', function (string $expression): string {
-            return "<?php echo \Filament\Support\Facades\FilamentAsset::renderStyles({$expression}) ?>";
-        });
+        Blade::directive('filamentStyles', fn (string $expression): string => "<?php echo \Filament\Support\Facades\FilamentAsset::renderStyles({$expression}) ?>");
 
-        Str::macro('sanitizeHtml', function (string $html): string {
-            return app(HtmlSanitizerInterface::class)->sanitize($html);
-        });
+        Str::macro('sanitizeHtml', fn (string $html): string => app(HtmlSanitizerInterface::class)->sanitize($html));
 
-        Stringable::macro('sanitizeHtml', function (): Stringable {
+        Stringable::macro('sanitizeHtml', fn (): Stringable =>
             /** @phpstan-ignore-next-line */
-            return new Stringable(Str::sanitizeHtml($this->value));
-        });
+            new Stringable(Str::sanitizeHtml($this->value)));
 
         if (class_exists(AboutCommand::class) && class_exists(InstalledVersions::class)) {
             $packages = [

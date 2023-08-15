@@ -21,9 +21,7 @@ trait CanBeAutocompleted
      */
     public function disableAutocomplete(bool | Closure $condition = true): static
     {
-        $this->autocomplete(static function (Field $component) use ($condition): ?bool {
-            return $component->evaluate($condition) ? false : null;
-        });
+        $this->autocomplete(static fn (Field $component): ?bool => $component->evaluate($condition) ? false : null);
 
         return $this;
     }

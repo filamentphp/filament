@@ -52,12 +52,10 @@ class KeyValue extends Field
 
         $this->default([]);
 
-        $this->dehydrateStateUsing(static function (?array $state) {
-            return collect($state ?? [])
-                ->filter(static fn (?string $value, ?string $key): bool => filled($key))
-                ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
-                ->all();
-        });
+        $this->dehydrateStateUsing(static fn (?array $state) => collect($state ?? [])
+            ->filter(static fn (?string $value, ?string $key): bool => filled($key))
+            ->map(static fn (?string $value): ?string => filled($value) ? $value : null)
+            ->all());
 
         $this->registerActions([
             fn (KeyValue $component): Action => $component->getAddAction(),

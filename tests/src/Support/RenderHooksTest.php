@@ -8,9 +8,7 @@ use Illuminate\Support\HtmlString;
 uses(TestCase::class);
 
 test('render hooks can be registered', function () {
-    FilamentView::registerRenderHook('foo', function (): string {
-        return Blade::render('bar');
-    });
+    FilamentView::registerRenderHook('foo', fn (): string => Blade::render('bar'));
 
     expect(FilamentView::renderHook('foo'))
         ->toBeInstanceOf(HtmlString::class)
@@ -18,9 +16,7 @@ test('render hooks can be registered', function () {
 });
 
 test('render hooks can render view files', function () {
-    FilamentView::registerRenderHook('view-foo', function (): Illuminate\Contracts\View\View {
-        return view('app.fixtures.pages.render-hooks.foo');
-    });
+    FilamentView::registerRenderHook('view-foo', fn (): Illuminate\Contracts\View\View => view('app.fixtures.pages.render-hooks.foo'));
 
     expect(FilamentView::renderHook('view-foo'))
         ->toBeInstanceOf(HtmlString::class)
@@ -28,13 +24,9 @@ test('render hooks can render view files', function () {
 });
 
 test('render hooks can be scopes:d', function () {
-    FilamentView::registerRenderHook('foo', function (): string {
-        return Blade::render('bar');
-    });
+    FilamentView::registerRenderHook('foo', fn (): string => Blade::render('bar'));
 
-    FilamentView::registerRenderHook('foo', function (): string {
-        return Blade::render('bar');
-    }, 'baz');
+    FilamentView::registerRenderHook('foo', fn (): string => Blade::render('bar'), 'baz');
 
     expect(FilamentView::renderHook('foo', scopes: 'baz'))
         ->toBeInstanceOf(HtmlString::class)
@@ -42,13 +34,9 @@ test('render hooks can be scopes:d', function () {
 });
 
 test('render hooks can be scopes:d to multiple scopes:s', function () {
-    FilamentView::registerRenderHook('foo', function (): string {
-        return Blade::render('bar');
-    });
+    FilamentView::registerRenderHook('foo', fn (): string => Blade::render('bar'));
 
-    FilamentView::registerRenderHook('foo', function (): string {
-        return Blade::render('bar');
-    }, ['baz', 'qux']);
+    FilamentView::registerRenderHook('foo', fn (): string => Blade::render('bar'), ['baz', 'qux']);
 
     expect(FilamentView::renderHook('foo', scopes: 'baz'))
         ->toBeInstanceOf(HtmlString::class)
@@ -60,13 +48,9 @@ test('render hooks can be scopes:d to multiple scopes:s', function () {
 });
 
 test('render hooks can be scopes:d to multiple scopes:s but only ever output once', function () {
-    FilamentView::registerRenderHook('foo', function (): string {
-        return Blade::render('bar');
-    });
+    FilamentView::registerRenderHook('foo', fn (): string => Blade::render('bar'));
 
-    FilamentView::registerRenderHook('foo', function (): string {
-        return Blade::render('bar');
-    }, ['baz', 'qux']);
+    FilamentView::registerRenderHook('foo', fn (): string => Blade::render('bar'), ['baz', 'qux']);
 
     expect(FilamentView::renderHook('foo', scopes: ['baz', 'qux']))
         ->toBeInstanceOf(HtmlString::class)

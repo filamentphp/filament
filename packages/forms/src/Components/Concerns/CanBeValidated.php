@@ -262,9 +262,7 @@ trait CanBeValidated
 
     public function multipleOf(int | Closure $value): static
     {
-        $this->rule(static function (Field $component) use ($value) {
-            return 'multiple_of:' . $component->evaluate($value);
-        }, static fn (Field $component): bool => filled($component->evaluate($value)));
+        $this->rule(static fn (Field $component) => 'multiple_of:' . $component->evaluate($value), static fn (Field $component): bool => filled($component->evaluate($value)));
 
         return $this;
     }
@@ -301,18 +299,14 @@ trait CanBeValidated
 
     public function notRegex(string | Closure | null $pattern): static
     {
-        $this->rule(static function (Field $component) use ($pattern) {
-            return 'not_regex:' . $component->evaluate($pattern);
-        }, static fn (Field $component): bool => filled($component->evaluate($pattern)));
+        $this->rule(static fn (Field $component) => 'not_regex:' . $component->evaluate($pattern), static fn (Field $component): bool => filled($component->evaluate($pattern)));
 
         return $this;
     }
 
     public function nullable(bool | Closure $condition = true): static
     {
-        $this->required(static function (Field $component) use ($condition): bool {
-            return ! $component->evaluate($condition);
-        });
+        $this->required(static fn (Field $component): bool => ! $component->evaluate($condition));
 
         return $this;
     }

@@ -24,20 +24,16 @@ it('can send notifications', function () {
     $iconSets = app(Factory::class)->all();
     $icons = app(IconsManifest::class)->getManifest($iconSets);
 
-    $getRandomColor = function (): string {
-        return Arr::random([
-            'danger',
-            'gray',
-            'info',
-            'primary',
-            'success',
-            'warning',
-        ]);
-    };
+    $getRandomColor = fn (): string => Arr::random([
+        'danger',
+        'gray',
+        'info',
+        'primary',
+        'success',
+        'warning',
+    ]);
 
-    $getRandomIcon = function () use ($icons): string {
-        return 'heroicon-' . collect($icons)->flatten()->random();
-    };
+    $getRandomIcon = fn (): string => 'heroicon-' . collect($icons)->flatten()->random();
 
     expect(session()->get('filament.notifications'))
         ->toBeEmpty();

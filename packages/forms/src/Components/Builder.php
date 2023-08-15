@@ -93,9 +93,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             fn (Builder $component): Action => $component->getReorderAction(),
         ]);
 
-        $this->mutateDehydratedStateUsing(static function (?array $state): array {
-            return array_values($state ?? []);
-        });
+        $this->mutateDehydratedStateUsing(static fn (?array $state): array => array_values($state ?? []));
     }
 
     /**

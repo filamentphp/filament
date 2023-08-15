@@ -95,9 +95,7 @@ class CheckTranslationsCommand extends Command
                 }
 
                 collect($files)
-                    ->reject(function ($file) use ($localeRootDirectory) {
-                        return ! file_exists(implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en', $file->getRelativePathname()]));
-                    })
+                    ->reject(fn ($file) => ! file_exists(implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en', $file->getRelativePathname()])))
                     ->mapWithKeys(function (SplFileInfo $file) use ($localeDir, $localeRootDirectory) {
                         $expectedKeys = require implode(DIRECTORY_SEPARATOR, [$localeRootDirectory, 'en', $file->getRelativePathname()]);
                         $actualKeys = require $file->getPathname();

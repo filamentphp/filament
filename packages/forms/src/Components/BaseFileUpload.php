@@ -155,9 +155,7 @@ class BaseFileUpload extends Field
             ];
         });
 
-        $this->getUploadedFileNameForStorageUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file) {
-            return $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename();
-        });
+        $this->getUploadedFileNameForStorageUsing(static fn (BaseFileUpload $component, TemporaryUploadedFile $file) => $component->shouldPreserveFilenames() ? $file->getClientOriginalName() : $file->getFilename());
 
         $this->saveUploadedFileUsing(static function (BaseFileUpload $component, TemporaryUploadedFile $file): ?string {
             try {

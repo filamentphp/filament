@@ -24,18 +24,14 @@ it('has fields', function () {
     livewire(TestComponentWithForm::class)
         ->assertFormFieldExists('title')
         ->assertFormFieldExists('nested.input')
-        ->assertFormFieldExists('disabled', function (TextInput $field): bool {
-            return $field->isDisabled();
-        });
+        ->assertFormFieldExists('disabled', fn (TextInput $field): bool => $field->isDisabled());
 });
 
 it('has fields on multiple forms', function () {
     livewire(TestComponentWithMultipleForms::class)
         ->assertFormFieldExists('title', 'fooForm')
         ->assertFormFieldExists('title', 'barForm')
-        ->assertFormFieldExists('disabled', 'barForm', function (TextInput $field): bool {
-            return $field->isDisabled();
-        });
+        ->assertFormFieldExists('disabled', 'barForm', fn (TextInput $field): bool => $field->isDisabled());
 });
 
 it('can fill fields on multiple forms', function () {

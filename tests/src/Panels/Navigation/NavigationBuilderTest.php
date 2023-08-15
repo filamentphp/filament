@@ -15,25 +15,23 @@ use Filament\Tests\Panels\Navigation\TestCase;
 uses(TestCase::class);
 
 it('can register navigation', function () {
-    Filament::getCurrentPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
-        return $navigation
-            ->items([
-                ...Dashboard::getNavigationItems(),
-                ...UserResource::getNavigationItems(),
-                ...Settings::getNavigationItems(),
-            ])
-            ->groups([
-                NavigationGroup::make('Blog')
-                    ->items([
-                        ...PostResource::getNavigationItems(),
-                        ...PostCategoryResource::getNavigationItems(),
-                    ]),
-                NavigationGroup::make('Shop')
-                    ->items([
-                        ...ProductResource::getNavigationItems(),
-                    ]),
-            ]);
-    });
+    Filament::getCurrentPanel()->navigation(fn (NavigationBuilder $navigation): NavigationBuilder => $navigation
+        ->items([
+            ...Dashboard::getNavigationItems(),
+            ...UserResource::getNavigationItems(),
+            ...Settings::getNavigationItems(),
+        ])
+        ->groups([
+            NavigationGroup::make('Blog')
+                ->items([
+                    ...PostResource::getNavigationItems(),
+                    ...PostCategoryResource::getNavigationItems(),
+                ]),
+            NavigationGroup::make('Shop')
+                ->items([
+                    ...ProductResource::getNavigationItems(),
+                ]),
+        ]));
 
     expect(Filament::getNavigation())
         ->sequence(
@@ -80,13 +78,11 @@ it('can register navigation', function () {
 });
 
 it('can register navigation groups individually', function () {
-    Filament::getCurrentPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
-        return $navigation
-            ->group('Blog', [
-                ...PostResource::getNavigationItems(),
-                ...PostCategoryResource::getNavigationItems(),
-            ]);
-    });
+    Filament::getCurrentPanel()->navigation(fn (NavigationBuilder $navigation): NavigationBuilder => $navigation
+        ->group('Blog', [
+            ...PostResource::getNavigationItems(),
+            ...PostCategoryResource::getNavigationItems(),
+        ]));
 
     expect(Filament::getNavigation())
         ->sequence(
@@ -107,20 +103,18 @@ it('can register navigation groups individually', function () {
 });
 
 it('can register navigation groups with hidden items', function () {
-    Filament::getCurrentPanel()->navigation(function (NavigationBuilder $navigation): NavigationBuilder {
-        return $navigation
-            ->items([
-                NavigationItem::make('Products')
-                    ->visible(false)
-                    ->label('Products'),
-                NavigationItem::make('Orders')
-                    ->hidden(fn (): bool => true)
-                    ->label('Orders'),
-                ...Dashboard::getNavigationItems(),
-                ...UserResource::getNavigationItems(),
-                ...Settings::getNavigationItems(),
-            ]);
-    });
+    Filament::getCurrentPanel()->navigation(fn (NavigationBuilder $navigation): NavigationBuilder => $navigation
+        ->items([
+            NavigationItem::make('Products')
+                ->visible(false)
+                ->label('Products'),
+            NavigationItem::make('Orders')
+                ->hidden(fn (): bool => true)
+                ->label('Orders'),
+            ...Dashboard::getNavigationItems(),
+            ...UserResource::getNavigationItems(),
+            ...Settings::getNavigationItems(),
+        ]));
 
     expect(Filament::getNavigation())
         ->sequence(

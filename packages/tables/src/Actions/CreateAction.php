@@ -33,12 +33,10 @@ class CreateAction extends Action
 
         $this->modalSubmitActionLabel(__('filament-actions::create.single.modal.actions.create.label'));
 
-        $this->extraModalFooterActions(function (): array {
-            return $this->canCreateAnother() ? [
-                $this->makeModalSubmitAction('createAnother', ['another' => true])
-                    ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
-            ] : [];
-        });
+        $this->extraModalFooterActions(fn (): array => $this->canCreateAnother() ? [
+            $this->makeModalSubmitAction('createAnother', ['another' => true])
+                ->label(__('filament-actions::create.single.modal.actions.create_another.label')),
+        ] : []);
 
         $this->successNotificationTitle(__('filament-actions::create.single.notifications.created.title'));
 

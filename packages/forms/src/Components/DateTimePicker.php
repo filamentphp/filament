@@ -197,9 +197,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
     {
         $this->maxDate = $date;
 
-        $this->rule(static function (DateTimePicker $component) {
-            return "before_or_equal:{$component->getMaxDate()}";
-        }, static fn (DateTimePicker $component): bool => (bool) $component->getMaxDate());
+        $this->rule(static fn (DateTimePicker $component) => "before_or_equal:{$component->getMaxDate()}", static fn (DateTimePicker $component): bool => (bool) $component->getMaxDate());
 
         return $this;
     }
@@ -208,9 +206,7 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
     {
         $this->minDate = $date;
 
-        $this->rule(static function (DateTimePicker $component) {
-            return "after_or_equal:{$component->getMinDate()}";
-        }, static fn (DateTimePicker $component): bool => (bool) $component->getMinDate());
+        $this->rule(static fn (DateTimePicker $component) => "after_or_equal:{$component->getMinDate()}", static fn (DateTimePicker $component): bool => (bool) $component->getMinDate());
 
         return $this;
     }
