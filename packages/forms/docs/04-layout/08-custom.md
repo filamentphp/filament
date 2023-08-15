@@ -79,7 +79,7 @@ Forms\Components\Livewire::make('foo', ['bar' => 'qux'])
 // Livewire component
 class Foo extends Component
 {
-    public function mount(Model $record, ?array $data): void
+    public function mount($record, ?array $data): void
     {
         $this->record = $record;
         $this->data = $data;
