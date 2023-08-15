@@ -177,18 +177,24 @@
 
             @if ($revealable)
                 <div :class="$actionsClasses">
+
                     <x-filament::icon-button
-                        icon-alias="forms::components.text-input.show-password"
+                        color="gray"
                         icon="heroicon-o-eye"
-                        color="gray"
+                        icon-alias="forms::components.text-input.show-password"
                         x-on:click="inputType = 'text'"
-                        x-show="inputType === 'password'"/>
+                        x-show="inputType === 'password'"
+                    />
+
                     <x-filament::icon-button
-                        icon-alias="forms::components.text-input.hide-password"
-                        icon="heroicon-o-eye-slash"
                         color="gray"
+                        icon="heroicon-o-eye-slash"
+                        icon-alias="forms::components.text-input.hide-password"
+                        x-cloak
                         x-on:click="inputType = 'password'"
-                        x-show="inputType !== 'password'" x-cloak/>
+                        x-show="inputType !== 'password'"
+                    />
+
                 </div>
             @endif
 
