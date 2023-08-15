@@ -120,7 +120,7 @@ Tabs::make('Label')
     ])
 ```
 
-<AutoScreenshot name="forms/layout/tabs/icons" alt="Tabs with icons" version="3.x" />
+<AutoScreenshot name="infolists/layout/tabs/icons" alt="Tabs with icons" version="3.x" />
 
 ### Setting the tab icon position
 

@@ -186,6 +186,8 @@ You can override any method you want on the base profile page class to make it a
 Anywhere in the app, you can access the tenant model for the current request using `Filament::getTenant()`:
 
 ```php
+use Filament\Facades\Filament;
+
 $tenant = Filament::getTenant();
 ```
 

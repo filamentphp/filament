@@ -329,7 +329,7 @@ Repeater::make('qualifications')
     ->schema([
         // ...
     ])
-    ->mutateRelationshipDataBeforeCreateUsing(fn (array $data): array {
+    ->mutateRelationshipDataBeforeCreateUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
 
         return $data;
@@ -348,7 +348,7 @@ Repeater::make('qualifications')
     ->schema([
         // ...
     ])
-    ->mutateRelationshipDataBeforeSaveUsing(fn (array $data): array {
+    ->mutateRelationshipDataBeforeSaveUsing(function (array $data): array {
         $data['user_id'] = auth()->id();
 
         return $data;

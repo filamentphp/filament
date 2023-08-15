@@ -304,6 +304,10 @@ trait HasComponents
                 ->replace('*', $variableNamespace)
                 ->replace(['/', '.php'], ['\\', '']);
 
+            if (! class_exists($class)) {
+                continue;
+            }
+
             if ((new ReflectionClass($class))->isAbstract()) {
                 continue;
             }
