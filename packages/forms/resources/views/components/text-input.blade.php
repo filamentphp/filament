@@ -29,7 +29,7 @@
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
         :valid="! $errors->has($statePath)"
-        :is-revealable="$isRevealable"
+        :revealable="$isRevealable"
         class="fi-fo-text-input"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())

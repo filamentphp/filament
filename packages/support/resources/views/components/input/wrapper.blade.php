@@ -4,7 +4,7 @@
     'disabled' => false,
     'inlinePrefix' => false,
     'inlineSuffix' => false,
-    'isRevealable' => false,
+    'revealable' => false,
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
@@ -152,7 +152,7 @@
         {{ $slot }}
     </div>
 
-    @if ($hasSuffix || $isRevealable)
+    @if ($hasSuffix || $revealable)
         <div
             @class([
                 'flex items-center gap-x-3 pe-3',
@@ -175,11 +175,11 @@
                 />
             @endif
 
-            @if ($isRevealable)
                 <div @class([
                     $actionsClasses,
                     'select-none'
                 ]) >
+            @if ($revealable)
                     <x-filament::icon-button
                         icon-alias="forms::components.text-input.show-password"
                         icon="heroicon-o-eye"
