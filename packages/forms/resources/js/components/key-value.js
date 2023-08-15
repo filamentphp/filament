@@ -69,7 +69,7 @@ export default function keyValueFormComponent({ state }) {
         },
 
         updateState: function () {
-            let state = {}
+            let state = []
 
             this.rows.forEach((row) => {
                 if (row.key === '' || row.key === null) {
