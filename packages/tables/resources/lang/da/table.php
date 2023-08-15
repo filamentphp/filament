@@ -71,7 +71,7 @@ return [
         ],
 
         'filter' => [
-            'label' => 'Filtre',
+            'label' => 'Filtrer',
         ],
 
         'group' => [
