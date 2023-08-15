@@ -71,17 +71,20 @@ class AssociateAction extends Action
 
             $record = $relationship->getQuery()->find($data['recordId']);
 
+            if ($record instanceof Model) {
+                $this->record($record);
+            }
+
             /** @var BelongsTo $inverseRelationship */
             $inverseRelationship = $table->getInverseRelationshipFor($record);
 
             $this->process(function () use ($inverseRelationship, $record, $relationship) {
                 $inverseRelationship->associate($relationship->getParent());
                 $record->save();
-            });
-
-            if ($record instanceof Model) {
-                $this->record($record);
-            }
+            }, [
+                'inverseRelationship' => $inverseRelationship,
+                'relationship' => $relationship,
+            ]);
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
