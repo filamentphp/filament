@@ -41,8 +41,10 @@ FilamentView::registerRenderHook(
 - `panels::content.end` - After page content, inside `<main>`
 - `panels::content.start` - Before page content, inside `<main>`
 - `panels::footer` - Footer of the page
-- `panels::global-search.end` - The end of the [global search](../panels/resources/global-search) container
+- `panels::global-search.before` - Before the [global search](../panels/resources/global-search) container, inside `topbar`
+- `panels::global-search.after` - After the [global search](../panels/resources/global-search) container, inside `topbar`
 - `panels::global-search.start` - The start of the [global search](../panels/resources/global-search) container
+- `panels::global-search.end` - The end of the [global search](../panels/resources/global-search) container
 - `panels::head.end` - Before `</head>`
 - `panels::head.start` - After `<head>`
 - `panels::page.end` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
