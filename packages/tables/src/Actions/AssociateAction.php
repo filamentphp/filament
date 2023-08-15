@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Str;
 
 class AssociateAction extends Action
 {
@@ -189,7 +190,7 @@ class AssociateAction extends Action
             }
 
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
-                $search = strtolower($search);
+                $search = Str::lower($search);
 
                 $searchColumns ??= [$titleAttribute];
                 $isFirst = true;

@@ -4,6 +4,7 @@ namespace Filament\Forms\Commands\Concerns;
 
 use Doctrine\DBAL\Types;
 use Filament\Forms;
+use Illuminate\Support\Str;
 
 trait CanGenerateForms
 {
@@ -65,7 +66,7 @@ trait CanGenerateForms
                 'sku',
                 'uuid',
             ])) {
-                $componentData['label'] = [strtoupper($columnName)];
+                $componentData['label'] = [Str::upper($columnName)];
             }
 
             if ($componentData['type'] === Forms\Components\TextInput::class) {
