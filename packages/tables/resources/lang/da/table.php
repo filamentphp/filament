@@ -139,33 +139,33 @@ return [
 
     'grouping' => [
 
-            'fields' => [
+        'fields' => [
 
-                'group' => [
-                    'label' => 'Gruppere på',
-                    'placeholder' => 'Gruppere på',
-                ],
+            'group' => [
+                'label' => 'Gruppere på',
+                'placeholder' => 'Gruppere på',
+            ],
 
-                'direction' => [
+            'direction' => [
 
-                    'label' => 'Grupperingsretning',
+                'label' => 'Grupperingsretning',
 
-                    'options' => [
-                        'asc' => 'Stigende',
-                        'desc' => 'Faldende',
-                    ],
-
+                'options' => [
+                    'asc' => 'Stigende',
+                    'desc' => 'Faldende',
                 ],
 
             ],
 
         ],
 
+    ],
+
     'reorder_indicator' => 'Træk og slip rækkerne i den ønskede rækkefølge.',
 
     'selection_indicator' => [
 
-    'selected_count' => '1 række valgt|:count rækker valgt',
+        'selected_count' => '1 række valgt|:count rækker valgt',
 
         'actions' => [
 
@@ -175,7 +175,7 @@ return [
 
             'deselect_all' => [
                 'label' => 'Fravælg alle',
-            ],            
+            ],
         ],
 
     ],
