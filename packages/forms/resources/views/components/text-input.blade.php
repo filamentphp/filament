@@ -30,12 +30,12 @@
         :suffix-icon="$suffixIcon"
         :valid="! $errors->has($statePath)"
         :revealable="$isRevealable"
+        :x-data="$isRevealable ? \Illuminate\Support\Js::from(['inputType' => $getType()]) : null"
         class="fi-fo-text-input"
         :attributes="
             \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
                 ->class(['overflow-hidden'])
         "
-        x-data="{inputType: '{{ $getType() }}'}"
     >
         <x-filament::input
             :attributes="
@@ -63,7 +63,7 @@
                         $applyStateBindingModifiers('wire:model') => $statePath,
                         'x-data' => (count($extraAlpineAttributes) || filled($mask)) ? '{}' : null,
                         'x-mask' . ($mask instanceof \Filament\Support\RawJs ? ':dynamic' : '') => filled($mask) ? $mask : null,
-                        'x-bind:type' => 'inputType',
+                        'x-bind:type' => $isRevealable ? 'inputType' : null,
                     ], escape: false)
             "
         />
