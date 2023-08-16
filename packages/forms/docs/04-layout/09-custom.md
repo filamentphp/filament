@@ -7,12 +7,12 @@ title: Custom layouts
 Aside from [building custom layout components](custom), you may create "view" components which allow you to create custom layouts without extra PHP classes.
 
 ```php
-use Filament\Infolists\Components\View;
+use Filament\Forms\Components\View;
 
-View::make('filament.infolists.components.box')
+View::make('filament.forms.components.wizard')
 ```
 
-This assumes that you have a `resources/views/filament/infolists/components/box.blade.php` file.
+This assumes that you have a `resources/views/filament/forms/components/wizard.blade.php` file.
 
 ## Custom layout classes
 
@@ -23,17 +23,17 @@ You may create your own custom component classes and views, which you can reuse 
 To create a custom column class and view, you may use the following command:
 
 ```bash
-php artisan make:infolist-layout Box
+php artisan make:form-layout Wizard
 ```
 
 This will create the following layout component class:
 
 ```php
-use Filament\Infolists\Components\Component;
+use Filament\Forms\Components\Component;
 
-class Box extends Component
+class Wizard extends Component
 {
-    protected string $view = 'filament.infolists.components.box';
+    protected string $view = 'filament.forms.components.wizard';
 
     public static function make(): static
     {
@@ -42,7 +42,7 @@ class Box extends Component
 }
 ```
 
-It will also create a view file at `resources/views/filament/infolists/components/box.blade.php`.
+It will also create a view file at `resources/views/filament/forms/components/wizard.blade.php`.
 
 ## Rendering the component's schema
 
@@ -62,25 +62,4 @@ Inside your view, you may access the Eloquent record using the `$getRecord()` fu
 <div>
     {{ $getRecord()->name }}
 </div>
-```
-
-## Livewire components
-
-You may use the Livewire component directly from the infolist. 
-Optionally, you can pass an array of parameters, including record.
-
-```php
-use Filament\Forms\Components\Livewire;
-
-Forms\Components\Livewire::make('foo', ['record' => $infolist->getRecord(), 'bar' => 'qux'])
-```
-
-```php
-// Livewire component
-class Foo extends Component
-{
-    public function mount(array $componentData = []): void
-    {
-        $this->data = $componentData;       
-    }
 ```
