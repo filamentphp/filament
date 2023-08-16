@@ -14,6 +14,7 @@
     'icon' => null,
     'iconColor' => 'gray',
     'iconSize' => IconSize::Large,
+    'sticky' => false,
 ])
 
 @php
@@ -62,6 +63,7 @@
                 true => 'grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
                 false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
             },
+            'md:relative' => $aside && $sticky,
         ])
     }}
 >
@@ -77,6 +79,7 @@
                     true => 'px-4 py-2.5',
                     false => 'px-6 py-4',
                 } => ! $aside,
+                'md:sticky md:top-20 md:left-0' => $aside && $sticky,
             ])
         >
             @if ($hasIcon)

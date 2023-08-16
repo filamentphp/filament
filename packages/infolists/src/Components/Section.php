@@ -3,6 +3,7 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\Support\Concerns\CanBeStickied;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
@@ -21,6 +22,7 @@ class Section extends Component
     use HasHeading;
     use HasIcon;
     use HasIconColor;
+    use CanBeStickied;
 
     /**
      * @var view-string

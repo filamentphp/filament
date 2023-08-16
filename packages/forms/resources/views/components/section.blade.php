@@ -13,6 +13,7 @@
     :icon="$getIcon()"
     :icon-color="$getIconColor()"
     :icon-size="$getIconSize()"
+    :sticky="$isSticky()"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([
