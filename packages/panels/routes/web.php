@@ -44,6 +44,10 @@ Route::name('filament.')
                             }
                         });
 
+                        if ($routes = $panel->getRoutes()) {
+                            $routes($panel);
+                        }
+
                         Route::middleware($panel->getAuthMiddleware())
                             ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute): void {
                                 if ($hasTenancy) {
@@ -124,10 +128,6 @@ Route::name('filament.')
                                         $routes($panel);
                                     }
                                 });
-                        }
-
-                        if ($routes = $panel->getRoutes()) {
-                            $routes($panel);
                         }
                     });
             }
