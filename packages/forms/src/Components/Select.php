@@ -989,7 +989,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             if (! $relationship instanceof BelongsToMany) {
                 $relationship->associate($state);
-                
+
                 return;
             }
 
