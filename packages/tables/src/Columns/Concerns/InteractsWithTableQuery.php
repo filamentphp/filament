@@ -96,17 +96,19 @@ trait InteractsWithTableQuery
                         new Expression("lower({$searchColumn})") :
                         $searchColumn;
 
+                    $operator = config('database.default') === 'pgsql' ? 'ilike' : 'like';
+                    
                     return $query->when(
                         $this->queriesRelationships($query->getModel()),
                         fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
                             $this->getRelationshipName(),
                             $caseAwareSearchColumn,
-                            'like',
+                            $operator,
                             "%{$search}%",
                         ),
                         fn (EloquentBuilder $query): EloquentBuilder => $query->{$whereClause}(
                             $caseAwareSearchColumn,
-                            'like',
+                            $operator,
                             "%{$search}%",
                         ),
                     );
