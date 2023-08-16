@@ -34,7 +34,7 @@
                         isAutofocused: @js($isAutofocused()),
                         isDisabled: @js($isDisabled),
                         isLiveOnPickerClose: @js($isLiveOnBlur() || $isLiveDebounced()),
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             {{ $getExtraAlpineAttributeBag()->class(['flex']) }}

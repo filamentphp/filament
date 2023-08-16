@@ -8,7 +8,7 @@
     @capture($content)
         <button
             x-data="{
-                state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
             }"
             x-bind:aria-checked="state?.toString()"
             x-on:click="state = ! state"
