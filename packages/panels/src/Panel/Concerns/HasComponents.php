@@ -334,7 +334,10 @@ trait HasComponents
                 continue;
             }
 
-            if (method_exists($class, 'isDiscovered') && !$class::isDiscovered()) {
+            if (
+                method_exists($class, 'isDiscovered') &&
+                (! $class::isDiscovered())
+            ) {
                 continue;
             }
 
