@@ -13,10 +13,10 @@
         :disabled="$isDisabled"
         :id="$id"
         :attributes="
-                \Filament\Support\prepare_inherited_attributes(
-                    $attributes
-                )
-            "
+            \Filament\Support\prepare_inherited_attributes(
+                $attributes
+            )
+        "
     >
         @if (($placeholder = $getPlaceholder()) !== null)
             <option value="">{{ $placeholder }}</option>
