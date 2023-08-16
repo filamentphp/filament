@@ -29,14 +29,14 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
      */
     protected string $view = 'filament-forms::components.section';
 
-    protected bool|Closure|null $isAside = null;
+    protected bool | Closure | null $isAside = null;
 
-    protected bool|Closure $isFormBefore = false;
+    protected bool | Closure $isFormBefore = false;
 
     /**
-     * @param string | array<Component> | Htmlable | Closure | null $heading
+     * @param  string | array<Component> | Htmlable | Closure | null  $heading
      */
-    final public function __construct(string|array|Htmlable|Closure|null $heading = null)
+    final public function __construct(string | array | Htmlable | Closure | null $heading = null)
     {
         is_array($heading)
             ? $this->childComponents($heading)
@@ -44,9 +44,9 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     }
 
     /**
-     * @param string | array<Component> | Htmlable | Closure | null $heading
+     * @param  string | array<Component> | Htmlable | Closure | null  $heading
      */
-    public static function make(string|array|Htmlable|Closure|null $heading = null): static
+    public static function make(string | array | Htmlable | Closure | null $heading = null): static
     {
         $static = app(static::class, ['heading' => $heading]);
         $static->configure();
@@ -61,7 +61,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
         $this->columnSpan('full');
     }
 
-    public function aside(bool|Closure|null $condition = true): static
+    public function aside(bool | Closure | null $condition = true): static
     {
         $this->isAside = $condition;
 
@@ -98,10 +98,10 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     public function isAside(): bool
     {
-        return (bool)($this->evaluate($this->isAside) ?? false);
+        return (bool) ($this->evaluate($this->isAside) ?? false);
     }
 
-    public function formBefore(bool|Closure $condition = true): static
+    public function formBefore(bool | Closure $condition = true): static
     {
         $this->isFormBefore = $condition;
 
@@ -110,6 +110,6 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
 
     public function isFormBefore(): bool
     {
-        return (bool)$this->evaluate($this->isFormBefore);
+        return (bool) $this->evaluate($this->isFormBefore);
     }
 }

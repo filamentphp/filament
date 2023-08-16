@@ -79,7 +79,7 @@
                     true => 'px-4 py-2.5',
                     false => 'px-6 py-4',
                 } => ! $aside,
-                'md:sticky md:top-20 md:left-0' => $aside && $sticky,
+                'md:sticky md:left-0 md:top-20' => $aside && $sticky,
             ])
         >
             @if ($hasIcon)
