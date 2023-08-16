@@ -710,7 +710,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $component->applySearchConstraint(
                 $relationshipQuery,
-                strtolower($search),
+                Str::lower($search),
             );
 
             $baseRelationshipQuery = $relationshipQuery->getQuery();

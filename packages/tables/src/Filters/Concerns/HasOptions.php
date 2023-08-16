@@ -40,7 +40,6 @@ trait HasOptions
         $enum = $options;
         if (
             is_string($enum) &&
-            function_exists('enum_exists') &&
             enum_exists($enum)
         ) {
             return collect($enum::cases())
