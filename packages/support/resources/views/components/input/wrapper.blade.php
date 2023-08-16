@@ -175,32 +175,32 @@
                 />
             @endif
 
-            @if ($revealable)
+            @if (count($suffixActions) || $revealable)
                 <div class="{{ $actionsClasses }}">
-                    <x-filament::icon-button
-                        color="gray"
-                        icon="heroicon-o-eye"
-                        icon-alias="forms::components.text-input.show-password"
-                        x-on:click="inputType = 'text'"
-                        x-show="inputType === 'password'"
-                    />
+                    @if ($revealable)
+                        <x-filament::icon-button
+                            color="gray"
+                            icon="heroicon-o-eye"
+                            icon-alias="forms::components.text-input.show-password"
+                            x-on:click="inputType = 'text'"
+                            x-show="inputType === 'password'"
+                        />
 
-                    <x-filament::icon-button
-                        color="gray"
-                        icon="heroicon-o-eye-slash"
-                        icon-alias="forms::components.text-input.hide-password"
-                        x-cloak
-                        x-on:click="inputType = 'password'"
-                        x-show="inputType !== 'password'"
-                    />
-                </div>
-            @endif
+                        <x-filament::icon-button
+                            color="gray"
+                            icon="heroicon-o-eye-slash"
+                            icon-alias="forms::components.text-input.hide-password"
+                            x-cloak
+                            x-on:click="inputType = 'password'"
+                            x-show="inputType !== 'password'"
+                        />
+                    @endif
 
-            @if (count($suffixActions))
-                <div class="{{ $actionsClasses }}">
-                    @foreach ($suffixActions as $suffixAction)
-                        {{ $suffixAction }}
-                    @endforeach
+                    @if (count($suffixActions))
+                        @foreach ($suffixActions as $suffixAction)
+                            {{ $suffixAction }}
+                        @endforeach
+                    @endif
                 </div>
             @endif
         </div>
