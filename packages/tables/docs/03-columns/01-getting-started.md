@@ -175,6 +175,8 @@ TextColumn::make('full_name')
     })
 ```
 
+If you are using PostgreSQL, check `forceSearchCaseInsensitive()` which is explained in later.
+
 ### Searching individually
 
 You can choose to enable a per-column search input field using the `isIndividual` parameter:
@@ -240,6 +242,7 @@ TextColumn::make('name')
     ->searchable()
     ->forceSearchCaseInsensitive()
 ```
+For PostgreSQL works slighly different that other databases, `forceSearchCaseInsensitive()` is required for search to work properly with PostgreSQL.
 
 ## Column actions and URLs
 
