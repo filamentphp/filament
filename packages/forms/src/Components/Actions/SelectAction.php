@@ -13,6 +13,11 @@ class SelectAction extends Action
     use HasState;
     use HasStateBindingModifiers;
 
+    public function isDisabled(): bool
+    {
+        return $this->getComponent()->isDisabled() || parent::isDisabled();
+    }
+
     public function getParentComponent(): ComponentContainer
     {
         return $this->getComponent()->getContainer();
