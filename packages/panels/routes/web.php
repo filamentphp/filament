@@ -91,7 +91,7 @@ Route::name('filament.')
                                         if ($routes = $panel->getAuthenticatedTenantRoutes()) {
                                             $routes($panel);
                                         }
-                                        
+
                                         Route::get('/', RedirectToHomeController::class)->name('home');
 
                                         Route::name('tenant.')->group(function () use ($panel): void {
