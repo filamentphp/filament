@@ -177,7 +177,6 @@
 
             @if ($revealable)
                 <div class="{{ $actionsClasses }}">
-
                     <x-filament::icon-button
                         color="gray"
                         icon="heroicon-o-eye"
@@ -194,7 +193,6 @@
                         x-on:click="inputType = 'password'"
                         x-show="inputType !== 'password'"
                     />
-
                 </div>
             @endif
 
