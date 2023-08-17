@@ -16,7 +16,7 @@ class Tabs extends Component
      */
     protected string $view = 'filament-infolists::components.tabs';
 
-    public int | Closure $activeTab = 1;
+    protected int | Closure $activeTab = 1;
 
     protected string | Closure | null $tabQueryStringKey = null;
 

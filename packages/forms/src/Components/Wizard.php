@@ -27,7 +27,7 @@ class Wizard extends Component
 
     protected ?Closure $modifyPreviousActionUsing = null;
 
-    public int | Closure $startStep = 1;
+    protected int | Closure $startStep = 1;
 
     /**
      * @var view-string
