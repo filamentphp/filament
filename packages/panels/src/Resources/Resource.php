@@ -656,7 +656,7 @@ abstract class Resource
                 },
                 fn (Builder $query): Builder => $query->when(
                     str($searchAttribute)->contains('.'),
-                    function (Builder $query) use ($databaseConnection, $searchAttribute, $search, $whereClause): Builder {
+                    function (Builder $query) use ($searchAttribute, $search, $whereClause): Builder {
                         $searchColumn = (string) str($searchAttribute)->afterLast('.');
 
                         $caseAwareSearchColumn = static::isGlobalSearchForcedCaseInsensitive($query) ?
