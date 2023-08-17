@@ -64,10 +64,13 @@ class RelationshipJoiner
                 // a `column` attribute set.
                 $relationshipQueryPivotWheres = Arr::where(
                     $relationshipQuery->getQuery()->wheres,
-                    fn (array $where): bool => (
-                        array_key_exists('column', $where) &&
-                        Str::startsWith($where['column'], "{$relationship->getTable()}.")
-                    ),
+                    function (array $where) use ($relationship): bool {
+                        if (! array_key_exists('column', $where)) {
+                            return false;
+                        }
+
+                        return Str::startsWith($where['column'], "{$relationship->getTable()}.");
+                    },
                 );
 
                 $firstRelationshipJoinClause->wheres = array_merge(
