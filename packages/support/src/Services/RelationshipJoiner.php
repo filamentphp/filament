@@ -66,7 +66,7 @@ class RelationshipJoiner
                     $relationshipQuery->getQuery()->wheres,
                     function (array $where) use ($relationship): bool {
                         if (! array_key_exists('column', $where)) {
-                            return true;
+                            return false;
                         }
 
                         return Str::startsWith($where['column'], "{$relationship->getTable()}.");
