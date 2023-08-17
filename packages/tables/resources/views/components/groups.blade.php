@@ -10,8 +10,8 @@
 
 <div
     x-data="{
-        direction: $wire.entangle('tableGroupingDirection').live,
-        group: $wire.entangle('tableGrouping').live,
+        direction: $wire.$entangle('tableGroupingDirection', true),
+        group: $wire.$entangle('tableGrouping', true),
     }"
     x-init="
         $watch('group', function (newGroup, oldGroup) {

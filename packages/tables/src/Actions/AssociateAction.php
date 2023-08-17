@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Str;
 
 class AssociateAction extends Action
 {
@@ -70,17 +71,20 @@ class AssociateAction extends Action
 
             $record = $relationship->getQuery()->find($data['recordId']);
 
+            if ($record instanceof Model) {
+                $this->record($record);
+            }
+
             /** @var BelongsTo $inverseRelationship */
             $inverseRelationship = $table->getInverseRelationshipFor($record);
 
             $this->process(function () use ($inverseRelationship, $record, $relationship) {
                 $inverseRelationship->associate($relationship->getParent());
                 $record->save();
-            });
-
-            if ($record instanceof Model) {
-                $this->record($record);
-            }
+            }, [
+                'inverseRelationship' => $inverseRelationship,
+                'relationship' => $relationship,
+            ]);
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
@@ -189,7 +193,7 @@ class AssociateAction extends Action
             }
 
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
-                $search = strtolower($search);
+                $search = Str::lower($search);
 
                 $searchColumns ??= [$titleAttribute];
                 $isFirst = true;

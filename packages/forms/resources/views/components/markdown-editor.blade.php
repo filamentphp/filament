@@ -29,7 +29,7 @@
                             isLiveOnBlur: @js($isLiveOnBlur()),
                             liveDebounce: @js($getNormalizedLiveDebounce()),
                             placeholder: @js($getPlaceholder()),
-                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", isOptimisticallyLive: false) }},
+                            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                             toolbarButtons: @js($getToolbarButtons()),
                             translations: @js(__('filament-forms::components.markdown_editor')),
                             uploadFileAttachmentUsing: async (file, onSuccess, onError) => {
