@@ -256,11 +256,11 @@ class EditProfile extends SimplePage
     {
         return [
             $this->getSaveFormAction(),
-            $this->getBackFormAction(),
+            $this->getCancelFormAction(),
         ];
     }
 
-    protected function getBackFormAction(): Action
+    protected function getCancelFormAction(): Action
     {
         return $this->backAction();
     }
@@ -299,7 +299,7 @@ class EditProfile extends SimplePage
     }
 
     /**
-     * @deprecated Use `getBackFormAction()` instead.
+     * @deprecated Use `getCancelFormAction()` instead.
      */
     public function backAction(): Action
     {
