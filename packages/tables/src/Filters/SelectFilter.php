@@ -25,7 +25,7 @@ class SelectFilter extends BaseFilter
 
     protected int | Closure $optionsLimit = 50;
 
-    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     protected function setUp(): void
     {
@@ -184,16 +184,16 @@ class SelectFilter extends BaseFilter
         return $this->getAttribute();
     }
 
-    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(): ?bool
     {
-        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+        return $this->evaluate($this->isSearchForcedCaseInsensitive);
     }
 
     public function getFormField(): Select

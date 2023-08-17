@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Exception;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,6 +13,7 @@ use Illuminate\Database\Query\Builder;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
 trait InteractsWithTableQuery
@@ -90,11 +92,20 @@ trait InteractsWithTableQuery
 
             $query->when(
                 $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $searchColumn),
-                fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $this->isSearchForcedCaseInsensitive()),
+                fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $this->isSearchForcedCaseInsensitive($query)),
                 function (EloquentBuilder $query) use ($search, $searchColumn, $whereClause): EloquentBuilder {
-                    $caseAwareSearchColumn = $this->isSearchForcedCaseInsensitive() ?
+                    /** @var Connection $databaseConnection */
+                    $databaseConnection = $query->getConnection();
+
+                    $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
+
+                    $caseAwareSearchColumn = $isSearchForcedCaseInsensitive ?
                         new Expression("lower({$searchColumn})") :
                         $searchColumn;
+
+                    if ($isSearchForcedCaseInsensitive) {
+                        $search = Str::lower($search);
+                    }
 
                     return $query->when(
                         $this->queriesRelationships($query->getModel()),

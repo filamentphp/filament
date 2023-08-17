@@ -3,6 +3,8 @@
 namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
+use Illuminate\Database\Connection;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 
 trait CanBeSearchable
@@ -20,7 +22,7 @@ trait CanBeSearchable
 
     protected ?Closure $searchQuery = null;
 
-    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     /**
      * @param  bool | array<string> | string  $condition
@@ -46,7 +48,7 @@ trait CanBeSearchable
         return $this;
     }
 
-    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
@@ -76,9 +78,15 @@ trait CanBeSearchable
         return $this->isSearchable() && $this->isIndividuallySearchable;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(Builder $query): bool
     {
-        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        return $this->evaluate($this->isSearchForcedCaseInsensitive) ?? match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
     }
 
     /**

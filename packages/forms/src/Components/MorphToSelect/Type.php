@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\Select;
 use function Filament\Support\get_model_label;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
@@ -36,7 +37,7 @@ class Type
 
     protected string $model;
 
-    protected bool $isSearchForcedCaseInsensitive = false;
+    protected ?bool $isSearchForcedCaseInsensitive = null;
 
     final public function __construct(string $model)
     {
@@ -65,10 +66,12 @@ class Type
                 $query->orderBy($this->getTitleAttribute());
             }
 
-            $search = Str::lower($search);
-
             $isFirst = true;
-            $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+            $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
+
+            if ($isForcedCaseInsensitive) {
+                $search = Str::lower($search);
+            }
 
             $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
                 foreach ($this->getSearchColumns() as $searchColumn) {
@@ -295,15 +298,21 @@ class Type
         return $this->optionsLimit;
     }
 
-    public function forceSearchCaseInsensitive(bool $condition = true): static
+    public function forceSearchCaseInsensitive(?bool $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(Builder $query): bool
     {
-        return $this->isSearchForcedCaseInsensitive;
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        return $this->isSearchForcedCaseInsensitive ?? match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
     }
 }

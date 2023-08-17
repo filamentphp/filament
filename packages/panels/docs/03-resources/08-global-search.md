@@ -159,5 +159,5 @@ public function panel(Panel $panel): Panel
 By default, searching will use the sensitivity settings from the database table column. This is to avoid unnecessary performance overhead when searching large datasets that would arise if we were to force insensitivity for all users. However, if your database does not search case-insensitively by default, you can force it to by using the `$isGlobalSearchForcedCaseInsensitive` property:
 
 ```php
-protected static bool $isGlobalSearchForcedCaseInsensitive = true;
+protected static ?bool $isGlobalSearchForcedCaseInsensitive = true;
 ```
