@@ -65,7 +65,7 @@ class Type
                 $query->orderBy($this->getTitleAttribute());
             }
 
-            $search = strtolower($search);
+            $search = Str::lower($search);
 
             $isFirst = true;
             $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();

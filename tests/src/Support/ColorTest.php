@@ -2,6 +2,7 @@
 
 use Filament\Support\Colors\Color;
 use Filament\Tests\TestCase;
+use Illuminate\Support\Str;
 
 uses(TestCase::class);
 
@@ -72,7 +73,7 @@ it('returns all colors', function () {
     $colors = [];
 
     foreach ((new ReflectionClass(Color::class))->getConstants() as $name => $color) {
-        $colors[strtolower($name)] = $color;
+        $colors[Str::lower($name)] = $color;
     }
 
     expect(Color::all())

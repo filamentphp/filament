@@ -242,6 +242,20 @@ trait HasComponents
         return $this->widgetNamespaces;
     }
 
+    public function discoverLivewireComponents(string $in, string $for): static
+    {
+        $component = [];
+
+        $this->discoverComponents(
+            Component::class,
+            $component,
+            directory: $in,
+            namespace: $for,
+        );
+
+        return $this;
+    }
+
     /**
      * @return array<class-string>
      */
@@ -304,6 +318,10 @@ trait HasComponents
                 ->replace('*', $variableNamespace)
                 ->replace(['/', '.php'], ['\\', '']);
 
+            if (! class_exists($class)) {
+                continue;
+            }
+
             if ((new ReflectionClass($class))->isAbstract()) {
                 continue;
             }
@@ -316,7 +334,10 @@ trait HasComponents
                 continue;
             }
 
-            if (! $class::isDiscovered()) {
+            if (
+                method_exists($class, 'isDiscovered') &&
+                (! $class::isDiscovered())
+            ) {
                 continue;
             }
 

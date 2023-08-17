@@ -63,6 +63,13 @@ trait HasStateBindingModifiers
 
         $modifiers = $this->getStateBindingModifiers(withBlur: ! $entangled, withDebounce: ! $entangled, isOptimisticallyLive: $isOptimisticallyLive);
 
+        if (str($expression)->is('$entangle(*)')) {
+            return (string) str($expression)->replaceLast(
+                ')',
+                in_array('live', $modifiers) ? ', true)' : ')',
+            );
+        }
+
         return implode('.', [
             $expression,
             ...$modifiers,

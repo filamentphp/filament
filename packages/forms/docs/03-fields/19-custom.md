@@ -51,7 +51,7 @@ Imagine you had a Livewire component with a public property called `$name`. You 
 
 <!-- Or -->
 
-<div x-data="{ state: $wire.entangle('name') }">
+<div x-data="{ state: $wire.$entangle('name') }">
     <input x-model="state" />
 </div>
 ```
@@ -65,7 +65,7 @@ This is the basis of how fields work in Filament. Each field is assigned to a pu
 
 <!-- Or -->
 
-<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+<div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
     <input x-model="state" />
 </div>
 ```
@@ -103,14 +103,14 @@ When you bind a field to a state path, you may use the `defer` modifier to ensur
 
 However, you may use the [`live()`](../advanced#the-basics-of-reactivity) on a field to ensure that the state is sent to the server immediately when the user interacts with the field. This allows for lots of advanced use cases as explained in the [advanced](../advanced) section of the documentation.
 
-Filament provides a `$applyStateBindingModifiers()` function that you may use in your view to apply any state binding modifiers to a `wire:model` or `$wire.entangle()` binding:
+Filament provides a `$applyStateBindingModifiers()` function that you may use in your view to apply any state binding modifiers to a `wire:model` or `$wire.$entangle()` binding:
 
 ```blade
 <input {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}" />
 
 <!-- Or -->
 
-<div x-data="{ state: $wire.{{ $applyStateBindingModifiers("entangle('{$getStatePath()}')") }} }">
+<div x-data="{ state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }} }">
     <input x-model="state" />
 </div>
 ```
