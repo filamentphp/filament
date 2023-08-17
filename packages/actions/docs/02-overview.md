@@ -7,7 +7,6 @@ title: Overview
 "Action" is a word that is used quite a bit within the Laravel community. Traditionally, action PHP classes handle "doing" something in your application's business logic. For instance, logging a user in, sending an email, or creating a new user record in the database.
 
 In Filament, actions also handle "doing" something in your app. However, they are a bit different from traditional actions. They are designed to be used in the context of a user interface. For instance, you might have a button to delete a client record, which opens a modal to confirm your decision. When the user clicks the "Delete" button in the modal, the client is deleted. This whole workflow is an "action".
-
 ```php
 Action::make('delete')
     ->requiresConfirmation()
@@ -125,5 +124,10 @@ ActionGroup::make([
     Action::make('delete'),
 ])
 ```
-
 To learn about how to group actions, see the [Grouping actions](grouping-actions) page.
+
+## Naming actions
+You can name an action with any combination of alphanumeric characters. 
+You can also include underscores (`_`), but dashes (`-`) are not allowed. 
+
+Using a dash will break the resolving of the action, causing the action to become non-functional.
