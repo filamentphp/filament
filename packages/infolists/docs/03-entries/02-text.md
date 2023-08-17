@@ -247,7 +247,8 @@ TextEntry::make('email')
 You may set the position of an icon using `iconPosition()`:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Support\Enums\IconPosition;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\IconPosition;
 
 TextEntry::make('email')
     ->icon('heroicon-m-envelope')
