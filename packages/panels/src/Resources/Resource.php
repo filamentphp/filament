@@ -655,10 +655,7 @@ abstract class Resource
                 fn (Builder $query): Builder => $query->when(
                     str($searchAttribute)->contains('.'),
                     function (Builder $query) use ($databaseConnection, $searchAttribute, $search, $whereClause): Builder {
-                        $searchColumn = match ($databaseConnection->getDriverName()) {
-                            'pgsql' => "{$searchAttribute}::text",
-                            default => $searchAttribute,
-                        };
+                        $searchColumn = (string) str($searchAttribute)->afterLast('.');
 
                         $caseAwareSearchColumn = static::isGlobalSearchForcedCaseInsensitive($query) ?
                             new Expression("lower({$searchColumn})") :
