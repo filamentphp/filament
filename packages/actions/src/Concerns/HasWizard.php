@@ -11,7 +11,7 @@ trait HasWizard
 
     protected bool | Closure $isWizardSkippable = false;
 
-    public int | Closure $wizardStartStep = 1;
+    protected int | Closure $wizardStartStep = 1;
 
     /**
      * @param  array<Step> | Closure  $steps
