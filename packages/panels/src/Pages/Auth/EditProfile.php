@@ -255,8 +255,8 @@ class EditProfile extends SimplePage
     protected function getFormActions(): array
     {
         return [
-            $this->getBackFormAction(),
             $this->getSaveFormAction(),
+            $this->getBackFormAction(),
         ];
     }
 
@@ -280,7 +280,7 @@ class EditProfile extends SimplePage
 
     public function getFormActionsAlignment(): string
     {
-        return 'between';
+        return 'start';
     }
 
     public function getTitle(): string | Htmlable
