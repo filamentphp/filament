@@ -318,7 +318,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->userMenuItems([
+        ->tenantMenuItems([
             'register' => MenuItem::make()->label('Register new team'),
             // ...
         ]);
@@ -337,7 +337,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->userMenuItems([
+        ->tenantMenuItems([
             'billing' => MenuItem::make()->label('Manage subscription'),
             // ...
         ]);
