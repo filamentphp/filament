@@ -639,12 +639,14 @@ abstract class Resource
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
                 function (Builder $query) use ($databaseConnection, $searchAttribute, $search, $whereClause): Builder {
+                    $searchColumn = match ($databaseConnection->getDriverName()) {
+                        'pgsql' => "{$searchAttribute}::text",
+                        default => $searchAttribute,
+                    };
+
                     $caseAwareSearchColumn = static::isGlobalSearchForcedCaseInsensitive($query) ?
-                        new Expression('lower(' . match ($databaseConnection->getDriverName()) {
-                            'pgsql' => "{$searchAttribute}::text",
-                            default => $searchAttribute,
-                        } . ')') :
-                        $searchAttribute;
+                        new Expression("lower({$searchColumn})") :
+                        $searchColumn;
 
                     return $query->$whereClause(
                         $caseAwareSearchColumn,
