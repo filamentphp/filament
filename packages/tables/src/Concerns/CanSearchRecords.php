@@ -4,7 +4,6 @@ namespace Filament\Tables\Concerns;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Str;
 use RecursiveArrayIterator;
 use RecursiveIteratorIterator;
 
@@ -106,7 +105,7 @@ trait CanSearchRecords
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
     {
-        $search = trim(Str::lower($this->getTableSearch()));
+        $search = trim($this->getTableSearch());
 
         if (blank($search)) {
             return $query;
@@ -249,7 +248,7 @@ trait CanSearchRecords
             // Nested array keys are flattened into `dot.syntax`.
             $searches[
                 implode('.', array_slice($path, 0, $iterator->getDepth() + 1))
-            ] = trim(Str::lower($value));
+            ] = trim($value);
         }
 
         return $searches;
