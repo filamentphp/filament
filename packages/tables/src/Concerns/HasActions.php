@@ -25,7 +25,10 @@ trait HasActions
      */
     public ?array $mountedTableActionsData = [];
 
-    public int | string | null $mountedTableActionRecord = null;
+    /**
+     * @var int | string | null
+     */
+    public $mountedTableActionRecord = null;
 
     protected ?Model $cachedMountedTableActionRecord = null;
 
