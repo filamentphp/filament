@@ -65,8 +65,8 @@ class RelationshipJoiner
                 $relationshipQueryPivotWheres = Arr::where(
                     $relationshipQuery->getQuery()->wheres,
                     function (array $where) use ($relationship): bool {
-                        if (array_key_exists('column', $where)) {
-                            return true;
+                        if (! array_key_exists('column', $where)) {
+                            return false;
                         }
 
                         return Str::startsWith($where['column'], "{$relationship->getTable()}.");
