@@ -4,6 +4,7 @@
 @endphp
 
 <div
+    wire:ignore.self
     x-cloak
     x-data="{
         step: null,
