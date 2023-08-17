@@ -11,10 +11,10 @@ class GlobalSearchResult
      * @param  array<Action>  $actions
      */
     public function __construct(
-        public readonly string $title,
-        public readonly string $url,
-        public readonly array $details = [],
-        public readonly array $actions = [],
+        readonly public string $title,
+        readonly public string $url,
+        readonly public array $details = [],
+        readonly public array $actions = [],
     ) {
     }
 }
