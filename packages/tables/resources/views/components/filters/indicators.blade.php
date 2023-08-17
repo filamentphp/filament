@@ -7,7 +7,7 @@
 >
     <div class="flex flex-col gap-x-3 gap-y-1 sm:flex-row">
         <span
-            class="text-sm font-medium leading-6 text-gray-700 whitespace-nowrap dark:text-gray-200"
+            class="whitespace-nowrap text-sm font-medium leading-6 text-gray-700 dark:text-gray-200"
         >
             {{ __('filament-tables::table.filters.indicator') }}
         </span>
