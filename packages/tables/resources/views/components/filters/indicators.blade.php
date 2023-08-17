@@ -12,7 +12,7 @@
             {{ __('filament-tables::table.filters.indicator') }}
         </span>
 
-        <div class="flex gap-1.5">
+        <div class="flex flex-wrap gap-1.5">
             @foreach ($indicators as $wireClickHandler => $label)
                 <x-filament::badge>
                     {{ $label }}
