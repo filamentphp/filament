@@ -450,7 +450,7 @@ public function panel(Panel $panel): Panel
 
 ## Configuring the name attribute
 
-By default, Filament will use Filament\Resources\Pages\CreateRecord;use the `name` attribute of the tenant to display its name in the app. To change this, you can implement the `HasName` contract:
+By default, Filament will use the `name` attribute of the tenant to display its name in the app. To change this, you can implement the `HasName` contract:
 
 ```php
 <?php
