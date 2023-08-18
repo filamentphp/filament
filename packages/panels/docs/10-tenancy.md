@@ -289,6 +289,7 @@ The tenant-switching menu is featured in the sidebar of the admin layout. It's f
 To register new items to the tenant menu, you can use the [configuration](configuration):
 
 ```php
+use App\Filament\Pages\Settings;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 
@@ -299,7 +300,7 @@ public function panel(Panel $panel): Panel
         ->tenantMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(route('filament.pages.settings'))
+                ->url(fn (): string => Settings::getUrl()),
                 ->icon('heroicon-m-cog-8-tooth'),
             // ...
         ]);
