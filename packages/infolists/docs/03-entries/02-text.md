@@ -247,7 +247,8 @@ TextEntry::make('email')
 You may set the position of an icon using `iconPosition()`:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Support\Enums\IconPosition;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\IconPosition;
 
 TextEntry::make('email')
     ->icon('heroicon-m-envelope')
@@ -276,7 +277,8 @@ Text entries have regular font weight by default, but you may change this to any
 For instance, you may make the font bold using `weight(FontWeight::Bold)`:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Support\Enums\FontWeight;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\FontWeight;
 
 TextEntry::make('title')
     ->weight(FontWeight::Bold)
