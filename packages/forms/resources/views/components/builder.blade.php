@@ -61,6 +61,7 @@
                         x-data="{
                             isCollapsed: @js($isCollapsed($item)),
                         }"
+                        x-bind:class="isCollapsed && 'fi-collapsed'"
                         x-on:builder-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                         x-on:builder-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                         x-on:expand-concealing-component.window="
