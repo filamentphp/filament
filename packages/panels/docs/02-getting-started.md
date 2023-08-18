@@ -456,7 +456,7 @@ php artisan make:filament-relation-manager PatientResource treatments descriptio
 This will create a `PatientResource/RelationManagers/TreatmentsRelationManager.php` file. You must register the new relation manager in the `getRelations()` method of the `PatientResource`:
 
 ```php
-use App\Filament\PatientResource\RelationManagers;
+use App\Filament\Resources\PatientResource\RelationManagers;
 
 public static function getRelations(): array
 {

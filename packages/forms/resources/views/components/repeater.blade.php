@@ -66,6 +66,7 @@
                             x-data="{
                                 isCollapsed: @js($isCollapsed($item)),
                             }"
+                            x-bind:class="isCollapsed && 'fi-collapsed'"
                             x-on:expand-concealing-component.window="
                                 error = $el.querySelector('[data-validation-error]')
 
