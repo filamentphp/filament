@@ -32,7 +32,7 @@ class Post extends Model
 }
 ```
 
-> Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/plugins/spatie-tags) for more information.
+> Filament also supports [`spatie/laravel-tags`](https://github.com/spatie/laravel-tags). See our [plugin documentation](/plugins/filament-spatie-tags) for more information.
 
 ## Comma-separated tags
 
