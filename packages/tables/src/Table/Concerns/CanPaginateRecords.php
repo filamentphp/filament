@@ -11,7 +11,7 @@ trait CanPaginateRecords
 
     protected bool | Closure $isPaginated = true;
 
-    protected bool | Closure $isPaginatedWhileReordering = true;
+    protected bool | Closure $isPaginatedWhileReordering = false;
 
     /**
      * @var array<int | string> | Closure | null
