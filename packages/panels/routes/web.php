@@ -23,10 +23,6 @@ Route::name('filament.')
                     ->name("{$panelId}.")
                     ->prefix($panel->getPath())
                     ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute) {
-                        if ($routes = $panel->getRoutes()) {
-                            $routes($panel);
-                        }
-
                         Route::name('auth.')->group(function () use ($panel) {
                             if ($panel->hasLogin()) {
                                 Route::get('/login', $panel->getLoginRouteAction())->name('login');
@@ -50,10 +46,6 @@ Route::name('filament.')
 
                         Route::middleware($panel->getAuthMiddleware())
                             ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute): void {
-                                if ($routes = $panel->getAuthenticatedRoutes()) {
-                                    $routes($panel);
-                                }
-
                                 if ($hasTenancy) {
                                     Route::get('/', RedirectToTenantController::class)->name('tenant');
                                 }
@@ -88,10 +80,6 @@ Route::name('filament.')
                                 Route::middleware($hasTenancy ? $panel->getTenantMiddleware() : [])
                                     ->prefix($hasTenancy ? (($tenantRoutePrefix) ? "{$tenantRoutePrefix}/" : '') . ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
                                     ->group(function () use ($panel): void {
-                                        if ($routes = $panel->getAuthenticatedTenantRoutes()) {
-                                            $routes($panel);
-                                        }
-
                                         Route::get('/', RedirectToHomeController::class)->name('home');
 
                                         Route::name('tenant.')->group(function () use ($panel): void {
@@ -116,8 +104,15 @@ Route::name('filament.')
                                                 $resource::routes($panel);
                                             }
                                         });
+
+                                        if ($routes = $panel->getAuthenticatedTenantRoutes()) {
+                                            $routes($panel);
+                                        }
                                     });
 
+                                if ($routes = $panel->getAuthenticatedRoutes()) {
+                                    $routes($panel);
+                                }
                             });
 
                         if ($hasTenancy) {
@@ -128,6 +123,10 @@ Route::name('filament.')
                                         $routes($panel);
                                     }
                                 });
+                        }
+
+                        if ($routes = $panel->getRoutes()) {
+                            $routes($panel);
                         }
                     });
             }
