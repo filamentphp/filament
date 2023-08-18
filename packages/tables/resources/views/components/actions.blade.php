@@ -25,7 +25,7 @@
         $attributes->class([
             'fi-ta-actions flex shrink-0 items-center gap-3',
             'flex-wrap' => $wrap,
-            'sm:flex-nowrap' => $wrap === '-sm',
+<!--             'sm:flex-nowrap' => $wrap === '-sm', -->
             match ($alignment) {
                 Alignment::Center, 'center' => 'justify-center',
                 Alignment::Start, Alignment::Left, 'start', 'left' => 'justify-start',
