@@ -214,10 +214,10 @@ We are using x-load to asynchronously load stylesheet, so it's only loaded when 
                     'gray' => 'text-gray-600 dark:text-gray-400',
                     default => 'text-custom-500',
                 },
-                ])
-                ->style([
-                    \Filament\Support\get_color_css_variables($color, [500]) => $color !== 'gray',
-                ])
+            ])
+            ->style([
+                \Filament\Support\get_color_css_variables($color, [500]) => $color !== 'gray',
+            ])
     }}
 >
     {{ $getContent() }}
