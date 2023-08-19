@@ -374,6 +374,14 @@ trait HasComponents
             $this->queueLivewireComponentForRegistration($registrationRouteAction);
         }
 
+        if ($this->hasTenantRegistration()  && is_subclass_of($tenantRegistrationRouteAction = $this->getTenantRegistrationPage(), Component::class)) {
+            $this->queueLivewireComponentForRegistration($tenantRegistrationRouteAction);
+        }
+
+        if ($this->hasTenantProfile()  && is_subclass_of($tenantProfileRouteAction = $this->getTenantProfilePage(), Component::class)) {
+            $this->queueLivewireComponentForRegistration($tenantProfileRouteAction);
+        }
+
         foreach ($this->getResources() as $resource) {
             foreach ($resource::getPages() as $pageRegistration) {
                 $this->queueLivewireComponentForRegistration($pageRegistration->getPage());
