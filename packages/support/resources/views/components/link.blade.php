@@ -45,8 +45,8 @@
             ActionSize::ExtraSmall, 'xs' => 'gap-1 text-xs',
             ActionSize::Small, 'sm' => 'gap-1 text-sm',
             ActionSize::Medium, 'md' => 'gap-1.5 text-sm',
-            ActionSize::Large, 'lg' => 'gap-1.5 text-sm',
-            ActionSize::ExtraLarge, 'xl' => 'gap-1.5 text-sm',
+            ActionSize::Large, 'lg' => 'gap-1.5 text-base',
+            ActionSize::ExtraLarge, 'xl' => 'gap-1.5 text-lg',
         },
         match ($color) {
             'gray' => 'text-gray-700 dark:text-gray-200',
