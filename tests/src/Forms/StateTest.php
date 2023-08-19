@@ -266,6 +266,42 @@ test('custom logic can be executed after state is updated', function () {
         ->getData()->toBe([$statePath => strrev($state)]);
 });
 
+test('custom logic can be executed after nested state is updated', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath = Str::random())
+                ->afterStateUpdated(fn (Component $component, $state) => $component->state([strrev($state[0])])),
+        ])
+        ->fill([$statePath => [$state = Str::random()]])
+        ->callAfterStateUpdated("data.{$statePath}.0");
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => [strrev($state)]]);
+});
+
+test('custom logic can be executed after child component state is updated', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath = Str::random())
+                ->childComponents([
+                    (new Component())
+                        ->statePath($childComponentStatePath = Str::random()),
+                ])
+                ->afterStateUpdated(fn (Component $component, $state) => $component->state([
+                    $childComponentStatePath => strrev($state[$childComponentStatePath]),
+                ])),
+        ])
+        ->fill([$statePath => [$childComponentStatePath => $state = Str::random()]])
+        ->callAfterStateUpdated("data.{$statePath}.{$childComponentStatePath}");
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => [$childComponentStatePath => strrev($state)]]);
+});
+
 test('state can be dehydrated', function () {
     $container = ComponentContainer::make(Livewire::make())
         ->statePath('data')
