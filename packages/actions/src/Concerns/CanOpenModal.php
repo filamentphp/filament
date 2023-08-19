@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\ModalWidth;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -68,7 +69,7 @@ trait CanOpenModal
 
     protected string | Htmlable | Closure | null $modalDescription = null;
 
-    protected string | Closure | null $modalWidth = null;
+    protected string | ModalWidth | Closure | null $modalWidth = null;
 
     protected bool | Closure | null $isModalHidden = false;
 
@@ -288,7 +289,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalWidth(string | Closure | null $width = null): static
+    public function modalWidth(string | ModalWidth | Closure | null $width = null): static
     {
         $this->modalWidth = $width;
 
@@ -510,7 +511,21 @@ trait CanOpenModal
 
     public function getModalWidth(): string
     {
-        return $this->evaluate($this->modalWidth) ?? '4xl';
+        return match ($size = $this->evaluate($this->modalWidth)) {
+            ModalWidth::ExtraSmall => 'xs',
+            ModalWidth::Small => 'sm',
+            ModalWidth::Medium => 'md',
+            ModalWidth::Large => 'lg',
+            ModalWidth::ExtraLarge => 'xl',
+            ModalWidth::TwoXl => '2xl',
+            ModalWidth::ThreeXl => '3xl',
+            ModalWidth::FourXl => '4xl',
+            ModalWidth::FiveXl => '5xl',
+            ModalWidth::SixXl => '6xl',
+            ModalWidth::SevenXl => '7xl',
+            ModalWidth::Screen => 'screen',
+            default => $size,
+        } ?? '4xl';
     }
 
     public function isModalFooterSticky(): bool
