@@ -27,9 +27,13 @@ By default, a link's underlying HTML tag is `<a>`. You can change it to be a `<b
 
 ## Setting the size of a link
 
-By default, the size of a link is "medium". You can make it "small", "large", "extra large" or "extra extra large" by using the `size` attribute:
+By default, the size of a link is "medium". You can make it "extra small", "small", "large" or "extra large" by using the `size` attribute:
 
 ```blade
+<x-filament::link size="xs">
+    New user
+</x-filament::link>
+
 <x-filament::link size="sm">
     New user
 </x-filament::link>
@@ -39,10 +43,6 @@ By default, the size of a link is "medium". You can make it "small", "large", "e
 </x-filament::link>
 
 <x-filament::link size="xl">
-    New user
-</x-filament::link>
-
-<x-filament::link size="2xl">
     New user
 </x-filament::link>
 ```
