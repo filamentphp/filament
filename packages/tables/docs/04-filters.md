@@ -307,7 +307,7 @@ Filter::make('is_admin')
     ->indicator('Administrators')
 ```
 
-If you are using a [custom filter form](#custom-filter-forms), you should use `indicateUsing()` to display an active indicator.
+If you are using a [custom filter form](#custom-filter-forms), you should use [`indicateUsing()`](#custom-active-indicators) to display an active indicator.
 
 ### Custom active indicators
 
