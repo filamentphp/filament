@@ -289,6 +289,25 @@ test('custom logic can be executed after child component state is updated', func
                 ->statePath($statePath = Str::random())
                 ->childComponents([
                     (new Component())
+                        ->statePath($childComponentStatePath = Str::random())
+                        ->afterStateUpdated(fn (Component $component, $state) => $component->state(strrev($state))),
+                ]),
+        ])
+        ->fill([$statePath => [$childComponentStatePath => $state = Str::random()]])
+        ->callAfterStateUpdated("data.{$statePath}.{$childComponentStatePath}");
+
+    expect($livewire)
+        ->getData()->toBe([$statePath => [$childComponentStatePath => strrev($state)]]);
+});
+
+test('custom logic on parent component can be executed after child component state is updated', function () {
+    ComponentContainer::make($livewire = Livewire::make())
+        ->statePath('data')
+        ->components([
+            (new Component())
+                ->statePath($statePath = Str::random())
+                ->childComponents([
+                    (new Component())
                         ->statePath($childComponentStatePath = Str::random()),
                 ])
                 ->afterStateUpdated(fn (Component $component, $state) => $component->state([

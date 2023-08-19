@@ -33,8 +33,6 @@ trait HasState
 
             if (str($path)->startsWith("{$component->getStatePath()}.")) {
                 $component->callAfterStateUpdated();
-
-                return true;
             }
 
             foreach ($component->getChildComponentContainers() as $container) {
