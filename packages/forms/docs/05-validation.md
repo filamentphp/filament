@@ -481,6 +481,20 @@ TextInput::make('slug')->rules([
 ])
 ```
 
+You may also inject a $get callable to your closure rules, if you need to reference other fields on your form:
+
+```php
+TextInput::make('slug')->rules([
+    function (Get $get) {
+        return function (string $attribute, $value, Closure $fail) use ($get) {
+            if ($get('other_field') === 'foo' && $value !== 'bar') {
+                $fail("The {$attribute} is invalid.");
+            }
+        };
+    },
+])
+```
+
 ## Validation attributes
 
 When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:
