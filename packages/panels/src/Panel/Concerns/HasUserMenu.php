@@ -30,6 +30,7 @@ trait HasUserMenu
     public function getUserMenuItems(): array
     {
         return collect($this->userMenuItems)
+            ->filter(fn (MenuItem $item): bool => $item->isVisible())
             ->sort(fn (MenuItem $item): int => $item->getSort())
             ->all();
     }

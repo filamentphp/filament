@@ -28,7 +28,7 @@ trait Translatable
 
     public function getTranslatableLocales(): array
     {
-        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
+        return static::getResource()::getTranslatableLocales();
     }
 
     protected function setActiveLocale(?string $locale = null): void
@@ -54,6 +54,11 @@ trait Translatable
 
             $translatableAttributes = app(static::getModel())->getTranslatableAttributes();
 
+            $nonTranslatableData = Arr::except(
+                $this->data[$originalActiveLocale] ?? [],
+                $translatableAttributes,
+            );
+
             foreach ($this->getTranslatableLocales() as $locale) {
                 if ($locale === $originalActiveLocale) {
                     continue;
@@ -62,15 +67,12 @@ trait Translatable
                 try {
                     $this->setActiveLocale($locale);
 
-                    $this->callHook('beforeValidate');
-
                     $this->data[$locale] = array_merge(
                         $this->data[$locale] ?? [],
-                        Arr::except(
-                            $this->data[$originalActiveLocale] ?? [],
-                            $translatableAttributes,
-                        ),
+                        $nonTranslatableData,
                     );
+
+                    $this->callHook('beforeValidate');
 
                     $data[$locale] = $this->form->getState();
 

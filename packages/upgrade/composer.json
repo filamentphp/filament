@@ -10,7 +10,7 @@
     "require": {
         "php": "^8.1",
         "nunomaduro/termwind": "^1.0",
-        "rector/rector": "^0.15"
+        "rector/rector": "^0.17"
     },
     "autoload": {
         "psr-4": {

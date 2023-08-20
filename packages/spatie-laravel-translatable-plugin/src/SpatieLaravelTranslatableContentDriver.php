@@ -96,9 +96,11 @@ class SpatieLaravelTranslatableContentDriver implements TranslatableContentDrive
             default => "json_extract({$column}, \"$.{$this->activeLocale}\")",
         };
 
-        $caseAwareSearchColumn = $isCaseInsensitivityForced ?
-            new Expression("lower({$column})") :
-            $column;
+        $caseAwareSearchColumn = new Expression(
+            $isCaseInsensitivityForced ?
+                "lower({$column})" :
+                $column
+        );
 
         return $query->{$whereClause}(
             $caseAwareSearchColumn,

@@ -47,7 +47,7 @@ protected int | string | array $columnSpan = [
 
 This is especially useful when using a [responsive widgets grid](#responsive-widgets-grid).
 
-## Customizing the widgets grid
+## Customizing the widgets' grid
 
 You may change how many grid columns are used to display widgets.
 
@@ -126,7 +126,7 @@ public function panel(Panel $panel): Panel
 
 ## Customizing the dashboard page
 
-If you want to customize the dashboard class, for example to [change the number of widget columns](#customizing-widget-width), create a new file at `app/Filament/Pages/Dashboard.php`:
+If you want to customize the dashboard class, for example, to [change the number of widget columns](#customizing-widget-width), create a new file at `app/Filament/Pages/Dashboard.php`:
 
 ```php
 <?php

@@ -50,7 +50,7 @@
         <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
             @class([
                 'list-inside list-disc' => $isBulleted(),
-                'flex flex-wrap items-center gap-1' => $isBadge,
+                'flex flex-wrap items-center gap-1.5' => $isBadge,
             ])
         >
             @foreach ($arrayState as $state)
@@ -79,7 +79,7 @@
                         ]);
 
                         $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-                            'fi-in-text-item-icon h-5 w-5',
+                            'fi-in-text-item-icon h-5 w-5 shrink-0',
                             match ($color) {
                                 'gray', null => 'text-gray-400 dark:text-gray-500',
                                 default => 'text-custom-500',

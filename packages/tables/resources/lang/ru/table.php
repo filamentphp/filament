@@ -1,7 +1,7 @@
 <?php
 
 return [
-  'column_toggle' => [
+    'column_toggle' => [
 
         'heading' => 'Столбцы',
 
@@ -15,7 +15,7 @@ return [
     ],
 
     'fields' => [
-   'bulk_select_page' => [
+        'bulk_select_page' => [
             'label' => 'Выбрать/снять все элементы для массовых действий.',
         ],
 
@@ -25,10 +25,10 @@ return [
         'search' => [
             'label' => 'Поиск',
             'placeholder' => 'Поиск',
-             'indicator' => 'Поиск',
+            'indicator' => 'Поиск',
         ],
 
- ],
+    ],
 
     'summary' => [
 
@@ -135,7 +135,7 @@ return [
 
     ],
 
-       'grouping' => [
+    'grouping' => [
 
         'fields' => [
 

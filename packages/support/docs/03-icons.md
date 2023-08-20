@@ -10,7 +10,7 @@ They have a website where you can [search all the available icons](https://blade
 
 ## Using custom SVGs as icons
 
-The [Blade Icons] package allows you to register custom SVGs as icons. This is useful if you want to use your own custom icons in Filament.
+The [Blade Icons](https://github.com/blade-ui-kit/blade-icons) package allows you to register custom SVGs as icons. This is useful if you want to use your own custom icons in Filament.
 
 To start with, publish the Blade Icons configuration file:
 

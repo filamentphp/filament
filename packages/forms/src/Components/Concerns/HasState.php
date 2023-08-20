@@ -10,6 +10,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 use Livewire\Livewire;
+use function Livewire\store;
 
 trait HasState
 {
@@ -65,11 +66,23 @@ trait HasState
 
     public function callAfterStateUpdated(): static
     {
-        if ($callback = $this->afterStateUpdated) {
-            $this->evaluate($callback, [
-                'old' => $this->getOldState(),
-            ]);
+        $callback = $this->afterStateUpdated;
+
+        if (! $callback) {
+            return $this;
         }
+
+        $callbackId = spl_object_id($callback);
+
+        if (store($this)->has('executedAfterStateUpdatedCallbacks', iKey: $callbackId)) {
+            return $this;
+        }
+
+        $this->evaluate($callback, [
+            'old' => $this->getOldState(),
+        ]);
+
+        store($this)->push('executedAfterStateUpdatedCallbacks', value: $callbackId, iKey: $callbackId);
 
         return $this;
     }

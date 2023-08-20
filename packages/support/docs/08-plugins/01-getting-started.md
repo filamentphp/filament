@@ -15,7 +15,7 @@ Before we dive in, it's important to understand the different contexts in which 
    1. A plugin that adds custom fields to be used with the [Form Builders](/docs/3.x/forms/installation/).
    2. A plugin that adds custom columns or filters to the [Table Builders](/docs/3.x/tables/installation/).
 
-Although these are two different mental contexts to keep in mind when building plugins they can be used together inside the same plugin. They do not have to be mutually exclusive.
+Although these are two different mental contexts to keep in mind when building plugins, they can be used together inside the same plugin. They do not have to be mutually exclusive.
 
 ## Important Concepts
 
@@ -44,19 +44,19 @@ While you can certainly build plugins from scratch, we recommend using the [Fila
 
 ### Usage
 
-To use the skeleton, simply go to the GitHub repo and click the "Use this template" button. This will create a new repo in your account with the skeleton code. After that you can clone the repo to your machine. Once you have the code on your machine, navigate to the root of the project and run the following command:
+To use the skeleton, simply go to the GitHub repo and click the "Use this template" button. This will create a new repo in your account with the skeleton code. After that, you can clone the repo to your machine. Once you have the code on your machine, navigate to the root of the project and run the following command:
 
 ```bash
 php ./configure.php
 ```
 
-This will ask you a series of questions to configure the plugin. Once you've answered all the questions the script will stub out a new plugin for you and you can begin to build your amazing new extension for Filament.
+This will ask you a series of questions to configure the plugin. Once you've answered all the questions, the script will stub out a new plugin for you, and you can begin to build your amazing new extension for Filament.
 
 ## Upgrading existing plugins
 
-Since every plugin varies greatly in its scope of use and functionality, there is no one size fits all approach to upgrading existing plugins. However, one thing to note, that is consistent to all plugins is the deprecation of the `PluginServiceProvider`.
+Since every plugin varies greatly in its scope of use and functionality, there is no one size fits all approaches to upgrading existing plugins. However, one thing to note, that is consistent to all plugins is the deprecation of the `PluginServiceProvider`.
 
-In you plugin service provider you will need to change it to extend the PackageServiceProvider instead. You will also need to add a static `$name` property to the service provider. This property is used to register the plugin with Filament. Here is an example of what your service provider might look like:
+In your plugin service provider, you will need to change it to extend the PackageServiceProvider instead. You will also need to add a static `$name` property to the service provider. This property is used to register the plugin with Filament. Here is an example of what your service provider might look like:
 
 ```php
 class MyPluginServiceProvider extends PackageServiceProvider

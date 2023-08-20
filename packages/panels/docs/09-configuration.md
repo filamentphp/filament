@@ -60,6 +60,8 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+Make sure your `routes/web.php` file doesn't already define the `''` or `'/'` route, as it will take precedence.
+
 ## Render hooks
 
 [Render hooks](../support/render-hooks) allow you to render Blade content at various points in the framework views. You can [register global render hooks](../support/render-hooks#registering-render-hooks) in a service provider or middleware, but it also allows you to register render hooks that are specific to a panel. To do that, you can use the `renderHook()` method on the panel configuration object. Here's an example, integrating [`wire-elements/modal`](https://github.com/wire-elements/modal) with Filament:
@@ -93,5 +95,20 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->domain('admin.example.com');
+}
+```
+
+## Customizing the maximum content width
+
+By default, Filament will restrict the width of the content on a page, so it doesn't become too wide on large screens. To change this, you may use the `maxContentWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, `prose`, `screen-sm`, `screen-md`, `screen-lg`, `screen-xl`, `screen-2xl` and `full`. The default is `7xl`:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->maxContentWidth('full');
 }
 ```

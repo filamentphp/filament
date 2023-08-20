@@ -340,27 +340,27 @@ return [
 
                         'create' => [
                             'label' => 'Создать',
-                         ],
-                         'create_another' => [
-                                'label' => 'Создать еще один',
-                            ],
-
+                        ],
+                        'create_another' => [
+                            'label' => 'Создать еще один',
                         ],
 
                     ],
 
                 ],
 
-                'edit_option' => [
+            ],
 
-                    'modal' => [
+            'edit_option' => [
 
-                        'heading' => 'Изменить',
+                'modal' => [
 
-                        'actions' => [
+                    'heading' => 'Изменить',
 
-                            'save' => [
-                                'label' => 'Сохранить',
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Сохранить',
                         ],
 
                     ],

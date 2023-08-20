@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -101,7 +102,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected int | Closure $optionsLimit = 50;
 
-    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     protected function setUp(): void
     {
@@ -650,7 +651,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return collect($options)
             ->map(fn ($label, $value): array => is_array($label)
                 ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
-                : ['label' => $label, 'value' => strval($value)])
+                : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
             ->values()
             ->all();
     }
@@ -708,9 +709,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
+            if ($component->isSearchForcedCaseInsensitive($relationshipQuery)) {
+                $search = Str::lower($search);
+            }
+
             $component->applySearchConstraint(
                 $relationshipQuery,
-                strtolower($search),
+                $search,
             );
 
             $baseRelationshipQuery = $relationshipQuery->getQuery();
@@ -987,14 +992,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->saveRelationshipsUsing(static function (Select $component, Model $record, $state) {
             $relationship = $component->getRelationship();
 
-            if ($relationship instanceof BelongsToMany) {
-                $relationship->sync($state ?? []);
+            if (! $relationship instanceof BelongsToMany) {
+                $relationship->associate($state);
 
                 return;
             }
 
-            $relationship->associate($state);
-            $record->save();
+            $relationship->sync($state ?? []);
         });
 
         $this->createOptionUsing(static function (Select $component, array $data, Form $form) {
@@ -1023,7 +1027,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     protected function applySearchConstraint(Builder $query, string $search): Builder
     {
         $isFirst = true;
-        $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+        $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
 
         $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
             foreach ($this->getSearchColumns() as $searchColumn) {
@@ -1169,15 +1173,32 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         ]);
     }
 
-    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(Builder $query): bool
     {
-        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        return $this->evaluate($this->isSearchForcedCaseInsensitive) ?? match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
+    }
+
+    public function getDefaultState(): mixed
+    {
+        $state = parent::getDefaultState();
+
+        if (is_bool($state)) {
+            return $state ? 1 : 0;
+        }
+
+        return $state;
     }
 }

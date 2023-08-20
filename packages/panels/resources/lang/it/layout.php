@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Gestisci abbonamento',
+        ],
+
         'logout' => [
             'label' => 'Disconnetti',
         ],
@@ -18,14 +22,30 @@ return [
             'label' => 'Menu utente',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Comprimi sidebar',
+            ],
+
+            'expand' => [
+                'label' => 'Espandi sidebar',
+            ],
+
+        ],
+
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Attiva modalità scura',
+                'label' => 'Attiva tema scuro',
             ],
 
             'light' => [
-                'label' => 'Attiva modalità chiara',
+                'label' => 'Attiva tema chiaro',
+            ],
+
+            'system' => [
+                'label' => 'Attiva tema di sistema',
             ],
 
         ],

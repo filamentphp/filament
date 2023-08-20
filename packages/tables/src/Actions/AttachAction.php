@@ -7,6 +7,7 @@ use Filament\Actions\Concerns\CanCustomizeProcess;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -14,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class AttachAction extends Action
 {
@@ -32,7 +34,7 @@ class AttachAction extends Action
      */
     protected array | Closure | null $recordSelectSearchColumns = null;
 
-    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     public static function getDefaultName(): ?string
     {
@@ -92,16 +94,18 @@ class AttachAction extends Action
                 ->{$isMultiple ? 'whereIn' : 'where'}($relationship->getQualifiedRelatedKeyName(), $data['recordId'])
                 ->{$isMultiple ? 'get' : 'first'}();
 
+            if ($record instanceof Model) {
+                $this->record($record);
+            }
+
             $this->process(function () use ($data, $record, $relationship) {
                 $relationship->attach(
                     $record,
                     Arr::only($data, $relationship->getPivotColumns()),
                 );
-            });
-
-            if ($record instanceof Model) {
-                $this->record($record);
-            }
+            }, [
+                'relationship' => $relationship,
+            ]);
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
@@ -226,11 +230,13 @@ class AttachAction extends Action
             }
 
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
-                $search = strtolower($search);
-
                 $searchColumns ??= [$titleAttribute];
                 $isFirst = true;
-                $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+                $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($relationshipQuery);
+
+                if ($isForcedCaseInsensitive) {
+                    $search = Str::lower($search);
+                }
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
@@ -319,15 +325,21 @@ class AttachAction extends Action
         return $select;
     }
 
-    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(Builder $query): bool
     {
-        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        return $this->evaluate($this->isSearchForcedCaseInsensitive) ?? match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
     }
 }

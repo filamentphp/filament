@@ -421,8 +421,8 @@
                         @if (count($sortableColumns))
                             <div
                                 x-data="{
-                                    column: $wire.entangle('tableSortColumn').live,
-                                    direction: $wire.entangle('tableSortDirection').live,
+                                    column: $wire.$entangle('tableSortColumn', true),
+                                    direction: $wire.$entangle('tableSortDirection', true),
                                 }"
                                 x-init="
                                     $watch('column', function (newColumn, oldColumn) {
@@ -466,10 +466,10 @@
                                         {{ __('filament-tables::table.sorting.fields.direction.label') }}
                                     </span>
 
-                                    <x-filament::input.wrapper
-                                        x-model="direction"
-                                    >
-                                        <x-filament::input.select>
+                                    <x-filament::input.wrapper>
+                                        <x-filament::input.select
+                                            x-model="direction"
+                                        >
                                             <option value="asc">
                                                 {{ __('filament-tables::table.sorting.fields.direction.options.asc') }}
                                             </option>
@@ -500,7 +500,7 @@
                         @class([
                             'gap-4 p-4 sm:px-6' => $contentGrid,
                             'pt-0' => $contentGrid && $this->getTableGrouping(),
-                            '[&>*:not(:first-child)]:border-t-[0.5px] [&>*:not(:last-child)]:border-b-[0.5px] [&>*]:border-gray-200 dark:[&>*]:border-white/5' => ! $contentGrid,
+                            'gap-y-px bg-gray-200 dark:bg-white/5' => ! $contentGrid,
                         ])
                     >
                         @php
@@ -559,6 +559,7 @@
                                 @if ($hasCollapsibleColumnsLayout)
                                     x-data="{ isCollapsed: @js($collapsibleColumnsLayout->isCollapsed()) }"
                                     x-init="$dispatch('collapsible-table-row-initialized')"
+                                    x-bind:class="isCollapsed && 'fi-collapsed'"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     x-on:expand-all-table-rows.window="isCollapsed = false"
                                 @endif
@@ -568,7 +569,7 @@
                                     x-sortable-handle
                                 @endif
                                 @class([
-                                    'relative h-full transition duration-75',
+                                    'relative h-full bg-white transition duration-75 dark:bg-gray-900',
                                     'hover:bg-gray-50 dark:hover:bg-white/5' => ($recordUrl || $recordAction) && (! $contentGrid),
                                     'hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20' => ($recordUrl || $recordAction) && $contentGrid,
                                     'rounded-xl shadow-sm ring-1 ring-gray-950/5' => $contentGrid,

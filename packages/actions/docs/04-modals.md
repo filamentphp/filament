@@ -73,7 +73,7 @@ Action::make('updateAuthor')
 
 ### Using a wizard as a modal form
 
-You may create a [multi-step form wizard](../forms/layout/wizard) inside a modal. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
+You may create a [multistep form wizard](../forms/layout/wizard) inside a modal. Instead of using a `form()`, define a `steps()` array and pass your `Step` objects:
 
 ```php
 use Filament\Forms\Components\MarkdownEditor;
@@ -359,11 +359,11 @@ By default, there are two actions in the footer of a modal. The first is a butto
 To modify the action instance that is used to render one of the default action buttons, you may pass a closure to the `modalSubmitAction()` and `modalCancelAction()` methods:
 
 ```php
-use Filament\Actions\Modal\Actions\Action as ModalAction;
+use Filament\Actions\StaticAction;
 
 Action::make('help')
     ->modalContent(view('actions.help'))
-    ->modalCancelAction(fn (ModalAction $action) => $action->label('Close'))
+    ->modalCancelAction(fn (StaticAction $action) => $action->label('Close'))
 ```
 
 The [methods available to customize trigger buttons](trigger-button) will work to modify the `$action` instance inside the closure.
@@ -476,7 +476,7 @@ Action::make('first')
     ])
 ```
 
-In this example, if the `fourth` action is run, the `second` action is cancelled, but so is the `third` action since it is a child of `second`. The `first` action is not cancelled, however, since it is the parent of `second`. The `first` action's modal will remain open.
+In this example, if the `fourth` action is run, the `second` action is canceled, but so is the `third` action since it is a child of `second`. The `first` action is not canceled, however, since it is the parent of `second`. The `first` action's modal will remain open.
 
 ## Closing the modal by clicking away
 

@@ -28,6 +28,7 @@
         x-data="{
             isCollapsed: @js($collapsed),
         }"
+        x-bind:class="isCollapsed && 'fi-collapsed'"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
             error = $el.querySelector('[data-validation-error]')
@@ -83,7 +84,7 @@
                 <x-filament::icon
                     :icon="$icon"
                     @class([
-                        'fi-section-header-icon',
+                        'fi-section-header-icon self-start',
                         match ($iconColor) {
                             'gray' => 'text-gray-400 dark:text-gray-500',
                             default => 'text-custom-500 dark:text-custom-400',

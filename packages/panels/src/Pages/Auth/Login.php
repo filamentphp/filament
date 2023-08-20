@@ -98,7 +98,8 @@ class Login extends SimplePage
             ->email()
             ->required()
             ->autocomplete()
-            ->autofocus();
+            ->autofocus()
+            ->extraInputAttributes(['tabindex' => 1]);
     }
 
     protected function getPasswordFormComponent(): Component
@@ -107,7 +108,9 @@ class Login extends SimplePage
             ->label(__('filament-panels::pages/auth/login.form.password.label'))
             ->hint(filament()->hasPasswordReset() ? new HtmlString(Blade::render('<x-filament::link :href="filament()->getRequestPasswordResetUrl()"> {{ __(\'filament-panels::pages/auth/login.actions.request_password_reset.label\') }}</x-filament::link>')) : null)
             ->password()
-            ->required();
+            ->autocomplete('current-password')
+            ->required()
+            ->extraInputAttributes(['tabindex' => 2]);
     }
 
     protected function getRememberFormComponent(): Component

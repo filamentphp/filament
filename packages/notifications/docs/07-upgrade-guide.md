@@ -6,12 +6,12 @@ title: Upgrading from v2.x
 
 ## New requirements
 
-- Laravel v9.0+
+- Laravel v10.0+
 - Livewire v3.0+
 
 Please upgrade Filament before upgrading to Livewire v3. Instructions on how to upgrade Livewire can be found [here](https://livewire.laravel.com/docs/upgrading).
 
-> **Livewire v3 is still in beta!**<br>
+> **Livewire v3 is still in beta!**<br />
 > Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Upgrading automatically
@@ -33,7 +33,7 @@ Make sure to carefully follow the instructions, and review the changes made by t
 
 Finally, you must run `php artisan filament:install` to finalize the Filament v3 installation. This command must be run for all new Filament projects.
 
-You can now `composer remove filament/upgrade` as you don't need it any more.
+You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 > Some plugins you're using may not be available in v3 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v3-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
@@ -45,7 +45,7 @@ Since Livewire v3 is still in beta, set the `minimum-stability` in your `compose
 "minimum-stability": "dev",
 ```
 
-### High impact changes
+### High-impact changes
 
 #### Config file renamed and combined with other Filament packages
 
@@ -68,7 +68,7 @@ You no longer need to import the `NotificationsAlpinePlugin` in your JavaScript 
 
 The Heroicons library has been updated to v2. This means that any icons you use in your app may have changed names. You can find a list of changes [here](https://github.com/tailwindlabs/heroicons/releases/tag/v2.0.0).
 
-### Medium impact changes
+### Medium-impact changes
 
 #### Secondary color
 

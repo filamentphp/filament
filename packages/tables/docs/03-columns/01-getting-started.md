@@ -141,7 +141,7 @@ public function table(Table $table): Table
 
 ## Searching
 
-Columns may be searchable, by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
+Columns may be searchable by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -227,18 +227,6 @@ public function table(Table $table): Table
         ->persistSearchInSession()
         ->persistColumnSearchesInSession();
 }
-```
-
-### Forcing case-insensitive column search
-
-By default, searching will use the sensitivity settings from the database table column. This is to avoid unnecessary performance overhead when searching large datasets that would arise if we were to force insensitivity for all users. However, if your database does not search case-insensitively by default, you can force it to by using the `forceSearchCaseInsensitive()` method:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('name')
-    ->searchable()
-    ->forceSearchCaseInsensitive()
 ```
 
 ## Column actions and URLs

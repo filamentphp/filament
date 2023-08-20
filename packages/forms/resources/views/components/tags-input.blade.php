@@ -11,7 +11,7 @@
         ax-load
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('tags-input', 'filament/forms') }}"
         x-data="tagsInputFormComponent({
-                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     splitKeys: @js($splitKeys),
                 })"
         x-ignore
@@ -70,7 +70,11 @@
                             class="hidden"
                         >
                             <x-filament::badge>
+                                {{ $getTagPrefix() }}
+
                                 <span class="text-start" x-text="tag"></span>
+
+                                {{ $getTagSuffix() }}
 
                                 @if (! $isDisabled)
                                     <x-slot

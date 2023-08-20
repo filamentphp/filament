@@ -207,7 +207,7 @@ As well as all rules listed on the [validation](../validation) page, there are a
 
 ### Max date / min date validation
 
-You may restrict the minimum and maximum date that can be selected with the picker. The `minDate()` and `maxDate()` methods accept a `DateTime` instance (e.g. Carbon), or a string:
+You may restrict the minimum and maximum date that can be selected with the picker. The `minDate()` and `maxDate()` methods accept a `DateTime` instance (e.g., Carbon), or a string:
 
 ```php
 use Filament\Forms\Components\DatePicker;

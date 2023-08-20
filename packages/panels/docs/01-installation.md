@@ -7,10 +7,10 @@ title: Installation
 Filament requires the following to run:
 
 - PHP 8.1+
-- Laravel v9.0+
+- Laravel v10.0+
 - Livewire v3.0+
 
-> **Livewire v3 is still in beta!**<br>
+> **Livewire v3 is still in beta!**<br />
 > Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Installation
@@ -47,7 +47,7 @@ Open `/admin` in your web browser, sign in, and start building your app!
 Not sure where to start? Review the [Getting Started guide](getting-started) to learn how to build a complete Filament admin panel.
 
 ## Using other Filament packages
-The Filament Panel Builder pre-installs the [form builder](/docs/forms), [table builder](/docs/tables), [notifications](/docs/notifications), [actions](/docs/actions), [infolists](/docs/infolists), and [widgets](/docs/widgets) packages. No other installation steps are required to use these packages within a panel.
+The Filament Panel Builder pre-installs the [Form Builder](/docs/forms), [Table Builder](/docs/tables), [Notifications](/docs/notifications), [Actions](/docs/actions), [Infolists](/docs/infolists), and [Widgets](/docs/widgets) packages. No other installation steps are required to use these packages within a panel.
 
 ## Deploying to production
 

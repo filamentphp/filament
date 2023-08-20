@@ -5,15 +5,18 @@
 
     $billingItem = $items['billing'] ?? null;
     $billingItemUrl = $billingItem?->getUrl();
-    $hasTenantBilling = filament()->hasTenantBilling() || filled($billingItemUrl);
+    $isBillingItemVisible = $billingItem?->isVisible() ?? true;
+    $hasBillingItem = (filament()->hasTenantBilling() || filled($billingItemUrl)) && $isBillingItemVisible;
 
     $registrationItem = $items['register'] ?? null;
     $registrationItemUrl = $registrationItem?->getUrl();
-    $hasTenantRegistration = filament()->hasTenantRegistration() || filled($registrationItemUrl);
+    $isRegistrationItemVisible = $registrationItem?->isVisible() ?? true;
+    $hasRegistrationItem = ((filament()->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView()) || filled($registrationItemUrl)) && $isRegistrationItemVisible;
 
     $profileItem = $items['profile'] ?? null;
     $profileItemUrl = $profileItem?->getUrl();
-    $hasTenantProfile = (filament()->hasTenantProfile() && filament()->getTenantProfilePage()::canView($currentTenant)) || filled($profileItemUrl);
+    $isProfileItemVisible = $profileItem?->isVisible() ?? true;
+    $hasProfileItem = ((filament()->hasTenantProfile() && filament()->getTenantProfilePage()::canView($currentTenant)) || filled($profileItemUrl)) && $isProfileItemVisible;
 
     $canSwitchTenants = count($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
@@ -79,9 +82,9 @@
         </button>
     </x-slot>
 
-    @if ($hasTenantProfile || $hasTenantBilling)
+    @if ($hasProfileItem || $hasBillingItem)
         <x-filament::dropdown.list>
-            @if ($hasTenantProfile)
+            @if ($hasProfileItem)
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
                     :href="$profileItemUrl ?? filament()->getTenantProfileUrl()"
@@ -92,7 +95,7 @@
                 </x-filament::dropdown.list.item>
             @endif
 
-            @if ($hasTenantBilling)
+            @if ($hasBillingItem)
                 <x-filament::dropdown.list.item
                     :color="$billingItem?->getColor() ?? 'gray'"
                     :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
@@ -134,7 +137,7 @@
         </x-filament::dropdown.list>
     @endif
 
-    @if ($hasTenantRegistration)
+    @if ($hasRegistrationItem)
         <x-filament::dropdown.list>
             <x-filament::dropdown.list.item
                 :color="$registrationItem?->getColor()"

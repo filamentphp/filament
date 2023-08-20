@@ -3,14 +3,13 @@
 namespace Filament\Infolists\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\text;
 
 class MakeEntryCommand extends Command
 {
     use CanManipulateFiles;
-    use CanValidateInput;
 
     protected $description = 'Create a new infolist entry class and view';
 
@@ -18,7 +17,11 @@ class MakeEntryCommand extends Command
 
     public function handle(): int
     {
-        $entry = (string) str($this->argument('name') ?? $this->askRequired('Name (e.g. `StatusSwitcher`)', 'name'))
+        $entry = (string) str($this->argument('name') ?? text(
+            label: 'What is the entry name?',
+            placeholder: 'StatusSwitcher',
+            required: true,
+        ))
             ->trim('/')
             ->trim('\\')
             ->trim(' ')

@@ -113,4 +113,15 @@ class Radio extends Field
             'value' => $value,
         ]);
     }
+
+    public function getDefaultState(): mixed
+    {
+        $state = parent::getDefaultState();
+
+        if (is_bool($state)) {
+            return $state ? 1 : 0;
+        }
+
+        return $state;
+    }
 }

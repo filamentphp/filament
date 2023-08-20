@@ -7,11 +7,11 @@ use Illuminate\Support\Arr;
 
 trait CanPaginateRecords
 {
-    protected int | string | Closure | null $defaultPaginationPageOption = 10;
+    protected int | string | Closure | null $defaultPaginationPageOption = null;
 
     protected bool | Closure $isPaginated = true;
 
-    protected bool | Closure $isPaginatedWhileReordering = true;
+    protected bool | Closure $isPaginatedWhileReordering = false;
 
     /**
      * @var array<int | string> | Closure | null
@@ -59,7 +59,19 @@ trait CanPaginateRecords
 
     public function getDefaultPaginationPageOption(): int | string | null
     {
-        return $this->evaluate($this->defaultPaginationPageOption) ?? Arr::first($this->getPaginationPageOptions());
+        $option = $this->evaluate($this->defaultPaginationPageOption);
+
+        if ($option) {
+            return $option;
+        }
+
+        $options = $this->getPaginationPageOptions();
+
+        if (in_array(10, $options)) {
+            return 10;
+        }
+
+        return Arr::first($options);
     }
 
     /**

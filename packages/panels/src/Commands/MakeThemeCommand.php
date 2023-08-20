@@ -8,6 +8,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+use function Laravel\Prompts\select;
 
 class MakeThemeCommand extends Command
 {
@@ -27,7 +28,7 @@ class MakeThemeCommand extends Command
             return static::FAILURE;
         }
 
-        $this->info("Using Node.js v{$npmVersion[0]}");
+        $this->info("Using NPM v{$npmVersion[0]}");
 
         exec('npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev');
 
@@ -41,13 +42,13 @@ class MakeThemeCommand extends Command
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[$this->choice(
-                'Which panel would you like to create this for?',
-                array_map(
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this for?',
+                options: array_map(
                     fn (Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
-                Filament::getDefaultPanel()->getId(),
+                default: Filament::getDefaultPanel()->getId(),
             )] : Arr::first($panels);
         }
 

@@ -7,6 +7,6 @@ return [
         'placeholder' => 'جستجو',
     ],
 
-    'no_results_message' => 'نتیجه‌ای برای جستجو شما یافت نشد.',
+    'no_results_message' => 'نتیجه‌ای برای جستجوی شما یافت نشد.',
 
 ];
