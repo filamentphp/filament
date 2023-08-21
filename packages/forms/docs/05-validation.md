@@ -481,7 +481,7 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-You may inject utilities like `$get` into your custom rules, for example if you need to reference other field values in your form:
+You may [inject utilities](advanced#form-component-utility-injection) like [`$get`](advanced#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form:
 
 ```php
 use Closure;
