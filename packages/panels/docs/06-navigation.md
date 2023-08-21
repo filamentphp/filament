@@ -17,7 +17,7 @@ protected static ?string $navigationLabel = 'Custom Navigation Label';
 Alternatively, you may override the `getNavigationLabel()` method:
 
 ```php
-public static function getNavigationLabel(): ?string
+public static function getNavigationLabel(): string
 {
     return 'Custom Navigation Label';
 }
