@@ -313,6 +313,10 @@ trait HasComponents
                 $variableNamespace = (string) str($variableNamespace)->before('\\');
             }
 
+            if ($variableNamespace === null) {
+                continue;
+            }
+
             $class = (string) $namespace
                 ->append('\\', $file->getRelativePathname())
                 ->replace('*', $variableNamespace)
