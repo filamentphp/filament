@@ -70,7 +70,7 @@
             class="flex flex-col gap-y-4"
         >
             @php
-                $managerLivewireProperties = ['lazy' => false, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass];
+                $managerLivewireProperties = ['lazy' => true, 'ownerRecord' => $ownerRecord, 'pageClass' => $pageClass];
 
                 if (filled($activeLocale)) {
                     $managerLivewireProperties['activeLocale'] = $activeLocale;
