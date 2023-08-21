@@ -92,7 +92,7 @@
                     >
                         @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $hasBlockLabels || $isCloneable || $isDeletable || $isCollapsible)
                             <header
-                                class="flex items-center gap-x-3 px-4 py-2 rounded-t-xl"
+                                class="flex items-center gap-x-3 rounded-t-xl px-4 py-2"
                                 x-bind:class="isCollapsed && 'rounded-b-xl'"
                             >
                                 @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
