@@ -62,21 +62,33 @@
             $outlined ?
                 [
                     'fi-btn-outlined ring-1',
-                    match ($color) {
-                        'gray' => 'text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus:ring-gray-400/40 dark:text-white dark:ring-gray-700',
-                        default => 'text-custom-600 ring-custom-600 hover:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-500',
+                    ...match ($color) {
+                        'gray' => [
+                            'text-gray-950 ring-gray-300 focus:ring-gray-400/40 dark:text-white dark:ring-gray-700',
+                            'hover:bg-gray-400/10' => ! $disabled,
+                            'opacity-70' => $disabled,
+                        ],
+                        default => [
+                            'text-custom-600 ring-custom-600 dark:text-custom-400 dark:ring-custom-500',
+                            'hover:bg-gray-400/10' => ! $disabled,
+                            'opacity-70' => $disabled,
+                        ],
                     },
                 ] :
                 [
                     'shadow-sm' => ! $grouped,
                     ...match ($color) {
                         'gray' => [
-                            'bg-white text-gray-950 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:hover:bg-white/10',
+                            'bg-white text-gray-950 dark:bg-white/5 dark:text-white',
                             'ring-1 ring-gray-950/10 dark:ring-white/20' => ! $grouped,
+                            'hover:bg-gray-50 dark:hover:bg-white/10' => ! $disabled,
+                            'opacity-70' => $disabled,
                         ],
                         default => [
-                            'bg-custom-600 text-white hover:bg-custom-500 dark:bg-custom-500 dark:hover:bg-custom-400',
+                            'bg-custom-600 text-white dark:bg-custom-500',
                             'focus:ring-custom-500/50 dark:focus:ring-custom-400/50' => ! $grouped,
+                            'hover:bg-custom-500 dark:hover:bg-custom-400' => ! $disabled,
+                            'opacity-70' => $disabled,
                         ],
                     },
                 ]
