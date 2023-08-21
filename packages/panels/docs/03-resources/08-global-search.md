@@ -124,7 +124,7 @@ protected static int $globalSearchResultsLimit = 20;
 
 ## Disabling global search
 
-As [explained above](#title), global search is automatically enables once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
+As [explained above](#title), global search is automatically enabled once you set a title attribute for your resource. Sometimes you may want to specify the title attribute while not enabling global search.
 
 This can be achieved by disabling global search in the [configuration](configuration):
 
