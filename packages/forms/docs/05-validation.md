@@ -481,19 +481,19 @@ TextInput::make('slug')->rules([
 ])
 ```
 
-You may also inject a $get callable to your closure rules, if you need to reference other fields on your form:
+You may inject utilities like `$get` into your custom rules, for example if you need to reference other field values in your form:
 
 ```php
+use Closure;
+use Filament\Forms\Get;
+
 TextInput::make('slug')->rules([
-    function (Get $get) {
-        return function (string $attribute, $value, Closure $fail) use ($get) {
-            if ($get('other_field') === 'foo' && $value !== 'bar') {
-                $fail("The {$attribute} is invalid.");
-            }
-        };
+    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+        if ($get('other_field') === 'foo' && $value !== 'bar') {
+            $fail("The {$attribute} is invalid.");
+        }
     },
 ])
-```
 
 ## Validation attributes
 
