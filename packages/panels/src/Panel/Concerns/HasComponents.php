@@ -313,7 +313,7 @@ trait HasComponents
                 $variableNamespace = (string) str($variableNamespace)->before('\\');
             }
 
-            if (!$variableNamespace) {
+            if (is_null($variableNamespace)) {
                 continue;
             }
 
