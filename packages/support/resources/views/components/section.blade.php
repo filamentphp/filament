@@ -28,6 +28,7 @@
         x-data="{
             isCollapsed: @js($collapsed),
         }"
+        x-bind:class="isCollapsed && 'fi-collapsed'"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
             error = $el.querySelector('[data-validation-error]')
