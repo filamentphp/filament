@@ -481,6 +481,20 @@ TextInput::make('slug')->rules([
 ])
 ```
 
+You may [inject utilities](advanced#form-component-utility-injection) like [`$get`](advanced#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form:
+
+```php
+use Closure;
+use Filament\Forms\Get;
+
+TextInput::make('slug')->rules([
+    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+        if ($get('other_field') === 'foo' && $value !== 'bar') {
+            $fail("The {$attribute} is invalid.");
+        }
+    },
+])
+
 ## Validation attributes
 
 When fields fail validation, their label is used in the error message. To customize the label used in field error messages, use the `validationAttribute()` method:

@@ -25,7 +25,7 @@
         x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses) : '-translate-x-full rtl:translate-x-full'"
     @endif
     @class([
-        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen w-[--sidebar-width] content-start overflow-hidden bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 dark:lg:bg-transparent',
+        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen w-[--sidebar-width] content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 dark:lg:bg-transparent',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
@@ -83,13 +83,14 @@
         @endif
     </header>
 
-    <nav
-        class="fi-sidebar-nav grid gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
-    >
+    <nav class="fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto px-6 py-8">
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
 
         @if (filament()->hasTenancy())
             <div
+                @class([
+                    '-mx-2' => ! filament()->isSidebarCollapsibleOnDesktop(),
+                ])
                 @if (filament()->isSidebarCollapsibleOnDesktop())
                     x-bind:class="$store.sidebar.isOpen ? '-mx-2' : '-mx-4'"
                 @endif
@@ -99,12 +100,7 @@
         @endif
 
         @if (filament()->hasNavigation())
-            <ul
-                class="-mx-2 grid gap-y-7"
-                @if (filament()->isSidebarCollapsibleOnDesktop())
-                    x-bind:class="{ 'auto-cols-min': ! $store.sidebar.isOpen }"
-                @endif
-            >
+            <ul class="-mx-2 flex flex-col gap-y-7">
                 @foreach ($navigation as $group)
                     <x-filament-panels::sidebar.group
                         :collapsible="$group->isCollapsible()"

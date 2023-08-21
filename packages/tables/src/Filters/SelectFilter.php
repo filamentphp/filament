@@ -27,6 +27,8 @@ class SelectFilter extends BaseFilter
 
     protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
+    protected ?Closure $getOptionLabelFromRecordUsing = null;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -227,6 +229,10 @@ class SelectFilter extends BaseFilter
             $field->getOptionLabelsUsing($this->getOptionLabelsUsing);
         }
 
+        if ($this->getOptionLabelFromRecordUsing) {
+            $field->getOptionLabelFromRecordUsing($this->getOptionLabelFromRecordUsing);
+        }
+
         if ($this->getSearchResultsUsing) {
             $field->getSearchResultsUsing($this->getSearchResultsUsing);
         }
@@ -270,5 +276,12 @@ class SelectFilter extends BaseFilter
     public function isNative(): bool
     {
         return (bool) $this->evaluate($this->isNative);
+    }
+
+    public function getOptionLabelFromRecordUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelFromRecordUsing = $callback;
+
+        return $this;
     }
 }
