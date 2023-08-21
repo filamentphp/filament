@@ -22,12 +22,6 @@
 ])
 
 @php
-    $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
-        ActionSize::Medium, 'md' => IconSize::Medium,
-        ActionSize::Large, ActionSize::ExtraLarge, 'lg', 'xl' => IconSize::Large,
-    };
-
     $stringSize = match ($size) {
         ActionSize::ExtraSmall => 'xs',
         ActionSize::Small => 'sm',
@@ -59,7 +53,7 @@
     ]);
 
     $iconSize ??= match ($size) {
-        'xs', 'sm' => IconSize::Small,
+        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
         default => IconSize::Medium,
     };
 

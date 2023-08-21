@@ -118,13 +118,6 @@
         },
     ]);
 
-    $stringIconSize = match ($iconSize) {
-        IconSize::Small => 'sm',
-        IconSize::Medium => 'md',
-        IconSize::Large => 'lg',
-        default => $iconSize,
-    };
-
     $badgeClasses = 'absolute -top-1 start-full z-[1] -ms-1 -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -232,7 +225,7 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $stringIconSize"
+                    :class="$iconClasses"
                 />
             @endif
 
@@ -240,7 +233,7 @@
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses . ' ' . $stringIconSize"
+                    :class="$iconClasses"
                 />
             @endif
         @endif
@@ -275,7 +268,7 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $stringIconSize"
+                    :class="$iconClasses"
                 />
             @endif
 
@@ -283,7 +276,7 @@
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses . ' ' . $stringIconSize"
+                    :class="$iconClasses"
                 />
             @endif
         @endif
