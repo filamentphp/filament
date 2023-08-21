@@ -2,10 +2,11 @@
 
 use Filament\Facades\Filament;
 use Filament\Pages\Auth\Login;
-use function Filament\Tests\livewire;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 

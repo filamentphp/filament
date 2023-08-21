@@ -315,7 +315,7 @@ trait HasComponents
 
             $class = (string) $namespace
                 ->append('\\', $file->getRelativePathname())
-                ->replace('*', $variableNamespace)
+                ->replace('*', $variableNamespace ?? '')
                 ->replace(['/', '.php'], ['\\', '']);
 
             if (! class_exists($class)) {
