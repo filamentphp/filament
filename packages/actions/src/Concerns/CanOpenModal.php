@@ -509,23 +509,9 @@ trait CanOpenModal
         return $this->evaluate($this->modalDescription);
     }
 
-    public function getModalWidth(): string
+    public function getModalWidth(): string | ModalWidth
     {
-        return match ($size = $this->evaluate($this->modalWidth)) {
-            ModalWidth::ExtraSmall => 'xs',
-            ModalWidth::Small => 'sm',
-            ModalWidth::Medium => 'md',
-            ModalWidth::Large => 'lg',
-            ModalWidth::ExtraLarge => 'xl',
-            ModalWidth::TwoXl => '2xl',
-            ModalWidth::ThreeXl => '3xl',
-            ModalWidth::FourXl => '4xl',
-            ModalWidth::FiveXl => '5xl',
-            ModalWidth::SixXl => '6xl',
-            ModalWidth::SevenXl => '7xl',
-            ModalWidth::Screen => 'screen',
-            default => $size,
-        } ?? '4xl';
+        return $this->evaluate($this->modalWidth) ?? '4xl';
     }
 
     public function isModalFooterSticky(): bool

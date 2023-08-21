@@ -1,7 +1,30 @@
+@php
+    function  getWidth($action){
+        return match ($size = $action?->getModalWidth()) {
+                    \Filament\Support\Enums\ModalWidth::ExtraSmall => 'xs',
+                    \Filament\Support\Enums\ModalWidth::Small => 'sm',
+                    \Filament\Support\Enums\ModalWidth::Medium => 'md',
+                    \Filament\Support\Enums\ModalWidth::Large => 'lg',
+                    \Filament\Support\Enums\ModalWidth::ExtraLarge => 'xl',
+                    \Filament\Support\Enums\ModalWidth::TwoXl => '2xl',
+                    \Filament\Support\Enums\ModalWidth::ThreeXl => '3xl',
+                    \Filament\Support\Enums\ModalWidth::FourXl => '4xl',
+                    \Filament\Support\Enums\ModalWidth::FiveXl => '5xl',
+                    \Filament\Support\Enums\ModalWidth::SixXl => '6xl',
+                    \Filament\Support\Enums\ModalWidth::SevenXl => '7xl',
+                    \Filament\Support\Enums\ModalWidth::Screen => 'screen',
+                    default => $size,
+                }?? '4xl';
+    }
+@endphp
+
+
 @if ($this instanceof \Filament\Actions\Contracts\HasActions && (! $this->hasActionsModalRendered))
     <form wire:submit.prevent="callMountedAction">
         @php
             $action = $this->getMountedAction();
+
+
         @endphp
 
         <x-filament::modal
@@ -20,7 +43,7 @@
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
             :visible="filled($action)"
-            :width="$action?->getModalWidth()"
+            :width="getWidth($action)"
             :wire:key="$action ? $this->getId() . '.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedActions.length) open()"
             x-on:modal-closed.stop="
@@ -79,7 +102,7 @@
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
             :visible="filled($action)"
-            :width="$action?->getModalWidth()"
+            :width="getWidth($action)"
             :wire:key="$action ? $this->getId() . '.infolist.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedInfolistActions.length) open()"
             x-on:modal-closed.stop="
@@ -138,7 +161,7 @@
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
             :visible="filled($action)"
-            :width="$action?->getModalWidth()"
+            :width="getWidth($action)"
             :wire:key="$action ? $this->getId() . '.table.actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableActions.length) open()"
             x-on:modal-closed.stop="
@@ -191,7 +214,7 @@
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
             :visible="filled($action)"
-            :width="$action?->getModalWidth()"
+            :width="getWidth($action)"
             :wire:key="$action ? $this->getId() . '.table.bulk-actions.' . $action->getName() . '.modal' : null"
             x-on:closed-form-component-action-modal.window="if (($event.detail.id === '{{ $this->getId() }}') && $wire.mountedTableBulkAction) open()"
             x-on:modal-closed.stop="
@@ -250,7 +273,7 @@
             :sticky-footer="$action?->isModalFooterSticky()"
             :sticky-header="$action?->isModalHeaderSticky()"
             :visible="filled($action)"
-            :width="$action?->getModalWidth()"
+            :width="getWidth($action)"
             :wire:key="$action ? $this->getId() . '.' . $action->getComponent()->getStatePath() . '.actions.' . $action->getName() . '.modal' : null"
             x-on:modal-closed.stop="
                 const mountedFormComponentActionShouldOpenModal = {{ \Illuminate\Support\Js::from($action && $this->mountedFormComponentActionShouldOpenModal()) }}
