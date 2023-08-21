@@ -62,7 +62,7 @@
             $outlined ?
                 [
                     'fi-btn-outlined ring-1',
-                    match ($color) {
+                    ...match ($color) {
                         'gray' => [
                             'text-gray-950 ring-gray-300 focus:ring-gray-400/40 dark:text-white dark:ring-gray-700',
                             'hover:bg-gray-400/10' => ! $disabled,
