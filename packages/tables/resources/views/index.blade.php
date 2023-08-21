@@ -559,7 +559,6 @@
                                 @if ($hasCollapsibleColumnsLayout)
                                     x-data="{ isCollapsed: @js($collapsibleColumnsLayout->isCollapsed()) }"
                                     x-init="$dispatch('collapsible-table-row-initialized')"
-                                    x-bind:class="isCollapsed && 'fi-collapsed'"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     x-on:expand-all-table-rows.window="isCollapsed = false"
                                 @endif
@@ -576,6 +575,7 @@
                                     ...$getRecordClasses($record),
                                 ])
                                 x-bind:class="{
+                                    'fi-collapsed': isCollapsed,
                                     'hidden':
                                         {{ $group?->isCollapsible() ? 'true' : 'false' }} &&
                                         isGroupCollapsed('{{ $recordGroupTitle }}'),

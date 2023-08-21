@@ -28,7 +28,6 @@
         x-data="{
             isCollapsed: @js($collapsed),
         }"
-        x-bind:class="isCollapsed && 'fi-collapsed'"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
             error = $el.querySelector('[data-validation-error]')
@@ -55,6 +54,7 @@
         "
         x-on:open-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:toggle-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
+        x-bind:class="isCollapsed && 'fi-collapsed'"
     @endif
     {{
         $attributes->class([
@@ -126,8 +126,8 @@
                     icon="heroicon-m-chevron-down"
                     icon-alias="section.collapse-button"
                     x-on:click.stop="isCollapsed = ! isCollapsed"
-                    x-bind:class="{ 'rotate-180': ! isCollapsed }"
                     class="-m-2"
+                    x-bind:class="{ 'rotate-180': ! isCollapsed }"
                 />
             @endif
         </header>
