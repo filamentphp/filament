@@ -266,7 +266,7 @@ it('can retrieve data', function () {
     livewire(PostResource\Pages\ViewPost::class, [
         'record' => $post->getRouteKey(),
     ])
-        ->assertFormSet([
+        ->assertSet([
             'author_id' => $post->author->getKey(),
             'content' => $post->content,
             'tags' => $post->tags,
