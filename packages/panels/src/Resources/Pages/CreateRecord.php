@@ -275,6 +275,9 @@ class CreateRecord extends Page
         return $resource::getUrl('index');
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     protected function getRedirectUrlParameters(): array
     {
         return [];
