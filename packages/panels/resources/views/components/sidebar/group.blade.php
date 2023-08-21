@@ -9,7 +9,7 @@
     x-data="{ label: @js($label) }"
     data-group-label="{{ $label }}"
     @class([
-        'fi-sidebar-group grid gap-y-1',
+        'fi-sidebar-group flex flex-col gap-y-1',
     ])
 >
     @if ($label)
@@ -62,7 +62,7 @@
             x-transition:enter-end="opacity-100"
         @endif
         x-collapse.duration.200ms
-        class="fi-sidebar-group-items grid gap-y-1"
+        class="fi-sidebar-group-items flex flex-col gap-y-1"
     >
         @foreach ($items as $item)
             @if ($item->isVisible())
