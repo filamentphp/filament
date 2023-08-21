@@ -71,8 +71,9 @@
             @if ($collapsible)
                 x-on:click="isCollapsed = ! isCollapsed"
             @endif
+            x-bind:class="isCollapsed && 'rounded-b-xl'"
             @class([
-                'flex items-center gap-x-3 overflow-hidden',
+                'flex items-center gap-x-3 overflow-hidden rounded-t-xl',
                 'cursor-pointer' => $collapsible,
                 match ($compact) {
                     true => 'px-4 py-2.5',
