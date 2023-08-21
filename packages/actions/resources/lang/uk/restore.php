@@ -2,60 +2,60 @@
 
 return [
 
-     'single' => [
+    'single' => [
 
-         'label' => 'Відновити',
+        'label' => 'Відновити',
 
-         'modal' => [
+        'modal' => [
 
-             'heading' => 'Відновити :label',
+            'heading' => 'Відновити :label',
 
-             'actions' => [
+            'actions' => [
 
-                 'restore' => [
-                     'label' => 'Відновити',
-                 ],
+                'restore' => [
+                    'label' => 'Відновити',
+                ],
 
-             ],
+            ],
 
-         ],
+        ],
 
-         'notifications' => [
+        'notifications' => [
 
-             'restored' => [
-                 'title' => 'Допис відновлено',
-             ],
+            'restored' => [
+                'title' => 'Допис відновлено',
+            ],
 
-         ],
+        ],
 
-     ],
+    ],
 
-     'multiple' => [
+    'multiple' => [
 
-         'label' => 'Відновити вибране',
+        'label' => 'Відновити вибране',
 
-         'modal' => [
+        'modal' => [
 
-             'heading' => 'Відновити вибране :label',
+            'heading' => 'Відновити вибране :label',
 
-             'actions' => [
+            'actions' => [
 
-                 'restore' => [
-                     'label' => 'Відновити',
-                 ],
+                'restore' => [
+                    'label' => 'Відновити',
+                ],
 
-             ],
+            ],
 
-         ],
+        ],
 
-         'notifications' => [
+        'notifications' => [
 
-             'restored' => [
-                 'title' => 'Дописи відновлені',
-             ],
+            'restored' => [
+                'title' => 'Дописи відновлені',
+            ],
 
-         ],
+        ],
 
-     ],
+    ],
 
 ];
