@@ -71,10 +71,15 @@
             x-on:change="
                 isLoading = true
 
+                let newState = $event.target.value;
+                if (newState === '') {
+                    newState = null;
+                }
+
                 const response = await $wire.updateTableColumnState(
                     name,
                     recordKey,
-                    $event.target.value,
+                    newState,
                 )
 
                 error = response?.error ?? undefined
