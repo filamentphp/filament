@@ -65,7 +65,7 @@
                     'fi-btn-outlined ring-1',
                     match ($color) {
                         'gray' => 'text-gray-950 ring-gray-300 hover:bg-gray-400/10 focus:ring-gray-400/40 dark:text-white dark:ring-gray-700',
-                        default => 'text-custom-600 ring-custom-600 hover:bg-gray-400/10 dark:text-custom-400 dark:ring-custom-500',
+                        default => 'text-custom-600 ring-custom-600 hover:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-500',
                     },
                 ] :
                 [
