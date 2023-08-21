@@ -70,8 +70,8 @@
         <header
             @if ($collapsible)
                 x-on:click="isCollapsed = ! isCollapsed"
+                x-bind:class="isCollapsed && 'rounded-b-xl'"
             @endif
-            x-bind:class="isCollapsed && 'rounded-b-xl'"
             @class([
                 'flex items-center gap-x-3 overflow-hidden rounded-t-xl',
                 'cursor-pointer' => $collapsible,

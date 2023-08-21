@@ -96,8 +96,9 @@
                             x-bind:class="isCollapsed && 'fi-collapsed'"
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
-                                <div
-                                    class="flex items-center gap-x-3 px-4 py-2"
+                                <header
+                                    class="flex items-center gap-x-3 px-4 py-2 rounded-t-xl"
+                                    x-bind:class="isCollapsed && 'rounded-b-xl'"
                                 >
                                     @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
                                         <ul class="-ms-1.5 flex">
@@ -168,7 +169,7 @@
                                             @endif
                                         </ul>
                                     @endif
-                                </div>
+                                </header>
                             @endif
 
                             <div
