@@ -130,7 +130,7 @@ it('can render page', function () {
 
 ##### Filling existing data
 
-To check that the form is filled with the correct data from the database, you may `assertFormSet()` that the data in the form matches that of the record:
+To check that the form is filled with the correct data from the database, you may `assertSet()` that the data in the form matches that of the record:
 
 ```php
 use function Pest\Livewire\livewire;
@@ -141,7 +141,7 @@ it('can retrieve data', function () {
     livewire(PostResource\Pages\EditPost::class, [
         'record' => $post->getRouteKey(),
     ])
-        ->assertFormSet([
+        ->assertSet([
             'author_id' => $post->author->getKey(),
             'content' => $post->content,
             'tags' => $post->tags,
