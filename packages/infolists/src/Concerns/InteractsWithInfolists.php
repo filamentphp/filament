@@ -9,6 +9,7 @@ use Filament\Infolists\Components\Component;
 use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
+
 use function Livewire\store;
 
 trait InteractsWithInfolists
