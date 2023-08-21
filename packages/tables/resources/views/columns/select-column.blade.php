@@ -48,7 +48,7 @@
 >
     <input
         type="hidden"
-        value="{{ str($state)->replace('"', '\\"') }}"
+        value="{{ $state }}"
         x-ref="newState"
     />
 
