@@ -1,12 +1,13 @@
 <?php
 
 namespace Filament\Panel\Concerns;
+use Closure;
 
 trait HasBrandName
 {
-    protected ?string $brandName = null;
+    protected string|Closure|null $brandName = null;
 
-    public function brandName(?string $name): static
+    public function brandName(string|Closure $name): static
     {
         $this->brandName = $name;
 
@@ -15,6 +16,6 @@ trait HasBrandName
 
     public function getBrandName(): string
     {
-        return $this->brandName ?? config('app.name');
+        return $this->evaluate($this->brandName ?? config('app.name'));
     }
 }
