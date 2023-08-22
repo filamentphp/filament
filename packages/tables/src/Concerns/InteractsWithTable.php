@@ -84,6 +84,10 @@ trait InteractsWithTable
             ];
         }
 
+        if ($this->tableFilters) {
+            $this->replaceNullValues($this->tableFilters);
+        }
+
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
         if ($shouldPersistFiltersInSession) {
@@ -263,5 +267,20 @@ trait InteractsWithTable
     protected function getTableQuery(): Builder | Relation | null
     {
         return null;
+    }
+
+    protected function replaceNullValues(array &$data): void
+    {
+        foreach ($data as &$value) {
+            if (is_array($value)) {
+                $this->replaceNullValues($value);
+            } elseif ($value === 'null') {
+                $value = null;
+            } elseif ($value === 'false') {
+                $value = false;
+            } elseif ($value === 'true') {
+                $value = true;
+            }
+        }
     }
 }
