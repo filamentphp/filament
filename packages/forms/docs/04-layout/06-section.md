@@ -83,6 +83,24 @@ Section::make('Cart')
 
 Your sections may be `collapsed()` by default:
 
+## Aanimated collapsing sections
+
+Collapsing sections can be animated with this getter:
+
+```php
+use Filament\Forms\Components\Section;
+
+Section::make('Cart')
+    ->description('The items you have selected for purchase')
+    ->schema([
+        // ...
+    ])
+    ->collapsible()
+    ->animated()
+```
+
+Animation lasts for 200ms, and sections are not animated by default.
+
 ```php
 use Filament\Forms\Components\Section;
 
