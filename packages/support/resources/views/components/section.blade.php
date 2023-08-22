@@ -21,7 +21,6 @@
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
     $hasAnimation = filled($animation);
-    // dd($animation);
     $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
 @endphp
 
@@ -29,9 +28,8 @@
     @if ($collapsible)
         x-data="{
             isCollapsed: @js($collapsed),
-            {{-- animation: @js($animation), --}}
         }"
-        {{-- x-bind:class="isCollapsed && 'fi-collapsed'" --}}
+        x-bind:class="isCollapsed && 'fi-collapsed'"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
             error = $el.querySelector('[data-validation-error]')
