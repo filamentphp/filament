@@ -21,7 +21,7 @@
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
-    $hasAniamtion = filled($animation   );
+    $hasAnimation = filled($animation);
     $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
 @endphp
 
