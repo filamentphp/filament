@@ -16,7 +16,6 @@
     'iconSize' => IconSize::Large,
     'animation' => null,
 ])
-{{-- test --}}
 @php
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
