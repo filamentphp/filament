@@ -7,17 +7,17 @@ use Illuminate\Contracts\Support\Htmlable;
 
 trait HasAnimation
 {
-    protected string | Htmlable | Closure | null $animation = null;
+    protected bool | Htmlable | Closure | null $animation = null;
 
-    public function animation(string | Htmlable | Closure | null $animation = null): static
+    public function animation(bool | Closure | null $animation = true): static
     {
-        $this->aniamtion = $animation;
+        $this->animation = $animation;
 
         return $this;
     }
 
-    public function getAnimation(): string | Htmlable | null
+    public function getAnimation(): bool | Htmlable | null
     {
-        return $this->evaluate($this->description);
+        return $this->evaluate($this->animation);
     }
 }
