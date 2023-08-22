@@ -142,14 +142,16 @@
             x-show="isCollapsed"
             x-collapse.duration.200ms
         @endif
+
         @if ($collapsible)
             x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($collapsed)
                 x-cloak
             @endif
-            if(!hasAnimation){
+            @if (!$hasAnimation){
                 x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
             }
+            @endif
         @endif
         @class([
             'fi-section-content-ctn',
