@@ -2,6 +2,7 @@
 
 namespace Filament\Resources\RelationManagers;
 
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
@@ -21,8 +22,9 @@ use Livewire\Component;
 
 use function Filament\authorize;
 
-class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
+    use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
