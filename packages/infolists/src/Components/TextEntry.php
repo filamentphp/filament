@@ -28,6 +28,8 @@ class TextEntry extends Entry implements HasAffixActions
 
     protected bool | Closure $isProse = false;
 
+    protected bool | Closure $isMarkdown = false;
+
     protected bool | Closure $isListWithLineBreaks = false;
 
     protected int | Closure | null $listLimit = null;
@@ -96,6 +98,11 @@ class TextEntry extends Entry implements HasAffixActions
     public function isProse(): bool
     {
         return (bool) $this->evaluate($this->isProse);
+    }
+
+    public function isMarkdown(): bool
+    {
+        return (bool) $this->evaluate($this->isMarkdown);
     }
 
     public function isListWithLineBreaks(): bool

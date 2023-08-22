@@ -11,6 +11,7 @@
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();
         $isProse = $isProse();
+        $isMarkdown = $isMarkdown();
         $url = $getUrl();
 
         $arrayState = $getState();
@@ -158,7 +159,7 @@
 
                                 <div
                                     @class([
-                                        $proseClasses => $isProse,
+                                        $proseClasses => $isProse || $isMarkdown,
                                     ])
                                 >
                                     {{ $formattedState }}
