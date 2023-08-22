@@ -135,12 +135,6 @@
     @endif
 
     <div
-        @if ($hasAnimation)
-            x-cloak
-            x-show="isCollapsed"
-            x-collapse.duration.200ms
-        @endif
-
         @if ($collapsible)
             x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($collapsed)
@@ -157,10 +151,15 @@
             'border-t border-gray-200 dark:border-white/10' => $hasHeader && (! $aside),
             'md:order-first' => $contentBefore,
         ])
+        @if ($hasAnimation)
+            x-cloak
+            x-show="!isCollapsed"
+            x-collapse.duration.200ms
+        @endif
     >
         <div
             @class([
-                // 'fi-section-content',
+                'fi-section-content',
                 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $aside,
                 match ($compact) {
                     true => 'p-4',
