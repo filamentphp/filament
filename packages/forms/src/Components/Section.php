@@ -3,6 +3,7 @@
 namespace Filament\Forms\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasAnimation;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
@@ -17,6 +18,7 @@ class Section extends Component implements Contracts\CanConcealComponents, Contr
     use Concerns\CanBeCompacted;
     use Concerns\EntanglesStateWithSingularRelationship;
     use HasDescription;
+    use HasAnimation;
     use HasExtraAlpineAttributes;
     use HasHeading;
     use HasIcon;

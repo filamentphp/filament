@@ -14,12 +14,14 @@
     'icon' => null,
     'iconColor' => 'gray',
     'iconSize' => IconSize::Large,
+    'animation' => null,
 ])
 
 @php
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
+    $hasAniamtion = filled($animation   );
     $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
 @endphp
 
@@ -27,6 +29,7 @@
     @if ($collapsible)
         x-data="{
             isCollapsed: @js($collapsed),
+            animation: @js($animation),
         }"
         x-bind:class="isCollapsed && 'fi-collapsed'"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
@@ -134,12 +137,19 @@
     @endif
 
     <div
+        @if ($hasAnimation)
+            x-cloak
+            x-show="isCollapsed"
+            x-collapse.duration.200ms
+        @endif
         @if ($collapsible)
             x-bind:aria-expanded="(! isCollapsed).toString()"
             @if ($collapsed)
                 x-cloak
             @endif
-            x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
+            if(!hasAnimation){
+                x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
+            }
         @endif
         @class([
             'fi-section-content-ctn',

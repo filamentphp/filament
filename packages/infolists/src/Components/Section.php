@@ -3,6 +3,7 @@
 namespace Filament\Infolists\Components;
 
 use Closure;
+use Filament\Support\Concerns\HasAnimation;
 use Filament\Support\Concerns\HasDescription;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Filament\Support\Concerns\HasHeading;
@@ -19,6 +20,7 @@ class Section extends Component
     use HasDescription;
     use HasExtraAlpineAttributes;
     use HasHeading;
+    use HasAnimation;   
     use HasIcon;
     use HasIconColor;
 
