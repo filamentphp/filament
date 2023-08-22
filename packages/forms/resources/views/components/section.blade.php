@@ -13,7 +13,7 @@
     :icon="$getIcon()"
     :icon-color="$getIconColor()"
     :icon-size="$getIconSize()"
-    :animation="$getAnimation()"
+    :animated="$getAnimation()"
     :attributes="
         \Filament\Support\prepare_inherited_attributes($attributes)
             ->merge([

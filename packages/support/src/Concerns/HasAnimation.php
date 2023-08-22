@@ -9,7 +9,7 @@ trait HasAnimation
 {
     protected bool | Htmlable | Closure | null $animation = null;
 
-    public function animation(bool | Closure | null $animation = true): static
+    public function animated(bool | Closure | null $animation = true): static
     {
         $this->animation = $animation;
 

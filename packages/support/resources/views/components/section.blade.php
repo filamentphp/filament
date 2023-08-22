@@ -14,13 +14,13 @@
     'icon' => null,
     'iconColor' => 'gray',
     'iconSize' => IconSize::Large,
-    'animation' => null,
+    'animated' => null,
 ])
 @php
     $hasDescription = filled((string) $description);
     $hasHeading = filled($heading);
     $hasIcon = filled($icon);
-    $hasAnimation = filled($animation);
+    $hasAnimation = filled($animated);
     $hasHeader = $hasIcon || $hasHeading || $hasDescription || $collapsible || filled((string) $headerEnd);
 @endphp
 
