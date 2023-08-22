@@ -22,7 +22,7 @@ use Livewire\Component;
 
 use function Filament\authorize;
 
-class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Tables\Contracts\HasTable,  Tables\Contracts\RendersActionModal
+class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;
