@@ -23,7 +23,7 @@
         @endif
 
         <title>
-            {{ filled($title = $livewire->getTitle()) ? "{$title} - " : null }}
+            {{ filled($title = strip_tags($livewire->getTitle())) ? "{$title} - " : null }}
             {{ filament()->getBrandName() }}
         </title>
 
