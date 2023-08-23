@@ -51,7 +51,7 @@
 
         @filamentStyles
         {{ filament()->getTheme()->getHtml() }}
-        {{ filament()->getFontHtml() }}
+        
 
         <style>
             :root {
