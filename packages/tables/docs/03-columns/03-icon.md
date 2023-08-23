@@ -59,6 +59,8 @@ IconColumn::make('status')
 
 Icon columns can display a check or cross icon based on the contents of the database column, either true or false, using the `boolean()` method:
 
+If the column is being cast to a `bool` or `boolean` in your Model then you can omit the `boolean()` method. 
+
 ```php
 use Filament\Tables\Columns\IconColumn;
 
