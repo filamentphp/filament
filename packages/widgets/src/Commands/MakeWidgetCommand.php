@@ -150,7 +150,7 @@ class MakeWidgetCommand extends Command
 
         if (! $this->option('force') && $this->checkForCollision([
             $path,
-            ($this->option('stats-overview') || $this->option('chart')) ?: $viewPath,
+            ...($this->option('stats-overview') || $this->option('chart')) ? [] : [$viewPath],
         ])) {
             return static::INVALID;
         }
