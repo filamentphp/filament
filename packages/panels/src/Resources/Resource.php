@@ -653,7 +653,7 @@ abstract class Resource
                     };
 
                     $caseAwareSearchColumn = $isForcedCaseInsensitive ?
-                        new Expression("lower({$searchColumn})") :
+                        new Expression(is_int($searchColumn) ? $searchColumn : "lower({$searchColumn})") :
                         $searchColumn;
 
                     return $query->$whereClause(
