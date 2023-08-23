@@ -23,6 +23,7 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
@@ -321,6 +322,10 @@ abstract class Resource
         $tenantOwnershipRelationshipName = static::getTenantOwnershipRelationshipName();
 
         return match (true) {
+            $tenantOwnershipRelationship instanceof MorphTo => $query->whereMorphedTo(
+                $tenantOwnershipRelationshipName,
+                $tenant,
+            ),
             $tenantOwnershipRelationship instanceof BelongsTo => $query->whereBelongsTo(
                 $tenant,
                 $tenantOwnershipRelationshipName,

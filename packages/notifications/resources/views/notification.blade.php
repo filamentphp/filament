@@ -31,9 +31,11 @@
         ])
     "
     @class([
-        'w-full transition duration-300',
+        'fi-no-notification w-full overflow-hidden transition duration-300',
         ...match ($isInline) {
-            true => [],
+            true => [
+                'fi-inline',
+            ],
             false => [
                 'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-900',
                 match ($color) {
@@ -50,15 +52,9 @@
     <div
         @class([
             'flex w-full gap-3 p-4',
-            ...match ($isInline) {
-                true => [],
-                false => [
-                    'rounded-xl',
-                    match ($color) {
-                        'gray' => null,
-                        default => 'bg-custom-50 dark:bg-custom-400/10',
-                    },
-                ],
+            match ($color) {
+                'gray' => null,
+                default => 'bg-custom-50 dark:bg-custom-400/10',
             },
         ])
         @style([

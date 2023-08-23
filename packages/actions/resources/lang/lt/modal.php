@@ -11,7 +11,7 @@ return [
         ],
 
         'confirm' => [
-            'label' => 'Patvirinti',
+            'label' => 'Patvirtinti',
         ],
 
         'submit' => [
