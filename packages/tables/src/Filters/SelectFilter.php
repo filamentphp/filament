@@ -49,6 +49,7 @@ class SelectFilter extends BaseFilter
                     $relationshipQuery = $filter->getRelationshipQuery();
 
                     $labels = $relationshipQuery
+                        ->distinct()
                         ->whereKey($state['values'])
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
