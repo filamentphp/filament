@@ -1,5 +1,7 @@
 <?php
 
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Table;
 use Filament\Tests\Models\Post;
 use Filament\Tests\Tables\Fixtures\PostsTable;
 use Filament\Tests\Tables\TestCase;
@@ -163,4 +165,18 @@ it('can state whether a select column has options', function () {
     livewire(PostsTable::class)
         ->assertTableSelectColumnHasOptions('with_options', ['red' => 'Red', 'blue' => 'Blue'], $post)
         ->assertTableSelectColumnDoesNotHaveOptions('with_options', ['one' => 'One', 'two' => 'Two'], $post);
+});
+
+it('can automatically detect boolean cast attribute in icon column', function () {
+    $post = Post::factory()->create(['is_published' => false]);
+
+    /** @var Table $table */
+    $table = tap(livewire(PostsTable::class)->instance()->getTable())->columns([
+        IconColumn::make('is_published')
+    ]);
+
+    /** @var IconColumn $column */
+    $column = tap($table->getColumn('is_published'))->record($post);
+
+    expect($column->isBoolean())->toBeTrue();
 });
