@@ -928,8 +928,14 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
-            $relatedKeyName = $relationship instanceof BelongsToMany ? $relationship->getQualifiedRelatedKeyName() : $relationship->getQualifiedOwnerKeyName();
-
+            if ($relationship instanceof BelongsToMany) {
+                $relatedKeyName = $relationship->getQualifiedRelatedKeyName();
+            } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+                $relatedKeyName = $relationship->getRelated()->getQualifiedKeyName();
+            } else {
+                $relatedKeyName = $relationship->getQualifiedOwnerKeyName();
+            }
+            
             $relationshipQuery->whereIn($relatedKeyName, $values);
 
             if ($modifyQueryUsing) {
