@@ -844,6 +844,19 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 return;
             }
 
+            if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+                /** @var \Znck\Eloquent\Relations\BelongsToThrough $relationship */
+                $relatedModel = $relationship->getResults();
+
+                $component->state(
+                    $relatedModel->getAttribute(
+                        $relationship->getRelated()->getKeyName(),
+                    ),
+                );
+
+                return;
+            }
+
             /** @var BelongsTo $relationship */
             $relatedModel = $relationship->getResults();
 
@@ -893,8 +906,16 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                     ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
+            if ($relationship instanceof BelongsToMany) {
+                $relatedKeyName = $relationship->getRelatedKeyName();
+            } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
+                $relatedKeyName = $relationship->getRelated()->getQualifiedKeyName();
+            } else {
+                $relatedKeyName = $relationship->getOwnerKeyName();
+            }
+
             $relationshipQuery->where(
-                $relationship instanceof BelongsToMany ? $relationship->getRelatedKeyName() : $relationship->getOwnerKeyName(),
+                $relatedKeyName,
                 $state,
             );
 
@@ -935,7 +956,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             } else {
                 $relatedKeyName = $relationship->getQualifiedOwnerKeyName();
             }
-            
+
             $relationshipQuery->whereIn($relatedKeyName, $values);
 
             if ($modifyQueryUsing) {
