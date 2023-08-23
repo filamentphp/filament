@@ -914,10 +914,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 $relatedKeyName = $relationship->getOwnerKeyName();
             }
 
-            $relationshipQuery->where(
-                $relatedKeyName,
-                $state,
-            );
+            $relationshipQuery->where($relatedKeyName, $state);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
