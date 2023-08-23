@@ -726,7 +726,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     if ($itemData === null) {
                         continue;
                     }
-    
+
                     $translatableContentDriver ?
                         $translatableContentDriver->updateRecord($record, $itemData) :
                         $record->fill($itemData)->save();
