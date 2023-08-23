@@ -80,6 +80,16 @@ abstract class EditTenantProfile extends Page
     {
         $data = $this->tenant->attributesToArray();
 
+        $this->fillFormWithDataAndCallHooks($data);
+    }
+
+    /**
+     * @internal Never override or call this method. If you completely override `fillForm()`, copy the contents of this method into your override.
+     *
+     * @param  array<string, mixed>  $data
+     */
+    protected function fillFormWithDataAndCallHooks(array $data): void
+    {
         $this->callHook('beforeFill');
 
         $data = $this->mutateFormDataBeforeFill($data);
