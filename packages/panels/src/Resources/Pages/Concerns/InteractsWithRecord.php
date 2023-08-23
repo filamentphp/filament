@@ -29,7 +29,7 @@ trait InteractsWithRecord
         return $this->record;
     }
 
-    public function getRecordTitle(): Htmlable|string
+    public function getRecordTitle(): Htmlable | string
     {
         $resource = static::getResource();
 
