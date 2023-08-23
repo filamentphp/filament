@@ -85,7 +85,7 @@ trait InteractsWithTable
         }
 
         if ($this->tableFilters) {
-            $this->replaceNullValues($this->tableFilters);
+            $this->normalizeBooleanAndNullValues($this->tableFilters);
         }
 
         $this->getTableFiltersForm()->fill($this->tableFilters);
@@ -269,11 +269,11 @@ trait InteractsWithTable
         return null;
     }
 
-    protected function replaceNullValues(array &$data): void
+    protected function normalizeBooleanAndNullValues(array &$data): void
     {
         foreach ($data as &$value) {
             if (is_array($value)) {
-                $this->replaceNullValues($value);
+                $this->normalizeBooleanAndNullValues($value);
             } elseif ($value === 'null') {
                 $value = null;
             } elseif ($value === 'false') {
