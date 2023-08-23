@@ -5,6 +5,7 @@
     'icon' => null,
     'iconPosition' => 'before',
     'size' => 'md',
+    'truncated' => false,
 ])
 
 @php
@@ -26,6 +27,7 @@
         $attributes
             ->class([
                 'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset',
+                'shrink-0 whitespace-nowrap' => !$truncated,
                 match ($size) {
                     'xs' => 'px-0.5 min-w-[theme(spacing.4)] tracking-tighter',
                     'sm' => 'px-1.5 min-w-[theme(spacing.5)] py-0.5 tracking-tight',
@@ -55,9 +57,17 @@
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 
-    <span>
-        {{ $slot }}
-    </span>
+    @if($truncated)
+        <div class="grid">
+            <span class="truncate">
+                {{ $slot }}
+            </span>
+        </div>
+    @else
+        <span>
+            {{ $slot }}
+        </span>
+    @endif
 
     @if ($isDeletable)
         <button
