@@ -205,7 +205,7 @@ class IconColumn extends Column
 
     public function isBoolean(): bool
     {
-        if (!is_null($this->isBoolean)){
+        if (filled($this->isBoolean)) {
             return (bool) $this->evaluate($this->isBoolean);
         }
 
