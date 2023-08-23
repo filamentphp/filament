@@ -107,7 +107,7 @@
         },
     ]);
 
-    $badgeClasses = 'absolute -top-1 start-full z-[1] -ms-1 -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
+    $badgeContainerClasses = 'fi-button-badge-ctn absolute -top-1 start-full z-[1] -ms-1 -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-label',
@@ -271,7 +271,7 @@
         @endif
 
         @if (filled($badge))
-            <div class="{{ $badgeClasses }}">
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>
@@ -319,7 +319,7 @@
         @endif
 
         @if (filled($badge))
-            <div class="{{ $badgeClasses }}">
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>

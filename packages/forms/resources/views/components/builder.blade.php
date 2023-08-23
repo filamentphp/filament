@@ -192,7 +192,7 @@
                                 class="flex w-full justify-center opacity-0 transition duration-75 hover:opacity-100"
                             >
                                 <div
-                                    class="rounded-lg bg-white dark:bg-gray-900"
+                                    class="fi-fo-builder-block-picker-ctn rounded-lg bg-white dark:bg-gray-900"
                                 >
                                     <x-filament-forms::builder.block-picker
                                         :action="$addBetweenAction"

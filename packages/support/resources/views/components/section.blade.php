@@ -60,7 +60,7 @@
         $attributes->class([
             'fi-section',
             match ($aside) {
-                true => 'grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
+                true => 'fi-aside grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
                 false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
             },
         ])

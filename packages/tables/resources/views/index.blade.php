@@ -498,7 +498,7 @@
                         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         x-sortable
                         @class([
-                            'gap-4 p-4 sm:px-6' => $contentGrid,
+                            'fi-ta-content-grid gap-4 p-4 sm:px-6' => $contentGrid,
                             'pt-0' => $contentGrid && $this->getTableGrouping(),
                             'gap-y-px bg-gray-200 dark:bg-white/5' => ! $contentGrid,
                         ])
@@ -569,7 +569,7 @@
                                     x-sortable-handle
                                 @endif
                                 @class([
-                                    'relative h-full bg-white transition duration-75 dark:bg-gray-900',
+                                    'fi-ta-record relative h-full bg-white transition duration-75 dark:bg-gray-900',
                                     'hover:bg-gray-50 dark:hover:bg-white/5' => ($recordUrl || $recordAction) && (! $contentGrid),
                                     'hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20' => ($recordUrl || $recordAction) && $contentGrid,
                                     'rounded-xl shadow-sm ring-1 ring-gray-950/5' => $contentGrid,
