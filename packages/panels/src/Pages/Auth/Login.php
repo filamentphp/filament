@@ -82,13 +82,25 @@ class Login extends SimplePage
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                $this->getEmailFormComponent(),
-                $this->getPasswordFormComponent(),
-                $this->getRememberFormComponent(),
-            ])
-            ->statePath('data');
+        return $form;
+    }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->schema([
+                        $this->getEmailFormComponent(),
+                        $this->getPasswordFormComponent(),
+                        $this->getRememberFormComponent(),
+                    ])
+                    ->statePath('data'),
+            ),
+        ];
     }
 
     protected function getEmailFormComponent(): Component

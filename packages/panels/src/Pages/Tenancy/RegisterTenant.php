@@ -116,6 +116,11 @@ abstract class RegisterTenant extends SimplePage
         return Filament::getUrl($this->tenant);
     }
 
+    public function form(Form $form): Form
+    {
+        return $form;
+    }
+
     /**
      * @return array<int | string, string | Form>
      */

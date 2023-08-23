@@ -167,6 +167,11 @@ abstract class EditTenantProfile extends Page
         return null;
     }
 
+    public function form(Form $form): Form
+    {
+        return $form;
+    }
+
     /**
      * @return array<int | string, string | Form>
      */
