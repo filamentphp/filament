@@ -58,7 +58,7 @@ trait HasActions
             $this->actions[] = $action;
         }
 
-        $this->actionsPosition($position);
+        $position && $this->actionsPosition($position);
 
         return $this;
     }
