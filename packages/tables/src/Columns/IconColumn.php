@@ -209,7 +209,7 @@ class IconColumn extends Column
             return (bool) $this->evaluate($this->isBoolean);
         }
 
-        return $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
+        return $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']) || is_bool($this->getState());
     }
 
     public function isListWithLineBreaks(): bool
