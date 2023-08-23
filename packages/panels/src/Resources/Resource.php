@@ -678,7 +678,12 @@ abstract class Resource
                             "%{$search}%",
                         );
                     },
-                    function ($query) use ($isForcedCaseInsensitive, $whereClause, $searchAttribute, $search) {
+                    function ($query) use ($databaseConnection, $isForcedCaseInsensitive, $whereClause, $searchAttribute, $search) {
+                        $searchAttribute = match ($databaseConnection->getDriverName()) {
+                            'pgsql' => "{$searchAttribute}::text",
+                            default => $searchAttribute,
+                        };
+                        
                         $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                             new Expression("lower({$searchAttribute})") :
                             $searchAttribute;
