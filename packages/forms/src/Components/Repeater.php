@@ -734,9 +734,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $itemData = $component->mutateRelationshipDataBeforeCreate($itemData);
 
-                // This is helpful in case we want to ignore an item; we can simply return an empty array,
-                // or even better, we can accept a null return to ignore the item.
-                if($itemData === []){
+                // This is helpful in case we want to ignore an item; we can simply return null from mutateRelationshipDataBeforeCreate
+                if($itemData === null){
                     break;
                 }
 
@@ -901,7 +900,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
      * @param  array<array<string, mixed>>  $data
      * @return array<array<string, mixed>>
      */
-    public function mutateRelationshipDataBeforeCreate(array $data): array
+    public function mutateRelationshipDataBeforeCreate(array $data): array | null
     {
         if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
             $data = $this->evaluate($this->mutateRelationshipDataBeforeCreateUsing, [
