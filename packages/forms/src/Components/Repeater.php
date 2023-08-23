@@ -734,6 +734,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
                 $itemData = $component->mutateRelationshipDataBeforeCreate($itemData);
 
+                // This is helpful in case we want to ignore an item; we can simply return an empty array,
+                // or even better, we can accept a null return to ignore the item.
+                if($itemData === []){
+                    break;
+                }
+
                 if ($translatableContentDriver) {
                     $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
                 } else {
