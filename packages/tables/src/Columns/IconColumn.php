@@ -205,11 +205,11 @@ class IconColumn extends Column
 
     public function isBoolean(): bool
     {
-        if (is_null($this->isBoolean) && $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean'])) {
-            return true;
+        if (!is_null($this->isBoolean)){
+            return (bool) $this->evaluate($this->isBoolean);
         }
 
-        return (bool) $this->evaluate($this->isBoolean ?? false);
+        return $this->getRecord()?->hasCast($this->getName(), ['bool', 'boolean']);
     }
 
     public function isListWithLineBreaks(): bool
