@@ -14,7 +14,7 @@
 
         <div class="flex flex-wrap gap-1.5">
             @foreach ($indicators as $wireClickHandler => $label)
-                <x-filament::badge truncated>
+                <x-filament::badge>
                     {{ $label }}
 
                     <x-slot
