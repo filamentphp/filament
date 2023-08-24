@@ -6,6 +6,6 @@
             ])
         }}
     >
-        {{ $brand }}
+        {!! $brand !!}
     </div>
 @endif
