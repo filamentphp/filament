@@ -5,7 +5,6 @@
     'icon' => null,
     'iconPosition' => 'before',
     'size' => 'md',
-    'truncated' => false,
 ])
 
 @php
