@@ -3,12 +3,13 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Illuminate\Contracts\Support\Htmlable;
 
 trait HasBrandName
 {
-    protected string | Closure | null $brandName = null;
+    protected string | Closure | Htmlable | null $brandName = null;
 
-    public function brandName(string | Closure | null $name): static
+    public function brandName(string | Closure | Htmlable | null $name): static
     {
         $this->brandName = $name;
 
