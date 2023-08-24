@@ -186,12 +186,12 @@ class CreateRecord extends Page
     {
         $relationship = static::getResource()::getTenantRelationship($tenant);
 
-        if (!$relationship instanceof HasManyThrough) {
-            return $relationship->save($record);
+        if ($relationship instanceof HasManyThrough) {
+            $record->save();
+            return $record;
         }
-        
-        $record->save();
-        return $record;
+
+        return $relationship->save($record);
     }
 
     /**
