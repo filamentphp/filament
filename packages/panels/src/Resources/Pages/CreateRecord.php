@@ -188,7 +188,7 @@ class CreateRecord extends Page
 
         if ($relationship instanceof HasManyThrough) {
             $record->save();
-            
+
             return $record;
         }
 
