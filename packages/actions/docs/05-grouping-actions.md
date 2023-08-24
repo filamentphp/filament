@@ -76,7 +76,7 @@ The dropdown may be set to a width by using the `width()` method. Options corres
 ActionGroup::make([
     // Array of actions
 ])
-    ->width('xs')
+    ->dropdownWidth('xs')
 ```
 
 ## Controlling the maximum height of the dropdown
