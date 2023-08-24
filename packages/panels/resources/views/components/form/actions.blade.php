@@ -12,7 +12,8 @@
 
                 evaluatePageScrollPosition: function () {
                     this.isSticky =
-                        document.body.scrollHeight >= window.scrollY + window.innerHeight * 2
+                        document.body.scrollHeight >=
+                        window.scrollY + window.innerHeight * 2
                 },
             }"
             x-init="evaluatePageScrollPosition"
