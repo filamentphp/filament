@@ -57,17 +57,9 @@
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 
-    @if ($truncated)
-        <div class="grid">
-            <span class="truncate">
-                {{ $slot }}
-            </span>
-        </div>
-    @else
-        <span>
-            {{ $slot }}
-        </span>
-    @endif
+    <span class="truncate">
+        {{ $slot }}
+    </span>
 
     @if ($isDeletable)
         <button
