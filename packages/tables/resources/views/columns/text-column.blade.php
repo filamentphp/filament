@@ -95,7 +95,8 @@
                         "
                     @endif
                     @class([
-                        'flex max-w-max',
+                        'max-w-max',
+                        'flex' => ! $isBulleted,
                         'cursor-pointer' => $itemIsCopyable,
                     ])
                 >
