@@ -19,6 +19,7 @@ trait HasRoutes
     protected Closure | Native | null $authenticatedTenantRoutes = null;
 
     protected string | Closure | null $homeUrl = null;
+    protected bool $needsHomeRedirectUrl = true;
 
     /**
      * @var array<string>
@@ -54,6 +55,13 @@ trait HasRoutes
     public function homeUrl(string | Closure | null $url): static
     {
         $this->homeUrl = $url;
+
+        return $this;
+    }
+
+    public function needsHomeRedirectUrl(bool $value): static
+    {
+        $this->needsHomeRedirectUrl = $value;
 
         return $this;
     }
@@ -109,6 +117,11 @@ trait HasRoutes
     public function getHomeUrl(): ?string
     {
         return $this->evaluate($this->homeUrl);
+    }
+
+    public function getNeedsHomeRedirectUrl(): bool
+    {
+        return $this->needsHomeRedirectUrl;
     }
 
     /**

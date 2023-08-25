@@ -13,6 +13,7 @@ Route::name('filament.')
             /** @var \Filament\Panel $panel */
             $panelId = $panel->getId();
             $hasTenancy = $panel->hasTenancy();
+            $needsHomeRedirectUrl = $panel->getNeedsHomeRedirectUrl();
             $tenantRoutePrefix = $panel->getTenantRoutePrefix();
             $tenantSlugAttribute = $panel->getTenantSlugAttribute();
             $domains = $panel->getDomains();
@@ -22,7 +23,7 @@ Route::name('filament.')
                     ->middleware($panel->getMiddleware())
                     ->name("{$panelId}.")
                     ->prefix($panel->getPath())
-                    ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute) {
+                    ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute, $needsHomeRedirectUrl) {
                         if ($routes = $panel->getRoutes()) {
                             $routes($panel);
                         }
@@ -49,7 +50,7 @@ Route::name('filament.')
                         });
 
                         Route::middleware($panel->getAuthMiddleware())
-                            ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute): void {
+                            ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute, $needsHomeRedirectUrl): void {
                                 if ($routes = $panel->getAuthenticatedRoutes()) {
                                     $routes($panel);
                                 }
@@ -87,12 +88,14 @@ Route::name('filament.')
 
                                 Route::middleware($hasTenancy ? $panel->getTenantMiddleware() : [])
                                     ->prefix($hasTenancy ? (($tenantRoutePrefix) ? "{$tenantRoutePrefix}/" : '') . ('{tenant' . (($tenantSlugAttribute) ? ":{$tenantSlugAttribute}" : '') . '}') : '')
-                                    ->group(function () use ($panel): void {
+                                    ->group(function () use ($panel, $needsHomeRedirectUrl): void {
                                         if ($routes = $panel->getAuthenticatedTenantRoutes()) {
                                             $routes($panel);
                                         }
 
-                                        Route::get('/', RedirectToHomeController::class)->name('home');
+                                        if ($needsHomeRedirectUrl) {
+                                            Route::get('/', RedirectToHomeController::class)->name('home');
+                                        }
 
                                         Route::name('tenant.')->group(function () use ($panel): void {
                                             if ($panel->hasTenantBilling()) {
