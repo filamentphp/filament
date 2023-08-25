@@ -48,7 +48,7 @@
 
                 $nextTick(() => {
                     this.checkIfAllCheckboxesAreChecked()
-                });
+                })
             },
 
             checkIfAllCheckboxesAreChecked: function () {
