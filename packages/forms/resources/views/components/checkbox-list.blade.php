@@ -42,6 +42,10 @@
                     this.updateVisibleCheckboxListOptions()
                     this.checkIfAllCheckboxesAreChecked()
                 })
+
+                $nextTick(() => {
+                    this.checkIfAllCheckboxesAreChecked()
+                });
             },
 
             checkIfAllCheckboxesAreChecked: function () {
