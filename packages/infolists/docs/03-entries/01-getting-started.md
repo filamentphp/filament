@@ -170,7 +170,7 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->hint('[Documentation](/documentation)')
+    ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
     ->hintColor('primary')
 ```
 
@@ -185,7 +185,7 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->hint('[Documentation](/documentation)')
+    ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
     ->hintIcon('heroicon-m-question-mark-circle')
 ```
 
@@ -200,7 +200,7 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->hint('[Documentation](/documentation)')
+    ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
     ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Read it!')
 ```
 
