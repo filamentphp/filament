@@ -23,6 +23,8 @@ class Notifications extends Component
 
     public static VerticalAlignment $verticalAlignment = VerticalAlignment::Start;
 
+    public static ?string $authGuard = null;
+
     public function mount(): void
     {
         $this->notifications = new Collection();
@@ -82,7 +84,7 @@ class Notifications extends Component
 
     public function getUser(): Model | Authenticatable | null
     {
-        return auth()->user();
+        return auth(static::$authGuard)->user();
     }
 
     public function getBroadcastChannel(): ?string
