@@ -11,6 +11,7 @@
     $iconPosition = $getIconPosition();
     $isListWithLineBreaks = $isListWithLineBreaks();
     $url = $getUrl();
+    $isBulleted = $isBulleted();
 
     $arrayState = $getState();
 
@@ -56,7 +57,7 @@
 
     <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
         @class([
-            'list-inside list-disc' => $isBulleted(),
+            'list-inside list-disc' => $isBulleted,
             'flex flex-wrap items-center gap-1.5' => $isBadge,
             'whitespace-normal' => $canWrap,
         ])

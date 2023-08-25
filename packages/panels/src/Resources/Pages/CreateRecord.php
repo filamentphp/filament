@@ -11,6 +11,7 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 
 /**
@@ -183,7 +184,15 @@ class CreateRecord extends Page
 
     protected function associateRecordWithTenant(Model $record, Model $tenant): Model
     {
-        return static::getResource()::getTenantRelationship($tenant)->save($record);
+        $relationship = static::getResource()::getTenantRelationship($tenant);
+
+        if ($relationship instanceof HasManyThrough) {
+            $record->save();
+
+            return $record;
+        }
+
+        return $relationship->save($record);
     }
 
     /**
