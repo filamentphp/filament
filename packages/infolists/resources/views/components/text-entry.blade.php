@@ -37,7 +37,11 @@
             }
         }
 
-        $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
+        if ($arrayState === null) {
+            $arrayState = [null];
+        } else {
+            $arrayState = \Illuminate\Support\Arr::wrap($arrayState);
+        }
     @endphp
 
     <x-filament-infolists::affixes
