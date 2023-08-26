@@ -390,7 +390,7 @@ abstract class Resource
         return static::$globalSearchResultsLimit;
     }
 
-    public static function modifyGlobalSearchQuery(Builder $query, string $search)
+    public static function modifyGlobalSearchQuery(Builder $query, string $search): void
     {
     }
 
