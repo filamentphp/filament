@@ -23,7 +23,7 @@ composer require filament/notifications:"^2.0"
 To get started with notifications quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
 
 ```bash
-php artisan notifications:install
+php artisan notifications:table
 npm install
 npm run dev
 ```
