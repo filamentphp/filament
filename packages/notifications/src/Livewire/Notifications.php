@@ -2,6 +2,7 @@
 
 namespace Filament\Notifications\Livewire;
 
+use Filament\Facades\Filament;
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
 use Filament\Support\Enums\Alignment;
@@ -82,7 +83,7 @@ class Notifications extends Component
 
     public function getUser(): Model | Authenticatable | null
     {
-        return auth()->user();
+        return Filament::auth()->user();
     }
 
     public function getBroadcastChannel(): ?string

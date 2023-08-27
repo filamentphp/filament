@@ -3,6 +3,7 @@
 namespace Filament\Notifications\Livewire;
 
 use Carbon\CarbonInterface;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -115,7 +116,7 @@ class DatabaseNotifications extends Component
 
     public function getUser(): Model | Authenticatable | null
     {
-        return auth()->user();
+        return Filament::auth()->user();
     }
 
     public function getBroadcastChannel(): ?string
