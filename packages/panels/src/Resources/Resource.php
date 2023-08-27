@@ -303,7 +303,8 @@ abstract class Resource
         return static::$breadcrumb ?? Str::headline(static::getPluralModelLabel());
     }
 
-    public static function getQuery(): Builder {
+    public static function getQuery(): Builder
+    {
         return static::getModel()::query();
     }
 
