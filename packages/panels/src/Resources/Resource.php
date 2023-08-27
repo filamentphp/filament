@@ -303,9 +303,13 @@ abstract class Resource
         return static::$breadcrumb ?? Str::headline(static::getPluralModelLabel());
     }
 
+    public static function getQuery(): Builder {
+        return static::getModel()::query();
+    }
+
     public static function getEloquentQuery(): Builder
     {
-        $query = static::getModel()::query();
+        $query = static::getQuery();
 
         if ($tenant = Filament::getTenant()) {
             static::scopeEloquentQueryToTenant($query, $tenant);
