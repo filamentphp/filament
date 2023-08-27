@@ -61,7 +61,7 @@ class NavigationGroup extends Component
     public function items(array | Arrayable $items): static
     {
         foreach ($items as $item) {
-            if ($item instanceof NavigationItem) {
+            if ($item instanceof NavigationItem || $item instanceof NavigationGroup) {
                 continue;
             }
 

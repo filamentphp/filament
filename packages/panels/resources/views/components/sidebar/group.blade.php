@@ -65,7 +65,17 @@
         class="fi-sidebar-group-items flex flex-col gap-y-1"
     >
         @foreach ($items as $item)
-            @if ($item->isVisible())
+
+            @if($item instanceof \Filament\Navigation\NavigationGroup)
+                <div class="ps-4">
+                    <x-filament-panels::sidebar.group
+                        :collapsible="$item->isCollapsible()"
+                        :icon="$item->getIcon()"
+                        :items="$item->getItems()"
+                        :label="$item->getLabel()"
+                    />
+                </div>
+            @else ($item->isVisible() )
                 <x-filament-panels::sidebar.item
                     :active-icon="$item->getActiveIcon()"
                     :active="$item->isActive()"
