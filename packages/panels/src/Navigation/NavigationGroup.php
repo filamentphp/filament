@@ -56,7 +56,7 @@ class NavigationGroup extends Component
     }
 
     /**
-     * @param  array<NavigationItem> | Arrayable  $items
+     * @param  array<NavigationItem, NavigationGroup> | Arrayable  $items
      */
     public function items(array | Arrayable $items): static
     {
