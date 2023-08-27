@@ -6,7 +6,7 @@ use Closure;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\Alignment;
-use Filament\Support\Enums\ModalWidth;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Support\View\Components\Modal;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -69,7 +69,7 @@ trait CanOpenModal
 
     protected string | Htmlable | Closure | null $modalDescription = null;
 
-    protected string | ModalWidth | Closure | null $modalWidth = null;
+    protected string | MaxWidth | Closure | null $modalWidth = null;
 
     protected bool | Closure | null $isModalHidden = false;
 
@@ -289,7 +289,7 @@ trait CanOpenModal
         return $this;
     }
 
-    public function modalWidth(string | ModalWidth | Closure | null $width = null): static
+    public function modalWidth(string | MaxWidth | Closure | null $width = null): static
     {
         $this->modalWidth = $width;
 
@@ -509,7 +509,7 @@ trait CanOpenModal
         return $this->evaluate($this->modalDescription);
     }
 
-    public function getModalWidth(): string | ModalWidth
+    public function getModalWidth(): string | MaxWidth
     {
         return $this->evaluate($this->modalWidth) ?? '4xl';
     }
