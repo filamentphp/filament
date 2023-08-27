@@ -1,7 +1,7 @@
 <?php
 
 namespace Filament\Support\Enums;
-enum ModalWidth
+enum MaxWidth
 {
     case ExtraSmall;
 
