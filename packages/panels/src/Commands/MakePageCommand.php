@@ -23,21 +23,25 @@ class MakePageCommand extends Command
     public function handle(): int
     {
 
-        $page = (string) str(
+        $page = (string)str(
             $this->argument('name') ??
             text(
                 label: 'What is the page name?',
                 placeholder: 'EditSettings',
                 required: true,
+                validate: fn(string $value) => preg_match(
+                    '/^[a-zA-Z_\x80-\xff][a-zA-Z0-9_\x80-\xff]*$/',
+                    $value
+                )?null:'Invalid Page Name'
             ),
         )
             ->trim('/')
             ->trim('\\')
             ->trim(' ')
             ->replace('/', '\\');
-        $pageClass = (string) str($page)->afterLast('\\');
+        $pageClass = (string)str($page)->afterLast('\\');
         $pageNamespace = str($page)->contains('\\') ?
-            (string) str($page)->beforeLast('\\') :
+            (string)str($page)->beforeLast('\\') :
             '';
 
         $resource = null;
@@ -50,18 +54,18 @@ class MakePageCommand extends Command
         );
 
         if (filled($resourceInput)) {
-            $resource = (string) str($resourceInput)
+            $resource = (string)str($resourceInput)
                 ->studly()
                 ->trim('/')
                 ->trim('\\')
                 ->trim(' ')
                 ->replace('/', '\\');
 
-            if (! str($resource)->endsWith('Resource')) {
+            if (!str($resource)->endsWith('Resource')) {
                 $resource .= 'Resource';
             }
 
-            $resourceClass = (string) str($resource)
+            $resourceClass = (string)str($resource)
                 ->afterLast('\\');
 
             $resourcePage = $this->option('type') ?? select(
@@ -84,14 +88,14 @@ class MakePageCommand extends Command
             $panel = Filament::getPanel($panel);
         }
 
-        if (! $panel) {
+        if (!$panel) {
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
             $panel = (count($panels) > 1) ? $panels[select(
                 label: 'Which panel would you like to create this in?',
                 options: array_map(
-                    fn (Panel $panel): string => $panel->getId(),
+                    fn(Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
                 default: Filament::getDefaultPanel()->getId()
@@ -128,15 +132,15 @@ class MakePageCommand extends Command
 
         $view = str($page)
             ->prepend(
-                (string) str(empty($resource) ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
+                (string)str(empty($resource) ? "{$namespace}\\" : "{$resourceNamespace}\\{$resource}\\pages\\")
                     ->replaceFirst('App\\', '')
             )
             ->replace('\\', '/')
             ->explode('/')
-            ->map(fn ($segment) => Str::lower(Str::kebab($segment)))
+            ->map(fn($segment) => Str::lower(Str::kebab($segment)))
             ->implode('.');
 
-        $path = (string) str($page)
+        $path = (string)str($page)
             ->prepend('/')
             ->prepend(empty($resource) ? ($path ?? '') : ($resourcePath ?? '') . "\\{$resource}\\Pages\\")
             ->replace('\\', '/')
@@ -144,7 +148,7 @@ class MakePageCommand extends Command
             ->append('.php');
 
         $viewPath = resource_path(
-            (string) str($view)
+            (string)str($view)
                 ->replace('.', '/')
                 ->prepend('views/')
                 ->append('.blade.php'),
@@ -155,7 +159,7 @@ class MakePageCommand extends Command
             ...($resourcePage === 'custom' ? [$viewPath] : []),
         ];
 
-        if (! $this->option('force') && $this->checkForCollision($files)) {
+        if (!$this->option('force') && $this->checkForCollision($files)) {
             return static::INVALID;
         }
 
