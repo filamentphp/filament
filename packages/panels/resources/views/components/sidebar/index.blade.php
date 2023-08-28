@@ -3,7 +3,7 @@
 ])
 
 @php
-    $openSidebarClasses = 'fi-sidebar-open max-w-none translate-x-0 shadow-xl ring-1 ring-gray-950/5 rtl:-translate-x-0 dark:ring-white/10';
+    $openSidebarClasses = 'fi-sidebar-open w-[--sidebar-width] translate-x-0 shadow-xl ring-1 ring-gray-950/5 rtl:-translate-x-0 dark:ring-white/10';
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
 @endphp
 
@@ -14,7 +14,7 @@
         x-bind:class="
             $store.sidebar.isOpen
                 ? @js($openSidebarClasses)
-                : 'lg:max-w-[--collapsed-sidebar-width] -translate-x-full rtl:translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0'
+                : ' -translate-x-full rtl:translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0'
         "
     @else
         @if (filament()->hasTopNavigation() || filament()->isSidebarFullyCollapsibleOnDesktop())
@@ -25,7 +25,7 @@
         x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses) : '-translate-x-full rtl:translate-x-full'"
     @endif
     @class([
-        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen w-[--sidebar-width] content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 dark:lg:bg-transparent',
+        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 dark:lg:bg-transparent',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
