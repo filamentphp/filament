@@ -295,8 +295,8 @@ return [
             'link' => [
 
                 'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'link' => 'Pridėti saitą',
+                    'unlink' => 'Pašalinti saitą',
                 ],
 
                 'label' => 'Svetainės adresas',
