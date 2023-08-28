@@ -24,7 +24,7 @@
 
                 $nextTick(() => {
                     this.checkIfAllCheckboxesAreChecked()
-                });
+                })
 
                 Livewire.hook(
                     'commit',
