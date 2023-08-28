@@ -46,7 +46,8 @@
                         ...$icon ? [500] : [],
                         600,
                         ...$isDeletable ? [700] : [],
-                    ]
+                    ],
+                    alias: 'badge',
                 ) => $color !== 'gray',
             ])
     }}
