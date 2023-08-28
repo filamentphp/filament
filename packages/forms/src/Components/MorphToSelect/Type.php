@@ -131,10 +131,6 @@ class Type
                 ]) ?? $query;
             }
 
-            if (! $this->hasOptionLabelFromRecordUsingCallback() && empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleAttribute());
-            }
-
             $keyName = $query->getModel()->getKeyName();
 
             if ($this->hasOptionLabelFromRecordUsingCallback()) {
@@ -144,6 +140,10 @@ class Type
                         $record->{$keyName} => $this->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
+            }
+
+            if (empty($query->getQuery()->orders)) {
+                $query->orderBy($this->getTitleAttribute());
             }
 
             return $query
