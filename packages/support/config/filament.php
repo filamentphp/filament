@@ -16,7 +16,7 @@ return [
 
     'broadcasting' => [
 
-        'echo' => [
+        // 'echo' => [
         //     'broadcaster' => 'pusher',
         //     'key' => env('VITE_PUSHER_APP_KEY'),
         //     'cluster' => env('VITE_PUSHER_APP_CLUSTER'),
