@@ -22,6 +22,8 @@ class TextColumn extends Column
      */
     protected string $view = 'filament-tables::columns.text-column';
 
+    protected bool | Closure $canTruncateBadge = true;
+
     protected bool | Closure $canWrap = false;
 
     protected bool | Closure $isBadge = false;
@@ -34,9 +36,11 @@ class TextColumn extends Column
 
     protected TextColumnSize | string | Closure | null $size = null;
 
-    public function badge(bool | Closure $condition = true): static
+    public function badge(bool | Closure $condition = true, bool | Closure $truncate = true): static
     {
         $this->isBadge = $condition;
+
+        $this->canTruncateBadge = $truncate;
 
         return $this;
     }
@@ -97,6 +101,11 @@ class TextColumn extends Column
     public function canWrap(): bool
     {
         return (bool) $this->evaluate($this->canWrap);
+    }
+
+    public function canTruncateBadge(): bool
+    {
+        return (bool) $this->evaluate($this->canTruncateBadge);
     }
 
     public function isBadge(): bool

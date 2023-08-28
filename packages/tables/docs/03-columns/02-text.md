@@ -34,6 +34,15 @@ TextColumn::make('status')
 
 <AutoScreenshot name="tables/columns/text/badge" alt="Text column as badge" version="3.x" />
 
+By default, badge content will be truncated to maintain the column width as necessary. You can prevent this behavior by adding `truncate` parameter as false to the method:
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('status')
+    ->badge(truncate: false)
+```
+
 You may add other things to the badge, like an [icon](#adding-an-icon).
 
 ## Displaying a description

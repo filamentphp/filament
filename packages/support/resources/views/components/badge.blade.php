@@ -5,6 +5,7 @@
     'icon' => null,
     'iconPosition' => 'before',
     'size' => 'md',
+    'canTruncateBadge' => true,
 ])
 
 @php
@@ -56,7 +57,7 @@
     @endif
 
     <span class="grid">
-        <span class="truncate">
+        <span @class(["truncate" => $canTruncateBadge])>
             {{ $slot }}
         </span>
     </span>

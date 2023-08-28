@@ -104,6 +104,7 @@
                             :color="$color"
                             :icon="$icon"
                             :icon-position="$iconPosition"
+                            :can-truncate-badge="$canTruncateBadge()"
                         >
                             {{ $formattedState }}
                         </x-filament::badge>
