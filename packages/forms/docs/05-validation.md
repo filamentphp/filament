@@ -494,6 +494,7 @@ TextInput::make('slug')->rules([
         }
     },
 ])
+```
 
 ## Validation attributes
 
