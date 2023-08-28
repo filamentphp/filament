@@ -35,7 +35,7 @@
 
                 $nextTick(() => {
                     this.checkIfAllCheckboxesAreChecked()
-                });
+                })
 
                 Livewire.hook('message.processed', () => {
                     this.updateVisibleCheckboxListOptions()
