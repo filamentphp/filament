@@ -343,7 +343,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
         return [];
     }
 
-    public function updatedActiveTab()
+    public function updatedActiveTab(): void
     {
         $this->resetPage();
     }
