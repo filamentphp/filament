@@ -84,9 +84,9 @@
     </header>
 
     <nav 
-        class="fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
+        class="fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto px-6 py-8"
         @if (filament()->isSidebarCollapsibleOnDesktop())
-            x-bind:class="$store.sidebar.isOpen ? '' : 'items-center'"
+            x-bind:class="{ 'items-center': $store.sidebar.isOpen}"
         @endif
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
