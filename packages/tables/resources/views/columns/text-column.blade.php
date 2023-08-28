@@ -7,11 +7,11 @@
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
-    $isBadge = $isBadge();
     $iconPosition = $getIconPosition();
+    $isBadge = $isBadge();
+    $isBulleted = $isBulleted();
     $isListWithLineBreaks = $isListWithLineBreaks();
     $url = $getUrl();
-    $isBulleted = $isBulleted();
 
     $arrayState = $getState();
 
@@ -96,7 +96,7 @@
                         "
                     @endif
                     @class([
-                        'max-w-max',
+                        'w-max',
                         'flex' => ! $isBulleted,
                         'cursor-pointer' => $itemIsCopyable,
                     ])
