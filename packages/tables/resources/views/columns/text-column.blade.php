@@ -95,7 +95,7 @@
                         "
                     @endif
                     @class([
-                        'flex max-w-max',
+                        'flex w-max',
                         'cursor-pointer' => $itemIsCopyable,
                     ])
                 >
