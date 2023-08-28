@@ -7,8 +7,9 @@
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
-    $isBadge = $isBadge();
     $iconPosition = $getIconPosition();
+    $isBadge = $isBadge();
+    $isBulleted = $isBulleted();
     $isListWithLineBreaks = $isListWithLineBreaks();
     $url = $getUrl();
 
@@ -56,7 +57,7 @@
 
     <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
         @class([
-            'list-inside list-disc' => $isBulleted(),
+            'list-inside list-disc' => $isBulleted,
             'flex flex-wrap items-center gap-1.5' => $isBadge,
             'whitespace-normal' => $canWrap,
         ])
@@ -95,7 +96,8 @@
                         "
                     @endif
                     @class([
-                        'flex w-max',
+                        'w-max',
+                        'flex' => ! $isBulleted,
                         'cursor-pointer' => $itemIsCopyable,
                     ])
                 >
