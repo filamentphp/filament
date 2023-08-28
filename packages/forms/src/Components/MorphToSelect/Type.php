@@ -61,7 +61,9 @@ class Type
                 $query = $component->evaluate($this->modifyOptionsQueryUsing, [
                     'query' => $query,
                 ]) ?? $query;
-            } elseif (! $this->hasOptionLabelFromRecordUsingCallback() && empty($query->getQuery()->orders)) {
+            }
+
+            if (! $this->hasOptionLabelFromRecordUsingCallback() && empty($query->getQuery()->orders)) {
                 $query->orderBy($this->getTitleAttribute());
             }
 
@@ -127,7 +129,9 @@ class Type
                 $query = $component->evaluate($this->modifyOptionsQueryUsing, [
                     'query' => $query,
                 ]) ?? $query;
-            } elseif (! $this->hasOptionLabelFromRecordUsingCallback() && empty($query->getQuery()->orders)) {
+            }
+
+            if (! $this->hasOptionLabelFromRecordUsingCallback() && empty($query->getQuery()->orders)) {
                 $query->orderBy($this->getTitleAttribute());
             }
 
