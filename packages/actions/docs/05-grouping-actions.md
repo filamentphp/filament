@@ -40,13 +40,13 @@ ActionGroup::make([
 
 ## Setting the placement of the dropdown
 
-The dropdown may be positioned relative to the trigger button by using the `placement()` method:
+The dropdown may be positioned relative to the trigger button by using the `dropdownPlacement()` method:
 
 ```php
 ActionGroup::make([
     // Array of actions
 ])
-    ->placement('top-start')
+    ->dropdownPlacement('top-start')
 ```
 
 <AutoScreenshot name="actions/group/placement" alt="Action group with top placement style" version="3.x" />
