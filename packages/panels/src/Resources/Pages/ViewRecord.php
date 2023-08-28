@@ -178,6 +178,10 @@ class ViewRecord extends Page implements HasInfolists
             return static::$title;
         }
 
+        if (!filament()->hasTitleAction()) {
+            return $this->getRecordTitle();
+        }
+
         return __('filament-panels::resources/pages/view-record.title', [
             'label' => $this->getRecordTitle(),
         ]);

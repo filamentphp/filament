@@ -268,6 +268,10 @@ class EditRecord extends Page
             return static::$title;
         }
 
+        if (!filament()->hasTitleAction()) {
+            return $this->getRecordTitle();
+        }
+
         return __('filament-panels::resources/pages/edit-record.title', [
             'label' => $this->getRecordTitle(),
         ]);

@@ -31,6 +31,7 @@ class Panel extends Component
     use Panel\Concerns\HasSidebar;
     use Panel\Concerns\HasTenancy;
     use Panel\Concerns\HasTheme;
+    use Panel\Concerns\HasTitleAction;
     use Panel\Concerns\HasTopNavigation;
     use Panel\Concerns\HasUserMenu;
 

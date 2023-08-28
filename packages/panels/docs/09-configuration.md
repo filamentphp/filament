@@ -115,7 +115,7 @@ public function panel(Panel $panel): Panel
 
 ## Hiding the action in title for View / Edit pages
 
-By default, Filament will prefix the page title with the action (e.g. "View John Doe"). It is possible to manually [override the title per page](pages#customizing-the-page-title), e.g. to return only the title of the object: `return $this->getRecordTitle();`.
+By default, Filament will prefix the page title with the action (e.g. "View John Doe"). It is possible to manually [override the title per page](pages#customizing-the-page-title), e.g. override `public function getTitle()` to return only the title of the object: `return $this->getRecordTitle();`.
 
 If you don't want to display the action in the title for any of the View/Edit pages (e.g. show only "John Doe"), you can add this to the Panel configuration:
 

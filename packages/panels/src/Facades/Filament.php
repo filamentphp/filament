@@ -98,6 +98,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static bool hasTenantBilling()
  * @method static bool hasTenantProfile()
  * @method static bool hasTenantRegistration()
+ * @method static bool hasTitleAction()
  * @method static bool hasTopNavigation()
  * @method static bool isServing()
  * @method static bool isSidebarCollapsibleOnDesktop()
