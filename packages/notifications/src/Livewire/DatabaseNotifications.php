@@ -158,6 +158,11 @@ class DatabaseNotifications extends Component
         static::$pollingInterval = $interval;
     }
 
+    public static function authGuard(?string $guard): void
+    {
+        static::$authGuard = $guard;
+    }
+
     /**
      * @return array<string>
      */
