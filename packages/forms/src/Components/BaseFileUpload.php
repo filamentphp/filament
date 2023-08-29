@@ -477,6 +477,16 @@ class BaseFileUpload extends Field
         return $this->evaluate($this->diskName) ?? config('filament.default_filesystem_disk');
     }
 
+    public function getMaxFiles(): ?int
+    {
+        return $this->evaluate($this->maxFiles);
+    }
+
+    public function getMinFiles(): ?int
+    {
+        return $this->evaluate($this->minFiles);
+    }
+
     public function getMaxSize(): ?int
     {
         return $this->evaluate($this->maxSize);
@@ -526,11 +536,11 @@ class BaseFileUpload extends Field
             'array',
         ];
 
-        if (filled($count = $this->maxFiles)) {
+        if (filled($count = $this->getMaxFiles())) {
             $rules[] = "max:{$count}";
         }
 
-        if (filled($count = $this->minFiles)) {
+        if (filled($count = $this->getMinFiles())) {
             $rules[] = "min:{$count}";
         }
 
