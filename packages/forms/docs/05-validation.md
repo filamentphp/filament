@@ -472,7 +472,7 @@ TextInput::make('slug')->rules([
     function () {
         return function (string $attribute, $value, Closure $fail) {
             if ($value === 'foo') {
-                $fail("The {$attribute} is invalid.");
+                $fail('The :attribute is invalid.');
             }
         };
     },
