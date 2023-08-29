@@ -158,7 +158,7 @@ trait HasNavigation
 
                 return $sort;
             })
-            ->filter(fn (NavigationGroup $group): bool => $group->getItems()->some->isVisible())
+            ->filter(fn (NavigationGroup $group): bool => collect($group->getItems())->some->isVisible())
             ->all();
     }
 
