@@ -68,7 +68,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint('[Documentation](/documentation)')
+                            ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
                             ->hintColor('primary'),
                     ]),
                 Group::make()
@@ -80,7 +80,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint('[Documentation](/documentation)')
+                            ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
                             ->hintIcon('heroicon-m-question-mark-circle'),
                     ]),
                 Group::make()
