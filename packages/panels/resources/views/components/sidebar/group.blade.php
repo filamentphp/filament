@@ -8,9 +8,7 @@
 <li
     x-data="{ label: @js($label) }"
     data-group-label="{{ $label }}"
-    @class([
-        'fi-sidebar-group flex flex-col gap-y-1',
-    ])
+    class="fi-sidebar-group flex flex-col gap-y-1"
 >
     @if ($label)
         <div
@@ -36,7 +34,7 @@
             @endif
 
             <span
-                class="flex-1 text-sm font-semibold text-gray-700 dark:text-gray-200"
+                class="fi-sidebar-group-label flex-1 text-sm font-semibold text-gray-700 dark:text-gray-200"
             >
                 {{ $label }}
             </span>
