@@ -96,8 +96,9 @@
                         "
                     @endif
                     @class([
-                        'w-max',
                         'flex' => ! $isBulleted,
+                        'max-w-max' => ! $isBadge,
+                        'w-max' => $isBadge,
                         'cursor-pointer' => $itemIsCopyable,
                     ])
                 >
