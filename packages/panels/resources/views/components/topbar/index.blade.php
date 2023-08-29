@@ -80,24 +80,22 @@
 
                                 <x-filament::dropdown.list>
                                     @foreach ($group->getItems() as $item)
-                                        @if ($item->isVisible())
-                                            @php
-                                                $icon = $item->getIcon();
-                                                $shouldOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
-                                            @endphp
+                                        @php
+                                            $icon = $item->getIcon();
+                                            $shouldOpenUrlInNewTab = $item->shouldOpenUrlInNewTab();
+                                        @endphp
 
-                                            <x-filament::dropdown.list.item
-                                                :badge="$item->getBadge()"
-                                                :badge-color="$item->getBadgeColor()"
-                                                :href="$item->getUrl()"
-                                                :icon="$item->isActive() ? ($item->getActiveIcon() ?? $icon) : $icon"
-                                                tag="a"
-                                                :target="$shouldOpenUrlInNewTab ? '_blank' : null"
-                                                {{-- :wire:navigate="$shouldOpenUrlInNewTab ? null : true" --}}
-                                            >
-                                                {{ $item->getLabel() }}
-                                            </x-filament::dropdown.list.item>
-                                        @endif
+                                        <x-filament::dropdown.list.item
+                                            :badge="$item->getBadge()"
+                                            :badge-color="$item->getBadgeColor()"
+                                            :href="$item->getUrl()"
+                                            :icon="$item->isActive() ? ($item->getActiveIcon() ?? $icon) : $icon"
+                                            tag="a"
+                                            :target="$shouldOpenUrlInNewTab ? '_blank' : null"
+                                            {{-- :wire:navigate="$shouldOpenUrlInNewTab ? null : true" --}}
+                                        >
+                                            {{ $item->getLabel() }}
+                                        </x-filament::dropdown.list.item>
                                     @endforeach
                                 </x-filament::dropdown.list>
                             </x-filament::dropdown>
