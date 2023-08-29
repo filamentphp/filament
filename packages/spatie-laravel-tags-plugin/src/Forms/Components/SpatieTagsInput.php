@@ -10,7 +10,7 @@ use Spatie\Tags\Tag;
 class SpatieTagsInput extends TagsInput
 {
     protected string | Closure | null $type = null;
-    protected bool $disableTypeCheckingForSuggestions = false;
+    protected bool $typeIsSet = false;
 
     protected function setUp(): void
     {
@@ -51,13 +51,6 @@ class SpatieTagsInput extends TagsInput
         return $this;
     }
 
-    public function disableTypeCheckingForSuggestions(): static
-    {
-        $this->disableTypeCheckingForSuggestions = true;
-
-        return $this;
-    }
-
     /**
      * @return array<string>
      */
@@ -75,7 +68,7 @@ class SpatieTagsInput extends TagsInput
             ->when(
                 filled($type),
                 fn (Builder $query) => $query->where('type', $type),
-                fn (Builder $query) => $this->disableTypeCheckingForSuggestions ? $query : $query->where('type', null),
+                fn (Builder $query) => $this->typeIsSet ? $query->where('type', null) : $query,
             )
             ->pluck('name')
             ->toArray();
