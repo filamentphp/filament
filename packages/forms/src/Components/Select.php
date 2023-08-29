@@ -703,12 +703,6 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
-            }
-
             if ($component->isSearchForcedCaseInsensitive($relationshipQuery)) {
                 $search = Str::lower($search);
             }
@@ -739,6 +733,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                         $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
+            }
+
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -785,12 +785,6 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
-            }
-
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $keyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
@@ -804,6 +798,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                         $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
+            }
+
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
