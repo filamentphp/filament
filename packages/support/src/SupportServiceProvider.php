@@ -107,7 +107,7 @@ class SupportServiceProvider extends PackageServiceProvider
         });
 
         if ($this->app->runningInConsole()) {
-            if (class_exists(AboutCommand::class) && class_exists(InstalledVersions::class)) {
+            if (class_exists(InstalledVersions::class)) {
                 $packages = [
                     'filament',
                     'forms',
