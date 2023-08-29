@@ -114,6 +114,11 @@ class Notifications extends Component
         static::$verticalAlignment = $alignment;
     }
 
+    public static function authGuard(?string $guard): void
+    {
+        static::$authGuard = $guard;
+    }
+
     public function render(): View
     {
         return view('filament-notifications::notifications');
