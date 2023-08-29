@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Force delete selected',
+        'label' => 'Priverstinai ištrinti pasirinktus',
 
         'modal' => [
 
-            'heading' => 'Force delete selected :label',
+            'heading' => 'Priverstinai ištrinti pasirinktus :label',
 
             'actions' => [
 
