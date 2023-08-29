@@ -176,7 +176,7 @@ class Type
                 return $this->getOptionLabelFromRecord($record);
             }
 
-            return $record->getAttributeValue();
+            return $record->getAttributeValue($this->getTitleAttribute());
         });
     }
 
