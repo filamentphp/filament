@@ -250,7 +250,7 @@ Filament::serving(function () {
 
 ### Customizing the logout link
 
-To customize the user account link at the end of the user menu, register a new item with the `logout` array key:
+To customize the user logout link at the end of the user menu, register a new item with the `logout` array key:
 
 ```php
 use Filament\Facades\Filament;
