@@ -31,6 +31,8 @@ class BaseFileUpload extends Field
 
     protected bool | Closure $isReorderable = false;
 
+    protected bool | Closure $isRemovable = true;
+
     protected string | Closure | null $directory = null;
 
     protected string | Closure | null $diskName = null;
@@ -251,6 +253,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function removable(bool | Closure $condition = true): static
+    {
+        $this->isRemovable = $condition;
+
+        return $this;
+    }
+
     public function previewable(bool | Closure $condition = true): static
     {
         $this->isPreviewable = $condition;
@@ -446,6 +455,11 @@ class BaseFileUpload extends Field
     public function isReorderable(): bool
     {
         return (bool) $this->evaluate($this->isReorderable);
+    }
+
+    public function isRemovable(): bool
+    {
+        return (bool) $this->evaluate($this->isRemovable);
     }
 
     /**
