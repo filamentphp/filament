@@ -33,7 +33,7 @@ You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 ## Upgrading manually
 
-After upgrading to v3, you need to execute `php artisan install --tables` in order to generate JavaScript and CSS files.
+After upgrading to v3, you need to execute `php artisan filament:install --tables` in order to generate JavaScript and CSS files.
 
 ### High-impact changes
 
