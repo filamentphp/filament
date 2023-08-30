@@ -322,6 +322,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
             array_key_exists($this->activeTab, $tabs)
         ) {
             $tabs[$this->activeTab]->modifyQuery($query);
+            $this->deselectAllTableRecords();
         }
 
         return $query;
