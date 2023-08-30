@@ -13,19 +13,35 @@
         x-cloak
         x-bind:class="
             $store.sidebar.isOpen
-                ? @js($openSidebarClasses)
-                : ' -translate-x-full rtl:translate-x-full lg:translate-x-0 rtl:lg:-translate-x-0'
+                ? @js($openSidebarClasses . ' lg:sticky')
+                : '-translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
         "
     @else
-        @if (filament()->hasTopNavigation() || filament()->isSidebarFullyCollapsibleOnDesktop())
+        @if (filament()->hasTopNavigation())
             x-cloak
+            x-bind:class="
+                $store.sidebar.isOpen 
+                    ? @js($openSidebarClasses) 
+                    : '-translate-x-full rtl:translate-x-full'
+            "
+        @elseif (filament()->isSidebarFullyCollapsibleOnDesktop())
+            x-cloak
+            x-bind:class="
+                $store.sidebar.isOpen 
+                    ? @js($openSidebarClasses . ' lg:sticky') 
+                    : '-translate-x-full rtl:translate-x-full'
+            "
         @else
             x-cloak="-lg"
+            x-bind:class="
+                $store.sidebar.isOpen 
+                    ? @js($openSidebarClasses . ' lg:sticky') 
+                    : 'w-[--sidebar-width] -translate-x-full rtl:translate-x-full lg:sticky'
+            "
         @endif
-        x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses) : '-translate-x-full rtl:translate-x-full'"
     @endif
     @class([
-        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 dark:lg:bg-transparent',
+        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 dark:lg:bg-transparent',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
@@ -84,10 +100,8 @@
     </header>
 
     <nav 
-        class="fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto px-6 py-8"
-        @if (filament()->isSidebarCollapsibleOnDesktop())
-            x-bind:class="{ 'items-center': $store.sidebar.isOpen}"
-        @endif
+        class="fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
+        style="scrollbar-gutter: stable"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.nav.start') }}
 
