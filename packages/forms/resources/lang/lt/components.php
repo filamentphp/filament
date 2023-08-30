@@ -14,6 +14,10 @@ return [
                 'label' => 'Pridėti prie :label',
             ],
 
+            'add_between' => [
+                'label' => 'Pridėti tarp blokų',
+            ],
+
             'delete' => [
                 'label' => 'Ištrinti',
             ],
@@ -77,11 +81,11 @@ return [
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Drag mode "crop"',
+                    'label' => 'Apkirpti velkant',
                 ],
 
                 'drag_move' => [
-                    'label' => 'Drag mode "move"',
+                    'label' => 'Perkelti velkant',
                 ],
 
                 'flip_horizontal' => [
@@ -176,7 +180,7 @@ return [
                 'label' => 'Kraštinių santykiai',
 
                 'no_fixed' => [
-                    'label' => 'Free',
+                    'label' => 'Laisvas',
                 ],
 
             ],
@@ -195,6 +199,10 @@ return [
 
             'delete' => [
                 'label' => 'Ištrinti eilutę',
+            ],
+
+            'reorder' => [
+                'label' => 'Pastumti',
             ],
 
         ],
@@ -217,15 +225,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'Pridėti failus',
+            'blockquote' => 'Citatos blokas',
             'bold' => 'Paryškinta',
             'bullet_list' => 'Ženklų sąrašas',
             'code_block' => 'Kodo blokas',
-            'edit' => 'Redaguoti',
+            'heading' => 'Antraštė',
             'italic' => 'Kursyvu',
             'link' => 'Nuoroda',
             'ordered_list' => 'Sunumeruotas sąrašas',
-            'preview' => 'Peržiūrėti',
+            'redo' => 'Perdaryti',
             'strike' => 'Perbraukti',
+            'table' => 'Lentelė',
+            'undo' => 'Anuliuoti',
         ],
 
     ],
@@ -285,8 +296,8 @@ return [
             'link' => [
 
                 'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'link' => 'Pridėti saitą',
+                    'unlink' => 'Pašalinti saitą',
                 ],
 
                 'label' => 'Svetainės adresas',
@@ -311,6 +322,7 @@ return [
             'ordered_list' => 'Sunumeruotas sąrašas',
             'redo' => 'Perdaryti',
             'strike' => 'Perbraukta',
+            'underline' => 'Pabraukta',
             'undo' => 'Anuliuoti',
         ],
 

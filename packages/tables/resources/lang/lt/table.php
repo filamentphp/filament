@@ -11,7 +11,7 @@ return [
     'columns' => [
 
         'text' => [
-            'more_list_items' => 'ir :count daugiau',
+            'more_list_items' => 'ir dar :count',
         ],
 
     ],
@@ -94,7 +94,7 @@ return [
 
         'heading' => 'Nerasta įrašų',
 
-        'description' => 'Sukurk :model, kad pradėti.',
+        'description' => 'Norėdami pradėti, sukurkite :model.',
 
     ],
 
@@ -131,7 +131,7 @@ return [
 
         'trashed' => [
 
-            'label' => 'Ištrinti įrašaų',
+            'label' => 'Ištrinti įrašai',
 
             'only_trashed' => 'Tik ištrinti įrašai',
 
@@ -167,7 +167,7 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Vilk ir paleisk pakeisti įrašų eiliškumui.',
+    'reorder_indicator' => 'Vilkite ir paleiskite įrašų rikiavimui.',
 
     'selection_indicator' => [
 

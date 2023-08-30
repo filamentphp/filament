@@ -390,6 +390,10 @@ abstract class Resource
         return static::$globalSearchResultsLimit;
     }
 
+    public static function modifyGlobalSearchQuery(Builder $query, string $search): void
+    {
+    }
+
     public static function getGlobalSearchResults(string $search): Collection
     {
         $query = static::getGlobalSearchEloquentQuery();
@@ -412,6 +416,8 @@ abstract class Resource
                 }
             });
         }
+
+        static::modifyGlobalSearchQuery($query, $search);
 
         return $query
             ->limit(static::getGlobalSearchResultsLimit())

@@ -21,7 +21,10 @@
 
             init: function () {
                 this.updateVisibleCheckboxListOptions()
-                this.checkIfAllCheckboxesAreChecked()
+
+                $nextTick(() => {
+                    this.checkIfAllCheckboxesAreChecked()
+                })
 
                 Livewire.hook(
                     'commit',
