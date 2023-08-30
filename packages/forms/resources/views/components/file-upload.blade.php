@@ -22,6 +22,7 @@
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
+                    allowRemove: @js($isRemovable()),
                     imageEditorEmptyFillColor: @js($getImageEditorEmptyFillColor()),
                     imageEditorMode: @js($getImageEditorMode()),
                     imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
