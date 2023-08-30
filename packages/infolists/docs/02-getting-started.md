@@ -10,7 +10,7 @@ This guide will walk you through the basics of building infolists with Filament'
 
 ## Defining entries
 
-The first step to building an infolist is to define the entries that will be displayed in the list. You can do this by calling the `entries()` method on an `Infolist` object. This method accepts an array of entry objects.
+The first step to building an infolist is to define the entries that will be displayed in the list. You can do this by calling the `schema()` method on an `Infolist` object. This method accepts an array of entry objects.
 
 ```php
 use Filament\Infolists\Components\TextEntry;

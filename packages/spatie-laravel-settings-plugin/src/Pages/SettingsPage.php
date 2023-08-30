@@ -148,6 +148,11 @@ class SettingsPage extends Page
         return $this->getSaveFormAction();
     }
 
+    public function form(Form $form): Form
+    {
+        return $form;
+    }
+
     /**
      * @return array<int | string, string | Form>
      */

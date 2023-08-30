@@ -102,7 +102,7 @@
 
     @if ((! $isSimple) && $paginator->hasPages())
         <ol
-            class="hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 md:flex"
+            class="fi-pagination-items hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 md:flex"
         >
             @if (! $paginator->onFirstPage())
                 <x-filament::pagination.item
@@ -124,7 +124,7 @@
                     @foreach ($element as $page => $url)
                         <x-filament::pagination.item
                             :active="$page === $paginator->currentPage()"
-                            :aria-label="trans_choice('filament::components.pagination.actions.go_to_page.label', $page, ['page' => $page])"
+                            :aria-label="trans_choice('filament::components/pagination.actions.go_to_page.label', $page, ['page' => $page])"
                             :label="$page"
                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                             :wire:key="$this->getId() . '.pagination.' . $paginator->getPageName() . '.' . $page"

@@ -36,6 +36,8 @@ FilamentView::registerRenderHook(
 
 ### Panel Builder render hooks
 
+- `panels::auth.login.form.before` - Before login form
+- `panels::auth.login.form.after` - After login form
 - `panels::body.start` - After `<body>`
 - `panels::body.end` - Before `</body>`
 - `panels::content.end` - After page content, inside `<main>`

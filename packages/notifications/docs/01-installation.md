@@ -12,16 +12,10 @@ Filament requires the following to run:
 - Laravel v10.0+
 - Livewire v3.0+
 
-> **Livewire v3 is still in beta**
-> Although breaking changes should be minimal, we recommend testing your application thoroughly before using Livewire v3 in production.
+> **Livewire v3 is recently released!**<br />
+> The Livewire team have done a great job in making it stable, but it was a complete rewrite of Livewire v2. You may encounter issues, so we recommend testing your application thoroughly before using Filament v3 in production.
 
-First, since Livewire v3 is still in beta, make sure that the `minimum-stability` in your `composer.json` is set to `dev`:
-
-```json
-"minimum-stability": "dev",
-```
-
-Then, require the Notifications package using Composer:
+Require the Notifications package using Composer:
 
 ```bash
 composer require filament/notifications:"^3.0-stable" -W

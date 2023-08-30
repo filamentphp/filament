@@ -4,6 +4,7 @@ namespace Filament\Commands;
 
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
+
 use function Laravel\Prompts\text;
 
 class MakeSettingsPageCommand extends Command

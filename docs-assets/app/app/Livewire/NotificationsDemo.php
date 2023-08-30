@@ -33,7 +33,6 @@ class NotificationsDemo extends Component
             ->title('Saved successfully')
             ->icon('heroicon-o-document-text')
             ->iconColor('success')
-            ->success()
             ->send();
     }
 

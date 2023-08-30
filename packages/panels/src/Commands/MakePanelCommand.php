@@ -5,6 +5,7 @@ namespace Filament\Commands;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\text;
 
 class MakePanelCommand extends Command

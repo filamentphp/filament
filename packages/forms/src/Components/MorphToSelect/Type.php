@@ -5,12 +5,13 @@ namespace Filament\Forms\Components\MorphToSelect;
 use Closure;
 use Exception;
 use Filament\Forms\Components\Select;
-use function Filament\Support\get_model_label;
 use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
+
+use function Filament\Support\get_model_label;
 
 class Type
 {
@@ -62,10 +63,6 @@ class Type
                 ]) ?? $query;
             }
 
-            if (empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleAttribute());
-            }
-
             $isFirst = true;
             $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
 
@@ -112,8 +109,14 @@ class Type
                     ->toArray();
             }
 
+            $titleAttribute = $this->getTitleAttribute();
+
+            if (empty($query->getQuery()->orders)) {
+                $query->orderBy($titleAttribute);
+            }
+
             return $query
-                ->pluck($this->getTitleAttribute(), $keyName)
+                ->pluck($titleAttribute, $keyName)
                 ->toArray();
         });
 
@@ -130,10 +133,6 @@ class Type
                 ]) ?? $query;
             }
 
-            if (empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleAttribute());
-            }
-
             $keyName = $query->getModel()->getKeyName();
 
             if ($this->hasOptionLabelFromRecordUsingCallback()) {
@@ -145,8 +144,14 @@ class Type
                     ->toArray();
             }
 
+            $titleAttribute = $this->getTitleAttribute();
+
+            if (empty($query->getQuery()->orders)) {
+                $query->orderBy($titleAttribute);
+            }
+
             return $query
-                ->pluck($this->getTitleAttribute(), $keyName)
+                ->pluck($titleAttribute, $keyName)
                 ->toArray();
         });
 

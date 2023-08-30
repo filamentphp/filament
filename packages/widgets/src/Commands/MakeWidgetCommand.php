@@ -9,6 +9,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 use function Laravel\Prompts\text;
 
@@ -149,7 +150,7 @@ class MakeWidgetCommand extends Command
 
         if (! $this->option('force') && $this->checkForCollision([
             $path,
-            ($this->option('stats-overview') || $this->option('chart')) ?: $viewPath,
+            ...($this->option('stats-overview') || $this->option('chart')) ? [] : [$viewPath],
         ])) {
             return static::INVALID;
         }

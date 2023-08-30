@@ -32,8 +32,8 @@
     $disabledValidWrapperClasses = 'dark:ring-white/10';
 
     $actionsClasses = '-mx-1.5 flex items-center';
-    $iconClasses = 'fi-input-wrapper-icon h-5 w-5 text-gray-400 dark:text-gray-500';
-    $labelClasses = 'fi-input-wrapper-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+    $iconClasses = 'fi-input-wrp-icon h-5 w-5 text-gray-400 dark:text-gray-500';
+    $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -70,7 +70,7 @@
         $attributes
             ->except(['wire:target'])
             ->class([
-                'fi-input-wrapper flex rounded-lg shadow-sm ring-1 transition duration-75',
+                'fi-input-wrp flex rounded-lg shadow-sm ring-1 transition duration-75',
                 $enabledWrapperClasses => (! $hasAlpineClasses) && (! $disabled),
                 $disabledWrapperClasses => (! $hasAlpineClasses) && $disabled,
                 $validWrapperClasses => (! $hasAlpineClasses) && $valid,

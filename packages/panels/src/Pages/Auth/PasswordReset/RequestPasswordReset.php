@@ -103,11 +103,23 @@ class RequestPasswordReset extends SimplePage
 
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                $this->getEmailFormComponent(),
-            ])
-            ->statePath('data');
+        return $form;
+    }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->schema([
+                        $this->getEmailFormComponent(),
+                    ])
+                    ->statePath('data'),
+            ),
+        ];
     }
 
     protected function getEmailFormComponent(): Component
