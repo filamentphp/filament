@@ -24,6 +24,7 @@ window.FilePond = FilePond
 
 export default function fileUploadFormComponent({
     acceptedFileTypes,
+    allowRemove,
     imageEditorEmptyFillColor,
     imageEditorMode,
     imageEditorViewportHeight,
@@ -89,6 +90,7 @@ export default function fileUploadFormComponent({
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
                 allowPaste: false,
+                allowRemove,
                 allowReorder: isReorderable,
                 allowImagePreview: isPreviewable,
                 allowVideoPreview: isPreviewable,
