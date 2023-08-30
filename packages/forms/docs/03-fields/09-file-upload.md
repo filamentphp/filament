@@ -224,6 +224,15 @@ FileUpload::make('attachment')
     ->uploadProgressIndicatorPosition('left')
 ```
 
+It is also possible to hide the remove uploaded file button by using the `removable()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->removable(false)
+```
+
 ## Reordering files
 
 You can also allow users to re-order uploaded files using the `reorderable()` method:
