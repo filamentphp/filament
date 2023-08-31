@@ -58,6 +58,27 @@ CheckboxList::make('technologies')
     ])
 ```
 
+This method accepts an array with plain text string, or an instance of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even markdown, in the description:
+
+```php
+use Filament\Forms\Components\TextInput;
+use Illuminate\Support\HtmlString;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->descriptions([
+        'tailwind' => 'A utility-first CSS framework for rapidly building modern websites without ever leaving your HTML.',
+        'alpine' => new HtmlString('A rugged, minimal tool for composing behavior directly in your markup.'),
+        'laravel' => str('A **web application** framework with expressive, elegant syntax.')->markdown()->toHtmlString(),
+        'livewire' => 'A full-stack framework for Laravel building dynamic interfaces simple, without leaving the comfort of Laravel.',
+    ])
+```
+
 <AutoScreenshot name="forms/fields/checkbox-list/option-descriptions" alt="Checkbox list with option descriptions" version="3.x" />
 
 Be sure to use the same `key` in the descriptions array as the `key` in the option array so the right description matches the right option.
