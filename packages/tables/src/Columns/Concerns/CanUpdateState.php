@@ -20,6 +20,10 @@ trait CanUpdateState
 
     public function updateState(mixed $state): mixed
     {
+        if (blank($state)) {
+            $state = null;
+        }
+
         if ($this->updateStateUsing !== null) {
             return $this->evaluate($this->updateStateUsing, [
                 'state' => $state,

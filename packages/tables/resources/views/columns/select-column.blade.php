@@ -1,7 +1,12 @@
 @php
     $canSelectPlaceholder = $canSelectPlaceholder();
     $isDisabled = $isDisabled();
+
     $state = $getState();
+    if ($state instanceof \BackedEnum) {
+        $state = $state->value;
+    }
+    $state = strval($state);
 @endphp
 
 <div
@@ -14,7 +19,7 @@
 
         recordKey: @js($recordKey),
 
-        state: @js($state ?? ''),
+        state: @js($state),
     }"
     x-init="
         Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {

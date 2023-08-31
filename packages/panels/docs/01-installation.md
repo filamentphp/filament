@@ -105,7 +105,7 @@ php artisan vendor:publish --tag=filament-translations
 
 > Upgrading from Filament v2? Please review the [upgrade guide](upgrade-guide).
 
-Filament automatically upgrades to the latest non-breaking version when you run `composer update`. If you notice that Filament is not upgrading automatically, ensure that the `filament:upgrade` command is present in your `composer.json`:
+Filament automatically upgrades to the latest non-breaking version when you run `composer update`. After any updates, all Laravel caches need to be cleared, and frontend assets need to be republished. You can do this all at once using the `filament:upgrade` command, which should have been added to your `composer.json` file when you ran `filament:install` the first time:
 
 ```json
 "post-autoload-dump": [
@@ -114,7 +114,7 @@ Filament automatically upgrades to the latest non-breaking version when you run 
 ],
 ```
 
-If you prefer not to use automatic upgrades, remove the `filament:upgrade` command from your `composer.json` and run the following commands:
+Please note that `filament:upgrade` does not actually handle the update process, as Composer does that already. If you're upgrading manually without a `post-autoload-dump` hook, you can run the command yourself:
 
 ```bash
 composer update

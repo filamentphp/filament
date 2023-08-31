@@ -81,11 +81,11 @@ return [
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Drag mode "crop"',
+                    'label' => 'Kijelölés mód',
                 ],
 
                 'drag_move' => [
-                    'label' => 'Drag mode "move"',
+                    'label' => 'Mozgatás mód',
                 ],
 
                 'flip_horizontal' => [
