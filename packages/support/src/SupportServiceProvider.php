@@ -115,7 +115,7 @@ class SupportServiceProvider extends PackageServiceProvider
                     'support',
                     'tables',
                 ];
-    
+
                 AboutCommand::add('Filament', static fn () => [
                     'Version' => InstalledVersions::getPrettyVersion('filament/support'),
                     'Packages' => collect($packages)
@@ -124,16 +124,16 @@ class SupportServiceProvider extends PackageServiceProvider
                     'Views' => function () use ($packages): string {
                         $publishedViewPaths = collect($packages)
                             ->filter(fn (string $package): bool => is_dir(resource_path("views/vendor/{$package}")));
-    
+
                         if (! $publishedViewPaths->count()) {
                             return '<fg=green;options=bold>NOT PUBLISHED</>';
                         }
-    
+
                         return "<fg=red;options=bold>PUBLISHED:</> {$publishedViewPaths->join(', ')}";
                     },
                 ]);
             }
-            
+
             $this->publishes([
                 $this->package->basePath('/../config/filament.php') => config_path('filament.php'),
             ], 'filament-config');
