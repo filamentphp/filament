@@ -2,7 +2,7 @@
 title: Upgrading from v2.x
 ---
 
-> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/3.x/packages/actions/docs/14-upgrade-guide.md) to our repository! Any help is appreciated!
+> If you see anything missing from this guide, please do not hesitate to [make a pull request](https://github.com/filamentphp/filament/edit/3.x/packages/actions/docs/10-upgrade-guide.md) to our repository! Any help is appreciated!
 
 ## New requirements
 
@@ -33,6 +33,8 @@ You can now `composer remove filament/upgrade` as you don't need it anymore.
 > Some plugins you're using may not be available in v3 just yet. You could temporarily remove them from your `composer.json` file until they've been upgraded, replace them with a similar plugins that are v3-compatible, wait for the plugins to be upgraded before upgrading your app, or even write PRs to help the authors upgrade them.
 
 ## Upgrading manually
+
+After upgrading the dependency via Composer, you should execute `php artisan filament:upgrade` in order to clear any Laravel caches and publish the new frontend assets.
 
 ### Low-impact changes
 

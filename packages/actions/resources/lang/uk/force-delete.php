@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Ištrinti',
+        'label' => 'Видалити назавжди',
 
         'modal' => [
 
-            'heading' => 'Ištrinti :label',
+            'heading' => 'Видалити назавжди :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Ištrinti',
+                    'label' => 'Видалити',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Ištrinta',
+                'title' => 'Запис видалено',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Ištrinti pasirinktus',
+        'label' => 'Видалити назавжди обране',
 
         'modal' => [
 
-            'heading' => 'Ištrinti pasirinktus :label',
+            'heading' => 'Видалити назавжди обране :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Ištrinti',
+                    'label' => 'Видалити',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Ištrinta',
+                'title' => 'Записи видалено',
             ],
 
         ],

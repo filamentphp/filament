@@ -14,7 +14,7 @@
 <li
     @class([
         'fi-sidebar-item',
-        'fi-sidebar-item-active' => $active,
+        'fi-active fi-sidebar-item-active' => $active,
     ])
 >
     <a
@@ -39,10 +39,8 @@
             x-tooltip.html="tooltip"
         @endif
         @class([
-            'relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm text-gray-700 outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:focus:bg-white/5',
-            'font-semibold' => ! $grouped,
-            'font-medium' => $grouped,
-            'bg-gray-100 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
+            'fi-sidebar-item-button relative flex items-center justify-center gap-x-3 rounded-lg px-2 py-2 text-sm outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'bg-gray-100 dark:bg-white/5' => $active,
         ])
     >
         @if (filled($icon))
@@ -87,7 +85,13 @@
                 x-transition:enter-start="opacity-0"
                 x-transition:enter-end="opacity-100"
             @endif
-            class="flex-1 truncate"
+            @class([
+                'fi-sidebar-item-label flex-1 truncate',
+                'text-gray-700 dark:text-gray-200' => ! $active,
+                'text-primary-600 dark:text-primary-400' => $active,
+                'font-semibold' => ! $grouped,
+                'font-medium' => $grouped,
+            ])
         >
             {{ $slot }}
         </span>

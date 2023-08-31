@@ -32,7 +32,7 @@ return [
 
     'multiple' => [
 
-        'label' => 'Kiválasztottak  szétválasztása',
+        'label' => 'Kiválasztottak szétválasztása',
 
         'modal' => [
 
