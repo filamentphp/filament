@@ -6,7 +6,7 @@
     if ($state instanceof \BackedEnum) {
         $state = $state->value;
     }
-    $state = (string) str(strval($state))->replace('"', '\\"');
+    $state = strval($state);
 @endphp
 
 <div
@@ -53,7 +53,7 @@
 >
     <input
         type="hidden"
-        value="{{ $state }}"
+        value="{{ str($state)->replace('"', '\\"') }}"
         x-ref="newState"
     />
 
