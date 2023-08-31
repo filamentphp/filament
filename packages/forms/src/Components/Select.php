@@ -172,13 +172,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $labels;
         });
 
-        $this->transformOptionsForJsUsing(function (array $options): array {          
+        $this->transformOptionsForJsUsing(function (array $options): array {
             return collect($options)
-              ->map(fn ($label, $value): array => is_array($label)
-                  ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
-                  : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
-              ->values()
-              ->all();
+                ->map(fn ($label, $value): array => is_array($label)
+                    ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
+                    : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
+                ->values()
+                ->all();
         });
 
         $this->placeholder(fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
