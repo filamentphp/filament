@@ -13,7 +13,6 @@
             ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('textarea', 'filament/forms') }}"
             x-data="textareaFormComponent({ initialHeight: @js($initialHeight) })"
             x-ignore
-            x-init="render()"
             x-on:input="render()"
             x-on:resize.window="render()"
             wire:ignore
