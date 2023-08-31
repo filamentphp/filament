@@ -306,7 +306,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     /**
      * @param  array-key  $value
      */
-    public function getDescription($value): ?string
+    public function getDescription($value): string | Htmlable | null
     {
         return $this->getDescriptions()[$value] ?? null;
     }
