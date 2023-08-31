@@ -665,7 +665,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
      */
     protected function transformOptionsForJs(array $options): array
     {
-        if(! $options) {
+        if (empty($options)) {
             return [];
         }
 
