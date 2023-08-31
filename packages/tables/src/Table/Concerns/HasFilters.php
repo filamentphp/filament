@@ -43,21 +43,27 @@ trait HasFilters
     /**
      * @param  array<BaseFilter>  $filters
      */
-    public function filters(array | null $filters = null, FiltersLayout | string | Closure | null $layout = null): static
+    public function filters(array $filters, FiltersLayout | string | Closure | null $layout = null): static
     {
-        if (empty($filters)) {
-            $this->filters = [];
-            return $this;
+        $this->filters = [];
+        $this->pushFilters($filters);
+
+        if ($layout) {
+            $this->filtersLayout($layout);
         }
 
+        return $this;
+    }
+
+    /**
+     * @param  array<BaseFilter>  $filters
+     */
+    public function pushFilters(array $filters): static
+    {
         foreach ($filters as $filter) {
             $filter->table($this);
 
             $this->filters[$filter->getName()] = $filter;
-        }
-
-        if ($layout) {
-            $this->filtersLayout($layout);
         }
 
         return $this;
