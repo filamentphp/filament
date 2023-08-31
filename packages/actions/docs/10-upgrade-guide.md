@@ -34,7 +34,7 @@ You can now `composer remove filament/upgrade` as you don't need it anymore.
 
 ## Upgrading manually
 
-After upgrading the dependency via Composer, you should execute `php artisan filament:upgrade` in order to clear any caches and publish the new assets.
+After upgrading the dependency via Composer, you should execute `php artisan filament:upgrade` in order to clear any Laravel caches and publish the new frontend assets.
 
 ### Low-impact changes
 
