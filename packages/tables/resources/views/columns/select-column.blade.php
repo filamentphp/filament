@@ -71,10 +71,9 @@
             x-on:change="
                 isLoading = true
 
-                let newState = $event.target.value;
-                if (newState === '') {
-                    newState = null;
-                }
+                let newState = $event.target.value !== '' ?
+                    $event.target.value :
+                    null
 
                 const response = await $wire.updateTableColumnState(
                     name,
