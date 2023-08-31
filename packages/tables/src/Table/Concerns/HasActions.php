@@ -34,6 +34,21 @@ trait HasActions
      */
     public function actions(array | ActionGroup $actions, ActionsPosition | string | Closure | null $position = null): static
     {
+        $this->actions = [];
+        $this->pushActions($actions);
+
+        if ($position) {
+            $this->actionsPosition($position);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
+     */
+    public function pushActions(array | ActionGroup $actions): static
+    {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);
 
@@ -57,8 +72,6 @@ trait HasActions
 
             $this->actions[] = $action;
         }
-
-        $position && $this->actionsPosition($position);
 
         return $this;
     }
