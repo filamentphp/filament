@@ -84,7 +84,7 @@ trait InteractsWithTable
             ];
         }
 
-        // https://github.com/livewire/livewire/pull/6188
+        // https://github.com/filamentphp/filament/pull/7999
         if ($this->tableFilters) {
             $this->normalizeTableFilterValuesFromQueryString($this->tableFilters);
         }
