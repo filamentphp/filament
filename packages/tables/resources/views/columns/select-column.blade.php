@@ -4,7 +4,7 @@
 
     $state = $getState();
     if ($state instanceof \BackedEnum) {
-        $state = $state->val;
+        $state = $state->value;
     }
     $state = (string) str(strval($state))->replace('"', '\\"');
 @endphp
