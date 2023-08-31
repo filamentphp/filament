@@ -84,6 +84,7 @@ trait InteractsWithTable
             ];
         }
 
+        // https://github.com/livewire/livewire/pull/6188
         if ($this->tableFilters) {
             $this->normalizeTableFilterValuesFromQueryString($this->tableFilters);
         }
