@@ -270,6 +270,9 @@ trait InteractsWithTable
         return null;
     }
 
+    /**
+     * @param array<string, mixed> $data
+     */
     protected function normalizeTableFilterValuesFromQueryString(array &$data): void
     {
         foreach ($data as &$value) {
