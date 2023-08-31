@@ -23,7 +23,7 @@
     @endif
     {{
         $attributes->class([
-            'fi-ta-row transition duration-75',
+            'fi-ta-row transition duration-0 [@media(hover:hover)]:duration-75',
             'hover:bg-gray-50 dark:hover:bg-white/5' => $recordAction || $recordUrl,
             $stripedClasses => $striped,
         ])
