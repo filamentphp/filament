@@ -20,7 +20,7 @@
                         :badge="$tab->getBadge()"
                         :icon="$tab->getIcon()"
                         :icon-position="$tab->getIconPosition()"
-                        :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
+                        :wire:click="'$set(\'activeTab\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ');$dispatch(\'deselectAllTableRecords\')'"
                     >
                         {{ $tab->getLabel() ?? $this->generateTabLabel($tabKey) }}
                     </x-filament::tabs.item>
