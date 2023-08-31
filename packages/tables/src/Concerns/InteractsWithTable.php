@@ -271,7 +271,7 @@ trait InteractsWithTable
     }
 
     /**
-     * @param array<string, mixed> $data
+     * @param  array<string, mixed>  $data
      */
     protected function normalizeTableFilterValuesFromQueryString(array &$data): void
     {
