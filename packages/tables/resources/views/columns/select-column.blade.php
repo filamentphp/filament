@@ -79,9 +79,7 @@
                 const response = await $wire.updateTableColumnState(
                     name,
                     recordKey,
-                    $event.target.value !== '' ?
-                        $event.target.value :
-                        null,
+                    $event.target.value,
                 )
 
                 error = response?.error ?? undefined
