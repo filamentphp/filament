@@ -1,4 +1,5 @@
 <x-filament::icon-button
+    class="cursor-move"
     color="gray"
     icon="heroicon-m-bars-2"
     icon-alias="tables::reorder.button"
