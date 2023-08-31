@@ -23,6 +23,8 @@ class BaseFileUpload extends Field
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
+    protected bool | Closure $isDeletable = true;
+
     protected bool | Closure $isDownloadable = false;
 
     protected bool | Closure $isOpenable = false;
@@ -30,8 +32,6 @@ class BaseFileUpload extends Field
     protected bool | Closure $isPreviewable = true;
 
     protected bool | Closure $isReorderable = false;
-
-    protected bool | Closure $isRemovable = true;
 
     protected string | Closure | null $directory = null;
 
@@ -218,6 +218,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function deletable(bool | Closure $condition = true): static
+    {
+        $this->isDeletable = $condition;
+
+        return $this;
+    }
+
     public function directory(string | Closure | null $directory): static
     {
         $this->directory = $directory;
@@ -249,13 +256,6 @@ class BaseFileUpload extends Field
     public function reorderable(bool | Closure $condition = true): static
     {
         $this->isReorderable = $condition;
-
-        return $this;
-    }
-
-    public function removable(bool | Closure $condition = true): static
-    {
-        $this->isRemovable = $condition;
 
         return $this;
     }
@@ -437,6 +437,11 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function isDeletable(): bool
+    {
+        return (bool) $this->evaluate($this->isDeletable);
+    }
+
     public function isDownloadable(): bool
     {
         return (bool) $this->evaluate($this->isDownloadable);
@@ -455,11 +460,6 @@ class BaseFileUpload extends Field
     public function isReorderable(): bool
     {
         return (bool) $this->evaluate($this->isReorderable);
-    }
-
-    public function isRemovable(): bool
-    {
-        return (bool) $this->evaluate($this->isRemovable);
     }
 
     /**
