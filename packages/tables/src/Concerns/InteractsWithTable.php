@@ -84,6 +84,11 @@ trait InteractsWithTable
             ];
         }
 
+        // https://github.com/filamentphp/filament/pull/7999
+        if ($this->tableFilters) {
+            $this->normalizeTableFilterValuesFromQueryString($this->tableFilters);
+        }
+
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
         if ($shouldPersistFiltersInSession) {
@@ -263,5 +268,20 @@ trait InteractsWithTable
     protected function getTableQuery(): Builder | Relation | null
     {
         return null;
+    }
+
+    protected function normalizeTableFilterValuesFromQueryString(array &$data): void
+    {
+        foreach ($data as &$value) {
+            if (is_array($value)) {
+                $this->normalizeTableFilterValuesFromQueryString($value);
+            } elseif ($value === 'null') {
+                $value = null;
+            } elseif ($value === 'false') {
+                $value = false;
+            } elseif ($value === 'true') {
+                $value = true;
+            }
+        }
     }
 }
