@@ -4,14 +4,14 @@ return [
 
     'column_toggle' => [
 
-        'heading' => 'Columns',
+        'heading' => 'स्तम्भहरू',
 
     ],
 
     'columns' => [
 
         'text' => [
-            'more_list_items' => 'and :count more',
+            'more_list_items' => 'र थप :count',
         ],
 
     ],
@@ -19,43 +19,44 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Select/deselect all items for bulk actions.',
+            'label' => 'बल्क कार्यका लागि सबै वस्तुहरू चयन/अचयन गर्नुहोस्।',
         ],
 
         'bulk_select_record' => [
-            'label' => 'Select/deselect item :key for bulk actions.',
+            // वस्तु चयन/अचयन गर्नुहोस् : बल्क कार्यहरूको लागि कुञ्जी।
+            'label' => ':key वस्तु चयन/अचयन गर्नुहोस् : बल्क कार्यहरूको लागि।',
         ],
 
         'search' => [
-            'label' => 'Search',
-            'placeholder' => 'Search',
-            'indicator' => 'Search',
+            'label' => 'खोज',
+            'placeholder' => 'खोज',
+            'indicator' => 'खोज',
         ],
 
     ],
 
     'summary' => [
 
-        'heading' => 'Summary',
+        'heading' => 'सारांश',
 
         'subheadings' => [
-            'all' => 'All :label',
-            'group' => ':group summary',
-            'page' => 'This page',
+            'all' => 'सबै :label',
+            'group' => ':group को सारांश',
+            'page' => 'यो पृष्ठ',
         ],
 
         'summarizers' => [
 
             'average' => [
-                'label' => 'Average',
+                'label' => 'औसत',
             ],
 
             'count' => [
-                'label' => 'Count',
+                'label' => 'गणना',
             ],
 
             'sum' => [
-                'label' => 'Sum',
+                'label' => 'योगफल',
             ],
 
         ],
@@ -65,36 +66,36 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Finish reordering records',
+            'label' => 'रेकर्ड पुन क्रमबद्ध समाप्त गर्नुहोस्',
         ],
 
         'enable_reordering' => [
-            'label' => 'Reorder records',
+            'label' => 'रेकर्डहरू पुन क्रमबद्ध गर्नुहोस्',
         ],
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'फिल्टर गर्नुहोस्',
         ],
 
         'group' => [
-            'label' => 'Group',
+            'label' => 'समूहबद्ध गर्नुहोस्',
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Bulk actions',
+            'label' => 'बल्क कार्यहरू',
         ],
 
         'toggle_columns' => [
-            'label' => 'Toggle columns',
+            'label' => 'स्तम्भहरू टगल गर्नुहोस्',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => 'No :model',
+        'heading' => ':model छैन',
 
-        'description' => 'Create a :model to get started.',
+        'description' => 'सुरु गर्न :model सिर्जना गर्नुहोस्।',
 
     ],
 
@@ -103,41 +104,41 @@ return [
         'actions' => [
 
             'remove' => [
-                'label' => 'Remove filter',
+                'label' => 'फिल्टर हटाउनुहोस्',
             ],
 
             'remove_all' => [
-                'label' => 'Remove all filters',
-                'tooltip' => 'Remove all filters',
+                'label' => 'सबै फिल्टरहरू हटाउनुहोस्',
+                'tooltip' => 'सबै फिल्टरहरू हटाउनुहोस्',
             ],
 
             'reset' => [
-                'label' => 'Reset',
+                'label' => 'रिसेट गर्नुहोस्',
             ],
 
         ],
 
-        'heading' => 'Filters',
+        'heading' => 'फिल्टरहरू',
 
-        'indicator' => 'Active filters',
+        'indicator' => 'सक्रिय फिल्टरहरू',
 
         'multi_select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'सबै',
         ],
 
         'select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'सबै',
         ],
 
         'trashed' => [
 
-            'label' => 'Deleted records',
+            'label' => 'मेटिएका रेकर्डहरू',
 
-            'only_trashed' => 'Only deleted records',
+            'only_trashed' => 'केवल मेटाइएको रेकर्डहरू',
 
-            'with_trashed' => 'With deleted records',
+            'with_trashed' => 'मेटाइएका रेकर्डहरूसँग',
 
-            'without_trashed' => 'Without deleted records',
+            'without_trashed' => 'मेटाइएको रेकर्ड बिना',
 
         ],
 
@@ -148,17 +149,17 @@ return [
         'fields' => [
 
             'group' => [
-                'label' => 'Group by',
-                'placeholder' => 'Group by',
+                'label' => 'समायोजन गर्नुहोस्',
+                'placeholder' => 'समायोजन गर्नुहोस्',
             ],
 
             'direction' => [
 
-                'label' => 'Group direction',
+                'label' => 'समूहको दिशा',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'आरोहण',
+                    'desc' => 'अवतरण',
                 ],
 
             ],
@@ -167,20 +168,20 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Drag and drop the records into order.',
+    'reorder_indicator' => 'क्रम मा रेकर्ड तान्नुहोस् र छोड्नुहोस्।',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selected|:count records selected',
+        'selected_count' => 'एउटा रेकर्ड चयन गरियो|:count वटा रेकर्ड चयन गरियो',
 
         'actions' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => ':count वटा चयन गर्नुहोस्',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'सबै अचयन गर्नुहोस्',
             ],
 
         ],
@@ -192,16 +193,16 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Sort by',
+                'label' => 'क्रमबद्ध गर्नुहोस्',
             ],
 
             'direction' => [
 
-                'label' => 'Sort direction',
+                'label' => 'क्रमबद्ध दिशा',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'आरोहण',
+                    'desc' => 'अवतरण',
                 ],
 
             ],

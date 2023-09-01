@@ -2,19 +2,19 @@
 
 return [
 
-    'title' => 'Login',
+    'title' => 'लग-इन',
 
-    'heading' => 'Sign in',
+    'heading' => 'साइन इन गर्नुहोस्',
 
     'actions' => [
 
         'register' => [
-            'before' => 'or',
-            'label' => 'sign up for an account',
+            'before' => 'वा',
+            'label' => 'खाताको लागि साइन अप गर्नुहोस्',
         ],
 
         'request_password_reset' => [
-            'label' => 'Forgotten your password?',
+            'label' => 'तपाईँको पासवर्ड बिर्सनुभयो?',
         ],
 
     ],
@@ -22,21 +22,21 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'इमेल ठेगाना',
         ],
 
         'password' => [
-            'label' => 'Password',
+            'label' => 'पासवर्ड',
         ],
 
         'remember' => [
-            'label' => 'Remember me',
+            'label' => 'मलाई सम्झनुहोस्',
         ],
 
         'actions' => [
 
             'authenticate' => [
-                'label' => 'Sign in',
+                'label' => 'साइन इन गर्नुहोस्',
             ],
 
         ],
@@ -45,15 +45,15 @@ return [
 
     'messages' => [
 
-        'failed' => 'These credentials do not match our records.',
+        'failed' => 'यी प्रमाणहरू हाम्रा रेकर्डहरूसँग मेल खाँदैनन्।',
 
     ],
 
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Too many login attempts',
-            'body' => 'Please try again in :seconds seconds.',
+            'title' => 'धेरै लगइन प्रयासहरू',
+            'body' => 'कृपया :seconds सेकेन्डमा पुन प्रयास गर्नुहोस्।',
         ],
 
     ],

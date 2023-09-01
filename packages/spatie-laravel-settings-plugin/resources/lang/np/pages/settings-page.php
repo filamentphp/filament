@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'save' => [
-                'label' => 'Save changes',
+                'label' => 'परिवर्तनहरू सुरक्षित गर्नुहोस',
             ],
 
         ],
@@ -17,7 +17,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Saved',
+            'title' => 'सुरक्षित गरियो',
         ],
 
     ],

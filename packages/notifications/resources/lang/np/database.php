@@ -4,23 +4,23 @@ return [
 
     'modal' => [
 
-        'heading' => 'Notifications',
+        'heading' => 'सूचनाहरू',
 
         'actions' => [
 
             'clear' => [
-                'label' => 'Clear',
+                'label' => 'खाली गर्नुहोस्',
             ],
 
             'mark_all_as_read' => [
-                'label' => 'Mark all as read',
+                'label' => 'सबै पढेको रूपमा चिन्ह लगाउनुहोस्',
             ],
 
         ],
 
         'empty' => [
-            'heading' => 'No notifications',
-            'description' => 'Please check again later.',
+            'heading' => 'कुनै सूचना छैन',
+            'description' => 'कृपया पछि फेरि जाँच गर्नुहोस्।',
         ],
 
     ],

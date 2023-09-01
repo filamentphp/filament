@@ -2,30 +2,30 @@
 
 return [
 
-    'label' => 'Profile',
+    'label' => 'प्रोफाइल',
 
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'इमेल ठेगाना',
         ],
 
         'name' => [
-            'label' => 'Name',
+            'label' => 'नाम',
         ],
 
         'password' => [
-            'label' => 'New password',
+            'label' => 'नया पासवर्ड',
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirm new password',
+            'label' => 'नयाँ पासवर्ड पुष्टि गर्नुहोस्',
         ],
 
         'actions' => [
 
             'save' => [
-                'label' => 'Save changes',
+                'label' => 'परिवर्तनहरू सुरक्षित गर्नुहोस',
             ],
 
         ],
@@ -35,7 +35,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Saved',
+            'title' => 'सुरक्षित गरियो',
         ],
 
     ],
@@ -43,7 +43,7 @@ return [
     'actions' => [
 
         'back' => [
-            'label' => 'back',
+            'label' => 'पछाडी',
         ],
 
     ],

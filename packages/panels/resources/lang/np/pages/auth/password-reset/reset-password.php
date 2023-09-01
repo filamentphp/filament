@@ -2,29 +2,29 @@
 
 return [
 
-    'title' => 'Reset your password',
+    'title' => 'आफ्नो पासवर्ड रिसेट गर्नुहोस्',
 
-    'heading' => 'Reset your password',
+    'heading' => 'आफ्नो पासवर्ड रिसेट गर्नुहोस्',
 
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'इमेल ठेगाना',
         ],
 
         'password' => [
-            'label' => 'Password',
-            'validation_attribute' => 'password',
+            'label' => 'पासवर्ड',
+            'validation_attribute' => 'पासवर्ड',
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirm password',
+            'label' => 'पासवर्ड सुनिश्चित गर्नुहोस',
         ],
 
         'actions' => [
 
             'reset' => [
-                'label' => 'Reset password',
+                'label' => 'पासवर्ड रिसेट',
             ],
 
         ],
@@ -34,8 +34,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Too many reset attempts',
-            'body' => 'Please try again in :seconds seconds.',
+            'title' => 'धेरै धेरै रिसेट प्रयासहरू',
+            'body' => 'कृपया :seconds सेकेन्डमा पुन प्रयास गर्नुहोस्।',
         ],
 
     ],

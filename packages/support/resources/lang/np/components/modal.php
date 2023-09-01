@@ -5,7 +5,7 @@ return [
     'actions' => [
 
         'close' => [
-            'label' => 'Close',
+            'label' => 'बन्द गर्नुहोस्',
         ],
 
     ],

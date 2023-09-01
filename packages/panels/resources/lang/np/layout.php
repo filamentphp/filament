@@ -7,29 +7,29 @@ return [
     'actions' => [
 
         'billing' => [
-            'label' => 'Manage subscription',
+            'label' => 'सदस्यता प्रबन्ध गर्नुहोस्',
         ],
 
         'logout' => [
-            'label' => 'Sign out',
+            'label' => 'साइन आउट गर्नुहोस्',
         ],
 
         'open_database_notifications' => [
-            'label' => 'Open notifications',
+            'label' => 'सूचनाहरू खोल्नुहोस्',
         ],
 
         'open_user_menu' => [
-            'label' => 'User menu',
+            'label' => 'प्रयोगकर्ता मेनु',
         ],
 
         'sidebar' => [
 
             'collapse' => [
-                'label' => 'Collapse sidebar',
+                'label' => 'साइडबार संक्षिप्त गर्नुहोस्',
             ],
 
             'expand' => [
-                'label' => 'Expand sidebar',
+                'label' => 'साइडबार विस्तार गर्नुहोस्',
             ],
 
         ],
@@ -37,15 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => 'Enable dark theme',
+                'label' => 'डार्क थेम प्रयोग गर्नुहोस्',
             ],
 
             'light' => [
-                'label' => 'Enable light theme',
+                'label' => 'उज्यालो थेम प्रयोग गर्नुहोस्',
             ],
 
             'system' => [
-                'label' => 'Enable system theme',
+                'label' => 'सिस्टम थेम प्रयोग गर्नुहोस्',
             ],
 
         ],

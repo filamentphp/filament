@@ -2,20 +2,20 @@
 
 return [
 
-    'title' => 'Edit :label',
+    'title' => ':label सम्पादन गर्नुहोस्',
 
-    'breadcrumb' => 'Edit',
+    'breadcrumb' => 'सम्पादन गर्नुहोस्',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Cancel',
+                'label' => 'रद्द गर्नुहोस्',
             ],
 
             'save' => [
-                'label' => 'Save changes',
+                'label' => 'परिवर्तनहरू सुरक्षित गर्नुहोस',
             ],
 
         ],
@@ -25,7 +25,7 @@ return [
     'content' => [
 
         'tab' => [
-            'label' => 'Edit',
+            'label' => 'सम्पादन गर्नुहोस्',
         ],
 
     ],
@@ -33,7 +33,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Saved',
+            'title' => 'सुरक्षित गरियो',
         ],
 
     ],

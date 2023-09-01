@@ -2,14 +2,14 @@
 
 return [
 
-    'title' => 'View :label',
+    'title' => ':label हेर्नुहोस्',
 
-    'breadcrumb' => 'View',
+    'breadcrumb' => 'हेर्नुहोस्',
 
     'content' => [
 
         'tab' => [
-            'label' => 'View',
+            'label' => 'हेर्नुहोस्',
         ],
 
     ],

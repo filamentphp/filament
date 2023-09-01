@@ -2,15 +2,15 @@
 
 return [
 
-    'title' => 'Register',
+    'title' => 'दर्ता गर्नुहोस्',
 
-    'heading' => 'Sign up',
+    'heading' => 'साइन अप',
 
     'actions' => [
 
         'login' => [
-            'before' => 'or',
-            'label' => 'sign in to your account',
+            'before' => 'वा',
+            'label' => 'आफ्नो खातामा साइन इन गर्नुहोस्',
         ],
 
     ],
@@ -18,26 +18,26 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'इमेल ठेगाना',
         ],
 
         'name' => [
-            'label' => 'Name',
+            'label' => 'नाम',
         ],
 
         'password' => [
-            'label' => 'Password',
-            'validation_attribute' => 'password',
+            'label' => 'पासवर्ड',
+            'validation_attribute' => 'पासवर्ड',
         ],
 
         'password_confirmation' => [
-            'label' => 'Confirm password',
+            'label' => 'पासवर्ड सुनिश्चित गर्नुहोस',
         ],
 
         'actions' => [
 
             'register' => [
-                'label' => 'Sign up',
+                'label' => 'साइन अप',
             ],
 
         ],
@@ -47,8 +47,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Too many registration attempts',
-            'body' => 'Please try again in :seconds seconds.',
+            'title' => 'धेरै धेरै दर्ता प्रयासहरू',
+            'body' => 'कृपया :seconds सेकेन्डमा पुन प्रयास गर्नुहोस्।',
         ],
 
     ],

@@ -2,24 +2,24 @@
 
 return [
 
-    'title' => 'Create :label',
+    'title' => ':label सिर्जना गर्नुहोस्',
 
-    'breadcrumb' => 'Create',
+    'breadcrumb' => 'सिर्जना गर्नुहोस्',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Cancel',
+                'label' => 'रद्द गर्नुहोस्',
             ],
 
             'create' => [
-                'label' => 'Create',
+                'label' => 'सिर्जना गर्नुहोस्',
             ],
 
             'create_another' => [
-                'label' => 'Create & create another',
+                'label' => 'बनाउनुहोस् र अर्को सिर्जना गर्नुहोस्',
             ],
 
         ],
@@ -29,7 +29,7 @@ return [
     'notifications' => [
 
         'created' => [
-            'title' => 'Created',
+            'title' => 'सिर्जना गरियो',
         ],
 
     ],

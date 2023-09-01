@@ -2,14 +2,14 @@
 
 return [
 
-    'title' => 'Reset your password',
+    'title' => 'आफ्नो पासवर्ड रिसेट गर्नुहोस्',
 
-    'heading' => 'Forgotten your password?',
+    'heading' => 'तपाईँको पासवर्ड बिर्सनुभयो?',
 
     'actions' => [
 
         'login' => [
-            'label' => 'back to login',
+            'label' => 'लगइन पृष्ठमा फर्कनुहोस्',
         ],
 
     ],
@@ -17,13 +17,13 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'Email address',
+            'label' => 'इमेल ठेगाना',
         ],
 
         'actions' => [
 
             'request' => [
-                'label' => 'Send email',
+                'label' => 'इमेल पठाउनुहोस्',
             ],
 
         ],
@@ -33,8 +33,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Too many requests',
-            'body' => 'Please try again in :seconds seconds.',
+            'title' => 'धेरै अनुरोधहरू',
+            'body' => 'कृपया :seconds सेकेन्डमा पुन प्रयास गर्नुहोस्।',
         ],
 
     ],

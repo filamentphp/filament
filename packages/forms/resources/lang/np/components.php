@@ -7,47 +7,47 @@ return [
         'actions' => [
 
             'clone' => [
-                'label' => 'Clone',
+                'label' => 'क्लोन गर्नुहोस्',
             ],
 
             'add' => [
-                'label' => 'Add to :label',
+                'label' => ':label मा थप्नुहोस्',
             ],
 
             'add_between' => [
-                'label' => 'Insert between blocks',
+                'label' => 'ब्लकहरू बीच सम्मिलित गर्नुहोस्',
             ],
 
             'delete' => [
-                'label' => 'Delete',
+                'label' => 'मेटाउनुहोस्',
             ],
 
             'reorder' => [
-                'label' => 'Move',
+                'label' => 'सार्नुहोस्',
             ],
 
             'move_down' => [
-                'label' => 'Move down',
+                'label' => 'तल सार्नुहोस्',
             ],
 
             'move_up' => [
-                'label' => 'Move up',
+                'label' => 'माथि सार्नुहोस्',
             ],
 
             'collapse' => [
-                'label' => 'Collapse',
+                'label' => 'संक्षिप्त गर्नुहोस्',
             ],
 
             'expand' => [
-                'label' => 'Expand',
+                'label' => 'विस्तार गर्नुहोस्',
             ],
 
             'collapse_all' => [
-                'label' => 'Collapse all',
+                'label' => 'सबै संक्षिप्त गर्नुहोस्',
             ],
 
             'expand_all' => [
-                'label' => 'Expand all',
+                'label' => 'सबै विस्तार गर्नुहोस्',
             ],
 
         ],
@@ -59,11 +59,11 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'सबै अचयन गर्नुहोस्',
             ],
 
             'select_all' => [
-                'label' => 'Select all',
+                'label' => 'सबै चयन गर्नुहोस्',
             ],
 
         ],
@@ -77,71 +77,71 @@ return [
             'actions' => [
 
                 'cancel' => [
-                    'label' => 'Cancel',
+                    'label' => 'रद्द गर्नुहोस्',
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Drag mode "crop"',
+                    'label' => 'तान्ने मोड "क्रप"',
                 ],
 
                 'drag_move' => [
-                    'label' => 'Drag mode "move"',
+                    'label' => 'तान्ने मोड "मुभ"',
                 ],
 
                 'flip_horizontal' => [
-                    'label' => 'Flip image horizontally',
+                    'label' => 'फोटो तेर्सो रूपमा फ्लिप गर्नुहोस्',
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'Flip image vertically',
+                    'label' => 'फोटो ठाडो रूपमा फ्लिप गर्नुहोस्',
                 ],
 
                 'move_down' => [
-                    'label' => 'Move image down',
+                    'label' => 'फोटो तल सार्नुहोस्',
                 ],
 
                 'move_left' => [
-                    'label' => 'Move image to left',
+                    'label' => 'फोटोलाई बाँया सार्नुहोस्',
                 ],
 
                 'move_right' => [
-                    'label' => 'Move image to right',
+                    'label' => 'फोटोलाई दायाँ सार्नुहोस्',
                 ],
 
                 'move_up' => [
-                    'label' => 'Move image up',
+                    'label' => 'फोटो माथि सार्नुहोस्',
                 ],
 
                 'reset' => [
-                    'label' => 'Reset',
+                    'label' => 'रिसेट गर्नुहोस्',
                 ],
 
                 'rotate_left' => [
-                    'label' => 'Rotate image to left',
+                    'label' => 'फोटो बायाँ घुमाउनुहोस्',
                 ],
 
                 'rotate_right' => [
-                    'label' => 'Rotate image to right',
+                    'label' => 'फोटो दायाँ घुमाउनुहोस्',
                 ],
 
                 'set_aspect_ratio' => [
-                    'label' => 'Set aspect ratio to :ratio',
+                    'label' => 'पक्ष अनुपात :ratio सेट गर्नुहोस्',
                 ],
 
                 'save' => [
-                    'label' => 'Save',
+                    'label' => 'सुरक्षित गर्नुहोस',
                 ],
 
                 'zoom_100' => [
-                    'label' => 'Zoom image to 100%',
+                    'label' => 'फोटोलाई 100% मा जुम गर्नुहोस्',
                 ],
 
                 'zoom_in' => [
-                    'label' => 'Zoom in',
+                    'label' => 'जुम इन गर्नुहोस्',
                 ],
 
                 'zoom_out' => [
-                    'label' => 'Zoom out',
+                    'label' => 'जुम आउट गर्नुहोस्',
                 ],
 
             ],
@@ -149,17 +149,17 @@ return [
             'fields' => [
 
                 'height' => [
-                    'label' => 'Height',
+                    'label' => 'उचाइ',
                     'unit' => 'px',
                 ],
 
                 'rotation' => [
-                    'label' => 'Rotation',
+                    'label' => 'परिक्रमा',
                     'unit' => 'deg',
                 ],
 
                 'width' => [
-                    'label' => 'Width',
+                    'label' => 'चौडाइ',
                     'unit' => 'px',
                 ],
 
@@ -177,10 +177,10 @@ return [
 
             'aspect_ratios' => [
 
-                'label' => 'Aspect ratios',
+                'label' => 'पक्ष अनुपात',
 
                 'no_fixed' => [
-                    'label' => 'Free',
+                    'label' => 'फ्री',
                 ],
 
             ],
@@ -194,15 +194,15 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Add row',
+                'label' => 'पङ्क्ति थप्नुहोस्',
             ],
 
             'delete' => [
-                'label' => 'Delete row',
+                'label' => 'पङ्क्ति मेटाउनुहोस्',
             ],
 
             'reorder' => [
-                'label' => 'Reorder row',
+                'label' => 'पङ्क्ति पुन क्रमबद्ध गर्नुहोस्',
             ],
 
         ],
@@ -224,19 +224,19 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
-            'blockquote' => 'Blockquote',
-            'bold' => 'Bold',
-            'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'heading' => 'Heading',
-            'italic' => 'Italic',
-            'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
-            'table' => 'Table',
-            'undo' => 'Undo',
+            'attach_files' => 'फाइलहरू संलग्न गर्नुहोस्',
+            'blockquote' => 'ब्लककोट',
+            'bold' => 'बोल्ड',
+            'bullet_list' => 'बुलेट सूची',
+            'code_block' => 'कोड ब्लक',
+            'heading' => 'हेडिङ',
+            'italic' => 'इटालिक',
+            'link' => 'लिङ्क',
+            'ordered_list' => 'अंकित सूची',
+            'redo' => 'पुन गर्नुहोस्',
+            'strike' => 'स्ट्राइकथ्रु',
+            'table' => 'तालिका',
+            'undo' => 'पूर्ववत गर्नुहोस्',
         ],
 
     ],
@@ -246,43 +246,43 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Add to :label',
+                'label' => ':label मा थप्नुहोस्',
             ],
 
             'delete' => [
-                'label' => 'Delete',
+                'label' => 'मेटाउनुहोस्',
             ],
 
             'clone' => [
-                'label' => 'Clone',
+                'label' => 'क्लोन',
             ],
 
             'reorder' => [
-                'label' => 'Move',
+                'label' => 'मुभ',
             ],
 
             'move_down' => [
-                'label' => 'Move down',
+                'label' => 'तल सार्नुहोस्',
             ],
 
             'move_up' => [
-                'label' => 'Move up',
+                'label' => 'माथि सार्नुहोस्',
             ],
 
             'collapse' => [
-                'label' => 'Collapse',
+                'label' => 'संक्षिप्त गर्नुहोस्',
             ],
 
             'expand' => [
-                'label' => 'Expand',
+                'label' => 'विस्तार गर्नुहोस्',
             ],
 
             'collapse_all' => [
-                'label' => 'Collapse all',
+                'label' => 'सबै संक्षिप्त गर्नुहोस्',
             ],
 
             'expand_all' => [
-                'label' => 'Expand all',
+                'label' => 'सबै विस्तार गर्नुहोस्',
             ],
 
         ],
@@ -296,34 +296,34 @@ return [
             'link' => [
 
                 'actions' => [
-                    'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'link' => 'लिङ्क गर्नुहोस्',
+                    'unlink' => 'अनलिंक गर्नुहोस्',
                 ],
 
                 'label' => 'URL',
 
-                'placeholder' => 'Enter a URL',
+                'placeholder' => 'URL इनपुट गर्नुहोस्',
 
             ],
 
         ],
 
         'toolbar_buttons' => [
-            'attach_files' => 'Attach files',
-            'blockquote' => 'Blockquote',
-            'bold' => 'Bold',
-            'bullet_list' => 'Bullet list',
-            'code_block' => 'Code block',
-            'h1' => 'Title',
-            'h2' => 'Heading',
-            'h3' => 'Subheading',
-            'italic' => 'Italic',
-            'link' => 'Link',
-            'ordered_list' => 'Numbered list',
-            'redo' => 'Redo',
-            'strike' => 'Strikethrough',
-            'underline' => 'Underline',
-            'undo' => 'Undo',
+            'attach_files' => 'फाइलहरू संलग्न गर्नुहोस्',
+            'blockquote' => 'ब्लककोट',
+            'bold' => 'बोल्ड',
+            'bullet_list' => 'बुलेट सूची',
+            'code_block' => 'कोड ब्लक',
+            'h1' => 'शीर्षक',
+            'h2' => 'हेडिङ',
+            'h3' => 'उपशीर्षक',
+            'italic' => 'इटालिक',
+            'link' => 'लिङ्क',
+            'ordered_list' => 'अंकित सूची',
+            'redo' => 'पुन गर्नुहोस्',
+            'strike' => 'स्ट्राइकथ्रु',
+            'underline' => 'अन्डरलाइन',
+            'undo' => 'पूर्ववत गर्नुहोस्',
         ],
 
     ],
@@ -336,16 +336,16 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Create',
+                    'heading' => 'सिर्जना गर्नुहोस्',
 
                     'actions' => [
 
                         'create' => [
-                            'label' => 'Create',
+                            'label' => 'सिर्जना गर्नुहोस्',
                         ],
 
                         'create_another' => [
-                            'label' => 'Create & create another',
+                            'label' => 'बनाउनुहोस् र अर्को सिर्जना गर्नुहोस्',
                         ],
 
                     ],
@@ -358,12 +358,12 @@ return [
 
                 'modal' => [
 
-                    'heading' => 'Edit',
+                    'heading' => 'सम्पादन गर्नुहोस्',
 
                     'actions' => [
 
                         'save' => [
-                            'label' => 'Save',
+                            'label' => 'सुरक्षित गर्नुहोस',
                         ],
 
                     ],
@@ -375,26 +375,26 @@ return [
         ],
 
         'boolean' => [
-            'true' => 'Yes',
-            'false' => 'No',
+            'true' => 'हो',
+            'false' => 'होईन',
         ],
 
-        'loading_message' => 'Loading...',
+        'loading_message' => 'लोड गर्दै...',
 
-        'max_items_message' => 'Only :count can be selected.',
+        'max_items_message' => ':count वस्तुहरू मात्र चयन गर्न सकिन्छ।',
 
-        'no_search_results_message' => 'No options match your search.',
+        'no_search_results_message' => 'कुनै पनि विकल्प तपाईंको खोजसँग मेल खाँदैन।',
 
-        'placeholder' => 'Select an option',
+        'placeholder' => 'एक विकल्प चयन गर्नुहोस्',
 
-        'searching_message' => 'Searching...',
+        'searching_message' => 'खोज्दै...',
 
-        'search_prompt' => 'Start typing to search...',
+        'search_prompt' => 'खोज्न टाइप गर्न सुरु गर्नुहोस्...',
 
     ],
 
     'tags_input' => [
-        'placeholder' => 'New tag',
+        'placeholder' => 'नयाँ ट्याग',
     ],
 
     'wizard' => [
@@ -402,11 +402,11 @@ return [
         'actions' => [
 
             'previous_step' => [
-                'label' => 'Back',
+                'label' => 'पछाडि',
             ],
 
             'next_step' => [
-                'label' => 'Next',
+                'label' => 'अर्को',
             ],
 
         ],

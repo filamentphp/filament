@@ -2,18 +2,18 @@
 
 return [
 
-    'label' => 'Pagination navigation',
+    'label' => 'पृष्ठांकन नेभिगेसन',
 
-    'overview' => '{1} Showing 1 result|[2,*] Showing :first to :last of :total results',
+    'overview' => '{1} एउटा परिणाम देखाउँदै|[2,*] :total नतिजा मध्ये :first देखि :last देखाउँदै',
 
     'fields' => [
 
         'records_per_page' => [
 
-            'label' => 'Per page',
+            'label' => 'प्रति पृष्ठ',
 
             'options' => [
-                'all' => 'All',
+                'all' => 'सबै',
             ],
 
         ],
@@ -23,15 +23,15 @@ return [
     'actions' => [
 
         'go_to_page' => [
-            'label' => 'Go to page :page',
+            'label' => 'पृष्ठ :page मा जानुहोस्',
         ],
 
         'next' => [
-            'label' => 'Next',
+            'label' => 'अर्को',
         ],
 
         'previous' => [
-            'label' => 'Previous',
+            'label' => 'अघिल्लो',
         ],
 
     ],

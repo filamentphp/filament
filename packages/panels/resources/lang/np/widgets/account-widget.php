@@ -5,11 +5,11 @@ return [
     'actions' => [
 
         'logout' => [
-            'label' => 'Sign out',
+            'label' => 'साइन आउट गर्नुहोस्',
         ],
 
     ],
 
-    'welcome' => 'Welcome',
+    'welcome' => 'स्वागतम्',
 
 ];
