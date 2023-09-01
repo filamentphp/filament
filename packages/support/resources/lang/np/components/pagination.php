@@ -2,18 +2,18 @@
 
 return [
 
-    'label' => 'Paginering navigatie',
+    'label' => 'Pagination navigation',
 
-    'overview' => '{1} Toont 1 resultaat|[2,*] Toont :first tot :last van :total resultaten',
+    'overview' => '{1} Showing 1 result|[2,*] Showing :first to :last of :total results',
 
     'fields' => [
 
         'records_per_page' => [
 
-            'label' => 'Per pagina',
+            'label' => 'Per page',
 
             'options' => [
-                'all' => 'Alles',
+                'all' => 'All',
             ],
 
         ],
@@ -23,15 +23,15 @@ return [
     'actions' => [
 
         'go_to_page' => [
-            'label' => 'Ga naar pagina :page',
+            'label' => 'Go to page :page',
         ],
 
         'next' => [
-            'label' => 'Volgende',
+            'label' => 'Next',
         ],
 
         'previous' => [
-            'label' => 'Vorige',
+            'label' => 'Previous',
         ],
 
     ],

@@ -7,7 +7,7 @@ return [
         'actions' => [
 
             'save' => [
-                'label' => 'حفظ',
+                'label' => 'Save changes',
             ],
 
         ],
@@ -17,7 +17,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'تم الحفظ',
+            'title' => 'Saved',
         ],
 
     ],

@@ -3,7 +3,7 @@
 return [
 
     'messages' => [
-        'uploading_file' => 'Bestand uploaden...',
+        'uploading_file' => 'Uploading file...',
     ],
 
 ];

@@ -4,23 +4,23 @@ return [
 
     'modal' => [
 
-        'heading' => 'التنبيهات',
+        'heading' => 'Notifications',
 
         'actions' => [
 
             'clear' => [
-                'label' => 'مسح',
+                'label' => 'Clear',
             ],
 
             'mark_all_as_read' => [
-                'label' => 'تحديد الكل كمقروء',
+                'label' => 'Mark all as read',
             ],
 
         ],
 
         'empty' => [
-            'heading' => 'لا توجد تنبيهات',
-            'description' => 'يرجى التحقق مرة أخرى لاحقاً.',
+            'heading' => 'No notifications',
+            'description' => 'Please check again later.',
         ],
 
     ],
