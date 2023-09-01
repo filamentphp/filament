@@ -85,6 +85,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected ?Closure $getSelectedRecordUsing = null;
 
+    protected ?Closure $transformOptionsForJsUsing = null;
+
     /**
      * @var array<string> | null
      */
@@ -168,6 +170,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             return $labels;
+        });
+
+        $this->transformOptionsForJsUsing(function (array $options): array {
+            return collect($options)
+                ->map(fn ($label, $value): array => is_array($label)
+                    ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
+                    : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
+                ->values()
+                ->all();
         });
 
         $this->placeholder(fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
@@ -503,6 +514,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this;
     }
 
+    public function transformOptionsForJsUsing(?Closure $callback): static
+    {
+        $this->transformOptionsForJsUsing = $callback;
+
+        return $this;
+    }
+
     /**
      * @param  bool | array<string> | Closure  $condition
      */
@@ -648,12 +666,19 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
      */
     protected function transformOptionsForJs(array $options): array
     {
-        return collect($options)
-            ->map(fn ($label, $value): array => is_array($label)
-                ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
-                : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
-            ->values()
-            ->all();
+        if (empty($options)) {
+            return [];
+        }
+
+        $transformedOptions = $this->evaluate($this->transformOptionsForJsUsing, [
+            'options' => $options,
+        ]);
+
+        if ($transformedOptions instanceof Arrayable) {
+            return $transformedOptions->toArray();
+        }
+
+        return $transformedOptions;
     }
 
     public function isMultiple(): bool

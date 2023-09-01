@@ -45,14 +45,25 @@ trait HasFilters
      */
     public function filters(array $filters, FiltersLayout | string | Closure | null $layout = null): static
     {
+        $this->filters = [];
+        $this->pushFilters($filters);
+
+        if ($layout) {
+            $this->filtersLayout($layout);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  array<BaseFilter>  $filters
+     */
+    public function pushFilters(array $filters): static
+    {
         foreach ($filters as $filter) {
             $filter->table($this);
 
             $this->filters[$filter->getName()] = $filter;
-        }
-
-        if ($layout) {
-            $this->filtersLayout($layout);
         }
 
         return $this;
