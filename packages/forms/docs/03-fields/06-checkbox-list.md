@@ -42,6 +42,7 @@ You can optionally provide descriptions to each option using the `descriptions()
 
 ```php
 use Filament\Forms\Components\CheckboxList;
+use Illuminate\Support\HtmlString;
 
 CheckboxList::make('technologies')
     ->options([
