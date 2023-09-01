@@ -70,3 +70,13 @@
 .cropper-drag-box.cropper-crop.cropper-modal {
     @apply bg-gray-100/50 opacity-100 dark:bg-gray-900/80;
 }
+
+.has-circle-cropper .cropper-view-box,
+.has-circle-cropper .cropper-face {
+    border-radius: 50%;
+}
+
+.has-circle-cropper .cropper-view-box {
+    outline: 0;
+    box-shadow: 0 0 0 1px #39f;
+}
