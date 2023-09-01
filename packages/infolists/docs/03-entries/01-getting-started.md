@@ -119,7 +119,7 @@ TextEntry::make('name')
     ->helperText(new HtmlString('Your <strong>full name</strong> here, including any middle names.'))
 
 TextEntry::make('name')
-    ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString())
+    ->helperText(str('Your **full name** here, including any middle names.')->inlineMarkdown()->toHtmlString())
 
 TextEntry::make('name')
     ->helperText(view('name-helper-text'))
@@ -152,7 +152,7 @@ TextEntry::make('apiKey')
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
+    ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString())
 
 TextEntry::make('apiKey')
     ->label('API key')
@@ -170,7 +170,7 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
+    ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString())
     ->hintColor('primary')
 ```
 
@@ -185,7 +185,7 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
+    ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString())
     ->hintIcon('heroicon-m-question-mark-circle')
 ```
 
@@ -200,7 +200,7 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('apiKey')
     ->label('API key')
-    ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString())
+    ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString())
     ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Read it!')
 ```
 

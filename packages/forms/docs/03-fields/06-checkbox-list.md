@@ -38,10 +38,11 @@ class App extends Model
 
 ## Setting option descriptions
 
-You can optionally provide descriptions to each option using the `descriptions()` method:
+You can optionally provide descriptions to each option using the `descriptions()` method. This method accepts an array of plain text strings, or instances of `Illuminate\Support\HtmlString` or `Illuminate\Contracts\Support\Htmlable`. This allows you to render HTML, or even markdown, in the descriptions:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
+use Illuminate\Support\HtmlString;
 
 CheckboxList::make('technologies')
     ->options([
@@ -52,8 +53,8 @@ CheckboxList::make('technologies')
     ])
     ->descriptions([
         'tailwind' => 'A utility-first CSS framework for rapidly building modern websites without ever leaving your HTML.',
-        'alpine' => 'A rugged, minimal tool for composing behavior directly in your markup.',
-        'laravel' => 'A web application framework with expressive, elegant syntax.',
+        'alpine' => new HtmlString('A rugged, minimal tool for composing behavior <strong>directly in your markup</strong>.'),
+        'laravel' => str('A **web application** framework with expressive, elegant syntax.')->inlineMarkdown()->toHtmlString(),
         'livewire' => 'A full-stack framework for Laravel building dynamic interfaces simple, without leaving the comfort of Laravel.',
     ])
 ```
