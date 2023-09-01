@@ -15,6 +15,7 @@
         $statePath = $getStatePath();
         $isDisabled = $isDisabled();
         $hasImageEditor = $hasImageEditor();
+        $hasCircleCropper = $hasCircleCropper();
     @endphp
 
     <div
@@ -33,6 +34,7 @@
                         return await $wire.getFormUploadedFiles(@js($statePath))
                     },
                     hasImageEditor: @js($hasImageEditor),
+                    hasCircleCropper: @js($hasCircleCropper),
                     imageCropAspectRatio: @js($imageCropAspectRatio),
                     imagePreviewHeight: @js($getImagePreviewHeight()),
                     imageResizeMode: @js($getImageResizeMode()),
@@ -127,7 +129,11 @@
                 x-on:click.stop
                 x-trap.noscroll="isEditorOpen"
                 x-on:keydown.escape.window="closeEditor"
-                class="fixed inset-0 isolate z-50 h-screen w-screen p-2 sm:p-10 md:p-20"
+                @class([
+                'fixed inset-0 isolate z-50 h-screen w-screen p-2 sm:p-10 md:p-20',
+                'has-circle-cropper' => $hasCircleCropper,
+
+            ])
             >
                 <div
                     aria-hidden="true"
