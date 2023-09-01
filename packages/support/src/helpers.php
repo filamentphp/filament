@@ -59,7 +59,17 @@ if (! function_exists('Filament\Support\get_color_css_variables')) {
         }
 
         if ($alias !== null) {
-            $shades = FilamentColor::resolveShades($alias);
+            if (($overridingShades = FilamentColor::getOverridingShades($alias)) !== null) {
+                $shades = $overridingShades;
+            }
+
+            if ($addedShades = FilamentColor::getAddedShades($alias)) {
+                $shades = [...$shades, ...$addedShades];
+            }
+
+            if ($removedShades = FilamentColor::getRemovedShades($alias)) {
+                $shades = array_diff($shades, $removedShades);
+            }
         }
 
         $variables = [];

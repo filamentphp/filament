@@ -41,11 +41,10 @@
                     $color,
                     shades: [
                         50,
-                        300,
                         400,
-                        ...$icon ? [500] : [],
                         600,
-                        ...$isDeletable ? [700] : [],
+                        ...$icon ? [500] : [],
+                        ...$isDeletable ? [300, 700] : [],
                     ],
                     alias: 'badge',
                 ) => $color !== 'gray',
