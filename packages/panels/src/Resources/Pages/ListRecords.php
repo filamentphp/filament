@@ -343,6 +343,11 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
         return [];
     }
 
+    public function updatedActiveTab(): void
+    {
+        $this->resetPage();
+    }
+
     public function generateTabLabel(string $key): string
     {
         return (string) str($key)

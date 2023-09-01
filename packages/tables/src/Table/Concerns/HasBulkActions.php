@@ -34,6 +34,17 @@ trait HasBulkActions
      */
     public function bulkActions(array | ActionGroup $actions): static
     {
+        $this->bulkActions = [];
+        $this->pushBulkActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<BulkAction | ActionGroup> | ActionGroup  $actions
+     */
+    public function pushBulkActions(array | ActionGroup $actions): static
+    {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);
 

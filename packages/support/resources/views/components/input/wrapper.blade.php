@@ -89,7 +89,7 @@
                 wire:key="{{ \Illuminate\Support\Str::random() }}" {{-- Makes sure the loading indicator gets hidden again. --}}
             @endif
             @class([
-                'flex items-center gap-x-3 ps-3',
+                'hidden items-center gap-x-3 ps-3',
                 'pe-1' => $inlinePrefix && filled($prefix),
                 'pe-2' => $inlinePrefix && blank($prefix),
                 'border-e border-gray-200 pe-3 ps-3 dark:border-white/10' => ! $inlinePrefix,

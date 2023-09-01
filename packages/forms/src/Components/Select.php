@@ -85,6 +85,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected ?Closure $getSelectedRecordUsing = null;
 
+    protected ?Closure $transformOptionsForJsUsing = null;
+
     /**
      * @var array<string> | null
      */
@@ -168,6 +170,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             return $labels;
+        });
+
+        $this->transformOptionsForJsUsing(function (array $options): array {
+            return collect($options)
+                ->map(fn ($label, $value): array => is_array($label)
+                    ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
+                    : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
+                ->values()
+                ->all();
         });
 
         $this->placeholder(fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
@@ -503,6 +514,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this;
     }
 
+    public function transformOptionsForJsUsing(?Closure $callback): static
+    {
+        $this->transformOptionsForJsUsing = $callback;
+
+        return $this;
+    }
+
     /**
      * @param  bool | array<string> | Closure  $condition
      */
@@ -648,12 +666,19 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
      */
     protected function transformOptionsForJs(array $options): array
     {
-        return collect($options)
-            ->map(fn ($label, $value): array => is_array($label)
-                ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
-                : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
-            ->values()
-            ->all();
+        if (empty($options)) {
+            return [];
+        }
+
+        $transformedOptions = $this->evaluate($this->transformOptionsForJsUsing, [
+            'options' => $options,
+        ]);
+
+        if ($transformedOptions instanceof Arrayable) {
+            return $transformedOptions->toArray();
+        }
+
+        return $transformedOptions;
     }
 
     public function isMultiple(): bool
@@ -671,7 +696,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
@@ -701,12 +726,6 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
-            }
-
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if ($component->isSearchForcedCaseInsensitive($relationshipQuery)) {
@@ -739,6 +758,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                         $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
+            }
+
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -785,12 +810,6 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
-            }
-
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $keyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
@@ -804,6 +823,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                         $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
+            }
+
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {

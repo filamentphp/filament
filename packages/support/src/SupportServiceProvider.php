@@ -106,34 +106,34 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeHtml($this->value));
         });
 
-        if (class_exists(AboutCommand::class) && class_exists(InstalledVersions::class)) {
-            $packages = [
-                'filament',
-                'forms',
-                'notifications',
-                'support',
-                'tables',
-            ];
-
-            AboutCommand::add('Filament', [
-                'Version' => InstalledVersions::getPrettyVersion('filament/support'),
-                'Packages' => collect($packages)
-                    ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))
-                    ->join(', '),
-                'Views' => function () use ($packages): string {
-                    $publishedViewPaths = collect($packages)
-                        ->filter(fn (string $package): bool => is_dir(resource_path("views/vendor/{$package}")));
-
-                    if (! $publishedViewPaths->count()) {
-                        return '<fg=green;options=bold>NOT PUBLISHED</>';
-                    }
-
-                    return "<fg=red;options=bold>PUBLISHED:</> {$publishedViewPaths->join(', ')}";
-                },
-            ]);
-        }
-
         if ($this->app->runningInConsole()) {
+            if (class_exists(InstalledVersions::class)) {
+                $packages = [
+                    'filament',
+                    'forms',
+                    'notifications',
+                    'support',
+                    'tables',
+                ];
+
+                AboutCommand::add('Filament', static fn () => [
+                    'Version' => InstalledVersions::getPrettyVersion('filament/support'),
+                    'Packages' => collect($packages)
+                        ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))
+                        ->join(', '),
+                    'Views' => function () use ($packages): string {
+                        $publishedViewPaths = collect($packages)
+                            ->filter(fn (string $package): bool => is_dir(resource_path("views/vendor/{$package}")));
+
+                        if (! $publishedViewPaths->count()) {
+                            return '<fg=green;options=bold>NOT PUBLISHED</>';
+                        }
+
+                        return "<fg=red;options=bold>PUBLISHED:</> {$publishedViewPaths->join(', ')}";
+                    },
+                ]);
+            }
+
             $this->publishes([
                 $this->package->basePath('/../config/filament.php') => config_path('filament.php'),
             ], 'filament-config');
