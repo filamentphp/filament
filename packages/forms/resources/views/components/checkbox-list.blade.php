@@ -58,22 +58,24 @@
             },
 
             toggleAllCheckboxes: function () {
-                updatedStates = []
+                updatedState = []
+
                 state = ! this.areAllCheckboxesChecked
 
                 this.visibleCheckboxListOptions.forEach((checkboxLabel) => {
+
                     checkbox = checkboxLabel.querySelector('input[type=checkbox]')
 
                     checkbox.checked = state
 
                     if (state) {
-                        updatedStates.push(checkbox.value);
+                        updatedState.push(checkbox.value);
                     }
-
-                    this.checkIfAllCheckboxesAreChecked()
                 })
 
-                @this.set(@js($getStatePath()), updatedStates);
+                this.checkIfAllCheckboxesAreChecked()
+
+                $wire.set(@js($getStatePath()), updatedStates);
 
                 this.areAllCheckboxesChecked = state
             },
@@ -155,7 +157,7 @@
                     wire:key="{{ $this->id }}.{{ $getStatePath() }}.{{ $field::class }}.options.{{ $optionValue }}"
                 >
                     <label
-                        class="filament-forms-checkbox-list-component-option-label flex items-center space-x-3 rtl:space-x-reverse"
+                        class="flex items-center space-x-3 filament-forms-checkbox-list-component-option-label rtl:space-x-reverse"
                         @if ($isSearchable())
                             x-show="
                                 $el.querySelector('.filament-forms-checkbox-list-component-option-label-text')
