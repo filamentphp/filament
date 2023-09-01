@@ -53,6 +53,8 @@ class FileUpload extends BaseFileUpload
 
     protected bool | Closure $hasImageEditor = false;
 
+    protected bool|Closure $hasCircleCropper = false;
+
     protected int | Closure | null $imageEditorViewportWidth = null;
 
     protected int | Closure | null $imageEditorViewportHeight = null;
@@ -294,6 +296,13 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function circleCropper(bool|Closure $condition = true): static
+    {
+        $this->hasCircleCropper = $condition;
+
+        return $this;
+    }
+
     public function imageEditorViewportWidth(int | Closure | null $width): static
     {
         $this->imageEditorViewportWidth = $width;
@@ -384,6 +393,11 @@ class FileUpload extends BaseFileUpload
     public function hasImageEditor(): bool
     {
         return (bool) $this->evaluate($this->hasImageEditor);
+    }
+
+    public function hasCircleCropper(): bool
+    {
+        return (bool) $this->evaluate($this->hasCircleCropper);
     }
 
     /**
