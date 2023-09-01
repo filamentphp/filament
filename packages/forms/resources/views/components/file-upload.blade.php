@@ -40,6 +40,7 @@
                     imageResizeTargetWidth: @js($imageResizeTargetWidth),
                     imageResizeUpscale: @js($getImageResizeUpscale()),
                     isAvatar: @js($isAvatar),
+                    isDeletable: @js($isDeletable()),
                     isDisabled: @js($isDisabled),
                     isDownloadable: @js($isDownloadable()),
                     isOpenable: @js($isOpenable()),

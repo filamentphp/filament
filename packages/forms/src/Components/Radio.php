@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Illuminate\Contracts\Support\Arrayable;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Radio extends Field
 {
@@ -19,7 +20,7 @@ class Radio extends Field
     protected bool | Closure $isInline = false;
 
     /**
-     * @var array<string> | Arrayable | Closure
+     * @var array<string | Htmlable> | Arrayable | Closure
      */
     protected array | Arrayable | Closure $descriptions = [];
 
@@ -55,7 +56,7 @@ class Radio extends Field
     }
 
     /**
-     * @param  array<string> | Arrayable | Closure  $descriptions
+     * @param  array<string | Htmlable> | Arrayable | Closure  $descriptions
      */
     public function descriptions(array | Arrayable | Closure $descriptions): static
     {
@@ -75,13 +76,13 @@ class Radio extends Field
     /**
      * @param  array-key  $value
      */
-    public function getDescription($value): ?string
+    public function getDescription($value): string | Htmlable | null
     {
         return $this->getDescriptions()[$value] ?? null;
     }
 
     /**
-     * @return array<string>
+     * @return array<string | Htmlable>
      */
     public function getDescriptions(): array
     {

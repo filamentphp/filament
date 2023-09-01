@@ -44,6 +44,17 @@ trait HasEmptyState
      */
     public function emptyStateActions(array | ActionGroup $actions): static
     {
+        $this->emptyStateActions = [];
+        $this->pushEmptyStateActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
+     */
+    public function pushEmptyStateActions(array | ActionGroup $actions): static
+    {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);
 
