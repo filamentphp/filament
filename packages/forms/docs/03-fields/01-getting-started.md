@@ -110,7 +110,7 @@ TextInput::make('name')
     ->helperText(new HtmlString('Your <strong>full name</strong> here, including any middle names.'))
 
 TextInput::make('name')
-    ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString())
+    ->helperText(str('Your **full name** here, including any middle names.')->inlineMarkdown()->toHtmlString())
 
 TextInput::make('name')
     ->helperText(view('name-helper-text'))
@@ -141,7 +141,7 @@ TextInput::make('password')
     ->hint(str(new HtmlString('<a href="/forgotten-password">Forgotten your password?</a>'))
 
 TextInput::make('password')
-    ->hint(str('[Forgotten your password?](/forgotten-password)')->markdown()->toHtmlString())
+    ->hint(str('[Forgotten your password?](/forgotten-password)')->inlineMarkdown()->toHtmlString())
 
 TextInput::make('password')
     ->hint(view('forgotten-password-hint'))
