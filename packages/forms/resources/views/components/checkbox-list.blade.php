@@ -69,7 +69,7 @@
                     checkbox.checked = state
 
                     if (state) {
-                        updatedState.push(checkbox.value);
+                        updatedState.push(checkbox.value)
                     }
                 })
 
