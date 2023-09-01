@@ -53,7 +53,7 @@ CheckboxList::make('technologies')
     ->descriptions([
         'tailwind' => 'A utility-first CSS framework for rapidly building modern websites without ever leaving your HTML.',
         'alpine' => new HtmlString('A rugged, minimal tool for composing behavior <strong>directly in your markup</strong>.'),
-        'laravel' => str('A **web application** framework with expressive, elegant syntax.')->markdown()->toHtmlString(),
+        'laravel' => str('A **web application** framework with expressive, elegant syntax.')->inlineMarkdown()->toHtmlString(),
         'livewire' => 'A full-stack framework for Laravel building dynamic interfaces simple, without leaving the comfort of Laravel.',
     ])
 ```

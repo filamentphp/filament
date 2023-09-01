@@ -25,6 +25,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Illuminate\Support\HtmlString;
 use Livewire\Component;
 
 class FieldsDemo extends Component implements HasForms
@@ -62,7 +63,7 @@ class FieldsDemo extends Component implements HasForms
                         TextInput::make('helperText')
                             ->label('Name')
                             ->default('Dan Harrin')
-                            ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString()),
+                            ->helperText(str('Your **full name** here, including any middle names.')->inlineMarkdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hint')
@@ -74,7 +75,7 @@ class FieldsDemo extends Component implements HasForms
                             ->label('Password')
                             ->password()
                             ->default('password')
-                            ->hint(str('[Forgotten your password?](forgotten-password)')->markdown()->toHtmlString()),
+                            ->hint(str('[Forgotten your password?](forgotten-password)')->inlineMarkdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hintColor')
@@ -413,9 +414,9 @@ class FieldsDemo extends Component implements HasForms
                             ])
                             ->descriptions([
                                 'tailwind' => 'A utility-first CSS framework for rapidly building modern websites without ever leaving your HTML.',
-                                'alpine' => 'A rugged, minimal tool for composing behavior directly in your markup.',
-                                'laravel' => 'A web application framework with expressive, elegant syntax.',
-                                'livewire' => 'A full-stack framework that makes building dynamic interfaces simple, without leaving the comfort of Laravel.',
+                                'alpine' => new HtmlString('A rugged, minimal tool for composing behavior <strong>directly in your markup</strong>.'),
+                                'laravel' => str('A **web application** framework with expressive, elegant syntax.')->inlineMarkdown()->toHtmlString(),
+                                'livewire' => 'A full-stack framework for Laravel building dynamic interfaces simple, without leaving the comfort of Laravel.',
                             ]),
                     ]),
                 Group::make()
