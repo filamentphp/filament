@@ -6,8 +6,7 @@
 ])
 
 <div
-    {{
-        $attributes
+    {{ $attributes
             ->class([
                 'fi-fo-field-wrp-hint flex items-center gap-x-3 text-sm',
                 match ($color) {
@@ -16,9 +15,11 @@
                 },
             ])
             ->style([
-                \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]),
-            ])
-    }}
+                \Filament\Support\get_color_css_variables(
+                    $color,
+                    shades: [400, 500, 600]),
+                    alias: 'forms::components.field-wrapper.hint'
+            ]) }}
 >
     @if (! \Filament\Support\is_slot_empty($slot))
         {{ $slot }}

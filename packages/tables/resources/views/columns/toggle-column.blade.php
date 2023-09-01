@@ -75,8 +75,8 @@
             "
             x-bind:style="
                 state
-                    ? '{{ \Filament\Support\get_color_css_variables($onColor, shades: [600]) }}'
-                    : '{{ \Filament\Support\get_color_css_variables($offColor, shades: [600]) }}'
+                    ? '{{ \Filament\Support\get_color_css_variables($onColor, shades: [600], alias: 'tables::columns.toggle-column.on') }}'
+                    : '{{ \Filament\Support\get_color_css_variables($offColor, shades: [600], alias: 'tables::columns.toggle-column.off') }}'
             "
             @disabled($isDisabled())
             type="button"

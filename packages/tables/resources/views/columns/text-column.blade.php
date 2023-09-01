@@ -84,7 +84,11 @@
                     ]);
 
                     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-                        \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
+                        \Filament\Support\get_color_css_variables(
+                            $color,
+                            shades: [500],
+                            alias: 'tables::columns.text-column.item.icon',
+                        ) => $color !== 'gray',
                     ]);
                 @endphp
 
@@ -146,7 +150,11 @@
                                 },
                             ])
                             @style([
-                                \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
+                                \Filament\Support\get_color_css_variables(
+                                    $color,
+                                    shades: [400, 600],
+                                    alias: 'tables::columns.text-column.item',
+                                ) => ! in_array($color, [null, 'gray']),
                             ])
                         >
                             @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))

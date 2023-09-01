@@ -85,7 +85,11 @@
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [400, 500, 600],
+            alias: 'button',
+        ) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {

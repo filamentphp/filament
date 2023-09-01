@@ -46,7 +46,15 @@
         },
     ])
     @style([
-        \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! ($isInline || $color === 'gray'),
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [
+                50,
+                400,
+                600,
+            ],
+            alias: 'notifications::notification',
+        ) => ! ($isInline || $color === 'gray'),
     ])
 >
     <div
@@ -56,9 +64,6 @@
                 'gray' => null,
                 default => 'bg-custom-50 dark:bg-custom-400/10',
             },
-        ])
-        @style([
-            \Filament\Support\get_color_css_variables($color, shades: [50, 400]) => ! ($isInline || $color === 'gray'),
         ])
     >
         @if ($icon = $getIcon())

@@ -27,7 +27,11 @@
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [50, 400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [50, 400, 500, 600],
+            alias: 'dropdown.list.item',
+        ) => $color !== 'gray',
     ]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([

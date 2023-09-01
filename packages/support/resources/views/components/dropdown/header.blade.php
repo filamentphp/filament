@@ -24,6 +24,7 @@
                         ...(filled($icon) ? [500] : []),
                         600,
                     ],
+                    alias: 'dropdown.header',
                 ) => $color !== 'gray',
             ])
     }}
