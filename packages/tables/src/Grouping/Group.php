@@ -41,9 +41,9 @@ class Group extends Component
     public static function make(?string $id = null): static
     {
         $static = app(static::class, ['id' => $id]);
-		$static->configure();
-		
-		return $static;
+        $static->configure();
+
+        return $static;
     }
 
     public function collapsible(bool $condition = true): static
