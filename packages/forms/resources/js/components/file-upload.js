@@ -39,6 +39,7 @@ export default function fileUploadFormComponent({
     imageResizeUpscale,
     isAvatar,
     hasImageEditor,
+    hasCircleCropper,
     isDownloadable,
     isOpenable,
     isPreviewable,
@@ -420,28 +421,28 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.editor = new Cropper(this.$refs.editor, {
-                aspectRatio:
-                    imageEditorViewportWidth / imageEditorViewportHeight,
-                autoCropArea: 1,
-                center: true,
-                crop: (event) => {
-                    this.$refs.xPositionInput.value = Math.round(event.detail.x)
-                    this.$refs.yPositionInput.value = Math.round(event.detail.y)
-                    this.$refs.heightInput.value = Math.round(
-                        event.detail.height,
-                    )
-                    this.$refs.widthInput.value = Math.round(event.detail.width)
-                    this.$refs.rotationInput.value = event.detail.rotate
-                },
-                cropBoxResizable: true,
-                guides: true,
-                highlight: true,
-                responsive: true,
-                toggleDragModeOnDblclick: true,
-                viewMode: imageEditorMode,
-                wheelZoomRatio: 0.02,
-            })
+                this.editor = new Cropper(this.$refs.editor, {
+                    aspectRatio:
+                        imageEditorViewportWidth / imageEditorViewportHeight,
+                    autoCropArea: 1,
+                    center: true,
+                    crop: (event) => {
+                        this.$refs.xPositionInput.value = Math.round(event.detail.x)
+                        this.$refs.yPositionInput.value = Math.round(event.detail.y)
+                        this.$refs.heightInput.value = Math.round(
+                            event.detail.height,
+                        )
+                        this.$refs.widthInput.value = Math.round(event.detail.width)
+                        this.$refs.rotationInput.value = event.detail.rotate
+                    },
+                    cropBoxResizable: true,
+                    guides: true,
+                    highlight: true,
+                    responsive: true,
+                    toggleDragModeOnDblclick: true,
+                    viewMode: imageEditorMode,
+                    wheelZoomRatio: 0.02,
+                })
         },
 
         closeEditor: function () {
@@ -479,7 +480,36 @@ export default function fileUploadFormComponent({
             reader.readAsDataURL(file)
         },
 
+        getRoundedCanvas: function (sourceCanvas) {
+            let canvas = document.createElement("canvas");
+            let context = canvas.getContext("2d");
+            let width = sourceCanvas.width;
+            let height = sourceCanvas.height;
+
+            canvas.width = width;
+            canvas.height = height;
+            context.imageSmoothingEnabled = true;
+            context.drawImage(sourceCanvas, 0, 0, width, height);
+            context.globalCompositeOperation = "destination-in";
+            context.beginPath();
+            context.ellipse(
+                width / 2,
+                height / 2,
+                width / 2,
+                height / 2,
+                0,
+                0,
+                2 * Math.PI,
+            );
+            context.fill();
+            return canvas;
+
+        },
+
         saveEditor: function () {
+            let croppedCanvas;
+            let finalImage;
+
             if (isDisabled) {
                 return
             }
@@ -488,48 +518,56 @@ export default function fileUploadFormComponent({
                 return
             }
 
-            this.editor
+            croppedCanvas = this.editor
                 .getCroppedCanvas({
-                    fillColor: imageEditorEmptyFillColor ?? 'transparent',
+                    fillColor: imageEditorEmptyFillColor ?? "transparent",
                     height: imageResizeTargetHeight,
                     imageSmoothingEnabled: true,
-                    imageSmoothingQuality: 'high',
+                    imageSmoothingQuality: "high",
                     width: imageResizeTargetWidth,
-                })
-                .toBlob((croppedImage) => {
-                    this.pond.removeFile(
-                        this.pond
-                            .getFiles()
-                            .find(
-                                (uploadedFile) =>
-                                    uploadedFile.filename ===
-                                    this.editingFile.name,
+                });
+
+            if (hasCircleCropper) {
+                finalImage = this.getRoundedCanvas(croppedCanvas);
+            } else {
+                finalImage = croppedCanvas;
+            }
+
+            finalImage.toBlob((croppedImage) => {
+                this.pond.removeFile(
+                    this.pond
+                        .getFiles()
+                        .find(
+                            (uploadedFile) => {
+                                return uploadedFile.filename ===
+                                this.editingFile.name;
+                            }
+                        ),
+                );
+
+                this.$nextTick(() => {
+                    this.shouldUpdateState = false;
+
+                    this.pond
+                        .addFile(
+                            new File(
+                                [croppedImage],
+                                this.editingFile.name,
+                                {
+                                    type:
+                                        this.editingFile.type ===
+                                        "image/svg+xml" || hasCircleCropper
+                                            ? "image/png"
+                                            : this.editingFile.type,
+                                    lastModified: new Date().getTime(),
+                                },
                             ),
-                    )
-
-                    this.$nextTick(() => {
-                        this.shouldUpdateState = false
-
-                        this.pond
-                            .addFile(
-                                new File(
-                                    [croppedImage],
-                                    this.editingFile.name,
-                                    {
-                                        type:
-                                            this.editingFile.type ===
-                                            'image/svg+xml'
-                                                ? 'image/png'
-                                                : this.editingFile.type,
-                                        lastModified: new Date().getTime(),
-                                    },
-                                ),
-                            )
-                            .then(() => {
-                                this.closeEditor()
-                            })
-                    })
-                }, this.editingFile.type)
+                        )
+                        .then(() => {
+                            this.closeEditor();
+                        });
+                });
+            }, hasCircleCropper ? "image/png" : this.editingFile.type);
         },
 
         destroyEditor: function () {
