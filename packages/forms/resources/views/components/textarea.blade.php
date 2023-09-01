@@ -15,7 +15,7 @@
             x-ignore
             x-on:input="render()"
             x-on:resize.window="render()"
-            wire:ignore
+            wire:key="{{ rand() }}"
             style="height: {{ $initialHeight }}rem"
             {{ $getExtraAlpineAttributeBag() }}
         @endif
