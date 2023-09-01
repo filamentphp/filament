@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Gjenskape',
+        'label' => 'नक्कल गर्नुहोस्',
 
         'modal' => [
 
-            'heading' => 'Gjenskap :label',
+            'heading' => ':label को नक्कल गर्नुहोस्',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Gjenskap',
+                    'label' => 'नक्कल गर्नुहोस्',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'replicated' => [
-                'title' => 'Gjenskapt',
+                'title' => 'नक्कल गरियो',
             ],
 
         ],

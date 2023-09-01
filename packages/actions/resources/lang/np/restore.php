@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Gjenopprett',
+        'label' => 'पुनर्स्थापना गर्नुहोस्',
 
         'modal' => [
 
-            'heading' => 'Gjenopprett :label',
+            'heading' => ':label को पुनर्स्थापना गर्नुहोस्',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Gjenopprett',
+                    'label' => 'पुनर्स्थापना गर्नुहोस्',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Gjenopprettet',
+                'title' => 'पुनर्स्थापित',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Gjenopprett valgte',
+        'label' => 'चयन गरिएको पुनर्स्थापना गर्नुहोस्',
 
         'modal' => [
 
-            'heading' => 'Gjenopprett valgte :label',
+            'heading' => 'चयन गरिएका :label पुनर्स्थापना गर्नुहोस्',
 
             'actions' => [
 
                 'restore' => [
-                    'label' => 'Gjenopprett',
+                    'label' => 'पुनर्स्थापना गर्नुहोस्',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'restored' => [
-                'title' => 'Gjenopprettet',
+                'title' => 'पुनर्स्थापित',
             ],
 
         ],

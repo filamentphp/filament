@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'छुटाउनु होस',
+        'label' => 'छुटाउनुहोस',
 
         'modal' => [
 
-            'heading' => ':label लाई छुटाउनु होस',
+            'heading' => ':label लाई छुटाउनुहोस',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'छुटाउनु होस',
+                    'label' => 'छुटाउनुहोस',
                 ],
 
             ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'चयन गरिएको छुटाउनु होस',
+        'label' => 'चयन गरिएको छुटाउनुहोस',
 
         'modal' => [
 
-            'heading' => 'चयन गरिएका :label छुटाउनु होस ',
+            'heading' => 'चयन गरिएका :label छुटाउनुहोस ',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'छुटाउनु होस',
+                    'label' => 'छुटाउनुहोस',
                 ],
 
             ],

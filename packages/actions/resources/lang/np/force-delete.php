@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Force delete selected',
+        'label' => 'चयन गरिएको मेटाउनुहोस्',
 
         'modal' => [
 
-            'heading' => 'Force delete selected :label',
+            'heading' => 'चयन गरिएका :label मेटाउनुहोस्',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => 'मेटाउनुहोस्',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => 'मेटाइयो',
             ],
 
         ],

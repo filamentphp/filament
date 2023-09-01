@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Vis',
+        'label' => 'हेर्नुहोस्',
 
         'modal' => [
 
-            'heading' => 'Vis :label',
+            'heading' => ':label हेर्नुहोस्',
 
             'actions' => [
 
                 'close' => [
-                    'label' => 'Lukk',
+                    'label' => 'बन्द गर्नुहोस्',
                 ],
 
             ],

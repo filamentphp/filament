@@ -3,7 +3,7 @@
 return [
 
     'trigger' => [
-        'label' => 'Handlinger',
+        'label' => 'कार्यहरू',
     ],
 
 ];

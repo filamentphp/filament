@@ -2,20 +2,20 @@
 
 return [
 
-    'confirmation' => 'Are you sure you would like to do this?',
+    'confirmation' => 'के तपाइँ यो गर्न निश्चित हुनुहुन्छ?',
 
     'actions' => [
 
         'cancel' => [
-            'label' => 'Avbryt',
+            'label' => 'रद्द गर्नुहोस्',
         ],
 
         'confirm' => [
-            'label' => 'Bekreft',
+            'label' => 'पुष्टि गर्नुहोस्',
         ],
 
         'submit' => [
-            'label' => 'Send',
+            'label' => 'पेश गर्नुहोस्',
         ],
 
     ],
