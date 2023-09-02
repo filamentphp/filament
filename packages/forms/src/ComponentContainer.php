@@ -40,7 +40,10 @@ class ComponentContainer extends ViewComponent
 
     public static function make(HasForms $livewire): static
     {
-        return app(static::class, ['livewire' => $livewire]);
+        $static = app(static::class, ['livewire' => $livewire]);
+        $static->configure();
+
+        return $static;
     }
 
     /**

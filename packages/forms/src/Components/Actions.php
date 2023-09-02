@@ -29,7 +29,10 @@ class Actions extends Component
      */
     public static function make(array $actions): static
     {
-        return app(static::class, ['actions' => $actions]);
+        $static = app(static::class, ['actions' => $actions]);
+        $static->configure();
+
+        return $static;
     }
 
     /**
