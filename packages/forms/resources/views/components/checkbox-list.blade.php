@@ -159,6 +159,7 @@
                 @php
                     $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
                 @endphp
+
                 <div
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
