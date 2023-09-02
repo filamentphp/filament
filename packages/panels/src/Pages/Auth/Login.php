@@ -74,7 +74,7 @@ class Login extends SimplePage
                 'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
             ]);
         }
-                
+
         if (! Filament::auth()->user()->canAccessPanel(Filament::getCurrentPanel())) {
             Filament::auth()->logout();
 
