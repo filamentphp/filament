@@ -31,7 +31,10 @@ class MenuItem extends Component
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     /**
