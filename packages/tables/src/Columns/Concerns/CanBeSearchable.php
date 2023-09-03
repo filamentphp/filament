@@ -94,6 +94,6 @@ trait CanBeSearchable
      */
     public function getDefaultSearchColumns(): array
     {
-        return [str($this->getName())->afterLast('.')];
+        return [(string) str($this->getName())->afterLast('.')];
     }
 }
