@@ -18,7 +18,7 @@
             if (newGroup && direction) {
                 return
             }
-            
+
             if (! newGroup) {
                 direction = null
 
