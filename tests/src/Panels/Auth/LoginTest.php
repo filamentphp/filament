@@ -2,6 +2,7 @@
 
 use Filament\Facades\Filament;
 use Filament\Pages\Auth\Login;
+use Filament\Tests\CustomPanelProvider;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Str;
@@ -56,6 +57,22 @@ it('cannot authenticate with incorrect credentials', function () {
         ->fillForm([
             'email' => $userToAuthenticate->email,
             'password' => 'incorrect-password',
+        ])
+        ->call('authenticate')
+        ->assertHasFormErrors(['email']);
+
+    $this->assertGuest();
+});
+
+it('cannot authenticate on unauthorized panel', function () {
+    $userToAuthenticate = User::factory()->create();
+
+    Filament::setCurrentPanel(Filament::getPanel('custom'));
+
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
         ])
         ->call('authenticate')
         ->assertHasFormErrors(['email']);
