@@ -3,7 +3,7 @@
 return [
 
     'text_entry' => [
-        'more_list_items' => 'and :count more',
+        'more_list_items' => 'và :count mục khác',
     ],
 
 ];
