@@ -10,6 +10,6 @@ return [
 
     ],
 
-    'welcome' => 'Chào',
+    'welcome' => 'Xin chào',
 
 ];
