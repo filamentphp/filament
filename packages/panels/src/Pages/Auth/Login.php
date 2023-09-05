@@ -73,7 +73,10 @@ class Login extends SimplePage
             $this->throwFailureValidationException();
         }
 
-        if (! Filament::auth()->user()->canAccessPanel(Filament::getCurrentPanel())) {
+        /** @var \Filament\Models\Contracts\FilamentUser $user */
+        $user = Filament::auth()->user();
+
+        if (! $user->canAccessPanel(Filament::getCurrentPanel())) {
             Filament::auth()->logout();
 
             $this->throwFailureValidationException();
