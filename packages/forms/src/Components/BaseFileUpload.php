@@ -364,6 +364,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    /**
+     * Specify the maximum number of files that can uploaded
+     */
     public function maxFiles(int | Closure | null $count): static
     {
         $this->maxFiles = $count;
@@ -371,6 +374,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    /**
+     * Specify the minimum number of files that must be uploaded
+     */
     public function minFiles(int | Closure | null $count): static
     {
         $this->minFiles = $count;
@@ -378,6 +384,9 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    /**
+     * Adds the `multiple` HTML attribute to allow uploading multiple files at once
+     */
     public function multiple(bool | Closure $condition = true): static
     {
         $this->isMultiple = $condition;
