@@ -185,27 +185,46 @@ public function table(Table $table): Table
 
 While Filament doesn't provide a direct integration with [Laravel Scout](https://laravel.com/docs/scout), you may override methods to integrate it.
 
-Use a `whereIn()` clause to filter the query for Scout results:
+The easiest way, is to create a custom trait, so it can be reuse in other resources:
 
 ```php
-use App\Models\Post;
+namespace App\Filament\Concerns;
+
 use Illuminate\Database\Eloquent\Builder;
 
-protected function applySearchToTableQuery(Builder $query): Builder
+trait InteractsWithScout
 {
-    $this->applyColumnSearchesToTableQuery($query);
-    
-    if (filled($search = $this->getTableSearch())) {
-        $query->whereIn('id', Post::search($search)->keys());
-    }
+    protected function applySearchToTableQuery(Builder $query): Builder
+    {
+        $search = $this->getTableSearch();
 
-    return $query;
+        $this->applyColumnSearchesToTableQuery($query);
+
+        if (blank($search)) {
+            return $query;
+        }        
+
+        $keys = $this->getModel()::search($search)->keys();
+
+        return $query
+            ->whereIn('id', $keys)
+            ->orderByRaw("FIND_IN_SET (id, ?)", [$keys->implode(',')]);
+    }
 }
 ```
 
-Scout uses this `whereIn()` method to retrieve results internally, so there is no performance penalty for using it.
-
 The `applyColumnSearchesToTableQuery()` method ensures that searching individual columns will still work. You can replace that method with your own implementation if you want to use Scout for those search inputs as well.
+
+To apply Laravel Scout searching on a resource, implement the `InteractsWithScout` trait:
+
+```php
+use App\Filament\Concerns\InteractsWithScout;
+
+class ListBooks extends ListRecords
+{
+    use InteractsWithScout;
+}
+```
 
 ## Query string
 
