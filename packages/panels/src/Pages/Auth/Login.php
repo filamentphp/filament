@@ -70,9 +70,16 @@ class Login extends SimplePage
         $data = $this->form->getState();
 
         if (! Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
-            throw ValidationException::withMessages([
-                'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
-            ]);
+            $this->throwFailureValidationException();
+        }
+
+        /** @var \Filament\Models\Contracts\FilamentUser $user */
+        $user = Filament::auth()->user();
+
+        if (! $user->canAccessPanel(Filament::getCurrentPanel())) {
+            Filament::auth()->logout();
+
+            $this->throwFailureValidationException();
         }
 
         if (! Filament::auth()->user()->canAccessPanel(Filament::getCurrentPanel())) {
@@ -86,6 +93,13 @@ class Login extends SimplePage
         session()->regenerate();
 
         return app(LoginResponse::class);
+    }
+
+    protected function throwFailureValidationException(): never
+    {
+        throw ValidationException::withMessages([
+            'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
+        ]);
     }
 
     public function form(Form $form): Form
