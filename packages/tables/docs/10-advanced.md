@@ -196,21 +196,24 @@ trait InteractsWithScout
 {
     protected function applySearchToTableQuery(Builder $query): Builder
     {
-        $search = $this->getTableSearch();
-
         $this->applyColumnSearchesToTableQuery($query);
+
+        $search = $this->getTableSearch();
 
         if (blank($search)) {
             return $query;
-        }        
+        }
 
         $keys = $this->getModel()::search($search)->keys();
 
         return $query
             ->whereIn('id', $keys)
-            ->orderByRaw("FIND_IN_SET (id, ?)", [$keys->implode(',')]);
+            ->when(blank($this->getTableSortColumn()), fn (Builder $query) => $query
+                ->orderByRaw('FIND_IN_SET (id, ?)', [$keys->implode(',')])
+            );
     }
 }
+
 ```
 
 The `applyColumnSearchesToTableQuery()` method ensures that searching individual columns will still work. You can replace that method with your own implementation if you want to use Scout for those search inputs as well.
