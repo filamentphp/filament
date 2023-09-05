@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'Tạo :label mới',
+        'label' => 'Tạo mới :label',
 
         'modal' => [
 
@@ -17,7 +17,7 @@ return [
                 ],
 
                 'create_another' => [
-                    'label' => 'Tạo & tiếp tục tạo mới',
+                    'label' => 'Tạo & tạo thêm',
                 ],
 
             ],
