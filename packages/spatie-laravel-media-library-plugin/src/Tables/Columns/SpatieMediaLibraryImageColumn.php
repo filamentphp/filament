@@ -81,6 +81,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
         return $record->getRelationValue('media')
             ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
+            ->sortBy('order_column')
             ->map(fn (Media $media): string => $media->uuid)
             ->all();
     }
