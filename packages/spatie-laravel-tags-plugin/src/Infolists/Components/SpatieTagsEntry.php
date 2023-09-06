@@ -2,15 +2,20 @@
 
 namespace Filament\Infolists\Components;
 
+use Closure;
+use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
 use Illuminate\Support\Collection;
 
 class SpatieTagsEntry extends TextEntry
 {
-    protected ?string $type = null;
+    protected string | Closure | AllTagTypes | null $type;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        //all all tag types by default:
+        $this->type(new AllTagTypes());
 
         $this->badge();
     }
@@ -43,20 +48,32 @@ class SpatieTagsEntry extends TextEntry
         }
 
         $type = $this->getType();
-        $tags = $record->tagsWithType($type);
+        $record->load('tags');
+
+        if($this->allowsAllTagTypes()) {
+            $tags = $record->tags;
+        }
+        else {
+            $tags = $record->tagsWithType($type);
+        }
 
         return $tags->pluck('name')->toArray();
     }
 
-    public function type(?string $type): static
+    public function type(string | Closure | AllTagTypes | null $type): static
     {
         $this->type = $type;
 
         return $this;
     }
 
-    public function getType(): ?string
+    public function getType(): string | AllTagTypes | null
     {
-        return $this->type;
+        return $this->evaluate($this->type);
+    }
+
+    public function allowsAllTagTypes(): bool
+    {
+        return $this->getType() instanceof AllTagTypes;
     }
 }
