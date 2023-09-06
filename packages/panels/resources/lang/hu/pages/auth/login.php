@@ -22,7 +22,7 @@ return [
     'form' => [
 
         'email' => [
-            'label' => 'E-mail cím',
+            'label' => 'Email cím',
         ],
 
         'password' => [
@@ -45,7 +45,7 @@ return [
 
     'messages' => [
 
-        'failed' => 'Hibás e-mail cím vagy jelszó.',
+        'failed' => 'Hibás email cím vagy jelszó.',
 
     ],
 
