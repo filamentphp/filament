@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Kiválasztottak szétválasztása',
+        'label' => 'Kijelöltek szétválasztása',
 
         'modal' => [
 
-            'heading' => 'Kiválasztott :label szétválasztása',
+            'heading' => 'Kijelölt :label szétválasztása',
 
             'actions' => [
 
                 'dissociate' => [
-                    'label' => 'Kiválasztottak szétválasztása',
+                    'label' => 'Kijelöltek szétválasztása',
                 ],
 
             ],
