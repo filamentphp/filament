@@ -304,17 +304,17 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         return $table;
     }
 
-    public static function getIcon(Model $ownerRecord, string $pageClass): ?string
+    public static function getIcon(): ?string
     {
         return static::$icon;
     }
 
-    public static function getIconPosition(Model $ownerRecord, string $pageClass): IconPosition
+    public static function getIconPosition(): IconPosition
     {
         return static::$iconPosition;
     }
 
-    public static function getBadge(Model $ownerRecord, string $pageClass): ?string
+    public static function getBadge(): ?string
     {
         return static::$badge;
     }
@@ -324,7 +324,7 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
         return static::$relationship;
     }
 
-    public static function getTitle(Model $ownerRecord, string $pageClass): string
+    public static function getTitle(): string
     {
         return static::$title ?? (string) str(static::getRelationshipName())
             ->kebab()
