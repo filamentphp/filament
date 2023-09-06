@@ -70,3 +70,38 @@ If you wish to translate the package, you may publish the language files using:
 ```bash
 php artisan vendor:publish --tag=filament-spatie-laravel-settings-plugin-translations
 ```
+
+## Upgrading from v2.x to v3.x
+
+### High impact changes
+
+#### The `make:filament-settings-page` command
+
+In v2.x, the command generated settings classes with the `getFormSchema()` method which is no longer automatically
+called in v3.x. 
+
+If you have generated settings pages from v2.x, make sure your form is returned with the correct schema by overriding
+the `form()` method of `Filament\Pages\SettingsPage` and moving the contents of `getFormSchema()` inside the `schema()`
+method:
+
+```php
+// v2.x
+
+protected function getFormSchema(): array
+{
+    return [
+        TextInput::make('name')->required()
+    ];
+}
+```
+
+```php
+// v3.x
+
+public function form(Form $form): Form
+{
+    return $form->schema([
+            TextInput::make('name')->required(),
+        ]);
+}
+```
