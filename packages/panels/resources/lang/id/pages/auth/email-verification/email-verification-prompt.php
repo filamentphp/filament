@@ -26,7 +26,7 @@ return [
         ],
 
         'notification_resend_throttled' => [
-            'title' => 'Terlalu banyak permintaan.',
+            'title' => 'Terlalu banyak permintaan',
             'body' => 'Silakan coba lagi dalam :seconds detik.',
         ],
 
