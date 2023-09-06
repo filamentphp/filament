@@ -84,8 +84,16 @@ class DatabaseNotifications extends Component
 
     public function getNotificationsQuery(): Builder | Relation
     {
-        /** @phpstan-ignore-next-line */
-        return $this->getUser()->notifications()->whereRaw('JSON_UNQUOTE(JSON_EXTRACT(data,\'$.format\')) = "filament"');
+        $query = $this->getUser()->notifications();
+        $databaseConnection = $query->getQuery()->getConnection();
+
+        if (method_exists($databaseConnection, 'isMaria') && $databaseConnection->isMaria()) {
+            /** @phpstan-ignore-next-line */
+            return $query->whereRaw('JSON_UNQUOTE(JSON_EXTRACT(data,\'$.format\')) = "filament"');
+        } else {
+            /** @phpstan-ignore-next-line */
+            return $query->where('data->format', 'filament');
+        }
     }
 
     public function getUnreadNotificationsQuery(): Builder | Relation
