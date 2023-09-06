@@ -15,6 +15,7 @@
     "devDependencies": {
         "@alpinejs/collapse": "^3.10.3",
         "@alpinejs/focus": "^3.10.3",
+        "@alpinejs/intersect": "^3.10.3",
         "@alpinejs/mask": "^3.10.3",
         "@alpinejs/persist": "^3.10.3",
         "@awcodes/alpine-floating-ui": "^3.4.0",
