@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use Spatie\Tags\Tag;
+use Spatie\Tags\HasTags;
 
 class SpatieTagsInput extends TagsInput
 {
@@ -21,7 +22,8 @@ class SpatieTagsInput extends TagsInput
         $this->type(new AllTagTypes());
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record): void {
-            if (! method_exists($record, 'tagsWithType')) {
+            /* @var HasTags $record */
+            if (! method_exists($record, 'tagsWithType') && method_exists($record, 'tags')) {
                 return;
             }
 
@@ -29,7 +31,7 @@ class SpatieTagsInput extends TagsInput
             $record->load('tags');
 
             if($component->allowsAllTagTypes()) {
-                $tags = $record->tags;
+                $tags = $record->tags()->get();
             }
             else {
                 $tags = $record->tagsWithType($type);
@@ -59,14 +61,18 @@ class SpatieTagsInput extends TagsInput
      * Syncs tags with the record without taking types into account. This avoids recreating existing tags with an empty type.
      * The Spatie HasTags trait does not have functionality for this behaviour.
      * @param Model|null $record
-     * @param array $state
+     * @param array<string> $state
      * @return void
      */
-    private function syncTagsWithAnyType(?Model $record, array $state){
+    private function syncTagsWithAnyType(?Model $record, array $state): void
+    {
+        /**
+         * @var HasTags $record
+         */
         $tagClassName = $record::getTagClassName();
 
         $tags = collect($state)->map(function ($tagName) use ($tagClassName) {
-            $locale = $locale ?? $tagClassName::getLocale();
+            $locale = $tagClassName::getLocale();
 
             $tag = $tagClassName::findFromStringOfAnyType($tagName, $locale);
 
