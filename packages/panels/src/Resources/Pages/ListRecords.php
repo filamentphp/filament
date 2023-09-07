@@ -69,7 +69,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
             blank($this->activeTab) &&
             count($tabs = $this->getTabs())
         ) {
-            $this->activeTab = array_key_first($tabs);
+            $this->activeTab = $this->getDefaultTab($tabs);
         }
     }
 
@@ -341,6 +341,14 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     public function getTabs(): array
     {
         return [];
+    }
+
+    /**
+     * @param array<string | int, Tab> $tabs
+     */
+    public function getDefaultTab(array $tabs): string | int
+    {
+        return array_key_first($tabs);
     }
 
     public function updatedActiveTab(): void
