@@ -344,7 +344,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     }
 
     /**
-     * @param array<string | int, Tab> $tabs
+     * @param  array<string | int, Tab>  $tabs
      */
     public function getDefaultTab(array $tabs): string | int
     {
