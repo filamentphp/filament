@@ -6,9 +6,7 @@ use Closure;
 use Filament\SpatieLaravelTagsPlugin\Types\AllTagTypes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Arr;
 use Spatie\Tags\Tag;
-use Spatie\Tags\HasTags;
 
 class SpatieTagsInput extends TagsInput
 {
@@ -22,8 +20,7 @@ class SpatieTagsInput extends TagsInput
         $this->type(new AllTagTypes());
 
         $this->loadStateFromRelationshipsUsing(static function (SpatieTagsInput $component, ?Model $record): void {
-            /* @var HasTags $record */
-            if (! method_exists($record, 'tagsWithType') && method_exists($record, 'tags')) {
+            if (! method_exists($record, 'tagsWithType') || !method_exists($record, 'tags')) {
                 return;
             }
 
@@ -66,11 +63,11 @@ class SpatieTagsInput extends TagsInput
      */
     private function syncTagsWithAnyType(?Model $record, array $state): void
     {
-        /**
-         * @var HasTags $record
-         */
-        $tagClassName = $record::getTagClassName();
+        if (!$record || ! method_exists($record, 'tags')) {
+            return;
+        }
 
+        $tagClassName = config('tags.tag_model', Tag::class);
         $tags = collect($state)->map(function ($tagName) use ($tagClassName) {
             $locale = $tagClassName::getLocale();
 

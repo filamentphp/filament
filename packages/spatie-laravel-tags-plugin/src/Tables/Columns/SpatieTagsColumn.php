@@ -20,6 +20,9 @@ class SpatieTagsColumn extends TagsColumn
         $this->type(new AllTagTypes());
     }
 
+    /**
+     * @return array<string>
+     */
     public function getTags(): array
     {
         $state = $this->getState();
@@ -34,18 +37,13 @@ class SpatieTagsColumn extends TagsColumn
             $record = $record->getRelationValue($this->getRelationshipName());
         }
 
-        if (! method_exists($record, 'tagsWithType')) {
+        if (! method_exists($record, 'tagsWithType') || ! method_exists($record, 'tags')) {
             return [];
         }
 
         $type = $this->getType();
 
-        if($this->allowsAllTagTypes()) {
-            $tags = $record->tags;
-        }
-        else {
-            $tags = $record->tagsWithType($type);
-        }
+        $tags = $this->allowsAllTagTypes() ? $record->tags() : $record->tagsWithType($type);
 
         return $tags->pluck('name')->toArray();
     }
