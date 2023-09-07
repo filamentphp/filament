@@ -29,6 +29,8 @@ This will create and register a new [Laravel service provider](https://laravel.c
 
 > If you get an error when accessing your panel, check that the service provider was registered in your `config/app.php`. If not, you should manually add it to the `providers` array.
 
+> Started with a new Laravel installation? Run `php artisan migrate` if not done yet.
+
 ## Create a user
 You can create a new user account with the following command:
 
