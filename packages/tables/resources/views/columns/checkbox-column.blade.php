@@ -18,7 +18,7 @@
     x-init="() => {
         Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
             succeed(({ snapshot, effect }) => {
-                $nextTick(()=>{
+                $nextTick(() => {
                     if (component.id !== @js($this->getId())) {
                         return
                     }
