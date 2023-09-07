@@ -89,7 +89,7 @@ class DatabaseNotifications extends Component
 
         if (method_exists($databaseConnection, 'isMaria') && $databaseConnection->isMaria()) {
             /** @phpstan-ignore-next-line */
-            return $query->whereRaw('JSON_UNQUOTE(JSON_EXTRACT(data,\'$.format\')) = "filament"');
+            return $query->whereRaw('json_unquote(json_extract(data, \'$.format\')) = "filament"');
         } else {
             /** @phpstan-ignore-next-line */
             return $query->where('data->format', 'filament');
