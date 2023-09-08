@@ -65,11 +65,8 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     {
         static::authorizeResourceAccess();
 
-        if (
-            blank($this->activeTab) &&
-            count($tabs = $this->getTabs())
-        ) {
-            $this->activeTab = $this->getDefaultTab($tabs);
+        if (blank($this->activeTab)) {
+            $this->activeTab = $this->getDefaultActiveTab();
         }
     }
 
@@ -343,12 +340,9 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
         return [];
     }
 
-    /**
-     * @param  array<string | int, Tab>  $tabs
-     */
-    public function getDefaultTab(array $tabs): string | int
+    public function getDefaultActiveTab(): string | int | null
     {
-        return array_key_first($tabs);
+        return array_key_first($this->getTabs());
     }
 
     public function updatedActiveTab(): void
