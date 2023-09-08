@@ -76,6 +76,28 @@ Tab::make()
 
 As in the example above, this could be quite useful for showing the number of records that pass that filter.
 
+### Customizing the default tab
+
+To customize the default tab that is selected when the page is loaded, you can return the array key of the tab from the `getDefaultActiveTab()` method:
+
+```php
+use Filament\Resources\Pages\ListRecords\Tab;
+
+public function getTabs(): array
+{
+    return [
+        'all' => Tab::make(),
+        'active' => Tab::make(),
+        'inactive' => Tab::make(),
+    ];
+}
+
+public function getDefaultActiveTab(): string | int | null
+{
+    return 'active';
+}
+```
+
 ## Authorization
 
 For authorization, Filament will observe any [model policies](https://laravel.com/docs/authorization#creating-policies) that are registered in your app.
