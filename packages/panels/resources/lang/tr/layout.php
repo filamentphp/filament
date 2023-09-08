@@ -40,6 +40,10 @@ return [
                 'label' => 'Açık tema',
             ],
 
+            'system' => [
+                'label' => 'Sistem teması',
+            ],
+
         ],
 
     ],
