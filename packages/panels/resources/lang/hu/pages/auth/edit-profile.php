@@ -42,7 +42,7 @@ return [
 
     'actions' => [
 
-        'back' => [
+        'cancel' => [
             'label' => 'vissza',
         ],
 
