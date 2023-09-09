@@ -6,6 +6,7 @@
     'active' => false,
     'alpineActive' => null,
     'badge' => null,
+    'badgeColor' => null,
     'icon' => null,
     'iconColor' => 'gray',
     'iconPosition' => IconPosition::Before,
@@ -95,7 +96,7 @@
     @endif
 
     @if (filled($badge))
-        <x-filament::badge size="sm">
+        <x-filament::badge size="sm" :color="$badgeColor">
             {{ $badge }}
         </x-filament::badge>
     @endif
