@@ -14,6 +14,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
@@ -278,9 +279,9 @@ class EditProfile extends SimplePage
         return false;
     }
 
-    public function getFormActionsAlignment(): string
+    public function getFormActionsAlignment(): string | Alignment
     {
-        return 'start';
+        return Alignment::Start;
     }
 
     public function getTitle(): string | Htmlable

@@ -7,6 +7,7 @@ use Filament\Actions\Concerns\InteractsWithActions;
 use Filament\Actions\Contracts\HasActions;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
@@ -32,7 +33,7 @@ abstract class BasePage extends Component implements HasForms, HasActions
 
     protected ?string $maxContentWidth = null;
 
-    public static string $formActionsAlignment = 'start';
+    public static string | Alignment $formActionsAlignment = Alignment::Start;
 
     public static bool $formActionsAreSticky = false;
 
@@ -117,17 +118,17 @@ abstract class BasePage extends Component implements HasForms, HasActions
 
     public static function alignFormActionsStart(): void
     {
-        static::$formActionsAlignment = 'start';
+        static::$formActionsAlignment = Alignment::Start;
     }
 
     public static function alignFormActionsCenter(): void
     {
-        static::$formActionsAlignment = 'center';
+        static::$formActionsAlignment = Alignment::Center;
     }
 
     public static function alignFormActionsEnd(): void
     {
-        static::$formActionsAlignment = 'end';
+        static::$formActionsAlignment = Alignment::End;
     }
 
     /**
@@ -146,7 +147,7 @@ abstract class BasePage extends Component implements HasForms, HasActions
         static::alignFormActionsEnd();
     }
 
-    public function getFormActionsAlignment(): string
+    public function getFormActionsAlignment(): string | Alignment
     {
         return static::$formActionsAlignment;
     }
@@ -161,7 +162,7 @@ abstract class BasePage extends Component implements HasForms, HasActions
         return static::$hasInlineLabels;
     }
 
-    public static function formActionsAlignment(string $alignment): void
+    public static function formActionsAlignment(string | Alignment $alignment): void
     {
         static::$formActionsAlignment = $alignment;
     }
