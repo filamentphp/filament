@@ -13,35 +13,27 @@
         x-cloak
         x-bind:class="
             $store.sidebar.isOpen
-                ? @js($openSidebarClasses . ' lg:sticky')
+                ? @js($openSidebarClasses . 'lg:sticky')
                 : '-translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
         "
     @else
         @if (filament()->hasTopNavigation())
             x-cloak
-            x-bind:class="
-                $store.sidebar.isOpen 
-                    ? @js($openSidebarClasses) 
-                    : '-translate-x-full rtl:translate-x-full'
-            "
+            x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses) : '-translate-x-full rtl:translate-x-full'"
         @elseif (filament()->isSidebarFullyCollapsibleOnDesktop())
             x-cloak
-            x-bind:class="
-                $store.sidebar.isOpen 
-                    ? @js($openSidebarClasses . ' lg:sticky') 
-                    : '-translate-x-full rtl:translate-x-full'
-            "
+            x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses . 'lg:sticky') : '-translate-x-full rtl:translate-x-full'"
         @else
             x-cloak="-lg"
             x-bind:class="
-                $store.sidebar.isOpen 
-                    ? @js($openSidebarClasses . ' lg:sticky') 
+                $store.sidebar.isOpen
+                    ? @js($openSidebarClasses . 'lg:sticky')
                     : 'w-[--sidebar-width] -translate-x-full rtl:translate-x-full lg:sticky'
             "
         @endif
     @endif
     @class([
-        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white transition-all lg:transition-none dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 dark:lg:bg-transparent',
+        'fi-sidebar fixed inset-y-0 start-0 z-30 grid h-screen content-start bg-white transition-all dark:bg-gray-900 lg:z-0 lg:bg-transparent lg:shadow-none lg:ring-0 lg:transition-none dark:lg:bg-transparent',
         'lg:translate-x-0 rtl:lg:-translate-x-0' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
         'lg:-translate-x-full rtl:lg:translate-x-full' => filament()->hasTopNavigation(),
     ])
