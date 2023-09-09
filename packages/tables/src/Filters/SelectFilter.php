@@ -49,7 +49,10 @@ class SelectFilter extends BaseFilter
                     $relationshipQuery = $filter->getRelationshipQuery();
 
                     $labels = $relationshipQuery
-                        ->when($filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough, fn ($query) => $query->distinct())
+                        ->when(
+                            $filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
+                            fn (Builder $query) => $query->distinct(),
+                        )
                         ->whereKey($state['values'])
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
