@@ -112,7 +112,6 @@ CheckboxList::make('technologies')
         'laravel' => 'Laravel',
         'livewire' => 'Laravel Livewire',
     ])
-    ->default('tailwind')
     ->disableOptionWhen(fn (string $value): bool => $value === 'livewire')
 ```
 
@@ -129,7 +128,6 @@ CheckboxList::make('technologies')
         'livewire' => 'Laravel Livewire',
         'heroicons' => 'SVG icons',
     ])
-    ->default('tailwind')
     ->disableOptionWhen(fn (string $value): bool => $value === 'heroicons')
     ->in(fn (CheckboxList $component): array => array_keys($component->getEnabledOptions()))
 ```
