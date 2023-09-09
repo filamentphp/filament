@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanBeSearchable;
+    use Concerns\CanDisableOptions;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasNestedRecursiveValidationRules;
