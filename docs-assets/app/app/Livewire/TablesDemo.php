@@ -46,6 +46,7 @@ use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Livewire\Component;
+use stdClass;
 
 class TablesDemo extends Component implements HasForms, HasTable
 {
@@ -229,6 +230,17 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ->label('Verified')
                     ->boolean()
                     ->getStateUsing(fn ($record) => filled($record->email_verified_at)),
+            ]);
+    }
+
+    public function placeholderColumns(Table $table): Table
+    {
+        return $this->postsTable($table)
+            ->columns([
+                TextColumn::make('title'),
+                TextColumn::make('description')
+                    ->getStateUsing(fn (Post $record, stdClass $rowLoop): ?string => $rowLoop->odd ? $record->description : null)
+                    ->placeholder('No description.'),
             ]);
     }
 

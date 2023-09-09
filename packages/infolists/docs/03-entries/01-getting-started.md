@@ -87,7 +87,7 @@ TextEntry::make('title')
 
 ## Setting a default value
 
-To set a default value for fields with a `null` state, you may use the `default()` method:
+To set a default value for entries with an empty state, you may use the `default()` method. This method will treat the default state as if it were real, so entries like [image](image) or [color](color) will display the default image or color.
 
 ```php
 use Filament\Infolists\Components\TextEntry;
@@ -95,6 +95,19 @@ use Filament\Infolists\Components\TextEntry;
 TextEntry::make('title')
     ->default('Untitled')
 ```
+
+## Adding placeholder text if an entry is empty
+
+Sometimes you may want to display placeholder text for entries with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-a-default-value), as the placeholder is always text and not treated as if it were real state.
+
+```php
+use Filament\Infolists\Components\TextEntry;
+
+TextEntry::make('title')
+    ->placeholder('Untitled')
+```
+
+<AutoScreenshot name="infolists/entries/placeholder" alt="Entry with a placeholder for empty state"" version="3.x" />
 
 ## Adding helper text below the entry
 

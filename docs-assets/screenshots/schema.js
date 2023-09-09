@@ -1184,6 +1184,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'infolists/entries/placeholder': {
+        url: 'infolists/entries',
+        selector: '#placeholder',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'infolists/entries/helper-text': {
         url: 'infolists/entries',
         selector: '#helperText',
@@ -1825,6 +1834,15 @@ export default {
     },
     'tables/columns/individually-searchable': {
         url: 'tables?table=individuallySearchableColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'tables/columns/placeholder': {
+        url: 'tables?table=placeholderColumns',
         selector: 'body',
         viewport: {
             width: 1080,
