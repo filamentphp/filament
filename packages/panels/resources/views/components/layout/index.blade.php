@@ -19,20 +19,21 @@
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-data="{}"
                 x-bind:class="{
-                    'fi-main-ctn-sidebar-open': $store.sidebar.isOpen,
+                    'lg:ps-[--collapsed-sidebar-width]': ! $store.sidebar.isOpen,
+                    'fi-main-ctn-sidebar-open lg:ps-[--sidebar-width]': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @elseif (filament()->isSidebarFullyCollapsibleOnDesktop())
                 x-data="{}"
                 x-bind:class="{
-                    'fi-main-ctn-sidebar-open': $store.sidebar.isOpen,
+                    'fi-main-ctn-sidebar-open lg:ps-[--sidebar-width]': $store.sidebar.isOpen,
                 }"
                 x-bind:style="'display: flex'" {{-- Mimics `x-cloak`, as using `x-cloak` causes visual issues with chart widgets --}}
             @endif
             @class([
                 'fi-main-ctn w-screen flex-1 flex-col',
                 'hidden h-full transition-all' => filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop(),
-                'flex' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
+                'flex lg:ps-[--sidebar-width]' => ! (filament()->isSidebarCollapsibleOnDesktop() || filament()->isSidebarFullyCollapsibleOnDesktop() || filament()->hasTopNavigation()),
             ])
         >
             <x-filament-panels::topbar :navigation="$navigation" />
