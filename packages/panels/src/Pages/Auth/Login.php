@@ -12,6 +12,7 @@ use Filament\Forms\Components\Component;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
@@ -73,10 +74,12 @@ class Login extends SimplePage
             $this->throwFailureValidationException();
         }
 
-        /** @var \Filament\Models\Contracts\FilamentUser $user */
         $user = Filament::auth()->user();
 
-        if (! $user->canAccessPanel(Filament::getCurrentPanel())) {
+        if (
+            ($user instanceof FilamentUser) &&
+            (! $user->canAccessPanel(Filament::getCurrentPanel()))
+        ) {
             Filament::auth()->logout();
 
             $this->throwFailureValidationException();
