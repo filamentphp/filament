@@ -304,7 +304,7 @@ class EditProfile extends SimplePage
     public function backAction(): Action
     {
         return Action::make('back')
-            ->label(__('filament-panels::pages/auth/edit-profile.actions.back.label'))
+            ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
             ->url(filament()->getUrl())
             ->color('gray');
     }
