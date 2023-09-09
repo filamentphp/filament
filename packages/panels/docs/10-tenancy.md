@@ -197,7 +197,7 @@ $tenant = Filament::getTenant();
 
 Filament provides a billing integration with [Laravel Spark](https://spark.laravel.com). Your users can start subscriptions and manage their billing information.
 
-To install the integration, first [install Spark](https://spark.laravel.com/docs/2.x/installation.html) and configure it for your tenant model.
+To install the integration, first [install Spark](https://spark.laravel.com/docs/installation.html) and configure it for your tenant model.
 
 Now, you can install the Filament billing provider for Spark using Composer:
 

@@ -63,7 +63,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             }
         }
 
-        return $media->getUrl($this->getConversion());
+        return $media->getAvailableUrl([$this->getConversion()]);
     }
 
     /**

@@ -9,7 +9,7 @@ return [
     'actions' => [
 
         'resend_notification' => [
-            'label' => 'Resend it',
+            'label' => 'Kirim ulang',
         ],
 
     ],
@@ -26,7 +26,8 @@ return [
         ],
 
         'notification_resend_throttled' => [
-            'title' => 'Terlalu banyak permintaan. Silakan coba lagi dalam :seconds detik.',
+            'title' => 'Terlalu banyak permintaan',
+            'body' => 'Silakan coba lagi dalam :seconds detik.',
         ],
 
     ],
