@@ -24,11 +24,6 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     use Concerns\HasContainerGridLayout;
     use Concerns\CanBeCloned;
 
-    /**
-     * @var view-string
-     */
-    protected string $view = 'filament-forms::components.repeater';
-
     protected string | Closure | null $addActionLabel = null;
 
     protected bool | Closure $isAddable = true;
@@ -50,6 +45,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     protected string | Closure | null $relationship = null;
 
     protected string | Closure | null $itemLabel = null;
+
+    protected Field | Closure | null $simpleField = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
@@ -79,6 +76,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
+    protected bool $hasHydratedSimpleState = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -88,8 +87,15 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             $items = [];
 
+            $shouldHydrateSimpleState = (
+                (! $component->hasHydratedSimpleState) &&
+                ($simpleField = $component->getSimpleField())
+            );
+
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $itemData;
+                $items[(string) Str::uuid()] = $shouldHydrateSimpleState ?
+                    [$simpleField->getName() => $itemData] :
+                    $itemData;
             }
 
             $component->state($items);
@@ -108,7 +114,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             fn (Repeater $component): Action => $component->getReorderAction(),
         ]);
 
-        $this->mutateDehydratedStateUsing(static function (?array $state): array {
+        $this->mutateDehydratedStateUsing(static function (Repeater $component, ?array $state): array {
+            if ($simpleField = $component->getSimpleField()) {
+                return collect($state ?? [])
+                    ->values()
+                    ->pluck($simpleField->getName())
+                    ->all();
+            }
+
             return array_values($state ?? []);
         });
     }
@@ -487,17 +500,36 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function defaultItems(int | Closure $count): static
     {
         $this->default(static function (Repeater $component) use ($count): array {
-            $items = [];
-
             $count = $component->evaluate($count);
 
             if (! $count) {
-                return $items;
+                return [];
             }
 
-            foreach (range(1, $count) as $index) {
-                $items[(string) Str::uuid()] = [];
+            return array_fill(0, $count, $component->isSimple() ? null : []);
+        });
+
+        return $this;
+    }
+
+    public function default(mixed $state): static
+    {
+        parent::default(function (Repeater $component) use ($state) {
+            $state = $component->evaluate($state);
+
+            $simpleField = $component->getSimpleField();
+
+            if (! $simpleField) {
+                return $state;
             }
+
+            $items = [];
+
+            foreach ($state as $value) {
+                $items[] = [$simpleField->getName() => $value];
+            }
+
+            $component->hasHydratedSimpleState = true;
 
             return $items;
         });
@@ -576,6 +608,15 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function inset(bool | Closure $condition = true): static
     {
         return $this;
+    }
+
+    public function getChildComponents(): array
+    {
+        if ($simpleField = $this->getSimpleField()) {
+            return [$simpleField];
+        }
+
+        return parent::getChildComponents();
     }
 
     /**
@@ -877,6 +918,23 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this->itemLabel !== null;
     }
 
+    public function simple(Field | Closure | null $field): static
+    {
+        $this->simpleField = $field;
+
+        return $this;
+    }
+
+    public function isSimple(): bool
+    {
+        return $this->simpleField !== null;
+    }
+
+    public function getSimpleField(): ?Field
+    {
+        return $this->evaluate($this->simpleField)?->hiddenLabel();
+    }
+
     public function clearCachedExistingRecords(): void
     {
         $this->cachedExistingRecords = null;
@@ -969,5 +1027,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function canConcealComponents(): bool
     {
         return $this->isCollapsible();
+    }
+
+    public function getView(): string
+    {
+        if ($this->isSimple()) {
+            return 'filament-forms::components.simple-repeater';
+        }
+
+        return 'filament-forms::components.repeater';
     }
 }

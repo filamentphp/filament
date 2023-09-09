@@ -27,6 +27,7 @@
                     match ($alignment) {
                         Alignment::Center, 'center' => 'justify-center',
                         Alignment::End, Alignment::Right, 'end', 'right' => 'flex-row-reverse',
+                        Alignment::Between, 'between' => 'justify-between',
                         default => 'justify-start',
                     } => ! $fullWidth,
                     'grid grid-cols-[repeat(auto-fit,minmax(0,1fr))]' => $fullWidth,

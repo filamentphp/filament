@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanBeSearchable;
+    use Concerns\CanDisableOptions;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasNestedRecursiveValidationRules;
@@ -34,7 +35,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     protected string | Closure | null $relationship = null;
 
     /**
-     * @var array<string> | Arrayable | Closure
+     * @var array<string | Htmlable> | Arrayable | Closure
      */
     protected array | Arrayable | Closure $descriptions = [];
 
@@ -286,7 +287,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     }
 
     /**
-     * @param  array<string> | Arrayable | Closure  $descriptions
+     * @param  array<string | Htmlable> | Arrayable | Closure  $descriptions
      */
     public function descriptions(array | Arrayable | Closure $descriptions): static
     {
@@ -306,13 +307,13 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     /**
      * @param  array-key  $value
      */
-    public function getDescription($value): ?string
+    public function getDescription($value): string | Htmlable | null
     {
         return $this->getDescriptions()[$value] ?? null;
     }
 
     /**
-     * @return array<string>
+     * @return array<string | Htmlable>
      */
     public function getDescriptions(): array
     {

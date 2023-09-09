@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolom',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -87,6 +93,8 @@ return [
     'empty' => [
 
         'heading' => 'Tidak ada data yang ditemukan',
+
+        'description' => 'Buat :model untuk memulai.',
 
     ],
 

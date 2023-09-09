@@ -43,11 +43,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'Becsuk minden',
+                'label' => 'Becsuk mindent',
             ],
 
             'expand_all' => [
-                'label' => 'Kibont minden',
+                'label' => 'Kibont mindent',
             ],
 
         ],
@@ -278,11 +278,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'Becsuk minden',
+                'label' => 'Becsuk mindent',
             ],
 
             'expand_all' => [
-                'label' => 'Kibont minden',
+                'label' => 'Kibont mindent',
             ],
 
         ],

@@ -19,11 +19,11 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'Az összes elem kiválasztása/kiválasztásának megszüntetése tömeges műveletekhez.',
+            'label' => 'Az összes elem kiválasztása vagy megszüntetése tömeges műveletekhez.',
         ],
 
         'bulk_select_record' => [
-            'label' => ':key elem kiválasztása/kiválasztásának megszüntetése tömeges műveletekhez.',
+            'label' => ':key elem kiválasztása vagy megszüntetése tömeges műveletekhez.',
         ],
 
         'search' => [
@@ -55,7 +55,7 @@ return [
             ],
 
             'sum' => [
-                'label' => 'Szumma',
+                'label' => 'Összeg',
             ],
 
         ],
@@ -81,11 +81,11 @@ return [
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Műveletek magjelenítése',
+            'label' => 'Műveletek',
         ],
 
         'toggle_columns' => [
-            'label' => 'Oszlopok mutatása/elrejtése',
+            'label' => 'Oszlopok láthatósága',
         ],
 
     ],
@@ -94,7 +94,7 @@ return [
 
         'heading' => 'Nincs találat',
 
-        'description' => 'Hozzon létre egy :model a kezdéshez.',
+        'description' => 'Hozzon létre egy újat a kezdéshez.',
 
     ],
 
@@ -112,7 +112,7 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Alapértelmezés',
+                'label' => 'Alaphelyzet',
             ],
 
         ],
@@ -135,9 +135,9 @@ return [
 
             'only_trashed' => 'Csak a törölt elemek',
 
-            'with_trashed' => 'A törölt elemekkel',
+            'with_trashed' => 'Törölt elemekkel',
 
-            'without_trashed' => 'A törölt elemek nélkül',
+            'without_trashed' => 'Törölt elemek nélkül',
 
         ],
 

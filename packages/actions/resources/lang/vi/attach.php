@@ -13,7 +13,7 @@ return [
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Danh sách',
+                    'label' => 'Bản ghi',
                 ],
 
             ],
@@ -25,7 +25,7 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Đính kèm & tiếp tục đính kèm với mục khác',
+                    'label' => 'Đính kèm & đính kèm thêm',
                 ],
 
             ],

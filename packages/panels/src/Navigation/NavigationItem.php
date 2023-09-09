@@ -43,7 +43,10 @@ class NavigationItem extends Component
 
     public static function make(string | Closure | null $label = null): static
     {
-        return app(static::class, ['label' => $label]);
+        $static = app(static::class, ['label' => $label]);
+        $static->configure();
+
+        return $static;
     }
 
     /**

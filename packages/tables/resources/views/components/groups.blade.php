@@ -15,6 +15,10 @@
     }"
     x-init="
         $watch('group', function (newGroup, oldGroup) {
+            if (newGroup && direction) {
+                return
+            }
+
             if (! newGroup) {
                 direction = null
 

@@ -23,6 +23,8 @@ class BaseFileUpload extends Field
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
+    protected bool | Closure $isDeletable = true;
+
     protected bool | Closure $isDownloadable = false;
 
     protected bool | Closure $isOpenable = false;
@@ -212,6 +214,13 @@ class BaseFileUpload extends Field
 
             return "mimetypes:{$types}";
         });
+
+        return $this;
+    }
+
+    public function deletable(bool | Closure $condition = true): static
+    {
+        $this->isDeletable = $condition;
 
         return $this;
     }
@@ -426,6 +435,11 @@ class BaseFileUpload extends Field
         $this->saveUploadedFileUsing = $callback;
 
         return $this;
+    }
+
+    public function isDeletable(): bool
+    {
+        return (bool) $this->evaluate($this->isDeletable);
     }
 
     public function isDownloadable(): bool
