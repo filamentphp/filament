@@ -99,6 +99,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $url ??= $media?->getUrl();
 
             return [
+                'caption' => $media->getCustomProperty('caption') ?? null,
                 'name' => $media->getAttributeValue('name') ?? $media->getAttributeValue('file_name'),
                 'size' => $media->getAttributeValue('size'),
                 'type' => $media->getAttributeValue('mime_type'),
@@ -156,6 +157,17 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             return $state;
         });
+
+        $this->captionUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, $fileKey, $caption) {
+            $mediaItem = $component->getRecord()->getRelationValue('media')->firstWhere('uuid', $fileKey);
+
+            $mediaItem->setCustomProperty('caption', $caption); // adds a new custom property
+
+            if ($mediaItem->id) {
+                $mediaItem->save();
+            }
+        });
+
     }
 
     public function collection(string | Closure | null $collection): static

@@ -9,6 +9,7 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
+import FilePondPluginFileCaption from './filepond-plugin-file-caption.js';
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -19,6 +20,7 @@ FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
+FilePond.registerPlugin(FilePondPluginFileCaption);
 
 window.FilePond = FilePond
 
@@ -61,6 +63,8 @@ export default function fileUploadFormComponent({
     uploadButtonPosition,
     uploadProgressIndicatorPosition,
     uploadUsing,
+    caption,
+    captionUploadedFileUsing,
 }) {
     return {
         fileKeyIndex: {},
@@ -98,6 +102,21 @@ export default function fileUploadFormComponent({
                 allowImageTransform: shouldTransformImage,
                 credits: false,
                 files: await this.getFiles(),
+                addFileCaption: true,
+                fileCaptionPlaceholder: 'Description...',
+                fileCaptionMaxLength: 255,
+                fileCaption: caption,
+                fileCaptionUsing: async (file, caption) => {
+                    let fileKey = this.uploadedFileIndex[file.source];
+
+                    if (!fileKey) {
+                        return
+                    }
+
+                    await captionUploadedFileUsing(fileKey, caption)
+
+                    // this.pond.server.load(file.source)
+                },
                 imageCropAspectRatio,
                 imagePreviewHeight,
                 imageResizeTargetHeight,
@@ -179,7 +198,7 @@ export default function fileUploadFormComponent({
                 allowImageEdit: hasImageEditor,
                 imageEditEditor: {
                     open: (file) => this.loadEditor(file),
-                    onconfirm: () => {},
+                    onconfirm: () => { },
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
                 },
@@ -271,9 +290,9 @@ export default function fileUploadFormComponent({
                         .filter(
                             (file) =>
                                 file.status ===
-                                    FilePond.FileStatus.PROCESSING ||
+                                FilePond.FileStatus.PROCESSING ||
                                 file.status ===
-                                    FilePond.FileStatus.PROCESSING_QUEUED,
+                                FilePond.FileStatus.PROCESSING_QUEUED,
                         ).length
                 ) {
                     return
@@ -333,15 +352,18 @@ export default function fileUploadFormComponent({
                     source: uploadedFile.url,
                     options: {
                         type: 'local',
+                        metadata: {
+                            caption: uploadedFile.caption ?? null,
+                        },
                         ...(/^image/.test(uploadedFile.type)
                             ? {}
                             : {
-                                  file: {
-                                      name: uploadedFile.name,
-                                      size: uploadedFile.size,
-                                      type: uploadedFile.type,
-                                  },
-                              }),
+                                file: {
+                                    name: uploadedFile.name,
+                                    size: uploadedFile.size,
+                                    type: uploadedFile.type,
+                                },
+                            }),
                     },
                 })
             }
@@ -520,7 +542,7 @@ export default function fileUploadFormComponent({
                                     {
                                         type:
                                             this.editingFile.type ===
-                                            'image/svg+xml'
+                                                'image/svg+xml'
                                                 ? 'image/png'
                                                 : this.editingFile.type,
                                         lastModified: new Date().getTime(),

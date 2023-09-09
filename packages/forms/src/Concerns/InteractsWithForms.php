@@ -16,9 +16,9 @@ use Livewire\WithFileUploads;
 
 trait InteractsWithForms
 {
-    use WithFileUploads;
     use HasFormComponentActions;
     use ResolvesDynamicLivewireProperties;
+    use WithFileUploads;
 
     /**
      * @var array <string, TemporaryUploadedFile | null>
@@ -120,6 +120,13 @@ trait InteractsWithForms
         }
 
         return [];
+    }
+
+    public function captionUploadedFile(string $statePath, string $fileKey, string $caption): void
+    {
+        foreach ($this->getCachedForms() as $form) {
+            $form->captionUploadedFile($statePath, $fileKey, $caption);
+        }
     }
 
     public function deleteUploadedFile(string $statePath, string $fileKey): void

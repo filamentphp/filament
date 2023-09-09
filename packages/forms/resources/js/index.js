@@ -6,6 +6,7 @@ import '../css/components/markdown-editor.css'
 import '../css/components/rich-editor.css'
 import '../css/components/select.css'
 import '../css/components/tags-input.css'
+import '../css/components/filepond-plugin-file-caption.css'
 
 document.addEventListener('alpine:init', () => {
     window.Alpine.plugin(mask)

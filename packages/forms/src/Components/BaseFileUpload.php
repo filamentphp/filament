@@ -57,6 +57,8 @@ class BaseFileUpload extends Field
 
     protected string | Closure $visibility = 'public';
 
+    protected ?Closure $captionUploadedFileUsing = null;
+
     protected ?Closure $deleteUploadedFileUsing = null;
 
     protected ?Closure $getUploadedFileNameForStorageUsing = null;
@@ -409,6 +411,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function captionUploadedFileUsing(?Closure $callback): static
+    {
+        $this->captionUploadedFileUsing = $callback;
+
+        return $this;
+    }
+
     public function deleteUploadedFileUsing(?Closure $callback): static
     {
         $this->deleteUploadedFileUsing = $callback;
@@ -578,6 +587,22 @@ class BaseFileUpload extends Field
         };
 
         return $rules;
+    }
+
+    public function captionUploadedFile(BaseFileUpload $component, string $fileKey, string $caption): self
+    {
+        $callback = $this->captionUploadedFileUsing;
+
+        if (! $callback) {
+            return $this;
+        }
+
+        $this->evaluate($callback, [
+            'fileKey' => $fileKey,
+            'caption' => $caption,
+        ]);
+
+        return $this;
     }
 
     public function deleteUploadedFile(string $fileKey): static

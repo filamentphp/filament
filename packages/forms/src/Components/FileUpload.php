@@ -336,6 +336,11 @@ class FileUpload extends BaseFileUpload
         return $this;
     }
 
+    public function getFileCaption(): ?string
+    {
+        return 'testing';
+    }
+
     public function getImageEditorViewportHeight(): ?int
     {
         if (($targetHeight = (int) $this->getImageResizeTargetHeight()) > 1) {
