@@ -51,7 +51,12 @@
 >
     @if (count($arrayState))
         @if (filled($descriptionAbove))
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <p
+                @class([
+                    'text-sm text-gray-500 dark:text-gray-400',
+                    'whitespace-normal' => $canWrap,
+                ])
+            >
                 {{ $descriptionAbove }}
             </p>
         @endif
@@ -97,7 +102,9 @@
                             "
                         @endif
                         @class([
-                            'flex max-w-max',
+                            'flex' => ! $isBulleted,
+                            'max-w-max' => ! $isBadge,
+                            'w-max' => $isBadge,
                             'cursor-pointer' => $itemIsCopyable,
                         ])
                     >
@@ -183,7 +190,12 @@
         </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
 
         @if (filled($descriptionBelow))
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <p
+                @class([
+                    'text-sm text-gray-500 dark:text-gray-400',
+                    'whitespace-normal' => $canWrap,
+                ])
+            >
                 {{ $descriptionBelow }}
             </p>
         @endif
