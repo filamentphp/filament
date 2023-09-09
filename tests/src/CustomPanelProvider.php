@@ -21,6 +21,7 @@ class CustomPanelProvider extends PanelProvider
     {
         return $panel
             ->id('custom')
+            ->path('custom')
             ->login()
             ->resources([])
             ->pages([])
