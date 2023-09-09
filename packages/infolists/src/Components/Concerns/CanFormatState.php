@@ -36,8 +36,6 @@ trait CanFormatState
 
     protected bool | Closure $isMarkdown = false;
 
-    protected string | Closure | null $placeholder = null;
-
     public function markdown(bool | Closure $condition = true): static
     {
         $this->isMarkdown = $condition;
@@ -143,13 +141,6 @@ trait CanFormatState
         return $this;
     }
 
-    public function placeholder(string | Closure | null $placeholder): static
-    {
-        $this->placeholder = $placeholder;
-
-        return $this;
-    }
-
     public function limit(int | Closure | null $length = 100, string | Closure | null $end = '...'): static
     {
         $this->characterLimit = $length;
@@ -224,10 +215,6 @@ trait CanFormatState
             return $state;
         }
 
-        if (blank($state)) {
-            $state = $this->getPlaceholder();
-        }
-
         if ($this->isHtml()) {
             return str($state)
                 ->when($this->isMarkdown(), fn (Stringable $stringable) => $stringable->markdown())
@@ -281,10 +268,5 @@ trait CanFormatState
     public function isMarkdown(): bool
     {
         return (bool) $this->evaluate($this->isMarkdown);
-    }
-
-    public function getPlaceholder(): ?string
-    {
-        return $this->evaluate($this->placeholder);
     }
 }
