@@ -392,8 +392,9 @@
                     @endphp
 
                     @if ($isSelectionEnabled || count($sortableColumns))
-                        <div class="flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6">
-
+                        <div
+                            class="flex items-center gap-4 gap-x-6 bg-gray-50 px-4 dark:bg-white/5 sm:px-6"
+                        >
                             @if ($isSelectionEnabled && (! $isReordering))
                                 <x-filament-tables::selection.checkbox
                                     :label="__('filament-tables::table.fields.bulk_select_page.label')"
