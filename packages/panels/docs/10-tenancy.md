@@ -10,7 +10,7 @@ Multi-tenancy is a very sensitive topic. It's important to understand the securi
 
 ## Simplified multi-tenancy in Eloquent
 
-The term "multi-tenancy" is broad and may mean different things in different contexts. Filament's tenancy system implies that the User belongs to **many** tenants (*organizations, teams, companies, etc.*) and may switch between them. 
+The term "multi-tenancy" is broad and may mean different things in different contexts. Filament's tenancy system implies that the user belongs to **many** tenants (*organizations, teams, companies, etc.*) and may switch between them. 
 
 If your case is simpler and you don't need a many-to-many relationship, then you don't need to set up the tenancy in Filament. You could use [observers](https://laravel.com/docs/eloquent#observers) and [global scopes](https://laravel.com/docs/eloquent#global-scopes) instead.
 
