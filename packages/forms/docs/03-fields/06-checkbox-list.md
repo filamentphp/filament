@@ -116,7 +116,7 @@ CheckboxList::make('technologies')
     ->disableOptionWhen(fn (string $value): bool => $value === 'livewire')
 ```
 
-If you want to retrieve the options that have not been disabled, e.g., for validation purposes, you can do so using `getEnabledOptions()`:
+If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
 ```php
 use Filament\Forms\Components\CheckboxList;
