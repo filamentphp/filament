@@ -40,74 +40,50 @@
                     class="gap-4"
                 >
                     @foreach ($containers as $uuid => $item)
-                        @php
-                            $itemLabel = $getItemLabel($uuid);
-                        @endphp
-
                         <li
                             wire:key="{{ $this->getId() }}.{{ $item->getStatePath() }}.{{ $field::class }}.item"
                             x-sortable-item="{{ $uuid }}"
-                            class="fi-fo-simple-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10"
+                            class="fi-fo-repeater-item simple flex justify-start gap-x-3"
                         >
-                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable)
-                                <div
-                                    class="flex items-center gap-x-3 px-4 py-2"
-                                >
-                                    @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons)
-                                        <ul class="-ms-1.5 flex">
-                                            @if ($isReorderableWithDragAndDrop)
-                                                <li x-sortable-handle>
-                                                    {{ $reorderAction }}
-                                                </li>
-                                            @endif
-
-                                            @if ($isReorderableWithButtons)
-                                                <li
-                                                    class="flex items-center justify-center"
-                                                >
-                                                    {{ $moveUpAction(['item' => $uuid])->disabled($loop->first) }}
-                                                </li>
-
-                                                <li
-                                                    class="flex items-center justify-center"
-                                                >
-                                                    {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
-                                                </li>
-                                            @endif
-                                        </ul>
-                                    @endif
-
-                                    @if (filled($itemLabel))
-                                        <h4
-                                            class="truncate text-sm font-medium text-gray-950 dark:text-white"
-                                        >
-                                            {{ $itemLabel }}
-                                        </h4>
-                                    @endif
-
-                                    @if ($isCloneable || $isDeletable)
-                                        <ul class="-me-1.5 ms-auto flex">
-                                            @if ($cloneAction->isVisible())
-                                                <li>
-                                                    {{ $cloneAction(['item' => $uuid]) }}
-                                                </li>
-                                            @endif
-
-                                            @if ($isDeletable)
-                                                <li>
-                                                    {{ $deleteAction(['item' => $uuid]) }}
-                                                </li>
-                                            @endif
-                                        </ul>
-                                    @endif
-                                </div>
-                            @endif
-
-                            <div
-                                class="border-t border-gray-100 p-4 dark:border-white/10"
-                            >
+                            <div class="flex-1">
                                 {{ $item }}
                             </div>
+
+                            @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || $isCloneable || $isDeletable)
+                                <ul class="flex items-center gap-x-1">
+                                    @if ($isReorderableWithDragAndDrop)
+                                        <li x-sortable-handle>
+                                            {{ $reorderAction }}
+                                        </li>
+                                    @endif
+
+                                    @if ($isReorderableWithButtons)
+                                        <li
+                                            class="flex items-center justify-center"
+                                        >
+                                            {{ $moveUpAction(['item' => $uuid])->disabled($loop->first) }}
+                                        </li>
+
+                                        <li
+                                            class="flex items-center justify-center"
+                                        >
+                                            {{ $moveDownAction(['item' => $uuid])->disabled($loop->last) }}
+                                        </li>
+                                    @endif
+
+                                    @if ($isCloneable)
+                                        <li>
+                                            {{ $cloneAction(['item' => $uuid]) }}
+                                        </li>
+                                    @endif
+
+                                    @if ($isDeletable)
+                                        <li>
+                                            {{ $deleteAction(['item' => $uuid]) }}
+                                        </li>
+                                    @endif
+                                </ul>
+                            @endif
                         </li>
                     @endforeach
                 </x-filament::grid>

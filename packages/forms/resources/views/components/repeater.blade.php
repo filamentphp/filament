@@ -133,7 +133,7 @@
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible)
                                         <ul class="-me-1.5 ms-auto flex">
-                                            @if ($cloneAction->isVisible())
+                                            @if ($isCloneable)
                                                 <li>
                                                     {{ $cloneAction(['item' => $uuid]) }}
                                                 </li>

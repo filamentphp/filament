@@ -46,9 +46,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected string | Closure | null $itemLabel = null;
 
-    protected bool | Closure $simpleField = false;
-
-    protected Field | Closure | null $field = null;
+    protected Field | Closure | null $simpleField = null;
 
     protected ?Closure $modifyRelationshipQueryUsing = null;
 
@@ -78,6 +76,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
+    protected bool $hasHydratedSimpleState = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -86,10 +86,16 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             $items = [];
-            $simpleField = $component->getSimpleField();
+
+            $shouldHydrateSimpleState = (
+                (! $component->hasHydratedSimpleState) &&
+                ($simpleField = $component->getSimpleField())
+            );
 
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $simpleField ? [$simpleField->getName() => $itemData] : $itemData;
+                $items[(string) Str::uuid()] = $shouldHydrateSimpleState ?
+                    [$simpleField->getName() => $itemData] :
+                    $itemData;
             }
 
             $component->state($items);
@@ -494,17 +500,36 @@ class Repeater extends Field implements Contracts\CanConcealComponents
     public function defaultItems(int | Closure $count): static
     {
         $this->default(static function (Repeater $component) use ($count): array {
-            $items = [];
-
             $count = $component->evaluate($count);
 
             if (! $count) {
-                return $items;
+                return [];
             }
 
-            foreach (range(1, $count) as $index) {
-                $items[(string) Str::uuid()] = [];
+            return array_fill(0, $count, $component->isSimple() ? null : []);
+        });
+
+        return $this;
+    }
+
+    public function default(mixed $state): static
+    {
+        parent::default(function (Repeater $component) use ($state) {
+            $state = $component->evaluate($state);
+
+            $simpleField = $component->getSimpleField();
+
+            if (! $simpleField) {
+                return $state;
             }
+
+            $items = [];
+
+            foreach ($state as $value) {
+                $items[] = [$simpleField->getName() => $value];
+            }
+
+            $component->hasHydratedSimpleState = true;
 
             return $items;
         });
@@ -902,7 +927,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     public function isSimple(): bool
     {
-        return (bool) $this->simpleField;
+        return $this->simpleField !== null;
     }
 
     public function getSimpleField(): ?Field
