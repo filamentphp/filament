@@ -40,6 +40,10 @@ return [
                 'label' => 'Light Mode einschalten',
             ],
 
+            'system' => [
+                'label' => 'Systemthema benutzen',
+            ],
+
         ],
 
     ],

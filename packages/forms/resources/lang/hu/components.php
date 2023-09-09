@@ -43,11 +43,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'Becsuk minden',
+                'label' => 'Becsuk mindent',
             ],
 
             'expand_all' => [
-                'label' => 'Kibont minden',
+                'label' => 'Kibont mindent',
             ],
 
         ],
@@ -81,11 +81,11 @@ return [
                 ],
 
                 'drag_crop' => [
-                    'label' => 'Drag mode "crop"',
+                    'label' => 'Kijelölés mód',
                 ],
 
                 'drag_move' => [
-                    'label' => 'Drag mode "move"',
+                    'label' => 'Mozgatás mód',
                 ],
 
                 'flip_horizontal' => [
@@ -278,11 +278,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => 'Becsuk minden',
+                'label' => 'Becsuk mindent',
             ],
 
             'expand_all' => [
-                'label' => 'Kibont minden',
+                'label' => 'Kibont mindent',
             ],
 
         ],

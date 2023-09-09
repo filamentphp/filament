@@ -6,6 +6,7 @@
     'active' => false,
     'alpineActive' => null,
     'badge' => null,
+    'badgeColor' => null,
     'icon' => null,
     'iconColor' => 'gray',
     'iconPosition' => IconPosition::Before,
@@ -16,11 +17,15 @@
 @php
     $hasAlpineActiveClasses = filled($alpineActive);
 
-    $inactiveItemClasses = 'text-gray-500 hover:text-gray-700 focus:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 dark:focus:text-gray-200';
+    $inactiveItemClasses = 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5';
 
-    $activeItemClasses = 'fi-tabs-item-active bg-gray-50 text-primary-600 dark:bg-white/5 dark:text-primary-400';
+    $activeItemClasses = 'fi-active fi-tabs-item-active bg-gray-50 dark:bg-white/5';
 
-    $iconClasses = 'fi-tabs-item-icon h-5 w-5';
+    $inactiveLabelClasses = 'text-gray-500 group-hover:text-gray-700 group-focus:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 dark:group-focus:text-gray-200';
+
+    $activeLabelClasses = 'text-primary-600 dark:text-primary-400';
+
+    $iconClasses = 'fi-tabs-item-icon h-5 w-5 transition duration-75';
 
     $inactiveIconClasses = 'text-gray-400 dark:text-gray-500';
 
@@ -44,7 +49,7 @@
                 'role' => 'tab',
             ])
             ->class([
-                'fi-tabs-item flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium font-medium outline-none transition duration-75 hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
+                'fi-tabs-item group flex items-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75',
                 $inactiveItemClasses => (! $hasAlpineActiveClasses) && (! $active),
                 $activeItemClasses => (! $hasAlpineActiveClasses) && $active,
             ])
@@ -62,7 +67,19 @@
         />
     @endif
 
-    <span>
+    <span
+        @if ($hasAlpineActiveClasses)
+            x-bind:class="{
+                @js($inactiveLabelClasses): ! {{ $alpineActive }},
+                @js($activeLabelClasses): {{ $alpineActive }},
+            }"
+        @endif
+        @class([
+            'fi-tabs-item-label transition duration-75',
+            $inactiveLabelClasses => (! $hasAlpineActiveClasses) && (! $active),
+            $activeLabelClasses => (! $hasAlpineActiveClasses) && $active,
+        ])
+    >
         {{ $slot }}
     </span>
 
@@ -79,7 +96,7 @@
     @endif
 
     @if (filled($badge))
-        <x-filament::badge size="sm">
+        <x-filament::badge size="sm" :color="$badgeColor">
             {{ $badge }}
         </x-filament::badge>
     @endif

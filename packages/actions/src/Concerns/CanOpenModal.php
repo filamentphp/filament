@@ -3,6 +3,7 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Actions\Contracts\HasRecord;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Filament\Support\Enums\Alignment;
@@ -401,8 +402,16 @@ trait CanOpenModal
             return $action;
         }
 
-        return $action
-            ->livewire($this->getLivewire());
+        $action->livewire($this->getLivewire());
+
+        if (
+            ($this instanceof HasRecord) &&
+            ($action instanceof HasRecord)
+        ) {
+            $action->record($this->getRecord());
+        }
+
+        return $action;
     }
 
     /**

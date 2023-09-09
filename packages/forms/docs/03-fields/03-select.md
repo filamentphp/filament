@@ -162,7 +162,7 @@ Select::make('technologies')
 
 ### Searching relationship options across multiple columns
 
-By default, if the select is also searchable, Filament will return search results for the relationship based on title column of the relationship. If you'd like to search across multiple columns, you can pass an array of columns to the `searchable()` method:
+By default, if the select is also searchable, Filament will return search results for the relationship based on the title column of the relationship. If you'd like to search across multiple columns, you can pass an array of columns to the `searchable()` method:
 
 ```php
 use Filament\Forms\Components\Select;
@@ -336,19 +336,6 @@ MorphToSelect::make('commentable')
 ```
 
 > Many of the same options in the select field are available for `MorphToSelect`, including `searchable()`, `preload()`, `allowHtml()`, and `optionsLimit()`.
-
-### Forcing case-insensitive search
-
-By default, searching will use the sensitivity settings from the database table column. This is to avoid unnecessary performance overhead when searching large datasets that would arise if we were to force insensitivity for all users. However, if your database does not search case-insensitively by default, you can force it to by using the `forceSearchCaseInsensitive()` method:
-
-```php
-use Filament\Forms\Components\Select;
-
-Select::make('author_id')
-    ->relationship(name: 'author', titleAttribute: 'name')
-    ->searchable()
-    ->forceSearchCaseInsensitive()
-```
 
 ## Allowing HTML in the option labels
 

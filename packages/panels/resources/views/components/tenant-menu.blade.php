@@ -5,15 +5,18 @@
 
     $billingItem = $items['billing'] ?? null;
     $billingItemUrl = $billingItem?->getUrl();
-    $hasTenantBilling = filament()->hasTenantBilling() || filled($billingItemUrl);
+    $isBillingItemVisible = $billingItem?->isVisible() ?? true;
+    $hasBillingItem = (filament()->hasTenantBilling() || filled($billingItemUrl)) && $isBillingItemVisible;
 
     $registrationItem = $items['register'] ?? null;
     $registrationItemUrl = $registrationItem?->getUrl();
-    $hasTenantRegistration = (filament()->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView()) || filled($registrationItemUrl);
+    $isRegistrationItemVisible = $registrationItem?->isVisible() ?? true;
+    $hasRegistrationItem = ((filament()->hasTenantRegistration() && filament()->getTenantRegistrationPage()::canView()) || filled($registrationItemUrl)) && $isRegistrationItemVisible;
 
     $profileItem = $items['profile'] ?? null;
     $profileItemUrl = $profileItem?->getUrl();
-    $hasTenantProfile = (filament()->hasTenantProfile() && filament()->getTenantProfilePage()::canView($currentTenant)) || filled($profileItemUrl);
+    $isProfileItemVisible = $profileItem?->isVisible() ?? true;
+    $hasProfileItem = ((filament()->hasTenantProfile() && filament()->getTenantProfilePage()::canView($currentTenant)) || filled($profileItemUrl)) && $isProfileItemVisible;
 
     $canSwitchTenants = count($tenants = array_filter(
         filament()->getUserTenants(filament()->auth()->user()),
@@ -49,7 +52,7 @@
                 x-tooltip.html="tooltip"
             @endif
             type="button"
-            class="group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
+            class="fi-tenant-menu-trigger group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
         >
             <x-filament-panels::avatar.tenant :tenant="$currentTenant" />
 
@@ -79,9 +82,9 @@
         </button>
     </x-slot>
 
-    @if ($hasTenantProfile || $hasTenantBilling)
+    @if ($hasProfileItem || $hasBillingItem)
         <x-filament::dropdown.list>
-            @if ($hasTenantProfile)
+            @if ($hasProfileItem)
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
                     :href="$profileItemUrl ?? filament()->getTenantProfileUrl()"
@@ -92,7 +95,7 @@
                 </x-filament::dropdown.list.item>
             @endif
 
-            @if ($hasTenantBilling)
+            @if ($hasBillingItem)
                 <x-filament::dropdown.list.item
                     :color="$billingItem?->getColor() ?? 'gray'"
                     :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
@@ -134,7 +137,7 @@
         </x-filament::dropdown.list>
     @endif
 
-    @if ($hasTenantRegistration)
+    @if ($hasRegistrationItem)
         <x-filament::dropdown.list>
             <x-filament::dropdown.list.item
                 :color="$registrationItem?->getColor()"

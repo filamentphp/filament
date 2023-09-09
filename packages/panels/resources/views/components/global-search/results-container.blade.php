@@ -23,7 +23,7 @@
     x-transition:leave-end="opacity-0"
     {{
         $attributes->class([
-            'fi-global-search-results-ctn absolute end-0 z-10 mt-2 max-h-96 w-screen max-w-sm overflow-auto rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10',
+            'fi-global-search-results-ctn absolute inset-x-4 z-10 mt-2 max-h-96 overflow-auto rounded-lg bg-white shadow-lg ring-1 ring-gray-950/5 transition dark:bg-gray-900 dark:ring-white/10 sm:inset-x-auto sm:end-0 sm:w-screen sm:max-w-sm',
         ])
     }}
 >

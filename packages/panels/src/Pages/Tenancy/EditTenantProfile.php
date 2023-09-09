@@ -4,7 +4,6 @@ namespace Filament\Pages\Tenancy;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -17,6 +16,8 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Locked;
+
+use function Filament\authorize;
 
 /**
  * @property Form $form
@@ -166,6 +167,11 @@ abstract class EditTenantProfile extends Page
         return null;
     }
 
+    public function form(Form $form): Form
+    {
+        return $form;
+    }
+
     /**
      * @return array<int | string, string | Form>
      */
@@ -212,7 +218,7 @@ abstract class EditTenantProfile extends Page
     public static function canView(Model $tenant): bool
     {
         try {
-            return authorize('edit', $tenant)->allowed();
+            return authorize('update', $tenant)->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }

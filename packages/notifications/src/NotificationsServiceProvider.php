@@ -10,10 +10,11 @@ use Filament\Support\Facades\FilamentAsset;
 use Livewire\Component;
 use Livewire\Features\SupportTesting\Testable;
 use Livewire\Livewire;
-use function Livewire\on;
-use function Livewire\store;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
+
+use function Livewire\on;
+use function Livewire\store;
 
 class NotificationsServiceProvider extends PackageServiceProvider
 {

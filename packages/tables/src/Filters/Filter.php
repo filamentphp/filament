@@ -8,7 +8,7 @@ use Filament\Forms\Components\Toggle;
 
 class Filter extends BaseFilter
 {
-    public string $formComponent = Checkbox::class;
+    protected string $formComponent = Checkbox::class;
 
     protected function setUp(): void
     {

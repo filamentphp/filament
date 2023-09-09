@@ -2,7 +2,7 @@
 
 namespace Filament\Resources\RelationManagers;
 
-use function Filament\authorize;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
@@ -20,8 +20,11 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
+use function Filament\authorize;
+
+class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
+    use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
@@ -245,7 +248,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
         $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
 
         try {
-            return authorize('viewAll', $model, static::shouldCheckPolicyExistence())->allowed();
+            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }

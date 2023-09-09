@@ -37,7 +37,8 @@
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "fi-btn fi-btn-size-{$stringSize} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70",
+            "fi-btn fi-btn-size-{$stringSize} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2",
+            'pointer-events-none opacity-70' => $disabled,
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
             is_string($color) ? "fi-btn-color-{$color}" : null,
@@ -106,14 +107,7 @@
         },
     ]);
 
-    $stringIconSize = match ($iconSize) {
-        IconSize::Small => 'sm',
-        IconSize::Medium => 'md',
-        IconSize::Large => 'lg',
-        default => $iconSize,
-    };
-
-    $badgeClasses = 'absolute -top-1 start-full z-10 -ms-1 -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
+    $badgeContainerClasses = 'fi-btn-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
     $labelClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-btn-label',
@@ -220,7 +214,7 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $stringIconSize"
+                    :class="$iconClasses"
                 />
             @endif
 
@@ -228,7 +222,7 @@
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses . ' ' . $stringIconSize"
+                    :class="$iconClasses"
                 />
             @endif
         @endif
@@ -263,7 +257,7 @@
                 <x-filament::loading-indicator
                     wire:loading.delay=""
                     :wire:target="$loadingIndicatorTarget"
-                    :class="$iconClasses . ' ' . $stringIconSize"
+                    :class="$iconClasses"
                 />
             @endif
 
@@ -271,13 +265,13 @@
                 <x-filament::loading-indicator
                     x-show="isUploadingFile"
                     x-cloak="x-cloak"
-                    :class="$iconClasses . ' ' . $stringIconSize"
+                    :class="$iconClasses"
                 />
             @endif
         @endif
 
         @if (filled($badge))
-            <div class="{{ $badgeClasses }}">
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>
@@ -325,7 +319,7 @@
         @endif
 
         @if (filled($badge))
-            <div class="{{ $badgeClasses }}">
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>

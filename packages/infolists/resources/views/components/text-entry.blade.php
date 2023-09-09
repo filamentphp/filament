@@ -11,6 +11,7 @@
         $iconPosition = $getIconPosition();
         $isListWithLineBreaks = $isListWithLineBreaks();
         $isProse = $isProse();
+        $isMarkdown = $isMarkdown();
         $url = $getUrl();
 
         $arrayState = $getState();
@@ -79,7 +80,7 @@
                         ]);
 
                         $iconClasses = \Illuminate\Support\Arr::toCssClasses([
-                            'fi-in-text-item-icon h-5 w-5',
+                            'fi-in-text-item-icon h-5 w-5 shrink-0',
                             match ($color) {
                                 'gray', null => 'text-gray-400 dark:text-gray-500',
                                 default => 'text-custom-500',
@@ -158,7 +159,7 @@
 
                                 <div
                                     @class([
-                                        $proseClasses => $isProse,
+                                        $proseClasses => $isProse || $isMarkdown,
                                     ])
                                 >
                                     {{ $formattedState }}

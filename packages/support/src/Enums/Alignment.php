@@ -15,4 +15,6 @@ enum Alignment
     case Right;
 
     case Justify;
+
+    case Between;
 }

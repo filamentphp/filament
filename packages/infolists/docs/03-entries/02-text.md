@@ -247,7 +247,8 @@ TextEntry::make('email')
 You may set the position of an icon using `iconPosition()`:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Support\Enums\IconPosition;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\IconPosition;
 
 TextEntry::make('email')
     ->icon('heroicon-m-envelope')
@@ -271,18 +272,19 @@ TextEntry::make('title')
 
 ## Customizing the font weight
 
-Text entries have regular font weight by default but you may change this to any of the following options: `FontWeight::Thin`, `FontWeight::ExtraLight`, `FontWeight::Light`, `FontWeight::Medium`, `FontWeight::SemiBold`, `FontWeight::Bold`, `FontWeight::ExtraBold` or `FontWeight::Black`.
+Text entries have regular font weight by default, but you may change this to any of the following options: `FontWeight::Thin`, `FontWeight::ExtraLight`, `FontWeight::Light`, `FontWeight::Medium`, `FontWeight::SemiBold`, `FontWeight::Bold`, `FontWeight::ExtraBold` or `FontWeight::Black`.
 
 For instance, you may make the font bold using `weight(FontWeight::Bold)`:
 
 ```php
-use Filament\Infolists\Components\TextEntry;use Filament\Support\Enums\FontWeight;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\FontWeight;
 
 TextEntry::make('title')
     ->weight(FontWeight::Bold)
 ```
 
-<AutoScreenshot name="infolists/entries/text/bolt" alt="Text entry in a bold font" version="3.x" />
+<AutoScreenshot name="infolists/entries/text/bold" alt="Text entry in a bold font" version="3.x" />
 
 ## Customizing the font family
 

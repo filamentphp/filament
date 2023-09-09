@@ -100,7 +100,7 @@ Finally, in your Livewire component's view, render the form:
 </div>
 ```
 
-> `<x-filament-actions::modals />` is used to render form component [action modals](actions). The code can be put anywhere outside of the `<form>` element, as long as it's within the Livewire component.
+> `<x-filament-actions::modals />` is used to render form component [action modals](actions). The code can be put anywhere outside the `<form>` element, as long as it's within the Livewire component.
 
 Visit your Livewire component in the browser, and you should see the form components from `schema()`:
 
@@ -138,7 +138,7 @@ Giving the `$form` access to a model is useful for a few reasons:
 - The form can load and save the model's relationship data automatically. For example, you have an Edit Post form, with a [Repeater](fields/repeater#integrating-with-an-eloquent-relationship) which manages comments associated with that post. Filament will automatically load the comments for that post when you call `$this->form->fill([...])`, and save them back to the relationship when you call `$this->form->getState()`.
 - Validation rules like `exists()` and `unique()` can automatically retrieve the database table name from the model.
 
-It is advised to always pass the model to the form when there is one. As explained, it unlocks many new powers of the Filament form builder.
+It is advised to always pass the model to the form when there is one. As explained, it unlocks many new powers of the Filament Form Builder.
 
 To pass the model to the form, use the `$form->model()` method:
 
@@ -271,7 +271,7 @@ public function createCommentForm(Form $form): Form
 
 Now, each form is addressable by its name instead of `form`. For example, to fill the post form, you can use `$this->editPostForm->fill([...])`, or to get the data from the comment form you can use `$this->createCommentForm->getState()`.
 
-You'll notice that each form has its own unique `statePath()`. Each form will write it's state to a different array on your Livewire component, so it's important to define these:
+You'll notice that each form has its own unique `statePath()`. Each form will write its state to a different array on your Livewire component, so it's important to define these:
 
 ```php
 public ?array $postData = [];
@@ -296,7 +296,7 @@ public function createComment(): void
 
 ## Generating form Livewire components with the CLI
 
-It's advised that you learn how to set up a Livewire component with the form builder manually, but once you are confident, you can use the CLI to generate a form for you.
+It's advised that you learn how to set up a Livewire component with the Form Builder manually, but once you are confident, you can use the CLI to generate a form for you.
 
 ```bash
 php artisan make:livewire-form RegistrationForm
@@ -330,4 +330,4 @@ Filament is also able to guess which form fields you want in the schema, based o
 php artisan make:livewire-form Products/CreateProduct --generate
 ```
 
-> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).
+> If your table contains ENUM columns, the `doctrine/dbal` package we use is unable to scan your table and will crash. Hence, Filament is unable to generate the schema for your table if it contains an ENUM column. Read more about this issue [here](https://github.com/doctrine/dbal/issues/3819#issuecomment-573419808).

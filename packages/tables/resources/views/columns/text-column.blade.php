@@ -7,8 +7,9 @@
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
-    $isBadge = $isBadge();
     $iconPosition = $getIconPosition();
+    $isBadge = $isBadge();
+    $isBulleted = $isBulleted();
     $isListWithLineBreaks = $isListWithLineBreaks();
     $url = $getUrl();
 
@@ -49,14 +50,19 @@
     }}
 >
     @if (filled($descriptionAbove))
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p
+            @class([
+                'text-sm text-gray-500 dark:text-gray-400',
+                'whitespace-normal' => $canWrap,
+            ])
+        >
             {{ $descriptionAbove }}
         </p>
     @endif
 
     <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
         @class([
-            'list-inside list-disc' => $isBulleted(),
+            'list-inside list-disc' => $isBulleted,
             'flex flex-wrap items-center gap-1.5' => $isBadge,
             'whitespace-normal' => $canWrap,
         ])
@@ -95,7 +101,9 @@
                         "
                     @endif
                     @class([
-                        'flex max-w-max',
+                        'flex' => ! $isBulleted,
+                        'max-w-max' => ! $isBadge,
+                        'w-max' => $isBadge,
                         'cursor-pointer' => $itemIsCopyable,
                     ])
                 >
@@ -181,7 +189,12 @@
     </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
 
     @if (filled($descriptionBelow))
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p
+            @class([
+                'text-sm text-gray-500 dark:text-gray-400',
+                'whitespace-normal' => $canWrap,
+            ])
+        >
             {{ $descriptionBelow }}
         </p>
     @endif

@@ -28,13 +28,13 @@ trait Translatable
 
     public function getTranslatableLocales(): array
     {
-        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
+        return static::getResource()::getTranslatableLocales();
     }
 
     protected function setActiveLocale(?string $locale = null): void
     {
         $this->activeLocale = filled($locale) ? $locale : static::getResource()::getDefaultTranslatableLocale();
-        $this->cacheForm('form', $this->form($this->makeForm()));
+        $this->cacheForm('form', $this->getForms()['form']);
     }
 
     public function create(bool $another = false): void

@@ -15,7 +15,7 @@ protected function mutateFormDataBeforeFill(array $data): array
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#customizing-data-before-filling-the-form).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/edit#customizing-data-before-filling-the-form).
 
 ## Customizing data before saving
 
@@ -30,7 +30,7 @@ protected function mutateFormDataBeforeSave(array $data): array
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#customizing-data-before-saving).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/edit#customizing-data-before-saving).
 
 ## Customizing the saving process
 
@@ -47,7 +47,7 @@ protected function handleRecordUpdate(Model $record, array $data): Model
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#customizing-the-saving-process).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/edit#customizing-the-saving-process).
 
 ## Customizing redirects
 
@@ -95,7 +95,7 @@ protected function getSavedNotificationTitle(): ?string
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#customizing-the-save-notification).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/edit#customizing-the-save-notification).
 
 You may customize the entire notification by overriding the `getSavedNotification()` method on the edit page class:
 
@@ -176,7 +176,7 @@ class EditUser extends EditRecord
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#lifecycle-hooks).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/edit#lifecycle-hooks).
 
 ## Halting the saving process
 
@@ -206,7 +206,7 @@ protected function beforeSave(): void
 }
 ```
 
-Alternatively, if you're editing records in a modal action, check out the [actions documentation](../../actions/prebuilt-actions/edit#halting-the-saving-process).
+Alternatively, if you're editing records in a modal action, check out the [Actions documentation](../../actions/prebuilt-actions/edit#halting-the-saving-process).
 
 ## Authorization
 
@@ -282,7 +282,7 @@ protected static string $view = 'filament.resources.users.pages.edit-user';
 
 This assumes that you have created a view at `resources/views/filament/resources/users/pages/edit-user.blade.php`.
 
-Here's a very simple example of what that view might contain:
+Here's a basic example of what that view might contain:
 
 ```blade
 <x-filament-panels::page>

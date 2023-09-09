@@ -7,6 +7,7 @@
     $descriptionIconPosition = $getDescriptionIconPosition();
     $url = $getUrl();
     $tag = $url ? 'a' : 'div';
+    $dataChecksum = $generateDataChecksum();
 
     $descriptionIconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-wi-stats-overview-stat-description-icon h-5 w-5',
@@ -98,6 +99,7 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('stats-overview/stat/chart', 'filament/widgets') }}"
                 x-data="statsOverviewStatChart({
+                            dataChecksum: @js($dataChecksum),
                             labels: @js(array_keys($chart)),
                             values: @js(array_values($chart)),
                         })"

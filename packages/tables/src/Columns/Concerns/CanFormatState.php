@@ -4,14 +4,15 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 
 trait CanFormatState
 {

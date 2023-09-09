@@ -20,7 +20,7 @@ trait Translatable
 
     public function getTranslatableLocales(): array
     {
-        return $this->translatableLocales ?? static::getResource()::getTranslatableLocales();
+        return static::getResource()::getTranslatableLocales();
     }
 
     public function save(bool $shouldRedirect = true): void

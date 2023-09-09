@@ -8,6 +8,7 @@ use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Illuminate\Database\Eloquent\Model;
+
 use function Livewire\store;
 
 /**
@@ -25,7 +26,10 @@ trait HasActions
      */
     public ?array $mountedTableActionsData = [];
 
-    public int | string | null $mountedTableActionRecord = null;
+    /**
+     * @var int | string | null
+     */
+    public $mountedTableActionRecord = null;
 
     protected ?Model $cachedMountedTableActionRecord = null;
 

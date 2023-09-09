@@ -40,8 +40,8 @@ trait CanSearchRecords
      */
     public function updatedTableColumnSearches($value = null, ?string $key = null): void
     {
-        if (blank($value) && ! str($key)->contains('.')) {
-            unset($this->tableColumnSearches[$key]);
+        if (blank($value) && filled($key)) {
+            Arr::forget($this->tableColumnSearches, $key);
         }
 
         if ($this->getTable()->persistsColumnSearchesInSession()) {
@@ -105,7 +105,7 @@ trait CanSearchRecords
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
     {
-        $search = trim(strtolower($this->getTableSearch()));
+        $search = trim($this->getTableSearch());
 
         if (blank($search)) {
             return $query;
@@ -248,7 +248,7 @@ trait CanSearchRecords
             // Nested array keys are flattened into `dot.syntax`.
             $searches[
                 implode('.', array_slice($path, 0, $iterator->getDepth() + 1))
-            ] = trim(strtolower($value));
+            ] = trim($value);
         }
 
         return $searches;

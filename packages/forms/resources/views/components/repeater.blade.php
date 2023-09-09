@@ -66,6 +66,7 @@
                             x-data="{
                                 isCollapsed: @js($isCollapsed($item)),
                             }"
+                            x-bind:class="isCollapsed && 'fi-collapsed'"
                             x-on:expand-concealing-component.window="
                                 error = $el.querySelector('[data-validation-error]')
 
@@ -132,7 +133,7 @@
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible)
                                         <ul class="-me-1.5 ms-auto flex">
-                                            @if ($cloneAction->isVisible())
+                                            @if ($isCloneable)
                                                 <li>
                                                     {{ $cloneAction(['item' => $uuid]) }}
                                                 </li>

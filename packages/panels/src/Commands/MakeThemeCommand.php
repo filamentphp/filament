@@ -8,6 +8,7 @@ use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+
 use function Laravel\Prompts\select;
 
 class MakeThemeCommand extends Command
@@ -28,7 +29,7 @@ class MakeThemeCommand extends Command
             return static::FAILURE;
         }
 
-        $this->info("Using Node.js v{$npmVersion[0]}");
+        $this->info("Using NPM v{$npmVersion[0]}");
 
         exec('npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev');
 

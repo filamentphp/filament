@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Prisijunkite prie savo paskyros',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'arba',
+            'label' => 'užsiregistruokite',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Pamiršote slaptažodį?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
@@ -40,6 +53,7 @@ return [
 
         'throttled' => [
             'title' => 'Per daug bandymų prisijungti. Bandykite po :seconds sekundžių.',
+            'body' => 'Pabandykite dar katą už :seconds sekundžių.',
         ],
 
     ],
