@@ -46,7 +46,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected string | Closure | null $itemLabel = null;
 
-    protected bool | Closure $isSimple = false;
+    protected bool | Closure $simpleField = false;
 
     protected Field | Closure | null $field = null;
 
@@ -86,11 +86,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             $items = [];
-            $isSimple = $component->isSimple();
-            $field = $component->getField();
+            $simpleField = $component->getSimpleField();
 
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $isSimple ? [$field->getName() => $itemData] : $itemData;
+                $items[(string) Str::uuid()] = $simpleField ? [$simpleField->getName() => $itemData] : $itemData;
             }
 
             $component->state($items);
@@ -110,10 +109,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         ]);
 
         $this->mutateDehydratedStateUsing(static function (Repeater $component, ?array $state): array {
-            if ($component->isSimple()) {
+            if ($simpleField = $component->getSimpleField()) {
                 return collect($state ?? [])
                     ->values()
-                    ->pluck($component->getField()->getName())
+                    ->pluck($simpleField->getName())
                     ->all();
             }
 
@@ -588,8 +587,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     public function getChildComponents(): array
     {
-        if ($this->isSimple()) {
-            return [$this->getField()];
+        if ($simpleField = $this->getSimpleField()) {
+            return [$simpleField];
         }
 
         return parent::getChildComponents();
@@ -894,28 +893,21 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         return $this->itemLabel !== null;
     }
 
-    public function simple(bool | Closure $condition = true): static
+    public function simple(Field | Closure | null $field): static
     {
-        $this->isSimple = $condition;
+        $this->simpleField = $field;
 
         return $this;
     }
 
     public function isSimple(): bool
     {
-        return (bool) $this->evaluate($this->isSimple);
+        return (bool) $this->simpleField;
     }
 
-    public function field(Field $field): static
+    public function getSimpleField(): ?Field
     {
-        $this->field = $field;
-
-        return $this;
-    }
-
-    public function getField(): ?Field
-    {
-        return $this->evaluate($this->field)?->hiddenLabel();
+        return $this->evaluate($this->simpleField)?->hiddenLabel();
     }
 
     public function clearCachedExistingRecords(): void
