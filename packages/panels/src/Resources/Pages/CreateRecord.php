@@ -11,6 +11,7 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Str;
 
 /**
@@ -23,7 +24,7 @@ class CreateRecord extends Page
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::resources.pages.create-record';
+    protected static string $view = 'filament-panels::resources.pages.create-record';
 
     public ?Model $record = null;
 
@@ -38,7 +39,7 @@ class CreateRecord extends Page
 
     public function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? __('filament::resources/pages/create-record.breadcrumb');
+        return static::$breadcrumb ?? __('filament-panels::resources/pages/create-record.breadcrumb');
     }
 
     public function mount(): void
@@ -149,7 +150,7 @@ class CreateRecord extends Page
 
     protected function getCreatedNotificationTitle(): ?string
     {
-        return $this->getCreatedNotificationMessage() ?? __('filament::resources/pages/create-record.messages.created');
+        return $this->getCreatedNotificationMessage() ?? __('filament-panels::resources/pages/create-record.notifications.created.title');
     }
 
     /**
@@ -183,7 +184,15 @@ class CreateRecord extends Page
 
     protected function associateRecordWithTenant(Model $record, Model $tenant): Model
     {
-        return static::getResource()::getTenantRelationship($tenant)->save($record);
+        $relationship = static::getResource()::getTenantRelationship($tenant);
+
+        if ($relationship instanceof HasManyThrough) {
+            $record->save();
+
+            return $record;
+        }
+
+        return $relationship->save($record);
     }
 
     /**
@@ -210,7 +219,7 @@ class CreateRecord extends Page
     protected function getCreateFormAction(): Action
     {
         return Action::make('create')
-            ->label(__('filament::resources/pages/create-record.form.actions.create.label'))
+            ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
             ->submit('create')
             ->keyBindings(['mod+s']);
     }
@@ -223,7 +232,7 @@ class CreateRecord extends Page
     protected function getCreateAnotherFormAction(): Action
     {
         return Action::make('createAnother')
-            ->label(__('filament::resources/pages/create-record.form.actions.create_another.label'))
+            ->label(__('filament-panels::resources/pages/create-record.form.actions.create_another.label'))
             ->action('createAnother')
             ->keyBindings(['mod+shift+s'])
             ->color('gray');
@@ -232,7 +241,7 @@ class CreateRecord extends Page
     protected function getCancelFormAction(): Action
     {
         return Action::make('cancel')
-            ->label(__('filament::resources/pages/create-record.form.actions.cancel.label'))
+            ->label(__('filament-panels::resources/pages/create-record.form.actions.cancel.label'))
             ->url($this->previousUrl ?? static::getResource()::getUrl())
             ->color('gray');
     }
@@ -243,21 +252,31 @@ class CreateRecord extends Page
             return static::$title;
         }
 
-        return __('filament::resources/pages/create-record.title', [
+        return __('filament-panels::resources/pages/create-record.title', [
             'label' => Str::headline(static::getResource()::getModelLabel()),
         ]);
     }
 
     public function form(Form $form): Form
     {
-        return static::getResource()::form(
-            $form
-                ->operation('create')
-                ->model($this->getModel())
-                ->statePath($this->getFormStatePath())
-                ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels()),
-        );
+        return $form;
+    }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(static::getResource()::form(
+                $this->makeForm()
+                    ->operation('create')
+                    ->model($this->getModel())
+                    ->statePath($this->getFormStatePath())
+                    ->columns($this->hasInlineLabels() ? 1 : 2)
+                    ->inlineLabel($this->hasInlineLabels()),
+            )),
+        ];
     }
 
     protected function getRedirectUrl(): string
@@ -265,14 +284,22 @@ class CreateRecord extends Page
         $resource = static::getResource();
 
         if ($resource::hasPage('view') && $resource::canView($this->getRecord())) {
-            return $resource::getUrl('view', ['record' => $this->getRecord()]);
+            return $resource::getUrl('view', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
         }
 
         if ($resource::hasPage('edit') && $resource::canEdit($this->getRecord())) {
-            return $resource::getUrl('edit', ['record' => $this->getRecord()]);
+            return $resource::getUrl('edit', ['record' => $this->getRecord(), ...$this->getRedirectUrlParameters()]);
         }
 
         return $resource::getUrl('index');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    protected function getRedirectUrlParameters(): array
+    {
+        return [];
     }
 
     protected function getMountedActionFormModel(): string

@@ -2,16 +2,16 @@
 
 namespace Filament\Widgets;
 
-use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class StatsOverviewWidget extends Widget
 {
     use Concerns\CanPoll;
 
     /**
-     * @var array<Card> | null
+     * @var array<Stat> | null
      */
-    protected ?array $cachedCards = null;
+    protected ?array $cachedStats = null;
 
     protected int | string | array $columnSpan = 'full';
 
@@ -22,7 +22,7 @@ class StatsOverviewWidget extends Widget
 
     protected function getColumns(): int
     {
-        $count = count($this->getCachedCards());
+        $count = count($this->getCachedStats());
 
         if ($count < 3) {
             return 3;
@@ -36,18 +36,28 @@ class StatsOverviewWidget extends Widget
     }
 
     /**
-     * @return array<Card>
+     * @return array<Stat>
      */
-    protected function getCachedCards(): array
+    protected function getCachedStats(): array
     {
-        return $this->cachedCards ??= $this->getCards();
+        return $this->cachedStats ??= $this->getStats();
     }
 
     /**
-     * @return array<Card>
+     * @deprecated Use `getStats()` instead.
+     *
+     * @return array<Stat>
      */
     protected function getCards(): array
     {
         return [];
+    }
+
+    /**
+     * @return array<Stat>
+     */
+    protected function getStats(): array
+    {
+        return $this->getCards();
     }
 }

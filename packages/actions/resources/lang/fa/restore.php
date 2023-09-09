@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'رکورد بازگردانی شد',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'رکورد بازگردانی شد',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'رکوردها بازگردانی شدند',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'رکوردها بازگردانی شدند',
+            ],
+
         ],
 
     ],

@@ -13,6 +13,8 @@ class Js extends Asset
 
     protected bool $isCore = false;
 
+    protected bool $isModule = false;
+
     protected string | Htmlable | null $html = null;
 
     public function async(bool $condition = true): static
@@ -32,6 +34,13 @@ class Js extends Asset
     public function core(bool $condition = true): static
     {
         $this->isCore = $condition;
+
+        return $this;
+    }
+
+    public function module(bool $condition = true): static
+    {
+        $this->isModule = $condition;
 
         return $this;
     }
@@ -58,6 +67,11 @@ class Js extends Asset
         return $this->isCore;
     }
 
+    public function isModule(): bool
+    {
+        return $this->isModule;
+    }
+
     public function getHtml(): Htmlable
     {
         $html = $this->html;
@@ -70,12 +84,14 @@ class Js extends Asset
 
         $async = $this->isAsync() ? 'async' : '';
         $defer = $this->isDeferred() ? 'defer' : '';
+        $module = $this->isModule() ? 'type="module"' : '';
 
         return new HtmlString("
             <script
                 src=\"{$html}\"
                 {$async}
                 {$defer}
+                {$module}
                 data-navigate-track
             ></script>
         ");

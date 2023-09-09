@@ -15,7 +15,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament-forms::affixes
+    <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -64,7 +64,7 @@
                             isAutofocused: @js($isAutofocused()),
                             locale: @js(app()->getLocale()),
                             shouldCloseOnDateSelection: @js($shouldCloseOnDateSelection()),
-                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                         })"
                 x-on:keydown.esc="isOpen() && $event.stopPropagation()"
                 {{
@@ -137,7 +137,7 @@
                     wire:ignore
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.panel"
                     @class([
-                        'absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
+                        'fi-fo-date-time-picker-panel absolute z-10 rounded-lg bg-white p-4 shadow-lg ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
                     ])
                 >
                     <div class="grid gap-y-3">
@@ -145,7 +145,7 @@
                             <div class="flex items-center justify-between">
                                 <select
                                     x-model="focusedMonth"
-                                    class="grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:text-white"
+                                    class="grow cursor-pointer border-none bg-transparent p-0 text-sm font-medium text-gray-950 focus:ring-0 dark:bg-gray-900 dark:text-white"
                                 >
                                     <template
                                         x-for="(month, index) in months"
@@ -206,9 +206,9 @@
                                                 ! dayIsSelected(day) &&
                                                 focusedDate.date() !== day &&
                                                 ! dayIsDisabled(day),
-                                            'bg-gray-950/5 dark:bg-white/5':
+                                            'bg-gray-50 dark:bg-white/5':
                                                 focusedDate.date() === day && ! dayIsSelected(day),
-                                            'text-primary-600 bg-gray-950/5 dark:bg-white/5 dark:text-primary-400':
+                                            'text-primary-600 bg-gray-50 dark:bg-white/5 dark:text-primary-400':
                                                 dayIsSelected(day),
                                             'pointer-events-none': dayIsDisabled(day),
                                             'opacity-50': focusedDate.date() !== day && dayIsDisabled(day),
@@ -272,7 +272,7 @@
                 </div>
             </div>
         @endif
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 
     @if ($datalistOptions)
         <datalist id="{{ $id }}-list">

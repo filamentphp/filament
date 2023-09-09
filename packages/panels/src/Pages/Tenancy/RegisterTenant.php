@@ -11,9 +11,12 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
 use Filament\Support\Exceptions\Halt;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
+
+use function Filament\authorize;
 
 /**
  * @property Form $form
@@ -26,7 +29,7 @@ abstract class RegisterTenant extends SimplePage
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::pages.tenancy.register-tenant';
+    protected static string $view = 'filament-panels::pages.tenancy.register-tenant';
 
     /**
      * @var array<string, mixed> | null
@@ -59,6 +62,8 @@ abstract class RegisterTenant extends SimplePage
 
     public function mount(): void
     {
+        abort_unless(static::canView(), 404);
+
         $this->form->fill();
     }
 
@@ -109,6 +114,11 @@ abstract class RegisterTenant extends SimplePage
     protected function getRedirectUrl(): ?string
     {
         return Filament::getUrl($this->tenant);
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form;
     }
 
     /**
@@ -165,5 +175,14 @@ abstract class RegisterTenant extends SimplePage
     protected function hasFullWidthFormActions(): bool
     {
         return true;
+    }
+
+    public static function canView(): bool
+    {
+        try {
+            return authorize('create', Filament::getTenantModel())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
+        }
     }
 }

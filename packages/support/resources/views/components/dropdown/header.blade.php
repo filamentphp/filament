@@ -1,7 +1,11 @@
+@php
+    use Filament\Support\Enums\IconSize;
+@endphp
+
 @props([
     'color' => 'gray',
     'icon' => null,
-    'iconSize' => 'md',
+    'iconSize' => IconSize::Medium,
     'tag' => 'div',
 ])
 
@@ -11,25 +15,28 @@
             ->class([
                 'fi-dropdown-header flex w-full gap-2 p-3 text-sm',
                 is_string($color) ? "fi-dropdown-header-color-{$color}" : null,
-                match ($color) {
-                    'gray' => 'text-gray-700 dark:text-gray-200',
-                    default => 'text-custom-600 dark:text-custom-400',
-                },
             ])
             ->style([
-                \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]) => $color !== 'gray',
+                \Filament\Support\get_color_css_variables(
+                    $color,
+                    shades: [
+                        400,
+                        ...(filled($icon) ? [500] : []),
+                        600,
+                    ],
+                ) => $color !== 'gray',
             ])
     }}
 >
-    @if ($icon)
+    @if (filled($icon))
         <x-filament::icon
             :icon="$icon"
             @class([
                 'fi-dropdown-header-icon',
                 match ($iconSize) {
-                    'sm' => 'h-4 w-4',
-                    'md' => 'h-5 w-5',
-                    'lg' => 'h-6 w-6',
+                    IconSize::Small, 'sm' => 'h-4 w-4',
+                    IconSize::Medium, 'md' => 'h-5 w-5',
+                    IconSize::Large, 'lg' => 'h-6 w-6',
                     default => $iconSize,
                 },
                 match ($color) {

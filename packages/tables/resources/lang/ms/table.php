@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolum',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -24,44 +30,6 @@ return [
             'label' => 'Cari',
             'placeholder' => 'Carian',
             'indicator' => 'Carian',
-        ],
-
-    ],
-
-    'pagination' => [
-
-        'label' => 'Navigasi Penomboran',
-
-        'overview' => 'Menunjukkan :first ke :last dari :total rekod',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'setiap halaman',
-
-                'options' => [
-                    'all' => 'Semua',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'Pergi ke halaman :page',
-            ],
-
-            'next' => [
-                'label' => 'Seterusnya',
-            ],
-
-            'previous' => [
-                'label' => 'Sebelumnya',
-            ],
-
         ],
 
     ],
@@ -126,6 +94,8 @@ return [
 
         'heading' => 'Tiada rekod dijumpai',
 
+        'description' => 'Cipta :model untuk bermula.',
+
     ],
 
     'filters' => [
@@ -146,6 +116,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'Penapis',
 
         'indicator' => 'Penapis aktif',
 
@@ -199,7 +171,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} 1 rekod dipilih.|[2,*] :count rekod yang dipilih.',
+        'selected_count' => '{1} 1 rekod dipilih|[2,*] :count rekod yang dipilih',
 
         'actions' => [
 

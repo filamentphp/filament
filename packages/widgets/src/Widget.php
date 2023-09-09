@@ -78,25 +78,33 @@ abstract class Widget extends Component
     }
 
     /**
-     * @param  array<string, mixed>  $props
+     * @param  array<string, mixed>  $properties
      */
-    public static function make(array $props = []): WidgetConfiguration
+    public static function make(array $properties = []): WidgetConfiguration
     {
 
-        return app(WidgetConfiguration::class, ['widget' => static::class, 'props' => $props]);
+        return app(WidgetConfiguration::class, ['widget' => static::class, 'properties' => $properties]);
     }
 
     /**
      * @return array<string, mixed>
      */
-    public static function getDefaultProps(): array
+    public static function getDefaultProperties(): array
     {
-        $props = [];
+        $properties = [];
 
         if (static::isLazy()) {
-            $props['lazy'] = true;
+            $properties['lazy'] = true;
         }
 
-        return $props;
+        return $properties;
+    }
+
+    public function placeholder(): View
+    {
+        return view('filament::components.loading-section', [
+            'columnSpan' => $this->getColumnSpan(),
+            'columnStart' => $this->getColumnStart(),
+        ]);
     }
 }

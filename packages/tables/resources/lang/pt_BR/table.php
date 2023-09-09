@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Colunas',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -24,44 +30,6 @@ return [
             'label' => 'Pesquisar',
             'placeholder' => 'Pesquisar',
             'indicator' => 'Pesquisar',
-        ],
-
-    ],
-
-    'pagination' => [
-
-        'label' => 'Paginação',
-
-        'overview' => '{1} Exibindo 1 resultado|[2,*] Exibindo :first a :last de :total resultados',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'por página',
-
-                'options' => [
-                    'all' => 'Todas',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'Ir para página :page',
-            ],
-
-            'next' => [
-                'label' => 'Próximo',
-            ],
-
-            'previous' => [
-                'label' => 'Anterior',
-            ],
-
         ],
 
     ],
@@ -126,6 +94,7 @@ return [
 
         'heading' => 'Sem registros',
 
+        'description' => 'Crie um :model para começar.',
     ],
 
     'filters' => [
@@ -146,6 +115,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'Filtros',
 
         'indicator' => 'Filtros ativos',
 
@@ -199,7 +170,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '1 registro selecionado.|:count registros selecionados.',
+        'selected_count' => '1 registro selecionado|:count registros selecionados',
 
         'actions' => [
 

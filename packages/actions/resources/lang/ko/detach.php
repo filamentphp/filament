@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => '분리 완료',
+        'notifications' => [
+
+            'detached' => [
+                'title' => '분리 완료',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => '분리 완료',
+        'notifications' => [
+
+            'detached' => [
+                'title' => '분리 완료',
+            ],
+
         ],
 
     ],

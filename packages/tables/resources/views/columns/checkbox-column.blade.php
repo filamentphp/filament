@@ -16,30 +16,37 @@
         state: @js($state),
     }"
     x-init="
-        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
-            succeed(({ snapshot, effect }) => {
-                if (component.id !== @js($this->getId())) {
-                    return
-                }
+        () => {
+            Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+                succeed(({ snapshot, effect }) => {
+                    $nextTick(() => {
+                        if (component.id !== @js($this->getId())) {
+                            return
+                        }
 
-                if (! $refs.newState) {
-                    return
-                }
+                        if (! $refs.newState) {
+                            return
+                        }
 
-                const newState = $refs.newState.value === '1' ? true : false
+                        const newState = $refs.newState.value === '1' ? true : false
 
-                if (state === newState) {
-                    return
-                }
+                        if (state === newState) {
+                            return
+                        }
 
-                state = newState
+                        state = newState
+                    })
+                })
             })
-        })
+        }
     "
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-checkbox flex items-center px-3 py-[1.125rem]'])
+            ->class([
+                'fi-ta-checkbox flex items-center',
+                'px-3 py-4' => ! $isInline(),
+            ])
     }}
 >
     <input type="hidden" value="{{ $state ? 1 : 0 }}" x-ref="newState" />

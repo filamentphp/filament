@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'קישור הוסר',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'קישור הוסר',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'קישורים הוסרו',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'קישורים הוסרו',
+            ],
+
         ],
 
     ],

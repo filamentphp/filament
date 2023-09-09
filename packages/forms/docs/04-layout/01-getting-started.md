@@ -6,7 +6,7 @@ title: Getting started
 
 Filament forms are not limited to just displaying fields. You can also use "layout components" to organize them into an infinitely nestable structure.
 
-Layout component classes can be found in the `Filament\Forms\Components` namespace. They reside within the schema of your form, alongside any [fields](fields).
+Layout component classes can be found in the `Filament\Forms\Components` namespace. They reside within the schema of your form, alongside any [fields](fields/getting-started).
 
 Components may be created using the static `make()` method. Usually, you will then define the child component `schema()` to display inside:
 
@@ -29,7 +29,6 @@ Filament ships with some layout components, suitable for arranging your form fie
 - [Wizard](wizard)
 - [Section](section)
 - [Placeholder](placeholder)
-- [Card](card)
 
 You may also [create your own custom layout components](custom) to organize fields however you wish.
 
@@ -38,10 +37,10 @@ You may also [create your own custom layout components](custom) to organize fiel
 You may define an ID for the component using the `id()` method:
 
 ```php
-use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Section;
 
-Card::make()
-    ->id('main-card')
+Section::make()
+    ->id('main-section')
 ```
 
 ## Adding extra HTML attributes
@@ -51,21 +50,21 @@ You can pass extra HTML attributes to the component, which will be merged onto t
 ```php
 use Filament\Forms\Components\Group;
 
-Card::make()
-    ->extraAttributes(['class' => 'custom-card-style'])
+Section::make()
+    ->extraAttributes(['class' => 'custom-section-style'])
 ```
 
 Classes will be merged with the default classes, and any other attributes will override the default attributes.
 
 ## Global settings
 
-If you wish to change the default behaviour of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all card components have [2 columns](grid) by default, you can do it like so:
+If you wish to change the default behaviour of a component globally, then you can call the static `configureUsing()` method inside a service provider's `boot()` method, to which you pass a Closure to modify the component using. For example, if you wish to make all section components have [2 columns](grid) by default, you can do it like so:
 
 ```php
-use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Section;
 
-Card::configureUsing(function (Card $card): void {
-    $card
+Section::configureUsing(function (Section $section): void {
+    $section
         ->columns(2);
 });
 ```
@@ -73,8 +72,8 @@ Card::configureUsing(function (Card $card): void {
 Of course, you are still able to overwrite this on each field individually:
 
 ```php
-use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Section;
 
-Card::make()
+Section::make()
     ->columns(1)
 ```

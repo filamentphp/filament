@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 <x-dynamic-component
     :component="$getFieldWrapperView()"
     :field="$field"
@@ -18,8 +22,8 @@
         ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('file-upload', 'filament/forms') }}"
         x-data="fileUploadFormComponent({
                     acceptedFileTypes: @js($getAcceptedFileTypes()),
-                    imageEditorEmptyFillColor: '{{ $getImageEditorEmptyFillColor() }}',
-                    imageEditorMode: {{ $getImageEditorMode() }},
+                    imageEditorEmptyFillColor: @js($getImageEditorEmptyFillColor()),
+                    imageEditorMode: @js($getImageEditorMode()),
                     imageEditorViewportHeight: @js($getImageEditorViewportHeight()),
                     imageEditorViewportWidth: @js($getImageEditorViewportWidth()),
                     deleteUploadedFileUsing: async (fileKey) => {
@@ -36,6 +40,7 @@
                     imageResizeTargetWidth: @js($imageResizeTargetWidth),
                     imageResizeUpscale: @js($getImageResizeUpscale()),
                     isAvatar: @js($isAvatar),
+                    isDeletable: @js($isDeletable()),
                     isDisabled: @js($isDisabled),
                     isDownloadable: @js($isDownloadable()),
                     isOpenable: @js($isOpenable()),
@@ -46,8 +51,8 @@
                     panelAspectRatio: @js($getPanelAspectRatio()),
                     panelLayout: @js($getPanelLayout()),
                     placeholder: @js($getPlaceholder()),
-                    maxSize: {{ ($size = $getMaxSize()) ? "'{$size} KB'" : 'null' }},
-                    minSize: {{ ($size = $getMinSize()) ? "'{$size} KB'" : 'null' }},
+                    maxSize: @js(($size = $getMaxSize()) ? "'{$size} KB'" : null),
+                    minSize: @js(($size = $getMinSize()) ? "'{$size} KB'" : null),
                     removeUploadedFileUsing: async (fileKey) => {
                         return await $wire.removeFormUploadedFile(@js($statePath), fileKey)
                     },
@@ -58,7 +63,7 @@
                     shouldAppendFiles: @js($shouldAppendFiles()),
                     shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
                     shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
-                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     uploadButtonPosition: @js($getUploadButtonPosition()),
                     uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
                     uploadUsing: (fileKey, file, success, error, progress) => {
@@ -69,7 +74,9 @@
                                 success(fileKey)
                             },
                             error,
-                            progress,
+                            (progressEvent) => {
+                                progress(true, progressEvent.detail.progress, 100)
+                            },
                         )
                     },
                 })"
@@ -85,11 +92,11 @@
                 ->class([
                     'fi-fo-file-upload flex',
                     match ($getAlignment()) {
-                        'center' => 'justify-center',
-                        'end' => 'justify-end',
-                        'left' => 'justify-left',
-                        'right' => 'justify-right',
-                        'start', null => 'justify-start',
+                        Alignment::Center, 'center' => 'justify-center',
+                        Alignment::End, 'end' => 'justify-end',
+                        Alignment::Left, 'left' => 'justify-left',
+                        Alignment::Right, 'right' => 'justify-right',
+                        Alignment::Start, 'start', null => 'justify-start',
                     },
                 ])
         }}
@@ -187,7 +194,7 @@
                                                         class="flex w-full items-center rounded-lg border border-gray-300 bg-gray-100 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-800"
                                                     >
                                                         <span
-                                                            class="flex w-20 flex-shrink-0 items-center justify-center self-stretch border-e border-gray-300 px-2 dark:border-gray-700"
+                                                            class="flex w-20 shrink-0 items-center justify-center self-stretch border-e border-gray-300 px-2 dark:border-gray-700"
                                                         >
                                                             {{ $input['label'] }}
                                                         </span>
@@ -219,10 +226,7 @@
                                                     >
                                                         @foreach ($groupedActions as $action)
                                                             <x-filament::button
-                                                                x-tooltip="{
-                                                                    content: @js($action['label']),
-                                                                    theme: $store.theme,
-                                                                }"
+                                                                :x-tooltip="'{ content: ' . \Illuminate\Support\Js::from($action['label']) . ', theme: $store.theme }'"
                                                                 x-on:click.stop.prevent="{{ $action['alpineClickHandler'] }}"
                                                                 color="gray"
                                                                 grouped
@@ -254,10 +258,7 @@
                                                         >
                                                             @foreach ($ratiosChunk as $label => $ratio)
                                                                 <x-filament::button
-                                                                    x-tooltip="{
-                                                                        content: @js(__('filament-forms::components.file_upload.editor.actions.set_aspect_ratio.label', ['ratio' => $label])),
-                                                                        theme: $store.theme,
-                                                                    }"
+                                                                    :x-tooltip="'{ content: ' . \Illuminate\Support\Js::from(__('filament-forms::components.file_upload.editor.actions.set_aspect_ratio.label', ['ratio' => $label])) . ', theme: $store.theme }'"
                                                                     x-on:click.stop.prevent="currentRatio = '{{ $label }}'; editor.setAspectRatio({{ $ratio }})"
                                                                     color="gray"
                                                                     x-bind:class="{'!bg-gray-50 dark:!bg-gray-700': currentRatio === '{{ $label }}'}"

@@ -2,6 +2,7 @@
 <?php
 
 use Composer\InstalledVersions;
+use Illuminate\Support\Str;
 use function Termwind\{ask, render};
 
 require 'vendor/autoload.php';
@@ -125,14 +126,14 @@ foreach ([
     if (str_contains($fileContents, 'filament/forms/dist/module.esm.css')) {
         $hasIndividualFilamentPackagesInstalled = true;
 
+        $fileContents = preg_replace('/.*filament\/forms\/dist\/module\.esm\.css.*\n/', '', $fileContents);
+
         render(<<<HTML
             <p>
-                Fixed path to the form builder CSS file in <strong>{$file}</strong>.
+                Removed path to the form builder CSS file in <strong>{$file}</strong>.
             </p>
         HTML);
     }
-
-    $fileContents = str_replace('filament/forms/dist/module.esm.css', 'filament/forms/dist/index.css', $fileContents);
 
     file_put_contents($file, $fileContents);
 }
@@ -156,10 +157,8 @@ foreach ([
         HTML);
     }
 
-    $fileContents = preg_replace('/import FormsAlpinePlugin from \'..\/..\/vendor\/filament\/forms\/dist\/module\.esm\';?\n/', '', $fileContents);
-    $fileContents = preg_replace('/import NotificationsAlpinePlugin from \'..\/..\/vendor\/filament\/notifications\/dist\/module\.esm\';?\n/', '', $fileContents);
-    $fileContents = preg_replace('/Alpine\.plugin\(FormsAlpinePlugin\);?\n/', '', $fileContents);
-    $fileContents = preg_replace('/Alpine\.plugin\(NotificationsAlpinePlugin\);?\n/', '', $fileContents);
+    $fileContents = preg_replace('/.*FormsAlpinePlugin.*\n/', '', $fileContents);
+    $fileContents = preg_replace('/.*NotificationsAlpinePlugin.*\n/', '', $fileContents);
 
     file_put_contents($file, $fileContents);
 }
@@ -180,13 +179,33 @@ if (file_exists('tailwind.config.js')) {
     }
 }
 
-if ($hasIndividualFilamentPackagesInstalled) {
-    foreach ([
-        ...glob('resources/views/*.blade.php'),
-        ...glob('resources/views/**/*.blade.php'),
-    ] as $file) {
-        $fileContents = file_get_contents($file);
+foreach ([
+    ...glob('resources/views/*.blade.php'),
+    ...glob('resources/views/**/*.blade.php'),
+] as $file) {
+    $fileContents = file_get_contents($file);
 
+    if (str_contains($fileContents, 'x-filament::page')) {
+        $fileContents = str_replace('x-filament::page', 'x-filament-panels::page', $fileContents);
+
+        render(<<<HTML
+            <p>
+                Replaced <strong><x-filament::page></strong> with <strong><x-filament-panels::page></strong> in <strong>{$file}</strong>.
+            </p>
+        HTML);
+    }
+
+    if (str_contains($fileContents, 'x-filament::widget')) {
+        $fileContents = str_replace('x-filament::widget', 'x-filament-widgets::widget', $fileContents);
+
+        render(<<<HTML
+            <p>
+                Replaced <strong><x-filament::widget></strong> with <strong><x-filament-widgets::widget></strong> in <strong>{$file}</strong>.
+            </p>
+        HTML);
+    }
+
+    if ($hasIndividualFilamentPackagesInstalled) {
         if (
             str_contains($fileContents, '@livewireScripts') &&
             (! str_contains($fileContents, '@filamentScripts'))
@@ -212,9 +231,9 @@ if ($hasIndividualFilamentPackagesInstalled) {
                 </p>
             HTML);
         }
-
-        file_put_contents($file, $fileContents);
     }
+
+    file_put_contents($file, $fileContents);
 }
 
 $getEnvValue = function (string $env, string $variable): ?string {
@@ -310,7 +329,7 @@ foreach (['.env', '.env.ci', '.env.example', '.env.testing'] as $envFile) {
 if (file_exists('resources/views/vendor/filament/brand.blade.php')) {
     rename(
         'resources/views/vendor/filament/brand.blade.php',
-        'resources/views/vendor/filament/logo.blade.php',
+        'resources/views/vendor/filament-panels/logo.blade.php',
     );
 
     render(<<<HTML
@@ -349,7 +368,7 @@ foreach (json_decode(file_get_contents('composer.json'), true)['require'] as $pa
         continue;
     }
 
-    $requireCommands[] = "composer require {$package}:\"^3.0\" --no-update";
+    $requireCommands[] = "composer require {$package}:\"^3.0-stable\" -W --no-update";
 }
 
 $requireCommands = implode("</strong><br /><strong>", $requireCommands);

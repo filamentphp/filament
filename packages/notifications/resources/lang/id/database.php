@@ -23,24 +23,6 @@ return [
             'description' => 'Silakan periksa kembali nanti',
         ],
 
-        'pagination' => [
-
-            'label' => 'Navigasi paginasi',
-
-            'actions' => [
-
-                'next' => [
-                    'label' => 'Selanjutnya',
-                ],
-
-                'previous' => [
-                    'label' => 'Sebelumnya',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

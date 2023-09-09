@@ -21,13 +21,20 @@ class MenuItem extends Component
 
     protected string | Closure | Native | null $url = null;
 
+    protected bool | Closure $isHidden = false;
+
+    protected bool | Closure $isVisible = true;
+
     final public function __construct()
     {
     }
 
     public static function make(): static
     {
-        return app(static::class);
+        $static = app(static::class);
+        $static->configure();
+
+        return $static;
     }
 
     /**
@@ -66,6 +73,34 @@ class MenuItem extends Component
         $this->url = $url;
 
         return $this;
+    }
+
+    public function hidden(bool | Closure $condition = true): static
+    {
+        $this->isHidden = $condition;
+
+        return $this;
+    }
+
+    public function visible(bool | Closure $condition = true): static
+    {
+        $this->isVisible = $condition;
+
+        return $this;
+    }
+
+    public function isVisible(): bool
+    {
+        return ! $this->isHidden();
+    }
+
+    public function isHidden(): bool
+    {
+        if ($this->evaluate($this->isHidden)) {
+            return true;
+        }
+
+        return ! $this->evaluate($this->isVisible);
     }
 
     /**

@@ -44,8 +44,18 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'These credentials do not match our records.',
-        'throttled' => 'Too many login attempts. Please try again in :seconds seconds.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Too many login attempts',
+            'body' => 'Please try again in :seconds seconds.',
+        ],
+
     ],
 
 ];

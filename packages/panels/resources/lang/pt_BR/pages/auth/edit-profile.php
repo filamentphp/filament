@@ -32,13 +32,17 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'Salvo',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'Salvo',
+        ],
+
     ],
 
     'actions' => [
 
-        'back' => [
+        'cancel' => [
             'label' => 'voltar',
         ],
 

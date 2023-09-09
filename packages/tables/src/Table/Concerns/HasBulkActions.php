@@ -6,7 +6,7 @@ use Closure;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\RecordCheckboxPosition;
+use Filament\Tables\Enums\RecordCheckboxPosition;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
@@ -27,12 +27,23 @@ trait HasBulkActions
 
     protected bool | Closure | null $selectsCurrentPageOnly = false;
 
-    protected string | Closure | null $recordCheckboxPosition = null;
+    protected RecordCheckboxPosition | Closure | null $recordCheckboxPosition = null;
 
     /**
      * @param  array<BulkAction | ActionGroup> | ActionGroup  $actions
      */
     public function bulkActions(array | ActionGroup $actions): static
+    {
+        $this->bulkActions = [];
+        $this->pushBulkActions($actions);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<BulkAction | ActionGroup> | ActionGroup  $actions
+     */
+    public function pushBulkActions(array | ActionGroup $actions): static
     {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);
@@ -113,7 +124,7 @@ trait HasBulkActions
     public function getBulkAction(string $name): ?BulkAction
     {
         $action = $this->getFlatBulkActions()[$name] ?? null;
-        $action?->records($this->getLivewire()->getSelectedTableRecords());
+        $action?->records($this->getLivewire()->getSelectedTableRecords(...));
 
         return $action;
     }
@@ -155,21 +166,15 @@ trait HasBulkActions
         return $this->checkIfRecordIsSelectableUsing !== null;
     }
 
-    public function recordCheckboxPosition(string | Closure | null $position = null): static
+    public function recordCheckboxPosition(RecordCheckboxPosition | Closure | null $position = null): static
     {
         $this->recordCheckboxPosition = $position;
 
         return $this;
     }
 
-    public function getRecordCheckboxPosition(): string
+    public function getRecordCheckboxPosition(): RecordCheckboxPosition
     {
-        $position = $this->evaluate($this->recordCheckboxPosition);
-
-        if (filled($position)) {
-            return $position;
-        }
-
-        return RecordCheckboxPosition::BeforeCells;
+        return $this->evaluate($this->recordCheckboxPosition) ?? RecordCheckboxPosition::BeforeCells;
     }
 }

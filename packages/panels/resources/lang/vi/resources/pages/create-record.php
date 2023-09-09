@@ -2,9 +2,9 @@
 
 return [
 
-    'title' => 'Tạo :label mới',
+    'title' => 'Tạo :label',
 
-    'breadcrumb' => 'Tạo mới',
+    'breadcrumb' => 'Tạo',
 
     'form' => [
 
@@ -19,15 +19,19 @@ return [
             ],
 
             'create_another' => [
-                'label' => 'Tạo & tiếp tục tạo mới',
+                'label' => 'Tạo & tạo thêm',
             ],
 
         ],
 
     ],
 
-    'messages' => [
-        'created' => 'Đã tạo',
+    'notifications' => [
+
+        'created' => [
+            'title' => 'Đã tạo',
+        ],
+
     ],
 
 ];

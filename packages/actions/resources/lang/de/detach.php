@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Getrennt',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Getrennt',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Getrennt',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Getrennt',
+            ],
+
         ],
 
     ],

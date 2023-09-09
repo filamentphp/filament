@@ -84,6 +84,11 @@ trait InteractsWithTable
             ];
         }
 
+        // https://github.com/filamentphp/filament/pull/7999
+        if ($this->tableFilters) {
+            $this->normalizeTableFilterValuesFromQueryString($this->tableFilters);
+        }
+
         $this->getTableFiltersForm()->fill($this->tableFilters);
 
         if ($shouldPersistFiltersInSession) {
@@ -167,7 +172,6 @@ trait InteractsWithTable
             ->query($this->getTableQuery())
             ->actions($this->getTableActions())
             ->actionsColumnLabel($this->getTableActionsColumnLabel())
-            ->actionsPosition($this->getTableActionsPosition())
             ->groupedBulkActions($this->getTableBulkActions())
             ->checkIfRecordIsSelectableUsing($this->isTableRecordSelectable())
             ->columns($this->getTableColumns())
@@ -187,10 +191,8 @@ trait InteractsWithTable
             ->emptyStateHeading($this->getTableEmptyStateHeading())
             ->emptyStateIcon($this->getTableEmptyStateIcon())
             ->filters($this->getTableFilters())
-            ->filtersFormColumns($this->getTableFiltersFormColumns())
             ->filtersFormMaxHeight($this->getTableFiltersFormMaxHeight())
             ->filtersFormWidth($this->getTableFiltersFormWidth())
-            ->filtersLayout($this->getTableFiltersLayout())
             ->header($this->getTableHeader())
             ->headerActions($this->getTableHeaderActions())
             ->modelLabel($this->getTableModelLabel())
@@ -266,5 +268,23 @@ trait InteractsWithTable
     protected function getTableQuery(): Builder | Relation | null
     {
         return null;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    protected function normalizeTableFilterValuesFromQueryString(array &$data): void
+    {
+        foreach ($data as &$value) {
+            if (is_array($value)) {
+                $this->normalizeTableFilterValuesFromQueryString($value);
+            } elseif ($value === 'null') {
+                $value = null;
+            } elseif ($value === 'false') {
+                $value = false;
+            } elseif ($value === 'true') {
+                $value = true;
+            }
+        }
     }
 }

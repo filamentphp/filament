@@ -1,5 +1,5 @@
 <x-filament-widgets::widget class="fi-filament-info-widget">
-    <x-filament::card>
+    <x-filament::section>
         <div class="flex items-center gap-x-3">
             <div class="flex-1">
                 <a
@@ -25,7 +25,7 @@
                 </a>
 
                 <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                    v{{ \Composer\InstalledVersions::getVersion('filament/filament') }}
+                    {{ \Composer\InstalledVersions::getPrettyVersion('filament/filament') }}
                 </p>
             </div>
 
@@ -38,7 +38,7 @@
                     rel="noopener noreferrer"
                     target="_blank"
                 >
-                    {{ __('filament::widgets/filament-info-widget.actions.open_documentation.label') }}
+                    {{ __('filament-panels::widgets/filament-info-widget.actions.open_documentation.label') }}
                 </x-filament::link>
 
                 <x-filament::link
@@ -62,9 +62,9 @@
                         </svg>
                     </x-slot>
 
-                    {{ __('filament::widgets/filament-info-widget.actions.open_github.label') }}
+                    {{ __('filament-panels::widgets/filament-info-widget.actions.open_github.label') }}
                 </x-filament::link>
             </div>
         </div>
-    </x-filament::card>
+    </x-filament::section>
 </x-filament-widgets::widget>

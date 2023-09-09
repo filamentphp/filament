@@ -8,7 +8,7 @@
     'pageClass',
 ])
 
-<div class="fi-resource-relation-managers flex flex-col gap-y-4">
+<div class="fi-resource-relation-managers flex flex-col gap-y-6">
     @php
         $normalizeRelationManagerClass = function (string | Filament\Resources\RelationManagers\RelationManagerConfiguration $manager): string {
             if ($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) {
@@ -20,7 +20,7 @@
     @endphp
 
     @if ((count($managers) > 1) || $content)
-        <x-filament::tabs class="self-center">
+        <x-filament::tabs>
             @php
                 $tabs = $managers;
 
@@ -47,7 +47,6 @@
                     :active="$activeManager === $tabKey"
                     :badge="filled($tabKey) ? ($isGroup ? $manager->getBadge() : $manager::getBadge($ownerRecord, $pageClass)) : null"
                     :icon="filled($tabKey) ? ($isGroup ? $manager->getIcon() : $manager::getIcon($ownerRecord, $pageClass)) : null"
-                    :icon-color="filled($tabKey) ? ($isGroup ? $manager->getIconColor() : $manager::getIconColor($ownerRecord, $pageClass)) : null"
                     :icon-position="filled($tabKey) ? ($isGroup ? $manager->getIconPosition() : $manager::getIconPosition($ownerRecord, $pageClass)) : null"
                     :wire:click="'$set(\'activeRelationManager\', ' . (filled($tabKey) ? ('\'' . $tabKey . '\'') : 'null') . ')'"
                 >
@@ -86,7 +85,7 @@
 
                     @livewire(
                         $normalizedGroupedManagerClass,
-                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $groupedManager->props : [])],
+                        [...$managerLivewireProperties, ...(($groupedManager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $groupedManager->properties : [])],
                         key($normalizedGroupedManagerClass),
                     )
                 @endforeach
@@ -98,7 +97,7 @@
 
                 @livewire(
                     $normalizedManagerClass,
-                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $manager->props : [])],
+                    [...$managerLivewireProperties, ...(($manager instanceof \Filament\Resources\RelationManagers\RelationManagerConfiguration) ? $manager->properties : [])],
                     key($normalizedManagerClass),
                 )
             @endif

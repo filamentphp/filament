@@ -1,11 +1,17 @@
 @php
+    use Filament\Support\Enums\FontFamily;
+    use Filament\Support\Enums\FontWeight;
+    use Filament\Support\Enums\IconPosition;
+    use Filament\Tables\Columns\TextColumn\TextColumnSize;
+
     $canWrap = $canWrap();
     $descriptionAbove = $getDescriptionAbove();
     $descriptionBelow = $getDescriptionBelow();
-    $isBadge = $isBadge();
     $iconPosition = $getIconPosition();
-    $isClickable = $getAction() || $getUrl();
+    $isBadge = $isBadge();
+    $isBulleted = $isBulleted();
     $isListWithLineBreaks = $isListWithLineBreaks();
+    $url = $getUrl();
 
     $arrayState = $getState();
 
@@ -38,21 +44,27 @@
         $attributes
             ->merge($getExtraAttributes(), escape: false)
             ->class([
-                'fi-ta-text',
-                'px-3 py-3.5' => ! $isInline(),
+                'fi-ta-text grid gap-y-1',
+                'px-3 py-4' => ! $isInline(),
             ])
     }}
 >
     @if (filled($descriptionAbove))
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p
+            @class([
+                'text-sm text-gray-500 dark:text-gray-400',
+                'whitespace-normal' => $canWrap,
+            ])
+        >
             {{ $descriptionAbove }}
         </p>
     @endif
 
     <{{ $isListWithLineBreaks ? 'ul' : 'div' }}
         @class([
-            'list-inside list-disc' => $isBulleted(),
-            'flex flex-wrap items-center gap-1' => $isBadge,
+            'list-inside list-disc' => $isBulleted,
+            'flex flex-wrap items-center gap-1.5' => $isBadge,
+            'whitespace-normal' => $canWrap,
         ])
     >
         @foreach ($arrayState as $state)
@@ -71,7 +83,7 @@
                     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
                         'fi-ta-text-item-icon h-5 w-5',
                         match ($color) {
-                            'gray' => 'text-gray-400 dark:text-gray-500',
+                            'gray', null => 'text-gray-400 dark:text-gray-500',
                             default => 'text-custom-500',
                         },
                     ]);
@@ -87,8 +99,13 @@
                             window.navigator.clipboard.writeText(@js($copyableState))
                             $tooltip(@js($copyMessage), { timeout: @js($copyMessageDuration) })
                         "
-                        class="cursor-pointer max-w-max"
                     @endif
+                    @class([
+                        'flex' => ! $isBulleted,
+                        'max-w-max' => ! $isBadge,
+                        'w-max' => $isBadge,
+                        'cursor-pointer' => $itemIsCopyable,
+                    ])
                 >
                     @if ($isBadge)
                         <x-filament::badge
@@ -104,10 +121,10 @@
                                 'fi-ta-text-item inline-flex items-center gap-1.5',
                                 'transition duration-75 hover:underline focus:underline' => $url,
                                 match ($size) {
-                                    'xs' => 'text-xs',
-                                    'sm', null => 'text-sm leading-6',
-                                    'base', 'md' => 'text-base',
-                                    'lg' => 'text-lg',
+                                    TextColumnSize::ExtraSmall, 'xs' => 'text-xs',
+                                    TextColumnSize::Small, 'sm', null => 'text-sm',
+                                    TextColumnSize::Medium, 'base', 'md' => 'text-base',
+                                    TextColumnSize::Large, 'lg' => 'text-lg',
                                     default => $size,
                                 },
                                 match ($color) {
@@ -116,20 +133,20 @@
                                     default => 'text-custom-600 dark:text-custom-400',
                                 },
                                 match ($weight) {
-                                    'thin' => 'font-thin',
-                                    'extralight' => 'font-extralight',
-                                    'light' => 'font-light',
-                                    'medium' => 'font-medium',
-                                    'semibold' => 'font-semibold',
-                                    'bold' => 'font-bold',
-                                    'extrabold' => 'font-extrabold',
-                                    'black' => 'font-black',
+                                    FontWeight::Thin, 'thin' => 'font-thin',
+                                    FontWeight::ExtraLight, 'extralight' => 'font-extralight',
+                                    FontWeight::Light, 'light' => 'font-light',
+                                    FontWeight::Medium, 'medium' => 'font-medium',
+                                    FontWeight::SemiBold, 'semibold' => 'font-semibold',
+                                    FontWeight::Bold, 'bold' => 'font-bold',
+                                    FontWeight::ExtraBold, 'extrabold' => 'font-extrabold',
+                                    FontWeight::Black, 'black' => 'font-black',
                                     default => $weight,
                                 },
                                 match ($fontFamily) {
-                                    'sans' => 'font-sans',
-                                    'serif' => 'font-serif',
-                                    'mono' => 'font-mono',
+                                    FontFamily::Sans, 'sans' => 'font-sans',
+                                    FontFamily::Serif, 'serif' => 'font-serif',
+                                    FontFamily::Mono, 'mono' => 'font-mono',
                                     default => $fontFamily,
                                 },
                             ])
@@ -137,7 +154,7 @@
                                 \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
                             ])
                         >
-                            @if ($icon && $iconPosition === 'before')
+                            @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
                                 <x-filament::icon
                                     :icon="$icon"
                                     :class="$iconClasses"
@@ -149,7 +166,7 @@
                                 {{ $formattedState }}
                             </div>
 
-                            @if ($icon && $iconPosition === 'after')
+                            @if ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
                                 <x-filament::icon
                                     :icon="$icon"
                                     :class="$iconClasses"
@@ -172,7 +189,12 @@
     </{{ $isListWithLineBreaks ? 'ul' : 'div' }}>
 
     @if (filled($descriptionBelow))
-        <p class="text-sm text-gray-500 dark:text-gray-400">
+        <p
+            @class([
+                'text-sm text-gray-500 dark:text-gray-400',
+                'whitespace-normal' => $canWrap,
+            ])
+        >
             {{ $descriptionBelow }}
         </p>
     @endif

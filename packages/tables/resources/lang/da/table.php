@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolonner',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -11,46 +17,44 @@ return [
     ],
 
     'fields' => [
+        'bulk_select_page' => [
+            'label' => 'Vælg/fravælg alle rækker for masse handlinger.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Vælg/fravælg :key for masse handlinger.',
+        ],
 
         'search' => [
             'label' => 'Søg',
             'placeholder' => 'Søg',
+            'indicator' => 'Søg',
         ],
 
     ],
 
-    'pagination' => [
+    'summary' => [
 
-        'label' => 'Paginering Navigation',
+        'heading' => 'Resumé',
 
-        'overview' => 'Viser :first til :last af :total resultater',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'per side',
-
-                'options' => [
-                    'all' => 'Alle',
-                ],
-
-            ],
-
+        'subheadings' => [
+            'all' => 'Alle :label',
+            'group' => ':group resumé',
+            'page' => 'Denne side',
         ],
 
-        'actions' => [
+        'summarizers' => [
 
-            'go_to_page' => [
-                'label' => 'Gå til side :page',
+            'average' => [
+                'label' => 'Gennemsnit',
             ],
 
-            'next' => [
-                'label' => 'Næste',
+            'count' => [
+                'label' => 'Antal',
             ],
 
-            'previous' => [
-                'label' => 'Forrige',
+            'sum' => [
+                'label' => 'Sum',
             ],
 
         ],
@@ -58,22 +62,110 @@ return [
     ],
 
     'actions' => [
+        'disable_reordering' => [
+            'label' => 'Afslut omrokering',
+        ],
+
+        'enable_reordering' => [
+            'label' => 'Omroker rækker',
+        ],
 
         'filter' => [
             'label' => 'Filtrer',
+        ],
+
+        'group' => [
+            'label' => 'Gruppe',
         ],
 
         'open_bulk_actions' => [
             'label' => 'Åbn handlinger',
         ],
 
+        'toggle_columns' => [
+            'label' => 'Vælg kolonner',
+        ],
     ],
 
     'empty' => [
         'heading' => 'Ingen resultater',
+        'description' => 'Opret en :model for at komme igang.',
     ],
 
+    'filters' => [
+
+        'actions' => [
+
+            'remove' => [
+                'label' => 'Fjern filter',
+            ],
+
+            'remove_all' => [
+                'label' => 'Fjern alle filtre',
+                'tooltip' => 'Fjern alle filtre',
+            ],
+
+            'reset' => [
+                'label' => 'Nulstil',
+            ],
+
+        ],
+
+        'heading' => 'Filtre',
+
+        'indicator' => 'Aktive filtre',
+
+        'multi_select' => [
+            'placeholder' => 'Alle',
+        ],
+
+        'select' => [
+            'placeholder' => 'Alle',
+        ],
+
+        'trashed' => [
+
+            'label' => 'Slettede rækker',
+
+            'only_trashed' => 'Kun slettede rækker',
+
+            'with_trashed' => 'Med slettede rækker',
+
+            'without_trashed' => 'Uden slettede rækker',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Gruppere på',
+                'placeholder' => 'Gruppere på',
+            ],
+
+            'direction' => [
+
+                'label' => 'Grupperingsretning',
+
+                'options' => [
+                    'asc' => 'Stigende',
+                    'desc' => 'Faldende',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
+    'reorder_indicator' => 'Træk og slip rækkerne i den ønskede rækkefølge.',
+
     'selection_indicator' => [
+
+        'selected_count' => '1 række valgt|:count rækker valgt',
 
         'actions' => [
 
@@ -81,6 +173,9 @@ return [
                 'label' => 'Vælg alle :count',
             ],
 
+            'deselect_all' => [
+                'label' => 'Fravælg alle',
+            ],
         ],
 
     ],

@@ -17,7 +17,7 @@ class {{ resourceClass }} extends Resource
 {
     protected static ?string $model = {{ modelClass }}::class;
 
-    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {

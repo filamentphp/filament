@@ -14,7 +14,7 @@ trait HasRelationship
 
     protected bool | Closure $isPreloaded = false;
 
-    public function relationship(string $name, ?string $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string $name, string $titleAttribute, ?Closure $modifyQueryUsing = null): static
     {
         $this->attribute("{$name}.{$titleAttribute}");
 
@@ -92,7 +92,9 @@ trait HasRelationship
                 $firstRelationshipJoinClause->type = 'left';
             }
 
-            $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+            $relationshipQuery
+                ->distinct() // Ensure that results are unique when fetching options and indicating.
+                ->select($relationshipQuery->getModel()->getTable() . '.*');
         }
 
         if ($this->getModifyRelationshipQueryUsing()) {

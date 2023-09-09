@@ -14,7 +14,7 @@
         @vite('resources/css/app.css')
 
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=be-vietnam-pro:400,500,700&amp;display=swap" rel="stylesheet">
+        <link href="https://fonts.bunny.net/css?family=inter:300,400,500,600,700&amp;display=swap" rel="stylesheet">
 
         <script>
             if (window.matchMedia('(prefers-color-scheme: dark)').matches) {

@@ -8,20 +8,24 @@ return [
 
         'modal' => [
 
-            'heading' => 'Arkartoti :label',
+            'heading' => 'Atkartoti :label',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Arkartoti',
+                    'label' => 'Atkartoti',
                 ],
 
             ],
 
         ],
 
-        'messages' => [
-            'replicated' => 'Arkartota',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Atkartota',
+            ],
+
         ],
 
     ],

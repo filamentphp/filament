@@ -8,6 +8,8 @@
     :collapsible="$isCollapsible() && (! $isAside)"
     :compact="$isCompact()"
     :content-before="$isContentBefore()"
+    :description="$getDescription()"
+    :heading="$getHeading()"
     :icon="$getIcon()"
     :icon-color="$getIconColor()"
     :icon-size="$getIconSize()"
@@ -20,13 +22,5 @@
             ->merge($getExtraAlpineAttributes(), escape: false)
     "
 >
-    <x-slot name="heading">
-        {{ $getHeading() }}
-    </x-slot>
-
-    <x-slot name="description">
-        {{ $getDescription() }}
-    </x-slot>
-
     {{ $getChildComponentContainer() }}
 </x-filament::section>

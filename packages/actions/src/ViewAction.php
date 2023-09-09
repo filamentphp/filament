@@ -2,8 +2,14 @@
 
 namespace Filament\Actions;
 
+use Closure;
+use Filament\Actions\Contracts\HasActions;
+use Illuminate\Database\Eloquent\Model;
+
 class ViewAction extends Action
 {
+    protected ?Closure $mutateRecordDataUsing = null;
+
     public static function getDefaultName(): ?string
     {
         return 'view';
@@ -25,5 +31,26 @@ class ViewAction extends Action
         $this->groupedIcon('heroicon-m-eye');
 
         $this->disabledForm();
+
+        $this->fillForm(function (HasActions $livewire, Model $record): array {
+            if ($translatableContentDriver = $livewire->makeFilamentTranslatableContentDriver()) {
+                $data = $translatableContentDriver->getRecordAttributesToArray($record);
+            } else {
+                $data = $record->attributesToArray();
+            }
+
+            if ($this->mutateRecordDataUsing) {
+                $data = $this->evaluate($this->mutateRecordDataUsing, ['data' => $data]);
+            }
+
+            return $data;
+        });
+    }
+
+    public function mutateRecordDataUsing(?Closure $callback): static
+    {
+        $this->mutateRecordDataUsing = $callback;
+
+        return $this;
     }
 }

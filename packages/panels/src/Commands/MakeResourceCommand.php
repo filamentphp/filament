@@ -8,10 +8,12 @@ use Filament\Panel;
 use Filament\Support\Commands\Concerns\CanIndentStrings;
 use Filament\Support\Commands\Concerns\CanManipulateFiles;
 use Filament\Support\Commands\Concerns\CanReadModelSchemas;
-use Filament\Support\Commands\Concerns\CanValidateInput;
 use Filament\Tables\Commands\Concerns\CanGenerateTables;
 use Illuminate\Console\Command;
 use Illuminate\Support\Arr;
+
+use function Laravel\Prompts\select;
+use function Laravel\Prompts\text;
 
 class MakeResourceCommand extends Command
 {
@@ -20,7 +22,6 @@ class MakeResourceCommand extends Command
     use CanIndentStrings;
     use CanManipulateFiles;
     use CanReadModelSchemas;
-    use CanValidateInput;
 
     protected $description = 'Create a new Filament resource class and default page classes';
 
@@ -28,7 +29,11 @@ class MakeResourceCommand extends Command
 
     public function handle(): int
     {
-        $model = (string) str($this->argument('name') ?? $this->askRequired('Model (e.g. `BlogPost`)', 'name'))
+        $model = (string) str($this->argument('name') ?? text(
+            label: 'What is the model name?',
+            placeholder: 'BlogPost',
+            required: true,
+        ))
             ->studly()
             ->beforeLast('Resource')
             ->trim('/')
@@ -57,18 +62,28 @@ class MakeResourceCommand extends Command
             $panels = Filament::getPanels();
 
             /** @var Panel $panel */
-            $panel = (count($panels) > 1) ? $panels[$this->choice(
-                'Which panel would you like to create this in?',
-                array_map(
+            $panel = (count($panels) > 1) ? $panels[select(
+                label: 'Which panel would you like to create this in?',
+                options: array_map(
                     fn (Panel $panel): string => $panel->getId(),
                     $panels,
                 ),
-                Filament::getDefaultPanel()->getId(),
+                default: Filament::getDefaultPanel()->getId()
             )] : Arr::first($panels);
         }
 
-        $path = $panel->getResourceDirectory() ?? app_path('Filament/Resources/');
-        $namespace = $panel->getResourceNamespace() ?? 'App\\Filament\\Resources';
+        $resourceDirectories = $panel->getResourceDirectories();
+        $resourceNamespaces = $panel->getResourceNamespaces();
+
+        $namespace = (count($resourceNamespaces) > 1) ?
+            select(
+                label: 'Which namespace would you like to create this in?',
+                options: $resourceNamespaces
+            ) :
+            (Arr::first($resourceNamespaces) ?? 'App\\Filament\\Resources');
+        $path = (count($resourceDirectories) > 1) ?
+            $resourceDirectories[array_search($namespace, $resourceNamespaces)] :
+            (Arr::first($resourceDirectories) ?? app_path('Filament/Resources/'));
 
         $resource = "{$model}Resource";
         $resourceClass = "{$modelClass}Resource";

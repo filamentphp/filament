@@ -5,7 +5,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 ## Overview
 
-Filament's forms can use [actions](../actions). They are buttons that can be added to any form component. For instance, you may want an action to call an API endpoint to generate content with AI, or to create a new option for a select dropdown. Also, you can [render anonymous sets of actions](#adding-anonymous-actions-to-a-form-without-attaching-them-to-a-component) on their own, that are not attached to a particular form component.
+Filament's forms can use [Actions](../actions). They are buttons that can be added to any form component. For instance, you may want an action to call an API endpoint to generate content with AI, or to create a new option for a select dropdown. Also, you can [render anonymous sets of actions](#adding-anonymous-actions-to-a-form-without-attaching-them-to-a-component) on their own which are not attached to a particular form component.
 
 ## Defining a form component action
 
@@ -144,7 +144,7 @@ Notice `$set` injected into the `action()` function in this example. This is [fo
 Now, to render the action in the view of the custom component, you need to call `$getAction()`, passing the name of the action you registered:
 
 ```blade
-<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+<div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
     <input x-model="state" type="range" />
     
     {{ $getAction('setMaximum') }}
@@ -196,28 +196,30 @@ Actions::make([
 
 #### Controlling the horizontal alignment of independent form actions
 
-Independent form actions are aligned to the start of the component by default. You may change this by passing `center` or `end` to `alignment()`:
+Independent form actions are aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `alignment()`:
 
 ```php
 use Filament\Forms\Components\Actions;
+use Filament\Support\Enums\Alignment;
 
 Actions::make([
     // ...
-])->alignment('center'),
+])->alignment(Alignment::Center),
 ```
 
 <AutoScreenshot name="forms/layout/actions/anonymous/horizontally-aligned-center" alt="Anonymous actions horizontally aligned to the center" version="3.x" />
 
 #### Controlling the vertical alignment of independent form actions
 
-Independent form actions are vertically aligned to the start of the component by default. You may change this by passing `center` or `end` to `verticalAlignment()`:
+Independent form actions are vertically aligned to the start of the component by default. You may change this by passing `Alignment::Center` or `Alignment::End` to `verticalAlignment()`:
 
 ```php
 use Filament\Forms\Components\Actions;
+use Filament\Support\Enums\VerticalAlignment;
 
 Actions::make([
     // ...
-])->verticalAlignment('end'),
+])->verticalAlignment(VerticalAlignment::End),
 ```
 
 <AutoScreenshot name="forms/layout/actions/anonymous/vertically-aligned-end" alt="Anonymous actions vertically aligned to the end" version="3.x" />
@@ -237,3 +239,5 @@ Action::make('copyCostToPrice')
         $set('price', $state);
     })
 ```
+
+Form component actions also have access to [all utilities that apply to actions](../actions/advanced#action-utility-injection) in general.

@@ -4,11 +4,14 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+
     $hasNotifications = $notifications->count();
+    $isPaginated = $notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages();
 @endphp
 
 <x-filament::modal
-    :alignment="$hasNotifications ? null : 'center'"
+    :alignment="$hasNotifications ? null : Alignment::Center"
     close-button
     :description="$hasNotifications ? null : __('filament-notifications::database.modal.empty.description')"
     :heading="$hasNotifications ? null : __('filament-notifications::database.modal.empty.heading')"
@@ -17,6 +20,7 @@
     :icon-color="$hasNotifications ? null : 'gray'"
     id="database-notifications"
     slide-over
+    :sticky-header="$hasNotifications"
     width="md"
 >
     @if ($hasNotifications)
@@ -33,11 +37,17 @@
             </div>
         </x-slot>
 
-        <div class="-mx-6 divide-y divide-gray-100 dark:divide-white/10">
+        <div
+            @class([
+                '-mx-6 -mt-6 divide-y divide-gray-200 dark:divide-white/10',
+                '-mb-6' => ! $isPaginated,
+                'border-b border-gray-200 dark:border-white/10' => $isPaginated,
+            ])
+        >
             @foreach ($notifications as $notification)
                 <div
                     @class([
-                        'relative before:absolute before:start-0 before:h-full before:w-0.5 before:bg-primary-600 dark:before:bg-primary-400' => $notification->unread(),
+                        'relative before:absolute before:start-0 before:h-full before:w-0.5 before:bg-primary-600 dark:before:bg-primary-500' => $notification->unread(),
                     ])
                 >
                     {{ $this->getNotification($notification)->inline() }}
@@ -45,48 +55,9 @@
             @endforeach
         </div>
 
-        @if ($notifications instanceof \Illuminate\Contracts\Pagination\Paginator && $notifications->hasPages())
+        @if ($isPaginated)
             <x-slot name="footer">
-                @php
-                    $isRtl = __('filament::layout.direction') === 'rtl';
-                    $previousArrowIcon = $isRtl ? 'heroicon-m-chevron-right' : 'heroicon-m-chevron-left';
-                    $nextArrowIcon = $isRtl ? 'heroicon-m-chevron-left' : 'heroicon-m-chevron-right';
-                @endphp
-
-                <nav
-                    aria-label="{{ __('filament-notifications::database.modal.pagination.label') }}"
-                    role="navigation"
-                    class="flex items-center justify-between gap-3"
-                >
-                    @if (! $notifications->onFirstPage())
-                        <x-filament::button
-                            color="gray"
-                            :icon="$previousArrowIcon"
-                            icon-alias="notifications::database.modal.pagination.previous-button"
-                            rel="prev"
-                            size="sm"
-                            :wire:click="'previousPage(\'' . $notifications->getPageName() . '\')'"
-                            class="me-auto"
-                        >
-                            {{ __('filament-notifications::database.modal.pagination.actions.previous.label') }}
-                        </x-filament::button>
-                    @endif
-
-                    @if ($notifications->hasMorePages())
-                        <x-filament::button
-                            color="gray"
-                            :icon="$nextArrowIcon"
-                            icon-alias="notifications::database.modal.pagination.next-button"
-                            icon-position="after"
-                            rel="next"
-                            size="sm"
-                            :wire:click="'nextPage(\'' . $notifications->getPageName() . '\')'"
-                            class="ms-auto"
-                        >
-                            {{ __('filament-notifications::database.modal.pagination.actions.next.label') }}
-                        </x-filament::button>
-                    @endif
-                </nav>
+                <x-filament::pagination :paginator="$notifications" />
             </x-slot>
         @endif
     @endif

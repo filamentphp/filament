@@ -6,28 +6,37 @@ return [
 
     'heading' => '¿Olvidaste tu contraseña?',
 
-    'buttons' => [
+    'actions' => [
 
         'login' => [
             'label' => 'Volver al inicio de sesión',
         ],
 
-        'request' => [
-            'label' => 'Enviar correo electrónico',
-        ],
-
     ],
 
-    'fields' => [
+    'form' => [
 
         'email' => [
             'label' => 'Correo electrónico',
         ],
 
+        'actions' => [
+
+            'request' => [
+                'label' => 'Enviar email',
+            ],
+
+        ],
+
     ],
 
-    'messages' => [
-        'throttled' => 'Demasiadas solicitudes. Por favor, inténtelo de nuevo en :seconds segundos.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Demasiadas solicitudes',
+            'label' => 'Por favor, inténtelo de nuevo en :seconds segundos.',
+        ],
+
     ],
 
 ];

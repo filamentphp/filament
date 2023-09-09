@@ -21,7 +21,10 @@
 
             init: function () {
                 this.updateVisibleCheckboxListOptions()
-                this.checkIfAllCheckboxesAreChecked()
+
+                $nextTick(() => {
+                    this.checkIfAllCheckboxesAreChecked()
+                })
 
                 Livewire.hook(
                     'commit',
@@ -88,7 +91,7 @@
     >
         @if (! $isDisabled)
             @if ($isSearchable)
-                <x-filament-forms::affixes
+                <x-filament::input.wrapper
                     inline-prefix
                     prefix-icon="heroicon-m-magnifying-glass"
                     prefix-icon-alias="forms:components.checkbox-list.search-field"
@@ -106,7 +109,7 @@
                             )
                         "
                     />
-                </x-filament-forms::affixes>
+                </x-filament::input.wrapper>
             @endif
 
             @if ($isBulkToggleable && count($getOptions()))
@@ -153,6 +156,10 @@
             "
         >
             @forelse ($getOptions() as $value => $label)
+                @php
+                    $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
+                @endphp
+
                 <div
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
@@ -179,7 +186,7 @@
                             :attributes="
                                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
-                                        'disabled' => $isDisabled,
+                                        'disabled' => $shouldOptionBeDisabled,
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,

@@ -3,6 +3,7 @@
 namespace Filament\Tables\Columns;
 
 use Closure;
+use Filament\Tables\Columns\IconColumn\IconColumnSize;
 use Illuminate\Contracts\Support\Arrayable;
 
 class IconColumn extends Column
@@ -13,7 +14,6 @@ class IconColumn extends Column
     use Concerns\HasIcon {
         getIcon as getBaseIcon;
     }
-    use Concerns\HasSize;
 
     /**
      * @var view-string
@@ -37,6 +37,8 @@ class IconColumn extends Column
     protected string | Closure | null $trueIcon = null;
 
     protected bool | Closure $isListWithLineBreaks = false;
+
+    protected IconColumnSize | string | Closure | null $size = null;
 
     public function boolean(bool | Closure $condition = true): static
     {
@@ -122,6 +124,20 @@ class IconColumn extends Column
         $this->icons($options);
 
         return $this;
+    }
+
+    public function size(IconColumnSize | string | Closure | null $size): static
+    {
+        $this->size = $size;
+
+        return $this;
+    }
+
+    public function getSize(mixed $state): IconColumnSize | string | null
+    {
+        return $this->evaluate($this->size, [
+            'state' => $state,
+        ]);
     }
 
     public function getIcon(mixed $state): ?string

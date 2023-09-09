@@ -44,14 +44,14 @@ It will also create a view file at `resources/views/filament/forms/components/ra
 
 Livewire components are PHP classes that have their state stored in the user's browser. When a network request is made, the state is sent to the server, and filled into public properties on the Livewire component class, where it can be accessed in the same way as any other class property in PHP can be.
 
-Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: by a the [`wire:model` attribute](https://laravel-livewire.com/docs/properties#data-binding), or by [entangling](https://laravel-livewire.com/docs/2.x/alpine-js#sharing-state) it with an Alpine.js property:
+Imagine you had a Livewire component with a public property called `$name`. You could bind that property to an input field in the HTML of the Livewire component in one of two ways: by a the [`wire:model` attribute](https://livewire.laravel.com/docs/properties#data-binding), or by [entangling](https://livewire.laravel.com/docs/2.x/alpine-js#sharing-state) it with an Alpine.js property:
 
 ```blade
 <input wire:model="name" />
 
 <!-- Or -->
 
-<div x-data="{ state: $wire.entangle('name') }">
+<div x-data="{ state: $wire.$entangle('name') }">
     <input x-model="state" />
 </div>
 ```
@@ -65,12 +65,12 @@ This is the basis of how fields work in Filament. Each field is assigned to a pu
 
 <!-- Or -->
 
-<div x-data="{ state: $wire.entangle('{{ $getStatePath() }}') }">
+<div x-data="{ state: $wire.$entangle('{{ $getStatePath() }}') }">
     <input x-model="state" />
 </div>
 ```
 
-If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../common/assets#asynchronous-alpinejs-components).
+If your component heavily relies on third party libraries, we advise that you asynchronously load the Alpine.js component using the Filament asset system. This ensures that the Alpine.js component is only loaded when it's needed, and not on every page load. To find out how to do this, check out our [Assets documentation](../../support/assets#asynchronous-alpinejs-components).
 
 ## Rendering the field wrapper
 
@@ -103,14 +103,14 @@ When you bind a field to a state path, you may use the `defer` modifier to ensur
 
 However, you may use the [`live()`](../advanced#the-basics-of-reactivity) on a field to ensure that the state is sent to the server immediately when the user interacts with the field. This allows for lots of advanced use cases as explained in the [advanced](../advanced) section of the documentation.
 
-Filament provides a `$applyStateBindingModifiers()` function that you may use in your view to apply any state binding modifiers to a `wire:model` or `$wire.entangle()` binding:
+Filament provides a `$applyStateBindingModifiers()` function that you may use in your view to apply any state binding modifiers to a `wire:model` or `$wire.$entangle()` binding:
 
 ```blade
 <input {{ $applyStateBindingModifiers('wire:model') }}="{{ $getStatePath() }}" />
 
 <!-- Or -->
 
-<div x-data="{ state: $wire.{{ $applyStateBindingModifiers("entangle('{$getStatePath()}')") }} }">
+<div x-data="{ state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$getStatePath()}')") }} }">
     <input x-model="state" />
 </div>
 ```

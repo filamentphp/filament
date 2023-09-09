@@ -83,11 +83,13 @@ Action::make('delete')
 
 ## Setting a size
 
-Buttons come in 3 sizes - `sm`, `md` or `lg`. You can change the size of the action's trigger using the `size()` method:
+Buttons come in 3 sizes - `ActionSize::Small`, `ActionSize::Medium` or `ActionSize::Large`. You can change the size of the action's trigger using the `size()` method:
 
 ```php
+use Filament\Support\Enums\ActionSize;
+
 Action::make('create')
-    ->size('lg')
+    ->size(ActionSize::Large)
 ```
 
 <AutoScreenshot name="actions/trigger-button/large" alt="Large trigger" version="3.x" />
@@ -107,10 +109,12 @@ Action::make('edit')
 You can also change the icon's position to be after the label instead of before it, using the `iconPosition()` method:
 
 ```php
+use Filament\Support\Enums\IconPosition;
+
 Action::make('edit')
     ->url(fn (): string => route('posts.edit', ['post' => $this->post]))
     ->icon('heroicon-m-pencil-square')
-    ->iconPosition('after')
+    ->iconPosition(IconPosition::After)
 ```
 
 <AutoScreenshot name="actions/trigger-button/icon-after" alt="Trigger with icon after the label" version="3.x" />

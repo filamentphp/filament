@@ -1,3 +1,8 @@
+@php
+    use Filament\Support\Enums\ActionSize;
+    use Filament\Support\Enums\IconSize;
+@endphp
+
 @props([
     'badge' => null,
     'badgeColor' => 'primary',
@@ -17,42 +22,42 @@
 
 @php
     $iconSize ??= match ($size) {
-        'xs' => 'sm',
-        'sm', 'md' => 'md',
-        'lg', 'xl' => 'lg',
+        ActionSize::ExtraSmall, 'xs' => IconSize::Small,
+        ActionSize::Small, ActionSize::Medium, 'sm', 'md' => IconSize::Medium,
+        ActionSize::Large, ActionSize::ExtraLarge, 'lg', 'xl' => IconSize::Large,
     };
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
-        'fi-icon-btn relative flex items-center justify-center outline-none transition duration-75 disabled:pointer-events-none disabled:opacity-70 rounded-lg',
+        'fi-icon-btn relative flex items-center justify-center rounded-lg outline-none transition duration-75 focus:ring-2 disabled:pointer-events-none disabled:opacity-70',
         match ($size) {
-            'xs' => 'h-7 w-7',
-            'sm' => 'h-8 w-8',
-            'md' => 'h-9 w-9',
-            'lg' => 'h-10 w-10',
-            'xl' => 'h-11 w-11',
+            ActionSize::ExtraSmall, 'xs' => 'h-7 w-7',
+            ActionSize::Small, 'sm' => 'h-8 w-8',
+            ActionSize::Medium, 'md' => 'h-9 w-9',
+            ActionSize::Large, 'lg' => 'h-10 w-10',
+            ActionSize::ExtraLarge, 'xl' => 'h-11 w-11',
             default => $size,
         },
         match ($color) {
-            'gray' => 'text-gray-400 hover:text-gray-500 focus:bg-gray-950/5 focus:text-gray-500 dark:text-gray-500 dark:hover:text-gray-400 dark:focus:bg-white/5 dark:focus:text-gray-400',
-            default => 'text-custom-500 hover:text-custom-600 focus:bg-custom-50 focus:text-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus:bg-custom-400/10 dark:focus:text-custom-300',
+            'gray' => 'text-gray-400 hover:text-gray-500 focus:ring-primary-600 dark:text-gray-500 dark:hover:text-gray-400 dark:focus:ring-primary-500',
+            default => 'text-custom-500 hover:text-custom-600 focus:ring-custom-600 dark:text-custom-400 dark:hover:text-custom-300 dark:focus:ring-custom-500',
         },
     ]);
 
-    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [50, 300, 400, 500, 600]);
+    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [300, 400, 500, 600]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-icon-btn-icon',
         match ($iconSize) {
-            'sm' => 'h-4 w-4',
-            'md' => 'h-5 w-5',
-            'lg' => 'h-6 w-6',
+            IconSize::Small, 'sm' => 'h-4 w-4',
+            IconSize::Medium, 'md' => 'h-5 w-5',
+            IconSize::Large, 'lg' => 'h-6 w-6',
             default => $iconSize,
         },
     ]);
 
-    $badgeClasses = 'absolute start-full top-0 -translate-x-1/2 rounded-md bg-white dark:bg-gray-900';
+    $badgeContainerClasses = 'fi-icon-btn-badge-ctn absolute start-full top-0 z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
 
     $hasLoadingIndicator = filled($wireTarget) || ($type === 'submit' && filled($form));
 
@@ -108,8 +113,8 @@
             />
         @endif
 
-        @if ($badge)
-            <div class="{{ $badgeClasses }}">
+        @if (filled($badge))
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>
@@ -151,8 +156,8 @@
             :class="$iconClasses"
         />
 
-        @if ($badge)
-            <div class="{{ $badgeClasses }}">
+        @if (filled($badge))
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>

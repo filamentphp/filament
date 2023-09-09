@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Sửa',
+        'label' => 'Chỉnh sửa',
 
         'modal' => [
 
-            'heading' => 'Sửa :label',
+            'heading' => 'Chỉnh sửa :label',
 
             'actions' => [
 
@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'saved' => 'Đã lưu',
+        'notifications' => [
+
+            'saved' => [
+                'title' => 'Đã lưu',
+            ],
+
         ],
 
     ],

@@ -23,24 +23,6 @@ return [
             'description' => 'Por favor, verifique mais tarde.',
         ],
 
-        'pagination' => [
-
-            'label' => 'Paginação',
-
-            'actions' => [
-
-                'next' => [
-                    'label' => 'Próximo',
-                ],
-
-                'previous' => [
-                    'label' => 'Anterior',
-                ],
-
-            ],
-
-        ],
-
     ],
 
 ];

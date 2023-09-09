@@ -32,14 +32,18 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'Saved',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'Saved',
+        ],
+
     ],
 
     'actions' => [
 
-        'back' => [
-            'label' => 'back',
+        'cancel' => [
+            'label' => 'Cancel',
         ],
 
     ],

@@ -6,6 +6,19 @@ return [
 
     'heading' => 'Kirjaudu tilillesi',
 
+    'actions' => [
+
+        'register' => [
+            'before' => 'tai',
+            'label' => 'luo tili',
+        ],
+
+        'request_password_reset' => [
+            'label' => 'Salasana hukassa?',
+        ],
+
+    ],
+
     'form' => [
 
         'email' => [
@@ -31,8 +44,18 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Kirjautuminen epäonnistui.',
-        'throttled' => 'Liian monta kirjautumisyritystä. Yritä uudelleen :seconds sekunnin kuluttua.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Liian monta kirjautumisyritystä',
+            'body' => 'Yritä uudelleen :seconds sekunnin kuluttua.',
+        ],
+
     ],
 
 ];

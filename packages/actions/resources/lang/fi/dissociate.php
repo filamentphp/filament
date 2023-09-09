@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Erotettu',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Erotettu',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'dissociated' => 'Erotettu',
+        'notifications' => [
+
+            'dissociated' => [
+                'title' => 'Erotettu',
+            ],
+
         ],
 
     ],

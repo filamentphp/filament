@@ -37,7 +37,7 @@ To display a widget on a resource page, use the `getHeaderWidgets()` or `getFoot
 
 ```php
 <?php
- 
+
 namespace App\Filament\Resources\CustomerResource\Pages;
 
 use App\Filament\Resources\CustomerResource;
@@ -80,7 +80,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListProducts extends ListRecords
 {
     use ExposesTableToWidgets;
-    
+
     // ...
 }
 ```
@@ -108,15 +108,45 @@ class ProductStats extends Widget
 In the widget class, you can now access the Eloquent query builder instance for the table data using the `$this->getPageTableQuery()` method:
 
 ```php
-use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-Card::make('Total Products', $this->getPageTableQuery()->count()),
+Stat::make('Total Products', $this->getPageTableQuery()->count()),
 ```
 
 Alternatively, you can access a collection of the records on the current page using the `$this->getPageTableRecords()` method:
 
 ```php
-use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
-Card::make('Total Products', $this->getPageTableRecords()->count()),
+Stat::make('Total Products', $this->getPageTableRecords()->count()),
 ```
+
+## Passing properties to widgets on resource pages
+
+When registering a widget on a resource page, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
+
+```php
+protected function getHeaderWidgets(): array
+{
+    return [
+        CustomerResource\Widgets\CustomerOverview::make([
+            'status' => 'active',
+        ]),
+    ];
+}
+```
+
+This array of properties gets mapped to [public Livewire properties](https://livewire.laravel.com/docs/properties) on the widget class:
+
+```php
+use Filament\Widgets\Widget;
+
+class CustomerOverview extends Widget
+{
+    public string $status;
+
+    // ...
+}
+```
+
+Now, you can access the `status` in the widget class using `$this->status`.

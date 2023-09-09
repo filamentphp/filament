@@ -7,7 +7,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 You may render a "summary" section below your table content. This is great for displaying the results of calculations such as averages, sums, counts, and ranges of the data in your table.
 
-By default, there will be a single summary line for the current page of data, and an additional summary line for the totals for all data if more than one page is available. You may also add summaries for [groups](grouping) of records, see ["Summarising groups of rows"](#summarising-groups-of-rows).
+By default, there will be a single summary line for the current page of data, and an additional summary line for the totals for all data if multiple pages are available. You may also add summaries for [groups](grouping) of records, see ["Summarising groups of rows"](#summarising-groups-of-rows).
 
 "Summarizer" objects can be added to any [table column](columns) using the `summarize()` method:
 
@@ -34,7 +34,7 @@ TextColumn::make('rating')
     ])
 ```
 
-> Note: The first column in a table may not use summarizers. That column is used to render the heading and subheading/s of the summary section.
+> The first column in a table may not use summarizers. That column is used to render the heading and subheading/s of the summary section.
 
 <AutoScreenshot name="tables/summaries" alt="Table with summaries" version="3.x" />
 
@@ -47,7 +47,7 @@ Filament ships with four types of summarizer:
 - [Range](#range)
 - [Sum](#sum)
 
-You may also [create your own custom summarizers](custom) to display data however you wish.
+You may also [create your own custom summarizers](#custom-summaries) to display data in whatever way you wish.
 
 ## Average
 

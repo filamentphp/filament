@@ -10,7 +10,7 @@ They have a website where you can [search all the available icons](https://blade
 
 ## Using custom SVGs as icons
 
-The [Blade Icons] package allows you to register custom SVGs as icons. This is useful if you want to use your own custom icons in Filament.
+The [Blade Icons](https://github.com/blade-ui-kit/blade-icons) package allows you to register custom SVGs as icons. This is useful if you want to use your own custom icons in Filament.
 
 To start with, publish the Blade Icons configuration file:
 
@@ -68,19 +68,19 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 
 ### Panel Builder icon aliases
 
-- `panels::database-notifications.open-button` - Button to open the database notifications modal
 - `panels::global-search.field` - Global search field
 - `panels::pages.dashboard.navigation-item` - Dashboard navigation item
 - `panels::pages.tenancy.register-tenant.open-tenant-button` - Button to open a tenant from the tenant registration page
-- `panels::sidebar.collapse-button` - Desktop sidebar collapse button when it is partially collapsible
-- `panels::sidebar.collapse-button.full` - Desktop sidebar collapse button when it is fully collapsible
+- `panels::sidebar.collapse-button` - Button to collapse the sidebar
+- `panels::sidebar.expand-button` - Button to expand the sidebar
 - `panels::sidebar.group.collapse-button` - Collapse button for a sidebar group
 - `panels::tenant-menu.toggle-button` - Button to toggle the tenant menu
 - `panels::theme-switcher.light-button` - Button to switch to the light theme from the theme switcher
 - `panels::theme-switcher.dark-button` - Button to switch to the dark theme from the theme switcher
 - `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
-- `panels::topbar.close-mobile-sidebar-button` - Button to close the mobile sidebar
-- `panels::topbar.open-mobile-sidebar-button` - Button to open the mobile sidebar
+- `panels::topbar.close-sidebar-button` - Button to close the sidebar
+- `panels::topbar.open-sidebar-button` - Button to open the sidebar
+- `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::user-menu.profile-item` - Profile item in the user menu
 - `panels::user-menu.logout-button` - Button in the user menu to log out
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
@@ -97,18 +97,14 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `tables::columns.collapse-button`
 - `tables::filters.remove-all-button` - Button to remove all filters
 - `tables::grouping.collapse-button` - Button to collapse a group of records
-- `tables::header-cell.sort-asc` - Sort button of a column sorted in ascending order
-- `tables::header-cell.sort-desc` - Sort button of a column sorted in descending order
-- `tables::pagination.previous-button` - Button to go to the previous page, used on mobile and by "simple pagination"
-- `tables::pagination.next-button` - Button to go to the next page, used on mobile and by "simple pagination"
+- `tables::header-cell.sort-asc-button` - Sort button of a column sorted in ascending order
+- `tables::header-cell.sort-desc-button` - Sort button of a column sorted in descending order
 - `tables::reorder.handle` - Handle to grab in order to reorder a record with drag and drop
 - `tables::search-field` - Search input
 
 ### Notifications icon aliases
 
 - `notifications::database.modal.empty-state` - Empty state of the database notifications modal
-- `notifications::database.modal.pagination.previous-button` - Button to go to the previous page of the database notifications modal
-- `notifications::database.modal.pagination.next-button` - Button to go to the next page of the database notifications modal
 - `notifications::notification.close-button` - Button to close a notification
 
 ### UI components icon aliases
@@ -116,4 +112,6 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `badge.delete-button` - Button to delete a badge
 - `breadcrumbs.separator` - Separator between breadcrumbs
 - `modal.close-button` - Button to close a modal
+- `pagination.previous-button` - Button to go to the previous page
+- `pagination.next-button` - Button to go to the next page
 - `section.collapse-button` - Button to collapse a section

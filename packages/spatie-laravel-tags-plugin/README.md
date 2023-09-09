@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-tags-plugin:"^3.0"
+composer require filament/spatie-laravel-tags-plugin:"^3.0-stable" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the tags table:
@@ -28,7 +28,7 @@ You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-tags/
 
 This guide assumes that you've already set up your model attach tags as per [Spatie's documentation](https://spatie.be/docs/laravel-tags/basic-usage/using-tags).
 
-You may use the field in the same way as the [original tags input](/docs/forms/fields/tags-input) field:
+You may use the field in the same way as the [original tags input](https://filamentphp.com/docs/forms/fields/tags-input) field:
 
 ```php
 use Filament\Forms\Components\SpatieTagsInput;
@@ -36,7 +36,7 @@ use Filament\Forms\Components\SpatieTagsInput;
 SpatieTagsInput::make('tags')
 ```
 
-> The field will automatically load and save its tags to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](/docs/forms/getting-started#field-relationships) section**. If you're using the [panel builder](../panels), you can skip this step.
+> The field will automatically load and save its tags to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](https://filamentphp.com/docs/forms/getting-started#field-relationships) section**. If you're using the [Panel Builder](../panels), you can skip this step.
 
 Optionally, you may pass a [`type()`](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections:
 
@@ -47,7 +47,7 @@ SpatieTagsInput::make('tags')
     ->type('categories')
 ```
 
-The tags input supports all the customization options of the [original tags input component](/docs/forms/fields/tags-input).
+The tags input supports all the customization options of the [original tags input component](https://filamentphp.com/docs/forms/fields/tags-input).
 
 ## Table column
 
@@ -72,7 +72,7 @@ SpatieTagsColumn::make('tags')
 
 The [type](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections.
 
-The tags column supports all the customization options of the [original tags column](/docs/tables/columns/tags).
+The tags column supports all the customization options of the [original tags column](https://filamentphp.com/docs/tables/columns/tags).
 
 ## Infolist entry
 
@@ -97,4 +97,4 @@ SpatieTagsEntry::make('tags')
 
 The [type](https://spatie.be/docs/laravel-tags/advanced-usage/using-types) allows you to group tags into collections.
 
-The tags entry supports all the customization options of the [text entry](/docs/infolists/entries/text).
+The tags entry supports all the customization options of the [text entry](https://filamentphp.com/docs/infolists/entries/text).

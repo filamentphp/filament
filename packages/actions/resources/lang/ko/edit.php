@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'saved' => '저장 완료',
+        'notifications' => [
+
+            'saved' => [
+                'title' => '저장 완료',
+            ],
+
         ],
 
     ],

@@ -12,7 +12,7 @@ class ProductResource extends Resource
 
     protected static ?string $navigationGroup = 'Shop';
 
-    protected static ?string $navigationIcon = 'heroicon-m-shopping-bag';
+    protected static ?string $navigationIcon = 'heroicon-o-shopping-bag';
 
     public static function getPages(): array
     {

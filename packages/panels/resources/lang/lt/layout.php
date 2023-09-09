@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Tvarkyti prenumeratą',
+        ],
+
         'logout' => [
             'label' => 'Atsijungti',
         ],
@@ -18,6 +22,18 @@ return [
             'label' => 'Vartotojo meniu',
         ],
 
+        'sidebar' => [
+
+            'collapse' => [
+                'label' => 'Sutraukti šoninę juostą',
+            ],
+
+            'expand' => [
+                'label' => 'Išskleisti šoninę juostą',
+            ],
+
+        ],
+
         'theme_switcher' => [
 
             'dark' => [
@@ -26,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Perjungti šviesos režimą',
+            ],
+
+            'system' => [
+                'label' => 'Perjungti sistemos režimą',
             ],
 
         ],

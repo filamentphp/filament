@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => 'បានបង្កើតដោយជោគជ័យ',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'បានបង្កើតដោយជោគជ័យ',
+            ],
+
         ],
 
     ],

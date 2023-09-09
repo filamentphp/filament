@@ -69,6 +69,11 @@ class StaticAction extends ViewComponent
         return $this;
     }
 
+    public function isButton(): bool
+    {
+        return $this->getView() === static::BUTTON_VIEW;
+    }
+
     public function grouped(): static
     {
         $this->view(static::GROUPED_VIEW);
@@ -83,11 +88,21 @@ class StaticAction extends ViewComponent
         return $this;
     }
 
+    public function isIconButton(): bool
+    {
+        return $this->getView() === static::ICON_BUTTON_VIEW;
+    }
+
     public function link(): static
     {
         $this->view(static::LINK_VIEW);
 
         return $this;
+    }
+
+    public function isLink(): bool
+    {
+        return $this->getView() === static::LINK_VIEW;
     }
 
     public static function getDefaultName(): ?string
@@ -140,6 +155,11 @@ class StaticAction extends ViewComponent
         }
 
         return 'close()';
+    }
+
+    public function getLivewireTarget(): ?string
+    {
+        return null;
     }
 
     /**

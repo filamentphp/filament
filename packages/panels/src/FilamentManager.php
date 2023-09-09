@@ -74,7 +74,12 @@ class FilamentManager
         return $this->getCurrentPanel()->getAuthGuard();
     }
 
-    public function getBrandName(): string
+    public function getAuthPasswordBroker(): ?string
+    {
+        return $this->getCurrentPanel()->getAuthPasswordBroker();
+    }
+
+    public function getBrandName(): string | Htmlable
     {
         return $this->getCurrentPanel()->getBrandName();
     }
@@ -134,6 +139,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getFontFamily();
     }
 
+    public function getFontHtml(): Htmlable
+    {
+        return $this->getCurrentPanel()->getFontHtml();
+    }
+
     public function getFontProvider(): string
     {
         return $this->getCurrentPanel()->getFontProvider();
@@ -142,11 +152,6 @@ class FilamentManager
     public function getFontUrl(): ?string
     {
         return $this->getCurrentPanel()->getFontUrl();
-    }
-
-    public function getFontHtml(): Htmlable
-    {
-        return $this->getCurrentPanel()->getFontHtml();
     }
 
     /**

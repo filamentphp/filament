@@ -20,19 +20,23 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Ištrinta',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Ištrinta',
+            ],
+
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Ištrinti pažymėtus',
+        'label' => 'Ištrinti pasirinktus',
 
         'modal' => [
 
-            'heading' => 'Ištrinti pažymėtą :label',
+            'heading' => 'Ištrinti pasirinktus :label',
 
             'actions' => [
 
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Ištrinta',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Ištrinta',
+            ],
+
         ],
 
     ],

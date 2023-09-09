@@ -4,28 +4,32 @@ return [
 
     'single' => [
 
-        'label' => 'ساختن :label',
+        'label' => 'ایجاد :label',
 
         'modal' => [
 
-            'heading' => 'ساختن :label',
+            'heading' => 'ایجاد :label',
 
             'actions' => [
 
                 'create' => [
-                    'label' => 'ساختن',
+                    'label' => 'ایجاد',
                 ],
 
                 'create_another' => [
-                    'label' => 'ساختن و ساختن یکی دیگر',
+                    'label' => 'ایجاد و ایجاد یکی دیگر',
                 ],
 
             ],
 
         ],
 
-        'messages' => [
-            'created' => 'ساخته شد',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'ایجاد شد',
+            ],
+
         ],
 
     ],

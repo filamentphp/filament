@@ -6,8 +6,26 @@ return [
 
         'label' => 'Duplica',
 
-        'messages' => [
-            'replicated' => 'Duplicato',
+        'modal' => [
+
+            'heading' => 'Duplica :label',
+
+            'actions' => [
+
+                'replicate' => [
+                    'label' => 'Duplica',
+                ],
+
+            ],
+
+        ],
+
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Duplicato',
+            ],
+
         ],
 
     ],

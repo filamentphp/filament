@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => 'Novo :label',
+        'label' => 'Adicionar :label',
 
         'modal' => [
 
@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => 'Criado',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'Criado',
+            ],
+
         ],
 
     ],

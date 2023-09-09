@@ -4,7 +4,7 @@ title: Navigation
 
 ## Overview
 
-By default, Filament will register navigation items for each of your [resources](resources) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item.
+By default, Filament will register navigation items for each of your [resources](resources/getting-started) and [custom pages](pages). These classes contain static properties and methods that you can override, to configure that navigation item.
 
 ## Customizing a navigation item's label
 
@@ -17,7 +17,7 @@ protected static ?string $navigationLabel = 'Custom Navigation Label';
 Alternatively, you may override the `getNavigationLabel()` method:
 
 ```php
-public static function getNavigationLabel(): ?string
+public static function getNavigationLabel(): string
 {
     return 'Custom Navigation Label';
 }
@@ -25,10 +25,10 @@ public static function getNavigationLabel(): ?string
 
 ## Customizing a navigation item's icon
 
-To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set=1#search), you may override the `$navigationIcon` property on the [resource](resources) or [page](pages) class:
+To customize a navigation item's [icon](https://blade-ui-kit.com/blade-icons?set=1#search), you may override the `$navigationIcon` property on the [resource](resources/getting-started) or [page](pages) class:
 
 ```php
-protected static ?string $navigationIcon = 'heroicon-m-document-text';
+protected static ?string $navigationIcon = 'heroicon-o-document-text';
 ```
 
 ### Switching navigation item icon when it is active
@@ -36,7 +36,7 @@ protected static ?string $navigationIcon = 'heroicon-m-document-text';
 You may assign a navigation [icon](https://blade-ui-kit.com/blade-icons?set=1#search) which will only be used for active items using the `$activeNavigationIcon` property:
 
 ```php
-protected static ?string $activeNavigationIcon = 'heroicon-m-document-text';
+protected static ?string $activeNavigationIcon = 'heroicon-o-document-text';
 ```
 
 ## Sorting navigation items
@@ -71,7 +71,7 @@ public static function getNavigationBadgeColor(): ?string
 
 ## Grouping navigation items
 
-You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources) and [custom page](pages):
+You may group navigation items by specifying a `$navigationGroup` property on a [resource](resources/getting-started) and [custom page](pages):
 
 ```php
 protected static ?string $navigationGroup = 'Settings';
@@ -94,13 +94,13 @@ public function panel(Panel $panel): Panel
         ->navigationGroups([
             NavigationGroup::make()
                  ->label('Shop')
-                 ->icon('heroicon-m-shopping-cart'),
+                 ->icon('heroicon-o-shopping-cart'),
             NavigationGroup::make()
                 ->label('Blog')
-                ->icon('heroicon-m-pencil'),
+                ->icon('heroicon-o-pencil'),
             NavigationGroup::make()
-                ->label('Settings')
-                ->icon('heroicon-m-cog-6-tooth')
+                ->label(fn (): string => __('navigation.settings'))
+                ->icon('heroicon-o-cog-6-tooth')
                 ->collapsed(),
         ]);
 }
@@ -130,7 +130,7 @@ use Filament\Navigation\NavigationGroup;
 
 NavigationGroup::make()
     ->label('Settings')
-    ->icon('heroicon-m-cog-6-tooth')
+    ->icon('heroicon-o-cog-6-tooth')
     ->collapsible(false);
 ```
 
@@ -181,6 +181,7 @@ To register new navigation items, you can use the [configuration](configuration)
 
 ```php
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -190,9 +191,13 @@ public function panel(Panel $panel): Panel
         ->navigationItems([
             NavigationItem::make('Analytics')
                 ->url('https://filament.pirsch.io', shouldOpenInNewTab: true)
-                ->icon('heroicon-m-presentation-chart-line')
+                ->icon('heroicon-o-presentation-chart-line')
                 ->group('Reports')
                 ->sort(3),
+            NavigationItem::make('dashboard')
+                ->label(fn (): string => __('filament-panels::pages/dashboard.title'))
+                ->url(fn (): string => Dashboard::getUrl())
+                ->isActiveWhen(fn () => request()->routeIs('filament.admin.pages.dashboard')),
             // ...
         ]);
 }
@@ -206,9 +211,9 @@ You can also conditionally hide a navigation item by using the `visible()` or `h
 use Filament\Navigation\NavigationItem;
 
 NavigationItem::make('Analytics')
-    ->visible(auth()->user()->can('view-analytics'))
+    ->visible(fn(): bool => auth()->user()->can('view-analytics'))
     // or
-    ->hidden(! auth()->user()->can('view-analytics')),
+    ->hidden(fn(): bool => ! auth()->user()->can('view-analytics')),
 ```
 
 ## Disabling resource or page navigation items
@@ -217,6 +222,21 @@ To prevent resources or pages from showing up in navigation, you may use:
 
 ```php
 protected static bool $shouldRegisterNavigation = false;
+```
+
+## Using top navigation
+
+By default, Filament will use a sidebar navigation. You may use a top navigation instead by using the [configuration](configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->topNavigation();
+}
 ```
 
 ## Advanced navigation customization
@@ -232,6 +252,7 @@ use App\Filament\Pages\Settings;
 use App\Filament\Resources\UserResource;
 use Filament\Navigation\NavigationBuilder;
 use Filament\Navigation\NavigationItem;
+use Filament\Pages\Dashboard;
 use Filament\Panel;
 
 public function panel(Panel $panel): Panel
@@ -241,9 +262,9 @@ public function panel(Panel $panel): Panel
         ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
             return $builder->items([
                 NavigationItem::make('Dashboard')
-                    ->icon('heroicon-m-home')
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.pages.dashboard'))
-                    ->url(route('filament.pages.dashboard')),
+                    ->icon('heroicon-o-home')
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.pages.dashboard'))
+                    ->url(fn (): string => Dashboard::getUrl()),
                 ...UserResource::getNavigationItems(),
                 ...Settings::getNavigationItems(),
             ]);
@@ -302,6 +323,7 @@ The user menu is featured in the top right corner of the admin layout. It's full
 To register new items to the user menu, you can use the [configuration](configuration):
 
 ```php
+use App\Filament\Pages\Settings;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 
@@ -312,8 +334,8 @@ public function panel(Panel $panel): Panel
         ->userMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(route('filament.pages.settings'))
-                ->icon('heroicon-m-cog-6-tooth'),
+                ->url(fn (): string => Settings::getUrl())
+                ->icon('heroicon-o-cog-6-tooth'),
             // ...
         ]);
 }
@@ -357,6 +379,21 @@ public function panel(Panel $panel): Panel
             // ...
         ]);
 }
+```
+
+### Conditionally hiding user menu items
+
+You can also conditionally hide a user menu item by using the `visible()` or `hidden()` methods, passing in a condition to check. Passing a function will defer condition evaluation until the menu is actually being rendered:
+
+```php
+use App\Models\Payment;
+use Filament\Navigation\MenuItem;
+
+MenuItem::make()
+    ->label('Payments')
+    ->visible(fn (): bool => auth()->user()->can('viewAny', Payment::class))
+    // or
+    ->hidden(fn (): bool => ! auth()->user()->can('viewAny', Payment::class))
 ```
 
 ## Disabling breadcrumbs

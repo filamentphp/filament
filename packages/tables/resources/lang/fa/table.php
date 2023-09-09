@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'ستون‌ها',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -13,55 +19,17 @@ return [
     'fields' => [
 
         'bulk_select_page' => [
-            'label' => 'انتخاب/عدم انتخاب تمامی موارد برای اقدامات گروهی',
+            'label' => 'انتخاب / عدم‌انتخاب تمامی موارد برای اقدامات گروهی',
         ],
 
         'bulk_select_record' => [
-            'label' => 'انتخاب/عدم انتخاب مورد :key برای اقدامات گروهی',
+            'label' => 'انتخاب / عدم‌انتخاب مورد :key برای اقدامات گروهی',
         ],
 
         'search' => [
             'label' => 'جستجو',
             'placeholder' => 'جستجو',
             'indicator' => 'جستجو',
-        ],
-
-    ],
-
-    'pagination' => [
-
-        'label' => 'صفحه بندی',
-
-        'overview' => 'در حال نمایش :first به :last از :total نتایج',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'در هر صفحه',
-
-                'options' => [
-                    'all' => 'همه',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'برو به صفحه :page',
-            ],
-
-            'next' => [
-                'label' => 'بعدی',
-            ],
-
-            'previous' => [
-                'label' => 'قبلی',
-            ],
-
         ],
 
     ],
@@ -117,13 +85,17 @@ return [
         ],
 
         'toggle_columns' => [
-            'label' => 'باز/بستن ستون‌ها',
+            'label' => 'باز / بستن ستون‌ها',
         ],
 
     ],
 
     'empty' => [
-        'heading' => 'هیچ رکوردی یافت نشد',
+
+        'heading' => ':model یافت نشد.',
+
+        'description' => 'برای شروع یک :model ایجاد کنید.',
+
     ],
 
     'filters' => [
@@ -145,6 +117,8 @@ return [
 
         ],
 
+        'heading' => 'فیلترها',
+
         'indicator' => 'فیلترهای فعال',
 
         'multi_select' => [
@@ -157,13 +131,13 @@ return [
 
         'trashed' => [
 
-            'label' => 'رکوردهای حذف‌شده',
+            'label' => 'رکوردهای حذف‌‌شده',
 
-            'only_trashed' => 'فقط رکوردهای حذف‌شده',
+            'only_trashed' => 'فقط رکوردهای حذف‌‌شده',
 
-            'with_trashed' => 'به همراه رکوردهای حذف‌شده',
+            'with_trashed' => 'به همراه رکوردهای حذف‌‌شده',
 
-            'without_trashed' => 'بدون رکوردهای حذف‌شده',
+            'without_trashed' => 'بدون رکوردهای حذف‌‌شده',
 
         ],
 
@@ -193,11 +167,11 @@ return [
 
     ],
 
-    'reorder_indicator' => 'برای تغییر ترتیب بکشید و رها کنید.',
+    'reorder_indicator' => 'برای تغییر ترتیب، بکشید و رها کنید.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 آیتم انتخاب شده.|:count آیتم انتخاب شده.',
+        'selected_count' => '1 آیتم انتخاب شده|:count آیتم انتخاب شده',
 
         'actions' => [
 
@@ -218,12 +192,12 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'مرتب‌سازی براساس',
+                'label' => 'مرتب‌ سازی براساس',
             ],
 
             'direction' => [
 
-                'label' => 'جهت مرتب‌سازی',
+                'label' => 'جهت مرتب‌ سازی',
 
                 'options' => [
                     'asc' => 'صعودی',

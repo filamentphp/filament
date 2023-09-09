@@ -4,20 +4,11 @@ title: Customizing notifications
 
 ## Overview
 
-Notifications come fully styled out of the box. However, if you want to apply your own styling or use a custom view to render notifications, there's multiple options.
+Notifications come fully styled out of the box. However, if you want to apply your own styling or use a custom view to render notifications, there are multiple options.
 
 ## Styling notifications
 
-Notifications have dedicated CSS classes you can hook into to apply your own styling:
-
-- `filament-notifications`
-- `filament-notifications-notification`
-- `filament-notifications-icon`
-- `filament-notifications-title`
-- `filament-notifications-close-button`
-- `filament-notifications-date`
-- `filament-notifications-body`
-- `filament-notifications-actions`
+Notifications have dedicated CSS classes you can hook into to apply your own styling. Open the inspector in your browser to find out which classes you need to target.
 
 ## Using a custom notification view
 
@@ -51,15 +42,15 @@ Getters for all notification properties will be available in the view. So, a cus
     <h4>
         {{ $getTitle() }}
     </h4>
-    
+
     <p>
         {{ $getDate() }}
     </p>
-    
+
     <p>
         {{ $getBody() }}
     </p>
-    
+
     <span x-on:click="close">
         Close
     </span>

@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\Alignment;
+@endphp
+
 @props([
     'actions' => [],
     'actionsPosition',
@@ -8,13 +12,13 @@
 <div
     {{
         $attributes->class([
-            'fi-ta-header flex flex-col gap-4 px-3 py-3 sm:px-6 sm:py-4',
+            'fi-ta-header flex flex-col justify-start gap-3 p-4 sm:px-6',
             'sm:flex-row sm:items-center sm:justify-between' => $actionsPosition === \Filament\Tables\Actions\HeaderActionsPosition::Adaptive,
         ])
     }}
 >
     @if ($heading || $description)
-        <div class="grid gap-y-2">
+        <div class="grid gap-y-1">
             @if ($heading)
                 <h3
                     class="fi-ta-header-heading text-base font-semibold leading-6"
@@ -36,9 +40,8 @@
     @if ($actions)
         <x-filament-tables::actions
             :actions="$actions"
-            alignment="start"
+            :alignment="Alignment::Start"
             wrap
-            class="ms-auto"
         />
     @endif
 </div>

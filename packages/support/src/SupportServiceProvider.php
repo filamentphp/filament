@@ -29,16 +29,16 @@ class SupportServiceProvider extends PackageServiceProvider
     public function configurePackage(Package $package): void
     {
         $package
-            ->name('filament-support')
+            ->name('filament')
             ->hasCommands([
                 AssetsCommand::class,
                 CheckTranslationsCommand::class,
                 InstallCommand::class,
                 UpgradeCommand::class,
             ])
-            ->hasConfigFile('filament')
+            ->hasConfigFile()
             ->hasTranslations()
-            ->hasViews(namespace: 'filament');
+            ->hasViews();
     }
 
     public function packageRegistered(): void
@@ -68,8 +68,11 @@ class SupportServiceProvider extends PackageServiceProvider
             fn (): HtmlSanitizer => new HtmlSanitizer(
                 (new HtmlSanitizerConfig())
                     ->allowSafeElements()
+                    ->allowRelativeLinks()
+                    ->allowRelativeMedias()
                     ->allowAttribute('class', allowedElements: '*')
-                    ->allowAttribute('style', allowedElements: '*'),
+                    ->allowAttribute('style', allowedElements: '*')
+                    ->withMaxInputLength(500000),
             ),
         );
     }
@@ -103,7 +106,7 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeHtml($this->value));
         });
 
-        if (class_exists(AboutCommand::class) && class_exists(InstalledVersions::class)) {
+        if (class_exists(InstalledVersions::class)) {
             $packages = [
                 'filament',
                 'forms',
@@ -112,7 +115,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 'tables',
             ];
 
-            AboutCommand::add('Filament', [
+            AboutCommand::add('Filament', static fn () => [
                 'Version' => InstalledVersions::getPrettyVersion('filament/support'),
                 'Packages' => collect($packages)
                     ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))

@@ -40,7 +40,7 @@ class CreateAction extends Action
             ] : [];
         });
 
-        $this->successNotificationTitle(__('filament-actions::create.single.messages.created'));
+        $this->successNotificationTitle(__('filament-actions::create.single.notifications.created.title'));
 
         $this->groupedIcon('heroicon-m-plus');
 

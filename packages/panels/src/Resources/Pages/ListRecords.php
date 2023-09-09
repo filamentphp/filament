@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
-use Livewire\Features\SupportQueryString\Url;
+use Livewire\Attributes\Url;
 
 class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
@@ -29,7 +29,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::resources.pages.list-records';
+    protected static string $view = 'filament-panels::resources.pages.list-records';
 
     #[Url]
     public bool $isTableReordering = false;
@@ -65,17 +65,14 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     {
         static::authorizeResourceAccess();
 
-        if (
-            blank($this->activeTab) &&
-            count($tabs = $this->getTabs())
-        ) {
-            $this->activeTab = array_key_first($tabs);
+        if (blank($this->activeTab)) {
+            $this->activeTab = $this->getDefaultActiveTab();
         }
     }
 
     public function getBreadcrumb(): ?string
     {
-        return static::$breadcrumb ?? __('filament::resources/pages/list-records.breadcrumb');
+        return static::$breadcrumb ?? __('filament-panels::resources/pages/list-records.breadcrumb');
     }
 
     public function table(Table $table): Table
@@ -341,6 +338,16 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     public function getTabs(): array
     {
         return [];
+    }
+
+    public function getDefaultActiveTab(): string | int | null
+    {
+        return array_key_first($this->getTabs());
+    }
+
+    public function updatedActiveTab(): void
+    {
+        $this->resetPage();
     }
 
     public function generateTabLabel(string $key): string

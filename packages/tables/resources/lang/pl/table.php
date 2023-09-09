@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Kolumny',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -24,44 +30,6 @@ return [
             'label' => 'Szukaj',
             'placeholder' => 'Szukaj',
             'indicator' => 'Szukaj',
-        ],
-
-    ],
-
-    'pagination' => [
-
-        'label' => 'Paginacja',
-
-        'overview' => 'Pozycje od :first do :last z :total łącznie',
-
-        'fields' => [
-
-            'records_per_page' => [
-
-                'label' => 'na stronę',
-
-                'options' => [
-                    'all' => 'Wszystkie',
-                ],
-
-            ],
-
-        ],
-
-        'actions' => [
-
-            'go_to_page' => [
-                'label' => 'Przejdź do strony :page',
-            ],
-
-            'next' => [
-                'label' => 'Następna',
-            ],
-
-            'previous' => [
-                'label' => 'Poprzednia',
-            ],
-
         ],
 
     ],
@@ -126,6 +94,8 @@ return [
 
         'heading' => 'Nie znaleziono rekordów',
 
+        'description' => 'Utwórz rekord aby rozpocząć.',
+
     ],
 
     'filters' => [
@@ -146,6 +116,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'Filtry',
 
         'indicator' => 'Aktywne filtry',
 
@@ -199,7 +171,7 @@ return [
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} 1 rekord zaznaczony.|[2,4]:count rekordy zaznaczone.|[5,*]:count rekordów zaznaczonych.',
+        'selected_count' => '{1} 1 rekord zaznaczony|[2,4]:count rekordy zaznaczone|[5,*]:count rekordów zaznaczonych',
 
         'actions' => [
 

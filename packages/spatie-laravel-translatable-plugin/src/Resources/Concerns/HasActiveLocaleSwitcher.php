@@ -9,10 +9,12 @@ trait HasActiveLocaleSwitcher
 {
     public ?string $activeLocale = null;
 
-    public ?array $translatableLocales = null;
-
     public function getActiveFormsLocale(): ?string
     {
+        if (! in_array($this->activeLocale, $this->getTranslatableLocales())) {
+            return null;
+        }
+
         return $this->activeLocale;
     }
 

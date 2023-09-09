@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-media-library-plugin:"^3.0"
+composer require filament/spatie-laravel-media-library-plugin:"^3.0-stable" -W
 ```
 
 If you haven't already done so, you need to publish the migration to create the media table:
@@ -26,7 +26,7 @@ You must also [prepare your Eloquent model](https://spatie.be/docs/laravel-media
 
 ## Form component
 
-You may use the field in the same way as the [original file upload](/docs/forms/fields/file-upload) field:
+You may use the field in the same way as the [original file upload](https://filamentphp.com/docs/forms/fields/file-upload) field:
 
 ```php
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -34,9 +34,9 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 SpatieMediaLibraryFileUpload::make('avatar')
 ```
 
-The media library file upload supports all the customization options of the [original file upload component](/docs/forms/fields/file-upload).
+The media library file upload supports all the customization options of the [original file upload component](https://filamentphp.com/docs/forms/fields/file-upload).
 
-> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](/docs/forms/getting-started#field-relationships) section**. If you're using a [panel](../panels), you can skip this step.
+> The field will automatically load and save its uploads to your model. To set this functionality up, **you must also follow the instructions set out in the [field relationships](https://filamentphp.com/docs/forms/getting-started#field-relationships) section**. If you're using a [panel](../panels), you can skip this step.
 
 ### Passing a collection
 
@@ -48,6 +48,21 @@ use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 SpatieMediaLibraryFileUpload::make('avatar')
     ->collection('avatars')
 ```
+
+### Configuring the storage disk and directory
+
+By default, files will be uploaded publicly to your storage disk defined in the [Filament configuration file](https://filamentphp.com/docs/forms/installation#publishing-configuration). You can also set the `FILAMENT_FILESYSTEM_DISK` environment variable to change this. Spatie's disk configuration will not be used. This is to ensure consistency between all Filament packages.
+
+You may set the disk for uploading files with the `disk()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->disk('s3')
+```
+
+The base file upload component also has configuration options for setting the `directory()` and `visibility()` of uploaded files. These are not used by the media library file upload component. Spatie's package has its own system for determining the directory of a newly-uploaded file, and it does not support uploading private files out of the box. One way to store files privately is to configure this in your S3 bucket settings, in which case you should also use `visibility('private')` to ensure that Filament generates temporary URLs for your files.
 
 ### Reordering files
 
@@ -135,7 +150,7 @@ use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 SpatieMediaLibraryImageColumn::make('avatar')
 ```
 
-The media library image column supports all the customization options of the [original image column](/docs/tables/columns/image).
+The media library image column supports all the customization options of the [original image column](https://filamentphp.com/docs/tables/columns/image).
 
 ### Passing a collection
 
@@ -171,7 +186,7 @@ use Filament\Infolists\Components\SpatieMediaLibraryImageEntry;
 SpatieMediaLibraryImageEntry::make('avatar')
 ```
 
-The media library image entry supports all the customization options of the [original image entry](/docs/infolists/entries/image).
+The media library image entry supports all the customization options of the [original image entry](https://filamentphp.com/docs/infolists/entries/image).
 
 ### Passing a collection
 

@@ -29,7 +29,7 @@ class ViewRecord extends Page implements HasInfolists
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::resources.pages.view-record';
+    protected static string $view = 'filament-panels::resources.pages.view-record';
 
     /**
      * @var array<string, mixed> | null
@@ -38,12 +38,12 @@ class ViewRecord extends Page implements HasInfolists
 
     public function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? __('filament::resources/pages/view-record.breadcrumb');
+        return static::$breadcrumb ?? __('filament-panels::resources/pages/view-record.breadcrumb');
     }
 
     public function getContentTabLabel(): ?string
     {
-        return __('filament::resources/pages/view-record.content.tab.label');
+        return __('filament-panels::resources/pages/view-record.content.tab.label');
     }
 
     public function mount(int | string $record): void
@@ -178,22 +178,32 @@ class ViewRecord extends Page implements HasInfolists
             return static::$title;
         }
 
-        return __('filament::resources/pages/view-record.title', [
+        return __('filament-panels::resources/pages/view-record.title', [
             'label' => $this->getRecordTitle(),
         ]);
     }
 
     public function form(Form $form): Form
     {
-        return static::getResource()::form(
-            $form
-                ->operation('view')
-                ->disabled()
-                ->model($this->getRecord())
-                ->statePath($this->getFormStatePath())
-                ->columns($this->hasInlineLabels() ? 1 : 2)
-                ->inlineLabel($this->hasInlineLabels()),
-        );
+        return $form;
+    }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(static::getResource()::form(
+                $this->makeForm()
+                    ->operation('view')
+                    ->disabled()
+                    ->model($this->getRecord())
+                    ->statePath($this->getFormStatePath())
+                    ->columns($this->hasInlineLabels() ? 1 : 2)
+                    ->inlineLabel($this->hasInlineLabels()),
+            )),
+        ];
     }
 
     public function getFormStatePath(): ?string

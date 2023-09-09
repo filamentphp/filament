@@ -49,6 +49,8 @@ trait HasAuth
 
     protected string $authGuard = 'web';
 
+    protected ?string $authPasswordBroker = null;
+
     /**
      * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
@@ -114,6 +116,13 @@ trait HasAuth
     public function authGuard(string $guard): static
     {
         $this->authGuard = $guard;
+
+        return $this;
+    }
+
+    public function authPasswordBroker(?string $broker = null): static
+    {
+        $this->authPasswordBroker = $broker;
 
         return $this;
     }
@@ -305,5 +314,10 @@ trait HasAuth
     public function getAuthGuard(): string
     {
         return $this->authGuard;
+    }
+
+    public function getAuthPasswordBroker(): ?string
+    {
+        return $this->authPasswordBroker;
     }
 }

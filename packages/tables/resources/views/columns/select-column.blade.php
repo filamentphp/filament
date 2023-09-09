@@ -1,7 +1,12 @@
 @php
     $canSelectPlaceholder = $canSelectPlaceholder();
     $isDisabled = $isDisabled();
+
     $state = $getState();
+    if ($state instanceof \BackedEnum) {
+        $state = $state->value;
+    }
+    $state = strval($state);
 @endphp
 
 <div
@@ -14,33 +19,40 @@
 
         recordKey: @js($recordKey),
 
-        state: @js($state ?? ''),
+        state: @js($state),
     }"
     x-init="
-        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
-            succeed(({ snapshot, effect }) => {
-                if (component.id !== @js($this->getId())) {
-                    return
-                }
+        () => {
+            Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+                succeed(({ snapshot, effect }) => {
+                    $nextTick(() => {
+                        if (component.id !== @js($this->getId())) {
+                            return
+                        }
 
-                if (! $refs.newState) {
-                    return
-                }
+                        if (! $refs.newState) {
+                            return
+                        }
 
-                let newState = $refs.newState.value
+                        let newState = $refs.newState.value
 
-                if (state === newState) {
-                    return
-                }
+                        if (state === newState) {
+                            return
+                        }
 
-                state = newState
+                        state = newState
+                    })
+                })
             })
-        })
+        }
     "
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-select px-3 py-2'])
+            ->class([
+                'fi-ta-select',
+                'px-3 py-4' => ! $isInline(),
+            ])
     }}
 >
     <input
@@ -49,7 +61,7 @@
         x-ref="newState"
     />
 
-    <x-filament-forms::affixes
+    <x-filament::input.wrapper
         :alpine-disabled="'isLoading || ' . \Illuminate\Support\Js::from($isDisabled)"
         alpine-valid="error === undefined"
         x-tooltip="
@@ -97,5 +109,5 @@
                 </option>
             @endforeach
         </x-filament::input.select>
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 </div>

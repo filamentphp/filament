@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Terpadam',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Terpadam',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Terpadam',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Terpadam',
+            ],
+
         ],
 
     ],

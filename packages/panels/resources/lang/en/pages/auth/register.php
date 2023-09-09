@@ -44,8 +44,13 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Too many registration attempts. Please try again in :seconds seconds.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Too many registration attempts',
+            'body' => 'Please try again in :seconds seconds.',
+        ],
+
     ],
 
 ];

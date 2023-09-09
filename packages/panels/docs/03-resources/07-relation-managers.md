@@ -32,7 +32,7 @@ From a UX perspective, this solution is only suitable if your related model only
 
 > These are compatible with `BelongsTo`, `HasOne` and `MorphOne` relationships.
 
-All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), [Card](../../forms/layout/card), etc) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
+All layout form components ([Grid](../../forms/layout/grid#grid-component), [Section](../../forms/layout/section), [Fieldset](../../forms/layout/fieldset), [Section](../../forms/layout/section), etc.) have a `relationship()` method. When you use this, all fields within that layout are saved to the related model instead of the owner's model:
 
 ```php
 use Filament\Forms\Components\Fieldset;
@@ -134,9 +134,9 @@ You can find out more about soft deleting [here](#deleting-records).
 
 ## Listing related records
 
-Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-records), [edit](#editing-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
+Related records will be listed in a table. The entire relation manager is based around this table, which contains actions to [create](#creating-related-records), [edit](#editing-related-records), [attach / detach](#attaching-and-detaching-records), [associate / dissociate](#associating-and-dissociating-records), and delete records.
 
-You may may use any of the features of the [table builder](../../tables) to customize relation managers.
+You may use any features of the [Table Builder](../../tables) to customize relation managers.
 
 ### Listing with pivot attributes
 
@@ -182,7 +182,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `CreateAction`
 
-To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/create).
+To learn how to customize the `CreateAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/create).
 
 ## Editing related records
 
@@ -209,7 +209,7 @@ Please ensure that any pivot attributes are listed in the `withPivot()` method o
 
 ### Customizing the `EditAction`
 
-To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/edit).
+To learn how to customize the `EditAction`, including mutating the form data, changing the notification, and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/edit).
 
 ## Attaching and detaching records
 
@@ -257,7 +257,8 @@ By default, as you search for a record to attach, options will load from the dat
 ```php
 use Filament\Tables\Actions\AttachAction;
 
-AttachAction::make()->preloadRecordSelect()
+AttachAction::make()
+    ->preloadRecordSelect()
 ```
 
 ### Attaching with pivot attributes
@@ -275,11 +276,11 @@ AttachAction::make()
     ])
 ```
 
-In this example, `$action->getRecordSelect()` outputs the select field to pick the record to attach. The `role` text input is then saved to the pivot table's `role` column.
+In this example, `$action->getRecordSelect()` returns the select field to pick the record to attach. The `role` text input is then saved to the pivot table's `role` column.
 
 Please ensure that any pivot attributes are listed in the `withPivot()` method of the relationship *and* inverse relationship.
 
-### Scoping the options
+### Scoping the options to attach
 
 You may want to scope the options available to `AttachAction`:
 
@@ -289,6 +290,31 @@ use Illuminate\Database\Eloquent\Builder;
 
 AttachAction::make()
     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+```
+
+### Searching the options to attach across multiple columns
+
+By default, the options available to `AttachAction` will be searched in the `recordTitleAttribute()` of the table. If you wish to search across multiple columns, you can use the `recordSelectSearchColumns()` method:
+
+```php
+use Filament\Tables\Actions\AttachAction;
+
+AttachAction::make()
+    ->recordSelectSearchColumns(['title', 'description'])
+```
+
+### Customizing the select field in the attached modal
+
+You may customize the select field object that is used during attachment by passing a function to the `recordSelect()` method:
+
+```php
+use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\AttachAction;
+
+AttachAction::make()
+    ->recordSelect(
+        fn (Select $select) => $select->placeholder('Select a post'),
+    )
 ```
 
 ### Handling duplicates
@@ -349,10 +375,11 @@ By default, as you search for a record to associate, options will load from the 
 ```php
 use Filament\Tables\Actions\AssociateAction;
 
-AssociateAction::make()->preloadRecordSelect()
+AssociateAction::make()
+    ->preloadRecordSelect()
 ```
 
-### Scoping the options
+### Scoping the options to associate
 
 You may want to scope the options available to `AssociateAction`:
 
@@ -362,6 +389,31 @@ use Illuminate\Database\Eloquent\Builder;
 
 AssociateAction::make()
     ->recordSelectOptionsQuery(fn (Builder $query) => $query->whereBelongsTo(auth()->user())
+```
+
+### Searching the options to associate across multiple columns
+
+By default, the options available to `AssociateAction` will be searched in the `recordTitleAttribute()` of the table. If you wish to search across multiple columns, you can use the `recordSelectSearchColumns()` method:
+
+```php
+use Filament\Tables\Actions\AssociateAction;
+
+AssociateAction::make()
+    ->recordSelectSearchColumns(['title', 'description'])
+```
+
+### Customizing the select field in the associate modal
+
+You may customize the select field object that is used during association by passing a function to the `recordSelect()` method:
+
+```php
+use Filament\Forms\Components\Select;
+use Filament\Tables\Actions\AssociateAction;
+
+AssociateAction::make()
+    ->recordSelect(
+        fn (Select $select) => $select->placeholder('Select a post'),
+    )
 ```
 
 ## Viewing related records
@@ -439,7 +491,7 @@ public function table(Table $table): Table
 
 ### Customizing the `DeleteAction`
 
-To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [actions documentation](../../actions/prebuilt-actions/delete).
+To learn how to customize the `DeleteAction`, including changing the notification and adding lifecycle hooks, please see the [Actions documentation](../../actions/prebuilt-actions/delete).
 
 ## Accessing the relationship's owner record
 
@@ -449,7 +501,7 @@ Relation managers are Livewire components. When they are first loaded, the owner
 $this->ownerRecord
 ```
 
-However, in you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
+However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
 
 ```php
 use Filament\Forms;
@@ -626,3 +678,87 @@ public function table(Table $table): Table
         ]);
 }
 ```
+
+## Customizing the relation manager record title
+
+The relation manager uses the concept of a "record title attribute" to determine which attribute of the related model should be used to identify it. When creating a relation manager, this attribute is passed as the third argument to the `make:filament-relation-manager` command:
+
+```bash
+php artisan make:filament-relation-manager CategoryResource posts title
+```
+
+In this example, the `title` attribute of the `Post` model will be used to identify a post in the relation manager.
+
+This is mainly used by the action classes. For instance, when you [attach](#attaching-and-detaching-records) or [associate](#associating-and-dissociating-records) a record, the titles will be listed in the select field. When you [edit](#editing-related-records), [view](#viewing-related-records) or [delete](#deleting-related-records) a record, the title will be used in the header of the modal.
+
+In some cases, you may want to concatenate multiple attributes together to form a title. You can do this by replacing the `recordTitleAttribute()` configuration method with `recordTitle()`, passing a function that transforms a model into a title:
+
+```php
+use App\Models\Post;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->recordTitle(fn (Post $record): string => "{$record->title} ({$record->id})")
+        ->columns([
+            // ...
+        ]);
+}
+```
+
+If you're using `recordTitle()`, and you have an [associate action](#associating-and-dissociating-records) or [attach action](#attaching-and-detaching-records), you will also want to specify search columns for those actions:
+
+```php
+use Filament\Tables\Actions\AssociateAction;
+use Filament\Tables\Actions\AttachAction;
+
+AssociateAction::make()
+    ->recordSelectSearchColumns(['title', 'id']);
+
+AttachAction::make()
+    ->recordSelectSearchColumns(['title', 'id'])
+```
+
+## Read-only mode
+
+Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit, and delete. However, you can disable this behaviour, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
+
+```php
+public function isReadOnly(): bool
+{
+    return false;
+}
+```
+
+## Passing properties to relation managers
+
+When registering a relation manager in a resource, you can use the `make()` method to pass an array of [Livewire properties](https://livewire.laravel.com/docs/properties) to it:
+
+```php
+use App\Filament\Resources\Blog\PostResource\RelationManagers\CommentsRelationManager;
+
+public static function getRelations(): array
+{
+    return [
+        CommentsRelationManager::make([
+            'status' => 'approved',
+        ]),
+    ];
+}
+```
+
+This array of properties gets mapped to [public Livewire properties](https://livewire.laravel.com/docs/properties) on the relation manager class:
+
+```php
+use Filament\Resources\RelationManagers\RelationManager;
+
+class CommentsRelationManager extends RelationManager
+{
+    public string $status;
+
+    // ...
+}
+```
+
+Now, you can access the `status` in the relation manager class using `$this->status`.

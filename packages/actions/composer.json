@@ -13,9 +13,9 @@
         "filament/infolists": "self.version",
         "filament/notifications": "self.version",
         "filament/support": "self.version",
-        "illuminate/contracts": "^9.0|^10.0",
-        "illuminate/database": "^9.0|^10.0",
-        "illuminate/support": "^9.0|^10.0",
+        "illuminate/contracts": "^10.0",
+        "illuminate/database": "^10.0",
+        "illuminate/support": "^10.0",
         "spatie/laravel-package-tools": "^1.9"
     },
     "autoload": {

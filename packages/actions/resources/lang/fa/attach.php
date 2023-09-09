@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'attached' => 'افزوده شد',
+        'notifications' => [
+
+            'attached' => [
+                'title' => 'افزوده شد',
+            ],
+
         ],
 
     ],

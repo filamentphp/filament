@@ -6,13 +6,18 @@ $path = $config['path'] ?? 'admin';
 
 $pathPhp = preg_match('/\'path\'\s*=>\s*(.*),/', $config, $matches) ? $matches[1] : '\'admin\'';
 $path = preg_match('/env\(\'FILAMENT_PATH\',\s*\'(.*)\'\)/', $pathPhp, $matches) ? $matches[1] : 'admin';
+$pathPhp = $path ? "\n            ->path('{$path}')" : '';
 
 $isAdmin = trim($path, '/') === 'admin';
 $className = $isAdmin ? 'AdminPanelProvider' : 'AppPanelProvider';
 $id = $isAdmin ? 'admin' : 'app';
 
 $domainPhp = preg_match('/\'domain\'\s*=>\s*(.*),/', $config, $matches) ? $matches[1] : null;
-$domainPhp = $domainPhp ? "\n            ->domain({$domainPhp})" : '';
+if ($domainPhp === 'env(\'FILAMENT_DOMAIN\')') {
+    $domainPhp = null;
+}
+$domain = preg_match('/env\(\'FILAMENT_DOMAIN\',\s*\'(.*)\'\)/', $pathPhp, $matches) ? $matches[1] : '';
+$domainPhp = $domain ? "\n            ->domain('{$domain}')" : '';
 
 $authGuardPhp = preg_match('/\'guard\'\s*=>\s*(.*),/', $config, $matches) ? $matches[1] : null;
 if ($authGuardPhp === 'env(\'FILAMENT_AUTH_GUARD\', \'web\')') {
@@ -30,7 +35,7 @@ $widgetsNamespacePhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*
 $widgetsPathPhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : 'app_path(\'Filament/Widgets\')';
 
 $databaseNotificationsPhp = preg_match("/'database_notifications'\s*=>\s*\[\s*'enabled'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : null;
-if ($databaseNotificationsPhp === 'false') {
+if (in_array($databaseNotificationsPhp, ['false', null])) {
     $databaseNotificationsPhp = '';
 } elseif ($databaseNotificationsPhp === 'true') {
     $databaseNotificationsPhp = "\n            ->databaseNotifications()";
@@ -74,8 +79,7 @@ class {$className} extends PanelProvider
     {
         return \$panel
             ->default()
-            ->id('{$id}')
-            ->path({$pathPhp}){$domainPhp}
+            ->id('{$id}'){$pathPhp}{$domainPhp}
             ->login(){$authGuardPhp}
             ->colors([
                 'primary' => Color::Amber,

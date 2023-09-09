@@ -1,16 +1,16 @@
-<x-filament::page.simple>
+<x-filament-panels::page.simple>
     @if (filament()->hasLogin())
         <x-slot name="subheading">
             {{ $this->loginAction }}
         </x-slot>
     @endif
 
-    <x-filament::form wire:submit="request">
+    <x-filament-panels::form wire:submit="request">
         {{ $this->form }}
 
-        <x-filament::form.actions
+        <x-filament-panels::form.actions
             :actions="$this->getCachedFormActions()"
             :full-width="$this->hasFullWidthFormActions()"
         />
-    </x-filament::form>
-</x-filament::page.simple>
+    </x-filament-panels::form>
+</x-filament-panels::page.simple>

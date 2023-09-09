@@ -30,8 +30,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => '保存しました',
+    'notifications' => [
+
+        'saved' => [
+            'title' => '保存しました',
+        ],
+
     ],
 
 ];

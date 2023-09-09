@@ -3,13 +3,15 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use function Filament\Forms\array_move_after;
-use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Builder\Block;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
+
+use function Filament\Forms\array_move_after;
+use function Filament\Forms\array_move_before;
 
 class Builder extends Field implements Contracts\CanConcealComponents
 {
@@ -129,7 +131,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isAddable());
 
         if ($this->modifyAddActionUsing) {
@@ -182,7 +184,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             })
             ->livewireClickHandlerEnabled(false)
             ->button()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isAddable());
 
         if ($this->modifyAddBetweenActionUsing) {
@@ -223,7 +225,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->collapsed(false, shouldMakeComponentCollapsible: false);
             })
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isCloneable());
 
         if ($this->modifyCloneActionUsing) {
@@ -260,7 +262,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isDeletable());
 
         if ($this->modifyDeleteActionUsing) {
@@ -296,7 +298,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyMoveDownActionUsing) {
@@ -332,7 +334,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
                 $component->state($items);
             })
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isReorderable());
 
         if ($this->modifyMoveUpActionUsing) {
@@ -372,7 +374,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             })
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size('sm')
+            ->size(ActionSize::Small)
             ->visible(fn (): bool => $this->isReorderableWithDragAndDrop());
 
         if ($this->modifyReorderActionUsing) {
@@ -404,7 +406,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyCollapseActionUsing) {
             $action = $this->evaluate($this->modifyCollapseActionUsing, [
@@ -435,7 +437,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->iconButton()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyExpandActionUsing) {
             $action = $this->evaluate($this->modifyExpandActionUsing, [
@@ -465,7 +467,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyCollapseAllActionUsing) {
             $action = $this->evaluate($this->modifyCollapseAllActionUsing, [
@@ -495,7 +497,7 @@ class Builder extends Field implements Contracts\CanConcealComponents
             ->color('gray')
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyExpandAllActionUsing) {
             $action = $this->evaluate($this->modifyExpandAllActionUsing, [

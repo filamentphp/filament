@@ -6,7 +6,7 @@
 <div {{ $attributes->class('mt-2 flex gap-x-3') }}>
     @if ($unreadNotificationsCount)
         <x-filament::link
-            color="gray"
+            color="primary"
             tabindex="-1"
             tag="button"
             wire:click="markAllNotificationsAsRead"
@@ -16,7 +16,7 @@
     @endif
 
     <x-filament::link
-        color="gray"
+        color="danger"
         tabindex="-1"
         tag="button"
         wire:click="clearNotifications"

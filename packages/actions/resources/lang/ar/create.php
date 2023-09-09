@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => 'تمت الإضافة',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'تمت الإضافة',
+            ],
+
         ],
 
     ],

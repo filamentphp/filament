@@ -12,7 +12,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament-forms::affixes
+    <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -23,8 +23,10 @@
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
         :valid="! $errors->has($statePath)"
-        class="fi-fo-color-picker"
-        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class('fi-fo-color-picker')
+        "
     >
         <div
             x-ignore
@@ -34,7 +36,7 @@
                         isAutofocused: @js($isAutofocused()),
                         isDisabled: @js($isDisabled),
                         isLiveOnPickerClose: @js($isLiveOnBlur() || $isLiveDebounced()),
-                        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     })"
             x-on:keydown.esc="isOpen() && $event.stopPropagation()"
             {{ $getExtraAlpineAttributeBag()->class(['flex']) }}
@@ -66,7 +68,10 @@
             >
                 <div
                     x-bind:style="{ 'background-color': state }"
-                    class="h-5 w-5 rounded-full ring-1 ring-inset ring-gray-950/10 dark:ring-white/20"
+                    x-bind:class="{
+                        'ring-1 ring-inset ring-gray-200 dark:ring-white/10': ! state,
+                    }"
+                    class="h-5 w-5 rounded-full"
                 ></div>
             </div>
 
@@ -76,7 +81,7 @@
                 x-cloak
                 x-float.placement.bottom-start.offset.flip.shift="{ offset: 8 }"
                 x-ref="panel"
-                class="absolute z-10 hidden rounded-lg shadow-lg"
+                class="fi-fo-color-picker-panel absolute z-10 hidden rounded-lg shadow-lg"
             >
                 @php
                     $tag = match ($getFormat()) {
@@ -90,5 +95,5 @@
                 <{{ $tag }} color="{{ $getState() }}" />
             </div>
         </div>
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 </x-dynamic-component>

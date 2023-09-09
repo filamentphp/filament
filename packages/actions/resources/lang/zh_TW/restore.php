@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => '已還原資料',
+        'notifications' => [
+
+            'restored' => [
+                'title' => '已還原資料',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => '已還原資料',
+        'notifications' => [
+
+            'restored' => [
+                'title' => '已還原資料',
+            ],
+
         ],
 
     ],

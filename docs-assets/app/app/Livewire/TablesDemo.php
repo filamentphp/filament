@@ -7,6 +7,11 @@ use App\Models\User;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
+use Filament\Support\Enums\ActionSize;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontFamily;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\BulkAction;
@@ -16,7 +21,6 @@ use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\Position;
 use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\CheckboxColumn;
 use Filament\Tables\Columns\ColorColumn;
@@ -34,8 +38,9 @@ use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
+use Filament\Tables\Enums\ActionsPosition;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\Filter;
-use Filament\Tables\Filters\Layout;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Grouping\Group;
 use Filament\Tables\Table;
@@ -342,7 +347,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                 TextColumn::make('name'),
                 TextColumn::make('email')
                     ->icon('heroicon-m-envelope')
-                    ->iconPosition('after'),
+                    ->iconPosition(IconPosition::After),
             ]);
     }
 
@@ -351,7 +356,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->postsTable($table)
             ->columns([
                 TextColumn::make('title')
-                    ->size('lg'),
+                    ->size(TextColumn\TextColumnSize::Large),
             ]);
     }
 
@@ -360,7 +365,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->postsTable($table)
             ->columns([
                 TextColumn::make('title')
-                    ->weight('bold'),
+                    ->weight(FontWeight::Bold),
             ]);
     }
 
@@ -370,7 +375,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->columns([
                 TextColumn::make('name'),
                 TextColumn::make('email')
-                    ->fontFamily('mono'),
+                    ->fontFamily(FontFamily::Mono),
             ]);
     }
 
@@ -431,7 +436,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         'reviewing' => 'heroicon-o-clock',
                         'published' => 'heroicon-o-check-circle',
                     })
-                    ->size('md'),
+                    ->size(IconColumn\IconColumnSize::Medium),
             ]);
     }
 
@@ -514,7 +519,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->usersTable($table)
             ->columns([
                 TextColumn::make('name'),
-                ImageColumn::make('avatars')
+                ImageColumn::make('colleagues')
                     ->circular()
                     ->stacked()
                     ->limit(3),
@@ -526,7 +531,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->usersTable($table)
             ->columns([
                 TextColumn::make('name'),
-                ImageColumn::make('avatars')
+                ImageColumn::make('colleagues')
                     ->circular()
                     ->stacked()
                     ->limit(3)
@@ -539,7 +544,7 @@ class TablesDemo extends Component implements HasForms, HasTable
         return $this->usersTable($table)
             ->columns([
                 TextColumn::make('name'),
-                ImageColumn::make('avatars')
+                ImageColumn::make('colleagues')
                     ->circular()
                     ->stacked()
                     ->limit(3)
@@ -711,7 +716,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ])
                     ->columns(2)
                     ->columnSpan(2),
-            ], layout: Layout::AboveContent)
+            ], layout: FiltersLayout::AboveContent)
             ->filtersFormColumns(4);
     }
 
@@ -728,7 +733,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ])
                     ->columns(2)
                     ->columnSpan(2),
-            ], layout: Layout::BelowContent)
+            ], layout: FiltersLayout::BelowContent)
             ->filtersFormColumns(4);
     }
 
@@ -785,7 +790,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ], position: Position::BeforeColumns);
+            ], position: ActionsPosition::BeforeColumns);
     }
 
     public function actionsBeforeCells(Table $table): Table
@@ -794,7 +799,7 @@ class TablesDemo extends Component implements HasForms, HasTable
             ->actions([
                 EditAction::make(),
                 DeleteAction::make(),
-            ], position: Position::BeforeCells)
+            ], position: ActionsPosition::BeforeCells)
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
@@ -916,7 +921,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
-                ])->size('sm'),
+                ])->size(ActionSize::Small),
             ]);
     }
 
@@ -955,7 +960,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->grow(false),
                     Stack::make([
                         TextColumn::make('name')
-                            ->weight('bold')
+                            ->weight(FontWeight::Bold)
                             ->searchable()
                             ->sortable(),
                         TextColumn::make('job'),
@@ -985,7 +990,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ImageColumn::make('avatar')
                         ->circular(),
                     TextColumn::make('name')
-                        ->weight('bold')
+                        ->weight(FontWeight::Bold)
                         ->searchable()
                         ->sortable(),
                     TextColumn::make('email'),
@@ -1001,7 +1006,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                     ImageColumn::make('avatar')
                         ->circular(),
                     TextColumn::make('name')
-                        ->weight('bold')
+                        ->weight(FontWeight::Bold)
                         ->searchable()
                         ->sortable(),
                     TextColumn::make('email'),
@@ -1018,7 +1023,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight('bold')
+                        ->weight(FontWeight::Bold)
                         ->searchable()
                         ->sortable(),
                     TextColumn::make('email'),
@@ -1035,7 +1040,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight('bold')
+                        ->weight(FontWeight::Bold)
                         ->searchable()
                         ->sortable(),
                     Stack::make([
@@ -1057,7 +1062,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight('bold')
+                        ->weight(FontWeight::Bold)
                         ->searchable()
                         ->sortable(),
                     Stack::make([
@@ -1079,7 +1084,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight('bold')
+                        ->weight(FontWeight::Bold)
                         ->searchable()
                         ->sortable(),
                     Stack::make([
@@ -1090,7 +1095,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                             ->icon('heroicon-m-envelope')
                             ->grow(false),
                     ])
-                        ->alignment('right')
+                        ->alignment(Alignment::End)
                         ->visibleFrom('md'),
                 ])->from('md'),
             ]);
@@ -1105,7 +1110,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight('bold')
+                        ->weight(FontWeight::Bold)
                         ->searchable()
                         ->sortable(),
                 ])->from('md'),
@@ -1129,7 +1134,7 @@ class TablesDemo extends Component implements HasForms, HasTable
                         ->circular()
                         ->grow(false),
                     TextColumn::make('name')
-                        ->weight('bold')
+                        ->weight(FontWeight::Bold)
                         ->searchable()
                         ->sortable(),
                     TextColumn::make('job'),

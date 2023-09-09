@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'saved' => 'သိမ်းဆည်းပြီး',
+        'notifications' => [
+
+            'saved' => [
+                'title' => 'သိမ်းဆည်းပြီး',
+            ],
+
         ],
 
     ],

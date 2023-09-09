@@ -6,7 +6,7 @@ title: Users
 
 By default, all `App\Models\User`s can access Filament locally. To allow them to access Filament in production, you must take a few extra steps to ensure that only the correct users have access to the app.
 
-## Authorizing access to the app
+## Authorizing access to the panel
 
 To set up your `App\Models\User` to access Filament in non-local environments, you must implement the `FilamentUser` contract:
 
@@ -30,7 +30,7 @@ class User extends Authenticatable implements FilamentUser
 }
 ```
 
-The `canAccessPanel()` method returns `true` or `false` depending on whether the user is allowed to access Filament. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
+The `canAccessPanel()` method returns `true` or `false` depending on whether the user is allowed to access the `$panel`. In this example, we check if the user's email ends with `@yourdomain.com` and if they have verified their email address.
 
 ## Setting up user avatars
 
@@ -102,7 +102,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Configuring the user name attribute
+## Configuring the user's name attribute
 
 By default, Filament will use the `name` attribute of the user to display their name in the app. To change this, you can implement the `HasName` contract:
 
@@ -203,3 +203,33 @@ This class extends the base profile page class from the Filament codebase. Other
 - `Filament\Pages\Auth\PasswordReset\ResetPassword`
 
 In the `form()` method of the example, we call methods like `getNameFormComponent()` to get the default form components for the page. You can customize these components as required. For all the available customization options, see the base `EditProfile` page class in the Filament codebase - it contains all the methods that you can override to make changes.
+
+### Setting the authentication guard
+
+To set the authentication guard that Filament uses, you can pass in the guard name to the `authGuard()` configuration method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->authGuard('web');
+}
+```
+
+### Setting the password broker
+
+To set the password broker that Filament uses, you can pass in the broker name to the `authPasswordBroker()` configuration method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->authPasswordBroker('users');
+}
+```

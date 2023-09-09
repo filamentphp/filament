@@ -32,13 +32,17 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'تم الحفظ',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'تم الحفظ',
+        ],
+
     ],
 
     'actions' => [
 
-        'back' => [
+        'cancel' => [
             'label' => 'عودة',
         ],
 

@@ -1,4 +1,6 @@
 @php
+    use Filament\Support\Enums\Alignment;
+
     $isDisabled = $isDisabled();
     $state = $getState();
     $type = $getType();
@@ -19,34 +21,41 @@
         state: @js($state),
     }"
     x-init="
-        Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
-            succeed(({ snapshot, effect }) => {
-                if (component.id !== @js($this->getId())) {
-                    return
-                }
+        () => {
+            Livewire.hook('commit', ({ component, commit, succeed, fail, respond }) => {
+                succeed(({ snapshot, effect }) => {
+                    $nextTick(() => {
+                        if (component.id !== @js($this->getId())) {
+                            return
+                        }
 
-                if (isEditing) {
-                    return
-                }
+                        if (isEditing) {
+                            return
+                        }
 
-                if (! $refs.newState) {
-                    return
-                }
+                        if (! $refs.newState) {
+                            return
+                        }
 
-                let newState = $refs.newState.value
+                        let newState = $refs.newState.value
 
-                if (state === newState) {
-                    return
-                }
+                        if (state === newState) {
+                            return
+                        }
 
-                state = newState
+                        state = newState
+                    })
+                })
             })
-        })
+        }
     "
     {{
         $attributes
             ->merge($getExtraAttributes(), escape: false)
-            ->class(['fi-ta-text-input px-3 py-2'])
+            ->class([
+                'fi-ta-text-input',
+                'px-3 py-4' => ! $isInline(),
+            ])
     }}
 >
     <input
@@ -55,7 +64,7 @@
         x-ref="newState"
     />
 
-    <x-filament-forms::affixes
+    <x-filament::input.wrapper
         :alpine-disabled="'isLoading || ' . \Illuminate\Support\Js::from($isDisabled)"
         alpine-valid="error === undefined"
         x-tooltip="
@@ -102,16 +111,16 @@
                         ])
                         ->class([
                             match ($getAlignment()) {
-                                'center' => 'text-center',
-                                'end' => 'text-end',
-                                'left' => 'text-left',
-                                'right' => 'text-right',
-                                'start', null => 'text-start',
+                                Alignment::Center, 'center' => 'text-center',
+                                Alignment::End, 'end' => 'text-end',
+                                Alignment::Left, 'left' => 'text-left',
+                                Alignment::Right, 'right' => 'text-right',
+                                Alignment::Start, 'start', null => 'text-start',
                             },
                         ])
                 )
             "
         />
         {{-- format-ignore-end --}}
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 </div>

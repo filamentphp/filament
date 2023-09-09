@@ -31,9 +31,9 @@
             type="button"
         @endif
         @class([
-            'flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-950/5 focus:bg-gray-950/5 dark:hover:bg-white/5 dark:focus:bg-white/5',
-            'text-gray-700 dark:text-gray-300' => ! $active,
-            'bg-gray-950/5 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
+            'flex items-center justify-center gap-x-2 rounded-lg px-3 py-2 text-sm font-semibold outline-none transition duration-75 hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
+            'text-gray-700 dark:text-gray-200' => ! $active,
+            'bg-gray-50 text-primary-600 dark:bg-white/5 dark:text-primary-400' => $active,
         ])
     >
         @if ($icon || $activeIcon)

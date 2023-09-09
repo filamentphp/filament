@@ -63,7 +63,7 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
             }
         }
 
-        return $media->getUrl($this->getConversion());
+        return $media->getAvailableUrl([$this->getConversion()]);
     }
 
     /**
@@ -73,8 +73,15 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
     {
         $collection = $this->getCollection();
 
-        return $this->getRecord()->getRelationValue('media')
+        $record = $this->getRecord();
+
+        if ($this->queriesRelationships($record)) {
+            $record = $record->getRelationValue($this->getRelationshipName());
+        }
+
+        return $record->getRelationValue('media')
             ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
+            ->sortBy('order_column')
             ->map(fn (Media $media): string => $media->uuid)
             ->all();
     }
@@ -87,9 +94,9 @@ class SpatieMediaLibraryImageColumn extends ImageColumn
 
         if ($this->queriesRelationships($query->getModel())) {
             return $query->with([
-                "{$this->getRelationshipName()}.media" => fn (Builder $query) => $query->when(
+                "{$this->getRelationshipName()}.media" => fn (Builder | Relation $query) => $query->when(
                     $this->getCollection(),
-                    fn (Builder $query, string $collection) => $query->where(
+                    fn (Builder | Relation $query, string $collection) => $query->where(
                         'collection_name',
                         $collection,
                     ),

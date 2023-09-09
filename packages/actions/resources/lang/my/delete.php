@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'ဖျက်ပြီးပါပြီ',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'ဖျက်ပြီးပါပြီ',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Deleted',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Deleted',
+            ],
+
         ],
 
     ],

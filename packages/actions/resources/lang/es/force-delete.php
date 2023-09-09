@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Registro eliminado',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Registro eliminado',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Registros eliminados',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Registros eliminados',
+            ],
+
         ],
 
     ],

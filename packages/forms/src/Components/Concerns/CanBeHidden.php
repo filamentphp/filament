@@ -54,13 +54,6 @@ trait CanBeHidden
         return $this;
     }
 
-    public function when(bool | Closure $condition = true): static
-    {
-        $this->visible($condition);
-
-        return $this;
-    }
-
     /**
      * @param  string | array<string>  $paths
      */

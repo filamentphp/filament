@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => "Gérer l'abonnement",
+        ],
+
         'logout' => [
             'label' => 'Déconnexion',
         ],
@@ -38,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Désactiver le mode sombre',
+            ],
+
+            'system' => [
+                'label' => 'Activer le thème système',
             ],
 
         ],

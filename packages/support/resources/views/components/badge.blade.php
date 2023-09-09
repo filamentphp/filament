@@ -3,11 +3,13 @@
     'closeIcon' => null,
     'deleteButton' => null,
     'icon' => null,
-    'iconPosition' => null,
+    'iconPosition' => 'before',
     'size' => 'md',
 ])
 
 @php
+    use Filament\Support\Enums\IconPosition;
+
     $isDeletable = count($deleteButton?->attributes->getAttributes() ?? []) > 0;
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -23,21 +25,22 @@
     {{
         $attributes
             ->class([
-                'fi-badge flex items-center justify-center gap-x-1 whitespace-nowrap rounded-md  text-xs font-medium ring-1 ring-inset',
+                'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset',
                 match ($size) {
                     'xs' => 'px-0.5 min-w-[theme(spacing.4)] tracking-tighter',
                     'sm' => 'px-1.5 min-w-[theme(spacing.5)] py-0.5 tracking-tight',
                     'md' => 'px-2 min-w-[theme(spacing.6)] py-1',
                 },
                 match ($color) {
-                    'gray' => 'bg-gray-300/10 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
-                    default => 'bg-custom-300/10 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
+                    'gray' => 'bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
+                    default => 'bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
                 },
             ])
             ->style([
                 \Filament\Support\get_color_css_variables(
                     $color,
                     shades: [
+                        50,
                         300,
                         400,
                         ...$icon ? [500] : [],
@@ -48,12 +51,14 @@
             ])
     }}
 >
-    @if ($icon && $iconPosition === 'before')
+    @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 
-    <span>
-        {{ $slot }}
+    <span class="grid">
+        <span class="truncate">
+            {{ $slot }}
+        </span>
     </span>
 
     @if ($isDeletable)
@@ -74,7 +79,7 @@
                 </span>
             @endif
         </button>
-    @elseif ($icon && $iconPosition === 'after')
+    @elseif ($icon && in_array($iconPosition, [IconPosition::After, 'after']))
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 </div>

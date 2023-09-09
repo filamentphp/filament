@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Silindi',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Silindi',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Silindi',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Silindi',
+            ],
+
         ],
 
     ],

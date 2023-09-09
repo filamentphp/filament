@@ -4,7 +4,6 @@ namespace Filament\Pages\Tenancy;
 
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -18,6 +17,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Route;
 use Livewire\Attributes\Locked;
 
+use function Filament\authorize;
+
 /**
  * @property Form $form
  */
@@ -29,7 +30,7 @@ abstract class EditTenantProfile extends Page
     /**
      * @var view-string
      */
-    protected static string $view = 'filament::pages.tenancy.edit-tenant-profile';
+    protected static string $view = 'filament-panels::pages.tenancy.edit-tenant-profile';
 
     /**
      * @var array<string, mixed> | null
@@ -158,12 +159,17 @@ abstract class EditTenantProfile extends Page
 
     protected function getSavedNotificationTitle(): ?string
     {
-        return __('filament::pages/tenancy/edit-tenant-profile.messages.saved');
+        return __('filament-panels::pages/tenancy/edit-tenant-profile.notifications.saved.title');
     }
 
     protected function getRedirectUrl(): ?string
     {
         return null;
+    }
+
+    public function form(Form $form): Form
+    {
+        return $form;
     }
 
     /**
@@ -194,7 +200,7 @@ abstract class EditTenantProfile extends Page
     protected function getSaveFormAction(): Action
     {
         return Action::make('save')
-            ->label(__('filament::pages/tenancy/edit-tenant-profile.form.actions.save.label'))
+            ->label(__('filament-panels::pages/tenancy/edit-tenant-profile.form.actions.save.label'))
             ->submit('save')
             ->keyBindings(['mod+s']);
     }
@@ -212,7 +218,7 @@ abstract class EditTenantProfile extends Page
     public static function canView(Model $tenant): bool
     {
         try {
-            return authorize('edit', $tenant)->allowed();
+            return authorize('update', $tenant)->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }

@@ -5,7 +5,7 @@
 Install the plugin with Composer:
 
 ```bash
-composer require filament/spatie-laravel-settings-plugin:"^3.0"
+composer require filament/spatie-laravel-settings-plugin:"^3.0-stable" -W
 ```
 
 ## Preparing your page class
@@ -34,7 +34,7 @@ protected static string $settings = FooterSettings::class;
 
 You must define a form schema to interact with your settings class inside the `form()` method.
 
-Since the [form builder](/docs/forms) is installed in the panel builder by default, you may use any form [fields](/docs/forms/fields) or [layout components](/docs/forms/layout) you like:
+Since the [Form Builder](https://filamentphp.com/docs/forms) is installed in the Panel Builder by default, you may use any form [fields](https://filamentphp.com/docs/forms/fields) or [layout components](https://filamentphp.com/docs/forms/layout) you like:
 
 ```php
 use Filament\Forms\Components\Repeater;

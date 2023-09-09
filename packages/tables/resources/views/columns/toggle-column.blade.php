@@ -15,7 +15,10 @@
         {{
             $attributes
                 ->merge($getExtraAttributes(), escape: false)
-                ->class(['fi-ta-toggle'])
+                ->class([
+                    'fi-ta-toggle',
+                    'px-3 py-4' => ! $isInline(),
+                ])
         }}
     >
         @php
@@ -46,10 +49,14 @@
 
                 isLoading = false
             "
-            x-tooltip="{
-                content: error,
-                theme: $store.theme,
-            }"
+            x-tooltip="
+                error === undefined
+                    ? false
+                    : {
+                          content: error,
+                          theme: $store.theme,
+                      }
+            "
             x-bind:class="
                 (state
                     ? '{{

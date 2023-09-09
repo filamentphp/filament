@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Lampiran berhasil dilepaskan',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Lampiran berhasil dilepaskan',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Lampiran berhasil dilepaskan',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Lampiran berhasil dilepaskan',
+            ],
+
         ],
 
     ],

@@ -11,6 +11,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
+
 use function Livewire\store;
 
 /**
@@ -157,7 +158,7 @@ trait InteractsWithActions
         } catch (Halt $exception) {
             return null;
         } catch (Cancel $exception) {
-            $this->unmountAction(shouldCloseParentActions: false);
+            $this->unmountAction(shouldCancelParentActions: false);
 
             return null;
         }
@@ -358,23 +359,23 @@ trait InteractsWithActions
         $this->mountedActionsData = [];
     }
 
-    public function unmountAction(bool $shouldCloseParentActions = true): void
+    public function unmountAction(bool $shouldCancelParentActions = true): void
     {
         $action = $this->getMountedAction();
 
-        if (! ($shouldCloseParentActions && $action)) {
+        if (! ($shouldCancelParentActions && $action)) {
             $this->popMountedAction();
-        } elseif ($action->shouldCloseAllParentActions()) {
+        } elseif ($action->shouldCancelAllParentActions()) {
             $this->resetMountedActionProperties();
         } else {
-            $parentActionToCloseTo = $action->getParentActionToCloseTo();
+            $parentActionToCancelTo = $action->getParentActionToCancelTo();
 
             while (true) {
                 $recentlyClosedParentAction = $this->popMountedAction();
 
                 if (
-                    blank($parentActionToCloseTo) ||
-                    ($recentlyClosedParentAction === $parentActionToCloseTo)
+                    blank($parentActionToCancelTo) ||
+                    ($recentlyClosedParentAction === $parentActionToCancelTo)
                 ) {
                     break;
                 }
