@@ -30,7 +30,7 @@
                     @foreach ($childComponentContainers as $container)
                         <li
                             @class([
-                                'block',
+                                'fi-in-repeatable-item block',
                                 'rounded-xl bg-white p-4 shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10' => $isContained,
                             ])
                         >
