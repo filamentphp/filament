@@ -474,9 +474,24 @@ TextInput::make('slug')->rules([
     function () {
         return function (string $attribute, $value, Closure $fail) {
             if ($value === 'foo') {
-                $fail("The {$attribute} is invalid.");
+                $fail('The :attribute is invalid.');
             }
         };
+    },
+])
+```
+
+You may [inject utilities](advanced#form-component-utility-injection) like [`$get`](advanced#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form:
+
+```php
+use Closure;
+use Filament\Forms\Get;
+
+TextInput::make('slug')->rules([
+    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+        if ($get('other_field') === 'foo' && $value !== 'bar') {
+            $fail("The {$attribute} is invalid.");
+        }
     },
 ])
 ```

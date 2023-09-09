@@ -309,7 +309,7 @@ Finally, you can load this asynchronous Alpine component in your view using `ax-
     ax-load
     ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('test-component') }}"
     x-data="testComponent({
-        state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+        state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
     })"
 >
     <input x-model="state" />

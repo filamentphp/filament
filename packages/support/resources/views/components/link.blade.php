@@ -22,12 +22,6 @@
 ])
 
 @php
-    $iconSize ??= match ($size) {
-        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
-        ActionSize::Medium, 'md' => IconSize::Medium,
-        ActionSize::Large, ActionSize::ExtraLarge, 'lg', 'xl' => IconSize::Large,
-    };
-
     $stringSize = match ($size) {
         ActionSize::ExtraSmall => 'xs',
         ActionSize::Small => 'sm',
@@ -38,7 +32,7 @@
     };
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        "fi-link fi-link-size-{$stringSize} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline disabled:pointer-events-none disabled:opacity-70",
+        "fi-link fi-link-size-{$stringSize} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline",
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
         match ($size) {
@@ -59,7 +53,7 @@
     ]);
 
     $iconSize ??= match ($size) {
-        'xs', 'sm' => IconSize::Small,
+        ActionSize::ExtraSmall, ActionSize::Small, 'xs', 'sm' => IconSize::Small,
         default => IconSize::Medium,
     };
 
@@ -81,7 +75,7 @@
         \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
     ]);
 
-    $badgeClasses = 'absolute -top-1 start-full z-[1] -ms-1 -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
+    $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
 
@@ -133,7 +127,7 @@
         @endif
 
         @if (filled($badge))
-            <div class="{{ $badgeClasses }}">
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>
@@ -211,7 +205,7 @@
         @endif
 
         @if (filled($badge))
-            <div class="{{ $badgeClasses }}">
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>

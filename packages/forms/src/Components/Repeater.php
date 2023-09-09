@@ -3,8 +3,6 @@
 namespace Filament\Forms\Components;
 
 use Closure;
-use function Filament\Forms\array_move_after;
-use function Filament\Forms\array_move_before;
 use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Contracts\HasForms;
@@ -15,6 +13,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOneOrMany;
 use Illuminate\Support\Str;
+
+use function Filament\Forms\array_move_after;
+use function Filament\Forms\array_move_before;
 
 class Repeater extends Field implements Contracts\CanConcealComponents
 {
@@ -722,6 +723,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 if ($record = ($existingRecords[$itemKey] ?? null)) {
                     $itemData = $component->mutateRelationshipDataBeforeSave($itemData, record: $record);
 
+                    if ($itemData === null) {
+                        continue;
+                    }
+
                     $translatableContentDriver ?
                         $translatableContentDriver->updateRecord($record, $itemData) :
                         $record->fill($itemData)->save();
@@ -732,6 +737,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                 $relatedModel = $component->getRelatedModel();
 
                 $itemData = $component->mutateRelationshipDataBeforeCreate($itemData);
+
+                if ($itemData === null) {
+                    continue;
+                }
 
                 if ($translatableContentDriver) {
                     $record = $translatableContentDriver->makeRecord($relatedModel, $itemData);
@@ -892,9 +901,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     /**
      * @param  array<array<string, mixed>>  $data
-     * @return array<array<string, mixed>>
+     * @return array<array<string, mixed>> | null
      */
-    public function mutateRelationshipDataBeforeCreate(array $data): array
+    public function mutateRelationshipDataBeforeCreate(array $data): ?array
     {
         if ($this->mutateRelationshipDataBeforeCreateUsing instanceof Closure) {
             $data = $this->evaluate($this->mutateRelationshipDataBeforeCreateUsing, [
@@ -936,9 +945,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     /**
      * @param  array<array<string, mixed>>  $data
-     * @return array<array<string, mixed>>
+     * @return array<array<string, mixed>> | null
      */
-    public function mutateRelationshipDataBeforeSave(array $data, Model $record): array
+    public function mutateRelationshipDataBeforeSave(array $data, Model $record): ?array
     {
         if ($this->mutateRelationshipDataBeforeSaveUsing instanceof Closure) {
             $data = $this->evaluate(

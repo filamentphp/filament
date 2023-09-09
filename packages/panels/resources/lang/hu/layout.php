@@ -25,7 +25,7 @@ return [
         'sidebar' => [
 
             'collapse' => [
-                'label' => 'Oldsáv becsukása',
+                'label' => 'Oldalsáv becsukása',
             ],
 
             'expand' => [

@@ -319,7 +319,7 @@ Repeater::make('qualifications')
 
 ### Mutating related item data before creating
 
-You may mutate the data for a new related item before it is created in the database using the `mutateRelationshipDataBeforeCreateUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You must return the modified array of data:
+You may mutate the data for a new related item before it is created in the database using the `mutateRelationshipDataBeforeCreateUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You can choose to return either the modified array of data, or `null` to prevent the item from being created:
 
 ```php
 use Filament\Forms\Components\Repeater;
@@ -338,7 +338,7 @@ Repeater::make('qualifications')
 
 ### Mutating related item data before saving
 
-You may mutate the data for an existing related item before it is saved in the database using the `mutateRelationshipDataBeforeSaveUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You must return the modified array of data:
+You may mutate the data for an existing related item before it is saved in the database using the `mutateRelationshipDataBeforeSaveUsing()` method. This method accepts a closure that receives the current item's data in a `$data` variable. You can choose to return either the modified array of data, or `null` to prevent the item from being saved:
 
 ```php
 use Filament\Forms\Components\Repeater;

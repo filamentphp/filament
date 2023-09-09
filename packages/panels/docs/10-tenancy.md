@@ -197,7 +197,7 @@ $tenant = Filament::getTenant();
 
 Filament provides a billing integration with [Laravel Spark](https://spark.laravel.com). Your users can start subscriptions and manage their billing information.
 
-To install the integration, first [install Spark](https://spark.laravel.com/docs/2.x/installation.html) and configure it for your tenant model.
+To install the integration, first [install Spark](https://spark.laravel.com/docs/installation.html) and configure it for your tenant model.
 
 Now, you can install the Filament billing provider for Spark using Composer:
 
@@ -289,6 +289,7 @@ The tenant-switching menu is featured in the sidebar of the admin layout. It's f
 To register new items to the tenant menu, you can use the [configuration](configuration):
 
 ```php
+use App\Filament\Pages\Settings;
 use Filament\Navigation\MenuItem;
 use Filament\Panel;
 
@@ -299,7 +300,7 @@ public function panel(Panel $panel): Panel
         ->tenantMenuItems([
             MenuItem::make()
                 ->label('Settings')
-                ->url(route('filament.pages.settings'))
+                ->url(fn (): string => Settings::getUrl()),
                 ->icon('heroicon-m-cog-8-tooth'),
             // ...
         ]);
@@ -318,7 +319,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->userMenuItems([
+        ->tenantMenuItems([
             'register' => MenuItem::make()->label('Register new team'),
             // ...
         ]);
@@ -337,7 +338,7 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->userMenuItems([
+        ->tenantMenuItems([
             'billing' => MenuItem::make()->label('Manage subscription'),
             // ...
         ]);
@@ -450,7 +451,7 @@ public function panel(Panel $panel): Panel
 
 ## Configuring the name attribute
 
-By default, Filament will use Filament\Resources\Pages\CreateRecord;use the `name` attribute of the tenant to display its name in the app. To change this, you can implement the `HasName` contract:
+By default, Filament will use the `name` attribute of the tenant to display its name in the app. To change this, you can implement the `HasName` contract:
 
 ```php
 <?php

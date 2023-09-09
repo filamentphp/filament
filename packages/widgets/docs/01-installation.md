@@ -12,16 +12,10 @@ Filament requires the following to run:
 - Laravel v10.0+
 - Livewire v3.0+
 
-> **Livewire v3 is still in beta!**<br />
-> Although breaking changes should be minimal, we recommend testing your application thoroughly before using Filament v3 in production.
+> **Livewire v3 is recently released!**<br />
+> The Livewire team have done a great job in making it stable, but it was a complete rewrite of Livewire v2. You may encounter issues, so we recommend testing your application thoroughly before using Filament v3 in production.
 
 ## Installation
-
-Since Livewire v3 is still in beta, set the `minimum-stability` in your `composer.json` to `dev`:
-
-```json
-"minimum-stability": "dev",
-```
 
 Require the Widgets package using Composer:
 
@@ -164,7 +158,7 @@ php artisan vendor:publish --tag=filament-config
 
 ## Upgrading
 
-Filament automatically upgrades to the latest non-breaking version when you run `composer update`. If you notice that Filament is not upgrading automatically, ensure that the `filament:upgrade` command is present in your `composer.json`:
+Filament automatically upgrades to the latest non-breaking version when you run `composer update`. After any updates, all Laravel caches need to be cleared, and frontend assets need to be republished. You can do this all at once using the `filament:upgrade` command, which should have been added to your `composer.json` file when you ran `filament:install` the first time:
 
 ```json
 "post-autoload-dump": [
@@ -173,7 +167,7 @@ Filament automatically upgrades to the latest non-breaking version when you run 
 ],
 ```
 
-If you prefer not to use automatic upgrades, remove the `filament:upgrade` command from your `composer.json` and run the following commands:
+Please note that `filament:upgrade` does not actually handle the update process, as Composer does that already. If you're upgrading manually without a `post-autoload-dump` hook, you can run the command yourself:
 
 ```bash
 composer update

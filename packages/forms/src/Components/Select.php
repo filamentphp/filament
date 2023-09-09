@@ -10,6 +10,7 @@ use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -84,6 +85,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected ?Closure $getSelectedRecordUsing = null;
 
+    protected ?Closure $transformOptionsForJsUsing = null;
+
     /**
      * @var array<string> | null
      */
@@ -101,7 +104,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     protected int | Closure $optionsLimit = 50;
 
-    protected bool | Closure $isSearchForcedCaseInsensitive = false;
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     protected function setUp(): void
     {
@@ -167,6 +170,15 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             }
 
             return $labels;
+        });
+
+        $this->transformOptionsForJsUsing(function (array $options): array {
+            return collect($options)
+                ->map(fn ($label, $value): array => is_array($label)
+                    ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
+                    : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
+                ->values()
+                ->all();
         });
 
         $this->placeholder(fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
@@ -502,6 +514,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this;
     }
 
+    public function transformOptionsForJsUsing(?Closure $callback): static
+    {
+        $this->transformOptionsForJsUsing = $callback;
+
+        return $this;
+    }
+
     /**
      * @param  bool | array<string> | Closure  $condition
      */
@@ -647,12 +666,19 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
      */
     protected function transformOptionsForJs(array $options): array
     {
-        return collect($options)
-            ->map(fn ($label, $value): array => is_array($label)
-                ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
-                : ['label' => $label, 'value' => strval($value)])
-            ->values()
-            ->all();
+        if (empty($options)) {
+            return [];
+        }
+
+        $transformedOptions = $this->evaluate($this->transformOptionsForJsUsing, [
+            'options' => $options,
+        ]);
+
+        if ($transformedOptions instanceof Arrayable) {
+            return $transformedOptions->toArray();
+        }
+
+        return $transformedOptions;
     }
 
     public function isMultiple(): bool
@@ -670,7 +696,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         return $this->evaluate($this->isSearchable) || $this->isMultiple();
     }
 
-    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
@@ -702,15 +728,13 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
+            if ($component->isSearchForcedCaseInsensitive($relationshipQuery)) {
+                $search = Str::lower($search);
             }
 
             $component->applySearchConstraint(
                 $relationshipQuery,
-                strtolower($search),
+                $search,
             );
 
             $baseRelationshipQuery = $relationshipQuery->getQuery();
@@ -734,6 +758,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                         $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
+            }
+
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -780,12 +810,6 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                 ]) ?? $relationshipQuery;
             }
 
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
-            }
-
             if ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $keyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
@@ -799,6 +823,12 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
                         $record->{Str::afterLast($keyName, '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
+            }
+
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -988,6 +1018,8 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             $relationship = $component->getRelationship();
 
             if (! $relationship instanceof BelongsToMany) {
+                $relationship->associate($state);
+
                 return;
             }
 
@@ -1020,7 +1052,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     protected function applySearchConstraint(Builder $query, string $search): Builder
     {
         $isFirst = true;
-        $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive();
+        $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
 
         $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
             foreach ($this->getSearchColumns() as $searchColumn) {
@@ -1166,16 +1198,22 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         ]);
     }
 
-    public function forceSearchCaseInsensitive(bool | Closure $condition = true): static
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
     {
         $this->isSearchForcedCaseInsensitive = $condition;
 
         return $this;
     }
 
-    public function isSearchForcedCaseInsensitive(): bool
+    public function isSearchForcedCaseInsensitive(Builder $query): bool
     {
-        return (bool) $this->evaluate($this->isSearchForcedCaseInsensitive);
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        return $this->evaluate($this->isSearchForcedCaseInsensitive) ?? match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
     }
 
     public function getDefaultState(): mixed

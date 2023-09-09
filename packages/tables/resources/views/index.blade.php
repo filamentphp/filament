@@ -70,7 +70,7 @@
     $hasHeaderToolbar = $isReorderable || count($groups) || $isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown;
     $pluralModelLabel = $getPluralModelLabel();
     $records = $isLoaded ? $getRecords() : null;
-    $allSelectableRecordsCount = $isLoaded ? $getAllSelectableRecordsCount() : null;
+    $allSelectableRecordsCount = ($isSelectionEnabled && $isLoaded) ? $getAllSelectableRecordsCount() : null;
     $columnsCount = count($columns);
     $reorderRecordsTriggerAction = $getReorderRecordsTriggerAction($isReordering);
     $toggleColumnsTriggerAction = $getToggleColumnsTriggerAction();
@@ -421,8 +421,8 @@
                         @if (count($sortableColumns))
                             <div
                                 x-data="{
-                                    column: $wire.entangle('tableSortColumn').live,
-                                    direction: $wire.entangle('tableSortDirection').live,
+                                    column: $wire.$entangle('tableSortColumn', true),
+                                    direction: $wire.$entangle('tableSortDirection', true),
                                 }"
                                 x-init="
                                     $watch('column', function (newColumn, oldColumn) {
@@ -498,7 +498,7 @@
                         x-on:end.stop="$wire.reorderTable($event.target.sortable.toArray())"
                         x-sortable
                         @class([
-                            'gap-4 p-4 sm:px-6' => $contentGrid,
+                            'fi-ta-content-grid gap-4 p-4 sm:px-6' => $contentGrid,
                             'pt-0' => $contentGrid && $this->getTableGrouping(),
                             'gap-y-px bg-gray-200 dark:bg-white/5' => ! $contentGrid,
                         ])
@@ -559,6 +559,7 @@
                                 @if ($hasCollapsibleColumnsLayout)
                                     x-data="{ isCollapsed: @js($collapsibleColumnsLayout->isCollapsed()) }"
                                     x-init="$dispatch('collapsible-table-row-initialized')"
+                                    x-bind:class="isCollapsed && 'fi-collapsed'"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     x-on:expand-all-table-rows.window="isCollapsed = false"
                                 @endif
@@ -568,7 +569,7 @@
                                     x-sortable-handle
                                 @endif
                                 @class([
-                                    'relative h-full bg-white transition duration-75 dark:bg-gray-900',
+                                    'fi-ta-record relative h-full bg-white transition duration-75 dark:bg-gray-900',
                                     'hover:bg-gray-50 dark:hover:bg-white/5' => ($recordUrl || $recordAction) && (! $contentGrid),
                                     'hover:bg-gray-50 dark:hover:bg-white/10 dark:hover:ring-white/20' => ($recordUrl || $recordAction) && $contentGrid,
                                     'rounded-xl shadow-sm ring-1 ring-gray-950/5' => $contentGrid,

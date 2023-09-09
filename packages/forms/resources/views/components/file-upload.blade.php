@@ -40,6 +40,7 @@
                     imageResizeTargetWidth: @js($imageResizeTargetWidth),
                     imageResizeUpscale: @js($getImageResizeUpscale()),
                     isAvatar: @js($isAvatar),
+                    isDeletable: @js($isDeletable()),
                     isDisabled: @js($isDisabled),
                     isDownloadable: @js($isDownloadable()),
                     isOpenable: @js($isOpenable()),
@@ -62,7 +63,7 @@
                     shouldAppendFiles: @js($shouldAppendFiles()),
                     shouldOrientImageFromExif: @js($shouldOrientImagesFromExif()),
                     shouldTransformImage: @js($imageCropAspectRatio || $imageResizeTargetHeight || $imageResizeTargetWidth),
-                    state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                    state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                     uploadButtonPosition: @js($getUploadButtonPosition()),
                     uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
                     uploadUsing: (fileKey, file, success, error, progress) => {
@@ -193,7 +194,7 @@
                                                         class="flex w-full items-center rounded-lg border border-gray-300 bg-gray-100 text-sm shadow-sm dark:border-gray-700 dark:bg-gray-800"
                                                     >
                                                         <span
-                                                            class="flex w-20 flex-shrink-0 items-center justify-center self-stretch border-e border-gray-300 px-2 dark:border-gray-700"
+                                                            class="flex w-20 shrink-0 items-center justify-center self-stretch border-e border-gray-300 px-2 dark:border-gray-700"
                                                         >
                                                             {{ $input['label'] }}
                                                         </span>

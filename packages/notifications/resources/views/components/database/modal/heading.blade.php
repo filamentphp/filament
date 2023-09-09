@@ -9,7 +9,7 @@
         @if ($unreadNotificationsCount)
             <x-filament::badge
                 size="xs"
-                class="absolute -top-1 start-full ms-1"
+                class="absolute -top-1 start-full ms-1 w-max"
             >
                 {{ $unreadNotificationsCount }}
             </x-filament::badge>

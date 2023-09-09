@@ -15,7 +15,7 @@ return [
         ],
 
         'submit' => [
-            'label' => 'Végrahajtás',
+            'label' => 'Végrehajtás',
         ],
 
     ],

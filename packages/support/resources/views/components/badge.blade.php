@@ -25,7 +25,7 @@
     {{
         $attributes
             ->class([
-                'fi-badge flex items-center justify-center gap-x-1 whitespace-nowrap rounded-md  text-xs font-medium ring-1 ring-inset',
+                'fi-badge flex items-center justify-center gap-x-1 rounded-md text-xs font-medium ring-1 ring-inset',
                 match ($size) {
                     'xs' => 'px-0.5 min-w-[theme(spacing.4)] tracking-tighter',
                     'sm' => 'px-1.5 min-w-[theme(spacing.5)] py-0.5 tracking-tight',
@@ -55,8 +55,10 @@
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 
-    <span>
-        {{ $slot }}
+    <span class="grid">
+        <span class="truncate">
+            {{ $slot }}
+        </span>
     </span>
 
     @if ($isDeletable)

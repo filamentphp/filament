@@ -155,7 +155,7 @@ The header of a modal scrolls out of view with the modal content when it overflo
 <x-filament::modal sticky-header>
     <x-slot name="heading">
         Modal heading
-    </slot>
+    </x-slot>
 
     {{-- Modal content --}}
 </x-filament::modal>

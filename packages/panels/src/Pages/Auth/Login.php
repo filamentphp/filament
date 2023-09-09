@@ -70,9 +70,16 @@ class Login extends SimplePage
         $data = $this->form->getState();
 
         if (! Filament::auth()->attempt($this->getCredentialsFromFormData($data), $data['remember'] ?? false)) {
-            throw ValidationException::withMessages([
-                'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
-            ]);
+            $this->throwFailureValidationException();
+        }
+
+        /** @var \Filament\Models\Contracts\FilamentUser $user */
+        $user = Filament::auth()->user();
+
+        if (! $user->canAccessPanel(Filament::getCurrentPanel())) {
+            Filament::auth()->logout();
+
+            $this->throwFailureValidationException();
         }
 
         session()->regenerate();
@@ -80,15 +87,34 @@ class Login extends SimplePage
         return app(LoginResponse::class);
     }
 
+    protected function throwFailureValidationException(): never
+    {
+        throw ValidationException::withMessages([
+            'data.email' => __('filament-panels::pages/auth/login.messages.failed'),
+        ]);
+    }
+
     public function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                $this->getEmailFormComponent(),
-                $this->getPasswordFormComponent(),
-                $this->getRememberFormComponent(),
-            ])
-            ->statePath('data');
+        return $form;
+    }
+
+    /**
+     * @return array<int | string, string | Form>
+     */
+    protected function getForms(): array
+    {
+        return [
+            'form' => $this->form(
+                $this->makeForm()
+                    ->schema([
+                        $this->getEmailFormComponent(),
+                        $this->getPasswordFormComponent(),
+                        $this->getRememberFormComponent(),
+                    ])
+                    ->statePath('data'),
+            ),
+        ];
     }
 
     protected function getEmailFormComponent(): Component

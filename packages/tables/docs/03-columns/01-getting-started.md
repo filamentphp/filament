@@ -229,18 +229,6 @@ public function table(Table $table): Table
 }
 ```
 
-### Forcing case-insensitive column search
-
-By default, searching will use the sensitivity settings from the database table column. This is to avoid unnecessary performance overhead when searching large datasets that would arise if we were to force insensitivity for all users. However, if your database does not search case-insensitively by default, you can force it to by using the `forceSearchCaseInsensitive()` method:
-
-```php
-use Filament\Tables\Columns\TextColumn;
-
-TextColumn::make('name')
-    ->searchable()
-    ->forceSearchCaseInsensitive()
-```
-
 ## Column actions and URLs
 
 When a cell is clicked, you may run an "action", or open a URL.

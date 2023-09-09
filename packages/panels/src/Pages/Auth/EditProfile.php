@@ -181,17 +181,6 @@ class EditProfile extends SimplePage
         return null;
     }
 
-    public function form(Form $form): Form
-    {
-        return $form
-            ->schema([
-                $this->getNameFormComponent(),
-                $this->getEmailFormComponent(),
-                $this->getPasswordFormComponent(),
-                $this->getPasswordConfirmationFormComponent(),
-            ]);
-    }
-
     protected function getNameFormComponent(): Component
     {
         return TextInput::make('name')
@@ -234,6 +223,11 @@ class EditProfile extends SimplePage
             ->dehydrated(false);
     }
 
+    public function form(Form $form): Form
+    {
+        return $form;
+    }
+
     /**
      * @return array<int | string, string | Form>
      */
@@ -242,6 +236,12 @@ class EditProfile extends SimplePage
         return [
             'form' => $this->form(
                 $this->makeForm()
+                    ->schema([
+                        $this->getNameFormComponent(),
+                        $this->getEmailFormComponent(),
+                        $this->getPasswordFormComponent(),
+                        $this->getPasswordConfirmationFormComponent(),
+                    ])
                     ->operation('edit')
                     ->model($this->getUser())
                     ->statePath('data'),

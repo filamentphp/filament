@@ -67,7 +67,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             }
         }
 
-        return $media->getUrl($this->getConversion());
+        return $media->getAvailableUrl([$this->getConversion()]);
     }
 
     /**
@@ -79,6 +79,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
 
         return $this->getRecord()->getRelationValue('media')
             ->filter(fn (Media $media): bool => blank($collection) || ($media->getAttributeValue('collection_name') === $collection))
+            ->sortBy('order_column')
             ->map(fn (Media $media): string => $media->uuid)
             ->all();
     }

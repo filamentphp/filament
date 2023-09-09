@@ -65,6 +65,7 @@
     wire:ignore.self
     @class([
         'fi-modal',
+        'fi-width-screen' => $width === 'screen',
         $displayClasses,
     ])
 >
@@ -147,25 +148,28 @@
                     'h-screen' => $slideOver || ($width === 'screen'),
                     'mx-auto rounded-xl' => ! ($slideOver || ($width === 'screen')),
                     'hidden' => ! $visible,
-                    'max-w-xs' => $width === 'xs',
-                    'max-w-sm' => $width === 'sm',
-                    'max-w-md' => $width === 'md',
-                    'max-w-lg' => $width === 'lg',
-                    'max-w-xl' => $width === 'xl',
-                    'max-w-2xl' => $width === '2xl',
-                    'max-w-3xl' => $width === '3xl',
-                    'max-w-4xl' => $width === '4xl',
-                    'max-w-5xl' => $width === '5xl',
-                    'max-w-6xl' => $width === '6xl',
-                    'max-w-7xl' => $width === '7xl',
-                    'fixed inset-0' => $width === 'screen',
+                    match ($width) {
+                        'xs' => 'max-w-xs',
+                        'sm' => 'max-w-sm',
+                        'md' => 'max-w-md',
+                        'lg' => 'max-w-lg',
+                        'xl' => 'max-w-xl',
+                        '2xl' => 'max-w-2xl',
+                        '3xl' => 'max-w-3xl',
+                        '4xl' => 'max-w-4xl',
+                        '5xl' => 'max-w-5xl',
+                        '6xl' => 'max-w-6xl',
+                        '7xl' => 'max-w-7xl',
+                        'screen' => 'fixed inset-0',
+                        default => $width,
+                    },
                 ])
             >
                 @if ($heading || $header)
                     <div
                         @class([
                             'fi-modal-header flex px-6 pt-6',
-                            'sticky top-0 z-10 border-b border-gray-200 bg-white bg-white pb-6 dark:border-white/10 dark:bg-gray-900' => $stickyHeader,
+                            'fi-sticky sticky top-0 z-10 border-b border-gray-200 bg-white bg-white pb-6 dark:border-white/10 dark:bg-gray-900' => $stickyHeader,
                             'rounded-t-xl' => $stickyHeader && ! ($slideOver || ($width === 'screen')),
                             match ($alignment) {
                                 Alignment::Left, Alignment::Start, 'left', 'start' => 'gap-x-5',
@@ -269,7 +273,7 @@
                             'fi-modal-footer w-full',
                             'pe-6 ps-[5.25rem]' => $icon && in_array($alignment, [Alignment::Start, 'start']) && (! in_array($footerActionsAlignment, [Alignment::Center, 'center'])) && (! $stickyFooter),
                             'px-6' => ! ($icon && in_array($alignment, [Alignment::Start, 'start']) && (! in_array($footerActionsAlignment, [Alignment::Center, 'center'])) && (! $stickyFooter)),
-                            'sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900' => $stickyFooter,
+                            'fi-sticky sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900' => $stickyFooter,
                             'rounded-b-xl' => $stickyFooter && ! ($slideOver || ($width === 'screen')),
                             'pb-6' => ! $stickyFooter,
                             'mt-6' => (! $stickyFooter) && \Filament\Support\is_slot_empty($slot),

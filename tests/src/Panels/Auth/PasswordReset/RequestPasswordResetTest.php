@@ -3,10 +3,11 @@
 use Filament\Facades\Filament;
 use Filament\Notifications\Auth\ResetPassword;
 use Filament\Pages\Auth\PasswordReset\RequestPasswordReset;
-use function Filament\Tests\livewire;
 use Filament\Tests\Models\User;
 use Filament\Tests\TestCase;
 use Illuminate\Support\Facades\Notification;
+
+use function Filament\Tests\livewire;
 
 uses(TestCase::class);
 
