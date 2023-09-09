@@ -63,6 +63,22 @@ it('cannot authenticate with incorrect credentials', function () {
     $this->assertGuest();
 });
 
+it('cannot authenticate on unauthorized panel', function () {
+    $userToAuthenticate = User::factory()->create();
+
+    Filament::setCurrentPanel(Filament::getPanel('custom'));
+
+    livewire(Login::class)
+        ->fillForm([
+            'email' => $userToAuthenticate->email,
+            'password' => 'password',
+        ])
+        ->call('authenticate')
+        ->assertHasFormErrors(['email']);
+
+    $this->assertGuest();
+});
+
 it('can throttle authentication attempts', function () {
     $this->assertGuest();
 

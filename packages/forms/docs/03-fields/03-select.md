@@ -391,7 +391,7 @@ Select::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
 ```
 
-If you want to retrieve the options that have not been disabled, e.g., for validation purposes, you can do so using `getEnabledOptions()`:
+If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
 
 ```php
 use Filament\Forms\Components\Select;

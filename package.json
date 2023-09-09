@@ -13,10 +13,6 @@
         "prettier": "npx prettier --write ."
     },
     "devDependencies": {
-        "@alpinejs/collapse": "^3.10.3",
-        "@alpinejs/focus": "^3.10.3",
-        "@alpinejs/mask": "^3.10.3",
-        "@alpinejs/persist": "^3.10.3",
         "@awcodes/alpine-floating-ui": "^3.4.0",
         "@babel/runtime": "^7.15.3",
         "@danharrin/alpine-mousetrap": "^0.1.0",

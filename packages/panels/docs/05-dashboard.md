@@ -133,9 +133,7 @@ If you want to customize the dashboard class, for example, to [change the number
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Dashboard as BasePage;
-
-class Dashboard extends BasePage
+class Dashboard extends \Filament\Pages\Dashboard
 {
     // ...
 }

@@ -99,7 +99,7 @@
         @endif
     </header>
 
-    <nav 
+    <nav
         class="fi-sidebar-nav flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8"
         style="scrollbar-gutter: stable"
     >

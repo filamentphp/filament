@@ -8,9 +8,7 @@
 <li
     x-data="{ label: @js($label) }"
     data-group-label="{{ $label }}"
-    @class([
-        'fi-sidebar-group flex flex-col gap-y-1',
-    ])
+    class="fi-sidebar-group flex flex-col gap-y-1"
 >
     @if ($label)
         <div
@@ -36,7 +34,7 @@
             @endif
 
             <span
-                class="flex-1 text-sm font-semibold text-gray-700 dark:text-gray-200"
+                class="fi-sidebar-group-label flex-1 text-sm font-semibold text-gray-700 dark:text-gray-200"
             >
                 {{ $label }}
             </span>
@@ -65,22 +63,20 @@
         class="fi-sidebar-group-items flex flex-col gap-y-1"
     >
         @foreach ($items as $item)
-            @if ($item->isVisible())
-                <x-filament-panels::sidebar.item
-                    :active-icon="$item->getActiveIcon()"
-                    :active="$item->isActive()"
-                    :badge-color="$item->getBadgeColor()"
-                    :badge="$item->getBadge()"
-                    :first="$loop->first"
-                    :grouped="filled($label)"
-                    :icon="$item->getIcon()"
-                    :last="$loop->last"
-                    :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
-                    :url="$item->getUrl()"
-                >
-                    {{ $item->getLabel() }}
-                </x-filament-panels::sidebar.item>
-            @endif
+            <x-filament-panels::sidebar.item
+                :active-icon="$item->getActiveIcon()"
+                :active="$item->isActive()"
+                :badge-color="$item->getBadgeColor()"
+                :badge="$item->getBadge()"
+                :first="$loop->first"
+                :grouped="filled($label)"
+                :icon="$item->getIcon()"
+                :last="$loop->last"
+                :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                :url="$item->getUrl()"
+            >
+                {{ $item->getLabel() }}
+            </x-filament-panels::sidebar.item>
         @endforeach
     </ul>
 </li>

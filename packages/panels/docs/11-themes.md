@@ -129,7 +129,7 @@ The command will create a CSS file and Tailwind Configuration file in the `/reso
 ⇂ Finally, run `npm run build` to compile the theme
 ```
 
-Please reference the command to see the exact file names that you need to register, they may not be `admim/theme.css`.
+Please reference the command to see the exact file names that you need to register, they may not be `admin/theme.css`.
 
 ## Non-sticky topbar
 
