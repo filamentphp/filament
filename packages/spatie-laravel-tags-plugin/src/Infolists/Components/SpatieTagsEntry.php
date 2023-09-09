@@ -14,7 +14,6 @@ class SpatieTagsEntry extends TextEntry
     {
         parent::setUp();
 
-        //all all tag types by default:
         $this->type(new AllTagTypes());
 
         $this->badge();
@@ -43,20 +42,19 @@ class SpatieTagsEntry extends TextEntry
             $record = $record->getRelationValue($relationshipName);
         }
 
-        if (! method_exists($record, 'tagsWithType') || ! method_exists($record, 'tags')) {
+        if (! (method_exists($record, 'tags') && method_exists($record, 'tagsWithType'))) {
             return [];
         }
 
         $type = $this->getType();
 
-        if($this->allowsAllTagTypes()) {
+        if ($this->isAnyTagTypeAllowed()) {
             $tags = $record->tags();
-        }
-        else {
+        } else {
             $tags = $record->tagsWithType($type);
         }
 
-        return $tags->pluck('name')->toArray();
+        return $tags->pluck('name')->all();
     }
 
     public function type(string | Closure | AllTagTypes | null $type): static
@@ -71,7 +69,7 @@ class SpatieTagsEntry extends TextEntry
         return $this->evaluate($this->type);
     }
 
-    public function allowsAllTagTypes(): bool
+    public function isAnyTagTypeAllowed(): bool
     {
         return $this->getType() instanceof AllTagTypes;
     }

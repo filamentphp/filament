@@ -10,22 +10,21 @@ use Illuminate\Support\Collection;
 
 class SpatieTagsColumn extends TagsColumn
 {
-    protected string | Closure | AllTagTypes | null $type = null;
+    protected string | Closure | AllTagTypes | null $type;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        //all all tag types by default:
         $this->type(new AllTagTypes());
     }
 
     /**
      * @return array<string>
      */
-    public function getTags(): array
+    public function getState(): array
     {
-        $state = $this->getState();
+        $state = parent::getState();
 
         if ($state && (! $state instanceof Collection)) {
             return $state;
@@ -37,15 +36,19 @@ class SpatieTagsColumn extends TagsColumn
             $record = $record->getRelationValue($this->getRelationshipName());
         }
 
-        if (! method_exists($record, 'tagsWithType') || ! method_exists($record, 'tags')) {
+        if (! (method_exists($record, 'tags') && method_exists($record, 'tagsWithType'))) {
             return [];
         }
 
         $type = $this->getType();
 
-        $tags = $this->allowsAllTagTypes() ? $record->tags() : $record->tagsWithType($type);
+        if ($this->isAnyTagTypeAllowed()) {
+            $tags = $record->tags();
+        } else {
+            $tags = $record->tagsWithType($type);
+        }
 
-        return $tags->pluck('name')->toArray();
+        return $tags->pluck('name')->all();
     }
 
     public function type(string | Closure | AllTagTypes | null $type): static
@@ -60,7 +63,7 @@ class SpatieTagsColumn extends TagsColumn
         return $this->evaluate($this->type);
     }
 
-    public function allowsAllTagTypes(): bool
+    public function isAnyTagTypeAllowed(): bool
     {
         return $this->getType() instanceof AllTagTypes;
     }
