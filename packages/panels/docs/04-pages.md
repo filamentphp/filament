@@ -68,11 +68,12 @@ protected function getHeaderActions(): array
 If you're using actions on an [Edit](resources/editing-records) or [View](resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
 
 ```php
+use App\Models\Post;
 use Filament\Actions\Action;
 
 Action::make('approve')
-    ->action(function () {
-        $this->getRecord()->approve();
+    ->action(function (Post $record) {
+        $record->approve();
 
         $this->refreshFormData([
             'status',
