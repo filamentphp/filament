@@ -15,8 +15,8 @@
             'md:grid-cols-2 xl:grid-cols-4' => $columns === 4,
         ])
     >
-        @foreach ($this->getCachedCards() as $card)
-            {{ $card }}
+        @foreach ($this->getCachedStats() as $stat)
+            {{ $stat }}
         @endforeach
     </div>
 </x-filament-widgets::widget>

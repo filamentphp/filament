@@ -10,7 +10,7 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Be Vietnam Pro', 'sans-serif'],
+                sans: ['Inter', 'sans-serif'],
             },
             fontWeight: {
                 normal: 300,

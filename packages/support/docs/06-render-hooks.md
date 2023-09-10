@@ -36,11 +36,15 @@ FilamentView::registerRenderHook(
 
 ### Panel Builder render hooks
 
+- `panels::auth.login.form.before` - Before login form
+- `panels::auth.login.form.after` - After login form
 - `panels::body.start` - After `<body>`
 - `panels::body.end` - Before `</body>`
 - `panels::content.end` - After page content, inside `<main>`
 - `panels::content.start` - Before page content, inside `<main>`
 - `panels::footer` - Footer of the page
+- `panels::global-search.after` - After the [global search](../panels/resources/global-search) container, inside the topbar
+- `panels::global-search.before` - Before the [global search](../panels/resources/global-search) container, inside the topbar
 - `panels::global-search.end` - The end of the [global search](../panels/resources/global-search) container
 - `panels::global-search.start` - The start of the [global search](../panels/resources/global-search) container
 - `panels::head.end` - Before `</head>`
@@ -53,6 +57,8 @@ FilamentView::registerRenderHook(
 - `panels::page.start` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::resource.pages.list-records.table.after` - After the resource table, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::resource.pages.list-records.table.before` - Before the resource table, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `panels::resource.pages.list-records.tabs.end` - The end of the filter tabs (after the last tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `panels::resource.pages.list-records.tabs.start` - The start of the filter tabs (before the first tab), also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::resource.relation-manager.after` - After the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or relation manager class
 - `panels::resource.relation-manager.before` - Before the relation manager table, also [can be scoped](#scoping-render-hooks) to the page or relation manager class
 - `panels::scripts.after` - After scripts are defined
@@ -101,7 +107,7 @@ FilamentView::registerRenderHook(
 );
 ```
 
-Some render hooks for the [panel builder](#panel-builder-render-hooks) allow you to scope hooks to all pages in a resource:
+Some render hooks for the [Panel Builder](#panel-builder-render-hooks) allow you to scope hooks to all pages in a resource:
 
 ```php
 use Filament\Support\Facades\FilamentView;

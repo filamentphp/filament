@@ -6,8 +6,11 @@
 
     @if ($isDisabled())
         <div
+            x-data="{
+                state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
+            }"
             x-html="state"
-            class="prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-transparent dark:text-gray-400 dark:ring-white/10 sm:text-sm"
+            class="fi-fo-rich-editor fi-disabled prose block w-full max-w-none rounded-lg bg-gray-50 px-3 py-3 text-gray-500 shadow-sm ring-1 ring-gray-950/10 dark:prose-invert dark:bg-transparent dark:text-gray-400 dark:ring-white/10 sm:text-sm"
         ></div>
     @else
         <div
@@ -25,7 +28,7 @@
                 ax-load
                 ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('rich-editor', 'filament/forms') }}"
                 x-data="richEditorFormComponent({
-                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')", isOptimisticallyLive: false) }},
+                            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')", isOptimisticallyLive: false) }},
                         })"
                 x-ignore
                 x-on:trix-attachment-add="
@@ -62,11 +65,11 @@
                 <trix-toolbar
                     id="trix-toolbar-{{ $id }}"
                     @class([
-                        'relative flex gap-x-3 overflow-x-auto border-b border-gray-200 px-2.5 py-2 dark:border-white/10',
+                        'relative flex flex-col gap-x-3 border-b border-gray-100 px-2.5 py-2 dark:border-white/10',
                         'hidden' => ! count($getToolbarButtons()),
                     ])
                 >
-                    <div class="flex gap-x-3">
+                    <div class="flex gap-x-3 overflow-x-auto">
                         @if ($hasToolbarButton(['bold', 'italic', 'underline', 'strike', 'link']))
                             <x-filament-forms::rich-editor.toolbar.group
                                 data-trix-button-group="text-tools"
@@ -473,10 +476,9 @@
                     x-ref="trix"
                     wire:ignore
                     {{
-                        $getExtraInputAttributeBag()
-                            ->class([
-                                'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert focus:outline-none dark:text-white sm:text-sm sm:leading-6',
-                            ])
+                        $getExtraInputAttributeBag()->class([
+                            'prose min-h-[theme(spacing.48)] max-w-none !border-none px-3 py-1.5 text-base text-gray-950 dark:prose-invert focus:outline-none focus-visible:outline-none dark:text-white sm:text-sm sm:leading-6',
+                        ])
                     }}
                 ></trix-editor>
             </div>

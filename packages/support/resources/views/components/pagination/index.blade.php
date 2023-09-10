@@ -1,6 +1,7 @@
 @props([
     'paginator',
     'pageOptions' => [],
+    'currentPageOptionProperty' => 'tableRecordsPerPage',
 ])
 
 @php
@@ -49,9 +50,9 @@
     @if (count($pageOptions) > 1)
         <div class="col-start-2 justify-self-center">
             <label class="sm:hidden">
-                <x-filament-forms::affixes>
+                <x-filament::input.wrapper>
                     <x-filament::input.select
-                        wire:model.live="tableRecordsPerPage"
+                        :wire:model.live="$currentPageOptionProperty"
                     >
                         @foreach ($pageOptions as $option)
                             <option value="{{ $option }}">
@@ -59,19 +60,19 @@
                             </option>
                         @endforeach
                     </x-filament::input.select>
-                </x-filament-forms::affixes>
+                </x-filament::input.wrapper>
 
                 <span class="sr-only">
-                    __('filament::components/pagination.fields.records_per_page.label')
+                    {{ __('filament::components/pagination.fields.records_per_page.label') }}
                 </span>
             </label>
 
             <label class="hidden sm:inline">
-                <x-filament-forms::affixes
+                <x-filament::input.wrapper
                     :prefix="__('filament::components/pagination.fields.records_per_page.label')"
                 >
                     <x-filament::input.select
-                        wire:model.live="tableRecordsPerPage"
+                        :wire:model.live="$currentPageOptionProperty"
                     >
                         @foreach ($pageOptions as $option)
                             <option value="{{ $option }}">
@@ -79,7 +80,7 @@
                             </option>
                         @endforeach
                     </x-filament::input.select>
-                </x-filament-forms::affixes>
+                </x-filament::input.wrapper>
             </label>
         </div>
     @endif
@@ -101,7 +102,7 @@
 
     @if ((! $isSimple) && $paginator->hasPages())
         <ol
-            class="hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 md:flex"
+            class="fi-pagination-items hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 md:flex"
         >
             @if (! $paginator->onFirstPage())
                 <x-filament::pagination.item
@@ -123,7 +124,7 @@
                     @foreach ($element as $page => $url)
                         <x-filament::pagination.item
                             :active="$page === $paginator->currentPage()"
-                            :aria-label="trans_choice('filament::components.pagination.actions.go_to_page.label', $page, ['page' => $page])"
+                            :aria-label="trans_choice('filament::components/pagination.actions.go_to_page.label', $page, ['page' => $page])"
                             :label="$page"
                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                             :wire:key="$this->getId() . '.pagination.' . $paginator->getPageName() . '.' . $page"

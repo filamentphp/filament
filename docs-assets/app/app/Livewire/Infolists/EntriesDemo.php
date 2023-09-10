@@ -13,6 +13,9 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
+use Filament\Support\Enums\FontFamily;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
 use Livewire\Component;
 
 class EntriesDemo extends Component implements HasInfolists
@@ -36,6 +39,15 @@ class EntriesDemo extends Component implements HasInfolists
                             ->state('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->id('placeholder')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('title')
+                            ->placeholder('Dan Harrin'),
+                    ]),
+                Group::make()
                     ->id('helperText')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',
@@ -43,7 +55,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ->schema([
                         TextEntry::make('name')
                             ->state('Dan Harrin')
-                            ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString()),
+                            ->helperText(str('Your **full name** here, including any middle names.')->inlineMarkdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hint')
@@ -54,7 +66,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint(str('[Documentation](/documentation)')->markdown()->toHtmlString()),
+                            ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString()),
                     ]),
                 Group::make()
                     ->id('hintColor')
@@ -65,7 +77,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint('[Documentation](/documentation)')
+                            ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString())
                             ->hintColor('primary'),
                     ]),
                 Group::make()
@@ -77,7 +89,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->hint('[Documentation](/documentation)')
+                            ->hint(str('[Documentation](/documentation)')->inlineMarkdown()->toHtmlString())
                             ->hintIcon('heroicon-m-question-mark-circle'),
                     ]),
                 Group::make()
@@ -165,7 +177,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('email')
                             ->state('dan@filamentphp.com')
                             ->icon('heroicon-m-envelope')
-                            ->iconPosition('after'),
+                            ->iconPosition(IconPosition::After),
                     ]),
                 Group::make()
                     ->id('textLarge')
@@ -175,7 +187,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ->schema([
                         TextEntry::make('title')
                             ->state('What is Filament?')
-                            ->size('lg'),
+                            ->size(TextEntry\TextEntrySize::Large),
                     ]),
                 Group::make()
                     ->id('textBold')
@@ -185,7 +197,7 @@ class EntriesDemo extends Component implements HasInfolists
                     ->schema([
                         TextEntry::make('title')
                             ->state('What is Filament?')
-                            ->weight('bold'),
+                            ->weight(FontWeight::Bold),
                     ]),
                 Group::make()
                     ->id('textMono')
@@ -196,7 +208,7 @@ class EntriesDemo extends Component implements HasInfolists
                         TextEntry::make('apiKey')
                             ->label('API key')
                             ->state('HGA3CH5AB345JD9MQ3')
-                            ->fontFamily('mono'),
+                            ->fontFamily(FontFamily::Mono),
                     ]),
                 Group::make()
                     ->id('textCopyable')
@@ -264,7 +276,7 @@ class EntriesDemo extends Component implements HasInfolists
                                 'published' => 'success',
                                 default => 'gray',
                             })
-                            ->size('md'),
+                            ->size(IconEntry\IconEntrySize::Medium),
                     ]),
                 Group::make()
                     ->id('iconBoolean')

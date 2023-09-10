@@ -4,9 +4,10 @@ namespace Filament\Tables\Table\Concerns;
 
 use Closure;
 use Filament\Forms\Form;
+use Filament\Support\Enums\ActionSize;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Filters\BaseFilter;
-use Filament\Tables\Filters\Layout;
 
 trait HasFilters
 {
@@ -24,7 +25,7 @@ trait HasFilters
 
     protected string | Closure | null $filtersFormWidth = null;
 
-    protected string | Closure | null $filtersLayout = null;
+    protected FiltersLayout | Closure | null $filtersLayout = null;
 
     protected ?Closure $modifyFiltersTriggerActionUsing = null;
 
@@ -42,15 +43,28 @@ trait HasFilters
     /**
      * @param  array<BaseFilter>  $filters
      */
-    public function filters(array $filters, string | Closure | null $layout = null): static
+    public function filters(array $filters, FiltersLayout | string | Closure | null $layout = null): static
+    {
+        $this->filters = [];
+        $this->pushFilters($filters);
+
+        if ($layout) {
+            $this->filtersLayout($layout);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param  array<BaseFilter>  $filters
+     */
+    public function pushFilters(array $filters): static
     {
         foreach ($filters as $filter) {
             $filter->table($this);
 
             $this->filters[$filter->getName()] = $filter;
         }
-
-        $this->filtersLayout($layout);
 
         return $this;
     }
@@ -79,7 +93,7 @@ trait HasFilters
         return $this;
     }
 
-    public function filtersLayout(string | Closure | null $filtersLayout): static
+    public function filtersLayout(FiltersLayout | Closure | null $filtersLayout): static
     {
         $this->filtersLayout = $filtersLayout;
 
@@ -138,7 +152,7 @@ trait HasFilters
         }
 
         if ($action->getView() === Action::BUTTON_VIEW) {
-            $action->defaultSize('sm');
+            $action->defaultSize(ActionSize::Small);
         }
 
         return $action;
@@ -150,7 +164,7 @@ trait HasFilters
     public function getFiltersFormColumns(): int | array
     {
         return $this->evaluate($this->filtersFormColumns) ?? match ($this->getFiltersLayout()) {
-            Layout::AboveContent, Layout::BelowContent => [
+            FiltersLayout::AboveContent, FiltersLayout::BelowContent => [
                 'sm' => 2,
                 'lg' => 3,
                 'xl' => 4,
@@ -175,9 +189,9 @@ trait HasFilters
         };
     }
 
-    public function getFiltersLayout(): string
+    public function getFiltersLayout(): FiltersLayout
     {
-        return $this->evaluate($this->filtersLayout) ?? Layout::Dropdown;
+        return $this->evaluate($this->filtersLayout) ?? FiltersLayout::Dropdown;
     }
 
     public function isFilterable(): bool

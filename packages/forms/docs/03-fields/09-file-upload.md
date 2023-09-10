@@ -15,7 +15,7 @@ FileUpload::make('attachment')
 
 <AutoScreenshot name="forms/fields/file-upload/simple" alt="File upload" version="3.x" />
 
-> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/spatie-media-library) for more information.
+> Filament also supports [`spatie/laravel-medialibrary`](https://github.com/spatie/laravel-medialibrary). See our [plugin documentation](/plugins/filament-spatie-media-library) for more information.
 
 ## Configuring the storage disk and directory
 
@@ -318,6 +318,17 @@ FileUpload::make('attachment')
     ->orientImagesFromExif(false)
 ```
 
+## Hiding the remove file button
+
+It is also possible to hide the remove uploaded file button by using `deletable(false)`:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('attachment')
+    ->deletable(false)
+```
+
 ## File upload validation
 
 As well as all rules listed on the [validation](../validation) page, there are additional rules that are specific to file uploads.
@@ -346,7 +357,7 @@ FileUpload::make('image')
 
 ### File size validation
 
-You may also restrict the size of uploaded files, in kilobytes:
+You may also restrict the size of uploaded files in kilobytes:
 
 ```php
 use Filament\Forms\Components\FileUpload;

@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'تم نسخ السجل',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'تم نسخ السجل',
+            ],
+
         ],
 
     ],

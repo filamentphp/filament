@@ -35,7 +35,7 @@ $widgetsNamespacePhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*
 $widgetsPathPhp = preg_match("/'widgets'\s*=>\s*\[\s*'namespace'\s*=>\s*(.*),\s*'path'\s*=>\s*(.*),/", $config, $matches) ? $matches[2] : 'app_path(\'Filament/Widgets\')';
 
 $databaseNotificationsPhp = preg_match("/'database_notifications'\s*=>\s*\[\s*'enabled'\s*=>\s*(.*),/", $config, $matches) ? $matches[1] : null;
-if ($databaseNotificationsPhp === 'false') {
+if (in_array($databaseNotificationsPhp, ['false', null])) {
     $databaseNotificationsPhp = '';
 } elseif ($databaseNotificationsPhp === 'true') {
     $databaseNotificationsPhp = "\n            ->databaseNotifications()";

@@ -3,33 +3,34 @@
 namespace Filament\Actions\Concerns;
 
 use Closure;
+use Filament\Support\Enums\ActionSize;
 
 trait HasSize
 {
-    protected string | Closure | null $defaultSize = null;
+    protected ActionSize | string | Closure | null $defaultSize = null;
 
-    protected string | Closure | null $size = null;
+    protected ActionSize | string | Closure | null $size = null;
 
-    public function defaultSize(string | Closure | null $size): static
+    public function defaultSize(ActionSize | string | Closure | null $size): static
     {
         $this->defaultSize = $size;
 
         return $this;
     }
 
-    public function size(string | Closure | null $size): static
+    public function size(ActionSize | string | Closure | null $size): static
     {
         $this->size = $size;
 
         return $this;
     }
 
-    public function getDefaultSize(): ?string
+    public function getDefaultSize(): ActionSize | string | null
     {
         return $this->evaluate($this->defaultSize);
     }
 
-    public function getSize(): ?string
+    public function getSize(): ActionSize | string | null
     {
         return $this->evaluate($this->size) ?? $this->getDefaultSize();
     }

@@ -22,8 +22,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'सेव हो गया',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'सेव हो गया',
+        ],
+
     ],
 
 ];

@@ -99,4 +99,12 @@ abstract class Widget extends Component
 
         return $properties;
     }
+
+    public function placeholder(): View
+    {
+        return view('filament::components.loading-section', [
+            'columnSpan' => $this->getColumnSpan(),
+            'columnStart' => $this->getColumnStart(),
+        ]);
+    }
 }

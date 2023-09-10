@@ -20,32 +20,40 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Scollegato',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Scollegato',
+            ],
+
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Scollega selezionato',
+        'label' => 'Scollega selezionati',
 
         'modal' => [
 
-            'heading' => 'Scollega selezionato :label',
+            'heading' => 'Scollega :label selezionati',
 
             'actions' => [
 
                 'detach' => [
-                    'label' => 'Scollega selezionato',
+                    'label' => 'Scollega',
                 ],
 
             ],
 
         ],
 
-        'messages' => [
-            'detached' => 'Scollegato',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Scollegati',
+            ],
+
         ],
 
     ],

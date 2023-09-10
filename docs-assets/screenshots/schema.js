@@ -395,6 +395,20 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/select/javascript': {
+        url: 'forms/fields',
+        selector: '#javascriptSelect',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#javascriptSelect .choices')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
     'forms/fields/select/searchable': {
         url: 'forms/fields',
         selector: '#searchableSelect',
@@ -421,6 +435,20 @@ export default {
             await page.click('#multipleSelect .choices')
             await page.click('#multipleSelect .choices #choices--datamultipleSelect-item-choice-2')
             await page.click('#multipleSelect .choices #choices--datamultipleSelect-item-choice-3')
+
+            await new Promise((resolve) => setTimeout(resolve, 500))
+        },
+    },
+    'forms/fields/select/grouped': {
+        url: 'forms/fields',
+        selector: '#groupedSelect',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+        before: async (page) => {
+            await page.click('#groupedSelect .choices')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -845,6 +873,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'forms/fields/repeater/simple-one-field': {
+        url: 'forms/fields',
+        selector: '#simpleRepeater',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'forms/fields/builder/simple': {
         url: 'forms/fields',
         selector: '#builder',
@@ -1084,18 +1121,18 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/placeholder/simple': {
+    'forms/layout/section/without-header': {
         url: 'forms/layout',
-        selector: '#placeholder',
+        selector: '#sectionWithoutHeader',
         viewport: {
             width: 1920,
             height: 640,
             deviceScaleFactor: 3,
         },
     },
-    'forms/layout/card/simple': {
+    'forms/layout/placeholder/simple': {
         url: 'forms/layout',
-        selector: '#card',
+        selector: '#placeholder',
         viewport: {
             width: 1920,
             height: 640,
@@ -1141,6 +1178,15 @@ export default {
     'infolists/entries/simple': {
         url: 'infolists/entries',
         selector: '#simple',
+        viewport: {
+            width: 1920,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
+    'infolists/entries/placeholder': {
+        url: 'infolists/entries',
+        selector: '#placeholder',
         viewport: {
             width: 1920,
             height: 640,
@@ -1567,9 +1613,9 @@ export default {
             deviceScaleFactor: 3,
         },
     },
-    'infolists/layout/card/simple': {
+    'infolists/layout/section/without-header': {
         url: 'infolists/layout',
-        selector: '#card',
+        selector: '#sectionWithoutHeader',
         viewport: {
             width: 1920,
             height: 640,
@@ -1738,7 +1784,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -1795,6 +1841,15 @@ export default {
             deviceScaleFactor: 3,
         },
     },
+    'tables/columns/placeholder': {
+        url: 'tables?table=placeholderColumns',
+        selector: 'body',
+        viewport: {
+            width: 1080,
+            height: 640,
+            deviceScaleFactor: 3,
+        },
+    },
     'tables/columns/toggleable': {
         url: 'tables?table=toggleableColumns',
         selector: 'body',
@@ -1804,7 +1859,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-col-toggling button')
+            await page.click('.fi-ta-col-toggle button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         }
@@ -2121,7 +2176,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2135,7 +2190,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2149,7 +2204,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },
@@ -2163,7 +2218,7 @@ export default {
             deviceScaleFactor: 3,
         },
         before: async (page) => {
-            await page.click('.fi-ta-filters button')
+            await page.click('.fi-ta-filters-dropdown button')
 
             await new Promise((resolve) => setTimeout(resolve, 500))
         },

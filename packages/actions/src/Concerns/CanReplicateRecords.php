@@ -35,7 +35,7 @@ trait CanReplicateRecords
 
         $this->modalSubmitActionLabel(__('filament-actions::replicate.single.modal.actions.replicate.label'));
 
-        $this->successNotificationTitle(__('filament-actions::replicate.single.messages.replicated'));
+        $this->successNotificationTitle(__('filament-actions::replicate.single.notifications.replicated.title'));
 
         $this->fillForm(function (Model $record): array {
             $data = $record->attributesToArray();

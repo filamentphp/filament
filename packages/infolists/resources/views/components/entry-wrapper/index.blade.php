@@ -8,6 +8,7 @@
     'hintActions' => null,
     'hintColor' => null,
     'hintIcon' => null,
+    'hintIconTooltip' => null,
     'id' => null,
     'label' => null,
     'labelPrefix' => null,
@@ -20,6 +21,8 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+
     if ($entry) {
         $action ??= $entry->getAction();
         $alignment ??= $entry->getAlignment();
@@ -29,6 +32,7 @@
         $hintActions ??= $entry->getHintActions();
         $hintColor ??= $entry->getHintColor();
         $hintIcon ??= $entry->getHintIcon();
+        $hintIconTooltip ??= $entry->getHintIconTooltip();
         $id ??= $entry->getId();
         $label ??= $entry->getLabel();
         $labelSrOnly ??= $entry->isLabelHidden();
@@ -77,6 +81,7 @@
                         :actions="$hintActions"
                         :color="$hintColor"
                         :icon="$hintIcon"
+                        :tooltip="$hintIconTooltip"
                     >
                         {{ $hint }}
                     </x-filament-infolists::entry-wrapper.hint>
@@ -100,12 +105,12 @@
                 @endif
                 @class([
                     match ($alignment) {
-                        'center' => 'text-center',
-                        'end' => 'text-end',
-                        'justify' => 'text-justify',
-                        'left' => 'text-left',
-                        'right' => 'text-right',
-                        'start' => 'text-start',
+                        Alignment::Center, 'center' => 'text-center',
+                        Alignment::End, 'end' => 'text-end',
+                        Alignment::Justify, 'justify' => 'text-justify',
+                        Alignment::Left, 'left' => 'text-left',
+                        Alignment::Right, 'right' => 'text-right',
+                        Alignment::Start, 'start' => 'text-start',
                         default => null,
                     },
                 ])

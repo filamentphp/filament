@@ -13,7 +13,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament-forms::affixes
+    <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -27,7 +27,7 @@
         class="fi-fo-select"
         :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
     >
-        @if (! ($isSearchable() || $isMultiple()))
+        @if ((! ($isSearchable() || $isMultiple()) && $isNative()))
             <x-filament::input.select
                 :autofocus="$isAutofocused()"
                 :disabled="$isDisabled"
@@ -55,16 +55,33 @@
                 @endif
 
                 @foreach ($getOptions() as $value => $label)
-                    <option
-                        @disabled($isOptionDisabled($value, $label))
-                        value="{{ $value }}"
-                    >
-                        @if ($isHtmlAllowed)
-                            {!! $label !!}
-                        @else
-                            {{ $label }}
-                        @endif
-                    </option>
+                    @if (is_array($label))
+                        <optgroup label="{{ $value }}">
+                            @foreach ($label as $groupedValue => $groupedLabel)
+                                <option
+                                    @disabled($isOptionDisabled($groupedValue, $groupedLabel))
+                                    value="{{ $groupedValue }}"
+                                >
+                                    @if ($isHtmlAllowed)
+                                        {!! $groupedLabel !!}
+                                    @else
+                                        {{ $groupedLabel }}
+                                    @endif
+                                </option>
+                            @endforeach
+                        </optgroup>
+                    @else
+                        <option
+                            @disabled($isOptionDisabled($value, $label))
+                            value="{{ $value }}"
+                        >
+                            @if ($isHtmlAllowed)
+                                {!! $label !!}
+                            @else
+                                {{ $label }}
+                            @endif
+                        </option>
+                    @endif
                 @endforeach
             </x-filament::input.select>
         @else
@@ -89,6 +106,7 @@
                             },
                             isAutofocused: @js($isAutofocused()),
                             isMultiple: @js($isMultiple()),
+                            isSearchable: @js($isSearchable()),
                             livewireId: @js($this->getId()),
                             hasDynamicOptions: @js($hasDynamicOptions()),
                             hasDynamicSearchResults: @js($hasDynamicSearchResults()),
@@ -104,7 +122,7 @@
                             searchingMessage: @js($getSearchingMessage()),
                             searchPrompt: @js($getSearchPrompt()),
                             searchableOptionFields: @js($getSearchableOptionFields()),
-                            state: $wire.{{ $applyStateBindingModifiers("entangle('{$statePath}')") }},
+                            state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
                             statePath: @js($statePath),
                         })"
                 wire:ignore
@@ -128,5 +146,5 @@
                 ></select>
             </div>
         @endif
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 </x-dynamic-component>

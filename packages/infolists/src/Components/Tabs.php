@@ -4,18 +4,19 @@ namespace Filament\Infolists\Components;
 
 use Closure;
 use Filament\Infolists\Components\Tabs\Tab;
-use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Concerns;
 
 class Tabs extends Component
 {
-    use HasExtraAlpineAttributes;
+    use Concerns\CanBeContained;
+    use Concerns\HasExtraAlpineAttributes;
 
     /**
      * @var view-string
      */
     protected string $view = 'filament-infolists::components.tabs';
 
-    public int | Closure $activeTab = 1;
+    protected int | Closure $activeTab = 1;
 
     protected string | Closure | null $tabQueryStringKey = null;
 

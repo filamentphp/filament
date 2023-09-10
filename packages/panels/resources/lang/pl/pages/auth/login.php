@@ -44,8 +44,18 @@ return [
     ],
 
     'messages' => [
+
         'failed' => 'Błędny login lub hasło.',
-        'throttled' => 'Za dużo nieudanych prób logowania. Proszę spróbować za :seconds sekund.',
+
+    ],
+
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Za dużo nieudanych prób logowania',
+            'body' => 'Spróbuj ponownie za :seconds sekund.',
+        ],
+
     ],
 
 ];

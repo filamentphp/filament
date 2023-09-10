@@ -6,12 +6,13 @@ use Closure;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -34,8 +35,6 @@ trait CanFormatState
     protected bool | Closure $isHtml = false;
 
     protected bool | Closure $isMarkdown = false;
-
-    protected string | Closure | null $placeholder = null;
 
     public function markdown(bool | Closure $condition = true): static
     {
@@ -142,13 +141,6 @@ trait CanFormatState
         return $this;
     }
 
-    public function placeholder(string | Closure | null $placeholder): static
-    {
-        $this->placeholder = $placeholder;
-
-        return $this;
-    }
-
     public function limit(int | Closure | null $length = 100, string | Closure | null $end = '...'): static
     {
         $this->characterLimit = $length;
@@ -221,10 +213,6 @@ trait CanFormatState
 
         if ($state instanceof HtmlString) {
             return $state;
-        }
-
-        if (blank($state)) {
-            $state = $this->evaluate($this->placeholder);
         }
 
         if ($this->isHtml()) {

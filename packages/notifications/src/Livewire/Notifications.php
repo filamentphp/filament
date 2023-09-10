@@ -4,6 +4,8 @@ namespace Filament\Notifications\Livewire;
 
 use Filament\Notifications\Collection;
 use Filament\Notifications\Notification;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\VerticalAlignment;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Model;
@@ -17,9 +19,11 @@ class Notifications extends Component
 
     public Collection $notifications;
 
-    public static string $horizontalAlignment = 'right';
+    public static Alignment $alignment = Alignment::Right;
 
-    public static string $verticalAlignment = 'top';
+    public static VerticalAlignment $verticalAlignment = VerticalAlignment::Start;
+
+    public static ?string $authGuard = null;
 
     public function mount(): void
     {
@@ -80,7 +84,7 @@ class Notifications extends Component
 
     public function getUser(): Model | Authenticatable | null
     {
-        return auth()->user();
+        return auth(static::$authGuard)->user();
     }
 
     public function getBroadcastChannel(): ?string
@@ -100,14 +104,19 @@ class Notifications extends Component
         return "{$userClass}.{$user->getKey()}";
     }
 
-    public static function horizontalAlignment(string $alignment): void
+    public static function alignment(Alignment $alignment): void
     {
-        static::$horizontalAlignment = $alignment;
+        static::$alignment = $alignment;
     }
 
-    public static function verticalAlignment(string $alignment): void
+    public static function verticalAlignment(VerticalAlignment $alignment): void
     {
         static::$verticalAlignment = $alignment;
+    }
+
+    public static function authGuard(?string $guard): void
+    {
+        static::$authGuard = $guard;
     }
 
     public function render(): View

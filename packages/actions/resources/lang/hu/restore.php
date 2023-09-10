@@ -20,19 +20,23 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Visszaállítva',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Visszaállítva',
+            ],
+
         ],
 
     ],
 
     'multiple' => [
 
-        'label' => 'Kiválasztottak visszaállítása',
+        'label' => 'Kijelöltek visszaállítása',
 
         'modal' => [
 
-            'heading' => 'Kiválasztott :label visszaállítása',
+            'heading' => 'Kijelölt :label visszaállítása',
 
             'actions' => [
 
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Visszaállítva',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Visszaállítva',
+            ],
+
         ],
 
     ],

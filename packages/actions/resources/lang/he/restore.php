@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'שוחזר',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'שוחזר',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'שוחזר',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'שוחזר',
+            ],
+
         ],
 
     ],

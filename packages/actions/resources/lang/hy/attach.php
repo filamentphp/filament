@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'attached' => 'Կցվել է',
+        'notifications' => [
+
+            'attached' => [
+                'title' => 'Կցվել է',
+            ],
+
         ],
 
     ],

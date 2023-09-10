@@ -248,7 +248,7 @@ TernaryFilter::make('trashed')
 
 ### Custom filter forms
 
-You may use components from the [form builder](../forms/fields) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
+You may use components from the [Form Builder](../forms/fields/getting-started) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
 ```php
 use Filament\Forms\Components\DatePicker;
@@ -306,6 +306,8 @@ Filter::make('is_admin')
     ->label('Administrators only?')
     ->indicator('Administrators')
 ```
+
+If you are using a [custom filter form](#custom-filter-forms), you should use [`indicateUsing()`](#custom-active-indicators) to display an active indicator.
 
 ### Custom active indicators
 
@@ -394,7 +396,7 @@ public function table(Table $table): Table
 
 ## Controlling the maximum height of the filters dropdown
 
-To add a maximum height to the filters dropdown content, so that they scroll, you may use the `filtersFormMaxHeight()` method, passing a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
+To add a maximum height to the filters' dropdown content, so that they scroll, you may use the `filtersFormMaxHeight()` method, passing a [CSS length](https://developer.mozilla.org/en-US/docs/Web/CSS/length):
 
 ```php
 use Filament\Tables\Table;
@@ -414,7 +416,7 @@ public function table(Table $table): Table
 To render the filters above the table content instead of in a dropdown, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -422,7 +424,7 @@ public function table(Table $table): Table
     return $table
         ->filters([
             // ...
-        ], layout: Layout::AboveContent);
+        ], layout: FiltersLayout::AboveContent);
 }
 ```
 
@@ -433,14 +435,14 @@ public function table(Table $table): Table
 To allow the filters above the table content to be collapsed, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 
 public function table(Table $table): Table
 {
     return $table
         ->filters([
             // ...
-        ], layout: Layout::AboveContentCollapsible);
+        ], layout: FiltersLayout::AboveContentCollapsible);
 }
 ```
 
@@ -449,7 +451,7 @@ public function table(Table $table): Table
 To render the filters below the table content instead of in a dropdown, you may use:
 
 ```php
-use Filament\Tables\Filters\Layout;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 
 public function table(Table $table): Table
@@ -457,7 +459,7 @@ public function table(Table $table): Table
     return $table
         ->filters([
             // ...
-        ], layout: Layout::BelowContent);
+        ], layout: FiltersLayout::BelowContent);
 }
 ```
 
@@ -519,7 +521,7 @@ TernaryFilter::make('trashed')
 
 ## Customizing the filters dropdown trigger action
 
-To customize the filters dropdown trigger button, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
+To customize the filters' dropdown trigger buttons, you may use the `filtersTriggerAction()` method, passing a closure that returns an action. All methods that are available to [customize action trigger buttons](../actions/trigger-button) can be used:
 
 ```php
 use Filament\Tables\Actions\Action;

@@ -17,7 +17,7 @@
 @endphp
 
 <x-dynamic-component :component="$getFieldWrapperView()" :field="$field">
-    <x-filament-forms::affixes
+    <x-filament::input.wrapper
         :disabled="$isDisabled"
         :inline-prefix="$isPrefixInline"
         :inline-suffix="$isSuffixInline"
@@ -63,7 +63,7 @@
                     ], escape: false)
             "
         />
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 
     @if ($datalistOptions)
         <datalist id="{{ $id }}-list">

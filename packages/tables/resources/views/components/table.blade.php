@@ -8,8 +8,8 @@
     {{ $attributes->class(['fi-ta-table w-full table-auto divide-y divide-gray-200 text-start dark:divide-white/5']) }}
 >
     @if ($header)
-        <thead>
-            <tr class="bg-gray-50 dark:bg-white/5">
+        <thead class="bg-gray-50 dark:bg-white/5">
+            <tr>
                 {{ $header }}
             </tr>
         </thead>
@@ -26,8 +26,8 @@
     </tbody>
 
     @if ($footer)
-        <tfoot>
-            <tr class="bg-gray-50 dark:bg-white/5">
+        <tfoot class="bg-gray-50 dark:bg-white/5">
+            <tr>
                 {{ $footer }}
             </tr>
         </tfoot>

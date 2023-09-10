@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'الأعمدة',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -88,6 +94,8 @@ return [
 
         'heading' => 'لا توجد سجلات',
 
+        'description' => 'قم بإنشاء :model للبدء.',
+
     ],
 
     'filters' => [
@@ -108,6 +116,8 @@ return [
             ],
 
         ],
+
+        'heading' => 'الفلاتر',
 
         'indicator' => 'الفلاتر النشطة',
 

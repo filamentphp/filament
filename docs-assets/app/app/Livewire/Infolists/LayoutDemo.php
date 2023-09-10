@@ -6,7 +6,6 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
-use Filament\Infolists\Components\Card;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\Group;
@@ -19,6 +18,10 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Concerns\InteractsWithInfolists;
 use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms, HasInfolists
@@ -109,7 +112,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
-                                    ->iconPosition('after')
+                                    ->iconPosition(IconPosition::After)
                                     ->schema([
                                         IconEntry::make('enabled')
                                             ->boolean()
@@ -123,10 +126,10 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     ->columns(2),
                                 Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                                 Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                             ]),
                     ]),
                 Group::make()
@@ -250,12 +253,12 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             ->columns(3),
                     ]),
                 Group::make()
-                    ->id('card')
+                    ->id('sectionWithoutHeader')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Card::make([
+                        Section::make([
                             TextEntry::make('hits')
                                 ->state(30),
                             TextEntry::make('period')
@@ -275,10 +278,10 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                     ])
                     ->schema([
                         Split::make([
-                            Card::make([
+                            Section::make([
                                 TextEntry::make('title')
                                     ->state('What is Filament?')
-                                    ->weight('bold'),
+                                    ->weight(FontWeight::Bold),
                                 TextEntry::make('content')
                                     ->state(<<<'MARKDOWN'
                                     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non dui eu augue tempor finibus. Vivamus tincidunt malesuada volutpat. Donec ornare euismod est id cursus. Donec dolor nisl, dignissim vitae vulputate accumsan, consequat a lorem.
@@ -288,7 +291,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     ->markdown()
                                     ->prose(),
                             ]),
-                            Card::make([
+                            Section::make([
                                 TextEntry::make('created_at')
                                     ->dateTime()
                                     ->state('2022-01-01 14:10:32'),
@@ -338,7 +341,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                             Action::make('resetStars')
                                 ->icon('heroicon-m-x-mark')
                                 ->color('danger'),
-                        ])->alignment('center'),
+                        ])->alignment(Alignment::Center),
                     ]),
                 Group::make()
                     ->id('anonymousActionsVerticallyAlignedEnd')
@@ -357,7 +360,7 @@ class LayoutDemo extends Component implements HasForms, HasInfolists
                                     Action::make('resetStars')
                                         ->icon('heroicon-m-x-mark')
                                         ->color('danger'),
-                                ])->verticalAlignment('end'),
+                                ])->verticalAlignment(VerticalAlignment::End),
                             ]),
                     ]),
             ])

@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'replicated' => 'Գրառումը կրկնօրինակվել է',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Գրառումը կրկնօրինակվել է',
+            ],
+
         ],
 
     ],

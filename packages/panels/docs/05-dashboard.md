@@ -4,7 +4,7 @@ title: Dashboard
 
 ## Overview
 
-Filament allows you to build dynamic dashboards, comprised of "widget" cards, very easily.
+Filament allows you to build dynamic dashboards, comprised of "widgets", very easily.
 
 The following document will explain how to use these widgets to assemble a dashboard using the panel.
 
@@ -12,7 +12,7 @@ The following document will explain how to use these widgets to assemble a dashb
 
 Filament ships with these widgets:
 
-- [Stats overview](../widgets/stats-overview) widgets display any data, often numeric data, within cards in a row.
+- [Stats overview](../widgets/stats-overview) widgets display any data, often numeric data, as stats in a row.
 - [Chart](../widgets/charts) widgets display numeric data in a visual chart.
 - [Table](#table-widgets) widgets which display a [table](../tables/getting-started) on your dashboard.
 
@@ -47,7 +47,7 @@ protected int | string | array $columnSpan = [
 
 This is especially useful when using a [responsive widgets grid](#responsive-widgets-grid).
 
-## Customizing the widgets grid
+## Customizing the widgets' grid
 
 You may change how many grid columns are used to display widgets.
 
@@ -56,9 +56,9 @@ Firstly, you must [replace the original Dashboard page](#customizing-the-dashboa
 Now, in your new `app/Filament/Pages/Dashboard.php` file, you may override the `getColumns()` method to return a number of grid columns to use:
 
 ```php
-protected function getColumns(): int | array
+public function getColumns(): int | string | array
 {
-    return 3;
+    return 2;
 }
 ```
 
@@ -67,7 +67,7 @@ protected function getColumns(): int | array
 You may wish to change the number of widget grid columns based on the responsive [breakpoint](https://tailwindcss.com/docs/responsive-design#overview) of the browser. You can do this using an array that contains the number of columns that should be used at each breakpoint:
 
 ```php
-protected function getColumns(): int | array
+public function getColumns(): int | string | array
 {
     return [
         'md' => 4,
@@ -126,16 +126,14 @@ public function panel(Panel $panel): Panel
 
 ## Customizing the dashboard page
 
-If you want to customize the dashboard class, for example to [change the number of widget columns](#customizing-widget-width), create a new file at `app/Filament/Pages/Dashboard.php`:
+If you want to customize the dashboard class, for example, to [change the number of widget columns](#customizing-widget-width), create a new file at `app/Filament/Pages/Dashboard.php`:
 
 ```php
 <?php
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Dashboard as BasePage;
-
-class Dashboard extends BasePage
+class Dashboard extends \Filament\Pages\Dashboard
 {
     // ...
 }

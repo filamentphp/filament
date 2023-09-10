@@ -6,44 +6,30 @@
 @endphp
 
 <x-filament-widgets::widget>
-    <x-filament::card class="fi-wi-chart grid auto-cols-fr gap-y-4">
-        @if ($heading || $description || $filters)
-            <div class="flex items-center gap-x-4">
-                @if ($heading || $description)
-                    <div class="grid gap-y-1">
-                        @if ($heading)
-                            <h3 class="text-base font-semibold leading-6">
-                                {{ $heading }}
-                            </h3>
-                        @endif
-
-                        @if ($description)
-                            <p class="text-sm text-gray-500 dark:text-gray-400">
-                                {{ $description }}
-                            </p>
-                        @endif
-                    </div>
-                @endif
-
-                @if ($filters)
-                    <x-filament-forms::affixes
+    <x-filament::section
+        :description="$description"
+        :heading="$heading"
+        class="fi-wi-chart"
+    >
+        @if ($filters)
+            <x-slot name="headerEnd">
+                <x-filament::input.wrapper
+                    inline-prefix
+                    wire:target="filter"
+                    class="-my-2"
+                >
+                    <x-filament::input.select
                         inline-prefix
-                        wire:target="filter"
-                        class="ms-auto"
+                        wire:model.live="filter"
                     >
-                        <x-filament::input.select
-                            inline-prefix
-                            wire:model.live="filter"
-                        >
-                            @foreach ($filters as $value => $label)
-                                <option value="{{ $value }}">
-                                    {{ $label }}
-                                </option>
-                            @endforeach
-                        </x-filament::input.select>
-                    </x-filament-forms::affixes>
-                @endif
-            </div>
+                        @foreach ($filters as $value => $label)
+                            <option value="{{ $value }}">
+                                {{ $label }}
+                            </option>
+                        @endforeach
+                    </x-filament::input.select>
+                </x-filament::input.wrapper>
+            </x-slot>
         @endif
 
         <div
@@ -103,5 +89,5 @@
                 ></span>
             </div>
         </div>
-    </x-filament::card>
+    </x-filament::section>
 </x-filament-widgets::widget>

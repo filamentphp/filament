@@ -128,12 +128,13 @@ The icon of the tab may be positioned before or after the label using the `iconP
 
 ```php
 use Filament\Forms\Components\Tabs;
+use Filament\Support\Enums\IconPosition;
 
 Tabs::make('Label')
     ->tabs([
         Tabs\Tab::make('Notifications')
             ->icon('heroicon-m-bell')
-            ->iconPosition('after')
+            ->iconPosition(IconPosition::After)
             ->schema([
                 // ...
             ]),
@@ -180,3 +181,29 @@ Tabs::make('Label')
         // ...
     ])
 ```
+
+## Removing the styled container
+
+By default, tabs and their content are wrapped in a container styled as a card. You may remove the styled container using `contained()`:
+
+```php
+use Filament\Forms\Components\Tabs;
+
+Tabs::make('Label')
+    ->tabs([
+        Tabs\Tab::make('Tab 1')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 2')
+            ->schema([
+                // ...
+            ]),
+        Tabs\Tab::make('Tab 3')
+            ->schema([
+                // ...
+            ]),
+    ])
+    ->contained(false)
+```
+

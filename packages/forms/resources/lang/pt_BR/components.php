@@ -235,6 +235,7 @@ return [
             'ordered_list' => 'Lista ordenada',
             'redo' => 'Refazer',
             'strike' => 'Tachado',
+            'underline' => 'Sublinhado',
             'table' => 'Tabela',
             'undo' => 'Desfazer',
         ],
@@ -297,7 +298,7 @@ return [
 
                 'actions' => [
                     'link' => 'Link',
-                    'unlink' => 'Unlink',
+                    'unlink' => 'Remover link',
                 ],
 
                 'label' => 'URL',
@@ -393,7 +394,7 @@ return [
     ],
 
     'tags_input' => [
-        'placeholder' => 'Novo rótulo',
+        'placeholder' => 'Nova tag',
     ],
 
     'wizard' => [

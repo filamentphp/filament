@@ -4,24 +4,14 @@ namespace Filament\Support\Components;
 
 use Closure;
 use Exception;
-use Filament\Support\Concerns\Configurable;
-use Filament\Support\Concerns\EvaluatesClosures;
-use Filament\Support\Concerns\Macroable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Traits\Tappable;
 use Illuminate\View\ComponentAttributeBag;
 use ReflectionClass;
 use ReflectionMethod;
-use ReflectionProperty;
 
 abstract class ViewComponent extends Component implements Htmlable
 {
-    use Configurable;
-    use EvaluatesClosures;
-    use Macroable;
-    use Tappable;
-
     /**
      * @var view-string
      */
@@ -38,11 +28,6 @@ abstract class ViewComponent extends Component implements Htmlable
     protected array $viewData = [];
 
     protected string $viewIdentifier;
-
-    /**
-     * @var array<string, array<string>>
-     */
-    protected static array $propertyCache = [];
 
     /**
      * @var array<string, array<string>>
@@ -76,29 +61,6 @@ abstract class ViewComponent extends Component implements Htmlable
         $this->defaultView = $view;
 
         return $this;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    protected function extractPublicProperties(): array
-    {
-        if (! isset(static::$propertyCache[static::class])) {
-            $reflection = new ReflectionClass($this);
-
-            static::$propertyCache[static::class] = collect($reflection->getProperties(ReflectionProperty::IS_PUBLIC))
-                ->filter(fn (ReflectionProperty $property): bool => ! $property->isStatic())
-                ->map(fn (ReflectionProperty $property): string => $property->getName())
-                ->all();
-        }
-
-        $values = [];
-
-        foreach (static::$propertyCache[static::class] as $property) {
-            $values[$property] = $this->{$property};
-        }
-
-        return $values;
     }
 
     /**
@@ -172,7 +134,6 @@ abstract class ViewComponent extends Component implements Htmlable
             $this->getView(),
             [
                 'attributes' => new ComponentAttributeBag(),
-                ...$this->extractPublicProperties(),
                 ...$this->extractPublicMethods(),
                 ...(isset($this->viewIdentifier) ? [$this->viewIdentifier => $this] : []),
                 ...$this->viewData,

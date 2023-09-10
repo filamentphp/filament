@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'attached' => 'Dilampirkan',
+        'notifications' => [
+
+            'attached' => [
+                'title' => 'Dilampirkan',
+            ],
+
         ],
 
     ],

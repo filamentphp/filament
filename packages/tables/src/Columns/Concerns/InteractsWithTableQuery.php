@@ -10,8 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
 trait InteractsWithTableQuery
@@ -90,27 +92,32 @@ trait InteractsWithTableQuery
 
             $query->when(
                 $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $searchColumn),
-                fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause),
+                fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $this->isSearchForcedCaseInsensitive($query)),
                 function (EloquentBuilder $query) use ($search, $searchColumn, $whereClause): EloquentBuilder {
                     /** @var Connection $databaseConnection */
                     $databaseConnection = $query->getConnection();
 
-                    $searchOperator = match ($databaseConnection->getDriverName()) {
-                        'pgsql' => 'ilike',
-                        default => 'like',
-                    };
+                    $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
+
+                    $caseAwareSearchColumn = $isSearchForcedCaseInsensitive ?
+                        new Expression("lower({$searchColumn})") :
+                        $searchColumn;
+
+                    if ($isSearchForcedCaseInsensitive) {
+                        $search = Str::lower($search);
+                    }
 
                     return $query->when(
                         $this->queriesRelationships($query->getModel()),
                         fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
                             $this->getRelationshipName(),
-                            $searchColumn,
-                            $searchOperator,
+                            $caseAwareSearchColumn,
+                            'like',
                             "%{$search}%",
                         ),
                         fn (EloquentBuilder $query): EloquentBuilder => $query->{$whereClause}(
-                            $searchColumn,
-                            $searchOperator,
+                            $caseAwareSearchColumn,
+                            'like',
                             "%{$search}%",
                         ),
                     );

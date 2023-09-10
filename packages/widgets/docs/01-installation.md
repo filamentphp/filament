@@ -2,40 +2,44 @@
 title: Installation
 ---
 
-**Using widgets inside a [panel](../panels)**? You can skip this installation. This guide is for people who want to use the package inside their custom TALL-stack app.
+**The Widgets package is pre-installed with the [Panel Builder](/docs/panels).** This guide is for using the Widgets package in a custom TALL Stack application (Tailwind, Alpine, Livewire, Laravel).
 
 ## Requirements
 
-Filament has a few requirements to run:
+Filament requires the following to run:
 
 - PHP 8.1+
-- Laravel v9.0+
+- Laravel v10.0+
 - Livewire v3.0+
 
-> **Livewire v3 is still in beta**
-> While they will attempt to keep breaking changes to a minimum, they could still happen. Filament v3 is also not stable because of that. Therefore, we recommend testing your application thoroughly before using Filament v3 in production.
+> **Livewire v3 is recently released!**<br />
+> The Livewire team have done a great job in making it stable, but it was a complete rewrite of Livewire v2. You may encounter issues, so we recommend testing your application thoroughly before using Filament v3 in production.
 
-First, require the actions package using Composer:
+## Installation
+
+Require the Widgets package using Composer:
 
 ```bash
-composer require filament/widgets:"^3.0@beta"
+composer require filament/widgets:"^3.0-stable" -W
 ```
 
 ## New Laravel projects
 
-To get started with Filament quickly, you can set up [Livewire](https://laravel-livewire.com), [Alpine.js](https://alpinejs.dev) and [Tailwind CSS](https://tailwindcss.com) with these commands:
+To quickly get started with Filament in a new Laravel project, run the following commands to install [Livewire](https://livewire.laravel.com), [Alpine.js](https://alpinejs.dev), and [Tailwind CSS](https://tailwindcss.com):
+
+> Since these commands will overwrite existing files in your application, only run this in a new Laravel project!
 
 ```bash
 php artisan filament:install --scaffold --widgets
+
 npm install
+
 npm run dev
 ```
 
-> These commands will ruthlessly overwrite existing files in your application, hence why we only recommend using this method for new projects.
-
 ## Existing Laravel projects
 
-First, run the following command to install the package's assets:
+Run the following command to install the Widgets package assets:
 
 ```bash
 php artisan filament:install --widgets
@@ -43,48 +47,30 @@ php artisan filament:install --widgets
 
 ### Installing Tailwind CSS
 
-First, use NPM to install Tailwind CSS and its `forms` and `typography` plugins:
+Run the following command to install Tailwind CSS with the Tailwind Forms and Typography plugins:
 
 ```bash
 npm install tailwindcss @tailwindcss/forms @tailwindcss/typography postcss autoprefixer --save-dev
 ```
 
-Create a new `tailwind.config.js` file. Ensure that you add Filament's `content` path, custom `colors`, and the `plugins` you installed:
+Create a new `tailwind.config.js` file and add the Filament `preset` *(includes the Filament color scheme and the required Tailwind plugins)*:
 
 ```js
-import colors from 'tailwindcss/colors'
-import forms from '@tailwindcss/forms'
-import typography from '@tailwindcss/typography'
+import preset from './vendor/filament/support/tailwind.config.preset'
 
 export default {
+    presets: [preset],
     content: [
-        './resources/**/*.blade.php',
+        './app/Filament/**/*.php',
+        './resources/views/filament/**/*.blade.php',
         './vendor/filament/**/*.blade.php',
-    ],
-    darkMode: 'class',
-    theme: {
-        extend: {
-            colors: {
-                danger: colors.red,
-                info: colors.blue,
-                primary: colors.amber,
-                success: colors.green,
-                warning: colors.amber,
-            },
-        },
-    },
-    plugins: [
-        forms,
-        typography,
     ],
 }
 ```
 
-Of course, you may specify your own custom `danger`, `gray`, `info`, `primary`, `success` and `warning` colors, which will be used instead. But each color needs to be a [Tailwind CSS color](https://tailwindcss.com/docs/customizing-colors#color-palette-reference), or have all 50 - 950 variants specified - a single hex code or RGB value won't work here.
-
 ### Configuring styles
 
-In `resources/css/app.css`, import Tailwind CSS:
+Add Tailwind's CSS layers to your `resources/css/app.css`:
 
 ```css
 @tailwind base;
@@ -92,7 +78,7 @@ In `resources/css/app.css`, import Tailwind CSS:
 @tailwind utilities;
 ```
 
-Create a `postcss.config.js` file in the root of your project, and register Tailwind CSS and Autoprefixer as plugins:
+Create a `postcss.config.js` file in the root of your project and register Tailwind CSS and Autoprefixer as plugins:
 
 ```js
 export default {
@@ -103,7 +89,8 @@ export default {
 }
 ```
 
-You may also want to update your `vite.config.js` file to refresh the page after Livewire components have been updated:
+### Automatically refreshing the browser
+You may also want to update your `vite.config.js` file to refresh the page automatically when Livewire components are updated:
 
 ```js
 import { defineConfig } from 'vite'
@@ -122,11 +109,13 @@ export default defineConfig({
 })
 ```
 
-Compile your new CSS and JS assets using `npm run dev`.
+### Compiling assets
 
-### Configuring layout
+Compile your new CSS and Javascript assets using `npm run dev`.
 
-Finally, create a new `resources/views/components/layouts/app.blade.php` layout file for Livewire components:
+### Configuring your layout
+
+Create a new `resources/views/components/layouts/app.blade.php` layout file for Livewire components:
 
 ```blade
 <!DOCTYPE html>
@@ -161,7 +150,7 @@ Finally, create a new `resources/views/components/layouts/app.blade.php` layout 
 
 ## Publishing configuration
 
-If you wish, you may publish the configuration of the package using:
+You can publish the package configuration using the following command (optional):
 
 ```bash
 php artisan vendor:publish --tag=filament-config
@@ -169,14 +158,7 @@ php artisan vendor:publish --tag=filament-config
 
 ## Upgrading
 
-To upgrade the package to the latest version, you must run:
-
-```bash
-composer update
-php artisan filament:upgrade
-```
-
-We recommend adding the `filament:upgrade` command to your `composer.json`'s `post-autoload-dump` to run it automatically:
+Filament automatically upgrades to the latest non-breaking version when you run `composer update`. After any updates, all Laravel caches need to be cleared, and frontend assets need to be republished. You can do this all at once using the `filament:upgrade` command, which should have been added to your `composer.json` file when you ran `filament:install` the first time:
 
 ```json
 "post-autoload-dump": [
@@ -185,4 +167,10 @@ We recommend adding the `filament:upgrade` command to your `composer.json`'s `po
 ],
 ```
 
-This should be done during the `filament:install` process, but double check it's been done.
+Please note that `filament:upgrade` does not actually handle the update process, as Composer does that already. If you're upgrading manually without a `post-autoload-dump` hook, you can run the command yourself:
+
+```bash
+composer update
+
+php artisan filament:upgrade
+```

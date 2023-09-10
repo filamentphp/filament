@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'attached' => 'បានភ្ជាប់ជោគជ័យ',
+        'notifications' => [
+
+            'attached' => [
+                'title' => 'បានភ្ជាប់ជោគជ័យ',
+            ],
+
         ],
 
     ],

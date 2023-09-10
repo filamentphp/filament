@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'נמחק',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'נמחק',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'נמחק',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'נמחק',
+            ],
+
         ],
 
     ],

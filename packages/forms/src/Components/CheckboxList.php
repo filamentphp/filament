@@ -4,6 +4,7 @@ namespace Filament\Forms\Components;
 
 use Closure;
 use Filament\Forms\Components\Actions\Action;
+use Filament\Support\Enums\ActionSize;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Collection;
@@ -16,6 +17,7 @@ use Illuminate\Support\Str;
 class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanBeSearchable;
+    use Concerns\CanDisableOptions;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasNestedRecursiveValidationRules;
@@ -33,7 +35,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     protected string | Closure | null $relationship = null;
 
     /**
-     * @var array<string> | Arrayable | Closure
+     * @var array<string | Htmlable> | Arrayable | Closure
      */
     protected array | Arrayable | Closure $descriptions = [];
 
@@ -71,7 +73,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
             ->label(__('filament-forms::components.checkbox_list.actions.select_all.label'))
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifySelectAllActionUsing) {
             $action = $this->evaluate($this->modifySelectAllActionUsing, [
@@ -100,7 +102,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
             ->label(__('filament-forms::components.checkbox_list.actions.deselect_all.label'))
             ->livewireClickHandlerEnabled(false)
             ->link()
-            ->size('sm');
+            ->size(ActionSize::Small);
 
         if ($this->modifyDeselectAllActionUsing) {
             $action = $this->evaluate($this->modifyDeselectAllActionUsing, [
@@ -123,7 +125,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
         return 'deselectAll';
     }
 
-    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute, ?Closure $modifyQueryUsing = null): static
+    public function relationship(string | Closure | null $name, string | Closure | null $titleAttribute = null, ?Closure $modifyQueryUsing = null): static
     {
         $this->relationship = $name ?? $this->getName();
         $this->relationshipTitleAttribute = $titleAttribute;
@@ -144,19 +146,15 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
                     $firstRelationshipJoinClause->type = 'left';
                 }
 
-                $relationshipQuery->select($relationshipQuery->getModel()->getTable() . '.*');
+                $relationshipQuery
+                    ->distinct() // Ensure that results are unique when fetching options.
+                    ->select($relationshipQuery->getModel()->getTable() . '.*');
             }
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
                     'query' => $relationshipQuery,
                 ]) ?? $relationshipQuery;
-            }
-
-            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
-
-            if (empty($relationshipQuery->getQuery()->orders) && filled($relationshipTitleAttribute)) {
-                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if ($component->hasOptionLabelFromRecordUsingCallback()) {
@@ -166,6 +164,12 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
                         $record->{Str::afterLast($relationship->getQualifiedRelatedKeyName(), '.')} => $component->getOptionLabelFromRecord($record),
                     ])
                     ->toArray();
+            }
+
+            $relationshipTitleAttribute = $component->getRelationshipTitleAttribute();
+
+            if (empty($relationshipQuery->getQuery()->orders)) {
+                $relationshipQuery->orderBy($relationshipQuery->qualifyColumn($relationshipTitleAttribute));
             }
 
             if (str_contains($relationshipTitleAttribute, '->')) {
@@ -283,7 +287,7 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     }
 
     /**
-     * @param  array<string> | Arrayable | Closure  $descriptions
+     * @param  array<string | Htmlable> | Arrayable | Closure  $descriptions
      */
     public function descriptions(array | Arrayable | Closure $descriptions): static
     {
@@ -303,13 +307,13 @@ class CheckboxList extends Field implements Contracts\HasNestedRecursiveValidati
     /**
      * @param  array-key  $value
      */
-    public function getDescription($value): ?string
+    public function getDescription($value): string | Htmlable | null
     {
         return $this->getDescriptions()[$value] ?? null;
     }
 
     /**
-     * @return array<string>
+     * @return array<string | Htmlable>
      */
     public function getDescriptions(): array
     {

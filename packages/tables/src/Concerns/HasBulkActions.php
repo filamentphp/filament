@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+
 use function Livewire\store;
 
 /**
@@ -95,12 +96,15 @@ trait HasBulkActions
     }
 
     /**
-     * @param  array<int | string>  $selectedRecords
+     * @param  array<int | string> | null  $selectedRecords
      */
-    public function mountTableBulkAction(string $name, array $selectedRecords): mixed
+    public function mountTableBulkAction(string $name, ?array $selectedRecords = null): mixed
     {
         $this->mountedTableBulkAction = $name;
-        $this->selectedTableRecords = $selectedRecords;
+
+        if ($selectedRecords !== null) {
+            $this->selectedTableRecords = $selectedRecords;
+        }
 
         $action = $this->getMountedTableBulkAction();
 

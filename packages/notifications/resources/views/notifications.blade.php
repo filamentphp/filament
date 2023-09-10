@@ -1,16 +1,21 @@
+@php
+    use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\VerticalAlignment;
+@endphp
+
 <div>
     <div
         @class([
             'fi-no pointer-events-none fixed inset-4 z-50 mx-auto flex gap-3',
-            match (static::$horizontalAlignment) {
-                'left' => 'items-start',
-                'center' => 'items-center',
-                'right' => 'items-end',
+            match (static::$alignment) {
+                Alignment::Start, Alignment::Left => 'items-start',
+                Alignment::Center => 'items-center',
+                Alignment::End, Alignment::Right => 'items-end',
             },
             match (static::$verticalAlignment) {
-                'top' => 'flex-col-reverse justify-end',
-                'bottom' => 'flex-col justify-end',
-                'center' => 'flex-col justify-center'
+                VerticalAlignment::Start => 'flex-col-reverse justify-end',
+                VerticalAlignment::End => 'flex-col justify-end',
+                VerticalAlignment::Center => 'flex-col justify-center'
             },
         ])
         role="status"

@@ -7,9 +7,9 @@ use Illuminate\Support\Arr;
 
 trait HasIndicators
 {
-    public string | Closure | null $indicateUsing = null;
+    protected string | Closure | null $indicateUsing = null;
 
-    public string | Closure | null $indicator = null;
+    protected string | Closure | null $indicator = null;
 
     public function indicator(string | Closure | null $indicator): static
     {

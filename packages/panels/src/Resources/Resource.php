@@ -3,7 +3,6 @@
 namespace Filament\Resources;
 
 use Exception;
-use function Filament\authorize;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
@@ -15,8 +14,6 @@ use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Resources\RelationManagers\RelationManagerConfiguration;
-use function Filament\Support\get_model_label;
-use function Filament\Support\locale_has_pluralization;
 use Filament\Tables\Table;
 use Filament\Widgets\Widget;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -26,13 +23,19 @@ use Illuminate\Database\Connection;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 use Illuminate\Support\Traits\Macroable;
+
+use function Filament\authorize;
+use function Filament\Support\get_model_label;
+use function Filament\Support\locale_has_pluralization;
 
 abstract class Resource
 {
@@ -99,6 +102,8 @@ abstract class Resource
     protected static bool $shouldCheckPolicyExistence = true;
 
     protected static bool $shouldSkipAuthorization = false;
+
+    protected static ?bool $isGlobalSearchForcedCaseInsensitive = null;
 
     public static function form(Form $form): Form
     {
@@ -317,6 +322,10 @@ abstract class Resource
         $tenantOwnershipRelationshipName = static::getTenantOwnershipRelationshipName();
 
         return match (true) {
+            $tenantOwnershipRelationship instanceof MorphTo => $query->whereMorphedTo(
+                $tenantOwnershipRelationshipName,
+                $tenant,
+            ),
             $tenantOwnershipRelationship instanceof BelongsTo => $query->whereBelongsTo(
                 $tenant,
                 $tenantOwnershipRelationshipName,
@@ -381,11 +390,17 @@ abstract class Resource
         return static::$globalSearchResultsLimit;
     }
 
+    public static function modifyGlobalSearchQuery(Builder $query, string $search): void
+    {
+    }
+
     public static function getGlobalSearchResults(string $search): Collection
     {
-        $search = strtolower($search);
-
         $query = static::getGlobalSearchEloquentQuery();
+
+        if (static::isGlobalSearchForcedCaseInsensitive($query)) {
+            $search = Str::lower($search);
+        }
 
         foreach (explode(' ', $search) as $searchWord) {
             $query->where(function (Builder $query) use ($searchWord) {
@@ -401,6 +416,8 @@ abstract class Resource
                 }
             });
         }
+
+        static::modifyGlobalSearchQuery($query, $search);
 
         return $query
             ->limit(static::getGlobalSearchResultsLimit())
@@ -607,6 +624,17 @@ abstract class Resource
         return static::getRecordTitleAttribute() !== null;
     }
 
+    public static function isGlobalSearchForcedCaseInsensitive(Builder $query): bool
+    {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        return static::$isGlobalSearchForcedCaseInsensitive ?? match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
+    }
+
     /**
      * @param  array<string>  $searchAttributes
      */
@@ -615,42 +643,58 @@ abstract class Resource
         /** @var Connection $databaseConnection */
         $databaseConnection = $query->getConnection();
 
-        $searchOperator = match ($databaseConnection->getDriverName()) {
-            'pgsql' => 'ilike',
-            default => 'like',
-        };
-
         $model = $query->getModel();
+
+        $isForcedCaseInsensitive = static::isGlobalSearchForcedCaseInsensitive($query);
 
         foreach ($searchAttributes as $searchAttribute) {
             $whereClause = $isFirst ? 'where' : 'orWhere';
 
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
-                function (Builder $query) use ($databaseConnection, $searchAttribute, $searchOperator, $search, $whereClause): Builder {
+                function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchAttribute, $search, $whereClause): Builder {
                     $searchColumn = match ($databaseConnection->getDriverName()) {
                         'pgsql' => "{$searchAttribute}::text",
                         default => $searchAttribute,
                     };
 
-                    return $query->{"{$whereClause}Raw"}(
-                        "lower({$searchColumn}) {$searchOperator} ?",
+                    $caseAwareSearchColumn = $isForcedCaseInsensitive ?
+                        new Expression("lower({$searchColumn})") :
+                        $searchColumn;
+
+                    return $query->$whereClause(
+                        $caseAwareSearchColumn,
+                        'like',
                         "%{$search}%",
                     );
                 },
                 fn (Builder $query): Builder => $query->when(
                     str($searchAttribute)->contains('.'),
-                    fn ($query) => $query->{"{$whereClause}Relation"}(
-                        (string) str($searchAttribute)->beforeLast('.'),
-                        (string) str($searchAttribute)->afterLast('.'),
-                        $searchOperator,
-                        "%{$search}%",
-                    ),
-                    fn ($query) => $query->{$whereClause}(
-                        $searchAttribute,
-                        $searchOperator,
-                        "%{$search}%",
-                    ),
+                    function (Builder $query) use ($isForcedCaseInsensitive, $searchAttribute, $search, $whereClause): Builder {
+                        $searchColumn = (string) str($searchAttribute)->afterLast('.');
+
+                        $caseAwareSearchColumn = $isForcedCaseInsensitive ?
+                            new Expression("lower({$searchColumn})") :
+                            $searchColumn;
+
+                        return $query->{"{$whereClause}Relation"}(
+                            (string) str($searchAttribute)->beforeLast('.'),
+                            $caseAwareSearchColumn,
+                            'like',
+                            "%{$search}%",
+                        );
+                    },
+                    function ($query) use ($isForcedCaseInsensitive, $whereClause, $searchAttribute, $search) {
+                        $caseAwareSearchColumn = $isForcedCaseInsensitive ?
+                            new Expression("lower({$searchAttribute})") :
+                            $searchAttribute;
+
+                        return $query->{$whereClause}(
+                            $caseAwareSearchColumn,
+                            'like',
+                            "%{$search}%",
+                        );
+                    },
                 ),
             );
 

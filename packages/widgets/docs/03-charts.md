@@ -12,9 +12,9 @@ Start by creating a widget with the command:
 php artisan make:filament-widget BlogPostsChart --chart
 ```
 
-There are several chart classes available, but we'll use the `LineChartWidget` class for this example.
+There is a single `ChartWidget` class that is extended for all charts. The type of chart is set by the `getType()` method. In this example, that method returns the string `'line'`.
 
-The `getHeading()` method is used to return a heading that describes the chart.
+The `protected static ?string $heading` variable is used to set the heading that describes the chart. If you need to set the heading dynamically, you can override the `getHeading()` method.
 
 The `getData()` method is used to return an array of datasets and labels. Each dataset is a labeled array of points to plot on the chart, and each label is a string. This structure is identical to the [Chart.js](https://www.chartjs.org/docs) library, which Filament uses to render charts. You may use the [Chart.js documentation](https://www.chartjs.org/docs) to fully understand the possibilities to return from `getData()`, based on the chart type.
 
@@ -23,14 +23,11 @@ The `getData()` method is used to return an array of datasets and labels. Each d
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\LineChartWidget;
+use Filament\Widgets\ChartWidget;
 
-class BlogPostsChart extends LineChartWidget
+class BlogPostsChart extends ChartWidget
 {
-    public function getHeading(): string
-    {
-        return 'Blog posts';
-    }
+    protected static ?string $heading = 'Blog Posts';
 
     protected function getData(): array
     {
@@ -43,6 +40,11 @@ class BlogPostsChart extends LineChartWidget
             ],
             'labels' => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
         ];
+    }
+
+    protected function getType(): string
+    {
+        return 'line';
     }
 }
 ```
@@ -239,4 +241,14 @@ public function getDescription(): ?string
 {
     return 'The number of blog posts published per month.';
 }
+```
+
+## Disabling lazy loading
+
+By default, widgets are lazy-loaded. This means that they will only be loaded when they are visible on the page.
+
+To disable this behavior, you may override the `$isLazy` property on the widget class:
+
+```php
+protected static bool $isLazy = true;
 ```

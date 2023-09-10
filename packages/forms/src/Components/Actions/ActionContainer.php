@@ -18,7 +18,10 @@ class ActionContainer extends Component
 
     public static function make(Action $action): static
     {
-        return app(static::class, ['action' => $action]);
+        $static = app(static::class, ['action' => $action]);
+        $static->configure();
+
+        return $static;
     }
 
     public function getKey(): string

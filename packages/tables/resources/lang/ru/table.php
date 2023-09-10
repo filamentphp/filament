@@ -1,7 +1,11 @@
 <?php
 
 return [
+    'column_toggle' => [
 
+        'heading' => 'Столбцы',
+
+    ],
     'columns' => [
 
         'text' => [
@@ -11,12 +15,46 @@ return [
     ],
 
     'fields' => [
+        'bulk_select_page' => [
+            'label' => 'Выбрать/снять все элементы для массовых действий.',
+        ],
 
+        'bulk_select_record' => [
+            'label' => 'Выбрать/отменить :key для массовых действий.',
+        ],
         'search' => [
             'label' => 'Поиск',
             'placeholder' => 'Поиск',
+            'indicator' => 'Поиск',
         ],
 
+    ],
+
+    'summary' => [
+
+        'heading' => 'Сводка',
+
+        'subheadings' => [
+            'all' => 'Все :label',
+            'group' => 'Cводка :group ',
+            'page' => 'Эта страница',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Среднее',
+            ],
+
+            'count' => [
+                'label' => 'Кол.',
+            ],
+
+            'sum' => [
+                'label' => 'Сумма',
+            ],
+
+        ],
     ],
 
     'actions' => [
@@ -32,7 +70,9 @@ return [
         'filter' => [
             'label' => 'Фильтр',
         ],
-
+        'group' => [
+            'label' => 'Группировать',
+        ],
         'open_bulk_actions' => [
             'label' => 'Открыть действия',
         ],
@@ -44,7 +84,10 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'Не найдено записей',
+
+        'heading' => 'Не найдено :model',
+
+        'description' => 'Создать :model для старта.',
     ],
 
     'filters' => [
@@ -61,10 +104,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Сбросить фильтры',
+                'label' => 'Сбросить',
             ],
 
         ],
+
+        'heading' => 'Фильтры',
 
         'indicator' => 'Активные фильтры',
 
@@ -85,6 +130,30 @@ return [
             'with_trashed' => 'С удаленными записями',
 
             'without_trashed' => 'Без удаленных записей',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Группировать по',
+                'placeholder' => 'Группировать по',
+            ],
+
+            'direction' => [
+
+                'label' => 'Направление',
+
+                'options' => [
+                    'asc' => 'По возрастанию',
+                    'desc' => 'По убыванию',
+                ],
+
+            ],
 
         ],
 
@@ -115,7 +184,7 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Сортировать по',
+                'label' => 'Сортировка',
             ],
 
             'direction' => [

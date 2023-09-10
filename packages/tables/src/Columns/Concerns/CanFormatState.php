@@ -4,14 +4,15 @@ namespace Filament\Tables\Columns\Concerns;
 
 use Closure;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
-use function Filament\Support\format_money;
-use function Filament\Support\format_number;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
+
+use function Filament\Support\format_money;
+use function Filament\Support\format_number;
 
 trait CanFormatState
 {
@@ -28,8 +29,6 @@ trait CanFormatState
     protected string | Closure | null $prefix = null;
 
     protected string | Closure | null $suffix = null;
-
-    protected string | Closure | null $placeholder = null;
 
     protected string | Closure | null $timezone = null;
 
@@ -142,13 +141,6 @@ trait CanFormatState
         return $this;
     }
 
-    public function placeholder(string | Closure | null $placeholder): static
-    {
-        $this->placeholder = $placeholder;
-
-        return $this;
-    }
-
     public function limit(int | Closure | null $length = 100, string | Closure | null $end = '...'): static
     {
         $this->characterLimit = $length;
@@ -221,10 +213,6 @@ trait CanFormatState
 
         if ($state instanceof HtmlString) {
             return $state;
-        }
-
-        if (blank($state)) {
-            $state = $this->evaluate($this->placeholder);
         }
 
         if ($this->isHtml()) {

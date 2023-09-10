@@ -47,7 +47,7 @@ Filament ships with four types of summarizer:
 - [Range](#range)
 - [Sum](#sum)
 
-You may also [create your own custom summarizers](custom) to display data however you wish.
+You may also [create your own custom summarizers](#custom-summaries) to display data in whatever way you wish.
 
 ## Average
 

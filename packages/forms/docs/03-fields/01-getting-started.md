@@ -7,7 +7,7 @@ import AutoScreenshot from "@components/AutoScreenshot.astro"
 
 Field classes can be found in the `Filament\Form\Components` namespace.
 
-Fields reside within the schema of your form, alongside any [layout components](layout).
+Fields reside within the schema of your form, alongside any [layout components](layout/getting-started).
 
 Fields may be created using the static `make()` method, passing its unique name. The name of the field should correspond to a property on your Livewire component. You may use "dot notation" to bind fields to keys in arrays.
 
@@ -110,7 +110,7 @@ TextInput::make('name')
     ->helperText(new HtmlString('Your <strong>full name</strong> here, including any middle names.'))
 
 TextInput::make('name')
-    ->helperText(str('Your **full name** here, including any middle names.')->markdown()->toHtmlString())
+    ->helperText(str('Your **full name** here, including any middle names.')->inlineMarkdown()->toHtmlString())
 
 TextInput::make('name')
     ->helperText(view('name-helper-text'))
@@ -141,7 +141,7 @@ TextInput::make('password')
     ->hint(str(new HtmlString('<a href="/forgotten-password">Forgotten your password?</a>'))
 
 TextInput::make('password')
-    ->hint(str('[Forgotten your password?](/forgotten-password)')->markdown()->toHtmlString())
+    ->hint(str('[Forgotten your password?](/forgotten-password)')->inlineMarkdown()->toHtmlString())
 
 TextInput::make('password')
     ->hint(view('forgotten-password-hint'))
@@ -176,6 +176,17 @@ RichEditor::make('content')
 ```
 
 <AutoScreenshot name="forms/fields/hint-icon" alt="Form field with hint icon" version="3.x" />
+
+#### Adding a tooltip to a hint icon
+
+Additionally, you can add a tooltip to display when you hover over the hint icon, using the `tooltip` parameter of `hintIcon()`:
+
+```php
+use Filament\Forms\Components\TextInput;
+
+TextInput::make('name')
+    ->hintIcon('heroicon-m-question-mark-circle', tooltip: 'Need some more information?')
+```
 
 ## Adding extra HTML attributes
 

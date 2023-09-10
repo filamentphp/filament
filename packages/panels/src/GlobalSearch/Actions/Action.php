@@ -3,6 +3,7 @@
 namespace Filament\GlobalSearch\Actions;
 
 use Filament\Actions\StaticAction;
+use Filament\Support\Enums\ActionSize;
 
 class Action extends StaticAction
 {
@@ -12,6 +13,6 @@ class Action extends StaticAction
 
         $this->defaultView(static::LINK_VIEW);
 
-        $this->defaultSize('sm');
+        $this->defaultSize(ActionSize::Small);
     }
 }

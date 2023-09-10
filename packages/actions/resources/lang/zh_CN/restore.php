@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => '记录已恢复',
+        'notifications' => [
+
+            'restored' => [
+                'title' => '记录已恢复',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => '记录已恢复',
+        'notifications' => [
+
+            'restored' => [
+                'title' => '记录已恢复',
+            ],
+
         ],
 
     ],

@@ -4,7 +4,6 @@ namespace App\Livewire\Forms;
 
 use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Actions\Action;
-use Filament\Forms\Components\Card;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -20,6 +19,9 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\VerticalAlignment;
 use Livewire\Component;
 
 class LayoutDemo extends Component implements HasForms
@@ -124,7 +126,7 @@ class LayoutDemo extends Component implements HasForms
                             ->schema([
                                 Tabs\Tab::make('Notifications')
                                     ->icon('heroicon-m-bell')
-                                    ->iconPosition('after')
+                                    ->iconPosition(IconPosition::After)
                                     ->schema([
                                         Checkbox::make('enabled')
                                             ->default(true),
@@ -136,10 +138,10 @@ class LayoutDemo extends Component implements HasForms
                                     ]),
                                 Tabs\Tab::make('Security')
                                     ->icon('heroicon-m-lock-closed')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                                 Tabs\Tab::make('Meta')
                                     ->icon('heroicon-m-bars-3-center-left')
-                                    ->iconPosition('after'),
+                                    ->iconPosition(IconPosition::After),
                             ]),
                     ]),
                 Group::make()
@@ -399,12 +401,12 @@ class LayoutDemo extends Component implements HasForms
                             ->content('May 21, 2021'),
                     ]),
                 Group::make()
-                    ->id('card')
+                    ->id('sectionWithoutHeader')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-2xl',
                     ])
                     ->schema([
-                        Card::make([
+                        Section::make([
                             TextInput::make('hits')
                                 ->default(30),
                             Select::make('period')
@@ -417,7 +419,7 @@ class LayoutDemo extends Component implements HasForms
                             Textarea::make('notes')
                                 ->columnSpanFull(),
                         ])
-                            ->statePath('card')
+                            ->statePath('sectionWithoutHeader')
                             ->columns(3),
                     ]),
                 Group::make()
@@ -460,7 +462,7 @@ class LayoutDemo extends Component implements HasForms
                             Action::make('resetStars')
                                 ->icon('heroicon-m-x-mark')
                                 ->color('danger'),
-                        ])->alignment('center'),
+                        ])->alignment(Alignment::Center),
                     ]),
                 Group::make()
                     ->id('anonymousActionsVerticallyAlignedEnd')
@@ -478,7 +480,7 @@ class LayoutDemo extends Component implements HasForms
                                     Action::make('resetStars')
                                         ->icon('heroicon-m-x-mark')
                                         ->color('danger'),
-                                ])->verticalAlignment('end'),
+                                ])->verticalAlignment(VerticalAlignment::End),
                             ]),
                     ]),
             ]);

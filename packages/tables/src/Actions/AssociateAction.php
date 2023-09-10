@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Support\Str;
 
 class AssociateAction extends Action
 {
@@ -31,6 +33,8 @@ class AssociateAction extends Action
      * @var array<string> | Closure | null
      */
     protected array | Closure | null $recordSelectSearchColumns = null;
+
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
 
     public static function getDefaultName(): ?string
     {
@@ -56,7 +60,7 @@ class AssociateAction extends Action
             ] : [];
         });
 
-        $this->successNotificationTitle(__('filament-actions::associate.single.messages.associated'));
+        $this->successNotificationTitle(__('filament-actions::associate.single.notifications.associated.title'));
 
         $this->color('gray');
 
@@ -68,17 +72,20 @@ class AssociateAction extends Action
 
             $record = $relationship->getQuery()->find($data['recordId']);
 
+            if ($record instanceof Model) {
+                $this->record($record);
+            }
+
             /** @var BelongsTo $inverseRelationship */
             $inverseRelationship = $table->getInverseRelationshipFor($record);
 
             $this->process(function () use ($inverseRelationship, $record, $relationship) {
                 $inverseRelationship->associate($relationship->getParent());
                 $record->save();
-            });
-
-            if ($record instanceof Model) {
-                $this->record($record);
-            }
+            }, [
+                'inverseRelationship' => $inverseRelationship,
+                'relationship' => $relationship,
+            ]);
 
             if ($arguments['another'] ?? false) {
                 $this->callAfter();
@@ -182,30 +189,26 @@ class AssociateAction extends Action
             $titleAttribute = $this->getRecordTitleAttribute();
             $titleAttribute = filled($titleAttribute) ? $relationshipQuery->qualifyColumn($titleAttribute) : null;
 
-            if (empty($relationshipQuery->getQuery()->orders) && filled($titleAttribute)) {
-                $relationshipQuery->orderBy($titleAttribute);
-            }
-
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
-                $search = strtolower($search);
-
-                /** @var Connection $databaseConnection */
-                $databaseConnection = $relationshipQuery->getConnection();
-
-                $searchOperator = match ($databaseConnection->getDriverName()) {
-                    'pgsql' => 'ilike',
-                    default => 'like',
-                };
-
                 $searchColumns ??= [$titleAttribute];
                 $isFirst = true;
+                $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($relationshipQuery);
 
-                $relationshipQuery->where(function (Builder $query) use ($isFirst, $searchColumns, $searchOperator, $search): Builder {
+                if ($isForcedCaseInsensitive) {
+                    $search = Str::lower($search);
+                }
+
+                $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
+                        $caseAwareSearchColumn = $isForcedCaseInsensitive ?
+                            new Expression("lower({$searchColumn})") :
+                            $searchColumn;
+
                         $whereClause = $isFirst ? 'where' : 'orWhere';
 
-                        $query->{"{$whereClause}Raw"}(
-                            "lower({$searchColumn}) {$searchOperator} ?",
+                        $query->{$whereClause}(
+                            $caseAwareSearchColumn,
+                            'like',
                             "%{$search}%",
                         );
 
@@ -237,6 +240,10 @@ class AssociateAction extends Action
                 });
 
             if (filled($titleAttribute)) {
+                if (empty($relationshipQuery->getQuery()->orders)) {
+                    $relationshipQuery->orderBy($titleAttribute);
+                }
+
                 return $relationshipQuery
                     ->pluck($titleAttribute, $relationship->getModel()->getQualifiedKeyName())
                     ->all();
@@ -264,5 +271,23 @@ class AssociateAction extends Action
         }
 
         return $select;
+    }
+
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
+    {
+        $this->isSearchForcedCaseInsensitive = $condition;
+
+        return $this;
+    }
+
+    public function isSearchForcedCaseInsensitive(Builder $query): bool
+    {
+        /** @var Connection $databaseConnection */
+        $databaseConnection = $query->getConnection();
+
+        return $this->evaluate($this->isSearchForcedCaseInsensitive) ?? match ($databaseConnection->getDriverName()) {
+            'pgsql' => true,
+            default => false,
+        };
     }
 }

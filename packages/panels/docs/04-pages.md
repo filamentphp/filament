@@ -16,7 +16,7 @@ php artisan make:filament-page Settings
 
 This command will create two files - a page class in the `/Pages` directory of the Filament directory, and a view in the `/pages` directory of the Filament views directory.
 
-Page classes are all full-page [Livewire](https://laravel-livewire.com) components with a few extra utilities you can use with the panel.
+Page classes are all full-page [Livewire](https://livewire.laravel.com) components with a few extra utilities you can use with the panel.
 
 ## Conditionally hiding pages in navigation
 
@@ -29,7 +29,7 @@ public static function shouldRegisterNavigation(): bool
 }
 ```
 
-Please be aware that all users will still be able to visit this page through its direct URL, so to fully limit access you must also also check in the `mount()` method of the page:
+Please be aware that all users will still be able to visit this page through its direct URL, so to fully limit access, you must also check in the `mount()` method of the page:
 
 ```php
 public function mount(): void
@@ -46,7 +46,7 @@ Since all pages are Livewire components, you can [add actions](../actions/adding
 
 ### Header actions
 
-You can also easily add actions to the header of any page, including [resource pages](resources). You don't need to worry about adding anything to the Blade, we handle that for you. Just return your actions from the `getHeaderActions()` method of the page class:
+You can also easily add actions to the header of any page, including [resource pages](resources/getting-started). You don't need to worry about adding anything to the Blade, we handle that for you. Just return your actions from the `getHeaderActions()` method of the page class:
 
 ```php
 use Filament\Actions\Action;
@@ -68,11 +68,12 @@ protected function getHeaderActions(): array
 If you're using actions on an [Edit](resources/editing-records) or [View](resources/viewing-records) resource page, you can refresh data within the main form using the `refreshFormData()` method:
 
 ```php
+use App\Models\Post;
 use Filament\Actions\Action;
 
 Action::make('approve')
-    ->action(function () {
-        $this->getRecord()->approve();
+    ->action(function (Post $record) {
+        $record->approve();
 
         $this->refreshFormData([
             'status',
@@ -103,7 +104,7 @@ protected function getHeaderWidgets(): array
 
 If you'd like to learn how to build and customize widgets, check out the [Dashboard](dashboard) documentation section.
 
-### Customizing the widgets grid
+### Customizing the widgets' grid
 
 You may change how many grid columns are used to display widgets.
 
@@ -295,10 +296,10 @@ This example assumes you have a Blade view at `resources/views/filament/settings
 
 ## Customizing the maximum content width
 
-By default, Filament will restrict the width of the content on the page so it doesn't become too wide on large screens. To change this, you may override the `getContentMaxWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, and `full`. The default is `7xl`:
+By default, Filament will restrict the width of the content on the page, so it doesn't become too wide on large screens. To change this, you may override the `getMaxContentWidth()` method. Options correspond to [Tailwind's max-width scale](https://tailwindcss.com/docs/max-width). The options are `xs`, `sm`, `md`, `lg`, `xl`, `2xl`, `3xl`, `4xl`, `5xl`, `6xl`, `7xl`, `prose`, `screen-sm`, `screen-md`, `screen-lg`, `screen-xl`, `screen-2xl` and `full`. The default is `7xl`:
 
 ```php
-public function getContentMaxWidth(): ?string
+public function getMaxContentWidth(): ?string
 {
     return 'full';
 }

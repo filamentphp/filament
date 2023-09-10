@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Салгасан',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Салгасан',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'detached' => 'Салгасан',
+        'notifications' => [
+
+            'detached' => [
+                'title' => 'Салгасан',
+            ],
+
         ],
 
     ],

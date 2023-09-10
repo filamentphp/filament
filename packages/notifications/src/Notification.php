@@ -9,6 +9,7 @@ use Filament\Notifications\Livewire\Notifications;
 use Filament\Support\Components\ViewComponent;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasIcon;
+use Filament\Support\Concerns\HasIconColor;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Database\Eloquent\Model;
@@ -30,6 +31,7 @@ class Notification extends ViewComponent implements Arrayable
     use Concerns\HasTitle;
     use HasColor;
     use HasIcon;
+    use HasIconColor;
 
     /**
      * @var view-string

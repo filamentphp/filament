@@ -68,16 +68,17 @@ class SupportServiceProvider extends PackageServiceProvider
             fn (): HtmlSanitizer => new HtmlSanitizer(
                 (new HtmlSanitizerConfig())
                     ->allowSafeElements()
+                    ->allowRelativeLinks()
+                    ->allowRelativeMedias()
                     ->allowAttribute('class', allowedElements: '*')
-                    ->allowAttribute('style', allowedElements: '*'),
+                    ->allowAttribute('style', allowedElements: '*')
+                    ->withMaxInputLength(500000),
             ),
         );
     }
 
     public function packageBooted(): void
     {
-        config()->set('livewire.inject_morph_markers', false);
-
         FilamentAsset::register([
             Js::make('async-alpine', __DIR__ . '/../dist/async-alpine.js'),
             Css::make('support', __DIR__ . '/../dist/index.css'),
@@ -105,7 +106,7 @@ class SupportServiceProvider extends PackageServiceProvider
             return new Stringable(Str::sanitizeHtml($this->value));
         });
 
-        if (class_exists(AboutCommand::class) && class_exists(InstalledVersions::class)) {
+        if (class_exists(InstalledVersions::class)) {
             $packages = [
                 'filament',
                 'forms',
@@ -114,7 +115,7 @@ class SupportServiceProvider extends PackageServiceProvider
                 'tables',
             ];
 
-            AboutCommand::add('Filament', [
+            AboutCommand::add('Filament', static fn () => [
                 'Version' => InstalledVersions::getPrettyVersion('filament/support'),
                 'Packages' => collect($packages)
                     ->filter(fn (string $package): bool => InstalledVersions::isInstalled("filament/{$package}"))

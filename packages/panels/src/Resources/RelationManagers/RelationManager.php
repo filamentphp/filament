@@ -2,11 +2,12 @@
 
 namespace Filament\Resources\RelationManagers;
 
-use function Filament\authorize;
+use Filament\Actions;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Table;
@@ -19,8 +20,11 @@ use Illuminate\Support\Str;
 use Livewire\Attributes\Locked;
 use Livewire\Component;
 
-class RelationManager extends Component implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
+use function Filament\authorize;
+
+class RelationManager extends Component implements Actions\Contracts\HasActions, Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
+    use Actions\Concerns\InteractsWithActions;
     use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
@@ -38,7 +42,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
 
     protected static ?string $icon = null;
 
-    protected static ?string $iconPosition = 'before';
+    protected static IconPosition $iconPosition = IconPosition::Before;
 
     protected static ?string $badge = null;
 
@@ -244,7 +248,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
         $model = $ownerRecord->{static::getRelationshipName()}()->getQuery()->getModel()::class;
 
         try {
-            return authorize('viewAll', $model, static::shouldCheckPolicyExistence())->allowed();
+            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
         } catch (AuthorizationException $exception) {
             return $exception->toResponse()->allowed();
         }
@@ -305,7 +309,7 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
         return static::$icon;
     }
 
-    public static function getIconPosition(Model $ownerRecord, string $pageClass): ?string
+    public static function getIconPosition(Model $ownerRecord, string $pageClass): IconPosition
     {
         return static::$iconPosition;
     }
@@ -553,5 +557,10 @@ class RelationManager extends Component implements Forms\Contracts\HasForms, Tab
             static::class,
             $this->pageClass,
         ];
+    }
+
+    public function placeholder(): View
+    {
+        return view('filament::components.loading-section');
     }
 }

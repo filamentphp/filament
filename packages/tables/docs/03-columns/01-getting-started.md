@@ -141,7 +141,7 @@ public function table(Table $table): Table
 
 ## Searching
 
-Columns may be searchable, by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
+Columns may be searchable by using the text input field in the top right of the table. To make a column searchable, you must use the `searchable()` method:
 
 ```php
 use Filament\Tables\Columns\TextColumn;
@@ -289,14 +289,27 @@ TextColumn::make('title')
 
 ## Setting a default value
 
-To set a default value for fields with a `null` state, you may use the `default()` method:
+To set a default value for columns with an empty state, you may use the `default()` method. This method will treat the default state as if it were real, so columns like [image](image) or [color](color) will display the default image or color.
 
 ```php
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('title')
-    ->default('Untitled')
+TextColumn::make('description')
+    ->default('No description.')
 ```
+
+## Adding placeholder text if a column is empty
+
+Sometimes you may want to display placeholder text for columns with an empty state, which is styled as a lighter gray text. This differs from the [default value](#setting-a-default-value), as the placeholder is always text and not treated as if it were real state.
+
+```php
+use Filament\Tables\Columns\TextColumn;
+
+TextColumn::make('description')
+    ->placeholder('No description.')
+```
+
+<AutoScreenshot name="tables/columns/placeholder" alt="Column with a placeholder for empty state" version="3.x" />
 
 ## Hiding columns
 
@@ -396,16 +409,17 @@ TextColumn::make('title')
 
 ## Aligning column content
 
-Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `start`, `center`, `end`, `left`, `right` or `justify` options:
+Table columns are aligned to the start (left in LTR interfaces or right in RTL interfaces) by default. You may change the alignment using the `alignment()` method, and passing it `Alignment::Start`, `Alignment::Center`, `Alignment::End` or `Alignment::Justify` options:
 
 ```php
+use Filament\Support\Enums\Alignment;
 use Filament\Tables\Columns\TextColumn;
 
-TextColumn::make('name')
-    ->alignment('end')
+TextColumn::make('email')
+    ->alignment(Alignment::End)
 ```
 
-<AutoScreenshot name="tables/columns/alignment" alt="Table with column aligned to the right" version="3.x" />
+<AutoScreenshot name="tables/columns/alignment" alt="Table with column aligned to the end" version="3.x" />
 
 Alternatively, you may use shorthand methods like `alignEnd()`:
 

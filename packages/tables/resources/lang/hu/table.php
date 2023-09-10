@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Oszlopok',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -12,9 +18,46 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Az összes elem kiválasztása vagy megszüntetése tömeges műveletekhez.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => ':key elem kiválasztása vagy megszüntetése tömeges műveletekhez.',
+        ],
+
         'search' => [
             'label' => 'Keresés',
-            'placeholder' => 'Keres',
+            'placeholder' => 'Keresés',
+            'indicator' => 'Keres',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Összesítés',
+
+        'subheadings' => [
+            'all' => 'Összes :label',
+            'group' => ':group összesítése',
+            'page' => 'Ezen az oldalon',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Átlag',
+            ],
+
+            'count' => [
+                'label' => 'Darab',
+            ],
+
+            'sum' => [
+                'label' => 'Összeg',
+            ],
+
         ],
 
     ],
@@ -33,18 +76,26 @@ return [
             'label' => 'Szűrés',
         ],
 
+        'group' => [
+            'label' => 'Csoport',
+        ],
+
         'open_bulk_actions' => [
-            'label' => 'Műveletek magjelenítése',
+            'label' => 'Műveletek',
         ],
 
         'toggle_columns' => [
-            'label' => 'Oszlopok mutatása/elrejtése',
+            'label' => 'Oszlopok láthatósága',
         ],
 
     ],
 
     'empty' => [
+
         'heading' => 'Nincs találat',
+
+        'description' => 'Hozzon létre egy újat a kezdéshez.',
+
     ],
 
     'filters' => [
@@ -61,10 +112,12 @@ return [
             ],
 
             'reset' => [
-                'label' => 'Alapértelmezés',
+                'label' => 'Alaphelyzet',
             ],
 
         ],
+
+        'heading' => 'Szűrők',
 
         'indicator' => 'Aktív szűrők',
 
@@ -82,9 +135,33 @@ return [
 
             'only_trashed' => 'Csak a törölt elemek',
 
-            'with_trashed' => 'A törölt elemekkel',
+            'with_trashed' => 'Törölt elemekkel',
 
-            'without_trashed' => 'A törölt elemek nélkül',
+            'without_trashed' => 'Törölt elemek nélkül',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Csoportosítás',
+                'placeholder' => 'Csoportosítás',
+            ],
+
+            'direction' => [
+
+                'label' => 'Csoportosítás iránya',
+
+                'options' => [
+                    'asc' => 'Növekvő',
+                    'desc' => 'Csökkenő',
+                ],
+
+            ],
 
         ],
 

@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Columnas',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -23,6 +29,35 @@ return [
         'search' => [
             'label' => 'Búsqueda',
             'placeholder' => 'Buscar',
+            'indicator' => 'Buscar',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Resumen',
+
+        'subheadings' => [
+            'all' => 'Todos :label',
+            'group' => 'resumen del :group',
+            'page' => 'Esta página',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Media',
+            ],
+
+            'count' => [
+                'label' => 'Recuento',
+            ],
+
+            'sum' => [
+                'label' => 'Suma',
+            ],
+
         ],
 
     ],
@@ -41,6 +76,10 @@ return [
             'label' => 'Filtrar',
         ],
 
+        'group' => [
+            'label' => 'Grupo',
+        ],
+
         'open_bulk_actions' => [
             'label' => 'Abrir acciones',
         ],
@@ -54,6 +93,8 @@ return [
     'empty' => [
 
         'heading' => 'No se encontraron registros',
+
+        'description' => 'Cree un :model para empezar.',
 
     ],
 
@@ -76,6 +117,8 @@ return [
 
         ],
 
+        'heading' => 'Filtros',
+
         'indicator' => 'Filtros activos',
 
         'multi_select' => [
@@ -95,6 +138,30 @@ return [
             'with_trashed' => 'Con registros eliminados',
 
             'without_trashed' => 'Sin registros eliminados',
+
+        ],
+
+    ],
+
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Agrupar por',
+                'placeholder' => 'Agrupar por',
+            ],
+
+            'direction' => [
+
+                'label' => 'Dirección de grupo',
+
+                'options' => [
+                    'asc' => 'Ascendente',
+                    'desc' => 'Descendente',
+                ],
+
+            ],
 
         ],
 

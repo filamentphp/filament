@@ -145,7 +145,7 @@ If you open the `PatientResource.php` file, there's a `form()` method with an em
 
 #### "Name" text input
 
-Filament bundles a large selection of [form fields](../forms/fields). Let's start with a simple [text input field](../forms/fields/text-input):
+Filament bundles a large selection of [form fields](../forms/fields/getting-started). Let's start with a simple [text input field](../forms/fields/text-input):
 
 ```php
 use Filament\Forms;
@@ -162,7 +162,7 @@ public static function form(Form $form): Form
 
 Visit `/admin/patients/create` (or click the "New Patient" button) and observe that a form field for the patient's name was added.
 
-Since this field is required in the database and has a maximum length of 255 characters, let's add  two [validation rules](../forms/validation) to the name field:
+Since this field is required in the database and has a maximum length of 255 characters, let's add two [validation rules](../forms/validation) to the name field:
 
 ```php
 use Filament\Forms;
@@ -327,13 +327,13 @@ The form should be working now! Try creating a new patient and their owner. Once
 
 ### Setting up the patients table
 
-Visit the `/admin/patients` page again. If you created a patient, there should be one empty row in the table — with an edit button. Let's add some columns to the table so we can view the actual patient data.
+Visit the `/admin/patients` page again. If you have created a patient, there should be one empty row in the table — with an edit button. Let's add some columns to the table, so we can view the actual patient data.
 
 Open the `PatientResource.php` file. You should see a `table()` method with an empty `columns([...])` array. You can use this array to add columns to the `patients` table.
 
 #### Adding text columns
 
-Filament bundles a large selection of [table columns](../tables/columns). Let's use a simple [text column](../tables/columns/text) for all of the fields in the `patients` table:
+Filament bundles a large selection of [table columns](../tables/columns). Let's use a simple [text column](../tables/columns/text) for all the fields in the `patients` table:
 
 ```php
 use Filament\Tables;
@@ -431,7 +431,7 @@ public static function table(Table $table): Table
 }
 ```
 
-Reload the page and you should see a new filter icon in the top right corner (next to the search form). The filter opens a select menu with a list of patient types. Try filtering your patients by type.
+Reload the page, and you should see a new filter icon in the top right corner (next to the search form). The filter opens a select menu with a list of patient types. Try filtering your patients by type.
 
 ## Introducing relation managers
 
@@ -456,7 +456,7 @@ php artisan make:filament-relation-manager PatientResource treatments descriptio
 This will create a `PatientResource/RelationManagers/TreatmentsRelationManager.php` file. You must register the new relation manager in the `getRelations()` method of the `PatientResource`:
 
 ```php
-use App\Filament\PatientResource\RelationManagers;
+use App\Filament\Resources\PatientResource\RelationManagers;
 
 public static function getRelations(): array
 {
@@ -531,7 +531,7 @@ public function form(Form $form): Form
 
 #### Configuring the `price` field
 
-Let's add a `price` field for the treatment. We can use a text input with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation and changes the keyboard layout on mobile devices. Add your preferred currency prefix using the `prefix()` method; for example, `prefix('$')` will add a `$` before the input without impacting the saved output value:
+Let's add a `price` field for the treatment. We can use a text input with some customizations to make it suitable for currency input. It should be `numeric()`, which adds validation and changes the keyboard layout on mobile devices. Add your preferred currency prefix using the `prefix()` method; for example, `prefix('€')` will add a `€` before the input without impacting the saved output value:
 
 ```php
 use Filament\Forms;
@@ -550,7 +550,7 @@ public function form(Form $form): Form
                 ->columnSpan('full'),
             Forms\Components\TextInput::make('price')
                 ->numeric()
-                ->prefix('$')
+                ->prefix('€')
                 ->maxValue(42949672.95),
         ]);
 }
@@ -598,7 +598,7 @@ class Treatment extends Model
 
 ### Setting up the treatments table
 
-When the relation manager was generated previously, the `description` text column was automatically added. Let's also add a `sortable()` column for the `price` with a currency prefix. Use the Filament `money()` method to format the `price` column as money — in this case for `usd` (`$`):
+When the relation manager was generated previously, the `description` text column was automatically added. Let's also add a `sortable()` column for the `price` with a currency prefix. Use the Filament `money()` method to format the `price` column as money — in this case for `EUR` (`€`):
 
 ```php
 use Filament\Tables;
@@ -610,7 +610,7 @@ public function table(Table $table): Table
         ->columns([
             Tables\Columns\TextColumn::make('description'),
             Tables\Columns\TextColumn::make('price')
-                ->money('usd')
+                ->money('EUR')
                 ->sortable(),
         ]);
 }
@@ -628,7 +628,7 @@ public function table(Table $table): Table
         ->columns([
             Tables\Columns\TextColumn::make('description'),
             Tables\Columns\TextColumn::make('price')
-                ->money('usd')
+                ->money('EUR')
                 ->sortable(),
             Tables\Columns\TextColumn::make('created_at')
                 ->dateTime(),
@@ -640,19 +640,21 @@ public function table(Table $table): Table
 
 ## Introducing widgets
 
-Filament widgets are components that display information on your dashboard, especially statistics. Widgets are typically added to the default [Dashboard](../panels/dashboard) of the panel, but you can add them to any page, including resource pages. Filament includes built-in widgets like the [stats widget](../widgets/stats-overview), to render important statistics in a simple card; [chart widget](../widgets/charts), which can render an interactive chart; and [table widget](../panels/dashboard#table-widgets), which allows you to easily embed the table builder.
+Filament widgets are components that display information on your dashboard, especially statistics. Widgets are typically added to the default [Dashboard](../panels/dashboard) of the panel, but you can add them to any page, including resource pages. Filament includes built-in widgets like the [stats widget](../widgets/stats-overview), to render important statistics in a simple overview; [chart widget](../widgets/charts), which can render an interactive chart; and [table widget](../panels/dashboard#table-widgets), which allows you to easily embed the Table Builder.
 
-Let's add a stats widget to our default dashboard page that includes a card for each type of patient and a chart to visualize treatments administered over time.
+Let's add a stats widget to our default dashboard page that includes a stat for each type of patient and a chart to visualize treatments administered over time.
 
 ### Creating a stats widget
 
-Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command (select "admin" for the location when prompted):
+Create a [stats widget](../widgets/stats-overview) to render patient types using the following artisan command:
 
 ```bash
 php artisan make:filament-widget PatientTypeOverview --stats-overview
 ```
 
-This will create a new `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Card` instances from the `getCards()` method:
+When prompted, do not specify a resource, and select "admin" for the location.
+
+This will create a new `app/Filament/Widgets/PatientTypeOverview.php` file. Open it, and return `Stat` instances from the `getStats()` method:
 
 ```php
 <?php
@@ -661,22 +663,22 @@ namespace App\Filament\Widgets;
 
 use App\Models\Patient;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Card;
+use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class PatientTypeOverview extends BaseWidget
 {
-    protected function getCards(): array
+    protected function getStats(): array
     {
         return [
-            Card::make('Cats', Patient::query()->where('type', 'cat')->count()),
-            Card::make('Dogs', Patient::query()->where('type', 'dog')->count()),
-            Card::make('Rabbits', Patient::query()->where('type', 'rabbit')->count()),
+            Stat::make('Cats', Patient::query()->where('type', 'cat')->count()),
+            Stat::make('Dogs', Patient::query()->where('type', 'dog')->count()),
+            Stat::make('Rabbits', Patient::query()->where('type', 'rabbit')->count()),
         ];
     }
 }
 ```
 
-Open your dashboard, and you should see your new widget displayed. Each card should show the total number of patients for the specified type.
+Open your dashboard, and you should see your new widget displayed. Each stat should show the total number of patients for the specified type.
 
 ### Creating a chart widget
 
@@ -686,7 +688,7 @@ Let's add a chart to the dashboard to visualize the number of treatments adminis
 php artisan make:filament-widget TreatmentsChart --chart
 ```
 
-When prompted, select "admin" for the location and "line chart" as the chart type.
+When prompted, do not specify a resource, select "admin" for the location, and choose "line chart" as the chart type.
 
 Open `app/Filament/Widgets/TreatmentsChart.php` and set the `$heading` of the chart to "Treatments".
 
@@ -731,7 +733,7 @@ Now, check out your new chart widget in the dashboard!
 
 > You can [customize your dashboard page](../panels/dashboard#customizing-the-dashboard-page) to change the grid and how many widgets are displayed.
 
-## Next steps with the panel builder
+## Next steps with the Panel Builder
 
 Congratulations! Now that you know how to build a basic Filament application, here are some suggestions for further learning:
 

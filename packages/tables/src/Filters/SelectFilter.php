@@ -17,11 +17,17 @@ class SelectFilter extends BaseFilter
 
     protected bool | Closure $isMultiple = false;
 
+    protected bool | Closure $isNative = true;
+
     protected bool | Closure $isStatic = false;
 
     protected bool | Closure $isSearchable = false;
 
     protected int | Closure $optionsLimit = 50;
+
+    protected bool | Closure | null $isSearchForcedCaseInsensitive = null;
+
+    protected ?Closure $getOptionLabelFromRecordUsing = null;
 
     protected function setUp(): void
     {
@@ -43,6 +49,10 @@ class SelectFilter extends BaseFilter
                     $relationshipQuery = $filter->getRelationshipQuery();
 
                     $labels = $relationshipQuery
+                        ->when(
+                            $filter->getRelationship() instanceof \Znck\Eloquent\Relations\BelongsToThrough,
+                            fn (Builder $query) => $query->distinct(),
+                        )
                         ->whereKey($state['values'])
                         ->pluck($relationshipQuery->qualifyColumn($filter->getRelationshipTitleAttribute()))
                         ->all();
@@ -180,6 +190,18 @@ class SelectFilter extends BaseFilter
         return $this->getAttribute();
     }
 
+    public function forceSearchCaseInsensitive(bool | Closure | null $condition = true): static
+    {
+        $this->isSearchForcedCaseInsensitive = $condition;
+
+        return $this;
+    }
+
+    public function isSearchForcedCaseInsensitive(): ?bool
+    {
+        return $this->evaluate($this->isSearchForcedCaseInsensitive);
+    }
+
     public function getFormField(): Select
     {
         $field = Select::make($this->isMultiple() ? 'values' : 'value')
@@ -188,6 +210,7 @@ class SelectFilter extends BaseFilter
             ->placeholder($this->getPlaceholder())
             ->searchable($this->isSearchable())
             ->preload($this->isPreloaded())
+            ->native($this->isNative())
             ->optionsLimit($this->getOptionsLimit());
 
         if ($this->queriesRelationships()) {
@@ -196,7 +219,8 @@ class SelectFilter extends BaseFilter
                     $this->getRelationshipName(),
                     $this->getRelationshipTitleAttribute(),
                     $this->modifyRelationshipQueryUsing,
-                );
+                )
+                ->forceSearchCaseInsensitive($this->isSearchForcedCaseInsensitive());
         } else {
             $field->options($this->getOptions());
         }
@@ -207,6 +231,10 @@ class SelectFilter extends BaseFilter
 
         if ($this->getOptionLabelsUsing) {
             $field->getOptionLabelsUsing($this->getOptionLabelsUsing);
+        }
+
+        if ($this->getOptionLabelFromRecordUsing) {
+            $field->getOptionLabelFromRecordUsing($this->getOptionLabelFromRecordUsing);
         }
 
         if ($this->getSearchResultsUsing) {
@@ -240,5 +268,24 @@ class SelectFilter extends BaseFilter
     public function getOptionsLimit(): int
     {
         return $this->evaluate($this->optionsLimit);
+    }
+
+    public function native(bool | Closure $condition = true): static
+    {
+        $this->isNative = $condition;
+
+        return $this;
+    }
+
+    public function isNative(): bool
+    {
+        return (bool) $this->evaluate($this->isNative);
+    }
+
+    public function getOptionLabelFromRecordUsing(?Closure $callback): static
+    {
+        $this->getOptionLabelFromRecordUsing = $callback;
+
+        return $this;
     }
 }

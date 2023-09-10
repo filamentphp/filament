@@ -171,7 +171,7 @@ class ActionGroup extends ViewComponent implements HasLivewire
     public function getActions(): array
     {
         return array_map(
-            fn (StaticAction | ActionGroup $action) => $this->hasDropdown() ? $action->grouped() : $action,
+            fn (StaticAction | ActionGroup $action) => $action->defaultView($action::GROUPED_VIEW),
             $this->actions,
         );
     }

@@ -17,6 +17,7 @@
     :tag="$url ? 'a' : 'button'"
     :x-on:click="$action->getAlpineClickHandler()"
     :wire:click="$action->getLivewireClickHandler()"
+    :wire:target="$action->getLivewireTarget()"
     :href="$isDisabled ? null : $url"
     :target="($url && $action->shouldOpenUrlInNewTab()) ? '_blank' : null"
     :type="$action->canSubmitForm() ? 'submit' : 'button'"

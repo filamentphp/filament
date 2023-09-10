@@ -59,6 +59,11 @@ class BulkAction extends MountableAction implements Groupable, HasTable
         return "mountBulkAction('{$this->getName()}')";
     }
 
+    public function getLivewireTarget(): ?string
+    {
+        return "mountTableBulkAction('{$this->getName()}')";
+    }
+
     /**
      * @return array<mixed>
      */

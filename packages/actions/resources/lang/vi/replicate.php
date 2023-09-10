@@ -4,24 +4,28 @@ return [
 
     'single' => [
 
-        'label' => 'Bản sao',
+        'label' => 'Sao chép',
 
         'modal' => [
 
-            'heading' => 'Bản sao :label',
+            'heading' => 'Sao chép :label',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Bản sao',
+                    'label' => 'Sao chép',
                 ],
 
             ],
 
         ],
 
-        'messages' => [
-            'replicated' => 'Đã tạo bản sao',
+        'notifications' => [
+
+            'replicated' => [
+                'title' => 'Đã sao chép',
+            ],
+
         ],
 
     ],

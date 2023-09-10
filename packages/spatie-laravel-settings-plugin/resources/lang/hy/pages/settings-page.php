@@ -14,8 +14,12 @@ return [
 
     ],
 
-    'messages' => [
-        'saved' => 'Պահպանվել է',
+    'notifications' => [
+
+        'saved' => [
+            'title' => 'Պահպանվել է',
+        ],
+
     ],
 
 ];

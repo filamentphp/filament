@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Đã xoá',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Đã xoá',
+            ],
+
         ],
 
     ],
@@ -32,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Xóa vĩnh viễn :label đã chọn',
+            'heading' => 'Xóa vĩnh viễn các mục :label đã chọn',
 
             'actions' => [
 
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'deleted' => 'Đã xoá',
+        'notifications' => [
+
+            'deleted' => [
+                'title' => 'Đã xoá',
+            ],
+
         ],
 
     ],

@@ -86,7 +86,7 @@ select:not(.choices) {
 
 .choices__list--dropdown .choices__item--selectable.is-highlighted,
 .choices__list[aria-expanded] .choices__item--selectable.is-highlighted {
-    @apply bg-gray-500/10;
+    @apply bg-gray-50 dark:bg-white/5;
 }
 
 .choices__item {
@@ -167,4 +167,8 @@ select:not(.choices) {
 .choices__input::-ms-clear,
 .choices__input::-ms-reveal {
     @apply hidden h-0 w-0;
+}
+
+.choices__group {
+    @apply px-2 pb-2 pt-4 text-gray-500 first:pt-2 dark:text-gray-400;
 }

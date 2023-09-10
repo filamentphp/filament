@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => 'Gestionați abonările',
+        ],
+
         'logout' => [
             'label' => 'Deconectare',
         ],
@@ -15,7 +19,7 @@ return [
         ],
 
         'open_user_menu' => [
-            'label' => 'meniul utilizatorului',
+            'label' => 'Meniul utilizatorului',
         ],
 
         'sidebar' => [
@@ -38,6 +42,10 @@ return [
 
             'light' => [
                 'label' => 'Comutați modul deschis',
+            ],
+
+            'system' => [
+                'label' => 'Activează modul de sistem',
             ],
 
         ],

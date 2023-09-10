@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Đã khôi phục',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Đã khôi phục',
+            ],
+
         ],
 
     ],
@@ -32,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Khôi phục :label đã chọn',
+            'heading' => 'Khôi phục các mục :label đã chọn',
 
             'actions' => [
 
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Đã khôi phục',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Đã khôi phục',
+            ],
+
         ],
 
     ],

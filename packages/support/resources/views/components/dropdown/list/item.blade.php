@@ -1,3 +1,7 @@
+@php
+    use Filament\Support\Enums\IconSize;
+@endphp
+
 @props([
     'badge' => null,
     'badgeColor' => null,
@@ -5,10 +9,11 @@
     'disabled' => false,
     'icon' => null,
     'iconAlias' => null,
-    'iconSize' => 'md',
+    'iconSize' => IconSize::Medium,
     'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
+    'shouldOpenUrlInNewTab' => false,
 ])
 
 @php
@@ -29,9 +34,9 @@
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item-icon',
         match ($iconSize) {
-            'sm' => 'h-4 w-4',
-            'md' => 'h-5 w-5',
-            'lg' => 'h-6 w-6',
+            IconSize::Small, 'sm' => 'h-4 w-4',
+            IconSize::Medium, 'md' => 'h-5 w-5',
+            IconSize::Large, 'lg' => 'h-6 w-6',
             default => $iconSize,
         },
         match ($color) {
@@ -50,7 +55,7 @@
         },
     ]);
 
-    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->first();
+    $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
 
     $hasLoadingIndicator = filled($wireTarget);
 
@@ -114,6 +119,11 @@
     </button>
 @elseif ($tag === 'a')
     <a
+        @if ($shouldOpenUrlInNewTab)
+            target="_blank"
+        @else
+            {{-- wire:navigate --}}
+        @endif
         @if ($keyBindings)
             x-data="{}"
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}

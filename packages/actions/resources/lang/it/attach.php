@@ -25,15 +25,19 @@ return [
                 ],
 
                 'attach_another' => [
-                    'label' => 'Collega & collega altro',
+                    'label' => 'Collega & collega un altro',
                 ],
 
             ],
 
         ],
 
-        'messages' => [
-            'attached' => 'Collegato',
+        'notifications' => [
+
+            'attached' => [
+                'title' => 'Collegato',
+            ],
+
         ],
 
     ],

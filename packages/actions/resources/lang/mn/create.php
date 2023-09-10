@@ -24,8 +24,12 @@ return [
 
         ],
 
-        'messages' => [
-            'created' => 'Үүсэв',
+        'notifications' => [
+
+            'created' => [
+                'title' => 'Үүсэв',
+            ],
+
         ],
 
     ],

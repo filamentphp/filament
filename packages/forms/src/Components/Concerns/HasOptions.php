@@ -10,12 +10,12 @@ use Illuminate\Support\Collection;
 trait HasOptions
 {
     /**
-     * @var array<string> | Arrayable | string | Closure | null
+     * @var array<string | array<string>> | Arrayable | string | Closure | null
      */
     protected array | Arrayable | string | Closure | null $options = null;
 
     /**
-     * @param  array<string> | Arrayable | string | Closure | null  $options
+     * @param  array<string | array<string>> | Arrayable | string | Closure | null  $options
      */
     public function options(array | Arrayable | string | Closure | null $options): static
     {
@@ -25,7 +25,7 @@ trait HasOptions
     }
 
     /**
-     * @return array<string>
+     * @return array<string | array<string>>
      */
     public function getOptions(): array
     {
@@ -34,7 +34,6 @@ trait HasOptions
         $enum = $options;
         if (
             is_string($enum) &&
-            function_exists('enum_exists') &&
             enum_exists($enum)
         ) {
             return collect($enum::cases())

@@ -11,6 +11,8 @@ trait HasTenancy
 {
     protected ?BillingProvider $tenantBillingProvider = null;
 
+    protected ?string $tenantRoutePrefix = null;
+
     protected ?string $tenantModel = null;
 
     protected ?string $tenantProfilePage = null;
@@ -53,6 +55,13 @@ trait HasTenancy
         $this->tenantModel = $model;
         $this->tenantSlugAttribute = $slugAttribute;
         $this->tenantOwnershipRelationshipName = $ownershipRelationship;
+
+        return $this;
+    }
+
+    public function tenantRoutePrefix(?string $prefix): static
+    {
+        $this->tenantRoutePrefix = $prefix;
 
         return $this;
     }
@@ -101,6 +110,16 @@ trait HasTenancy
     public function hasTenantRegistration(): bool
     {
         return filled($this->getTenantRegistrationPage());
+    }
+
+    public function hasTenantRoutePrefix(): bool
+    {
+        return filled($this->getTenantRoutePrefix());
+    }
+
+    public function getTenantRoutePrefix(): ?string
+    {
+        return $this->tenantRoutePrefix;
     }
 
     public function getTenantBillingProvider(): ?BillingProvider
@@ -190,6 +209,13 @@ trait HasTenancy
     public function getTenantMenuItems(): array
     {
         return collect($this->tenantMenuItems)
+            ->filter(function (MenuItem $item, string | int $key): bool {
+                if (in_array($key, ['billing', 'profile', 'register'])) {
+                    return true;
+                }
+
+                return $item->isVisible();
+            })
             ->sort(fn (MenuItem $item): int => $item->getSort())
             ->all();
     }

@@ -1,4 +1,7 @@
 @php
+    use Filament\Support\Enums\Alignment;
+    use Filament\Support\Enums\VerticalAlignment;
+
     $color = $getColor() ?? 'gray';
     $isInline = $isInline();
 @endphp
@@ -9,13 +12,13 @@
         \Illuminate\Support\Arr::toCssClasses([
             'opacity-0',
             ($this instanceof \Filament\Notifications\Livewire\Notifications)
-            ? match (static::$horizontalAlignment) {
-                'left' => '-translate-x-12',
-                'right' => 'translate-x-12',
-                'center' => match (static::$verticalAlignment) {
-                    'top' => '-translate-y-12',
-                    'bottom' => 'translate-y-12',
-                    'center' => null,
+            ? match (static::$alignment) {
+                Alignment::Start, Alignment::Left => '-translate-x-12',
+                Alignment::End, Alignment::Right => 'translate-x-12',
+                Alignment::Center => match (static::$verticalAlignment) {
+                    VerticalAlignment::Start => '-translate-y-12',
+                    VerticalAlignment::End => 'translate-y-12',
+                    default => null,
                 },
             }
             : null,
@@ -28,9 +31,11 @@
         ])
     "
     @class([
-        'w-full transition duration-300',
+        'fi-no-notification w-full overflow-hidden transition duration-300',
         ...match ($isInline) {
-            true => [],
+            true => [
+                'fi-inline',
+            ],
             false => [
                 'max-w-sm rounded-xl bg-white shadow-lg ring-1 dark:bg-gray-900',
                 match ($color) {
@@ -47,15 +52,9 @@
     <div
         @class([
             'flex w-full gap-3 p-4',
-            ...match ($isInline) {
-                true => [],
-                false => [
-                    'rounded-xl',
-                    match ($color) {
-                        'gray' => null,
-                        default => 'bg-custom-50 dark:bg-custom-400/10',
-                    },
-                ],
+            match ($color) {
+                'gray' => null,
+                default => 'bg-custom-50 dark:bg-custom-400/10',
             },
         ])
         @style([

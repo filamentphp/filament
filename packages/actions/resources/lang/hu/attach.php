@@ -32,8 +32,12 @@ return [
 
         ],
 
-        'messages' => [
-            'attached' => 'Csatolva',
+        'notifications' => [
+
+            'attached' => [
+                'title' => 'Csatolva',
+            ],
+
         ],
 
     ],

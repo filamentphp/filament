@@ -8,7 +8,7 @@
         {{ $getLabel() }}
     </label>
 
-    <x-filament-forms::affixes :disabled="$isDisabled">
+    <x-filament::input.wrapper :disabled="$isDisabled">
         <x-filament::input.select
             :disabled="$isDisabled"
             :id="$id"
@@ -24,5 +24,5 @@
                 </option>
             @endforeach
         </x-filament::input.select>
-    </x-filament-forms::affixes>
+    </x-filament::input.wrapper>
 </div>

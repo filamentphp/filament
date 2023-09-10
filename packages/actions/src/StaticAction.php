@@ -157,6 +157,11 @@ class StaticAction extends ViewComponent
         return 'close()';
     }
 
+    public function getLivewireTarget(): ?string
+    {
+        return null;
+    }
+
     /**
      * @deprecated Use `extraAttributes()` instead.
      *

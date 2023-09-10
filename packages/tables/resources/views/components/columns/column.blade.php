@@ -8,6 +8,8 @@
 ])
 
 @php
+    use Filament\Support\Enums\Alignment;
+
     $action = $column->getAction();
     $name = $column->getName();
     $shouldOpenUrlInNewTab = $column->shouldOpenUrlInNewTab();
@@ -17,11 +19,11 @@
     $columnClasses = \Illuminate\Support\Arr::toCssClasses([
         'flex w-full disabled:pointer-events-none',
         match ($column->getAlignment()) {
-            'center' => 'justify-center text-center',
-            'end' => 'justify-end text-end',
-            'left' => 'justify-start text-left',
-            'right' => 'justify-end text-right',
-            'justify' => 'justify-between text-justify',
+            Alignment::Center, 'center' => 'justify-center text-center',
+            Alignment::End, 'end' => 'justify-end text-end',
+            Alignment::Left, 'left' => 'justify-start text-left',
+            Alignment::Right, 'right' => 'justify-end text-right',
+            Alignment::Justify, 'justify' => 'justify-between text-justify',
             default => 'justify-start text-start',
         },
     ]);

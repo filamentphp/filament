@@ -31,8 +31,13 @@ return [
 
     ],
 
-    'messages' => [
-        'throttled' => 'Muitas tentativas de redefinição. Por favor tente novamente em :seconds segundos.',
+    'notifications' => [
+
+        'throttled' => [
+            'title' => 'Muitas tentativas de redefinição',
+            'body' => 'Por favor tente novamente em :seconds segundos.',
+        ],
+
     ],
 
 ];

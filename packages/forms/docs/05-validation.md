@@ -4,7 +4,7 @@ title: Validation
 
 ## Overview
 
-Validation rules may be added to any [field](fields).
+Validation rules may be added to any [field](fields/getting-started).
 
 In Laravel, validation rules are usually defined in arrays like `['required', 'max:255']` or a combined string like `required|max:255`. This is fine if you're exclusively working in the backend with simple form requests. But Filament is also able to give your users frontend validation, so they can fix their mistakes before any backend requests are made.
 
@@ -62,7 +62,7 @@ Field::make('name')->alpha()
 
 ### Alpha Dash
 
-The field may have alpha-numeric characters, as well as dashes and underscores. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-alpha-dash)
+The field may have alphanumeric characters, as well as dashes and underscores. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-alpha-dash)
 
 ```php
 Field::make('name')->alphaDash()
@@ -70,7 +70,7 @@ Field::make('name')->alphaDash()
 
 ### Alpha Numeric
 
-The field must be entirely alpha-numeric characters. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-alpha-num)
+The field must be entirely alphanumeric characters. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-alpha-num)
 
 ```php
 Field::make('name')->alphaNum()
@@ -165,7 +165,7 @@ Field::make('status')->enum(MyStatus::class)
 
 ### Exists
 
-The field value must exist in the database. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-exists).
+The field value must exist in the database. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-exists)
 
 ```php
 Field::make('invitation')->exists()
@@ -343,7 +343,7 @@ Field::make('name')->requiredWith('field,another_field')
 
 ### Required With All
 
-The field value must not be empty _only if_ all of the other specified fields are not empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-with-all)
+The field value must not be empty _only if_ all the other specified fields are not empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-with-all)
 
 ```php
 Field::make('name')->requiredWithAll('field,another_field')
@@ -359,7 +359,7 @@ Field::make('name')->requiredWithout('field,another_field')
 
 ### Required Without All
 
-The field value must not be empty _only when_ all of the other specified fields are empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-without-all)
+The field value must not be empty _only when_ all the other specified fields are empty. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-required-without-all)
 
 ```php
 Field::make('name')->requiredWithoutAll('field,another_field')
@@ -424,7 +424,7 @@ Sometimes, you may wish to ignore a given model during unique validation. For ex
 Field::make('email')->unique(ignorable: $ignoredUser)
 ```
 
-If you're using the [panel builder](../panels), you can easily ignore the current record by using `ignoreRecord` instead:
+If you're using the [Panel Builder](../panels), you can easily ignore the current record by using `ignoreRecord` instead:
 
 ```php
 Field::make('email')->unique(ignoreRecord: true)
@@ -474,9 +474,24 @@ TextInput::make('slug')->rules([
     function () {
         return function (string $attribute, $value, Closure $fail) {
             if ($value === 'foo') {
-                $fail("The {$attribute} is invalid.");
+                $fail('The :attribute is invalid.');
             }
         };
+    },
+])
+```
+
+You may [inject utilities](advanced#form-component-utility-injection) like [`$get`](advanced#injecting-the-state-of-another-field) into your custom rules, for example if you need to reference other field values in your form:
+
+```php
+use Closure;
+use Filament\Forms\Get;
+
+TextInput::make('slug')->rules([
+    fn (Get $get): Closure => function (string $attribute, $value, Closure $fail) use ($get) {
+        if ($get('other_field') === 'foo' && $value !== 'bar') {
+            $fail("The {$attribute} is invalid.");
+        }
     },
 ])
 ```
@@ -508,7 +523,7 @@ protected function onValidationError(ValidationException $exception): void
 }
 ```
 
-Alternatively, if you are using the panel builder and want this behaviour on all the pages, add this inside the `boot()` method of your `AppServiceProvider`:
+Alternatively, if you are using the Panel Builder and want this behavior on all the pages, add this inside the `boot()` method of your `AppServiceProvider`:
 
 ```php
 use Filament\Notifications\Notification;

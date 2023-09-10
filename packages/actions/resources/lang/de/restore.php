@@ -20,8 +20,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Eintrag wiederhergestellt',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Eintrag wiederhergestellt',
+            ],
+
         ],
 
     ],
@@ -44,8 +48,12 @@ return [
 
         ],
 
-        'messages' => [
-            'restored' => 'Einträge wiederhergestellt',
+        'notifications' => [
+
+            'restored' => [
+                'title' => 'Einträge wiederhergestellt',
+            ],
+
         ],
 
     ],

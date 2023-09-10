@@ -79,7 +79,7 @@ class FilamentManager
         return $this->getCurrentPanel()->getAuthPasswordBroker();
     }
 
-    public function getBrandName(): string
+    public function getBrandName(): string | Htmlable
     {
         return $this->getCurrentPanel()->getBrandName();
     }
@@ -152,14 +152,6 @@ class FilamentManager
     public function getFontUrl(): ?string
     {
         return $this->getCurrentPanel()->getFontUrl();
-    }
-
-    /**
-     * @return  array<string, int>
-     */
-    public function getFontWeights(): array
-    {
-        return $this->getCurrentPanel()->getFontWeights();
     }
 
     /**
