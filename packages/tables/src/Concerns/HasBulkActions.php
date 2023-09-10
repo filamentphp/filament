@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\BulkAction;
@@ -403,5 +404,10 @@ trait HasBulkActions
     public function isTableRecordSelectable(): ?Closure
     {
         return null;
+    }
+
+    public function mountedTableBulkActionInfolist(): Infolist
+    {
+        return $this->getMountedTableBulkAction()->getInfolist();
     }
 }

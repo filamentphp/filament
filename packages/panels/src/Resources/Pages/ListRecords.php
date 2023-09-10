@@ -19,9 +19,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 
-class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class ListRecords extends Page implements Tables\Contracts\HasTable
 {
-    use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
     }

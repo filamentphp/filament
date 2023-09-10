@@ -19,12 +19,11 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property Form $form
  */
-class ViewRecord extends Page implements HasInfolists
+class ViewRecord extends Page
 {
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
-    use InteractsWithInfolists;
 
     /**
      * @var view-string

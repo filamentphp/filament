@@ -2,6 +2,7 @@
 
 namespace Filament\Infolists\Components\Actions;
 
+use Exception;
 use Filament\Actions\MountableAction;
 use Filament\Actions\StaticAction;
 use Illuminate\Database\Eloquent\Model;

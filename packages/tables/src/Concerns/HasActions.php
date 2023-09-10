@@ -3,6 +3,7 @@
 namespace Filament\Tables\Concerns;
 
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\Action;
@@ -321,5 +322,10 @@ trait HasActions
     protected function getTableActionsColumnLabel(): ?string
     {
         return null;
+    }
+
+    public function mountedTableActionInfolist(): Infolist
+    {
+        return $this->getMountedTableAction()->getInfolist();
     }
 }
