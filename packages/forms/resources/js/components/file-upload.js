@@ -179,7 +179,7 @@ export default function fileUploadFormComponent({
                 allowImageEdit: hasImageEditor,
                 imageEditEditor: {
                     open: (file) => this.loadEditor(file),
-                    onconfirm: () => {},
+                    onconfirm: () => { },
                     oncancel: () => this.closeEditor(),
                     onclose: () => this.closeEditor(),
                 },
@@ -271,9 +271,9 @@ export default function fileUploadFormComponent({
                         .filter(
                             (file) =>
                                 file.status ===
-                                    FilePond.FileStatus.PROCESSING ||
+                                FilePond.FileStatus.PROCESSING ||
                                 file.status ===
-                                    FilePond.FileStatus.PROCESSING_QUEUED,
+                                FilePond.FileStatus.PROCESSING_QUEUED,
                         ).length
                 ) {
                     return
@@ -336,12 +336,12 @@ export default function fileUploadFormComponent({
                         ...(/^image/.test(uploadedFile.type)
                             ? {}
                             : {
-                                  file: {
-                                      name: uploadedFile.name,
-                                      size: uploadedFile.size,
-                                      type: uploadedFile.type,
-                                  },
-                              }),
+                                file: {
+                                    name: uploadedFile.name,
+                                    size: uploadedFile.size,
+                                    type: uploadedFile.type,
+                                },
+                            }),
                     },
                 })
             }
@@ -520,7 +520,7 @@ export default function fileUploadFormComponent({
                                     {
                                         type:
                                             this.editingFile.type ===
-                                            'image/svg+xml'
+                                                'image/svg+xml'
                                                 ? 'image/png'
                                                 : this.editingFile.type,
                                         lastModified: new Date().getTime(),
