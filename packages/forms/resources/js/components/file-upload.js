@@ -99,13 +99,10 @@ export default function fileUploadFormComponent({
                 enableManageMetadata: enableManageMetadata,
                 labelButtonManageMetadata: labelButtonManageMetadata ?? 'Edit caption',
                 onManageMetadata: async (item) => {
+                    if (!onManageMetadata)
+                        return;
 
-                    let currentCaption = item.getMetadata('caption');
-                    let newCaption = window.prompt('Edit file caption', currentCaption);
-
-                    if (newCaption && newCaption != currentCaption) {
-                        item.setMetadata('caption', newCaption);
-                    }
+                    onManageMetadata(this.uploadedFileIndex[item.source] ?? null, item);
                 },
 
                 acceptedFileTypes,

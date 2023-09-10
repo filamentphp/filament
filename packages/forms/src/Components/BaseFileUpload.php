@@ -59,6 +59,8 @@ class BaseFileUpload extends Field
 
     protected string | Closure $visibility = 'public';
 
+    protected ?Closure $annotateUploadedFileUsing = null;
+
     protected ?Closure $deleteUploadedFileUsing = null;
 
     protected ?Closure $getUploadedFileNameForStorageUsing = null;
@@ -418,6 +420,13 @@ class BaseFileUpload extends Field
         return $this;
     }
 
+    public function annotateUploadedFileUsing(?Closure $callback): static
+    {
+        $this->annotateUploadedFileUsing = $callback;
+
+        return $this;
+    }
+
     public function deleteUploadedFileUsing(?Closure $callback): static
     {
         $this->deleteUploadedFileUsing = $callback;
@@ -592,6 +601,22 @@ class BaseFileUpload extends Field
         };
 
         return $rules;
+    }
+
+    public function annotateUploadedFile(string $fileKey, string $data): static
+    {
+        $callback = $this->annotateUploadedFileUsing;
+
+        if (! $callback) {
+            return $this;
+        }
+
+        $this->evaluate($callback, [
+            'fileKey' => $fileKey,
+            'data' => $data,
+        ]);
+
+        return $this;
     }
 
     public function deleteUploadedFile(string $fileKey): static

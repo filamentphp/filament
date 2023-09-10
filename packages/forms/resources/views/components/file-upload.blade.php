@@ -62,17 +62,23 @@
             uploadButtonPosition: @js($getUploadButtonPosition()),
             uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
             enableManageMetadata: @js($isCaptionable()),
-            onManageMetadata: async (item) => {
+            onManageMetadata: async (fileKey, item) => {
         
                 let currentCaption = item.getMetadata('caption');
                 let newCaption = window.prompt('Edit file caption', currentCaption);
         
                 if (newCaption && newCaption != currentCaption) {
-                    item.setMetadata('caption', newCaption);
+                    // line below will cause filepond to re-upload, need a way to set newCaption
+                    // item.setMetadata('caption', newCaption); 
+        
+                    return await $wire.annotateUploadedFile(@js($statePath), fileKey, newCaption);
                 }
             },
             uploadUsing: (fileKey, file, metadata, success, error, progress) => {
+                file['metadata'] = metadata;
+        
                 console.log('metadata inside uploadUsing', metadata);
+                console.log('file inside uploadUsing', file);
         
                 $wire.upload(
                     `{{ $statePath }}.${fileKey}`,

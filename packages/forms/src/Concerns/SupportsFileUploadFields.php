@@ -6,6 +6,29 @@ use Filament\Forms\Components\BaseFileUpload;
 
 trait SupportsFileUploadFields
 {
+    public function annotateUploadedFile(string $statePath, string $fileKey, string $data): bool
+    {
+        foreach ($this->getComponents() as $component) {
+            if ($component instanceof BaseFileUpload && $component->getStatePath() === $statePath) {
+                $component->annotateUploadedFile($fileKey, $data);
+
+                return true;
+            }
+
+            foreach ($component->getChildComponentContainers() as $container) {
+                if ($container->isHidden()) {
+                    continue;
+                }
+
+                if ($container->annotateUploadedFile($statePath, $fileKey, $data)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     public function deleteUploadedFile(string $statePath, string $fileKey): bool
     {
         foreach ($this->getComponents() as $component) {

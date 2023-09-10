@@ -157,6 +157,19 @@ class SpatieMediaLibraryFileUpload extends FileUpload
 
             return $state;
         });
+
+        $this->annotateUploadedFileUsing(static function (SpatieMediaLibraryFileUpload $component, $fileKey, $data) {
+            $mediaItem = $component->getRecord()->getRelationValue('media')->firstWhere('uuid', $fileKey);
+
+            $mediaItem->setCustomProperty('caption', $data); // adds a new custom property
+
+            if ($mediaItem->id) {
+                $mediaItem->save();
+            }
+
+            return $mediaItem->getAttributeValue('uuid');
+        });
+
     }
 
     public function collection(string | Closure | null $collection): static
