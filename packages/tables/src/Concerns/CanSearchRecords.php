@@ -103,15 +103,20 @@ trait CanSearchRecords
         return $query;
     }
 
+    protected function searchWords(string $search): array
+    {
+        return explode(' ', preg_replace('/\s+/', ' ', trim($search)));
+    }
+
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
     {
-        $search = trim($this->getTableSearch());
+        $search = $this->getTableSearch();
 
         if (blank($search)) {
             return $query;
         }
 
-        foreach (explode(' ', $search) as $searchWord) {
+        foreach ($this->searchWords($search) as $searchWord) {
             $query->where(function (Builder $query) use ($searchWord) {
                 $isFirst = true;
 
