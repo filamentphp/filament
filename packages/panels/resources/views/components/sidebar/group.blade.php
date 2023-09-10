@@ -72,8 +72,8 @@
                 :grouped="filled($label)"
                 :icon="$item->getIcon()"
                 :last="$loop->last"
-                :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                 :url="$item->getUrl()"
+                :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
             >
                 {{ $item->getLabel() }}
             </x-filament-panels::sidebar.item>

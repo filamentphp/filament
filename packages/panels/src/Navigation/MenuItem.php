@@ -78,14 +78,12 @@ class MenuItem extends Component
         return $this;
     }
 
-
     public function openUrlInNewTab(bool | Closure $condition = true): static
     {
         $this->shouldOpenUrlInNewTab = $condition;
 
         return $this;
     }
-
 
     public function hidden(bool | Closure $condition = true): static
     {
@@ -142,7 +140,6 @@ class MenuItem extends Component
     {
         return $this->evaluate($this->url);
     }
-
 
     public function shouldOpenUrlInNewTab(): bool
     {
