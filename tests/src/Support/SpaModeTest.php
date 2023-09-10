@@ -2,8 +2,7 @@
 
 use Filament\Support\Facades\FilamentView;
 use Filament\Tests\TestCase;
-use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\HtmlString;
+
 use function Filament\Support\generate_href_html;
 
 uses(TestCase::class);
