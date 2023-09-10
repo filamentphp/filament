@@ -5,7 +5,6 @@ namespace Filament\Resources\Pages;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ListRecords\Tab;
@@ -19,9 +18,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 
-class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class ListRecords extends Page implements Tables\Contracts\HasTable
 {
-    use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
     }

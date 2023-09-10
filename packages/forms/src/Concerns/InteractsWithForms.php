@@ -6,6 +6,7 @@ use Closure;
 use Exception;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Concerns\ResolvesDynamicLivewireProperties;
 use Filament\Support\Contracts\TranslatableContentDriver;
 use Illuminate\Database\Eloquent\Model;
@@ -439,5 +440,10 @@ trait InteractsWithForms
     public function isCachingForms(): bool
     {
         return $this->isCachingForms;
+    }
+
+    public function mountedFormComponentActionInfolist(): Infolist
+    {
+        return $this->getMountedFormComponentAction()->getInfolist();
     }
 }
