@@ -28,10 +28,12 @@
         }}
     >
         @if ($isCollapsible)
-            <div @class([
-                'flex gap-x-3',
-                'hidden' => count($containers) < 2,
-            ])>
+            <div
+                @class([
+                    'flex gap-x-3',
+                    'hidden' => count($containers) < 2,
+                ])
+            >
                 <span
                     x-on:click="$dispatch('repeater-collapse', '{{ $statePath }}')"
                 >
