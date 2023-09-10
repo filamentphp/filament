@@ -650,7 +650,7 @@
                                         <div class="flex-1">
                                             @if ($recordUrl)
                                                 <a
-                                                    href="{{ $recordUrl }}"
+                                                    {{ \Filament\Support\generate_href_html($recordUrl) }}
                                                     class="{{ $recordContentClasses }}"
                                                 >
                                                     <x-filament-tables::columns.layout

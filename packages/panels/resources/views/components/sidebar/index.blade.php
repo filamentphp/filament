@@ -43,7 +43,7 @@
             @endif
         >
             @if ($homeUrl = filament()->getHomeUrl())
-                <a href="{{ $homeUrl }}">
+                <a {{ \Filament\Support\generate_href_html($homeUrl) }}>
                     <x-filament-panels::logo />
                 </a>
             @else

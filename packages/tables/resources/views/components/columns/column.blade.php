@@ -43,8 +43,7 @@
 >
     @if (($url || ($recordUrl && $action === null)) && (! $isClickDisabled))
         <a
-            href="{{ $url ?: $recordUrl }}"
-            @if ($shouldOpenUrlInNewTab) target="_blank" @endif
+            {{ \Filament\Support\generate_href_html($url ?: $recordUrl, $shouldOpenUrlInNewTab) }}
             class="{{ $columnClasses }}"
         >
             {{ $slot }}

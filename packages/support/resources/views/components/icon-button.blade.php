@@ -9,6 +9,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'href' => null,
     'icon' => null,
     'iconAlias' => null,
     'iconSize' => null,
@@ -16,6 +17,7 @@
     'label' => null,
     'size' => 'md',
     'tag' => 'button',
+    'target' => null,
     'tooltip' => null,
     'type' => 'button',
 ])
@@ -123,6 +125,7 @@
     </button>
 @elseif ($tag === 'a')
     <a
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
