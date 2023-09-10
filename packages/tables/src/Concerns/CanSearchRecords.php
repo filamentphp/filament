@@ -113,7 +113,7 @@ trait CanSearchRecords
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
     {
-        $search = trim($this->getTableSearch());
+        $search = $this->getTableSearch();
 
         if (blank($search)) {
             return $query;
@@ -149,7 +149,7 @@ trait CanSearchRecords
      */
     public function getTableSearch()
     {
-        return $this->tableSearch;
+        return $this->tableSearch === null ? null : trim($this->tableSearch);
     }
 
     public function hasTableSearch(): bool

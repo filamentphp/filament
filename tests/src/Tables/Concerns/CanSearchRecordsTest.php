@@ -33,3 +33,18 @@ it('can split on whitespace', function () {
 
     $this->assertSame(['', 'test', ''], $trait->extractTableSearchWords('   test   '));
 });
+
+it('can trim a search query', function () {
+    $trait = new class {
+        use \Filament\Tables\Concerns\CanSearchRecords;
+    };
+
+    $trait->tableSearch = 'test';
+    $this->assertSame('test', $trait->getTableSearch());
+
+    $trait->tableSearch = '  test  ';
+    $this->assertSame('test', $trait->getTableSearch());
+
+    $trait->tableSearch = null;
+    $this->assertNull($trait->getTableSearch());
+});
