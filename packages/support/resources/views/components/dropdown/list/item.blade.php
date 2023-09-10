@@ -13,6 +13,7 @@
     'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
+    'shouldOpenUrlInNewTab' => false,
 ])
 
 @php
@@ -118,6 +119,11 @@
     </button>
 @elseif ($tag === 'a')
     <a
+        @if ($shouldOpenUrlInNewTab)
+            target="_blank"
+        @else
+            {{-- wire:navigate --}}
+        @endif
         @if ($keyBindings)
             x-data="{}"
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}
