@@ -36,7 +36,6 @@ class FormsServiceProvider extends PackageServiceProvider
             AlpineComponent::make('tags-input', __DIR__ . '/../dist/components/tags-input.js'),
             AlpineComponent::make('textarea', __DIR__ . '/../dist/components/textarea.js'),
             Css::make('forms', __DIR__ . '/../dist/index.css'),
-            Js::make('forms', __DIR__ . '/../dist/index.js'),
         ], 'filament/forms');
 
         if ($this->app->runningInConsole()) {

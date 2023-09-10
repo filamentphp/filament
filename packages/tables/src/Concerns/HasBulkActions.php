@@ -223,6 +223,47 @@ trait HasBulkActions
         );
     }
 
+    public function getGroupedSelectableTableRecordKeys(string $group): array
+    {
+        $query = $this->getFilteredTableQuery();
+
+        $tableGrouping = $this->getTableGrouping();
+
+        $tableGrouping->scopeQueryWithKey($query, $group);
+
+        if (! $this->getTable()->checksIfRecordIsSelectable()) {
+            $records = $this->getTable()->selectsCurrentPageOnly() ?
+                $this->getTableRecords()->filter(
+                    fn (Model $record) => $tableGrouping->getKey($record) === $group,
+                ) :
+                $query;
+
+            return $records
+                ->pluck($query->getModel()->getQualifiedKeyName())
+                ->map(fn ($key): string => (string) $key)
+                ->all();
+        }
+
+        $records = $this->getTable()->selectsCurrentPageOnly() ?
+            $this->getTableRecords()->filter(
+                fn (Model $record) => $tableGrouping->getKey($record) === $group,
+            ) :
+            $query->get();
+
+        return $records->reduce(
+            function (array $carry, Model $record): array {
+                if (! $this->getTable()->isRecordSelectable($record)) {
+                    return $carry;
+                }
+
+                $carry[] = (string) $record->getKey();
+
+                return $carry;
+            },
+            initial: [],
+        );
+    }
+
     public function getAllSelectableTableRecordsCount(): int
     {
         if ($this->getTable()->checksIfRecordIsSelectable()) {

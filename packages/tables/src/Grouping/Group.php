@@ -2,6 +2,7 @@
 
 namespace Filament\Tables\Grouping;
 
+use BackedEnum;
 use Closure;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
@@ -17,6 +18,8 @@ class Group extends Component
 
     protected ?Closure $getDescriptionFromRecordUsing = null;
 
+    protected ?Closure $getKeyFromRecordUsing = null;
+
     protected ?Closure $getTitleFromRecordUsing = null;
 
     protected ?Closure $groupQueryUsing = null;
@@ -24,6 +27,8 @@ class Group extends Component
     protected ?Closure $orderQueryUsing = null;
 
     protected ?Closure $scopeQueryUsing = null;
+
+    protected ?Closure $scopeQueryWithKeyUsing = null;
 
     protected ?string $label;
 
@@ -98,6 +103,13 @@ class Group extends Component
         return $this;
     }
 
+    public function getKeyFromRecordUsing(?Closure $callback): static
+    {
+        $this->getKeyFromRecordUsing = $callback;
+
+        return $this;
+    }
+
     public function groupQueryUsing(?Closure $callback): static
     {
         $this->groupQueryUsing = $callback;
@@ -115,6 +127,13 @@ class Group extends Component
     public function scopeQueryUsing(?Closure $callback): static
     {
         $this->scopeQueryUsing = $callback;
+
+        return $this;
+    }
+
+    public function scopeQueryWithKeyUsing(?Closure $callback): static
+    {
+        $this->scopeQueryWithKeyUsing = $callback;
 
         return $this;
     }
@@ -177,10 +196,26 @@ class Group extends Component
 
     public function getKey(Model $record): ?string
     {
+        $column = $this->getColumn();
+
+        if ($this->getKeyFromRecordUsing) {
+            return $this->evaluate(
+                $this->getKeyFromRecordUsing,
+                namedInjections: [
+                    'column' => $column,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
+        }
+
         $key = Arr::get($record, $this->getColumn());
 
-        if ($key instanceof LabelInterface) {
-            $key = $key->getLabel();
+        if ($key instanceof BackedEnum) {
+            $key = $key->value;
         }
 
         return filled($key) ? strval($key) : null;
@@ -295,17 +330,43 @@ class Group extends Component
             ) ?? $query;
         }
 
-        $value = Arr::get($record, $column);
+        $key = Arr::get($record, $column);
 
         if ($relationshipName = $this->getRelationshipName()) {
             return $query->whereRelation(
                 $relationshipName,
                 $this->getRelationshipAttribute(),
-                $value,
+                $key,
             );
         }
 
-        return $query->where($column, $value);
+        return $query->where($column, $key);
+    }
+
+    public function scopeQueryWithKey(EloquentBuilder $query, string $key): EloquentBuilder
+    {
+        $column = $this->getColumn();
+
+        if ($this->scopeQueryWithKeyUsing) {
+            return $this->evaluate(
+                $this->scopeQueryWithKeyUsing,
+                namedInjections: [
+                    'column' => $column,
+                    'key' => $key,
+                    'query' => $query,
+                ],
+            ) ?? $query;
+        }
+
+        if ($relationshipName = $this->getRelationshipName()) {
+            return $query->whereRelation(
+                $relationshipName,
+                $this->getRelationshipAttribute(),
+                $key,
+            );
+        }
+
+        return $query->where($column, $key);
     }
 
     public function getRelationship(Model $record, ?string $name = null): ?Relation

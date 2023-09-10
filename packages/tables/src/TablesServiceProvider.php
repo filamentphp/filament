@@ -2,6 +2,7 @@
 
 namespace Filament\Tables;
 
+use Filament\Support\Assets\AlpineComponent;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Testing\TestsActions;
@@ -29,7 +30,7 @@ class TablesServiceProvider extends PackageServiceProvider
     public function packageBooted(): void
     {
         FilamentAsset::register([
-            Js::make('tables', __DIR__ . '/../dist/index.js'),
+            AlpineComponent::make('table', __DIR__ . '/../dist/components/table.js'),
         ], 'filament/tables');
 
         if ($this->app->runningInConsole()) {

@@ -116,120 +116,10 @@
     @if (! $isLoaded)
         wire:init="loadTable"
     @endif
-    x-data="{
-        collapsedGroups: [],
-
-        isLoading: false,
-
-        selectedRecords: [],
-
-        shouldCheckUniqueSelection: true,
-
-        init: function () {
-            this.$wire.$on('deselectAllTableRecords', () =>
-                this.deselectAllRecords(),
-            )
-
-            $watch('selectedRecords', () => {
-                if (! this.shouldCheckUniqueSelection) {
-                    this.shouldCheckUniqueSelection = true
-
-                    return
-                }
-
-                this.selectedRecords = [...new Set(this.selectedRecords)]
-
-                this.shouldCheckUniqueSelection = false
-            })
-        },
-
-        mountBulkAction: function (name) {
-            $wire.set('selectedTableRecords', this.selectedRecords, false)
-            $wire.mountTableBulkAction(name)
-        },
-
-        toggleSelectRecordsOnPage: function () {
-            const keys = this.getRecordsOnPage()
-
-            if (this.areRecordsSelected(keys)) {
-                this.deselectRecords(keys)
-
-                return
-            }
-
-            this.selectRecords(keys)
-        },
-
-        getRecordsOnPage: function () {
-            const keys = []
-
-            for (checkbox of $el.getElementsByClassName('fi-ta-record-checkbox')) {
-                keys.push(checkbox.value)
-            }
-
-            return keys
-        },
-
-        selectRecords: function (keys) {
-            for (key of keys) {
-                if (this.isRecordSelected(key)) {
-                    continue
-                }
-
-                this.selectedRecords.push(key)
-            }
-        },
-
-        deselectRecords: function (keys) {
-            for (key of keys) {
-                let index = this.selectedRecords.indexOf(key)
-
-                if (index === -1) {
-                    continue
-                }
-
-                this.selectedRecords.splice(index, 1)
-            }
-        },
-
-        selectAllRecords: async function () {
-            this.isLoading = true
-
-            this.selectedRecords = await $wire.getAllSelectableTableRecordKeys()
-
-            this.isLoading = false
-        },
-
-        deselectAllRecords: function () {
-            this.selectedRecords = []
-        },
-
-        isRecordSelected: function (key) {
-            return this.selectedRecords.includes(key)
-        },
-
-        areRecordsSelected: function (keys) {
-            return keys.every((key) => this.isRecordSelected(key))
-        },
-
-        toggleCollapseGroup: function (group) {
-            if (this.isGroupCollapsed(group)) {
-                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
-
-                return
-            }
-
-            this.collapsedGroups.push(group)
-        },
-
-        isGroupCollapsed: function (group) {
-            return this.collapsedGroups.includes(group)
-        },
-
-        resetCollapsedGroups: function () {
-            this.collapsedGroups = []
-        },
-    }"
+    x-ignore
+    ax-load
+    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
+    x-data="table"
     @class([
         'fi-ta',
         'animate-pulse' => $records === null,
@@ -964,8 +854,52 @@
 
                                 @if (! $isGroupsOnly)
                                     <x-filament-tables::row>
+                                        @php
+                                            $groupHeaderColspan = $columnsCount;
+
+                                            if ($isSelectionEnabled) {
+                                                $groupHeaderColspan--;
+
+                                                if (
+                                                    ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
+                                                    count($actions) &&
+                                                    ($actionsPosition === ActionsPosition::BeforeCells)
+                                                ) {
+                                                    $groupHeaderColspan--;
+                                                }
+                                            }
+                                        @endphp
+
+                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
+                                            @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
+                                                <td class="bg-gray-50 dark:bg-white/5"></td>
+                                            @endif
+
+                                            <x-filament-tables::cell class="bg-gray-50 dark:bg-white/5 w-1">
+                                                <div class="px-3">
+                                                    <x-filament-tables::selection.checkbox
+                                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
+                                                        :x-bind:checked="'
+                                                            const recordsInGroup = getRecordsInGroupOnPage(' . \Illuminate\Support\Js::from($recordGroupKey) . ')
+
+                                                            if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
+                                                                $el.checked = true
+
+                                                                return \'checked\'
+                                                            }
+
+                                                            $el.checked = false
+
+                                                            return null
+                                                        '"
+                                                        :x-on:click="'toggleSelectRecordsInGroup(' . \Illuminate\Support\Js::from($recordGroupKey) . ')'"
+                                                    />
+                                                </div>
+                                            </x-filament-tables::cell>
+                                        @endif
+
                                         <td
-                                            colspan="{{ $columnsCount }}"
+                                            colspan="{{ $groupHeaderColspan }}"
                                             class="p-0"
                                         >
                                             <x-filament-tables::group.header
@@ -975,6 +909,12 @@
                                                 :title="$recordGroupTitle"
                                             />
                                         </td>
+
+                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                            <td>
+                                                Checkbox
+                                            </td>
+                                        @endif
                                     </x-filament-tables::row>
                                 @endif
 
@@ -1022,6 +962,7 @@
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
                                                     class="fi-ta-record-checkbox"
+                                                    :data-group="$recordGroupKey"
                                                 />
                                             @endif
                                         </x-filament-tables::selection.cell>
@@ -1082,6 +1023,7 @@
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
                                                     class="fi-ta-record-checkbox"
+                                                    :data-group="$recordGroupKey"
                                                 />
                                             @endif
                                         </x-filament-tables::selection.cell>
