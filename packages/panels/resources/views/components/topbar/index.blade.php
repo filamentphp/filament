@@ -46,10 +46,7 @@
         @if (filament()->hasTopNavigation())
             <div class="me-6 hidden lg:flex">
                 @if ($homeUrl = filament()->getHomeUrl())
-                    <a
-                        href="{{ $homeUrl }}"
-                        wire:navigate
-                    >
+                    <a href="{{ $homeUrl }}" wire:navigate>
                         <x-filament-panels::logo />
                     </a>
                 @else

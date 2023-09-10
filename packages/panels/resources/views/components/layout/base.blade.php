@@ -103,12 +103,10 @@
         @filamentScripts(withCore: true)
 
         @if (config('filament.broadcasting.echo'))
-            <script>
-                window.addEventListener('livewire:navigated', () => {
-                    window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
+            <script data-navigate-once>
+                window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
 
-                    window.dispatchEvent(new CustomEvent('EchoLoaded'))
-                })
+                window.dispatchEvent(new CustomEvent('EchoLoaded'))
             </script>
         @endif
 
