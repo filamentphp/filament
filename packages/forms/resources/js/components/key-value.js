@@ -32,10 +32,7 @@ export default function keyValueFormComponent({ state }) {
                     return Object.keys(value).length
                 }
 
-                if (
-                    (getLength(state) === 0) &&
-                    (getLength(oldState) === 0)
-                ) {
+                if (getLength(state) === 0 && getLength(oldState) === 0) {
                     return
                 }
 
@@ -71,7 +68,7 @@ export default function keyValueFormComponent({ state }) {
         },
 
         updateRows: function () {
-            if (! this.shouldUpdateRows) {
+            if (!this.shouldUpdateRows) {
                 this.shouldUpdateRows = true
 
                 return
