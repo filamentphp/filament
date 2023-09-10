@@ -87,7 +87,7 @@ trait CanSearchRecords
                 continue;
             }
 
-            foreach (explode(' ', $search) as $searchWord) {
+            foreach ($this->extractTableSearchWords($search) as $searchWord) {
                 $query->where(function (Builder $query) use ($column, $searchWord) {
                     $isFirst = true;
 
@@ -106,20 +106,20 @@ trait CanSearchRecords
     /**
      * @return array<integer, string>
      */
-    protected function searchWords(string $search): array
+    protected function extractTableSearchWords(string $search): array
     {
-        return explode(' ', preg_replace('/\s+/', ' ', trim($search)));
+        return explode(' ', preg_replace('/\s+/', ' ', $search));
     }
 
     protected function applyGlobalSearchToTableQuery(Builder $query): Builder
     {
-        $search = $this->getTableSearch();
+        $search = trim($this->getTableSearch());
 
         if (blank($search)) {
             return $query;
         }
 
-        foreach ($this->searchWords($search) as $searchWord) {
+        foreach ($this->extractTableSearchWords($search) as $searchWord) {
             $query->where(function (Builder $query) use ($searchWord) {
                 $isFirst = true;
 

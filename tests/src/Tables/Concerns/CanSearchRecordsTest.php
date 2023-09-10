@@ -14,19 +14,22 @@ uses(TestCase::class);
 it('can split on whitespace', function () {
     $trait = new class {
         use \Filament\Tables\Concerns\CanSearchRecords {
-            searchWords as public;
+            extractTableSearchWords as public;
         }
     };
 
-    assertCount(1, $trait->searchWords('test'));
-    assertCount(1, $trait->searchWords('  test  '));
-    assertCount(1, $trait->searchWords(" \t test \n "));
+    assertCount(1, $trait->extractTableSearchWords('test'));
 
-    assertCount(2, $trait->searchWords('testy test'));
-    assertCount(2, $trait->searchWords('  testy test  '));
-    assertCount(2, $trait->searchWords('testy   test'));
-    assertCount(2, $trait->searchWords("testy \t \n \r  test"));
-    assertCount(2, $trait->searchWords(" \t testy test \n "));
+    assertCount(2, $trait->extractTableSearchWords('testy test'));
+    assertCount(2, $trait->extractTableSearchWords('testy   test'));
+    assertCount(2, $trait->extractTableSearchWords("testy \t \n \r  test"));
 
-    assertCount(3, $trait->searchWords("   \t testy  \t  tasty  \n  test \r   "));
+    // Leading and trailing whitespace are extracted as empty words.
+    assertCount(3, $trait->extractTableSearchWords('  test  '));
+    assertCount(3, $trait->extractTableSearchWords(" \t test \n "));
+    assertCount(4, $trait->extractTableSearchWords('  testy test  '));
+    assertCount(4, $trait->extractTableSearchWords(" \t testy test \n "));
+    assertCount(5, $trait->extractTableSearchWords("   \t testy  \t  tasty  \n  test \r   "));
+
+    $this->assertSame(['', 'test', ''], $trait->extractTableSearchWords('   test   '));
 });
