@@ -99,6 +99,7 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             $url ??= $media?->getUrl();
 
             return [
+                'caption' => $media->getCustomProperty('caption') ?? null,
                 'name' => $media->getAttributeValue('name') ?? $media->getAttributeValue('file_name'),
                 'size' => $media->getAttributeValue('size'),
                 'type' => $media->getAttributeValue('mime_type'),

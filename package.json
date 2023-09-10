@@ -55,5 +55,8 @@
         "trix": "^1.3.1",
         "uuid-browser": "^3.1.0",
         "vanilla-colorful": "^0.6.2"
+    },
+    "dependencies": {
+        "filepond-plugin-manage-metadata": "^1.0.9"
     }
 }

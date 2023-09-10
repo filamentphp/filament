@@ -9,6 +9,8 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
+// import FilePondPluginManageMetadata from 'filepond-plugin-manage-metadata'
+import FilePondPluginManageMetadata from './filepond-plugin-manage-metadata.js'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -19,6 +21,7 @@ FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
+FilePond.registerPlugin(FilePondPluginManageMetadata)
 
 window.FilePond = FilePond
 
@@ -61,6 +64,10 @@ export default function fileUploadFormComponent({
     uploadButtonPosition,
     uploadProgressIndicatorPosition,
     uploadUsing,
+
+    enableManageMetadata,
+    labelButtonManageMetadata,
+    onManageMetadata,
 }) {
     return {
         fileKeyIndex: {},
@@ -87,6 +94,20 @@ export default function fileUploadFormComponent({
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
             this.pond = FilePond.create(this.$refs.input, {
+
+                // filepond-plugin-manage-metadata
+                enableManageMetadata: enableManageMetadata,
+                labelButtonManageMetadata: labelButtonManageMetadata ?? 'Edit caption',
+                onManageMetadata: async (item) => {
+
+                    let currentCaption = item.getMetadata('caption');
+                    let newCaption = window.prompt('Edit file caption', currentCaption);
+
+                    if (newCaption && newCaption != currentCaption) {
+                        item.setMetadata('caption', newCaption);
+                    }
+                },
+
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
                 allowPaste: false,
@@ -150,6 +171,7 @@ export default function fileUploadFormComponent({
                         uploadUsing(
                             fileKey,
                             file,
+                            metadata,
                             (fileKey) => {
                                 this.shouldUpdateState = true
 
@@ -333,6 +355,9 @@ export default function fileUploadFormComponent({
                     source: uploadedFile.url,
                     options: {
                         type: 'local',
+                        metadata: {
+                            caption: uploadedFile.caption ?? null,
+                        },
                         ...(/^image/.test(uploadedFile.type)
                             ? {}
                             : {

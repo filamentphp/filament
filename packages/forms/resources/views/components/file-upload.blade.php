@@ -61,7 +61,19 @@
             state: $wire.{{ $applyStateBindingModifiers("\$entangle('{$statePath}')") }},
             uploadButtonPosition: @js($getUploadButtonPosition()),
             uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
-            uploadUsing: (fileKey, file, success, error, progress) => {
+            enableManageMetadata: @js($isCaptionable()),
+            onManageMetadata: async (item) => {
+        
+                let currentCaption = item.getMetadata('caption');
+                let newCaption = window.prompt('Edit file caption', currentCaption);
+        
+                if (newCaption && newCaption != currentCaption) {
+                    item.setMetadata('caption', newCaption);
+                }
+            },
+            uploadUsing: (fileKey, file, metadata, success, error, progress) => {
+                console.log('metadata inside uploadUsing', metadata);
+        
                 $wire.upload(
                     `{{ $statePath }}.${fileKey}`,
                     file,
@@ -217,8 +229,10 @@
                                                                     ', theme: $store.theme }'"
                                                                     x-on:click.stop.prevent="currentRatio = '{{ $label }}'; editor.setAspectRatio({{ $ratio }})"
                                                                     color="gray"
-                                                                    x-bind:class="{ '!bg-gray-50 dark:!bg-gray-700': currentRatio ===
-                                                                            '{{ $label }}' }"
+                                                                    x-bind:class="{
+                                                                        '!bg-gray-50 dark:!bg-gray-700': currentRatio ===
+                                                                            '{{ $label }}'
+                                                                    }"
                                                                     grouped>
                                                                     {{ $label }}
                                                                 </x-filament::button>

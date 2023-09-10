@@ -23,6 +23,8 @@ class BaseFileUpload extends Field
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
+    protected bool | Closure $isCaptionable = false;
+
     protected bool | Closure $isDeletable = true;
 
     protected bool | Closure $isDownloadable = false;
@@ -214,6 +216,13 @@ class BaseFileUpload extends Field
 
             return "mimetypes:{$types}";
         });
+
+        return $this;
+    }
+
+    public function captionable(bool | Closure $condition = true): static
+    {
+        $this->isCaptionable = $condition;
 
         return $this;
     }
@@ -435,6 +444,11 @@ class BaseFileUpload extends Field
         $this->saveUploadedFileUsing = $callback;
 
         return $this;
+    }
+
+    public function isCaptionable(): bool
+    {
+        return (bool) $this->evaluate($this->isCaptionable);
     }
 
     public function isDeletable(): bool
