@@ -103,6 +103,9 @@ trait CanSearchRecords
         return $query;
     }
 
+    /**
+     * @return array<integer, string>
+     */
     protected function searchWords(string $search): array
     {
         return explode(' ', preg_replace('/\s+/', ' ', trim($search)));
