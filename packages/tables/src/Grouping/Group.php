@@ -206,9 +206,9 @@ class Group extends Component
         );
     }
 
-    public function getKey(Model $record): ?string
+    public function getStringKey(Model $record): ?string
     {
-        $key = $this->getRawKey($record);
+        $key = $this->getKey($record);
 
         if ($key instanceof BackedEnum) {
             $key = $key->value;
@@ -225,12 +225,12 @@ class Group extends Component
         return filled($key) ? strval($key) : null;
     }
 
-    public function getRawKey(Model $record): ?string
+    public function getKey(Model $record): mixed
     {
         $column = $this->getColumn();
 
         if ($this->getKeyFromRecordUsing) {
-            return $key = $this->evaluate(
+            return $this->evaluate(
                 $this->getKeyFromRecordUsing,
                 namedInjections: [
                     'column' => $column,
@@ -367,7 +367,7 @@ class Group extends Component
             ) ?? $query;
         }
 
-        $this->scopeQueryByKey($query, $this->getRawKey($record));
+        $this->scopeQueryByKey($query, $this->getKey($record));
 
         return $query;
     }

@@ -190,6 +190,9 @@ trait HasBulkActions
         $this->dispatch('deselectAllTableRecords');
     }
 
+    /**
+     * @return array<string>
+     */
     public function getAllSelectableTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
@@ -223,6 +226,9 @@ trait HasBulkActions
         );
     }
 
+    /**
+     * @return array<string>
+     */
     public function getGroupedSelectableTableRecordKeys(string $group): array
     {
         $query = $this->getFilteredTableQuery();
@@ -234,7 +240,7 @@ trait HasBulkActions
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
             $records = $this->getTable()->selectsCurrentPageOnly() ?
                 $this->getTableRecords()->filter(
-                    fn (Model $record) => $tableGrouping->getKey($record) === $group,
+                    fn (Model $record) => $tableGrouping->getStringKey($record) === $group,
                 ) :
                 $query;
 
@@ -246,7 +252,7 @@ trait HasBulkActions
 
         $records = $this->getTable()->selectsCurrentPageOnly() ?
             $this->getTableRecords()->filter(
-                fn (Model $record) => $tableGrouping->getKey($record) === $group,
+                fn (Model $record) => $tableGrouping->getStringKey($record) === $group,
             ) :
             $query->get();
 

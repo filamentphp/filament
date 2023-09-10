@@ -403,7 +403,7 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
-                                $recordGroupKey = $group?->getKey($record);
+                                $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
 
                                 $collapsibleColumnsLayout?->record($record);
@@ -845,7 +845,7 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
-                                $recordGroupKey = $group?->getKey($record);
+                                $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
                             @endphp
 
