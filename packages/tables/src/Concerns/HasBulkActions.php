@@ -229,7 +229,7 @@ trait HasBulkActions
 
         $tableGrouping = $this->getTableGrouping();
 
-        $tableGrouping->scopeQueryWithKey($query, $group);
+        $tableGrouping->scopeQueryByKey($query, $group);
 
         if (! $this->getTable()->checksIfRecordIsSelectable()) {
             $records = $this->getTable()->selectsCurrentPageOnly() ?

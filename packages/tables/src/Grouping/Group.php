@@ -31,7 +31,7 @@ class Group extends Component
 
     protected ?Closure $scopeQueryUsing = null;
 
-    protected ?Closure $scopeQueryWithKeyUsing = null;
+    protected ?Closure $scopeQueryByKeyUsing = null;
 
     protected ?string $label;
 
@@ -143,9 +143,9 @@ class Group extends Component
         return $this;
     }
 
-    public function scopeQueryWithKeyUsing(?Closure $callback): static
+    public function scopeQueryByKeyUsing(?Closure $callback): static
     {
-        $this->scopeQueryWithKeyUsing = $callback;
+        $this->scopeQueryByKeyUsing = $callback;
 
         return $this;
     }
@@ -208,23 +208,7 @@ class Group extends Component
 
     public function getKey(Model $record): ?string
     {
-        $column = $this->getColumn();
-
-        if ($this->getKeyFromRecordUsing) {
-            $key = $this->evaluate(
-                $this->getKeyFromRecordUsing,
-                namedInjections: [
-                    'column' => $column,
-                    'record' => $record,
-                ],
-                typedInjections: [
-                    Model::class => $record,
-                    $record::class => $record,
-                ],
-            );
-        } else {
-            $key = Arr::get($record, $this->getColumn());
-        }
+        $key = $this->getRawKey($record);
 
         if ($key instanceof BackedEnum) {
             $key = $key->value;
@@ -239,6 +223,27 @@ class Group extends Component
         }
 
         return filled($key) ? strval($key) : null;
+    }
+
+    public function getRawKey(Model $record): ?string
+    {
+        $column = $this->getColumn();
+
+        if ($this->getKeyFromRecordUsing) {
+            return $key = $this->evaluate(
+                $this->getKeyFromRecordUsing,
+                namedInjections: [
+                    'column' => $column,
+                    'record' => $record,
+                ],
+                typedInjections: [
+                    Model::class => $record,
+                    $record::class => $record,
+                ],
+            );
+        }
+
+        return Arr::get($record, $this->getColumn());
     }
 
     public function getTitle(Model $record): ?string
@@ -347,13 +352,11 @@ class Group extends Component
 
     public function scopeQuery(EloquentBuilder $query, Model $record): EloquentBuilder
     {
-        $column = $this->getColumn();
-
         if ($this->scopeQueryUsing) {
             return $this->evaluate(
                 $this->scopeQueryUsing,
                 namedInjections: [
-                    'column' => $column,
+                    'column' => $this->getColumn(),
                     'query' => $query,
                     'record' => $record,
                 ],
@@ -364,18 +367,18 @@ class Group extends Component
             ) ?? $query;
         }
 
-        $this->scopeQueryWithKey($query, Arr::get($record, $column));
+        $this->scopeQueryByKey($query, $this->getRawKey($record));
 
         return $query;
     }
 
-    public function scopeQueryWithKey(EloquentBuilder $query, string $key): EloquentBuilder
+    public function scopeQueryByKey(EloquentBuilder $query, string $key): EloquentBuilder
     {
         $column = $this->getColumn();
 
-        if ($this->scopeQueryWithKeyUsing) {
+        if ($this->scopeQueryByKeyUsing) {
             return $this->evaluate(
-                $this->scopeQueryWithKeyUsing,
+                $this->scopeQueryByKeyUsing,
                 namedInjections: [
                     'column' => $column,
                     'key' => $key,
