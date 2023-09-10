@@ -18,12 +18,7 @@
     ])
 >
     <a
-        href="{{ $url }}"
-        @if ($shouldOpenUrlInNewTab)
-            target="_blank"
-        @else
-            {{-- wire:navigate --}}
-        @endif
+        {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         x-on:click="window.matchMedia(`(max-width: 1024px)`).matches && $store.sidebar.close()"
         @if (filament()->isSidebarCollapsibleOnDesktop())
             x-data="{ tooltip: false }"

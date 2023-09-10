@@ -10,6 +10,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'href' => null,
     'icon' => null,
     'iconAlias' => null,
     'iconPosition' => IconPosition::Before,
@@ -17,6 +18,7 @@
     'keyBindings' => null,
     'size' => 'md',
     'tag' => 'a',
+    'target' => null,
     'tooltip' => null,
     'type' => 'button',
 ])
@@ -88,6 +90,7 @@
 
 @if ($tag === 'a')
     <a
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
