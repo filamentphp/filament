@@ -15,7 +15,9 @@ ViewField::make('rating')
 
 This assumes that you have a `resources/views/filament/forms/components/range-slider.blade.php` file.
 
-Here's another example on how you can pass data to the view:
+### Passing data to view fields
+
+You can pass a simple array of data to to the view using `viewData()`:
 
 ```php
 use Filament\Forms\Components\ViewField;
@@ -23,10 +25,12 @@ use Filament\Forms\Components\ViewField;
 ViewField::make('rating')
     ->view('filament.forms.components.range-slider')
     ->viewData([
-        'name' => 'John Doe',
-        'age' => 23
-        ])
+        'min' => 1,
+        'max' => 5,
+    ])
 ```
+
+However, more complex configuration can be achieved with a [custom field class](#custom-field-classes).
 
 ## Custom field classes
 
