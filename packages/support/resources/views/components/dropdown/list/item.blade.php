@@ -122,7 +122,7 @@
         @if ($shouldOpenUrlInNewTab)
             target="_blank"
         @else
-            {{-- wire:navigate --}}
+            wire:navigate
         @endif
         @if ($keyBindings)
             x-data="{}"

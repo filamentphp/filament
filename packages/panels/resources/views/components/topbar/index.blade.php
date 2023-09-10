@@ -92,7 +92,6 @@
                                             :icon="$item->isActive() ? ($item->getActiveIcon() ?? $icon) : $icon"
                                             tag="a"
                                             :target="$shouldOpenUrlInNewTab ? '_blank' : null"
-                                            :wire:navigate="$shouldOpenUrlInNewTab ? null : true"
                                         >
                                             {{ $item->getLabel() }}
                                         </x-filament::dropdown.list.item>
@@ -109,7 +108,6 @@
                                     :icon="$item->getIcon()"
                                     :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                                     :url="$item->getUrl()"
-                                    :wire:navigate="$shouldOpenUrlInNewTab ? null : true"
                                 >
                                     {{ $item->getLabel() }}
                                 </x-filament-panels::topbar.item>
