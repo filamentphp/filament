@@ -130,6 +130,42 @@ public function table(Table $table): Table
 
 <AutoScreenshot name="tables/grouping-descriptions" alt="Table with group descriptions" version="3.x" />
 
+## Setting a group key
+
+By default, the key of a group will be the value of the attribute. It is used internally as a raw identifier of that group, instead of the [title](#setting-a-group-title). You may customize it by returning a new key from the `getKeyFromRecordUsing()` method of a `Group` object:
+
+```php
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('status')
+                ->getKeyFromRecordUsing(fn (Post $record): string => $record->status->value),
+        ]);
+}
+```
+
+## Date groups
+
+When using a date-time column as a group, you may want to group by the date only, and ignore the time. To do this, use the `date()` method on a `Group` object:
+
+```php
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('created_at')
+                ->date(),
+        ]);
+}
+```
+
 ## Collapsible groups
 
 You can allow rows inside a group to be collapsed underneath their group title. To enable this, use a `Group` object with the `collapsible()` method:
@@ -196,7 +232,7 @@ public function table(Table $table): Table
 
 ## Customizing the Eloquent query scoping behaviour
 
-Some features require the table to be able to scope an Eloquent query according to a group. You can customize how we do this using the `scopeQueryUsing()` method on a `Group` object:
+Some features require the table to be able to scope an Eloquent query according to a group. You can customize how we do this using the `scopeQueryByKeyUsing()` method on a `Group` object:
 
 ```php
 use Filament\Tables\Grouping\Group;
@@ -207,7 +243,7 @@ public function table(Table $table): Table
     return $table
         ->groups([
             Group::make('status')
-                ->scopeQueryUsing(fn (Builder $query, Post $record) => $query->where('status', $record->status)),
+                ->scopeQueryByKeyUsing(fn (Builder $query, string $key) => $query->where('status', $key)),
         ]);
 }
 ```

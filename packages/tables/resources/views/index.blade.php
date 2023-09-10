@@ -116,120 +116,10 @@
     @if (! $isLoaded)
         wire:init="loadTable"
     @endif
-    x-data="{
-        collapsedGroups: [],
-
-        isLoading: false,
-
-        selectedRecords: [],
-
-        shouldCheckUniqueSelection: true,
-
-        init: function () {
-            this.$wire.$on('deselectAllTableRecords', () =>
-                this.deselectAllRecords(),
-            )
-
-            $watch('selectedRecords', () => {
-                if (! this.shouldCheckUniqueSelection) {
-                    this.shouldCheckUniqueSelection = true
-
-                    return
-                }
-
-                this.selectedRecords = [...new Set(this.selectedRecords)]
-
-                this.shouldCheckUniqueSelection = false
-            })
-        },
-
-        mountBulkAction: function (name) {
-            $wire.set('selectedTableRecords', this.selectedRecords, false)
-            $wire.mountTableBulkAction(name)
-        },
-
-        toggleSelectRecordsOnPage: function () {
-            const keys = this.getRecordsOnPage()
-
-            if (this.areRecordsSelected(keys)) {
-                this.deselectRecords(keys)
-
-                return
-            }
-
-            this.selectRecords(keys)
-        },
-
-        getRecordsOnPage: function () {
-            const keys = []
-
-            for (checkbox of $el.getElementsByClassName('fi-ta-record-checkbox')) {
-                keys.push(checkbox.value)
-            }
-
-            return keys
-        },
-
-        selectRecords: function (keys) {
-            for (key of keys) {
-                if (this.isRecordSelected(key)) {
-                    continue
-                }
-
-                this.selectedRecords.push(key)
-            }
-        },
-
-        deselectRecords: function (keys) {
-            for (key of keys) {
-                let index = this.selectedRecords.indexOf(key)
-
-                if (index === -1) {
-                    continue
-                }
-
-                this.selectedRecords.splice(index, 1)
-            }
-        },
-
-        selectAllRecords: async function () {
-            this.isLoading = true
-
-            this.selectedRecords = await $wire.getAllSelectableTableRecordKeys()
-
-            this.isLoading = false
-        },
-
-        deselectAllRecords: function () {
-            this.selectedRecords = []
-        },
-
-        isRecordSelected: function (key) {
-            return this.selectedRecords.includes(key)
-        },
-
-        areRecordsSelected: function (keys) {
-            return keys.every((key) => this.isRecordSelected(key))
-        },
-
-        toggleCollapseGroup: function (group) {
-            if (this.isGroupCollapsed(group)) {
-                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
-
-                return
-            }
-
-            this.collapsedGroups.push(group)
-        },
-
-        isGroupCollapsed: function (group) {
-            return this.collapsedGroups.includes(group)
-        },
-
-        resetCollapsedGroups: function () {
-            this.collapsedGroups = []
-        },
-    }"
+    x-ignore
+    ax-load
+    ax-load-src="{{ \Filament\Support\Facades\FilamentAsset::getAlpineComponentSrc('table', 'filament/tables') }}"
+    x-data="table"
     @class([
         'fi-ta',
         'animate-pulse' => $records === null,
@@ -513,7 +403,7 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
-                                $recordGroupKey = $group?->getKey($record);
+                                $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
 
                                 $collapsibleColumnsLayout?->record($record);
@@ -551,7 +441,18 @@
                                         '-mx-4 w-[calc(100%+2rem)] border-y border-gray-200 first:border-t-0 dark:border-white/5 sm:-mx-6 sm:w-[calc(100%+3rem)]' => $contentGrid,
                                     ])
                                     :x-bind:class="$hasSummary ? null : '{ \'-mb-4 border-b-0\': isGroupCollapsed(\'' . $recordGroupTitle . '\') }'"
-                                />
+                                >
+                                    @if ($isSelectionEnabled)
+                                        <x-slot name="start">
+                                            <div class="px-3">
+                                                <x-filament-tables::selection.group-checkbox
+                                                    :key="$recordGroupKey"
+                                                    :title="$recordGroupTitle"
+                                                />
+                                            </div>
+                                        </x-slot>
+                                    @endif
+                                </x-filament-tables::group.header>
                             @endif
 
                             <div
@@ -630,6 +531,7 @@
                                             :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                             :value="$recordKey"
                                             x-model="selectedRecords"
+                                            :data-group="$recordGroupKey"
                                             class="fi-ta-record-checkbox mx-3 my-4"
                                         />
                                     @endif
@@ -943,7 +845,7 @@
                                 $recordAction = $getRecordAction($record);
                                 $recordKey = $getRecordKey($record);
                                 $recordUrl = $getRecordUrl($record);
-                                $recordGroupKey = $group?->getKey($record);
+                                $recordGroupKey = $group?->getStringKey($record);
                                 $recordGroupTitle = $group?->getTitle($record);
                             @endphp
 
@@ -964,8 +866,39 @@
 
                                 @if (! $isGroupsOnly)
                                     <x-filament-tables::row>
+                                        @php
+                                            $groupHeaderColspan = $columnsCount;
+
+                                            if ($isSelectionEnabled) {
+                                                $groupHeaderColspan--;
+
+                                                if (
+                                                    ($recordCheckboxPosition === RecordCheckboxPosition::BeforeCells) &&
+                                                    count($actions) &&
+                                                    ($actionsPosition === ActionsPosition::BeforeCells)
+                                                ) {
+                                                    $groupHeaderColspan--;
+                                                }
+                                            }
+                                        @endphp
+
+                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
+                                            @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
+                                                <td
+                                                    class="bg-gray-50 dark:bg-white/5"
+                                                ></td>
+                                            @endif
+
+                                            <x-filament-tables::selection.group-cell>
+                                                <x-filament-tables::selection.group-checkbox
+                                                    :key="$recordGroupKey"
+                                                    :title="$recordGroupTitle"
+                                                />
+                                            </x-filament-tables::selection.group-cell>
+                                        @endif
+
                                         <td
-                                            colspan="{{ $columnsCount }}"
+                                            colspan="{{ $groupHeaderColspan }}"
                                             class="p-0"
                                         >
                                             <x-filament-tables::group.header
@@ -975,6 +908,15 @@
                                                 :title="$recordGroupTitle"
                                             />
                                         </td>
+
+                                        @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
+                                            <x-filament-tables::selection.group-cell>
+                                                <x-filament-tables::selection.group-checkbox
+                                                    :key="$recordGroupKey"
+                                                    :title="$recordGroupTitle"
+                                                />
+                                            </x-filament-tables::selection.group-cell>
+                                        @endif
                                     </x-filament-tables::row>
                                 @endif
 
@@ -1021,6 +963,7 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
+                                                    :data-group="$recordGroupKey"
                                                     class="fi-ta-record-checkbox"
                                                 />
                                             @endif
@@ -1081,6 +1024,7 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
+                                                    :data-group="$recordGroupKey"
                                                     class="fi-ta-record-checkbox"
                                                 />
                                             @endif
