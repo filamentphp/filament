@@ -88,6 +88,7 @@
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
                     :href="$profileItemUrl ?? filament()->getTenantProfileUrl()"
+                    :should-open-url-in-new-tab="$profileItem?->shouldOpenUrlInNewTab() ?? false"
                     :icon="$profileItem?->getIcon() ?? 'heroicon-m-cog-6-tooth'"
                     tag="a"
                 >
@@ -99,6 +100,7 @@
                 <x-filament::dropdown.list.item
                     :color="$billingItem?->getColor() ?? 'gray'"
                     :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
+                    :should-open-url-in-new-tab="$billingItem?->shouldOpenUrlInNewTab() ?? false"
                     :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
                     tag="a"
                 >
@@ -114,6 +116,7 @@
                 <x-filament::dropdown.list.item
                     :color="$item->getColor()"
                     :href="$item->getUrl()"
+                    :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
                     :icon="$item->getIcon()"
                     tag="a"
                 >
@@ -142,6 +145,7 @@
             <x-filament::dropdown.list.item
                 :color="$registrationItem?->getColor()"
                 :href="$registrationItemUrl ?? filament()->getTenantRegistrationUrl()"
+                :should-open-url-in-new-tab="$registrationItem?->shouldOpenUrlInNewTab() ?? false"
                 :icon="$registrationItem?->getIcon() ?? 'heroicon-m-plus'"
                 tag="a"
             >
