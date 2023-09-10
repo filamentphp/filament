@@ -45,6 +45,9 @@ it('can trim a search query', function () {
     $trait->tableSearch = '  test  ';
     $this->assertSame('test', $trait->getTableSearch());
 
+    $trait->tableSearch = '';
+    $this->assertSame(null, $trait->getTableSearch());
+
     $trait->tableSearch = null;
     $this->assertNull($trait->getTableSearch());
 });
