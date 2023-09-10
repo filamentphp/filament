@@ -54,8 +54,9 @@ export default function table() {
                 return
             }
 
-            this.selectedRecords =
+            this.selectRecords(
                 await this.$wire.getGroupedSelectableTableRecordKeys(group)
+            )
 
             this.isLoading = false
         },
