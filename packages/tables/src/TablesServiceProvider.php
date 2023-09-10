@@ -3,7 +3,6 @@
 namespace Filament\Tables;
 
 use Filament\Support\Assets\AlpineComponent;
-use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
 use Filament\Tables\Testing\TestsActions;
 use Filament\Tables\Testing\TestsBulkActions;

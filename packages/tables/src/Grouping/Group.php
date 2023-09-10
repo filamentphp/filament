@@ -3,9 +3,12 @@
 namespace Filament\Tables\Grouping;
 
 use BackedEnum;
+use Carbon\Carbon;
 use Closure;
+use DateTimeInterface;
 use Filament\Support\Components\Component;
 use Filament\Support\Contracts\HasLabel as LabelInterface;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -38,6 +41,8 @@ class Group extends Component
 
     protected bool $isTitlePrefixedWithLabel = true;
 
+    protected bool $isDate = false;
+
     final public function __construct(?string $id = null)
     {
         $this->id($id);
@@ -61,6 +66,13 @@ class Group extends Component
     public function column(?string $column): static
     {
         $this->column = $column;
+
+        return $this;
+    }
+
+    public function date(bool $condition = true): static
+    {
+        $this->isDate = $condition;
 
         return $this;
     }
@@ -199,7 +211,7 @@ class Group extends Component
         $column = $this->getColumn();
 
         if ($this->getKeyFromRecordUsing) {
-            return $this->evaluate(
+            $key = $this->evaluate(
                 $this->getKeyFromRecordUsing,
                 namedInjections: [
                     'column' => $column,
@@ -210,12 +222,20 @@ class Group extends Component
                     $record::class => $record,
                 ],
             );
+        } else {
+            $key = Arr::get($record, $this->getColumn());
         }
-
-        $key = Arr::get($record, $this->getColumn());
 
         if ($key instanceof BackedEnum) {
             $key = $key->value;
+        }
+
+        if (filled($key) && $this->isDate()) {
+            if (! ($key instanceof DateTimeInterface)) {
+                $key = Carbon::parse($key);
+            }
+
+            $key = $key->format('Y-m-d');
         }
 
         return filled($key) ? strval($key) : null;
@@ -226,7 +246,7 @@ class Group extends Component
         $column = $this->getColumn();
 
         if ($this->getTitleFromRecordUsing) {
-            return $this->evaluate(
+            $title = $this->evaluate(
                 $this->getTitleFromRecordUsing,
                 namedInjections: [
                     'column' => $column,
@@ -237,12 +257,20 @@ class Group extends Component
                     $record::class => $record,
                 ],
             );
+        } else {
+            $title = Arr::get($record, $column);
         }
-
-        $title = Arr::get($record, $column);
 
         if ($title instanceof LabelInterface) {
             $title = $title->getLabel();
+        }
+
+        if (filled($title) && $this->isDate()) {
+            if (! ($title instanceof DateTimeInterface)) {
+                $title = Carbon::parse($title);
+            }
+
+            $title = $title->format(Table::$defaultDateDisplayFormat);
         }
 
         return $title;
@@ -258,10 +286,16 @@ class Group extends Component
         }
 
         if ($relationship = $this->getRelationship($model)) {
-            return $query->groupBy($relationship->getRelated()->qualifyColumn($this->getRelationshipAttribute()));
+            $column = $relationship->getRelated()->qualifyColumn($this->getRelationshipAttribute());
+        } else {
+            $column = $this->getColumn();
         }
 
-        return $query->groupBy($this->getColumn());
+        if ($this->isDate()) {
+            return $query->groupByRaw("date({$column})");
+        }
+
+        return $query->groupBy($column);
     }
 
     public function orderQuery(EloquentBuilder $query, string $direction): EloquentBuilder
@@ -330,17 +364,9 @@ class Group extends Component
             ) ?? $query;
         }
 
-        $key = Arr::get($record, $column);
+        $this->scopeQueryWithKey($query, Arr::get($record, $column));
 
-        if ($relationshipName = $this->getRelationshipName()) {
-            return $query->whereRelation(
-                $relationshipName,
-                $this->getRelationshipAttribute(),
-                $key,
-            );
-        }
-
-        return $query->where($column, $key);
+        return $query;
     }
 
     public function scopeQueryWithKey(EloquentBuilder $query, string $key): EloquentBuilder
@@ -359,14 +385,22 @@ class Group extends Component
         }
 
         if ($relationshipName = $this->getRelationshipName()) {
-            return $query->whereRelation(
+            return $query->whereHas(
                 $relationshipName,
-                $this->getRelationshipAttribute(),
-                $key,
+                fn (EloquentBuilder $query) => $this->applyDefaultScopeToQuery($query, $this->getRelationshipAttribute(), $key),
             );
         }
 
-        return $query->where($column, $key);
+        return $this->applyDefaultScopeToQuery($query, $column, $key);
+    }
+
+    protected function applyDefaultScopeToQuery(EloquentBuilder $query, string $column, mixed $value): EloquentBuilder
+    {
+        if ($this->isDate()) {
+            return $query->whereDate($column, $value);
+        }
+
+        return $query->where($column, $value);
     }
 
     public function getRelationship(Model $record, ?string $name = null): ?Relation
@@ -411,5 +445,10 @@ class Group extends Component
         }
 
         return (string) str($name)->beforeLast('.');
+    }
+
+    public function isDate(): bool
+    {
+        return $this->isDate;
     }
 }

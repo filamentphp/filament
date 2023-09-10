@@ -26,6 +26,10 @@ return [
             'label' => 'Select/deselect item :key for bulk actions.',
         ],
 
+        'bulk_select_group' => [
+            'label' => 'Select/deselect group :title for bulk actions.',
+        ],
+
         'search' => [
             'label' => 'Search',
             'placeholder' => 'Search',

@@ -14,7 +14,7 @@ export default function table() {
             )
 
             this.$watch('selectedRecords', () => {
-                if (! this.shouldCheckUniqueSelection) {
+                if (!this.shouldCheckUniqueSelection) {
                     this.shouldCheckUniqueSelection = true
 
                     return
@@ -47,12 +47,15 @@ export default function table() {
             this.isLoading = true
 
             if (this.areRecordsSelected(this.getRecordsInGroupOnPage(group))) {
-                this.deselectRecords(await this.$wire.getGroupedSelectableTableRecordKeys(group))
+                this.deselectRecords(
+                    await this.$wire.getGroupedSelectableTableRecordKeys(group),
+                )
 
                 return
             }
 
-            this.selectedRecords = await this.$wire.getGroupedSelectableTableRecordKeys(group)
+            this.selectedRecords =
+                await this.$wire.getGroupedSelectableTableRecordKeys(group)
 
             this.isLoading = false
         },
@@ -60,7 +63,9 @@ export default function table() {
         getRecordsInGroupOnPage: function (group) {
             const keys = []
 
-            for (let checkbox of this.$root.getElementsByClassName('fi-ta-record-checkbox')) {
+            for (let checkbox of this.$root.getElementsByClassName(
+                'fi-ta-record-checkbox',
+            )) {
                 if (checkbox.dataset.group !== group) {
                     continue
                 }
@@ -74,7 +79,9 @@ export default function table() {
         getRecordsOnPage: function () {
             const keys = []
 
-            for (let checkbox of this.$root.getElementsByClassName('fi-ta-record-checkbox')) {
+            for (let checkbox of this.$root.getElementsByClassName(
+                'fi-ta-record-checkbox',
+            )) {
                 keys.push(checkbox.value)
             }
 
@@ -106,7 +113,8 @@ export default function table() {
         selectAllRecords: async function () {
             this.isLoading = true
 
-            this.selectedRecords = await this.$wire.getAllSelectableTableRecordKeys()
+            this.selectedRecords =
+                await this.$wire.getAllSelectableTableRecordKeys()
 
             this.isLoading = false
         },
@@ -125,7 +133,10 @@ export default function table() {
 
         toggleCollapseGroup: function (group) {
             if (this.isGroupCollapsed(group)) {
-                this.collapsedGroups.splice(this.collapsedGroups.indexOf(group), 1)
+                this.collapsedGroups.splice(
+                    this.collapsedGroups.indexOf(group),
+                    1,
+                )
 
                 return
             }
@@ -141,4 +152,4 @@ export default function table() {
             this.collapsedGroups = []
         },
     }
- }
+}

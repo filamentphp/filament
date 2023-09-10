@@ -441,7 +441,18 @@
                                         '-mx-4 w-[calc(100%+2rem)] border-y border-gray-200 first:border-t-0 dark:border-white/5 sm:-mx-6 sm:w-[calc(100%+3rem)]' => $contentGrid,
                                     ])
                                     :x-bind:class="$hasSummary ? null : '{ \'-mb-4 border-b-0\': isGroupCollapsed(\'' . $recordGroupTitle . '\') }'"
-                                />
+                                >
+                                    @if ($isSelectionEnabled)
+                                        <x-slot name="start">
+                                            <div class="px-3">
+                                                <x-filament-tables::selection.group-checkbox
+                                                    :key="$recordGroupKey"
+                                                    :title="$recordGroupTitle"
+                                                />
+                                            </div>
+                                        </x-slot>
+                                    @endif
+                                </x-filament-tables::group.header>
                             @endif
 
                             <div
@@ -520,6 +531,7 @@
                                             :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                             :value="$recordKey"
                                             x-model="selectedRecords"
+                                            :data-group="$recordGroupKey"
                                             class="fi-ta-record-checkbox mx-3 my-4"
                                         />
                                     @endif
@@ -872,30 +884,17 @@
 
                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::BeforeCells)
                                             @if (count($actions) && $actionsPosition === ActionsPosition::BeforeCells)
-                                                <td class="bg-gray-50 dark:bg-white/5"></td>
+                                                <td
+                                                    class="bg-gray-50 dark:bg-white/5"
+                                                ></td>
                                             @endif
 
-                                            <x-filament-tables::cell class="bg-gray-50 dark:bg-white/5 w-1">
-                                                <div class="px-3">
-                                                    <x-filament-tables::selection.checkbox
-                                                        :label="__('filament-tables::table.fields.bulk_select_page.label')"
-                                                        :x-bind:checked="'
-                                                            const recordsInGroup = getRecordsInGroupOnPage(' . \Illuminate\Support\Js::from($recordGroupKey) . ')
-
-                                                            if (recordsInGroup.length && areRecordsSelected(recordsInGroup)) {
-                                                                $el.checked = true
-
-                                                                return \'checked\'
-                                                            }
-
-                                                            $el.checked = false
-
-                                                            return null
-                                                        '"
-                                                        :x-on:click="'toggleSelectRecordsInGroup(' . \Illuminate\Support\Js::from($recordGroupKey) . ')'"
-                                                    />
-                                                </div>
-                                            </x-filament-tables::cell>
+                                            <x-filament-tables::selection.group-cell>
+                                                <x-filament-tables::selection.group-checkbox
+                                                    :key="$recordGroupKey"
+                                                    :title="$recordGroupTitle"
+                                                />
+                                            </x-filament-tables::selection.group-cell>
                                         @endif
 
                                         <td
@@ -911,9 +910,12 @@
                                         </td>
 
                                         @if ($isSelectionEnabled && $recordCheckboxPosition === RecordCheckboxPosition::AfterCells)
-                                            <td>
-                                                Checkbox
-                                            </td>
+                                            <x-filament-tables::selection.group-cell>
+                                                <x-filament-tables::selection.group-checkbox
+                                                    :key="$recordGroupKey"
+                                                    :title="$recordGroupTitle"
+                                                />
+                                            </x-filament-tables::selection.group-cell>
                                         @endif
                                     </x-filament-tables::row>
                                 @endif
@@ -961,8 +963,8 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
-                                                    class="fi-ta-record-checkbox"
                                                     :data-group="$recordGroupKey"
+                                                    class="fi-ta-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::selection.cell>
@@ -1022,8 +1024,8 @@
                                                     :label="__('filament-tables::table.fields.bulk_select_record.label', ['key' => $recordKey])"
                                                     :value="$recordKey"
                                                     x-model="selectedRecords"
-                                                    class="fi-ta-record-checkbox"
                                                     :data-group="$recordGroupKey"
+                                                    class="fi-ta-record-checkbox"
                                                 />
                                             @endif
                                         </x-filament-tables::selection.cell>
