@@ -71,6 +71,7 @@
                 :color="$item->getColor()"
                 :href="$item->getUrl()"
                 :icon="$item->getIcon()"
+                :shouldOpenUrlInNewTab="$item->shouldOpenUrlInNewTab()"
                 tag="a"
             >
                 {{ $item->getLabel() }}

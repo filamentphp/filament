@@ -335,7 +335,8 @@ public function panel(Panel $panel): Panel
             MenuItem::make()
                 ->label('Settings')
                 ->url(fn (): string => Settings::getUrl())
-                ->icon('heroicon-o-cog-6-tooth'),
+                ->icon('heroicon-o-cog-6-tooth')
+                ->openUrlInNewTab(false),
             // ...
         ]);
 }
