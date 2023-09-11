@@ -59,6 +59,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     #[Url]
     public ?string $activeTab = null;
 
+    /**
+     * @var array<string | int, Tab>
+     */
+    protected array $cachedTabs;
+
     public function mount(): void
     {
         static::authorizeResourceAccess();
@@ -310,7 +315,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     {
         $query = static::getResource()::getEloquentQuery();
 
-        $tabs = $this->getTabs();
+        $tabs = $this->getCachedTabs();
 
         if (
             filled($this->activeTab) &&
@@ -338,9 +343,17 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
         return [];
     }
 
+    /**
+     * @return array<string | int, Tab>
+     */
+    public function getCachedTabs(): array
+    {
+        return $this->cachedTabs ??= $this->getTabs();
+    }
+
     public function getDefaultActiveTab(): string | int | null
     {
-        return array_key_first($this->getTabs());
+        return array_key_first($this->getCachedTabs());
     }
 
     public function updatedActiveTab(): void
