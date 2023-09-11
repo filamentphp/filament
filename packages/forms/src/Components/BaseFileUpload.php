@@ -23,7 +23,7 @@ class BaseFileUpload extends Field
      */
     protected array | Arrayable | Closure | null $acceptedFileTypes = null;
 
-    protected bool | Closure $isCaptionable = false;
+    protected bool | Closure $isCaptionable = true;
 
     protected bool | Closure $isDeletable = true;
 

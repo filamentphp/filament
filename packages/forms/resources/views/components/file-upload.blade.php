@@ -64,21 +64,23 @@
             enableManageMetadata: @js($isCaptionable()),
             onManageMetadata: async (fileKey, item) => {
         
-                let currentCaption = item.getMetadata('caption');
+                let currentCaption = item.getMetadata('caption') ?? '';
                 let newCaption = window.prompt('Edit file caption', currentCaption);
-        
                 if (newCaption && newCaption != currentCaption) {
-                    // line below will cause filepond to re-upload, need a way to set newCaption
-                    // item.setMetadata('caption', newCaption); 
         
-                    return await $wire.annotateUploadedFile(@js($statePath), fileKey, newCaption);
+                    if (fileKey) {
+                        await $wire.annotateUploadedFile(@js($statePath), fileKey, newCaption);
+                        item.setMetadata('caption', newCaption, true);
+                    }
                 }
+        
             },
             uploadUsing: (fileKey, file, metadata, success, error, progress) => {
-                file['metadata'] = metadata;
         
                 console.log('metadata inside uploadUsing', metadata);
                 console.log('file inside uploadUsing', file);
+        
+                file['metadata'] = metadata;
         
                 $wire.upload(
                     `{{ $statePath }}.${fileKey}`,

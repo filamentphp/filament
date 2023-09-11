@@ -9,8 +9,6 @@ import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
 import FilePondPluginImageTransform from 'filepond-plugin-image-transform'
 import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
-// import FilePondPluginManageMetadata from 'filepond-plugin-manage-metadata'
-import FilePondPluginManageMetadata from './filepond-plugin-manage-metadata.js'
 
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
@@ -21,7 +19,6 @@ FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
 FilePond.registerPlugin(FilePondPluginImageTransform)
 FilePond.registerPlugin(FilePondPluginMediaPreview)
-FilePond.registerPlugin(FilePondPluginManageMetadata)
 
 window.FilePond = FilePond
 
@@ -94,17 +91,6 @@ export default function fileUploadFormComponent({
             FilePond.setOptions(locales[locale] ?? locales['en'])
 
             this.pond = FilePond.create(this.$refs.input, {
-
-                // filepond-plugin-manage-metadata
-                enableManageMetadata: enableManageMetadata,
-                labelButtonManageMetadata: labelButtonManageMetadata ?? 'Edit caption',
-                onManageMetadata: async (item) => {
-                    if (!onManageMetadata)
-                        return;
-
-                    onManageMetadata(this.uploadedFileIndex[item.source] ?? null, item);
-                },
-
                 acceptedFileTypes,
                 allowImageExifOrientation: shouldOrientImageFromExif,
                 allowPaste: false,
@@ -252,6 +238,8 @@ export default function fileUploadFormComponent({
             })
 
             this.pond.on('initfile', async (fileItem) => {
+                this.insertAnnotationEditor(fileItem);
+
                 if (!isDownloadable) {
                     return
                 }
@@ -369,6 +357,32 @@ export default function fileUploadFormComponent({
             }
 
             return shouldAppendFiles ? files : files.reverse()
+        },
+
+        insertAnnotationEditor: function (file) {
+            if (file.origin !== FilePond.FileOrigin.LOCAL) {
+                return
+            }
+
+            if (!enableManageMetadata) {
+                return
+            }
+
+            const editIcon = document.createElement('span');
+
+            editIcon.className = 'filepond--edit-icon';
+            editIcon.title = labelButtonManageMetadata;
+            editIcon.addEventListener("click", () => {
+                if (!onManageMetadata)
+                    return;
+
+                onManageMetadata(this.uploadedFileIndex[file.source] ?? null, file);
+            });
+
+            document
+                .getElementById(`filepond--item-${file.id}`)
+                .querySelector('.filepond--file-info-main')
+                .prepend(editIcon)
         },
 
         insertDownloadLink: function (file) {
