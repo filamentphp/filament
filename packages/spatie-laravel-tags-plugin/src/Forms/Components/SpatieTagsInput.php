@@ -40,7 +40,7 @@ class SpatieTagsInput extends TagsInput
                 return;
             }
 
-            if ($type = $component->getType() && ! $component->isAnyTagTypeAllowed()) {
+            if (($type = $component->getType()) && ! $component->isAnyTagTypeAllowed()) {
                 $record->syncTagsWithType($state, $type);
 
                 return;
