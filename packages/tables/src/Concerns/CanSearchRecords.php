@@ -149,7 +149,7 @@ trait CanSearchRecords
      */
     public function getTableSearch()
     {
-        return filled($this->tableSearch) ? trim($this->tableSearch) : null;
+        return filled($this->tableSearch) ? trim(strval($this->tableSearch)) : null;
     }
 
     public function hasTableSearch(): bool
