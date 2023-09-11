@@ -7,7 +7,8 @@ use function PHPUnit\Framework\assertCount;
 uses(TestCase::class);
 
 it('can extract the search into words using whitespace', function () {
-    $trait = new class {
+    $trait = new class
+    {
         use \Filament\Tables\Concerns\CanSearchRecords {
             extractTableSearchWords as public;
         }
@@ -22,7 +23,8 @@ it('can extract the search into words using whitespace', function () {
 });
 
 it('can trim the search query', function () {
-    $trait = new class {
+    $trait = new class
+    {
         use \Filament\Tables\Concerns\CanSearchRecords;
     };
 
