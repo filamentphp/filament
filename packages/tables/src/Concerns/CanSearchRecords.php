@@ -144,10 +144,7 @@ trait CanSearchRecords
         return $query;
     }
 
-    /**
-     * @return ?string
-     */
-    public function getTableSearch()
+    public function getTableSearch(): ?string
     {
         return filled($this->tableSearch) ? trim(strval($this->tableSearch)) : null;
     }
@@ -256,7 +253,7 @@ trait CanSearchRecords
             // Nested array keys are flattened into `dot.syntax`.
             $searches[
                 implode('.', array_slice($path, 0, $iterator->getDepth() + 1))
-            ] = trim($value);
+            ] = trim(strval($value));
         }
 
         return $searches;
