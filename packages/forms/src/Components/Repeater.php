@@ -99,6 +99,8 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             }
 
             $component->state($items);
+
+            $component->hasHydratedSimpleState = true;
         });
 
         $this->registerActions([
@@ -519,14 +521,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
             $simpleField = $component->getSimpleField();
 
-            if (! $simpleField) {
-                return $state;
-            }
-
             $items = [];
 
-            foreach ($state as $value) {
-                $items[] = [$simpleField->getName() => $value];
+            foreach ($state ?? [] as $itemData) {
+                $items[(string) Str::uuid()] = $simpleField ?
+                    [$simpleField->getName() => $itemData] :
+                    $itemData;
             }
 
             $component->hasHydratedSimpleState = true;
