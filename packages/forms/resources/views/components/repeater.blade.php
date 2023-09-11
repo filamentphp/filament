@@ -27,8 +27,13 @@
                 ->class(['fi-fo-repeater grid gap-y-4'])
         }}
     >
-        @if ((count($containers) > 1) && $isCollapsible)
-            <div class="flex gap-x-3">
+        @if ($isCollapsible)
+            <div
+                @class([
+                    'flex gap-x-3',
+                    'hidden' => count($containers) < 2,
+                ])
+            >
                 <span
                     x-on:click="$dispatch('repeater-collapse', '{{ $statePath }}')"
                 >

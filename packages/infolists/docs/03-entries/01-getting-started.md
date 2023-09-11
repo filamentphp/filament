@@ -107,7 +107,7 @@ TextEntry::make('title')
     ->placeholder('Untitled')
 ```
 
-<AutoScreenshot name="infolists/entries/placeholder" alt="Entry with a placeholder for empty state"" version="3.x" />
+<AutoScreenshot name="infolists/entries/placeholder" alt="Entry with a placeholder for empty state" version="3.x" />
 
 ## Adding helper text below the entry
 

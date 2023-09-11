@@ -103,7 +103,7 @@
         @filamentScripts(withCore: true)
 
         @if (config('filament.broadcasting.echo'))
-            <script>
+            <script data-navigate-once>
                 window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
 
                 window.dispatchEvent(new CustomEvent('EchoLoaded'))

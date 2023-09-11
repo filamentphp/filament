@@ -7,7 +7,7 @@ use Filament\Notifications\Notification;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 
-class MountableAction extends StaticAction implements HasLivewire
+abstract class MountableAction extends StaticAction implements HasLivewire
 {
     use Concerns\BelongsToLivewire;
     use Concerns\CanBeMounted;

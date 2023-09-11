@@ -4,6 +4,7 @@ namespace Filament\Tables\Concerns;
 
 use Closure;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Filament\Tables\Actions\BulkAction;
@@ -190,6 +191,9 @@ trait HasBulkActions
         $this->dispatch('deselectAllTableRecords');
     }
 
+    /**
+     * @return array<string>
+     */
     public function getAllSelectableTableRecordKeys(): array
     {
         $query = $this->getFilteredTableQuery();
@@ -207,6 +211,50 @@ trait HasBulkActions
 
         $records = $this->getTable()->selectsCurrentPageOnly() ?
             $this->getTableRecords() :
+            $query->get();
+
+        return $records->reduce(
+            function (array $carry, Model $record): array {
+                if (! $this->getTable()->isRecordSelectable($record)) {
+                    return $carry;
+                }
+
+                $carry[] = (string) $record->getKey();
+
+                return $carry;
+            },
+            initial: [],
+        );
+    }
+
+    /**
+     * @return array<string>
+     */
+    public function getGroupedSelectableTableRecordKeys(string $group): array
+    {
+        $query = $this->getFilteredTableQuery();
+
+        $tableGrouping = $this->getTableGrouping();
+
+        $tableGrouping->scopeQueryByKey($query, $group);
+
+        if (! $this->getTable()->checksIfRecordIsSelectable()) {
+            $records = $this->getTable()->selectsCurrentPageOnly() ?
+                $this->getTableRecords()->filter(
+                    fn (Model $record) => $tableGrouping->getStringKey($record) === $group,
+                ) :
+                $query;
+
+            return $records
+                ->pluck($query->getModel()->getQualifiedKeyName())
+                ->map(fn ($key): string => (string) $key)
+                ->all();
+        }
+
+        $records = $this->getTable()->selectsCurrentPageOnly() ?
+            $this->getTableRecords()->filter(
+                fn (Model $record) => $tableGrouping->getStringKey($record) === $group,
+            ) :
             $query->get();
 
         return $records->reduce(
@@ -356,5 +404,10 @@ trait HasBulkActions
     public function isTableRecordSelectable(): ?Closure
     {
         return null;
+    }
+
+    public function mountedTableBulkActionInfolist(): Infolist
+    {
+        return $this->getMountedTableBulkAction()->getInfolist();
     }
 }

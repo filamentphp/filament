@@ -14,6 +14,8 @@ class ViewManager
      */
     protected array $renderHooks = [];
 
+    protected bool $hasSpaMode = false;
+
     /**
      * @param  string | array<string> | null  $scopes
      */
@@ -65,5 +67,15 @@ class ViewManager
         }
 
         return new HtmlString(implode('', $hooks));
+    }
+
+    public function spa(bool $condition = true): void
+    {
+        $this->hasSpaMode = $condition;
+    }
+
+    public function hasSpaMode(): bool
+    {
+        return $this->hasSpaMode;
     }
 }
