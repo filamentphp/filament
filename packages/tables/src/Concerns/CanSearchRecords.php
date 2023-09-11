@@ -104,7 +104,7 @@ trait CanSearchRecords
     }
 
     /**
-     * @return array<integer, string>
+     * @return array<string>
      */
     protected function extractTableSearchWords(string $search): array
     {
