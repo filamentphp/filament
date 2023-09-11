@@ -178,9 +178,9 @@ class NavigationItem extends Component
         return $this->evaluate($this->label);
     }
 
-    public function getSort(): int
+    public function getSort(): ?int
     {
-        return $this->evaluate($this->sort) ?? -1;
+        return $this->evaluate($this->sort) ?? null;
     }
 
     public function getUrl(): ?string
