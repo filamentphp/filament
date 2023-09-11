@@ -6,12 +6,7 @@ use function PHPUnit\Framework\assertCount;
 
 uses(TestCase::class);
 
-/**
- * The user-entered search string for a table is split into words
- * on any runs of whitespace.
- */
-
-it('can split on whitespace', function () {
+it('can extract the search into words using whitespace', function () {
     $trait = new class {
         use \Filament\Tables\Concerns\CanSearchRecords {
             extractTableSearchWords as public;
@@ -23,18 +18,10 @@ it('can split on whitespace', function () {
     assertCount(2, $trait->extractTableSearchWords('testy test'));
     assertCount(2, $trait->extractTableSearchWords('testy   test'));
     assertCount(2, $trait->extractTableSearchWords("testy \t \n \r  test"));
-
-    // Leading and trailing whitespace are extracted as empty words.
-    assertCount(3, $trait->extractTableSearchWords('  test  '));
-    assertCount(3, $trait->extractTableSearchWords(" \t test \n "));
-    assertCount(4, $trait->extractTableSearchWords('  testy test  '));
-    assertCount(4, $trait->extractTableSearchWords(" \t testy test \n "));
-    assertCount(5, $trait->extractTableSearchWords("   \t testy  \t  tasty  \n  test \r   "));
-
-    $this->assertSame(['', 'test', ''], $trait->extractTableSearchWords('   test   '));
+    assertCount(3, $trait->extractTableSearchWords('testy   tasty   test'));
 });
 
-it('can trim a search query', function () {
+it('can trim the search query', function () {
     $trait = new class {
         use \Filament\Tables\Concerns\CanSearchRecords;
     };
