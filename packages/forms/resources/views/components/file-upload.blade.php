@@ -63,17 +63,14 @@
             uploadProgressIndicatorPosition: @js($getUploadProgressIndicatorPosition()),
             enableManageMetadata: @js($isCaptionable()),
             onManageMetadata: async (fileKey, item) => {
-        
                 let currentCaption = item.getMetadata('caption') ?? '';
                 let newCaption = window.prompt('Edit file caption', currentCaption);
                 if (newCaption && newCaption != currentCaption) {
-        
                     if (fileKey) {
                         await $wire.annotateUploadedFile(@js($statePath), fileKey, newCaption);
                         item.setMetadata('caption', newCaption, true);
                     }
                 }
-        
             },
             uploadUsing: (fileKey, file, metadata, success, error, progress) => {
         

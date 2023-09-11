@@ -371,12 +371,15 @@ export default function fileUploadFormComponent({
             const editIcon = document.createElement('span');
 
             editIcon.className = 'filepond--edit-icon';
-            editIcon.title = labelButtonManageMetadata;
-            editIcon.addEventListener("click", () => {
+            editIcon.title = (file.getMetadata("caption") === undefined)
+                ? labelButtonManageMetadata ?? 'Edit caption'
+                : file.getMetadata("caption");
+            editIcon.addEventListener("click", async () => {
                 if (!onManageMetadata)
                     return;
 
-                onManageMetadata(this.uploadedFileIndex[file.source] ?? null, file);
+                await onManageMetadata(this.uploadedFileIndex[file.source] ?? null, file);
+                editIcon.title = file.getMetadata("caption");
             });
 
             document
