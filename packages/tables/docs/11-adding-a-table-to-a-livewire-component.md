@@ -73,7 +73,7 @@ class ListProducts extends Component implements HasForms, HasTable
     
     public function render(): View
     {
-        return view('list-products');
+        return view('livewire.list-products');
     }
 }
 ```
