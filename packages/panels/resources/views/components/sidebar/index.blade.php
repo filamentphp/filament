@@ -11,25 +11,31 @@
     x-data="{}"
     @if (filament()->isSidebarCollapsibleOnDesktop())
         x-cloak
+        {{-- format-ignore-start --}}
         x-bind:class="
             $store.sidebar.isOpen
-                ? @js($openSidebarClasses . 'lg:sticky')
+                ? @js($openSidebarClasses . ' ' . 'lg:sticky')
                 : '-translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
         "
+        {{-- format-ignore-end --}}
     @else
         @if (filament()->hasTopNavigation())
             x-cloak
             x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses) : '-translate-x-full rtl:translate-x-full'"
         @elseif (filament()->isSidebarFullyCollapsibleOnDesktop())
             x-cloak
-            x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses . 'lg:sticky') : '-translate-x-full rtl:translate-x-full'"
+            {{-- format-ignore-start --}}
+            x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses . ' ' . 'lg:sticky') : '-translate-x-full rtl:translate-x-full'"
+            {{-- format-ignore-end --}}
         @else
             x-cloak="-lg"
+            {{-- format-ignore-start --}}
             x-bind:class="
                 $store.sidebar.isOpen
-                    ? @js($openSidebarClasses . 'lg:sticky')
+                    ? @js($openSidebarClasses . ' ' . 'lg:sticky')
                     : 'w-[--sidebar-width] -translate-x-full rtl:translate-x-full lg:sticky'
             "
+            {{-- format-ignore-end --}}
         @endif
     @endif
     @class([
