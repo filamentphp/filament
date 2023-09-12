@@ -83,7 +83,7 @@ class SpatieTagsInput extends TagsInput
             return $tag;
         })->flatten();
 
-        $record->tags()->sync($tags);
+        $record->tags()->sync($tags->pluck('id'));
     }
 
     public function type(string | Closure | AllTagTypes | null $type): static

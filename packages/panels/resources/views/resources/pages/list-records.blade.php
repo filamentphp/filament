@@ -5,7 +5,7 @@
     ])
 >
     <div class="flex flex-col gap-y-6">
-        @if (count($tabs = $this->getTabs()))
+        @if (count($tabs = $this->getCachedTabs()))
             <x-filament::tabs>
                 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::resource.pages.list-records.tabs.start', scopes: $this->getRenderHookScopes()) }}
 
