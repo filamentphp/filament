@@ -118,6 +118,8 @@
                         :icon="$group->getIcon()"
                         :items="$group->getItems()"
                         :label="$group->getLabel()"
+                        :url="$group->getUrl()"
+                        :should-open-url-in-new-tab="$group->shouldOpenUrlInNewTab()"
                     />
                 @endforeach
             </ul>
