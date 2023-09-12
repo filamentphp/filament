@@ -33,15 +33,15 @@ trait Translatable
             /** @internal Read the DocBlock above the following method. */
             $this->validateFormAndUpdateRecordAndCallHooks();
 
+            $nonTranslatableData = Arr::except(
+                $this->data[$originalActiveLocale] ?? [],
+                $this->getRecord()->getTranslatableAttributes(),
+            );
+
             $otherTranslatableLocales = Arr::except($this->getTranslatableLocales(), $originalActiveLocale);
 
             foreach ($otherTranslatableLocales as $locale) {
                 $this->setActiveLocale($locale);
-
-                $nonTranslatableData = Arr::except(
-                    $this->data[$originalActiveLocale] ?? [],
-                    $this->getRecord()->getTranslatableAttributes(),
-                );
 
                 $this->data[$locale] = array_merge(
                     $this->data[$locale] ?? [],
