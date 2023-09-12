@@ -45,7 +45,7 @@ class Css extends Asset
 
     public function getRelativePublicPath(): string
     {
-        return "css/{$this->getPackage()}/{$this->getId()}.css";
+        return "/vendor/{$this->getPackage()}/css/{$this->getId()}.css";
     }
 
     public function getPublicPath(): string

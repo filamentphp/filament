@@ -108,7 +108,7 @@ class Js extends Asset
 
     public function getRelativePublicPath(): string
     {
-        return "js/{$this->getPackage()}/{$this->getId()}.js";
+        return "vendor/{$this->getPackage()}/js/{$this->getId()}.js";
     }
 
     public function getPublicPath(): string
