@@ -135,7 +135,7 @@ trait CanAggregateRelatedModels
         return $this->evaluate($this->columnToSum);
     }
 
-    public function getRelationshipToSum(): ?string
+    public function getRelationshipToSum(): string | array | null
     {
         return $this->evaluate($this->relationshipToSum);
     }
