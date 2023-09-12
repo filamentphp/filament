@@ -16,7 +16,7 @@ jobs:
       - name: Monorepo Split of admin
         uses: danharrin/monorepo-split-github-action@v2.3.0
         env:
-          GITHUB_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         with:
           package_directory: 'packages/admin'
           repository_organization: 'filamentphp'
