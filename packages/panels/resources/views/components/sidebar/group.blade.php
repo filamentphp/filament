@@ -3,6 +3,8 @@
     'icon' => null,
     'items' => [],
     'label' => null,
+    'url' => null,
+    'shouldOpenUrlInNewTab' => false,
 ])
 
 <li
@@ -12,7 +14,7 @@
 >
     @if ($label)
         <div
-            @if ($collapsible)
+            @if ($collapsible && !$url)
                 x-on:click="$store.sidebar.toggleCollapsedGroup(label)"
             @endif
             @if (filament()->isSidebarCollapsibleOnDesktop())
@@ -33,11 +35,15 @@
                 />
             @endif
 
-            <span
+            <a
+                @if($url)
+                    href="{{ $url }}"
+                    target="{{ $shouldOpenUrlInNewTab ? '_blank' : '_self' }}"
+                @endif
                 class="fi-sidebar-group-label flex-1 text-sm font-semibold text-gray-700 dark:text-gray-200"
             >
                 {{ $label }}
-            </span>
+            </a>
 
             @if ($collapsible)
                 <x-filament::icon-button
