@@ -30,13 +30,18 @@ trait Translatable
         $originalActiveLocale = $this->activeLocale;
 
         try {
-            foreach ($this->getTranslatableLocales() as $locale) {
+            /** @internal Read the DocBlock above the following method. */
+            $this->validateFormAndUpdateRecordAndCallHooks();
+
+            $otherTranslatableLocales = Arr::except($this->getTranslatableLocales(), $originalActiveLocale);
+
+            foreach ($otherTranslatableLocales as $locale) {
                 $this->setActiveLocale($locale);
 
                 $nonTranslatableData = Arr::except(
                     $this->data[$originalActiveLocale] ?? [],
                     $this->getRecord()->getTranslatableAttributes(),
-                );                
+                );
 
                 $this->data[$locale] = array_merge(
                     $this->data[$locale] ?? [],
