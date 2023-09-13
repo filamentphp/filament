@@ -102,7 +102,7 @@
                             :icon="$getOffIcon()"
                             @class([
                                 'fi-ta-toggle-off-icon h-3 w-3',
-                                match ($onColor) {
+                                match ($offColor) {
                                     'gray' => 'text-gray-400 dark:text-gray-700',
                                     default => 'text-custom-600',
                                 },
