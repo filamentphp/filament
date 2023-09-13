@@ -38,7 +38,7 @@ export default function tagsInputFormComponent({ state, splitKeys }) {
                 }
             },
             ['x-on:paste']() {
-                $nextTick(() => {
+                this.$nextTick(() => {
                     const pattern = splitKeys
                         .map((key) =>
                             key.replace(/[/\-\\^$*+?.()|[\]{}]/g, '\\$&'),
