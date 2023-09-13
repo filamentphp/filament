@@ -82,14 +82,16 @@ class Table extends ViewComponent
     {
         parent::setUp();
 
-        $this->emptyStateDescription(function (Table $table): ?string {
-            if (! $table->hasAction('create')) {
-                return null;
-            }
+        if (is_null($this->getEmptyStateDescription())) {
+            $this->emptyStateDescription(function (Table $table): ?string {
+                if (! $table->hasAction('create')) {
+                    return null;
+                }
 
-            return __('filament-tables::table.empty.description', [
-                'model' => $table->getModelLabel(),
-            ]);
-        });
+                return __('filament-tables::table.empty.description', [
+                    'model' => $table->getModelLabel(),
+                ]);
+            });
+        }
     }
 }
