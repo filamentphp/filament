@@ -18,7 +18,8 @@ abstract class Page extends BasePage
         return new PageRegistration(
             page: static::class,
             route: fn (Panel $panel): Route => RouteFacade::get($path, static::class)
-                ->middleware(static::getRouteMiddleware($panel)),
+                ->middleware(static::getRouteMiddleware($panel))
+                ->withoutMiddleware(static::getWithoutRouteMiddleware($panel)),
         );
     }
 
