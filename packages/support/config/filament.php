@@ -42,4 +42,15 @@ return [
 
     'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DISK', 'public'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Assets Path
+    |--------------------------------------------------------------------------
+    |
+    | This is the path where Filament's published assets are placed. This path
+    | is relative to the `public` directory of your Laravel application.
+    |
+    */
+
+    'assets_path' => null,
 ];
