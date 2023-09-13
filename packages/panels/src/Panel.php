@@ -73,16 +73,16 @@ class Panel extends Component
             $plugin->boot($this);
         }
 
+        if ($callback = $this->bootUsing) {
+            $callback($this);
+        }
+
         if (class_exists(\Laravel\Octane\Events\RequestTerminated::class)) {
             Event::listen(\Laravel\Octane\Events\RequestTerminated::class, function () {
                 $this->isNavigationMounted = false;
                 $this->navigationGroups = [];
                 $this->navigationItems = [];
             });
-        }
-
-        if ($callback = $this->bootUsing) {
-            $callback($this);
         }
     }
 
