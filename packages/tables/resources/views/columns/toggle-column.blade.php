@@ -89,41 +89,50 @@
                     'translate-x-0': ! state,
                 }"
             >
-                @if ($hasOffIcon())
-                    <x-filament::icon
-                        :icon="$getOffIcon()"
-                        @class([
-                            'fi-ta-toggle-off-icon h-3 w-3',
-                            match ($onColor) {
-                                'gray' => 'text-gray-400 dark:text-gray-700',
-                                default => 'text-custom-600',
-                            },
-                        ])
-                    />
-                @endif
-            </span>
+                <span
+                    class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                    aria-hidden="true"
+                    x-bind:class="{
+                        'opacity-0 ease-out duration-100': state,
+                        'opacity-100 ease-in duration-200': ! state,
+                    }"
+                >
+                    @if ($hasOffIcon())
+                        <x-filament::icon
+                            :icon="$getOffIcon()"
+                            @class([
+                                'fi-ta-toggle-off-icon h-3 w-3',
+                                match ($offColor) {
+                                    'gray' => 'text-gray-400 dark:text-gray-700',
+                                    default => 'text-custom-600',
+                                },
+                            ])
+                        />
+                    @endif
+                </span>
 
-            <span
-                class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
-                aria-hidden="true"
-                x-bind:class="{
-                    'opacity-100 ease-in duration-200': state,
-                    'opacity-0 ease-out duration-100': ! state,
-                }"
-            >
-                @if ($hasOnIcon())
-                    <x-filament::icon
-                        :icon="$getOnIcon()"
-                        x-cloak="x-cloak"
-                        @class([
-                            'fi-ta-toggle-on-icon h-3 w-3',
-                            match ($onColor) {
-                                'gray' => 'text-gray-400 dark:text-gray-700',
-                                default => 'text-custom-600',
-                            },
-                        ])
-                    />
-                @endif
+                <span
+                    class="absolute inset-0 flex h-full w-full items-center justify-center transition-opacity"
+                    aria-hidden="true"
+                    x-bind:class="{
+                        'opacity-100 ease-in duration-200': state,
+                        'opacity-0 ease-out duration-100': ! state,
+                    }"
+                >
+                    @if ($hasOnIcon())
+                        <x-filament::icon
+                            :icon="$getOnIcon()"
+                            x-cloak="x-cloak"
+                            @class([
+                                'fi-ta-toggle-on-icon h-3 w-3',
+                                match ($onColor) {
+                                    'gray' => 'text-gray-400 dark:text-gray-700',
+                                    default => 'text-custom-600',
+                                },
+                            ])
+                        />
+                    @endif
+                </span>
             </span>
         </button>
     </div>

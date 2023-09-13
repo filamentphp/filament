@@ -52,6 +52,7 @@ class EditProfile extends SimplePage
 
         Route::get("/{$slug}", static::class)
             ->middleware(static::getRouteMiddleware($panel))
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name('profile');
     }
 
