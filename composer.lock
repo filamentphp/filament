@@ -63,16 +63,16 @@
         },
         {
             "name": "aws/aws-sdk-php",
-            "version": "3.281.5",
+            "version": "3.281.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/aws/aws-sdk-php.git",
-                "reference": "53cb798ca9b0b817dd2584f9406ee84d0214e6fc"
+                "reference": "b83c543a9ff07fc1d9f11766ee77fc7f4deed2b9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/53cb798ca9b0b817dd2584f9406ee84d0214e6fc",
-                "reference": "53cb798ca9b0b817dd2584f9406ee84d0214e6fc",
+                "url": "https://api.github.com/repos/aws/aws-sdk-php/zipball/b83c543a9ff07fc1d9f11766ee77fc7f4deed2b9",
+                "reference": "b83c543a9ff07fc1d9f11766ee77fc7f4deed2b9",
                 "shasum": ""
             },
             "require": {
@@ -152,9 +152,9 @@
             "support": {
                 "forum": "https://forums.aws.amazon.com/forum.jspa?forumID=80",
                 "issues": "https://github.com/aws/aws-sdk-php/issues",
-                "source": "https://github.com/aws/aws-sdk-php/tree/3.281.5"
+                "source": "https://github.com/aws/aws-sdk-php/tree/3.281.6"
             },
-            "time": "2023-09-12T18:13:00+00:00"
+            "time": "2023-09-13T18:07:28+00:00"
         },
         {
             "name": "blade-ui-kit/blade-heroicons",
