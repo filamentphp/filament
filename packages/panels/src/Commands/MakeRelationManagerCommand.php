@@ -101,19 +101,24 @@ class MakeRelationManagerCommand extends Command
             return static::INVALID;
         }
 
-        $tableHeaderAndEmptyStateActions = [];
+        $tableHeaderActions = [];
+        $tableEmptyStateActions = [];
 
-        $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\CreateAction::make(),';
+        $tableHeaderActions[] = 'Tables\Actions\CreateAction::make(),';
+        $tableEmptyStateActions[] = 'Tables\Actions\CreateAction::make(\'empty-state-create\'),';
 
         if ($this->option('associate')) {
-            $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\AssociateAction::make(),';
+            $tableHeaderActions[] = 'Tables\Actions\AssociateAction::make(),';
+            $tableEmptyStateActions[] = 'Tables\Actions\AssociateAction::make(\'empty-state-associate\'),';
         }
 
         if ($this->option('attach')) {
-            $tableHeaderAndEmptyStateActions[] = 'Tables\Actions\AttachAction::make(),';
+            $tableHeaderActions[] = 'Tables\Actions\AttachAction::make(),';
+            $tableEmptyStateActions[] = 'Tables\Actions\AttachAction::make(\'empty-state-attach\'),';
         }
 
-        $tableHeaderAndEmptyStateActions = implode(PHP_EOL, $tableHeaderAndEmptyStateActions);
+        $tableHeaderActions = implode(PHP_EOL, $tableHeaderActions);
+        $tableEmptyStateActions = implode(PHP_EOL, $tableEmptyStateActions);
 
         $tableActions = [];
 
@@ -173,12 +178,12 @@ class MakeRelationManagerCommand extends Command
             'relationship' => $relationship,
             'tableActions' => $this->indentString($tableActions, 4),
             'tableBulkActions' => $this->indentString($tableBulkActions, 5),
-            'tableEmptyStateActions' => $this->indentString($tableHeaderAndEmptyStateActions, 4),
+            'tableEmptyStateActions' => $this->indentString($tableEmptyStateActions, 4),
             'tableFilters' => $this->indentString(
                 $this->option('soft-deletes') ? 'Tables\Filters\TrashedFilter::make()' : '//',
                 4,
             ),
-            'tableHeaderActions' => $this->indentString($tableHeaderAndEmptyStateActions, 4),
+            'tableHeaderActions' => $this->indentString($tableHeaderActions, 4),
         ]);
 
         $this->components->info("Successfully created {$managerClass}!");
