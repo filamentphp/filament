@@ -7,6 +7,7 @@ use Filament\Support\Components\Component;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Support\Facades\FilamentView;
+use Illuminate\Support\Facades\Event;
 
 class Panel extends Component
 {
@@ -70,6 +71,14 @@ class Panel extends Component
 
         foreach ($this->plugins as $plugin) {
             $plugin->boot($this);
+        }
+
+        if (class_exists(\Laravel\Octane\Events\RequestTerminated::class)) {
+            Event::listen(\Laravel\Octane\Events\RequestTerminated::class, function () {
+                $this->isNavigationMounted = false;
+                $this->navigationGroups = [];
+                $this->navigationItems = [];
+            });
         }
 
         if ($callback = $this->bootUsing) {
