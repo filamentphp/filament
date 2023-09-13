@@ -562,7 +562,7 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 {
     // ...
     
-    public function getDefaultTenant(): ?Model
+    public function getDefaultTenant(Panel $panel): ?Model
     {
         return $this->latestTeam;
     }
