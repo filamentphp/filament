@@ -555,6 +555,7 @@ namespace App\Models;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -562,7 +563,7 @@ class User extends Model implements FilamentUser, HasDefaultTenant, HasTenants
 {
     // ...
     
-    public function getDefaultTenant(): ?Model
+    public function getDefaultTenant(Panel $panel): ?Model
     {
         return $this->latestTeam;
     }
