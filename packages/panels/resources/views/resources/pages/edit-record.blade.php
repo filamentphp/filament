@@ -30,7 +30,7 @@
     @if (count($relationManagers))
         <x-filament-panels::resources.relation-managers
             :active-locale="isset($activeLocale) ? $activeLocale : null"
-            :active-manager="$activeRelationManager"
+            :active-manager="$activeRelationManager ?? array_key_first($relationManagers)"
             :content-tab-label="$this->getContentTabLabel()"
             :managers="$relationManagers"
             :owner-record="$record"
