@@ -77,6 +77,18 @@ FilamentView::registerRenderHook(
 - `panels::user-menu.profile.after` - After the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
 - `panels::user-menu.profile.before` - Before the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
 
+### Table Builder render hooks
+
+- `tables::toolbar.reorder.start` - Before the table [reorder](../tables/advanced#reordering-records) container
+- `tables::toolbar.reorder.end` - After the table [reorder](../tables/advanced#reordering-records) container
+- `tables::toolbar.groups.start` - Before the table [group](../tables/grouping) container
+- `tables::toolbar.groups.end` - After the table [group](../tables/grouping) container
+- `tables::toolbar.search.start` - Before the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.search.end` - After the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.columns.start` - Before the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) container
+- `tables::toolbar.columns.end` - After the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) container
+- `tables::toolbar.end` - The end of the table toolbar
+
 ## Scoping render hooks
 
 Some render hooks can be given a "scope", which allows them to only be output on a specific page or Livewire component. For instance, you might want to register a render hook for just 1 page. To do that, you can pass the class of the page or component as the second argument to `registerRenderHook()`:
