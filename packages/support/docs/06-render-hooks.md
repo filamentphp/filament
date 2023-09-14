@@ -77,6 +77,11 @@ FilamentView::registerRenderHook(
 - `panels::user-menu.profile.after` - After the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
 - `panels::user-menu.profile.before` - Before the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
 
+### Widgets render hooks
+
+- `widgets::table-widget.after` - After the [table widget](../panels/dashboard#table-widgets), also [can be scoped](#scoping-render-hooks) to the table widget class
+- `widgets::table-widget.before` - Before the [table widget](../panels/dashboard#table-widgets), also [can be scoped](#scoping-render-hooks) to the table widget class
+
 ## Scoping render hooks
 
 Some render hooks can be given a "scope", which allows them to only be output on a specific page or Livewire component. For instance, you might want to register a render hook for just 1 page. To do that, you can pass the class of the page or component as the second argument to `registerRenderHook()`:
