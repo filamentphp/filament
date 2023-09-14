@@ -79,15 +79,16 @@ FilamentView::registerRenderHook(
 
 ### Table Builder render hooks
 
-- `tables::toolbar.reorder.start` - Before the table [reorder](../tables/advanced#reordering-records) container
-- `tables::toolbar.reorder.end` - After the table [reorder](../tables/advanced#reordering-records) container
-- `tables::toolbar.groups.start` - Before the table [group](../tables/grouping) container
-- `tables::toolbar.groups.end` - After the table [group](../tables/grouping) container
-- `tables::toolbar.search.start` - Before the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
-- `tables::toolbar.search.end` - After the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
-- `tables::toolbar.columns.start` - Before the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) container
-- `tables::toolbar.columns.end` - After the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) container
+- `tables::toolbar.start` - The start of the table toolbar
 - `tables::toolbar.end` - The end of the table toolbar
+- `tables::toolbar.reorder-trigger.before` - Before the table [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.reorder-trigger.after` - After the table [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.groups.before` - Before the table [group](../tables/grouping) container
+- `tables::toolbar.groups.after` - After the table [group](../tables/grouping) container
+- `tables::toolbar.search.before` - Before the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.search.after` - After the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.column-toggle.before` - Before the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+- `tables::toolbar.column-toggle.after` - After the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 
 ## Scoping render hooks
 
