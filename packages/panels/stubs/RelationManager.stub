@@ -44,9 +44,6 @@ class {{ managerClass }} extends RelationManager
                 Tables\Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
-            ])
-            ->emptyStateActions([
-{{ tableEmptyStateActions }}
             ]){{ modifyQueryUsing }};
     }
 }

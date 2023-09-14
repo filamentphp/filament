@@ -150,20 +150,31 @@ trait HasActions
         return array_key_exists($name, $this->getFlatActions());
     }
 
-    protected function cacheAction(Action $action): void
+    protected function cacheAction(Action $action, bool $shouldOverwriteExistingAction = true): void
     {
-        $this->flatActions[$action->getName()] = $action;
+        if ($shouldOverwriteExistingAction) {
+            $this->flatActions[$action->getName()] = $action;
+        } else {
+            $this->flatActions[$action->getName()] ??= $action;
+        }
     }
 
     /**
      * @param  array<string, Action>  $actions
      */
-    protected function mergeCachedFlatActions(array $actions): void
+    protected function mergeCachedFlatActions(array $actions, bool $shouldOverwriteExistingActions = true): void
     {
-        $this->flatActions = [
-            ...$this->flatActions,
-            ...$actions,
-        ];
+        if ($shouldOverwriteExistingActions) {
+            $this->flatActions = [
+                ...$this->flatActions,
+                ...$actions,
+            ];
+        } else {
+            $this->flatActions = [
+                ...$actions,
+                ...$this->flatActions,
+            ];
+        }
     }
 
     /**
