@@ -3,6 +3,7 @@
 namespace Filament\Resources\RelationManagers;
 
 use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists;
@@ -90,6 +91,16 @@ class RelationManager extends Component implements Actions\Contracts\HasActions,
     public function isReadOnly(): bool
     {
         if (blank($this->pageClass)) {
+            return false;
+        }
+
+        $panel = Filament::getCurrentPanel();
+
+        if (! $panel) {
+            return false;
+        }
+
+        if (! $panel->hasReadOnlyRelationManagersOnResourceViewPagesByDefault()) {
             return false;
         }
 
