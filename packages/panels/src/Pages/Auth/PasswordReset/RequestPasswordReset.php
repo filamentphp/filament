@@ -13,8 +13,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Auth\ResetPassword as ResetPasswordNotification;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\CanResetPassword;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Password;
@@ -24,6 +26,7 @@ use Illuminate\Support\Facades\Password;
  */
 class RequestPasswordReset extends SimplePage
 {
+    use HasRoutes;
     use InteractsWithFormActions;
     use WithRateLimiting;
 
@@ -36,6 +39,16 @@ class RequestPasswordReset extends SimplePage
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
+
+    public static function getSlug(): string
+    {
+        return 'request';
+    }
+
+    public static function getRouteMiddleware(Panel $panel): string|array
+    {
+        return static::$routeMiddleware;
+    }
 
     public function mount(): void
     {

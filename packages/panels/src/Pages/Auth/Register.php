@@ -12,13 +12,16 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\RegistrationResponse;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Panel;
 use Illuminate\Auth\EloquentUserProvider;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\SessionGuard;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
 
 /**
@@ -26,6 +29,7 @@ use Illuminate\Validation\Rules\Password;
  */
 class Register extends SimplePage
 {
+    use HasRoutes;
     use InteractsWithFormActions;
     use WithRateLimiting;
 
@@ -40,6 +44,11 @@ class Register extends SimplePage
     public ?array $data = [];
 
     protected string $userModel;
+
+    public static function getRouteMiddleware(Panel $panel): string|array
+    {
+        return static::$routeMiddleware;
+    }
 
     public function mount(): void
     {

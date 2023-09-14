@@ -12,8 +12,10 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\PasswordResetResponse;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Panel;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\CanResetPassword;
@@ -30,6 +32,7 @@ use Livewire\Attributes\Locked;
  */
 class ResetPassword extends SimplePage
 {
+    use HasRoutes;
     use InteractsWithFormActions;
     use WithRateLimiting;
 
@@ -47,6 +50,19 @@ class ResetPassword extends SimplePage
 
     #[Locked]
     public ?string $token = null;
+
+    public static function getSlug(): string
+    {
+        return 'reset';
+    }
+
+    public static function getRouteMiddleware(Panel $panel): string|array
+    {
+        return [
+            'signed',
+            ... static::$routeMiddleware,
+        ];
+    }
 
     public function mount(?string $email = null, ?string $token = null): void
     {

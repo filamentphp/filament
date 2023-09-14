@@ -14,10 +14,13 @@ use Filament\Forms\Form;
 use Filament\Http\Responses\Auth\Contracts\LoginResponse;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
+use Filament\Panel;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 
@@ -26,6 +29,7 @@ use Illuminate\Validation\ValidationException;
  */
 class Login extends SimplePage
 {
+    use HasRoutes;
     use InteractsWithFormActions;
     use WithRateLimiting;
 
@@ -38,6 +42,11 @@ class Login extends SimplePage
      * @var array<string, mixed> | null
      */
     public ?array $data = [];
+
+    public static function getRouteMiddleware(Panel $panel): string|array
+    {
+        return static::$routeMiddleware;
+    }
 
     public function mount(): void
     {

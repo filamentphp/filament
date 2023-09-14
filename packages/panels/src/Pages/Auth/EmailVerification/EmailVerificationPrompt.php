@@ -10,7 +10,9 @@ use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Auth\VerifyEmail;
 use Filament\Notifications\Notification;
+use Filament\Pages\Concerns\HasRoutes;
 use Filament\Pages\SimplePage;
+use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Contracts\Support\Htmlable;
 
@@ -19,12 +21,23 @@ use Illuminate\Contracts\Support\Htmlable;
  */
 class EmailVerificationPrompt extends SimplePage
 {
+    use HasRoutes;
     use WithRateLimiting;
 
     /**
      * @var view-string
      */
     protected static string $view = 'filament-panels::pages.auth.email-verification.email-verification-prompt';
+
+    public static function getSlug(): string
+    {
+        return 'prompt';
+    }
+
+    public static function getRouteMiddleware(Panel $panel): string|array
+    {
+        return static::$routeMiddleware;
+    }
 
     public function mount(): void
     {

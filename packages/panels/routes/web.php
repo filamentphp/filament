@@ -29,22 +29,21 @@ Route::name('filament.')
 
                         Route::name('auth.')->group(function () use ($panel) {
                             if ($panel->hasLogin()) {
-                                Route::get('/login', $panel->getLoginRouteAction())->name('login');
+                                $panel->getLoginRouteAction()::routes($panel);
                             }
 
                             if ($panel->hasPasswordReset()) {
                                 Route::name('password-reset.')
                                     ->prefix('/password-reset')
                                     ->group(function () use ($panel) {
-                                        Route::get('/request', $panel->getRequestPasswordResetRouteAction())->name('request');
-                                        Route::get('/reset', $panel->getResetPasswordRouteAction())
-                                            ->middleware(['signed'])
-                                            ->name('reset');
+                                        $panel->getRequestPasswordResetRouteAction()::routes($panel);
+
+                                        $panel->getResetPasswordRouteAction()::routes($panel);
                                     });
                             }
 
                             if ($panel->hasRegistration()) {
-                                Route::get('/register', $panel->getRegistrationRouteAction())->name('register');
+                                $panel->getRegistrationRouteAction()::routes($panel);
                             }
                         });
 
@@ -71,7 +70,8 @@ Route::name('filament.')
                                     Route::name('auth.email-verification.')
                                         ->prefix('/email-verification')
                                         ->group(function () use ($panel) {
-                                            Route::get('/prompt', $panel->getEmailVerificationPromptRouteAction())->name('prompt');
+                                            $panel->getEmailVerificationPromptRouteAction()::routes($panel);
+
                                             Route::get('/verify', EmailVerificationController::class)
                                                 ->middleware(['signed'])
                                                 ->name('verify');
