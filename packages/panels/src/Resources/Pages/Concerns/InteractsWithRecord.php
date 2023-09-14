@@ -47,9 +47,11 @@ trait InteractsWithRecord
     {
         $resource = static::getResource();
 
-        $breadcrumbs = [
-            $resource::getUrl() => $resource::getBreadcrumb(),
-        ];
+        $breadcrumbs = [];
+
+        if ($resource::hasPage('index')) {
+            $breadcrumbs[$resource::getUrl()] = $resource::getBreadcrumb();
+        }
 
         $record = $this->getRecord();
 
