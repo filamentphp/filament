@@ -23,6 +23,10 @@ Route::name('filament.')
                     ->name("{$panelId}.")
                     ->prefix($panel->getPath())
                     ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute) {
+                        if ($routes = $panel->getRoutes()) {
+                            $routes($panel);
+                        }
+
                         Route::name('auth.')->group(function () use ($panel) {
                             if ($panel->hasLogin()) {
                                 Route::get('/login', $panel->getLoginRouteAction())->name('login');
@@ -43,13 +47,13 @@ Route::name('filament.')
                                 Route::get('/register', $panel->getRegistrationRouteAction())->name('register');
                             }
                         });
-                        
-                        if ($routes = $panel->getRoutes()) {
-                            $routes($panel);
-                        }
 
                         Route::middleware($panel->getAuthMiddleware())
                             ->group(function () use ($panel, $hasTenancy, $tenantRoutePrefix, $tenantSlugAttribute): void {
+                                if ($routes = $panel->getAuthenticatedRoutes()) {
+                                    $routes($panel);
+                                }
+
                                 if ($hasTenancy) {
                                     Route::get('/', RedirectToTenantController::class)->name('tenant');
                                 }
@@ -113,10 +117,6 @@ Route::name('filament.')
                                             }
                                         });
                                     });
-
-                                if ($routes = $panel->getAuthenticatedRoutes()) {
-                                    $routes($panel);
-                                }
 
                             });
 
