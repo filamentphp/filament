@@ -484,7 +484,7 @@ class Resource
                     };
 
                     return $query->{"{$whereClause}Raw"}(
-                        "lower({$searchColumn}) {$searchOperator} lower(?)",
+                        "lower({$searchColumn}) {$searchOperator} ?",
                         "%{$searchQuery}%",
                     );
                 },
