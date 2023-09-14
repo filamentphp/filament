@@ -609,6 +609,8 @@ class FilamentManager
     {
         $this->panels[$panel->getId()] = $panel;
 
+        $panel->register();
+
         if ($panel->isDefault()) {
             $this->setCurrentPanel($panel);
         }
