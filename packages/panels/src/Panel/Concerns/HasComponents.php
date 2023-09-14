@@ -345,6 +345,18 @@ trait HasComponents
         }
     }
 
+    /**
+     * @param array<string, class-string<Component>> $components
+     */
+    public function livewireComponents(array $components): static
+    {
+        foreach ($components as $component) {
+            $this->queueLivewireComponentForRegistration($component);
+        }
+
+        return $this;
+    }
+
     protected function registerLivewireComponents(): void
     {
         $this->queueLivewireComponentForRegistration(DatabaseNotifications::class);
