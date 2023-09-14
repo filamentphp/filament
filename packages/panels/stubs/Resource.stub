@@ -43,9 +43,6 @@ class {{ resourceClass }} extends Resource
                 Tables\Actions\BulkActionGroup::make([
 {{ tableBulkActions }}
                 ]),
-            ])
-            ->emptyStateActions([
-{{ tableEmptyStateActions }}
             ]);
     }
 {{ relations }}
