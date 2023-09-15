@@ -28,6 +28,7 @@ class Panel extends Component
     use Panel\Concerns\HasNotifications;
     use Panel\Concerns\HasPlugins;
     use Panel\Concerns\HasRenderHooks;
+    use Panel\Concerns\HasRootClass;
     use Panel\Concerns\HasRoutes;
     use Panel\Concerns\HasSidebar;
     use Panel\Concerns\HasSpaMode;

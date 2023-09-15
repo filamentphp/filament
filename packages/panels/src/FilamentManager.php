@@ -198,6 +198,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getModelResource($model);
     }
 
+    public function getRootClass(): ?string
+    {
+        return $this->getCurrentPanel()->getRootClass();
+    }
+
     public function getNameForDefaultAvatar(Model | Authenticatable $record): string
     {
         if ($this->getTenantModel() === $record::class) {
