@@ -21,7 +21,7 @@
         <div class="grid gap-y-1">
             @if ($heading)
                 <h3
-                    class="fi-ta-header-heading text-base font-semibold leading-6"
+                    class="fi-ta-header-heading text-base font-semibold leading-6 text-gray-950 dark:text-white"
                 >
                     {{ $heading }}
                 </h3>
