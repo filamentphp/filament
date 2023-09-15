@@ -121,7 +121,12 @@
                 @endforeach
             </ul>
 
-            @php@endphp
+            @php
+                $collapsedNavigationGroupLabels = collect($navigation)
+                    ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                    ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                    ->values();
+            @endphp
 
             <script>
                 let collapsedGroups = JSON.parse(
