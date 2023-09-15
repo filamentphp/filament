@@ -24,11 +24,11 @@
 @endphp
 
 <section
+    {{-- TODO: Investigate Livewire bug - https://github.com/filamentphp/filament/pull/8511 --}}
     x-data="{
         isCollapsed: @js($collapsed),
     }"
     @if ($collapsible)
-        x-bind:class="isCollapsed && 'fi-collapsed'"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
             error = $el.querySelector('[data-validation-error]')
