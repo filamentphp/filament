@@ -71,7 +71,6 @@
                             x-data="{
                                 isCollapsed: @js($isCollapsed($item)),
                             }"
-                            x-bind:class="isCollapsed && 'fi-collapsed'"
                             x-on:expand-concealing-component.window="
                                 error = $el.querySelector('[data-validation-error]')
 
@@ -98,6 +97,7 @@
                             x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                             x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                             x-sortable-item="{{ $uuid }}"
+                            x-bind:class="isCollapsed && 'fi-collapsed'"
                             class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
