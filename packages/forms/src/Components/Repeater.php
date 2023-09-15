@@ -76,7 +76,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     protected ?Closure $mutateRelationshipDataBeforeSaveUsing = null;
 
-    protected bool $hasHydratedSimpleState = false;
+    /**
+     * @var array<string, mixed> | null
+     */
+    protected ?array $hydratedDefaultState = null;
 
     protected function setUp(): void
     {
@@ -85,22 +88,32 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->defaultItems(1);
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
+            if (is_array($component->hydratedDefaultState)) {
+                $items = $component->hydratedDefaultState;
+
+                foreach ($items as $itemKey => $itemData) {
+                    $items[$itemKey] = [
+                        ...$state[$itemKey] ?? [],
+                        ...$itemData,
+                    ];
+                }
+
+                $component->state($items);
+
+                return;
+            }
+
             $items = [];
 
-            $shouldHydrateSimpleState = (
-                (! $component->hasHydratedSimpleState) &&
-                ($simpleField = $component->getSimpleField())
-            );
+            $simpleField = $component->getSimpleField();
 
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $shouldHydrateSimpleState ?
+                $items[(string) Str::uuid()] = $simpleField ?
                     [$simpleField->getName() => $itemData] :
                     $itemData;
             }
 
             $component->state($items);
-
-            $component->hasHydratedSimpleState = true;
         });
 
         $this->registerActions([
@@ -509,14 +522,14 @@ class Repeater extends Field implements Contracts\CanConcealComponents
             }
 
             return array_fill(0, $count, $component->isSimple() ? null : []);
-        });
+        }, shouldPreserveChildState: false);
 
         return $this;
     }
 
-    public function default(mixed $state): static
+    public function default(mixed $state, bool $shouldPreserveChildState = true): static
     {
-        parent::default(function (Repeater $component) use ($state) {
+        parent::default(function (Repeater $component) use ($shouldPreserveChildState, $state) {
             $state = $component->evaluate($state);
 
             $simpleField = $component->getSimpleField();
@@ -529,7 +542,9 @@ class Repeater extends Field implements Contracts\CanConcealComponents
                     $itemData;
             }
 
-            $component->hasHydratedSimpleState = true;
+            if ($shouldPreserveChildState) {
+                $component->hydratedDefaultState = $items;
+            }
 
             return $items;
         });
