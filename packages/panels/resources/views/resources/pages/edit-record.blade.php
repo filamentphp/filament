@@ -21,22 +21,23 @@
 
     @php
         $relationManagers = $this->getRelationManagers();
+        $hasCombinedRelationManagerTabsWithContent = $this->hasCombinedRelationManagerTabsWithContent();
     @endphp
 
-    @if ((! $this->hasCombinedRelationManagerTabsWithContent()) || (! count($relationManagers)))
+    @if ((! $hasCombinedRelationManagerTabsWithContent) || (! count($relationManagers)))
         {{ $form() }}
     @endif
 
     @if (count($relationManagers))
         <x-filament-panels::resources.relation-managers
             :active-locale="isset($activeLocale) ? $activeLocale : null"
-            :active-manager="$activeRelationManager ?? array_key_first($relationManagers)"
+            :active-manager="$activeRelationManager ?? ($hasCombinedRelationManagerTabsWithContent ? null : array_key_first($relationManagers))"
             :content-tab-label="$this->getContentTabLabel()"
             :managers="$relationManagers"
             :owner-record="$record"
             :page-class="static::class"
         >
-            @if ($this->hasCombinedRelationManagerTabsWithContent())
+            @if ($hasCombinedRelationManagerTabsWithContent)
                 <x-slot name="content">
                     {{ $form() }}
                 </x-slot>
