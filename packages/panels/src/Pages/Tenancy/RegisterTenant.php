@@ -14,6 +14,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 
 use function Filament\authorize;
@@ -57,7 +58,7 @@ abstract class RegisterTenant extends SimplePage
     {
         return [
             ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
-            ...static::$routeMiddleware,
+            ...Arr::wrap(static::$routeMiddleware),
         ];
     }
 

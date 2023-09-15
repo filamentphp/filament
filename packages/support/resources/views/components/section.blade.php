@@ -55,6 +55,7 @@
         "
         x-on:open-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:toggle-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
+        x-bind:class="isCollapsed && 'fi-collapsed'"
     @endif
     {{
         $attributes->class([
