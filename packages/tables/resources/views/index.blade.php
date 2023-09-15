@@ -167,6 +167,7 @@
                     <x-filament-tables::filters
                         :form="$getFiltersForm()"
                         x-show="areFiltersOpen"
+                        style="display: none;"
                         @class([
                             'py-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
                         ])
