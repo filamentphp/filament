@@ -15,7 +15,7 @@
     {{
         $attributes->class([
             'fi-pagination grid grid-flow-col items-center gap-3',
-            'grid-cols-3' => ! $isSimple && ! ($paginator->hasMorePages() || $paginator->hasPages()),
+            'grid-cols-3' => (! $isSimple) && (! ($paginator->hasMorePages() || $paginator->hasPages())),
         ])
     }}
 >
