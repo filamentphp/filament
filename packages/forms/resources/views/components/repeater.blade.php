@@ -27,8 +27,13 @@
                 ->class(['fi-fo-repeater grid gap-y-4'])
         }}
     >
-        @if ((count($containers) > 1) && $isCollapsible)
-            <div class="flex gap-x-3">
+        @if ($isCollapsible)
+            <div
+                @class([
+                    'flex gap-x-3',
+                    'hidden' => count($containers) < 2,
+                ])
+            >
                 <span
                     x-on:click="$dispatch('repeater-collapse', '{{ $statePath }}')"
                 >
@@ -66,7 +71,6 @@
                             x-data="{
                                 isCollapsed: @js($isCollapsed($item)),
                             }"
-                            x-bind:class="isCollapsed && 'fi-collapsed'"
                             x-on:expand-concealing-component.window="
                                 error = $el.querySelector('[data-validation-error]')
 
@@ -93,6 +97,7 @@
                             x-on:repeater-expand.window="$event.detail === '{{ $statePath }}' && (isCollapsed = false)"
                             x-on:repeater-collapse.window="$event.detail === '{{ $statePath }}' && (isCollapsed = true)"
                             x-sortable-item="{{ $uuid }}"
+                            x-bind:class="isCollapsed && 'fi-collapsed'"
                             class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
@@ -133,7 +138,7 @@
 
                                     @if ($isCloneable || $isDeletable || $isCollapsible)
                                         <ul class="-me-1.5 ms-auto flex">
-                                            @if ($cloneAction->isVisible())
+                                            @if ($isCloneable)
                                                 <li>
                                                     {{ $cloneAction(['item' => $uuid]) }}
                                                 </li>

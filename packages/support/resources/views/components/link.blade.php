@@ -10,6 +10,7 @@
     'color' => 'primary',
     'disabled' => false,
     'form' => null,
+    'href' => null,
     'icon' => null,
     'iconAlias' => null,
     'iconPosition' => IconPosition::Before,
@@ -17,6 +18,7 @@
     'keyBindings' => null,
     'size' => 'md',
     'tag' => 'a',
+    'target' => null,
     'tooltip' => null,
     'type' => 'button',
 ])
@@ -75,7 +77,7 @@
         \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
     ]);
 
-    $badgeClasses = 'absolute -top-1 start-full z-[1] -ms-1 -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
+    $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';
 
     $wireTarget = $attributes->whereStartsWith(['wire:target', 'wire:click'])->filter(fn ($value): bool => filled($value))->first();
 
@@ -88,6 +90,7 @@
 
 @if ($tag === 'a')
     <a
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
         @if ($keyBindings || $tooltip)
             x-data="{}"
         @endif
@@ -127,7 +130,7 @@
         @endif
 
         @if (filled($badge))
-            <div class="{{ $badgeClasses }}">
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>
@@ -205,7 +208,7 @@
         @endif
 
         @if (filled($badge))
-            <div class="{{ $badgeClasses }}">
+            <div class="{{ $badgeContainerClasses }}">
                 <x-filament::badge :color="$badgeColor" size="xs">
                     {{ $badge }}
                 </x-filament::badge>

@@ -12,7 +12,12 @@
 <nav
     aria-label="{{ __('filament::components/pagination.label') }}"
     role="navigation"
-    {{ $attributes->class(['fi-pagination grid grid-cols-3 items-center']) }}
+    {{
+        $attributes->class([
+            'fi-pagination grid grid-flow-col items-center gap-3',
+            'grid-cols-3' => (! $isSimple) && (! ($paginator->hasMorePages() || $paginator->hasPages())),
+        ])
+    }}
 >
     @if (! $paginator->onFirstPage())
         <x-filament::button
@@ -102,7 +107,7 @@
 
     @if ((! $isSimple) && $paginator->hasPages())
         <ol
-            class="hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 md:flex"
+            class="fi-pagination-items hidden justify-self-end rounded-lg bg-white shadow-sm ring-1 ring-gray-950/10 dark:bg-white/5 dark:ring-white/20 md:flex"
         >
             @if (! $paginator->onFirstPage())
                 <x-filament::pagination.item
@@ -124,7 +129,7 @@
                     @foreach ($element as $page => $url)
                         <x-filament::pagination.item
                             :active="$page === $paginator->currentPage()"
-                            :aria-label="trans_choice('filament::components.pagination.actions.go_to_page.label', $page, ['page' => $page])"
+                            :aria-label="trans_choice('filament::components/pagination.actions.go_to_page.label', $page, ['page' => $page])"
                             :label="$page"
                             :wire:click="'gotoPage(' . $page . ', \'' . $paginator->getPageName() . '\')'"
                             :wire:key="$this->getId() . '.pagination.' . $paginator->getPageName() . '.' . $page"

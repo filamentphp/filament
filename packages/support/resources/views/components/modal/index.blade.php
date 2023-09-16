@@ -65,6 +65,7 @@
     wire:ignore.self
     @class([
         'fi-modal',
+        'fi-width-screen' => $width === 'screen',
         $displayClasses,
     ])
 >
@@ -168,7 +169,7 @@
                     <div
                         @class([
                             'fi-modal-header flex px-6 pt-6',
-                            'sticky top-0 z-10 border-b border-gray-200 bg-white bg-white pb-6 dark:border-white/10 dark:bg-gray-900' => $stickyHeader,
+                            'fi-sticky sticky top-0 z-10 border-b border-gray-200 bg-white bg-white pb-6 dark:border-white/10 dark:bg-gray-900' => $stickyHeader,
                             'rounded-t-xl' => $stickyHeader && ! ($slideOver || ($width === 'screen')),
                             match ($alignment) {
                                 Alignment::Left, Alignment::Start, 'left', 'start' => 'gap-x-5',
@@ -272,7 +273,7 @@
                             'fi-modal-footer w-full',
                             'pe-6 ps-[5.25rem]' => $icon && in_array($alignment, [Alignment::Start, 'start']) && (! in_array($footerActionsAlignment, [Alignment::Center, 'center'])) && (! $stickyFooter),
                             'px-6' => ! ($icon && in_array($alignment, [Alignment::Start, 'start']) && (! in_array($footerActionsAlignment, [Alignment::Center, 'center'])) && (! $stickyFooter)),
-                            'sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900' => $stickyFooter,
+                            'fi-sticky sticky bottom-0 border-t border-gray-200 bg-white py-5 dark:border-white/10 dark:bg-gray-900' => $stickyFooter,
                             'rounded-b-xl' => $stickyFooter && ! ($slideOver || ($width === 'screen')),
                             'pb-6' => ! $stickyFooter,
                             'mt-6' => (! $stickyFooter) && \Filament\Support\is_slot_empty($slot),

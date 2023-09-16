@@ -12,8 +12,10 @@ Actions may require additional confirmation or input from the user before they r
 You may require confirmation before an action is run using the `requiresConfirmation()` method. This is useful for particularly destructive actions, such as those that delete records.
 
 ```php
+use App\Models\Post;
+
 Action::make('delete')
-    ->action(fn () => $this->record->delete())
+    ->action(fn (Post $record) => $record->delete())
     ->requiresConfirmation()
 ```
 
@@ -28,6 +30,7 @@ You may also render a form in the modal to collect extra information from the us
 You may use components from the [Form Builder](../forms) to create custom action modal forms. The data from the form is available in the `$data` array of the `action()` closure:
 
 ```php
+use App\Models\Post;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 
@@ -38,9 +41,9 @@ Action::make('updateAuthor')
             ->options(User::query()->pluck('name', 'id'))
             ->required(),
     ])
-    ->action(function (array $data): void {
-        $this->record->author()->associate($data['authorId']);
-        $this->record->save();
+    ->action(function (array $data, Post $record): void {
+        $record->author()->associate($data['authorId']);
+        $record->save();
     })
 ```
 
@@ -51,13 +54,14 @@ Action::make('updateAuthor')
 You may fill the form with existing data, using the `fillForm()` method:
 
 ```php
+use App\Models\Post;
 use App\Models\User;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 
 Action::make('updateAuthor')
-    ->fillForm([
-        'authorId' => $this->record->author->id,
+    ->fillForm(fn (Post $record): array => [
+        'authorId' => $record->author->id,
     ])
     ->form([
         Select::make('authorId')
@@ -65,9 +69,9 @@ Action::make('updateAuthor')
             ->options(User::query()->pluck('name', 'id'))
             ->required(),
     ])
-    ->action(function (array $data): void {
-        $this->record->author()->associate($data['authorId']);
-        $this->record->save();
+    ->action(function (array $data, Post $record): void {
+        $record->author()->associate($data['authorId']);
+        $record->save();
     })
 ```
 
@@ -118,6 +122,7 @@ Action::make('create')
 You may wish to disable all form fields in the modal, ensuring the user cannot edit them. You may do so using the `disabledForm()` method:
 
 ```php
+use App\Models\Post;
 use App\Models\User;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -127,13 +132,13 @@ Action::make('approvePost')
         TextInput::make('title'),
         Textarea::make('content'),
     ])
-    ->fillForm([
-        'title' => $this->record->title,
-        'content' => $this->record->content,
+    ->fillForm(fn (Post $record): array => [
+        'title' => $record->title,
+        'content' => $record->content,
     ])
     ->disabledForm()
-    ->action(function (): void {
-        $this->record->approve();
+    ->action(function (Post $record): void {
+        $record->approve();
     })
 ```
 
@@ -142,8 +147,10 @@ Action::make('approvePost')
 You may customize the heading, description and label of the submit button in the modal:
 
 ```php
+use App\Models\Post;
+
 Action::make('delete')
-    ->action(fn () => $this->record->delete())
+    ->action(fn (Post $record) => $record->delete())
     ->requiresConfirmation()
     ->modalHeading('Delete post')
     ->modalDescription('Are you sure you\'d like to delete this post? This cannot be undone.')
@@ -157,8 +164,10 @@ Action::make('delete')
 You may add an [icon](https://blade-ui-kit.com/blade-icons?set=1#search) inside the modal using the `modalIcon()` method:
 
 ```php
+use App\Models\Post;
+
 Action::make('delete')
-    ->action(fn () => $this->record->delete())
+    ->action(fn (Post $record) => $record->delete())
     ->requiresConfirmation()
     ->modalIcon('heroicon-o-trash')
 ```
@@ -168,8 +177,10 @@ Action::make('delete')
 By default, the icon will inherit the color of the action button. You may customize the color of the icon using the `modalIconColor()` method:
 
 ```php
+use App\Models\Post;
+
 Action::make('delete')
-    ->action(fn () => $this->record->delete())
+    ->action(fn (Post $record) => $record->delete())
     ->requiresConfirmation()
     ->color('danger')
     ->modalIcon('heroicon-o-trash')
@@ -198,8 +209,10 @@ Action::make('updateAuthor')
 You may define custom content to be rendered inside your modal, which you can specify by passing a Blade view into the `modalContent()` method:
 
 ```php
+use App\Models\Post;
+
 Action::make('advance')
-    ->action(fn () => $this->record->advance())
+    ->action(fn (Post $record) => $record->advance())
     ->modalContent(view('filament.pages.actions.advance'))
 ```
 
@@ -223,8 +236,10 @@ Action::make('advance')
 By default, the custom content is displayed above the modal form if there is one, but you can add content below using `modalContentFooter()` if you wish:
 
 ```php
+use App\Models\Post;
+
 Action::make('advance')
-    ->action(fn () => $this->record->advance())
+    ->action(fn (Post $record) => $record->advance())
     ->modalContentFooter(view('filament.pages.actions.advance'))
 ```
 
@@ -233,15 +248,16 @@ Action::make('advance')
 You can add an action button to your custom modal content, which is useful if you want to add a button that performs an action other than the main action. You can do this by registering an action with the `registerModalActions()` method, and then passing it to the view:
 
 ```php
+use App\Models\Post;
 use Illuminate\Contracts\View\View;
 
 Action::make('advance')
     ->registerModalActions([
         Action::make('report')
             ->requiresConfirmation()
-            ->action(fn () => $this->record->report()),
+            ->action(fn (Post $record) => $record->report()),
     ])
-    ->action(fn () => $this->record->advance())
+    ->action(fn (Post $record) => $record->advance())
     ->modalContent(fn (Action $action): View => view(
         'filament.pages.actions.advance',
         ['action' => $action],

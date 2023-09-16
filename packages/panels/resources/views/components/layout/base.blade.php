@@ -23,7 +23,7 @@
         @endif
 
         <title>
-            {{ filled($title = $livewire->getTitle()) ? "{$title} - " : null }}
+            {{ filled($title = strip_tags($livewire->getTitle())) ? "{$title} - " : null }}
             {{ filament()->getBrandName() }}
         </title>
 
@@ -90,7 +90,7 @@
     </head>
 
     <body
-        class="min-h-screen overscroll-y-none bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
+        class="fi-body min-h-screen bg-gray-50 font-normal text-gray-950 antialiased dark:bg-gray-950 dark:text-white"
     >
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::body.start') }}
 
@@ -103,7 +103,7 @@
         @filamentScripts(withCore: true)
 
         @if (config('filament.broadcasting.echo'))
-            <script>
+            <script data-navigate-once>
                 window.Echo = new window.EchoFactory(@js(config('filament.broadcasting.echo')))
 
                 window.dispatchEvent(new CustomEvent('EchoLoaded'))

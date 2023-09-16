@@ -42,7 +42,7 @@ class MakeWidgetCommand extends Command
 
         if (class_exists(Resource::class)) {
             $resourceInput = $this->option('resource') ?? text(
-                label: 'Would you like to create the page inside a resource?',
+                label: 'Would you like to create the widget inside a resource?',
                 placeholder: '[Optional] BlogPostResource',
             );
 
@@ -150,7 +150,7 @@ class MakeWidgetCommand extends Command
 
         if (! $this->option('force') && $this->checkForCollision([
             $path,
-            ($this->option('stats-overview') || $this->option('chart')) ?: $viewPath,
+            ...($this->option('stats-overview') || $this->option('chart')) ? [] : [$viewPath],
         ])) {
             return static::INVALID;
         }

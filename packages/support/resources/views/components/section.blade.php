@@ -25,11 +25,11 @@
 @endphp
 
 <section
+    {{-- TODO: Investigate Livewire bug - https://github.com/filamentphp/filament/pull/8511 --}}
+    x-data="{
+        isCollapsed: @js($collapsed),
+    }"
     @if ($collapsible)
-        x-data="{
-            isCollapsed: @js($collapsed),
-        }"
-        x-bind:class="isCollapsed && 'fi-collapsed'"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
             error = $el.querySelector('[data-validation-error]')
@@ -56,12 +56,13 @@
         "
         x-on:open-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:toggle-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
+        x-bind:class="isCollapsed && 'fi-collapsed'"
     @endif
     {{
         $attributes->class([
             'fi-section',
             match ($aside) {
-                true => 'grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
+                true => 'fi-aside grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
                 false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
             },
         ])

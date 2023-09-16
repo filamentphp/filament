@@ -80,4 +80,9 @@ class Action extends MountableAction
             default => parent::resolveDefaultClosureDependencyForEvaluationByType($parameterType),
         };
     }
+
+    public function getInfolistName(): string
+    {
+        return 'mountedFormComponentActionInfolist';
+    }
 }

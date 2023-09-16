@@ -52,7 +52,7 @@
                 x-tooltip.html="tooltip"
             @endif
             type="button"
-            class="group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
+            class="fi-tenant-menu-trigger group flex w-full items-center justify-center gap-x-3 rounded-lg p-2 text-sm font-medium outline-none transition duration-75 hover:bg-gray-100 focus:bg-gray-100 dark:hover:bg-white/5 dark:focus:bg-white/5"
         >
             <x-filament-panels::avatar.tenant :tenant="$currentTenant" />
 
@@ -88,6 +88,7 @@
                 <x-filament::dropdown.list.item
                     :color="$profileItem?->getColor()"
                     :href="$profileItemUrl ?? filament()->getTenantProfileUrl()"
+                    :target="($profileItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                     :icon="$profileItem?->getIcon() ?? 'heroicon-m-cog-6-tooth'"
                     tag="a"
                 >
@@ -99,6 +100,7 @@
                 <x-filament::dropdown.list.item
                     :color="$billingItem?->getColor() ?? 'gray'"
                     :href="$billingItemUrl ?? filament()->getTenantBillingUrl()"
+                    :target="($billingItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                     :icon="$billingItem?->getIcon() ?? 'heroicon-m-credit-card'"
                     tag="a"
                 >
@@ -114,6 +116,7 @@
                 <x-filament::dropdown.list.item
                     :color="$item->getColor()"
                     :href="$item->getUrl()"
+                    :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                     :icon="$item->getIcon()"
                     tag="a"
                 >
@@ -142,6 +145,7 @@
             <x-filament::dropdown.list.item
                 :color="$registrationItem?->getColor()"
                 :href="$registrationItemUrl ?? filament()->getTenantRegistrationUrl()"
+                :target="($registrationItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                 :icon="$registrationItem?->getIcon() ?? 'heroicon-m-plus'"
                 tag="a"
             >

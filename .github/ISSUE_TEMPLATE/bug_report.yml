@@ -1,6 +1,6 @@
 name: Bug report
 description: Report a problem you're experiencing
-labels: bug,unconfirmed
+labels: bug,unconfirmed,low priority
 body:
   - type: markdown
     attributes:

@@ -4,13 +4,13 @@ return [
 
     'label' => 'Lapozás',
 
-    'overview' => ':first től :last ig mutatása a :total találatból',
+    'overview' => ':first / :last mutatása a(z) :total találatból',
 
     'fields' => [
 
         'records_per_page' => [
 
-            'label' => 'oldalanként',
+            'label' => 'Sorok száma:',
 
             'options' => [
                 'all' => 'Összes',

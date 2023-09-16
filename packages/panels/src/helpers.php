@@ -8,7 +8,7 @@ use Illuminate\Auth\Access\Response;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
 
-if (! function_exists('authorize')) {
+if (! function_exists('Filament\authorize')) {
     /**
      * @throws AuthorizationException
      */

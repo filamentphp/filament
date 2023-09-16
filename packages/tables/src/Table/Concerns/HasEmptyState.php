@@ -42,7 +42,18 @@ trait HasEmptyState
     /**
      * @param  array<Action | ActionGroup> | ActionGroup  $actions
      */
-    public function emptyStateActions(array | ActionGroup $actions): static
+    public function emptyStateActions(array | ActionGroup $actions, bool $shouldOverwriteExistingActions = false): static
+    {
+        $this->emptyStateActions = [];
+        $this->pushEmptyStateActions($actions, $shouldOverwriteExistingActions);
+
+        return $this;
+    }
+
+    /**
+     * @param  array<Action | ActionGroup> | ActionGroup  $actions
+     */
+    public function pushEmptyStateActions(array | ActionGroup $actions, bool $shouldOverwriteExistingActions = false): static
     {
         foreach (Arr::wrap($actions) as $action) {
             $action->table($this);
@@ -51,9 +62,9 @@ trait HasEmptyState
                 /** @var array<string, Action> $flatActions */
                 $flatActions = $action->getFlatActions();
 
-                $this->mergeCachedFlatActions($flatActions);
+                $this->mergeCachedFlatActions($flatActions, $shouldOverwriteExistingActions);
             } elseif ($action instanceof Action) {
-                $this->cacheAction($action);
+                $this->cacheAction($action, $shouldOverwriteExistingActions);
             } else {
                 throw new InvalidArgumentException('Table empty state actions must be an instance of ' . Action::class . ' or ' . ActionGroup::class . '.');
             }

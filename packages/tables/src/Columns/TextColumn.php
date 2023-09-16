@@ -67,7 +67,13 @@ class TextColumn extends Column
         $this->state(static function (HasTable $livewire, stdClass $rowLoop) use ($isFromZero): string {
             $rowIndex = $rowLoop->{$isFromZero ? 'index' : 'iteration'};
 
-            return (string) ($rowIndex + ($livewire->getTableRecordsPerPage() * ($livewire->getTablePage() - 1)));
+            $recordsPerPage = $livewire->getTableRecordsPerPage();
+
+            if (! is_numeric($recordsPerPage)) {
+                return (string) $rowIndex;
+            }
+
+            return (string) ($rowIndex + ($recordsPerPage * ($livewire->getTablePage() - 1)));
         });
 
         return $this;

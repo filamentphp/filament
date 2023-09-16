@@ -7,12 +7,14 @@
     'badgeColor' => null,
     'color' => 'gray',
     'disabled' => false,
+    'href' => null,
     'icon' => null,
     'iconAlias' => null,
     'iconSize' => IconSize::Medium,
     'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
+    'target' => null,
 ])
 
 @php
@@ -118,6 +120,7 @@
     </button>
 @elseif ($tag === 'a')
     <a
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
         @if ($keyBindings)
             x-data="{}"
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}

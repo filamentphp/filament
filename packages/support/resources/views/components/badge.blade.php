@@ -55,8 +55,10 @@
         <x-filament::icon :icon="$icon" :class="$iconClasses" />
     @endif
 
-    <span>
-        {{ $slot }}
+    <span class="grid">
+        <span class="truncate">
+            {{ $slot }}
+        </span>
     </span>
 
     @if ($isDeletable)
