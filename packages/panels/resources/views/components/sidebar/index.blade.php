@@ -121,8 +121,6 @@
                 @endforeach
             </ul>
 
-            @php@endphp
-
             <script>
                 let collapsedGroups = JSON.parse(
                     localStorage.getItem('collapsedGroups'),
@@ -131,7 +129,12 @@
                 if (collapsedGroups === null || collapsedGroups === 'null') {
                     localStorage.setItem(
                         'collapsedGroups',
-                        JSON.stringify(@js($collapsedNavigationGroupLabels)),
+                        JSON.stringify(@js(
+                            collect($navigation)
+                                ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                                ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                                ->values()
+                        )),
                     )
                 }
 
