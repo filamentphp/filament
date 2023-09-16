@@ -89,16 +89,7 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
         $this->afterStateHydrated(static function (Repeater $component, ?array $state): void {
             if (is_array($component->hydratedDefaultState)) {
-                $items = $component->hydratedDefaultState;
-
-                foreach ($items as $itemKey => $itemData) {
-                    $items[$itemKey] = [
-                        ...$state[$itemKey] ?? [],
-                        ...$itemData,
-                    ];
-                }
-
-                $component->state($items);
+                $component->mergeHydratedDefaultStateWithChildComponentContainerState();
 
                 return;
             }
@@ -728,7 +719,13 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->relationship = $name ?? $this->getName();
         $this->modifyRelationshipQueryUsing = $modifyQueryUsing;
 
-        $this->afterStateHydrated(null);
+        $this->afterStateHydrated(function (Repeater $component) {
+            if (! is_array($component->hydratedDefaultState)) {
+                return;
+            }
+
+            $component->mergeHydratedDefaultStateWithChildComponentContainerState();
+        });
 
         $this->loadStateFromRelationshipsUsing(static function (Repeater $component) {
             $component->clearCachedExistingRecords();
@@ -815,6 +812,28 @@ class Repeater extends Field implements Contracts\CanConcealComponents
         $this->disableItemMovement();
 
         return $this;
+    }
+
+    /**
+     * After hydrating the state of child component containers, the default state
+     * of fields inside the repeater can be lost, if it was defined on the repeater
+     * itself. This method merges the hydrated default state with the state of the
+     * child component containers, so that the default state of the fields inside
+     * the repeater is preserved.
+     */
+    protected function mergeHydratedDefaultStateWithChildComponentContainerState(): void
+    {
+        $state = $this->getState();
+        $items = $this->hydratedDefaultState;
+
+        foreach ($items as $itemKey => $itemData) {
+            $items[$itemKey] = [
+                ...$state[$itemKey] ?? [],
+                ...$itemData,
+            ];
+        }
+
+        $this->state($items);
     }
 
     public function itemLabel(string | Closure | null $label): static
