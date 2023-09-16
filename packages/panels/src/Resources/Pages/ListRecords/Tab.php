@@ -15,6 +15,8 @@ class Tab extends Component
 
     protected string | Closure | null $badge = null;
 
+    protected string | Closure | null $badgeColor = null;
+
     protected ?Closure $modifyQueryUsing = null;
 
     public function __construct(string | Closure | null $label = null)
@@ -37,6 +39,13 @@ class Tab extends Component
         return $this;
     }
 
+    public function badgeColor(string | Closure | null $badgeColor): static
+    {
+        $this->badgeColor = $badgeColor;
+
+        return $this;
+    }    
+    
     public function label(string | Closure | null $label): static
     {
         $this->label = $label;
@@ -68,6 +77,11 @@ class Tab extends Component
         return $this->evaluate($this->badge);
     }
 
+    public function getBadgeColor(): ?string
+    {
+        return $this->evaluate($this->badgeColor);
+    }    
+    
     public function modifyQuery(Builder $query): Builder
     {
         return $this->evaluate($this->modifyQueryUsing, [
