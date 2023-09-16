@@ -56,7 +56,7 @@
     @endif
 
     <span class="grid">
-        <span class="truncate">
+        <span>
             {{ $slot }}
         </span>
     </span>
