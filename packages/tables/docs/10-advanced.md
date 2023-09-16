@@ -33,6 +33,8 @@ public function table(Table $table): Table
 }
 ```
 
+### Customizing the default pagination page option
+
 To customize the default number of records shown use the `defaultPaginationPageOption()` method:
 
 ```php
