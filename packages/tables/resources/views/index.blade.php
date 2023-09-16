@@ -167,6 +167,7 @@
                     <x-filament-tables::filters
                         :form="$getFiltersForm()"
                         x-show="areFiltersOpen"
+                        x-cloak
                         @class([
                             'py-1 sm:py-3' => $hasFiltersAboveContentCollapsible,
                         ])
@@ -459,9 +460,9 @@
                                 @if ($hasCollapsibleColumnsLayout)
                                     x-data="{ isCollapsed: @js($collapsibleColumnsLayout->isCollapsed()) }"
                                     x-init="$dispatch('collapsible-table-row-initialized')"
-                                    x-bind:class="isCollapsed && 'fi-collapsed'"
                                     x-on:collapse-all-table-rows.window="isCollapsed = true"
                                     x-on:expand-all-table-rows.window="isCollapsed = false"
+                                    x-bind:class="isCollapsed && 'fi-collapsed'"
                                 @endif
                                 wire:key="{{ $this->getId() }}.table.records.{{ $recordKey }}"
                                 @if ($isReordering)

@@ -144,6 +144,6 @@ trait CanGroupRecords
 
     public function isGroupsOnly(): bool
     {
-        return $this->isGroupsOnly;
+        return (bool) $this->evaluate($this->isGroupsOnly);
     }
 }

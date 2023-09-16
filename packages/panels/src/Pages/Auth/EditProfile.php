@@ -19,6 +19,7 @@ use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
@@ -63,7 +64,7 @@ class EditProfile extends SimplePage
     {
         return [
             ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
-            ...static::$routeMiddleware,
+            ...Arr::wrap(static::$routeMiddleware),
         ];
     }
 
