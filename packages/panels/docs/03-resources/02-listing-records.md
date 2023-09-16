@@ -76,6 +76,26 @@ Tab::make()
 
 As in the example above, this could be quite useful for showing the number of records that pass that filter.
 
+### Customizing the color of the badges in filter tabs
+
+You can change the color of the badges in the tabs by passing a string into the `badgeColor()` method of the tab:
+
+```php
+use Filament\Resources\Pages\ListRecords\Tab;
+
+Tab::make()
+    ->badgeColor('warning')
+```
+
+You can also pass in a closure to change the color depending on the count or name of the tab.
+
+```php
+use Filament\Resources\Pages\ListRecords\Tab;
+
+Tab::make()
+    ->badgeColor(fn() => (Customer::query()->where('active', true)->count() > 0 ? 'primary' : 'danger'))
+```
+
 ### Customizing the default tab
 
 To customize the default tab that is selected when the page is loaded, you can return the array key of the tab from the `getDefaultActiveTab()` method:
