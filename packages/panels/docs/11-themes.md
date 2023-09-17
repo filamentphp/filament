@@ -141,16 +141,6 @@ By default, the topbar sticks to the top of the page. You may make the topbar sc
 }
 ```
 
-## Changing the logo
-
-By default, Filament will use your app's name as a logo.
-
-You may create a `resources/views/vendor/filament-panels/components/logo.blade.php` file to provide a custom logo:
-
-```blade
-<img src="{{ asset('/images/logo.svg') }}" alt="Logo" class="h-10">
-```
-
 ## Disabling dark mode
 
 To disable dark mode switching, you can use the [configuration](configuration) file:
@@ -163,6 +153,23 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->darkMode(false);
+}
+```
+
+## Adding a Logo
+
+By default, Filament uses your app's name as a logo. However, you can easily add a custom logo to the __Filament__ panel.
+
+To set a custom logo, you can use the [configuration](configuration) file and pass the public URL of the logo image using the `brandLogo` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->brandLogo(asset('images/logo.png'));
 }
 ```
 
