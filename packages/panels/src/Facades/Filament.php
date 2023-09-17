@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string getAuthGuard()
  * @method static string | null getAuthPasswordBroker()
  * @method static string getBrandName()
+ * @method static string | null getBrandLogo()
  * @method static string getCollapsedSidebarWidth()
  * @method static Panel | null getCurrentPanel()
  * @method static string | null getDatabaseNotificationsPollingInterval()

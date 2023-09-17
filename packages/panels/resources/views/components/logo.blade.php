@@ -1,4 +1,7 @@
-@if (filled($brand = filament()->getBrandName()))
+@if (
+        filled($brand = filament()->getBrandName()) &&
+        is_null(filament()->getBrandLogo())
+    )
     <div
         {{
             $attributes->class([
@@ -8,4 +11,11 @@
     >
         {{ $brand }}
     </div>
+@endif
+
+@if(filled($logoPath = filament()->getBrandLogo()))
+    <img src="{{ $logoPath }}" 
+        loading="lazy"
+        alt="{{ filament()->getBrandName() }}" 
+        class="h-10">
 @endif
