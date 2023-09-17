@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'billing' => [
+            'label' => '管理订阅',
+        ],
+
         'logout' => [
             'label' => '退出登录',
         ],
@@ -33,11 +37,15 @@ return [
         'theme_switcher' => [
 
             'dark' => [
-                'label' => '切换暗黑模式',
+                'label' => '切换至深色主题',
             ],
 
             'light' => [
-                'label' => '切换明亮模式',
+                'label' => '切换至浅色主题',
+            ],
+
+            'system' => [
+                'label' => '按照系统主题切换',
             ],
 
         ],
