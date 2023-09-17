@@ -1,6 +1,6 @@
 @if (
         filled($brand = filament()->getBrandName()) &&
-        is_null(filament()->getBrandLogo())
+        is_null($logo = filament()->getBrandLogo())
     )
     <div
         {{
@@ -13,9 +13,9 @@
     </div>
 @endif
 
-@if(filled($logoPath = filament()->getBrandLogo()))
-    <img src="{{ $logoPath }}" 
+@if($logo)
+    <img src="{{ $logo }}" 
         loading="lazy"
-        alt="{{ filament()->getBrandName() }}" 
+        alt="{{ $brand }}" 
         class="h-10">
 @endif
