@@ -63,20 +63,22 @@
         class="fi-sidebar-group-items flex flex-col gap-y-1"
     >
         @foreach ($items as $item)
-            <x-filament-panels::sidebar.item
-                :active-icon="$item->getActiveIcon()"
-                :active="$item->isActive()"
-                :badge-color="$item->getBadgeColor()"
-                :badge="$item->getBadge()"
-                :first="$loop->first"
-                :grouped="filled($label)"
-                :icon="$item->getIcon()"
-                :last="$loop->last"
-                :url="$item->getUrl()"
-                :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
-            >
-                {{ $item->getLabel() }}
-            </x-filament-panels::sidebar.item>
+            @if($item->isVisible())
+                <x-filament-panels::sidebar.item
+                    :active-icon="$item->getActiveIcon()"
+                    :active="$item->isActive()"
+                    :badge-color="$item->getBadgeColor()"
+                    :badge="$item->getBadge()"
+                    :first="$loop->first"
+                    :grouped="filled($label)"
+                    :icon="$item->getIcon()"
+                    :last="$loop->last"
+                    :url="$item->getUrl()"
+                    :should-open-url-in-new-tab="$item->shouldOpenUrlInNewTab()"
+                >
+                    {{ $item->getLabel() }}
+                </x-filament-panels::sidebar.item>
+            @endif
         @endforeach
     </ul>
 </li>
