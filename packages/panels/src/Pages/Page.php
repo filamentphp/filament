@@ -159,7 +159,7 @@ abstract class Page extends BasePage
     /**
      * @return int | string | array<string, int | string | null>
      */
-    protected function getHeaderWidgetsColumns(): int | string | array
+    public function getHeaderWidgetsColumns(): int | string | array
     {
         return 2;
     }
