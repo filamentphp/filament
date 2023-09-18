@@ -15,6 +15,9 @@ class Tab extends Component
 
     protected string | Closure | null $badge = null;
 
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
     protected string | array | Closure | null $badgeColor = null;
 
     protected ?Closure $modifyQueryUsing = null;
@@ -39,9 +42,12 @@ class Tab extends Component
         return $this;
     }
 
-    public function badgeColor(string | array | Closure | null $badgeColor): static
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
+     */
+    public function badgeColor(string | array | Closure | null $color): static
     {
-        $this->badgeColor = $badgeColor;
+        $this->badgeColor = $color;
 
         return $this;
     }    
@@ -77,6 +83,9 @@ class Tab extends Component
         return $this->evaluate($this->badge);
     }
 
+    /**
+     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
+     */
     public function getBadgeColor(): string | array | Closure | null
     {
         return $this->evaluate($this->badgeColor);
