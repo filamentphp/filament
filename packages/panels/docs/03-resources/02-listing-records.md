@@ -82,7 +82,8 @@ The color of a badge may be changed using the `badgeColor()` method:
 use Filament\Resources\Pages\ListRecords\Tab;
 
 Tab::make()
-    ->badgeColor('warning')
+    ->badge(Customer::query()->where('active', true)
+    ->badgeColor('success')
 ```
 
 You can also pass in a closure to change the color depending on the count or name of the tab.
