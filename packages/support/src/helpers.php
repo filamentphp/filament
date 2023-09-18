@@ -121,8 +121,7 @@ if (! function_exists('Filament\Support\generate_href_html')) {
 
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
-        }
-        else if (FilamentView::hasSpaMode() && str($url)->startsWith(request()->root())) {
+        } elseif (FilamentView::hasSpaMode() && str($url)->startsWith(request()->root())) {
             $html .= ' wire:navigate';
         }
 
