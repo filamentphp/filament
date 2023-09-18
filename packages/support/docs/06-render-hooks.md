@@ -79,8 +79,8 @@ FilamentView::registerRenderHook(
 
 ### Widgets render hooks
 
-- `widgets::table-widget.after` - After the [table widget](../panels/dashboard#table-widgets), also [can be scoped](#scoping-render-hooks) to the table widget class
-- `widgets::table-widget.before` - Before the [table widget](../panels/dashboard#table-widgets), also [can be scoped](#scoping-render-hooks) to the table widget class
+- `widgets::table-widget.end` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `widgets::table-widget.start` - Start of the [table widget](../panels/dashboard#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
 
 ## Scoping render hooks
 
