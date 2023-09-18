@@ -74,7 +74,17 @@ Tab::make()
     ->badge(Customer::query()->where('active', true)->count())
 ```
 
-As in the example above, this could be quite useful for showing the number of records that pass that filter.
+#### Changing the color of filter tab badges
+
+The color of a badge may be changed using the `badgeColor()` method:
+
+```php
+use Filament\Resources\Pages\ListRecords\Tab;
+
+Tab::make()
+    ->badge(Customer::query()->where('active', true)
+    ->badgeColor('success')
+```
 
 ### Customizing the default tab
 

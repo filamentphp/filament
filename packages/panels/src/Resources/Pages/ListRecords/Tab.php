@@ -4,16 +4,16 @@ namespace Filament\Resources\Pages\ListRecords;
 
 use Closure;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Database\Eloquent\Builder;
 
 class Tab extends Component
 {
+    use HasBadge;
     use HasIcon;
 
     protected string | Closure | null $label = null;
-
-    protected string | Closure | null $badge = null;
 
     protected ?Closure $modifyQueryUsing = null;
 
@@ -28,13 +28,6 @@ class Tab extends Component
         $static->configure();
 
         return $static;
-    }
-
-    public function badge(string | Closure | null $badge): static
-    {
-        $this->badge = $badge;
-
-        return $this;
     }
 
     public function label(string | Closure | null $label): static
@@ -61,11 +54,6 @@ class Tab extends Component
     public function getLabel(): ?string
     {
         return $this->evaluate($this->label);
-    }
-
-    public function getBadge(): ?string
-    {
-        return $this->evaluate($this->badge);
     }
 
     public function modifyQuery(Builder $query): Builder
