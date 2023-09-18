@@ -10,7 +10,8 @@ use Illuminate\Database\Eloquent\Builder;
 
 class Tab extends Component
 {
-    use HasIcon, HasBadge;
+    use HasBadge;
+    use HasIcon;
 
     protected string | Closure | null $label = null;
 
