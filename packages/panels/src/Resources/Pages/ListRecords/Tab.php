@@ -3,22 +3,16 @@
 namespace Filament\Resources\Pages\ListRecords;
 
 use Closure;
+use Filament\Actions\Concerns\HasBadge;
 use Filament\Support\Components\Component;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Database\Eloquent\Builder;
 
 class Tab extends Component
 {
-    use HasIcon;
+    use HasIcon, HasBadge;
 
     protected string | Closure | null $label = null;
-
-    protected string | Closure | null $badge = null;
-
-    /**
-     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
-     */
-    protected string | array | Closure | null $badgeColor = null;
 
     protected ?Closure $modifyQueryUsing = null;
 
@@ -35,23 +29,6 @@ class Tab extends Component
         return $static;
     }
 
-    public function badge(string | Closure | null $badge): static
-    {
-        $this->badge = $badge;
-
-        return $this;
-    }
-
-    /**
-     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $color
-     */
-    public function badgeColor(string | array | Closure | null $color): static
-    {
-        $this->badgeColor = $color;
-
-        return $this;
-    }    
-    
     public function label(string | Closure | null $label): static
     {
         $this->label = $label;
@@ -78,19 +55,6 @@ class Tab extends Component
         return $this->evaluate($this->label);
     }
 
-    public function getBadge(): ?string
-    {
-        return $this->evaluate($this->badge);
-    }
-
-    /**
-     * @return string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | null
-     */
-    public function getBadgeColor(): string | array | null
-    {
-        return $this->evaluate($this->badgeColor);
-    }    
-    
     public function modifyQuery(Builder $query): Builder
     {
         return $this->evaluate($this->modifyQueryUsing, [
