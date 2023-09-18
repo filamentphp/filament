@@ -92,24 +92,6 @@ public function table(Table $table): Table
 }
 ```
 
-## Disable the grouping prefix
-
-By default, the grouping prefix is generated based on the attribute. To disable this prefix, simply utilize the `titlePrefixedWithLabel(false)` method:
-
-```php
-use Filament\Tables\Grouping\Group;
-use Filament\Tables\Table;
-
-public function table(Table $table): Table
-{
-    return $table
-        ->groups([
-            Group::make('author.name')
-                ->titlePrefixedWithLabel(false),
-        ]);
-}
-```
-
 ## Setting a group title
 
 By default, the title of a group will be the value of the attribute. You may customize it by returning a new title from the `getTitleFromRecordUsing()` method of a `Group` object:
@@ -124,6 +106,24 @@ public function table(Table $table): Table
         ->groups([
             Group::make('status')
                 ->getTitleFromRecordUsing(fn (Post $record): string => ucfirst($record->status->getLabel())),
+        ]);
+}
+```
+
+### Disable the title label prefix
+
+By default, the title is prefixed with the label of the group. To disable this prefix, utilize the `titlePrefixedWithLabel(false)` method:
+
+```php
+use Filament\Tables\Grouping\Group;
+use Filament\Tables\Table;
+
+public function table(Table $table): Table
+{
+    return $table
+        ->groups([
+            Group::make('status')
+                ->titlePrefixedWithLabel(false),
         ]);
 }
 ```
