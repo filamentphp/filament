@@ -85,16 +85,6 @@ Tab::make()
     ->badge(Customer::query()->where('active', true)
     ->badgeColor('success')
 ```
-
-You can also pass in a closure to change the color depending on the count or name of the tab.
-
-```php
-use Filament\Resources\Pages\ListRecords\Tab;
-
-Tab::make()
-    ->badgeColor(fn() => (Customer::query()->where('active', true)->count() > 0 ? 'primary' : 'danger'))
-```
-
 ### Customizing the default tab
 
 To customize the default tab that is selected when the page is loaded, you can return the array key of the tab from the `getDefaultActiveTab()` method:
