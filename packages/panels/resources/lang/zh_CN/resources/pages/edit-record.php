@@ -2,30 +2,26 @@
 
 return [
 
-    'title' => 'Edit :label',
+    'title' => '编辑 :label',
 
-    'breadcrumb' => 'Edit',
+    'breadcrumb' => '编辑',
 
     'form' => [
 
         'actions' => [
 
             'cancel' => [
-                'label' => 'Cancel',
+                'label' => '取消',
             ],
 
             'save' => [
-                'label' => 'Save changes',
+                'label' => '保存',
             ],
 
         ],
 
-    ],
-
-    'content' => [
-
         'tab' => [
-            'label' => 'Edit',
+            'label' => '编辑',
         ],
 
     ],
@@ -33,7 +29,7 @@ return [
     'notifications' => [
 
         'saved' => [
-            'title' => 'Saved',
+            'title' => '已保存',
         ],
 
     ],
