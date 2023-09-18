@@ -119,12 +119,10 @@ if (! function_exists('Filament\Support\generate_href_html')) {
     {
         $html = "href=\"{$url}\"";
 
-        if (FilamentView::hasSpaMode() && str($url)->startsWith(request()->root())) {
-            $html .= ' wire:navigate';
-        }
-
         if ($shouldOpenInNewTab) {
             $html .= ' target="_blank"';
+        } elseif (FilamentView::hasSpaMode() && str($url)->startsWith(request()->root())) {
+            $html .= ' wire:navigate';
         }
 
         return new HtmlString($html);
