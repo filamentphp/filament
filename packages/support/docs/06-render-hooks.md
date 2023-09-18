@@ -92,6 +92,11 @@ All these render hooks [can be scoped](#scoping-render-hooks) to any table Livew
 - `tables::toolbar.toggle-column-trigger.after` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 - `tables::toolbar.toggle-column-trigger.before` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 
+### Widgets render hooks
+
+- `widgets::table-widget.end` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `widgets::table-widget.start` - Start of the [table widget](../panels/dashboard#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+
 ## Scoping render hooks
 
 Some render hooks can be given a "scope", which allows them to only be output on a specific page or Livewire component. For instance, you might want to register a render hook for just 1 page. To do that, you can pass the class of the page or component as the second argument to `registerRenderHook()`:
