@@ -12,17 +12,17 @@ class ColorManager
     protected array $colors = [];
 
     /**
-     * @var array<int>
+     * @var array<string,array<int>>
      */
     protected array $overridingShades = [];
 
     /**
-     * @var array<int>
+     * @var array<string,array<int>>
      */
     protected array $addedShades = [];
 
     /**
-     * @var array<int>
+     * @var array<string,array<int>>
      */
     protected array $removedShades = [];
 
