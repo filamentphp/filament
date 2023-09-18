@@ -386,7 +386,7 @@ Repeater::make('members')
     ->schema([
         TextInput::make('name')
             ->required()
-            ->blur(),
+            ->live(onBlur: true),
         Select::make('role')
             ->options([
                 'member' => 'Member',
