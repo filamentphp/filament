@@ -3,6 +3,7 @@
 namespace Filament\Actions;
 
 use Filament\Support\Components\ViewComponent;
+use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
@@ -23,7 +24,6 @@ class StaticAction extends ViewComponent
     use Concerns\CanSubmitForm;
     use Concerns\HasAction;
     use Concerns\HasArguments;
-    use Concerns\HasBadge;
     use Concerns\HasGroupedIcon;
     use Concerns\HasKeyBindings;
     use Concerns\HasLabel;
@@ -31,6 +31,7 @@ class StaticAction extends ViewComponent
     use Concerns\HasSize;
     use Concerns\HasTooltip;
     use Conditionable;
+    use HasBadge;
     use HasColor;
     use HasIcon;
     use HasExtraAttributes;

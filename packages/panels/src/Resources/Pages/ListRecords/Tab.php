@@ -3,8 +3,8 @@
 namespace Filament\Resources\Pages\ListRecords;
 
 use Closure;
-use Filament\Actions\Concerns\HasBadge;
 use Filament\Support\Components\Component;
+use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasIcon;
 use Illuminate\Database\Eloquent\Builder;
 
