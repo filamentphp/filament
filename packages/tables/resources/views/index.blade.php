@@ -216,7 +216,7 @@
                             :trigger-action="$getGroupRecordsTriggerAction()"
                         />
                     @endif
-                    
+
                     {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.after', scopes: static::class) }}
                 </div>
 
