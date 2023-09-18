@@ -8,19 +8,15 @@
         src="{{ $brandLogo }}" 
         loading="lazy"
         alt="{{ $brandName }}" 
-        {{
-            $attributes->class([
+        {{ $attributes->class([
                 'fi-logo h-10',
-            ])
-        }}
+            ]) }}
     />
 @else
     <div
-        {{
-            $attributes->class([
+        {{ $attributes->class([
                 'fi-logo text-xl font-bold leading-5 tracking-tight text-gray-950 dark:text-white',
-            ])
-        }}
+            ]) }}
     >
         {{ $brandName }}
     </div>
