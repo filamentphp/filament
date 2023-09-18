@@ -2,11 +2,13 @@
 
 namespace Filament\Panel\Concerns;
 
+use Closure;
+
 trait HasBrandLogo
 {
-    protected ?string $brandLogo = null;
+    protected string | Closure | null $brandLogo = null;
 
-    public function brandLogo(?string $url): static
+    public function brandLogo(string | Closure | null $url): static
     {
         $this->brandLogo = $url;
 
@@ -15,6 +17,6 @@ trait HasBrandLogo
 
     public function getBrandLogo(): ?string
     {
-        return $this->brandLogo;
+        return $this->evaluate($this->brandLogo);
     }
 }
