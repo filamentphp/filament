@@ -78,7 +78,7 @@ As in the example above, this could be quite useful for showing the number of re
 
 ### Customizing the color of the badges in filter tabs
 
-You can change the color of the badges in the tabs by passing a string into the `badgeColor()` method of the tab:
+You can change the color of a badge using the `badgeColor()` method:
 
 ```php
 use Filament\Resources\Pages\ListRecords\Tab;
