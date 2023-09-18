@@ -156,11 +156,11 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Adding a Logo
+## Adding a logo
 
-By default, Filament uses your app's name as a logo. However, you can easily add a custom logo to the __Filament__ panel.
+By default, Filament uses your app's name to render a simple text-based logo. However, you can easily customize this.
 
-To set a custom logo, you can use the [configuration](configuration) file and pass the public URL of the logo image using the `brandLogo` method:
+If you want to simply change the text that is used in the logo, you can use the `brandName()` method:
 
 ```php
 use Filament\Panel;
@@ -169,8 +169,31 @@ public function panel(Panel $panel): Panel
 {
     return $panel
         // ...
-        ->brandLogo(asset('images/logo.png'));
+        ->brandName('Filament Demo');
 }
+```
+
+To render an image instead, you can pass a URL to the `brandLogo()` method:
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->brandLogo(asset('images/logo.svg'));
+}
+```
+
+Alternatively, you may create a `resources/views/vendor/filament-panels/components/logo.blade.php` file to provide completely custom HTML:
+
+```blade
+<img
+    src="{{ asset('images/logo.svg') }}"
+    alt="Logo"
+    class="h-10"
+/>
 ```
 
 ## Adding a favicon
