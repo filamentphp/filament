@@ -840,6 +840,24 @@ class FieldsDemo extends Component implements HasForms
                             ->itemLabel(fn (array $state): ?string => $state['name'] ?? null),
                     ]),
                 Group::make()
+                    ->id('simpleRepeater')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-5xl',
+                    ])
+                    ->schema([
+                        Repeater::make('simpleRepeater')
+                            ->label('Invitations')
+                            ->simple(
+                                TextInput::make('email')
+                                    ->email()
+                                    ->required(),
+                            )
+                            ->default([
+                                'dan@filamentphp.com',
+                                'ryan@filamentphp.com',
+                            ]),
+                    ]),
+                Group::make()
                     ->id('builder')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-5xl',

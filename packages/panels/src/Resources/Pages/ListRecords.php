@@ -5,7 +5,6 @@ namespace Filament\Resources\Pages;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Facades\Filament;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ListRecords\Tab;
@@ -19,9 +18,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Url;
 
-class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contracts\HasTable
+class ListRecords extends Page implements Tables\Contracts\HasTable
 {
-    use Forms\Concerns\InteractsWithForms;
     use Tables\Concerns\InteractsWithTable {
         makeTable as makeBaseTable;
     }
@@ -61,15 +59,17 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     #[Url]
     public ?string $activeTab = null;
 
+    /**
+     * @var array<string | int, Tab>
+     */
+    protected array $cachedTabs;
+
     public function mount(): void
     {
         static::authorizeResourceAccess();
 
-        if (
-            blank($this->activeTab) &&
-            count($tabs = $this->getTabs())
-        ) {
-            $this->activeTab = array_key_first($tabs);
+        if (blank($this->activeTab)) {
+            $this->activeTab = $this->getDefaultActiveTab();
         }
     }
 
@@ -315,7 +315,7 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     {
         $query = static::getResource()::getEloquentQuery();
 
-        $tabs = $this->getTabs();
+        $tabs = $this->getCachedTabs();
 
         if (
             filled($this->activeTab) &&
@@ -341,6 +341,19 @@ class ListRecords extends Page implements Forms\Contracts\HasForms, Tables\Contr
     public function getTabs(): array
     {
         return [];
+    }
+
+    /**
+     * @return array<string | int, Tab>
+     */
+    public function getCachedTabs(): array
+    {
+        return $this->cachedTabs ??= $this->getTabs();
+    }
+
+    public function getDefaultActiveTab(): string | int | null
+    {
+        return array_key_first($this->getCachedTabs());
     }
 
     public function updatedActiveTab(): void

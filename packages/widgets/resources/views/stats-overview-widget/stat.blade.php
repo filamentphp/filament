@@ -28,10 +28,7 @@
 
 <{!! $tag !!}
     @if ($url)
-        href="{{ $url }}"
-        @if ($shouldOpenUrlInNewTab())
-            target="_blank"
-        @endif
+        {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab()) }}
     @endif
     {{
         $getExtraAttributeBag()

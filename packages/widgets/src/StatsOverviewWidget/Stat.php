@@ -146,7 +146,7 @@ class Stat extends Component implements Htmlable
 
     public function url(?string $url, bool $shouldOpenInNewTab = false): static
     {
-        $this->shouldOpenUrlInNewTab = $shouldOpenInNewTab;
+        $this->openUrlInNewTab($shouldOpenInNewTab);
         $this->url = $url;
 
         return $this;

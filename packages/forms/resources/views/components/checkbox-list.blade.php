@@ -182,7 +182,7 @@
                             :attributes="
                                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
-                                        'disabled' => $isDisabled,
+                                        'disabled' => $isDisabled || $isOptionDisabled($value, $label),
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,

@@ -98,6 +98,40 @@ CheckboxList::make('technologies')
 
 <AutoScreenshot name="forms/fields/checkbox-list/rows" alt="Checkbox list with 2 rows" version="3.x" />
 
+## Disabling specific options
+
+You can disable specific options using the `disableOptionWhen()` method. It accepts a closure, in which you can check if the option with a specific `$value` should be disabled:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+    ])
+    ->disableOptionWhen(fn (string $value): bool => $value === 'livewire')
+```
+
+If you want to retrieve the options that have not been disabled, e.g. for validation purposes, you can do so using `getEnabledOptions()`:
+
+```php
+use Filament\Forms\Components\CheckboxList;
+
+CheckboxList::make('technologies')
+    ->options([
+        'tailwind' => 'Tailwind CSS',
+        'alpine' => 'Alpine.js',
+        'laravel' => 'Laravel',
+        'livewire' => 'Laravel Livewire',
+        'heroicons' => 'SVG icons',
+    ])
+    ->disableOptionWhen(fn (string $value): bool => $value === 'heroicons')
+    ->in(fn (CheckboxList $component): array => array_keys($component->getEnabledOptions()))
+```
+
 ## Searching options
 
 You may enable a search input to allow easier access to many options, using the `searchable()` method:

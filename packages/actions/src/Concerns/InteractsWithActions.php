@@ -6,6 +6,7 @@ use Closure;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Infolist;
 use Filament\Support\Exceptions\Cancel;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Database\Eloquent\Model;
@@ -418,5 +419,10 @@ trait InteractsWithActions
     public function getActiveActionsLocale(): ?string
     {
         return null;
+    }
+
+    public function mountedActionInfolist(): Infolist
+    {
+        return $this->getMountedAction()->getInfolist();
     }
 }

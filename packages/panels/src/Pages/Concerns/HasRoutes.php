@@ -3,6 +3,7 @@
 namespace Filament\Pages\Concerns;
 
 use Filament\Panel;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
 
 trait HasRoutes
@@ -44,7 +45,7 @@ trait HasRoutes
         return [
             ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
             ...(static::isTenantSubscriptionRequired($panel) ? [static::getTenantSubscribedMiddleware($panel)] : []),
-            ...static::$routeMiddleware,
+            ...Arr::wrap(static::$routeMiddleware),
         ];
     }
 

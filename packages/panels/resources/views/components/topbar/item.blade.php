@@ -20,13 +20,7 @@
 >
     <{{ $tag }}
         @if ($url)
-            href="{{ $url }}"
-
-            @if ($shouldOpenUrlInNewTab)
-                target="_blank"
-            @else
-                {{-- wire:navigate --}}
-            @endif
+            {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         @else
             type="button"
         @endif

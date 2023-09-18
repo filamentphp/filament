@@ -14,10 +14,12 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns;
 use Filament\Pages\SimplePage;
 use Filament\Panel;
+use Filament\Support\Enums\Alignment;
 use Filament\Support\Exceptions\Halt;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Validation\Rules\Password;
@@ -51,6 +53,7 @@ class EditProfile extends SimplePage
 
         Route::get("/{$slug}", static::class)
             ->middleware(static::getRouteMiddleware($panel))
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name('profile');
     }
 
@@ -61,7 +64,7 @@ class EditProfile extends SimplePage
     {
         return [
             ...(static::isEmailVerificationRequired($panel) ? [static::getEmailVerifiedMiddleware($panel)] : []),
-            ...static::$routeMiddleware,
+            ...Arr::wrap(static::$routeMiddleware),
         ];
     }
 
@@ -256,7 +259,13 @@ class EditProfile extends SimplePage
     {
         return [
             $this->getSaveFormAction(),
+            $this->getCancelFormAction(),
         ];
+    }
+
+    protected function getCancelFormAction(): Action
+    {
+        return $this->backAction();
     }
 
     protected function getSaveFormAction(): Action
@@ -269,7 +278,12 @@ class EditProfile extends SimplePage
 
     protected function hasFullWidthFormActions(): bool
     {
-        return true;
+        return false;
+    }
+
+    public function getFormActionsAlignment(): string | Alignment
+    {
+        return Alignment::Start;
     }
 
     public function getTitle(): string | Htmlable
@@ -287,15 +301,14 @@ class EditProfile extends SimplePage
         return false;
     }
 
+    /**
+     * @deprecated Use `getCancelFormAction()` instead.
+     */
     public function backAction(): Action
     {
         return Action::make('back')
-            ->link()
-            ->label(__('filament-panels::pages/auth/edit-profile.actions.back.label'))
-            ->icon(match (__('filament-panels::layout.direction')) {
-                'rtl' => 'heroicon-m-arrow-right',
-                default => 'heroicon-m-arrow-left',
-            })
-            ->url(filament()->getUrl());
+            ->label(__('filament-panels::pages/auth/edit-profile.actions.cancel.label'))
+            ->url(filament()->getUrl())
+            ->color('gray');
     }
 }

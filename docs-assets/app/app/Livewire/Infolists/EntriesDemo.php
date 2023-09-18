@@ -39,6 +39,15 @@ class EntriesDemo extends Component implements HasInfolists
                             ->state('Dan Harrin'),
                     ]),
                 Group::make()
+                    ->id('placeholder')
+                    ->extraAttributes([
+                        'class' => 'p-16 max-w-xl',
+                    ])
+                    ->schema([
+                        TextEntry::make('title')
+                            ->placeholder('Dan Harrin'),
+                    ]),
+                Group::make()
                     ->id('helperText')
                     ->extraAttributes([
                         'class' => 'p-16 max-w-xl',

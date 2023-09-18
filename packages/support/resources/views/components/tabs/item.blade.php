@@ -6,10 +6,13 @@
     'active' => false,
     'alpineActive' => null,
     'badge' => null,
+    'badgeColor' => null,
+    'href' => null,
     'icon' => null,
     'iconColor' => 'gray',
     'iconPosition' => IconPosition::Before,
     'tag' => 'button',
+    'target' => null,
     'type' => 'button',
 ])
 
@@ -34,6 +37,8 @@
 <{{ $tag }}
     @if ($tag === 'button')
         type="{{ $type }}"
+    @elseif ($tag === 'a')
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
     @endif
     @if ($hasAlpineActiveClasses)
         x-bind:class="{
@@ -95,7 +100,7 @@
     @endif
 
     @if (filled($badge))
-        <x-filament::badge size="sm">
+        <x-filament::badge :color="$badgeColor" size="sm" class="w-max">
             {{ $badge }}
         </x-filament::badge>
     @endif

@@ -67,7 +67,7 @@ class SpatieMediaLibraryImageEntry extends ImageEntry
             }
         }
 
-        return $media->getUrl($this->getConversion());
+        return $media->getAvailableUrl([$this->getConversion()]);
     }
 
     /**

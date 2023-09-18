@@ -40,6 +40,7 @@
                     :color="$profileItem?->getColor()"
                     :icon="$profileItem?->getIcon() ?? 'heroicon-m-user-circle'"
                     :href="$profileItemUrl ?? filament()->getProfileUrl()"
+                    :target="($profileItem?->shouldOpenUrlInNewTab() ?? false) ? '_blank' : null"
                     icon-alias="panels::user-menu.profile-item"
                     tag="a"
                 >
@@ -70,6 +71,7 @@
             <x-filament::dropdown.list.item
                 :color="$item->getColor()"
                 :href="$item->getUrl()"
+                :target="$item->shouldOpenUrlInNewTab() ? '_blank' : null"
                 :icon="$item->getIcon()"
                 tag="a"
             >

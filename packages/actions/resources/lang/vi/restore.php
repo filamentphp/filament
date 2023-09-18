@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Khôi phục :label đã chọn',
+            'heading' => 'Khôi phục các mục :label đã chọn',
 
             'actions' => [
 

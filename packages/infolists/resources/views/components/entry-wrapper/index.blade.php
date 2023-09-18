@@ -117,10 +117,7 @@
             >
                 @if ($url)
                     <a
-                        href="{{ $url }}"
-                        @if ($shouldOpenUrlInNewTab)
-                            target="_blank"
-                        @endif
+                        {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
                         class="block"
                     >
                         {{ $slot }}

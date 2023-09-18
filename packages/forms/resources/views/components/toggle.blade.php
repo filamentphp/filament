@@ -42,6 +42,7 @@
                         'role' => 'switch',
                         'type' => 'button',
                         'wire:loading.attr' => 'disabled',
+                        'wire:target' => $statePath,
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)
