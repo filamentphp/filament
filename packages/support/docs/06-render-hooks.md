@@ -87,8 +87,8 @@ FilamentView::registerRenderHook(
 - `tables::toolbar.groups.after` - After the table [group](../tables/grouping) container, also [can be scoped](#scoping-render-hooks) to the table class
 - `tables::toolbar.search.before` - Before the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container, also [can be scoped](#scoping-render-hooks) to the table class
 - `tables::toolbar.search.after` - After the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.column-toggle.before` - Before the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.column-toggle.after` - After the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger, also [can be scoped](#scoping-render-hooks) to the table class
+- `tables::toolbar.toggle-column-trigger.before` - Before the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger, also [can be scoped](#scoping-render-hooks) to the table class
+- `tables::toolbar.toggle-column-trigger.after` - After the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger, also [can be scoped](#scoping-render-hooks) to the table class
 
 ## Scoping render hooks
 
