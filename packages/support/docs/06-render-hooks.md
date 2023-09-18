@@ -81,16 +81,16 @@ FilamentView::registerRenderHook(
 
 All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager. Table widgets are also Livewire component classes.
 
-- `tables::toolbar.start` - The start of the table toolbar
-- `tables::toolbar.end` - The end of the table toolbar
-- `tables::toolbar.reorder-trigger.before` - Before the table [reorder](../tables/advanced#reordering-records) trigger
-- `tables::toolbar.reorder-trigger.after` - After the table [reorder](../tables/advanced#reordering-records) trigger
-- `tables::toolbar.groups.before` - Before the table [group](../tables/grouping) container
-- `tables::toolbar.groups.after` - After the table [group](../tables/grouping) container
-- `tables::toolbar.search.before` - Before the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
-- `tables::toolbar.search.after` - After the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
-- `tables::toolbar.toggle-column-trigger.before` - Before the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger
-- `tables::toolbar.toggle-column-trigger.after` - After the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+- `tables::toolbar.end` - The end of the toolbar
+- `tables::toolbar.grouping-selector.after` - After the [grouping](../tables/grouping) selector
+- `tables::toolbar.grouping-selector.before` - Before the [grouping](../tables/grouping) selector
+- `tables::toolbar.reorder-trigger.after` - After the [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.reorder-trigger.before` - Before the [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.search.after` - After the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.search.before` - Before the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.start` - The start of the toolbar
+- `tables::toolbar.toggle-column-trigger.after` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+- `tables::toolbar.toggle-column-trigger.before` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 
 ## Scoping render hooks
 
