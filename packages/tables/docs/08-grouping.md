@@ -110,7 +110,7 @@ public function table(Table $table): Table
 }
 ```
 
-### Disable the title label prefix
+### Disabling the title label prefix
 
 By default, the title is prefixed with the label of the group. To disable this prefix, utilize the `titlePrefixedWithLabel(false)` method:
 
