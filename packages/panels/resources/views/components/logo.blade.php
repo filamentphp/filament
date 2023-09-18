@@ -1,7 +1,20 @@
-@if (
-        filled($brand = filament()->getBrandName()) &&
-        is_null($logo = filament()->getBrandLogo())
-    )
+@php
+    $brandName = filament()->getBrandName();
+    $brandLogo = filament()->getBrandLogo()
+@endphp
+
+@if (filled($brandLogo))
+    <img
+        src="{{ $brandLogo }}" 
+        loading="lazy"
+        alt="{{ $brandName }}" 
+        {{
+            $attributes->class([
+                'fi-logo h-10',
+            ])
+        }}
+    >
+@else
     <div
         {{
             $attributes->class([
@@ -9,13 +22,6 @@
             ])
         }}
     >
-        {{ $brand }}
+        {{ $brandName }}
     </div>
-@endif
-
-@if($logo)
-    <img src="{{ $logo }}" 
-        loading="lazy"
-        alt="{{ $brand }}" 
-        class="h-10">
 @endif
