@@ -40,7 +40,7 @@ test('`wire:navigate` is not used in the `href` HTML if it doesn\'t match the re
 test('`target` HTML can be generated if the URL should open in a new tab', function () {
     FilamentView::spa();
     expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true))
-        ->toHtml()->toBe('href="http://localhost/page" wire:navigate target="_blank"');
+        ->toHtml()->toBe('href="http://localhost/page" target="_blank"');
 
     FilamentView::spa(false);
     expect(generate_href_html('http://localhost/page', shouldOpenInNewTab: true))
