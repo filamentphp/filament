@@ -156,10 +156,6 @@
             "
         >
             @forelse ($getOptions() as $value => $label)
-                @php
-                    $shouldOptionBeDisabled = $isDisabled || $isOptionDisabled($value, $label);
-                @endphp
-
                 <div
                     wire:key="{{ $this->getId() }}.{{ $statePath }}.{{ $field::class }}.options.{{ $value }}"
                     @if ($isSearchable)
@@ -186,7 +182,7 @@
                             :attributes="
                                 \Filament\Support\prepare_inherited_attributes($getExtraInputAttributeBag())
                                     ->merge([
-                                        'disabled' => $shouldOptionBeDisabled,
+                                        'disabled' => $isDisabled || $isOptionDisabled($value, $label),
                                         'value' => $value,
                                         'wire:loading.attr' => 'disabled',
                                         $applyStateBindingModifiers('wire:model') => $statePath,

@@ -100,7 +100,7 @@
     @endif
 
     @if (filled($badge))
-        <x-filament::badge size="sm" :color="$badgeColor">
+        <x-filament::badge :color="$badgeColor" size="sm" class="w-max">
             {{ $badge }}
         </x-filament::badge>
     @endif
