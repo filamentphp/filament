@@ -12,6 +12,7 @@ class Panel extends Component
 {
     use Panel\Concerns\HasAuth;
     use Panel\Concerns\HasAvatars;
+    use Panel\Concerns\HasBrandLogo;
     use Panel\Concerns\HasBrandName;
     use Panel\Concerns\HasBreadcrumbs;
     use Panel\Concerns\HasColors;
