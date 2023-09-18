@@ -18,7 +18,7 @@
                 \Filament\Support\get_color_css_variables(
                     $color,
                     shades: [400, 500, 600]),
-                    alias: 'forms::components.field-wrapper.hint'
+                    alias: 'forms::components.field-wrapper.hint',
             ]) }}
 >
     @if (! \Filament\Support\is_slot_empty($slot))
