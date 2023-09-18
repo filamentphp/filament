@@ -76,7 +76,6 @@ Tab::make()
 
 As in the example above, this could be quite useful for showing the number of records that pass that filter.
 
-
 You can change the color of a badge using the `badgeColor()` method:
 
 ```php
