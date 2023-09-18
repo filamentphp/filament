@@ -101,7 +101,7 @@ protected function getStats(): array
 }
 ```
 
-Note: the escaping of the $ in $dispatch is intentional. This is a Livewire event, not a PHP variable. 
+In this example, we are deliberately escaping the `$` in `$dispatch()` since this needs to be passed directly to the HTML, it is not a PHP variable.
 
 ## Adding a chart to a stat
 
@@ -146,83 +146,3 @@ To disable this behavior, you may override the `$isLazy` property on the widget 
 ```php
 protected static bool $isLazy = true;
 ```
-
-## Example
-
-Given you have an OrderResource, to display an OrdersOverview widget above the table which sets a 'processed' filter on 
-the table, the Widget would be: 
-
-```php
-<?php
-
-namespace App\Filament\Resources\OrderResource\Widgets;
-
-use App\Enum\DeliveryStatus;
-use App\Enum\OrderStatus;
-use App\Models\Delivery;
-use App\Models\Order;
-use Filament\Widgets\StatsOverviewWidget as BaseWidget;
-use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Database\Eloquent\Builder;
-
-class OrdersOverview extends BaseWidget
-{
-    protected static ?string $pollingInterval = null;
-
-    protected function getStats(): array
-    {
-        return [
-            Stat::make('Processed', '192.1k')
-                ->color('success')
-                ->extraAttributes([
-                    'class' => 'cursor-pointer',
-                    'wire:click' => "\$dispatch('setStatusFilter', {filter: 'processed'})",
-                ]),
-            // ...
-        ];
-    }
-}
-```
-
-To listen for the **setStatusFilter** event, the ListOrder class would be: 
-
-```php
-<?php
-
-declare(strict_types=1);
-
-namespace App\Filament\Resources\OrderResource\Pages;
-
-use App\Filament\Resources\OrderResource;
-use Filament\Actions;
-use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
-use Livewire\Attributes\On;
-
-class ListOrders extends ListRecords
-{
-    protected static string $resource = OrderResource::class;
-
-    #[On('setStatusFilter')]
-    public function setStatusFilter(string $filter): void
-    {
-        $this->tableFilters[$filter]['isActive'] = true;
-    }
-    
-    protected function getHeaderActions(): array
-    {
-        return [
-            CreateAction::make(),
-        ];
-    }
-
-    protected function getHeaderWidgets(): array
-    {
-        return [
-            OrderResource\Widgets\OrdersOverview::class,
-        ];
-    }
-}
-```
-
-Note the new Livewire v3 `#[On...` syntax for listening for events.
