@@ -77,6 +77,26 @@ FilamentView::registerRenderHook(
 - `panels::user-menu.profile.after` - After the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
 - `panels::user-menu.profile.before` - Before the profile item in the [user menu](../panels/navigation#customizing-the-user-menu)
 
+### Table Builder render hooks
+
+All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager. Table widgets are also Livewire component classes.
+
+- `tables::toolbar.end` - The end of the toolbar
+- `tables::toolbar.grouping-selector.after` - After the [grouping](../tables/grouping) selector
+- `tables::toolbar.grouping-selector.before` - Before the [grouping](../tables/grouping) selector
+- `tables::toolbar.reorder-trigger.after` - After the [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.reorder-trigger.before` - Before the [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.search.after` - After the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.search.before` - Before the [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.start` - The start of the toolbar
+- `tables::toolbar.toggle-column-trigger.after` - After the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+- `tables::toolbar.toggle-column-trigger.before` - Before the [toggle columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+
+### Widgets render hooks
+
+- `widgets::table-widget.end` - End of the [table widget](../panels/dashboard#table-widgets), after the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+- `widgets::table-widget.start` - Start of the [table widget](../panels/dashboard#table-widgets), before the table itself, also [can be scoped](#scoping-render-hooks) to the table widget class
+
 ## Scoping render hooks
 
 Some render hooks can be given a "scope", which allows them to only be output on a specific page or Livewire component. For instance, you might want to register a render hook for just 1 page. To do that, you can pass the class of the page or component as the second argument to `registerRenderHook()`:
