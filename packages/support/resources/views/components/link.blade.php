@@ -51,7 +51,10 @@
     ]);
 
     $linkStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [300, 400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [300, 400, 500, 600],
+        ) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {
@@ -74,7 +77,10 @@
     ]);
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [500],
+        ) => $color !== 'gray',
     ]);
 
     $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';

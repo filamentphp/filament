@@ -209,13 +209,22 @@
                                 >
                                     <div
                                         @class([
-                                            'rounded-full bg-custom-100 dark:bg-custom-500/20',
+                                            'rounded-full',
+                                            match ($iconColor) {
+                                                'gray' => 'bg-gray-100 dark:bg-gray-500/20',
+                                                default => 'bg-custom-100 dark:bg-custom-500/20',
+                                            },
                                             match ($alignment) {
                                                 Alignment::Left, Alignment::Start, 'left', 'start' => 'p-2',
                                                 Alignment::Center, 'center' => 'p-3',
                                             },
                                         ])
-                                        style="{{ \Filament\Support\get_color_css_variables($iconColor, shades: [100, 500]) }}"
+                                        @style([
+                                            \Filament\Support\get_color_css_variables(
+                                                $iconColor,
+                                                shades: [100, 400, 500, 600],
+                                            ) => $iconColor !== 'gray',
+                                        ])
                                     >
                                         <x-filament::icon
                                             :alias="$iconAlias"
@@ -226,9 +235,6 @@
                                                     'gray' => 'text-gray-500 dark:text-gray-400',
                                                     default => 'text-custom-600 dark:text-custom-400',
                                                 },
-                                            ])
-                                            @style([
-                                                \Filament\Support\get_color_css_variables($iconColor, shades: [400, 600]) => $iconColor !== 'gray',
                                             ])
                                         />
                                     </div>

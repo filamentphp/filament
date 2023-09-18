@@ -18,7 +18,10 @@
     ]);
 
     $descriptionIconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($descriptionColor, shades: [500]) => $descriptionColor !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $descriptionColor,
+            shades: [500],
+        ) => $descriptionColor !== 'gray',
     ]);
 @endphp
 
@@ -72,7 +75,10 @@
                         },
                     ])
                     @style([
-                        \Filament\Support\get_color_css_variables($descriptionColor, shades: [400, 600]) => $descriptionColor !== 'gray',
+                        \Filament\Support\get_color_css_variables(
+                            $descriptionColor,
+                            shades: [400, 600],
+                        ) => $descriptionColor !== 'gray',
                     ])
                 >
                     {{ $description }}
@@ -102,7 +108,10 @@
                         })"
                 class="fi-wi-stats-overview-stat-chart absolute inset-x-0 bottom-0 overflow-hidden rounded-b-xl"
                 @style([
-                    \Filament\Support\get_color_css_variables($chartColor, shades: [50, 400, 500]) => $chartColor !== 'gray',
+                    \Filament\Support\get_color_css_variables(
+                        $chartColor,
+                        shades: [50, 400, 500],
+                    ) => $chartColor !== 'gray',
                 ])
             >
                 <canvas x-ref="canvas" class="h-6"></canvas>

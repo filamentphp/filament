@@ -45,7 +45,10 @@
         },
     ]);
 
-    $buttonStyles = \Filament\Support\get_color_css_variables($color, shades: [300, 400, 500, 600]);
+    $buttonStyles = \Filament\Support\get_color_css_variables(
+        $color,
+        shades: [300, 400, 500, 600],
+    );
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-icon-btn-icon',

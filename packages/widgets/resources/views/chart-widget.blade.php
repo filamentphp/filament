@@ -48,7 +48,10 @@
                         })"
                 x-ignore
                 @style([
-                    \Filament\Support\get_color_css_variables($color, shades: [50, 400, 500]) => $color !== 'gray',
+                    \Filament\Support\get_color_css_variables(
+                        $color,
+                        shades: [50, 400, 500],
+                    ) => $color !== 'gray',
                 ])
             >
                 <canvas
