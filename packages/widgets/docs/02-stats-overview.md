@@ -94,7 +94,7 @@ protected function getStats(): array
             ->color('success')
             ->extraAttributes([
                 'class' => 'cursor-pointer',
-                'wire:click' => "\$dispatch('setStatusFilter', {filter: 'processed'})",
+                'wire:click' => "\$dispatch('setStatusFilter', { filter: 'processed' })",
             ]),
         // ...
     ];
