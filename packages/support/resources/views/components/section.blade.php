@@ -101,7 +101,6 @@
                         \Filament\Support\get_color_css_variables(
                             $iconColor,
                             shades: [400, 500],
-                            alias: 'section.header.icon',
                         ) => $iconColor !== 'gray',
                     ])
                 />

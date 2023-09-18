@@ -51,7 +51,6 @@
                     \Filament\Support\get_color_css_variables(
                         $color,
                         shades: [50, 400, 500],
-                        alias: 'widgets::chart-widget.chart',
                     ) => $color !== 'gray',
                 ])
             >

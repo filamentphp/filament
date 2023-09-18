@@ -29,8 +29,18 @@
             "
             x-bind:style="
                 state
-                    ? '{{ \Filament\Support\get_color_css_variables($onColor, shades: [600]), alias: 'forms::components.toggle.on' }}'
-                    : '{{ \Filament\Support\get_color_css_variables($offColor, shades: [600]), alias: 'forms::components.toggle.off' }}'
+                    ? '{{
+                        \Filament\Support\get_color_css_variables(
+                            $onColor,
+                            shades: [600],
+                        )
+                    }}'
+                    : '{{
+                        \Filament\Support\get_color_css_variables(
+                            $offColor,
+                            shades: [600],
+                        )
+                    }}'
             "
             {{
                 $attributes

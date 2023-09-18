@@ -54,7 +54,6 @@
         \Filament\Support\get_color_css_variables(
             $color,
             shades: [300, 400, 500, 600],
-            alias: 'link',
         ) => $color !== 'gray',
     ]);
 
@@ -81,7 +80,6 @@
         \Filament\Support\get_color_css_variables(
             $color,
             shades: [500],
-            alias: 'link.icon',
         ) => $color !== 'gray',
     ]);
 
