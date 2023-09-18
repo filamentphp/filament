@@ -17,6 +17,22 @@
         $isReorderableWithButtons = $isReorderableWithButtons();
         $isReorderableWithDragAndDrop = $isReorderableWithDragAndDrop();
 
+        $customActions = collect($getActions())->forget([
+            $getAddActionName(),
+            $getAddBetweenActionName(),
+            $getCloneActionName(),
+            $getDeleteActionName(),
+            $getMoveDownActionName(),
+            $getMoveUpActionName(),
+            $getReorderActionName(),
+            $getCollapseActionName(),
+            $getExpandActionName(),
+            $getCollapseAllActionName(),
+            $getExpandAllActionName(),
+        ]);
+
+        $hasCustomActions = $customActions->isNotEmpty();
+
         $statePath = $getStatePath();
     @endphp
 
@@ -143,8 +159,20 @@
                                     </h4>
                                 @endif
 
-                                @if ($isCloneable || $isDeletable || $isCollapsible)
+                                @if ($isCloneable || $isDeletable || $isCollapsible || $hasCustomActions)
                                     <ul class="-me-1.5 ms-auto flex">
+                                        @if($hasCustomActions)
+                                            @foreach($customActions as $action)
+                                                <li>
+                                                    {{
+                                                        $action(['item' => $uuid])
+                                                            ->size(Filament\Support\Enums\ActionSize::Small)
+                                                            ->color($action->getColor() ?? 'gray')
+                                                    }}
+                                                </li>
+                                            @endforeach
+                                        @endif
+
                                         @if ($isCloneable)
                                             <li>
                                                 {{ $cloneAction(['item' => $uuid]) }}
