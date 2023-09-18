@@ -206,7 +206,7 @@
                         />
                     @endif
 
-                    {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.groups.before', scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.before', scopes: static::class) }}
 
                     @if (count($groups))
                         <x-filament-tables::groups
@@ -216,7 +216,7 @@
                         />
                     @endif
                     
-                    {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.groups.after', scopes: static::class) }}
+                    {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.grouping-selector.after', scopes: static::class) }}
                 </div>
 
                 @if ($isGlobalSearchVisible || $hasFiltersDropdown || $hasColumnToggleDropdown)
