@@ -79,16 +79,18 @@ FilamentView::registerRenderHook(
 
 ### Table Builder render hooks
 
-- `tables::toolbar.start` - The start of the table toolbar, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.end` - The end of the table toolbar, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.reorder-trigger.before` - Before the table [reorder](../tables/advanced#reordering-records) trigger, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.reorder-trigger.after` - After the table [reorder](../tables/advanced#reordering-records) trigger, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.groups.before` - Before the table [group](../tables/grouping) container, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.groups.after` - After the table [group](../tables/grouping) container, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.search.before` - Before the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.search.after` - After the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.toggle-column-trigger.before` - Before the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger, also [can be scoped](#scoping-render-hooks) to the table class
-- `tables::toolbar.toggle-column-trigger.after` - After the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger, also [can be scoped](#scoping-render-hooks) to the table class
+All these render hooks [can be scoped](#scoping-render-hooks) to any table Livewire component class. When using the Panel Builder, these classes might be the List or Manage page of a resource, or a relation manager. Table widgets are also Livewire component classes.
+
+- `tables::toolbar.start` - The start of the table toolbar
+- `tables::toolbar.end` - The end of the table toolbar
+- `tables::toolbar.reorder-trigger.before` - Before the table [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.reorder-trigger.after` - After the table [reorder](../tables/advanced#reordering-records) trigger
+- `tables::toolbar.groups.before` - Before the table [group](../tables/grouping) container
+- `tables::toolbar.groups.after` - After the table [group](../tables/grouping) container
+- `tables::toolbar.search.before` - Before the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.search.after` - After the table [search](../tables/getting-started#making-columns-sortable-and-searchable) container
+- `tables::toolbar.toggle-column-trigger.before` - Before the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger
+- `tables::toolbar.toggle-column-trigger.after` - After the table [toggled columns](../tables/columns/getting-started#toggling-column-visibility) trigger
 
 ## Scoping render hooks
 
