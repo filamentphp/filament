@@ -18,9 +18,10 @@ By default, the View page will display a disabled form with the record's data. I
 use Filament\Infolists;
 use Filament\Infolists\Infolist;
 
-public static function infolist(Infolist $infolist): Infolist
+public function infolist(Infolist $infolist): Infolist
 {
     return $infolist
+        ->record($this->record)
         ->schema([
             Infolists\Components\TextEntry::make('name'),
             Infolists\Components\TextEntry::make('email'),
