@@ -2,6 +2,6 @@
 
 return [
 
-    'title' => 'Panel',
+    'title' => 'Genel Bakış',
 
 ];

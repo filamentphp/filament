@@ -8,7 +8,7 @@ return [
 
         'modal' => [
 
-            'heading' => ':label sil',
+            'heading' => ':label Sil',
 
             'actions' => [
 
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Seçiliyi sil',
+        'label' => 'Seçilenleri sil',
 
         'modal' => [
 
-            'heading' => ':label seçiliyi sil',
+            'heading' => 'Seçilenleri sil', // When ':label' is used here, the meaning is distorted.
 
             'actions' => [
 
