@@ -23,7 +23,7 @@ class UpgradeCommand extends Command
         }
 
         FilamentUpgraded::dispatch();
-        
+
         $this->components->info('Successfully upgraded!');
 
         return static::SUCCESS;
