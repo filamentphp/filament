@@ -11,7 +11,7 @@ return [
             ],
 
             'add' => [
-                'label' => ':label\'e ekle',
+                'label' => ':label ekle',
             ],
 
             'add_between' => [

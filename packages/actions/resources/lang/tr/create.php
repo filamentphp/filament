@@ -4,7 +4,7 @@ return [
 
     'single' => [
 
-        'label' => ':Label Oluştur',
+        'label' => ':label Oluştur',
 
         'modal' => [
 
