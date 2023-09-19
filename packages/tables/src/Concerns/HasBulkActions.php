@@ -312,6 +312,8 @@ trait HasBulkActions
                 $column->applyRelationshipAggregates($query);
             }
 
+            $this->filterTableQuery($query);
+
             return $this->cachedSelectedTableRecords = $query->get();
         }
 
