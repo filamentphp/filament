@@ -430,7 +430,7 @@ If you're using the [Panel Builder](../panels), you can easily ignore the curren
 Field::make('email')->unique(ignoreRecord: true)
 ```
 
-You can further customize the rule by passing a [closure](advanced#closure-customization) to the `callback` parameter:
+You can further customize the rule by passing a [closure](advanced#closure-customization) to the `modifyRuleUsing` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Unique;
