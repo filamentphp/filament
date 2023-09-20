@@ -43,7 +43,7 @@ public function panel(Panel $panel): Panel
 
 ## Make your model translatable
 
-First, you need to make your models translatable. Read the official spatie's guide from <a href="https://spatie.be/docs/laravel-translatable/v6/installation-setup#content-making-a-model-translatable" target="_blank">here</a>.
+First, you need to make your models translatable. Read the official spatie's guide from [here](https://spatie.be/docs/laravel-translatable/v6/installation-setup#content-making-a-model-translatable).
 
 ## Preparing your resource class
 
