@@ -94,7 +94,7 @@ return [
 
         'heading' => 'لا توجد سجلات',
 
-        'description' => 'قم بإنشاء :model للبدء.',
+        'description' => 'قم بإضافة :model للبدء.',
 
     ],
 
