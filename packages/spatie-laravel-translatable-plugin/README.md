@@ -41,7 +41,7 @@ public function panel(Panel $panel): Panel
 }
 ```
 
-## Make your translatable
+## Make your model translatable
 
 Below steps are required to make your model translatable:
 1. Add `Spatie\Translatable\HasTranslations` trait to your model.
