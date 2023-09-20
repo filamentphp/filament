@@ -131,7 +131,9 @@
                 @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
             @endif
 
-            <x-filament-panels::user-menu />
+            @if (filament()->auth()->check())
+                <x-filament-panels::user-menu />
+            @endif
         </div>
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.end') }}
