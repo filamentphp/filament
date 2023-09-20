@@ -12,7 +12,7 @@
 <nav
     aria-label="{{ __('filament::components/pagination.label') }}"
     role="navigation"
-    {{ $attributes->class(['fi-pagination grid grid-col-3 grid-flow-col items-center gap-3']) }}
+    {{ $attributes->class(['fi-pagination grid grid-cols-3 grid-flow-col items-center gap-3']) }}
 >
     @if (! $paginator->onFirstPage())
         <x-filament::button
