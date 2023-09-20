@@ -10,7 +10,7 @@
 {{-- format-ignore-start --}}
 <aside
     x-data="{}"
-    @if (filament()->isSidebarCollapsibleOnDesktop() && ! filament()->hasTopNavigation())
+    @if (filament()->isSidebarCollapsibleOnDesktop() && (! filament()->hasTopNavigation()))
         x-cloak
         x-bind:class="
             $store.sidebar.isOpen
