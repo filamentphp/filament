@@ -44,6 +44,8 @@ trait CanGroupRecords
             return $query;
         }
 
-        return $group->orderQuery($query, $this->tableGroupingDirection ?? 'asc');
+        $orderDirection = $this->tableGroupingDirection === 'desc' ? 'desc' : 'asc';
+
+        return $group->orderQuery($query, $orderDirection);
     }
 }
