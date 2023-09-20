@@ -43,27 +43,11 @@ public function panel(Panel $panel): Panel
 
 ## Make your model translatable
 
-Below steps are required to make your model translatable:
-1. Add `Spatie\Translatable\HasTranslations` trait to your model.
-2. Create public property `$translatable` which is an array containing all names of attributes that you want to be translatable.
-
-```php
-use Illuminate\Database\Eloquent\Model;
-use Spatie\Translatable\HasTranslations;
-
-class BlogPost extends Model
-{
-    use HasTranslations;
-    
-    public $translatable = ['title', 'content', 'slug'];
-    
-    // ...
-}
-```
+First, you need to make your models translatable. Read the official spatie's guide from <a href="https://spatie.be/docs/laravel-translatable/v6/installation-setup#content-making-a-model-translatable" target="_blank">here</a>.
 
 ## Preparing your resource class
 
-First, you must apply the `Filament\Resources\Concerns\Translatable` trait to your resource class:
+Second, you must apply the `Filament\Resources\Concerns\Translatable` trait to your resource class:
 
 ```php
 use Filament\Resources\Concerns\Translatable;
