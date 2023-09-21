@@ -84,7 +84,7 @@
 
             @if (filled($body = $getBody()))
                 <x-filament-notifications::body class="mt-1">
-                    {{ str($body)->sanitizeHtml()->toHtmlString() }}
+                    {{ str($body)->markdown()->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::body>
             @endif
 
