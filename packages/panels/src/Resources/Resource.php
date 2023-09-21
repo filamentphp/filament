@@ -8,8 +8,10 @@ use Filament\Forms\Form;
 use Filament\GlobalSearch\Actions\Action;
 use Filament\GlobalSearch\GlobalSearchResult;
 use Filament\Infolists\Infolist;
+use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
 use Filament\Panel;
+use Filament\Resources\Pages\Page;
 use Filament\Resources\Pages\PageRegistration;
 use Filament\Resources\RelationManagers\RelationGroup;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -134,14 +136,12 @@ abstract class Resource
      */
     public static function getNavigationItems(): array
     {
-        $routeBaseName = static::getRouteBaseName();
-
         return [
             NavigationItem::make(static::getNavigationLabel())
                 ->group(static::getNavigationGroup())
                 ->icon(static::getNavigationIcon())
                 ->activeIcon(static::getActiveNavigationIcon())
-                ->isActiveWhen(fn () => request()->routeIs("{$routeBaseName}.*"))
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.*'))
                 ->badge(static::getNavigationBadge(), color: static::getNavigationBadgeColor())
                 ->sort(static::getNavigationSort())
                 ->url(static::getNavigationUrl()),
@@ -816,5 +816,13 @@ abstract class Resource
         }
 
         return $tenant->{$relationshipName}();
+    }
+
+    /**
+     * @return array<NavigationItem | NavigationGroup>
+     */
+    public static function getRecordSubNavigation(Page $page): array
+    {
+        return [];
     }
 }
