@@ -270,6 +270,10 @@ class Group extends Component
             $title = $title->getLabel();
         }
 
+        if ($title instanceof BackedEnum) {
+            $title = $title->value;
+        }
+
         if (filled($title) && $this->isDate()) {
             if (! ($title instanceof DateTimeInterface)) {
                 $title = Carbon::parse($title);
