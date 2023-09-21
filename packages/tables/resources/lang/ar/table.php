@@ -23,7 +23,11 @@ return [
         ],
 
         'bulk_select_record' => [
-            'label' => 'تحديد / إلغاء تحديد العنصر :key للإجراءات الجماعية',
+            'label' => 'تحديد / إلغاء تحديد العنصر :key للإجراءات الجماعية.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'تحديد / إلغاء تحديد المجموعة :title للإجراءات الجماعية.',
         ],
 
         'search' => [
@@ -65,36 +69,36 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'إنهاء إعادة ترتيب السجلات',
+            'label' => 'Finish reordering records',
         ],
 
         'enable_reordering' => [
-            'label' => 'إعادة ترتيب السجلات',
+            'label' => 'Reorder records',
         ],
 
         'filter' => [
-            'label' => 'تصفية',
+            'label' => 'Filter',
         ],
 
         'group' => [
-            'label' => 'مجموعة',
+            'label' => 'Group',
         ],
 
         'open_bulk_actions' => [
-            'label' => 'فتح الإجراءات',
+            'label' => 'Bulk actions',
         ],
 
         'toggle_columns' => [
-            'label' => 'تبديل الأعمدة',
+            'label' => 'Toggle columns',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => 'لا توجد سجلات',
+        'heading' => 'No :model',
 
-        'description' => 'قم بإضافة :model للبدء.',
+        'description' => 'Create a :model to get started.',
 
     ],
 
@@ -103,41 +107,41 @@ return [
         'actions' => [
 
             'remove' => [
-                'label' => 'إلغاء الفلاتر',
+                'label' => 'Remove filter',
             ],
 
             'remove_all' => [
-                'label' => 'إلغاء كافة الفلاتر',
-                'tooltip' => 'إلغاء كافة الفلاتر',
+                'label' => 'Remove all filters',
+                'tooltip' => 'Remove all filters',
             ],
 
             'reset' => [
-                'label' => 'إعادة ضبط الفلاتر',
+                'label' => 'Reset',
             ],
 
         ],
 
-        'heading' => 'الفلاتر',
+        'heading' => 'Filters',
 
-        'indicator' => 'الفلاتر النشطة',
+        'indicator' => 'Active filters',
 
         'multi_select' => [
-            'placeholder' => 'الكل',
+            'placeholder' => 'All',
         ],
 
         'select' => [
-            'placeholder' => 'الكل',
+            'placeholder' => 'All',
         ],
 
         'trashed' => [
 
-            'label' => 'السجلات المحذوفة',
+            'label' => 'Deleted records',
 
-            'only_trashed' => 'السجلات المحذوفة فقط',
+            'only_trashed' => 'Only deleted records',
 
-            'with_trashed' => 'مع السجلات المحذوفة',
+            'with_trashed' => 'With deleted records',
 
-            'without_trashed' => 'بدون السجلات المحذوفة',
+            'without_trashed' => 'Without deleted records',
 
         ],
 
@@ -148,17 +152,17 @@ return [
         'fields' => [
 
             'group' => [
-                'label' => 'تجميع حسب',
-                'placeholder' => 'تجميع حسب',
+                'label' => 'Group by',
+                'placeholder' => 'Group by',
             ],
 
             'direction' => [
 
-                'label' => 'إتجاه التجميع',
+                'label' => 'Group direction',
 
                 'options' => [
-                    'asc' => 'تصاعدي',
-                    'desc' => 'تنازلي',
+                    'asc' => 'Ascending',
+                    'desc' => 'Descending',
                 ],
 
             ],
@@ -167,20 +171,20 @@ return [
 
     ],
 
-    'reorder_indicator' => 'قم بسحب وإسقاط السجلات بالترتيب.',
+    'reorder_indicator' => 'Drag and drop the records into order.',
 
     'selection_indicator' => [
 
-        'selected_count' => '{1} تم تحديد سجل واحد|[3,10] تم تحديد :count سجلات |[2,*] تم تحديد :count سجل',
+        'selected_count' => '1 record selected|:count records selected',
 
         'actions' => [
 
             'select_all' => [
-                'label' => 'تحديد كل السجلات :count',
+                'label' => 'Select all :count',
             ],
 
             'deselect_all' => [
-                'label' => 'إلغاء تحديد الكل',
+                'label' => 'Deselect all',
             ],
 
         ],
@@ -192,16 +196,16 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'ترتيب حسب',
+                'label' => 'Sort by',
             ],
 
             'direction' => [
 
-                'label' => 'اتجاه الترتيب',
+                'label' => 'Sort direction',
 
                 'options' => [
-                    'asc' => 'تصاعدي',
-                    'desc' => 'تنازلي',
+                    'asc' => 'Ascending',
+                    'desc' => 'Descending',
                 ],
 
             ],
