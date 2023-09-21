@@ -61,6 +61,7 @@
                                 <option
                                     @disabled($isOptionDisabled($groupedValue, $groupedLabel))
                                     value="{{ $groupedValue }}"
+                                    wire:key="{{ $groupedValue }}"
                                 >
                                     @if ($isHtmlAllowed)
                                         {!! $groupedLabel !!}
@@ -74,6 +75,7 @@
                         <option
                             @disabled($isOptionDisabled($value, $label))
                             value="{{ $value }}"
+                            wire:key="{{ $value }}"
                         >
                             @if ($isHtmlAllowed)
                                 {!! $label !!}
