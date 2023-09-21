@@ -10,13 +10,13 @@
 {{-- format-ignore-start --}}
 <aside
     x-data="{}"
-    @if (filament()->isSidebarCollapsibleOnDesktop())
+    @if (filament()->isSidebarCollapsibleOnDesktop() && (! filament()->hasTopNavigation()))
         x-cloak
-    x-bind:class="
-        $store.sidebar.isOpen
-            ? @js($openSidebarClasses . ' ' . 'lg:sticky')
-            : '-translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
-    "
+        x-bind:class="
+            $store.sidebar.isOpen
+                ? @js($openSidebarClasses . ' ' . 'lg:sticky')
+                : '-translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
+        "
     @else
         @if (filament()->hasTopNavigation())
             x-cloak
