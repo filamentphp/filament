@@ -202,9 +202,14 @@ abstract class EditTenantProfile extends Page
     protected function getSaveFormAction(): Action
     {
         return Action::make('save')
-            ->label(__('filament-panels::pages/tenancy/edit-tenant-profile.form.actions.save.label'))
+            ->label($this->getSaveFormActionLabel())
             ->submit('save')
             ->keyBindings(['mod+s']);
+    }
+
+    protected function getSaveFormActionLabel(): string
+    {
+        return __('filament-panels::pages/tenancy/edit-tenant-profile.form.actions.save.label');
     }
 
     public function getTitle(): string | Htmlable
