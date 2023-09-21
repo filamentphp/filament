@@ -72,7 +72,7 @@
         <div class="mt-0.5 grid flex-1">
             @if (filled($title = $getTitle()))
                 <x-filament-notifications::title>
-                    {{ str($title)->sanitizeHtml()->toHtmlString() }}
+                    {{ str($title)->markdown()->sanitizeHtml()->toHtmlString() }}
                 </x-filament-notifications::title>
             @endif
 
