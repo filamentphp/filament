@@ -1,6 +1,6 @@
 @if (count($tabs = $this->getCachedTabs()))
     @php
-        $activeTab = strval($activeTab);
+        $activeTab = strval($this->activeTab);
         $renderHookScopes = $this->getRenderHookScopes();
     @endphp
 
