@@ -5,6 +5,9 @@ namespace Filament\Resources\Pages;
 use Filament\Forms\Form;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Concerns\InteractsWithRelationshipTable;
+use Filament\Resources\RelationManagers\RelationGroup;
+use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Resources\RelationManagers\RelationManagerConfiguration;
 use Filament\Tables;
 use Filament\Tables\Actions\BulkAction;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -15,6 +18,7 @@ use function Filament\authorize;
 
 class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
 {
+    use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use InteractsWithRelationshipTable;
 
@@ -55,6 +59,8 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     #[Url]
     public ?string $activeTab = null;
 
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
     public function mount(int | string $record): void
     {
         $this->record = $this->resolveRecord($record);
@@ -70,12 +76,31 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     {
         static::authorizeResourceAccess();
 
-        abort_unless($this->canViewAny(), 403);
+        abort_unless(static::canAccess($this->getRecord()), 403);
+    }
+
+    public static function canAccess(?Model $record = null): bool
+    {
+        if (! $record) {
+            return false;
+        }
+
+        if (static::shouldSkipAuthorization()) {
+            return true;
+        }
+
+        $model = $record->{static::getRelationshipName()}()->getQuery()->getModel()::class;
+
+        try {
+            return authorize('viewAny', $model, static::shouldCheckPolicyExistence())->allowed();
+        } catch (AuthorizationException $exception) {
+            return $exception->toResponse()->allowed();
+        }
     }
 
     public function getBreadcrumb(): string
     {
-        return static::$breadcrumb ?? __('filament-panels::resources/pages/edit-record.breadcrumb');
+        return static::$breadcrumb ?? static::getTitle();
     }
 
     /**
@@ -349,5 +374,33 @@ class ManageRelatedRecords extends Page implements Tables\Contracts\HasTable
     protected function canView(Model $record): bool
     {
         return $this->can('view', $record);
+    }
+
+    /**
+     * @return array<class-string<RelationManager> | RelationGroup | RelationManagerConfiguration>
+     */
+    public function getRelationManagers(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return static::getResource()::getRecordSubNavigation($this);
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return parent::shouldRegisterNavigation($parameters) && static::canAccess($parameters['record']);
     }
 }

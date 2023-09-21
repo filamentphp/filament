@@ -27,10 +27,11 @@ use function Filament\authorize;
 class RelationManager extends Component implements Actions\Contracts\HasActions, Infolists\Contracts\HasInfolists, Forms\Contracts\HasForms, Tables\Contracts\HasTable
 {
     use Actions\Concerns\InteractsWithActions;
-    use Forms\Concerns\InteractsWithForms, InteractsWithRelationshipTable {
+    use Forms\Concerns\InteractsWithForms;
+    use Infolists\Concerns\InteractsWithInfolists;
+    use InteractsWithRelationshipTable {
         InteractsWithRelationshipTable::makeTable as makeBaseRelationshipTable;
     }
-    use Infolists\Concerns\InteractsWithInfolists;
 
     /**
      * @var view-string

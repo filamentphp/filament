@@ -47,11 +47,6 @@ trait InteractsWithRelationshipTable
         return $this->getOwnerRecord()->{static::getRelationshipName()}();
     }
 
-    public function table(Table $table): Table
-    {
-        return $table;
-    }
-
     public static function getRelationshipName(): string
     {
         return static::$relationship;
