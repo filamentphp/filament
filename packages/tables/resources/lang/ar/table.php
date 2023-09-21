@@ -69,36 +69,36 @@ return [
     'actions' => [
 
         'disable_reordering' => [
-            'label' => 'Finish reordering records',
+            'label' => 'إنهاء إعادة ترتيب السجلات',
         ],
 
         'enable_reordering' => [
-            'label' => 'Reorder records',
+            'label' => 'إعادة ترتيب السجلات',
         ],
 
         'filter' => [
-            'label' => 'Filter',
+            'label' => 'تصفية',
         ],
 
         'group' => [
-            'label' => 'Group',
+            'label' => 'مجموعة',
         ],
 
         'open_bulk_actions' => [
-            'label' => 'Bulk actions',
+            'label' => 'فتح الإجراءات',
         ],
 
         'toggle_columns' => [
-            'label' => 'Toggle columns',
+            'label' => 'تبديل الأعمدة',
         ],
 
     ],
 
     'empty' => [
 
-        'heading' => 'No :model',
+        'heading' => 'لا توجد سجلات',
 
-        'description' => 'Create a :model to get started.',
+        'description' => 'قم بإضافة :model للبدء.',
 
     ],
 
@@ -107,41 +107,41 @@ return [
         'actions' => [
 
             'remove' => [
-                'label' => 'Remove filter',
+                'label' => 'إلغاء الفلاتر',
             ],
 
             'remove_all' => [
-                'label' => 'Remove all filters',
-                'tooltip' => 'Remove all filters',
+                'label' => 'إلغاء كافة الفلاتر',
+                'tooltip' => 'إلغاء كافة الفلاتر',
             ],
 
             'reset' => [
-                'label' => 'Reset',
+                'label' => 'إعادة ضبط الفلاتر',
             ],
 
         ],
 
-        'heading' => 'Filters',
+        'heading' => 'الفلاتر',
 
-        'indicator' => 'Active filters',
+        'indicator' => 'الفلاتر النشطة',
 
         'multi_select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'الكل',
         ],
 
         'select' => [
-            'placeholder' => 'All',
+            'placeholder' => 'الكل',
         ],
 
         'trashed' => [
 
-            'label' => 'Deleted records',
+            'label' => 'السجلات المحذوفة',
 
-            'only_trashed' => 'Only deleted records',
+            'only_trashed' => 'السجلات المحذوفة فقط',
 
-            'with_trashed' => 'With deleted records',
+            'with_trashed' => 'مع السجلات المحذوفة',
 
-            'without_trashed' => 'Without deleted records',
+            'without_trashed' => 'بدون السجلات المحذوفة',
 
         ],
 
@@ -152,17 +152,17 @@ return [
         'fields' => [
 
             'group' => [
-                'label' => 'Group by',
-                'placeholder' => 'Group by',
+                'label' => 'تجميع حسب',
+                'placeholder' => 'تجميع حسب',
             ],
 
             'direction' => [
 
-                'label' => 'Group direction',
+                'label' => 'إتجاه التجميع',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'تصاعدي',
+                    'desc' => 'تنازلي',
                 ],
 
             ],
@@ -171,20 +171,20 @@ return [
 
     ],
 
-    'reorder_indicator' => 'Drag and drop the records into order.',
+    'reorder_indicator' => 'قم بسحب وإسقاط السجلات بالترتيب.',
 
     'selection_indicator' => [
 
-        'selected_count' => '1 record selected|:count records selected',
+        'selected_count' => '{1} تم تحديد سجل واحد|[3,10] تم تحديد :count سجلات |[2,*] تم تحديد :count سجل',
 
         'actions' => [
 
             'select_all' => [
-                'label' => 'Select all :count',
+                'label' => 'تحديد كل السجلات :count',
             ],
 
             'deselect_all' => [
-                'label' => 'Deselect all',
+                'label' => 'إلغاء تحديد الكل',
             ],
 
         ],
@@ -196,16 +196,16 @@ return [
         'fields' => [
 
             'column' => [
-                'label' => 'Sort by',
+                'label' => 'ترتيب حسب',
             ],
 
             'direction' => [
 
-                'label' => 'Sort direction',
+                'label' => 'اتجاه الترتيب',
 
                 'options' => [
-                    'asc' => 'Ascending',
-                    'desc' => 'Descending',
+                    'asc' => 'تصاعدي',
+                    'desc' => 'تنازلي',
                 ],
 
             ],
