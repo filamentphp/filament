@@ -8,6 +8,7 @@ use Illuminate\Contracts\Support\Htmlable;
 
 class Radio extends Field
 {
+    use Concerns\CanBeDistinct;
     use Concerns\HasExtraInputAttributes;
     use Concerns\HasGridDirection;
     use Concerns\HasOptions;
@@ -25,11 +26,6 @@ class Radio extends Field
     protected array | Arrayable | Closure $descriptions = [];
 
     protected bool | Closure | null $isOptionDisabled = null;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
 
     public function boolean(string $trueLabel = 'Yes', string $falseLabel = 'No'): static
     {

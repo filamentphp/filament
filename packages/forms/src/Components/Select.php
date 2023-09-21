@@ -29,6 +29,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
     use Concerns\CanAllowHtml;
     use Concerns\CanBePreloaded;
     use Concerns\CanBeSearchable;
+    use Concerns\CanBeDistinct;
     use Concerns\CanDisableOptions;
     use Concerns\CanSelectPlaceholder;
     use Concerns\CanLimitItemsLength;
@@ -1182,6 +1183,10 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
     public function hasDynamicOptions(): bool
     {
+        if ($this->isDistinct()) {
+            return true;
+        }
+
         if ($this->hasRelationship()) {
             return $this->isPreloaded();
         }

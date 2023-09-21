@@ -5,6 +5,7 @@ namespace Filament\Forms\Components;
 class Checkbox extends Field
 {
     use Concerns\CanBeAccepted;
+    use Concerns\CanBeDistinct;
     use Concerns\CanBeInline;
     use Concerns\HasExtraInputAttributes;
 

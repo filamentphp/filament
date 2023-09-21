@@ -101,3 +101,31 @@ Radio::make('status')
     ->disableOptionWhen(fn (string $value): bool => $value === 'published')
     ->in(fn (Radio $component): array => array_keys($component->getEnabledOptions()))
 ```
+
+## Distinct selection in a Repeater
+
+You may enforce selection of any given radio button in only one instance of a Repeater by using the `distinct()` method.
+
+This example of creating teams for a tournament in a Repeater would only allow each shirt color to be chosen once
+
+```php
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Repeaater;
+
+Repeaater::make('teams')
+    ->maxItems(5)
+    ->schema([  
+        Radio::make('shirt_color')
+            ->options([
+                'blue' => 'Blue',
+                'green' => 'Green',
+                'red' => 'Red',
+                'yellow' => 'Yellow',
+                'white' => 'White',
+            ])
+            ->distinct(),
+        //
+    ])
+```
+
+If any radio button is selected again in a subsequent repeat instance, the previous selection will be de-selected.

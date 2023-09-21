@@ -407,6 +407,46 @@ Select::make('status')
     ->in(fn (Select $component): array => array_keys($component->getEnabledOptions()))
 ```
 
+## Distinct selection in a Repeater
+
+You may enforce selection of any given option in only one instance of a Repeater by using the `distinct()` method.
+
+This example of creating teams for a tournament in a Repeater would only allow each shirt color to be chosen once:
+
+```php
+use Filament\Forms\Components\Repeaater;
+use Filament\Forms\Components\Select;
+
+Repeaater::make('teams')
+    ->maxItems(5)
+    ->schema([  
+        Select::make('shirt_color')
+            ->options([
+                'blue' => 'Blue',
+                'green' => 'Green',
+                'red' => 'Red',
+                'yellow' => 'Yellow',
+                'white' => 'White',
+            ])
+            ->distinct(),
+        //
+    ])
+```
+
+With no arguments, this will allow selection of the same color again, but will de-select the other occurrence of it.
+
+Alternatively, you may specify the `shouldDisableOptions` argument, which will disable any selected option in all other repeater instances, so once an option is selected in one instance, it cannot be selected in another.  **Note** that this may impact performance for Selects with a lot of options.
+
+```php
+        Select::make('shirt_color')
+            ->options([
+                //
+            ])
+            ->distinct(shouldDisableOptions: true)
+```
+
+The `distinct()` method works for single and multiple selects, with and without `shouldDisableOptions`.  Without the `shouldDisableOptions` argument, the `live()` method is automatically applied.
+
 ## Adding affix text aside the field
 
 You may place text before and after the input using the `prefix()` and `suffix()` methods:
