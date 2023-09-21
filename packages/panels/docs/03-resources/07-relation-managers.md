@@ -519,10 +519,10 @@ To learn how to customize the `DeleteAction`, including changing the notificatio
 
 ## Accessing the relationship's owner record
 
-Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is mounted in a public `$ownerRecord` property. Thus, you may access the owner record using:
+Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is saved into a property. You can read this property using:
 
 ```php
-$this->ownerRecord
+$this->getOwnerRecord()
 ```
 
 However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
@@ -538,7 +538,7 @@ public function form(Form $form): Form
         ->schema([
             Forms\Components\Select::make('store_id')
                 ->options(function (RelationManager $livewire): array {
-                    return $livewire->ownerRecord->stores()
+                    return $livewire->getOwnerRecord()->stores()
                         ->pluck('name', 'id')
                         ->toArray();
                 }),
