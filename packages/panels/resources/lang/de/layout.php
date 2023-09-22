@@ -6,6 +6,10 @@ return [
 
     'actions' => [
 
+        'login' => [
+            'label' => 'Anmelden',
+        ],
+
         'logout' => [
             'label' => 'Abmelden',
         ],
@@ -14,8 +18,16 @@ return [
             'label' => 'Benachrichtigungen öffnen',
         ],
 
+        'open_guest_menu' => [
+            'label' => 'Gastmenü',
+        ],
+
         'open_user_menu' => [
             'label' => 'Benutzermenü',
+        ],
+
+        'register' => [
+            'label' => 'Registrieren',
         ],
 
         'sidebar' => [

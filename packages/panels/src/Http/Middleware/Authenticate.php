@@ -16,7 +16,7 @@ class Authenticate extends Middleware
     {
         $guard = Filament::auth();
 
-        if (! $guard->check()) {
+        if (! $guard->check() && ! Filament::getCurrentPanel()->getAllowGuests()) {
             $this->unauthenticated($request, $guards);
 
             return;
@@ -24,7 +24,7 @@ class Authenticate extends Middleware
 
         $this->auth->shouldUse(Filament::getAuthGuard());
 
-        /** @var Model $user */
+        /** @var ?Model $user */
         $user = $guard->user();
 
         $panel = Filament::getCurrentPanel();
@@ -32,7 +32,7 @@ class Authenticate extends Middleware
         abort_if(
             $user instanceof FilamentUser ?
                 (! $user->canAccessPanel($panel)) :
-                (config('app.env') !== 'local'),
+                (config('app.env') !== 'local' && ! Filament::getCurrentPanel()->getAllowGuests()),
             403,
         );
     }

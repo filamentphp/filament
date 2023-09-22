@@ -10,6 +10,10 @@ return [
             'label' => 'Manage subscription',
         ],
 
+        'login' => [
+            'label' => 'Sign in',
+        ],
+
         'logout' => [
             'label' => 'Sign out',
         ],
@@ -19,7 +23,15 @@ return [
         ],
 
         'open_user_menu' => [
+            'label' => 'Guest menu',
+        ],
+
+        'open_user_menu' => [
             'label' => 'User menu',
+        ],
+
+        'register' => [
+            'label' => 'Sign up',
         ],
 
         'sidebar' => [

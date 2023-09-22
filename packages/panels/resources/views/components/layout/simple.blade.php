@@ -6,15 +6,19 @@
     ])
 
     <div class="fi-simple-layout flex min-h-screen flex-col items-center">
-        @if (filament()->auth()->check())
+        @if (filament()->auth()->check() || filament()->allowsGuests())
             <div
                 class="absolute end-0 top-0 flex h-16 items-center gap-x-4 pe-4 md:pe-6 lg:pe-8"
             >
-                @if (filament()->hasDatabaseNotifications())
-                    @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
-                @endif
+                @if (filament()->auth()->check())
+                    @if (filament()->hasDatabaseNotifications())
+                        @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
+                    @endif
 
-                <x-filament-panels::user-menu />
+                    <x-filament-panels::user-menu />
+                @elseif (filament()->allowsGuests() && filament()->guestMenuOnSimplePages())
+                    <x-filament-panels::guest-menu />
+                @endif
             </div>
         @endif
 

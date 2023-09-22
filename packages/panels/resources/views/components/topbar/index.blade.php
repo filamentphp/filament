@@ -133,6 +133,8 @@
                 @endif
 
                 <x-filament-panels::user-menu />
+            @elseif (filament()->allowsGuests())
+                <x-filament-panels::guest-menu />
             @endif
         </div>
 

@@ -50,6 +50,11 @@ class FilamentManager
         return $this->getCurrentPanel()->auth();
     }
 
+    public function allowsGuests(): bool
+    {
+        return $this->getCurrentPanel()->getAllowGuests();
+    }
+
     public function bootCurrentPanel(): void
     {
         if ($this->isCurrentPanelBooted) {
@@ -446,6 +451,14 @@ class FilamentManager
         return $this->getCurrentPanel()->getUserMenuItems();
     }
 
+    /**
+     * @return array<MenuItem>
+     */
+    public function getGuestMenuItems(): array
+    {
+        return $this->getCurrentPanel()->getGuestMenuItems();
+    }
+
     public function getUserName(Model | Authenticatable $user): string
     {
         if ($user instanceof HasName) {
@@ -488,6 +501,11 @@ class FilamentManager
     public function getWidgets(): array
     {
         return $this->getCurrentPanel()->getWidgets();
+    }
+
+    public function guestMenuOnSimplePages(): bool
+    {
+        return $this->getCurrentPanel()->getGuestMenuOnSimplePages();
     }
 
     public function hasBreadcrumbs(): bool

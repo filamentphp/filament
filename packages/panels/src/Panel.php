@@ -21,6 +21,8 @@ class Panel extends Component
     use Panel\Concerns\HasFavicon;
     use Panel\Concerns\HasFont;
     use Panel\Concerns\HasGlobalSearch;
+    use Panel\Concerns\HasGuestMenu;
+    use Panel\Concerns\HasGuests;
     use Panel\Concerns\HasIcons;
     use Panel\Concerns\HasId;
     use Panel\Concerns\HasMaxContentWidth;
