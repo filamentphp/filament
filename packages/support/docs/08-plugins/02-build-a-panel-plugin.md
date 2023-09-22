@@ -134,7 +134,7 @@ class ClockWidget extends Widget
 
 Next, we'll need to create the view for our widget. Create a new file at `resources/views/widget.blade.php` and add the following code. We'll make use of Filament's blade components to save time on writing the html for the widget.
 
-We are using async Alpine to load our Alpine component, so we'll need to add the `x-ignore` attribute to the div that will load our component. We'll also need to add the `ax-load` attribute to the div to tell Alpine to load our component. You can learn more about this in the [Core Concepts](/docs/3.x/support/plugins/core-concepts#alpine-components) section of the docs.
+We are using async Alpine to load our Alpine component, so we'll need to add the `x-ignore` attribute to the div that will load our component. We'll also need to add the `ax-load` attribute to the div to tell Alpine to load our component. You can learn more about this in the [Core Concepts](/docs/3.x/support/assets#asynchronous-alpinejs-components) section of the docs.
 
 ```blade
 <x-filament-widgets::widget>
