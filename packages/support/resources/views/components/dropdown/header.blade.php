@@ -9,12 +9,26 @@
     'tag' => 'div',
 ])
 
+@php
+    $colorClasses = match ($color) {
+        'gray' => 'fi-color-gray',
+        default => 'fi-color-custom',
+    };
+
+    $deprecatedColorClasses = is_string($color) ? "fi-dropdown-header-color-{$color}" : null;
+@endphp
+
+@if ($deprecatedColorClasses)
+    <!-- DEPRECATED: Use {{ $colorClasses }} class instead of {{ $deprecatedColorClasses }}. -->
+@endif
+
 <{{ $tag }}
     {{
         $attributes
             ->class([
                 'fi-dropdown-header flex w-full gap-2 p-3 text-sm',
-                is_string($color) ? "fi-dropdown-header-color-{$color}" : null,
+                $colorClasses,
+                $deprecatedColorClasses,
             ])
             ->style([
                 \Filament\Support\get_color_css_variables(

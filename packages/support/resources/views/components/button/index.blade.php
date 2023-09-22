@@ -20,7 +20,7 @@
     'labeledFrom' => null,
     'labelSrOnly' => false,
     'outlined' => false,
-    'size' => 'md',
+    'size' => ActionSize::Medium,
     'tag' => 'button',
     'target' => null,
     'tooltip' => null,
@@ -28,28 +28,42 @@
 ])
 
 @php
-    $stringSize = match ($size) {
-        ActionSize::ExtraSmall => 'xs',
-        ActionSize::Small => 'sm',
-        ActionSize::Medium => 'md',
-        ActionSize::Large => 'lg',
-        ActionSize::ExtraLarge => 'xl',
-        default => $size,
+    $colorClasses = match ($color) {
+        'gray' => 'fi-color-gray',
+        default => 'fi-color-custom',
     };
+
+    $deprecatedColorClasses = is_string($color) ? "fi-btn-color-{$color}" : null;
+
+    if (! $size instanceof ActionSize) {
+        $size = ActionSize::tryFrom($size) ?? $size;
+    }
+
+    $sizeClasses = null;
+    $deprecatedSizeClasses = null;
+
+    if ($size instanceof ActionSize) {
+        $sizeClasses = "fi-size-{$size->value}";
+        $deprecatedSizeClasses = "fi-btn-size-{$size->value}";
+    }
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         ...[
-            "fi-btn fi-btn-size-{$stringSize} relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2",
+            'fi-btn relative grid-flow-col items-center justify-center font-semibold outline-none transition duration-75 focus:ring-2',
             'pointer-events-none opacity-70' => $disabled,
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
-            is_string($color) ? "fi-btn-color-{$color}" : null,
+            $colorClasses,
+            $deprecatedColorClasses,
+            $sizeClasses,
+            $deprecatedSizeClasses,
             match ($size) {
-                ActionSize::ExtraSmall, 'xs' => 'gap-1 px-2 py-1.5 text-xs',
-                ActionSize::Small, 'sm' => 'gap-1 px-2.5 py-1.5 text-sm',
-                ActionSize::Medium, 'md' => 'gap-1.5 px-3 py-2 text-sm',
-                ActionSize::Large, 'lg' => 'gap-1.5 px-3.5 py-2.5 text-sm',
-                ActionSize::ExtraLarge, 'xl' => 'gap-1.5 px-4 py-3 text-sm',
+                ActionSize::ExtraSmall => 'gap-1 px-2 py-1.5 text-xs',
+                ActionSize::Small => 'gap-1 px-2.5 py-1.5 text-sm',
+                ActionSize::Medium => 'gap-1.5 px-3 py-2 text-sm',
+                ActionSize::Large => 'gap-1.5 px-3.5 py-2.5 text-sm',
+                ActionSize::ExtraLarge => 'gap-1.5 px-4 py-3 text-sm',
+                default => $size,
             },
             'hidden' => $labeledFrom,
             match ($labeledFrom) {
@@ -128,6 +142,14 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
+
+@if ($deprecatedColorClasses)
+    <!-- DEPRECATED: Use {{ $colorClasses }} class instead of {{ $deprecatedColorClasses }}. -->
+@endif
+
+@if ($deprecatedSizeClasses)
+    <!-- DEPRECATED: Use {{ $sizeClasses }} class instead of {{ $deprecatedSizeClasses }}. -->
+@endif
 
 @if ($labeledFrom)
     <x-filament::icon-button

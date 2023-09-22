@@ -11,6 +11,10 @@
     'url',
 ])
 
+@if ($active)
+    <!-- DEPRECATED: Use fi-active class instead of fi-sidebar-item-active. -->
+@endif
+
 <li
     @class([
         'fi-sidebar-item',

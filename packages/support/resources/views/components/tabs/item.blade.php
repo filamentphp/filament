@@ -34,6 +34,10 @@
     $activeIconClasses = 'text-primary-600 dark:text-primary-400';
 @endphp
 
+@if ($hasAlpineActiveClasses || $active)
+    <!-- DEPRECATED: Use fi-active class instead of fi-tabs-item-active. -->
+@endif
+
 <{{ $tag }}
     @if ($tag === 'button')
         type="{{ $type }}"
