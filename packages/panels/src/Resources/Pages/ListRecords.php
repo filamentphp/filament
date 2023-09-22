@@ -236,7 +236,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
     protected function makeTable(): Table
     {
         return $this->makeBaseTable()
-            ->query(fn (): Builder => $this->getTableQuery() ?? static::getResource()::getEloquentQuery())
+            ->query(fn (): Builder => $this->getTableQuery())
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
@@ -308,7 +308,7 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
     protected function getTableQuery(): ?Builder
     {
-        return null;
+        return static::getResource()::getEloquentQuery();
     }
 
     /**
