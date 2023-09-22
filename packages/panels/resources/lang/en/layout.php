@@ -22,7 +22,7 @@ return [
             'label' => 'Open notifications',
         ],
 
-        'open_user_menu' => [
+        'open_guest_menu' => [
             'label' => 'Guest menu',
         ],
 
