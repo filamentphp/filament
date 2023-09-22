@@ -18,18 +18,15 @@
 ])
 
 @php
-    $colorClasses = match ($color) {
-        'gray' => 'fi-color-gray',
-        default => 'fi-color-custom',
-    };
-
-    $deprecatedColorClasses = is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null;
-
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
         'pointer-events-none opacity-70' => $disabled,
-        $colorClasses,
-        $deprecatedColorClasses,
+        match ($color) {
+            'gray' => 'fi-color-gray',
+            default => 'fi-color-custom',
+        },
+        // @deprecated `fi-dropdown-list-item-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
+        is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
         match ($color) {
             'gray' => 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
             default => 'hover:bg-custom-50 focus:bg-custom-50 dark:hover:bg-custom-400/10 dark:focus:bg-custom-400/10',
@@ -75,10 +72,6 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget, ENT_QUOTES);
     }
 @endphp
-
-@if ($deprecatedColorClasses)
-    <!-- DEPRECATED: Use {{ $colorClasses }} class instead of {{ $deprecatedColorClasses }}. -->
-@endif
 
 @if ($tag === 'button')
     <button

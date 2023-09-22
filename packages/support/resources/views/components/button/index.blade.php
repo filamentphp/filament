@@ -28,23 +28,8 @@
 ])
 
 @php
-    $colorClasses = match ($color) {
-        'gray' => 'fi-color-gray',
-        default => 'fi-color-custom',
-    };
-
-    $deprecatedColorClasses = is_string($color) ? "fi-btn-color-{$color}" : null;
-
     if (! $size instanceof ActionSize) {
         $size = ActionSize::tryFrom($size) ?? $size;
-    }
-
-    $sizeClasses = null;
-    $deprecatedSizeClasses = null;
-
-    if ($size instanceof ActionSize) {
-        $sizeClasses = "fi-size-{$size->value}";
-        $deprecatedSizeClasses = "fi-btn-size-{$size->value}";
     }
 
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -53,10 +38,15 @@
             'pointer-events-none opacity-70' => $disabled,
             'flex-1' => $grouped,
             'rounded-lg' => ! $grouped,
-            $colorClasses,
-            $deprecatedColorClasses,
-            $sizeClasses,
-            $deprecatedSizeClasses,
+            match ($color) {
+                'gray' => 'fi-color-gray',
+                default => 'fi-color-custom',
+            },
+            // @deprecated `fi-btn-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
+            is_string($color) ? "fi-btn-color-{$color}" : null,
+            "fi-size-{$size->value}" => $size instanceof ActionSize,
+            // @deprecated `fi-btn-size-*` has been replaced by `fi-size-*`.
+            "fi-btn-size-{$size->value}" => $size instanceof ActionSize,
             match ($size) {
                 ActionSize::ExtraSmall => 'gap-1 px-2 py-1.5 text-xs',
                 ActionSize::Small => 'gap-1 px-2.5 py-1.5 text-sm',
@@ -142,14 +132,6 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
-
-@if ($deprecatedColorClasses)
-    <!-- DEPRECATED: Use {{ $colorClasses }} class instead of {{ $deprecatedColorClasses }}. -->
-@endif
-
-@if ($deprecatedSizeClasses)
-    <!-- DEPRECATED: Use {{ $sizeClasses }} class instead of {{ $deprecatedSizeClasses }}. -->
-@endif
 
 @if ($labeledFrom)
     <x-filament::icon-button

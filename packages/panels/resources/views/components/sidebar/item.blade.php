@@ -11,13 +11,10 @@
     'url',
 ])
 
-@if ($active)
-    <!-- DEPRECATED: Use fi-active class instead of fi-sidebar-item-active. -->
-@endif
-
 <li
     @class([
         'fi-sidebar-item',
+        // @deprecated `fi-sidebar-item-active` has been replaced by `fi-active`.
         'fi-active fi-sidebar-item-active' => $active,
     ])
 >

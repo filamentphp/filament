@@ -28,20 +28,13 @@
         $size = ActionSize::tryFrom($size) ?? $size;
     }
 
-    $sizeClasses = null;
-    $deprecatedSizeClasses = null;
-
-    if ($size instanceof ActionSize) {
-        $sizeClasses = "fi-size-{$size->value}";
-        $deprecatedSizeClasses = "fi-link-size-{$size->value}";
-    }
-
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
-        $sizeClasses,
-        $deprecatedSizeClasses,
+        "fi-size-{$size->value}" => $size instanceof ActionSize,
+        // @deprecated `fi-link-size-*` has been replaced by `fi-size-*`.
+        "fi-link-size-{$size->value}" => $size instanceof ActionSize,
         match ($size) {
             ActionSize::ExtraSmall => 'gap-1 text-xs',
             ActionSize::Small => 'gap-1 text-sm',
@@ -99,10 +92,6 @@
         $loadingIndicatorTarget = html_entity_decode($wireTarget ?: $form, ENT_QUOTES);
     }
 @endphp
-
-@if ($deprecatedSizeClasses)
-    <!-- DEPRECATED: Use {{ $sizeClasses }} class instead of {{ $deprecatedSizeClasses }}. -->
-@endif
 
 @if ($tag === 'a')
     <a

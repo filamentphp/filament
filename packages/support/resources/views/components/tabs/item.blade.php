@@ -21,6 +21,7 @@
 
     $inactiveItemClasses = 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5';
 
+    // @deprecated `fi-tabs-item-active` has been replaced by `fi-active`.
     $activeItemClasses = 'fi-active fi-tabs-item-active bg-gray-50 dark:bg-white/5';
 
     $inactiveLabelClasses = 'text-gray-500 group-hover:text-gray-700 group-focus:text-gray-700 dark:text-gray-400 dark:group-hover:text-gray-200 dark:group-focus:text-gray-200';
@@ -33,10 +34,6 @@
 
     $activeIconClasses = 'text-primary-600 dark:text-primary-400';
 @endphp
-
-@if ($hasAlpineActiveClasses || $active)
-    <!-- DEPRECATED: Use fi-active class instead of fi-tabs-item-active. -->
-@endif
 
 <{{ $tag }}
     @if ($tag === 'button')
