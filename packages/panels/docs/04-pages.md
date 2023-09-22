@@ -37,6 +37,15 @@ public function mount(): void
     abort_unless(auth()->user()->canManageSettings(), 403);
 }
 ```
+When adding authorization to `Edit` pages you need to call the parent mount method for authorization to work.
+
+```php
+public function mount(string|int $record): void
+{
+    parent::mount();
+    abort_unless(auth()->user()->canManageSettings(), 403);
+}
+```
 
 ## Adding actions to pages
 
