@@ -76,6 +76,6 @@ Please read this guide in its entirety before upgrading your plugin. It will hel
 
 1. [Filament Asset Management](/docs/3.x/support/assets)
 2. [Panel Plugin Development](/docs/3.x/panels/plugins)
-3. [Icon Management](docs/3.x/support/icons)
-4. [Colors Management](docs/3.x/support/colors)
-5. [Stying Customization](docs/3.x/support/style-customization)
+3. [Icon Management](/docs/3.x/support/icons)
+4. [Colors Management](/docs/3.x/support/colors)
+5. [Style Customization](/docs/3.x/support/style-customization)
