@@ -79,6 +79,16 @@ class Panel extends Component
         if ($callback = $this->bootUsing) {
             $callback($this);
         }
+
+        // In a Laravel Octane instance we have to make sure we rebuild the navigation on every
+        // request since it may require the current requests state. This is especially the case
+        // for multi-tenancy.
+        if (class_exists(\Laravel\Octane\Events\RequestReceived::class)) {
+            Event::listen(\Laravel\Octane\Events\RequestReceived::class, function () {
+                $this->navigationItems = [];
+                $this->isNavigationMounted = false;
+            });
+        }
     }
 
     public function bootUsing(?Closure $callback): static
