@@ -61,8 +61,12 @@ export default function table() {
             this.isLoading = false
         },
 
-        getRecordsInGroupOnPage: function (group) {
+        getRecordsInGroupOnPage: function (group) {            
             const keys = []
+
+            if (this.$root === undefined) {
+                return keys
+            }
 
             for (let checkbox of this.$root.getElementsByClassName(
                 'fi-ta-record-checkbox',
