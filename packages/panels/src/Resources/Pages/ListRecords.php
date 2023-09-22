@@ -306,6 +306,9 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->reorderable(condition: static::getResource()::canReorder());
     }
 
+    /**
+     * @deprecated Override the `table()` method to configure the table.
+     */
     protected function getTableQuery(): ?Builder
     {
         return static::getResource()::getEloquentQuery();
