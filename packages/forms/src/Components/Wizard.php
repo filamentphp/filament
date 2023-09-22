@@ -64,7 +64,7 @@ class Wizard extends Component
 
         $this->registerListeners([
             'wizard::nextStep' => [
-                function (Wizard $component, string $statePath, string $currentStepIndex): void {
+                function (Wizard $component, string $statePath, int $currentStepIndex): void {
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
