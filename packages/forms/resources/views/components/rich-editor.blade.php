@@ -128,7 +128,7 @@
                                 @if ($hasToolbarButton('underline'))
                                     <x-filament-forms::rich-editor.toolbar.button
                                         data-trix-attribute="underline"
-                                        title="{{ __('forms::components.rich_editor.toolbar_buttons.underline') }}"
+                                        title="{{ __('filament-forms::components.rich_editor.toolbar_buttons.underline') }}"
                                         tabindex="-1"
                                     >
                                         <svg
