@@ -45,7 +45,7 @@ The Filament Panel Builder pre-installs the [Form Builder](/docs/forms), [Table 
 
 ## Deploying to production
 
-### Users
+### Allowing users to access a panel
 
 By default, all `User` models can access Filament locally. However, when deploying to production, you must update your `App\Models\User.php` to implement the `FilamentUser` contract — ensuring that only the correct users can access your panel:
 
@@ -73,9 +73,9 @@ class User extends Authenticatable implements FilamentUser
 
 Learn more about [users](users).
 
-### Icons
+### Caching Blade Icons
 
-You may wish to consider adding `php artisan icons:cache` to your deployment process because internally Filament uses the Blade UI Kit package, which is more performant when caching.
+You may wish to consider using `php artisan icons:cache` in your deployment process, as Filament uses the [Blade Icons](https://blade-ui-kit.com/blade-icons) package, which can be much more performant when cached. This is very hardware-dependant though, and many servers do not require this command for Filament to run smoothly.
 
 ## Publishing configuration
 
