@@ -37,6 +37,7 @@ RichEditor::make('content')
         'redo',
         'strike',
         'undo',
+        'underline',
     ])
 ```
 
