@@ -64,14 +64,18 @@ class Wizard extends Component
 
         $this->registerListeners([
             'wizard::nextStep' => [
-                function (Wizard $component, string $statePath, string $currentStep): void {
+                function (Wizard $component, string $statePath, int $currentStepIndex): void {
                     if ($statePath !== $component->getStatePath()) {
                         return;
                     }
 
                     if (! $component->isSkippable()) {
                         /** @var Step $currentStep */
-                        $currentStep = $component->getChildComponentContainer()->getComponents(withHidden: true)[$currentStep];
+                        $currentStep = array_values(
+                            $component
+                                ->getChildComponentContainer()
+                                ->getComponents()
+                        )[$currentStepIndex];
 
                         $currentStep->callBeforeValidation();
                         $currentStep->getChildComponentContainer()->validate();
