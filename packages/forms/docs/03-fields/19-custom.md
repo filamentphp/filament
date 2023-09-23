@@ -3,7 +3,7 @@ title: Custom fields
 ---
 import LaracastsBanner from "@components/LaracastsBanner.astro"
 
-<LaracastsBanner title="Build a Custom Form Field" description="You can find this information on Laracasts, in the \"Building advanced components for Filament\" series. The series will teach you how to build components, like custom form fields and table columns, and how to distribute them in a plugin package. Meanwhile, you'll get to know all the tools of Filament's internal component system, and how to use them to your advantage." url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/6" />
+<LaracastsBanner title="Build a Custom Form Field" description="You can find this information on Laracasts, in the Build Advanced Components for Filament series. The series will teach you how to build components, like custom form fields and table columns, and how to distribute them in a plugin package. Meanwhile, you'll get to know all the tools of Filament's internal component system, and how to use them to your advantage." url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/6" />
 
 ## View fields
 
