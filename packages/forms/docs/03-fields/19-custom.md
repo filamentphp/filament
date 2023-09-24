@@ -1,6 +1,13 @@
 ---
 title: Custom fields
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
+
+<LaracastsBanner
+    title="Build a Custom Form Field"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/6"
+/>
 
 ## View fields
 

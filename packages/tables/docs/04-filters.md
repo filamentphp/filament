@@ -2,6 +2,7 @@
 title: Filters
 ---
 import AutoScreenshot from "@components/AutoScreenshot.astro"
+import LaracastsBanner from "@components/LaracastsBanner.astro"
 
 ## Overview
 
@@ -247,6 +248,12 @@ TernaryFilter::make('trashed')
 ```
 
 ### Custom filter forms
+
+<LaracastsBanner
+    title="Build a Custom Table Filter"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/11"
+/>
 
 You may use components from the [Form Builder](../forms/fields/getting-started) to create custom filter forms. The data from the custom filter form is available in the `$data` array of the `query()` callback:
 
