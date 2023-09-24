@@ -73,7 +73,7 @@
                 x-on:click="isCollapsed = ! isCollapsed"
             @endif
             @class([
-                'flex items-center gap-x-3 overflow-hidden',
+                'fi-section-header flex items-center gap-x-3 overflow-hidden',
                 'cursor-pointer' => $collapsible,
                 match ($compact) {
                     true => 'px-4 py-2.5',
@@ -87,8 +87,8 @@
                     @class([
                         'fi-section-header-icon self-start',
                         match ($iconColor) {
-                            'gray' => 'text-gray-400 dark:text-gray-500',
-                            default => 'text-custom-500 dark:text-custom-400',
+                            'gray' => 'fi-color-gray text-gray-400 dark:text-gray-500',
+                            default => 'fi-color-custom text-custom-500 dark:text-custom-400',
                         },
                         match ($iconSize) {
                             IconSize::Small, 'sm' => 'h-4 w-4 mt-1',

@@ -32,8 +32,8 @@
                     'md' => 'px-2 min-w-[theme(spacing.6)] py-1',
                 },
                 match ($color) {
-                    'gray' => 'bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
-                    default => 'bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
+                    'gray' => 'fi-color-gray bg-gray-50 text-gray-600 ring-gray-600/10 dark:bg-gray-400/10 dark:text-gray-400 dark:ring-gray-400/20',
+                    default => 'fi-color-custom bg-custom-50 text-custom-600 ring-custom-600/10 dark:bg-custom-400/10 dark:text-custom-400 dark:ring-custom-400/30',
                 },
             ])
             ->style([
@@ -64,8 +64,18 @@
     @if ($isDeletable)
         <button
             type="button"
-            class="-my-1 -me-2 -ms-1 flex items-center justify-center p-1 text-custom-700/50 outline-none transition duration-75 hover:text-custom-700/75 focus:text-custom-700/75 dark:text-custom-300/50 dark:hover:text-custom-300/75 dark:focus:text-custom-300/75"
-            {{ $deleteButton->attributes->except(['label']) }}
+            {{
+                $deleteButton
+                    ->attributes
+                    ->except(['label'])
+                    ->class([
+                        '-my-1 -me-2 -ms-1 flex items-center justify-center p-1 outline-none transition duration-75',
+                        match ($color) {
+                            'gray' => 'text-gray-700/50 hover:text-gray-700/75 focus:text-gray-700/75 dark:text-gray-300/50 dark:hover:text-gray-300/75 dark:focus:text-gray-300/75',
+                            default => 'text-custom-700/50 hover:text-custom-700/75 focus:text-custom-700/75 dark:text-custom-300/50 dark:hover:text-custom-300/75 dark:focus:text-custom-300/75',
+                        },
+                    ])
+            }}
         >
             <x-filament::icon
                 alias="badge.delete-button"

@@ -47,6 +47,12 @@
                             type: @js($this->getType()),
                         })"
                 x-ignore
+                @class([
+                    match ($color) {
+                        'gray' => 'fi-color-gray',
+                        default => 'fi-color-custom',
+                    },
+                ])
                 @style([
                     \Filament\Support\get_color_css_variables(
                         $color,

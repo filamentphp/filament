@@ -16,14 +16,14 @@
                 state
                     ? '{{
                         match ($onColor) {
-                            'gray' => 'bg-gray-200 dark:bg-gray-700',
-                            default => 'bg-custom-600',
+                            'gray' => 'fi-color-gray bg-gray-200 dark:bg-gray-700',
+                            default => 'fi-color-custom bg-custom-600',
                         }
                     }}'
                     : '{{
                         match ($offColor) {
-                            'gray' => 'bg-gray-200 dark:bg-gray-700',
-                            default => 'bg-custom-600',
+                            'gray' => 'fi-color-gray bg-gray-200 dark:bg-gray-700',
+                            default => 'fi-color-custom bg-custom-600',
                         }
                     }}'
             "
