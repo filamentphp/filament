@@ -180,7 +180,7 @@ class MakeRelationManagerCommand extends Command
             'tableHeaderActions' => $this->indentString($tableHeaderActions, 4),
         ]);
 
-        $this->components->info("Successfully created {$managerClass}!");
+        $this->components->info(sprintf('%s [%s] created successfully.', "Filament Relation-Manager", $path));
 
         $this->components->info("Make sure to register the relation in `{$resource}::getRelations()`.");
 

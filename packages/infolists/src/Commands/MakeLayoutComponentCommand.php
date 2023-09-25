@@ -67,7 +67,7 @@ class MakeLayoutComponentCommand extends Command
             $this->copyStubToApp('LayoutComponentView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$component}!");
+        $this->components->info(sprintf('%s [%s] created successfully.', "Infolist Layout", $path));
 
         return static::SUCCESS;
     }

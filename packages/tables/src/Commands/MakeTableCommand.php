@@ -84,7 +84,7 @@ class MakeTableCommand extends Command
 
         $this->copyStubToApp('TableView', $viewPath);
 
-        $this->info("Successfully created {$component}!");
+        $this->components->info(sprintf('%s [%s] created successfully.', "Table", $path));
 
         return static::SUCCESS;
     }

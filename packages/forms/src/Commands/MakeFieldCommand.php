@@ -67,7 +67,7 @@ class MakeFieldCommand extends Command
             $this->copyStubToApp('FieldView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$field}!");
+        $this->components->info(sprintf('%s [%s] created successfully.', "Form Field", $path));
 
         return static::SUCCESS;
     }

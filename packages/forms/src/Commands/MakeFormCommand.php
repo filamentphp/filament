@@ -101,7 +101,7 @@ class MakeFormCommand extends Command
             'submitAction' => filled($model) ? ($isEditForm ? 'save' : 'create') : 'submit',
         ]);
 
-        $this->components->info("Successfully created {$component}!");
+        $this->components->info(sprintf('%s [%s] created successfully.', "Livewire Form", $path));
 
         return static::SUCCESS;
     }
