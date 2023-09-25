@@ -122,14 +122,19 @@ class StaticAction extends ViewComponent
         }
 
         if ($event = $this->getEvent()) {
-            $arguments = collect([$event])
-                ->merge($this->getEventData())
-                ->when(
-                    $this->getDispatchToComponent(),
-                    fn (Collection $collection, string $component) => $collection->prepend($component),
-                )
-                ->map(fn (mixed $value): string => Js::from($value)->toHtml())
-                ->implode(', ');
+            $arguments = '';
+
+            if ($component = $this->getDispatchToComponent()) {
+                $arguments .= Js::from($component)->toHtml();
+                $arguments .= ', ';
+            }
+
+            $arguments .= Js::from($event)->toHtml();
+
+            if ($this->getEventData()) {
+                $arguments .= ', ';
+                $arguments .= Js::from($this->getEventData())->toHtml();
+            }
 
             return match ($this->getDispatchDirection()) {
                 'self' => "\$dispatchSelf($arguments)",
