@@ -7,7 +7,6 @@ use Filament\Support\Concerns\HasBadge;
 use Filament\Support\Concerns\HasColor;
 use Filament\Support\Concerns\HasExtraAttributes;
 use Filament\Support\Concerns\HasIcon;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Js;
 use Illuminate\Support\Traits\Conditionable;
 
