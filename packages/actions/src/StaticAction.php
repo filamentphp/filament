@@ -122,17 +122,16 @@ class StaticAction extends ViewComponent
         }
 
         if ($event = $this->getEvent()) {
-
             $arguments = '';
 
-            if ($component = $this->getDispatchToComponent() ) {
-                $arguments .= Js::from( $component)->toHtml();
+            if ($component = $this->getDispatchToComponent()) {
+                $arguments .= Js::from($component)->toHtml();
                 $arguments .= ', ';
             }
 
-            $arguments .= Js::from( $event)->toHtml();
+            $arguments .= Js::from($event)->toHtml();
 
-            if ($this->getEventData()){
+            if ($this->getEventData()) {
                 $arguments .= ', ';
                 $arguments .= Js::from($this->getEventData())->toHtml();
             }
