@@ -3,6 +3,7 @@
 namespace Filament\Panel\Concerns;
 
 use Closure;
+use Filament\Http\Middleware\EnsureGuestOrEmailIsVerified;
 use Filament\Pages\Auth\EditProfile;
 use Filament\Pages\Auth\EmailVerification\EmailVerificationPrompt;
 use Filament\Pages\Auth\Login;
@@ -161,7 +162,9 @@ trait HasAuth
 
     public function getEmailVerifiedMiddleware(): string
     {
-        return "verified:{$this->getEmailVerificationPromptRouteName()}";
+        $emailVerificationPromptRouteName = $this->getEmailVerificationPromptRouteName();
+
+        return $this->getAllowGuests() ? EnsureGuestOrEmailIsVerified::class . ":{$emailVerificationPromptRouteName}" : "verified:{$emailVerificationPromptRouteName}";
     }
 
     /**
