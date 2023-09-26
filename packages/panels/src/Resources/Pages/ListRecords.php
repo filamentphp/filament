@@ -241,7 +241,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             ->modelLabel($this->getModelLabel() ?? static::getResource()::getModelLabel())
             ->pluralModelLabel($this->getPluralModelLabel() ?? static::getResource()::getPluralModelLabel())
             ->recordAction(function (Model $record, Table $table): ?string {
-                foreach (['view', 'edit'] as $action) {
+                $actions = array_keys(
+                    Arr::only($table->getFlatActions(), ['view', 'edit'])
+                );
+                
+                foreach ($actions as $action) {
                     $action = $table->getAction($action);
 
                     if (! $action) {
@@ -265,7 +269,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
             })
             ->recordTitle(fn (Model $record): string => static::getResource()::getRecordTitle($record))
             ->recordUrl($this->getTableRecordUrlUsing() ?? function (Model $record, Table $table): ?string {
-                foreach (['view', 'edit'] as $action) {
+                $actions = array_keys(
+                    Arr::only($table->getFlatActions(), ['view', 'edit'])
+                );
+                
+                foreach ($actions as $action) {
                     $action = $table->getAction($action);
 
                     if (! $action) {
@@ -289,7 +297,11 @@ class ListRecords extends Page implements Tables\Contracts\HasTable
 
                 $resource = static::getResource();
 
-                foreach (['view', 'edit'] as $action) {
+                $actions = array_keys(
+                    Arr::only($resource::getPages(), ['view', 'edit'])
+                );
+
+                foreach ($actions as $action) {
                     if (! $resource::hasPage($action)) {
                         continue;
                     }
