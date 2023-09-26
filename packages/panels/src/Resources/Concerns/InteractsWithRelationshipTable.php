@@ -59,7 +59,11 @@ trait InteractsWithRelationshipTable
             ->modifyQueryUsing($this->modifyQueryWithActiveTab(...))
             ->queryStringIdentifier(Str::lcfirst(class_basename(static::class)))
             ->recordAction(function (Model $record, Table $table): ?string {
-                foreach (['view', 'edit'] as $action) {
+                $actions = array_keys(
+                    Arr::only($table->getFlatActions(), ['view', 'edit'])
+                );
+                
+                foreach ($actions as $action) {
                     $action = $table->getAction($action);
 
                     if (! $action) {
@@ -82,7 +86,11 @@ trait InteractsWithRelationshipTable
                 return null;
             })
             ->recordUrl(function (Model $record, Table $table): ?string {
-                foreach (['view', 'edit'] as $action) {
+                $actions = array_keys(
+                    Arr::only($table->getFlatActions(), ['view', 'edit'])
+                );
+                
+                foreach ($actions as $action) {
                     $action = $table->getAction($action);
 
                     if (! $action) {
