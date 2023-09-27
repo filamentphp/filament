@@ -127,13 +127,11 @@
 
             {{ \Filament\Support\Facades\FilamentView::renderHook('panels::global-search.after') }}
 
-            @if (filament()->auth()->check())
-                @if (filament()->hasDatabaseNotifications())
-                    @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
-                @endif
-
-                <x-filament-panels::user-menu />
+            @if (filament()->hasDatabaseNotifications())
+                @livewire(Filament\Livewire\DatabaseNotifications::class, ['lazy' => true])
             @endif
+
+            <x-filament-panels::user-menu />
         </div>
 
         {{ \Filament\Support\Facades\FilamentView::renderHook('panels::topbar.end') }}

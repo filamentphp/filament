@@ -10,6 +10,10 @@ return [
             'label' => 'Manage subscription',
         ],
 
+        'login' => [
+            'label' => 'Sign in',
+        ],
+
         'logout' => [
             'label' => 'Sign out',
         ],
