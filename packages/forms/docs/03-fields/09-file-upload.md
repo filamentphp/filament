@@ -152,6 +152,19 @@ FileUpload::make('image')
     ])
 ```
 
+### Allowing users to crop images as a circle
+
+You can allow users to crop images as a circle using the `circleCropper()` method:
+
+```php
+use Filament\Forms\Components\FileUpload;
+
+FileUpload::make('image')
+    ->image()
+    ->imageEditor()
+    ->circleCropper()
+```
+
 ### Setting the image editor's mode
 
 You can change the mode of the image editor using the `imageEditorMode()` method, which accepts either `1`, `2` or `3`. These options are explained in the [Cropper.js documentation](https://github.com/fengyuanchen/cropperjs#viewmode):
