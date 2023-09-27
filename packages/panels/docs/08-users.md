@@ -219,6 +219,72 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Limiting Panel Access Using Middleware:
+
+1. **Extend the User Model**:
+
+   Introduce a flag, such as `is_owner` or `is_admin`, to your User model. This flag can differentiate between user types or roles.
+
+   ```php
+   protected $fillable = [
+       ...,
+       'is_owner',
+   ];
+   ```
+
+2. **Middleware Creation**:
+
+   Utilize the Artisan CLI to craft a new middleware:
+
+   ```bash
+   php artisan make:middleware VerifyIsOwner
+   ```
+
+3. **Define Middleware Logic**:
+
+   Inside the generated middleware file, set up the access logic based on the user's attribute:
+
+   ```php
+   use Illuminate\Support\Facades\Auth;
+
+   public function handle(Request $request, Closure $next): Response
+   {
+       if (Auth::user() && Auth::user()->is_owner) {
+           return $next($request);
+       }
+
+       abort(403, 'Unauthorized access. You don't have permission to view this page.');
+   }
+   ```
+
+   Adjust the conditional accordingly if leveraging the `is_owner` flag.
+
+4. **Incorporate Middleware with Panel**:
+
+   Append the newly created middleware to the panel's middleware array:
+
+   ```php
+   use Filament\Panel;
+
+   public function panel(Panel $panel): Panel
+   {
+       return $panel
+           // ...
+           ->middleware([
+               EncryptCookies::class,
+               AddQueuedCookiesToResponse::class,
+               StartSession::class,
+               AuthenticateSession::class,
+               ShareErrorsFromSession::class,
+               VerifyCsrfToken::class,
+               SubstituteBindings::class,
+               DisableBladeIconComponents::class,
+               DispatchServingFilamentEvent::class,
+               VerifyIsOwner::class,  // <-- This is the newly added middleware
+           ]);
+   }
+   ```
+
 ### Setting the password broker
 
 To set the password broker that Filament uses, you can pass in the broker name to the `authPasswordBroker()` configuration method:
