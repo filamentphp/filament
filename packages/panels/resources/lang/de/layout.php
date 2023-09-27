@@ -22,6 +22,10 @@ return [
             'label' => 'Benutzermenü',
         ],
 
+        'register' => [
+            'label' => 'Registrieren',
+        ],
+
         'sidebar' => [
 
             'collapse' => [

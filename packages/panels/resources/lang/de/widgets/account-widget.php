@@ -4,12 +4,16 @@ return [
 
     'actions' => [
 
-        'logout' => [
+        'login' => [
             'label' => 'Anmelden',
         ],
 
         'logout' => [
             'label' => 'Abmelden',
+        ],
+
+        'register' => [
+            'label' => 'Registrieren',
         ],
 
     ],

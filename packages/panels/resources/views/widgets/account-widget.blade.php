@@ -45,15 +45,28 @@
                     </x-filament::button>
                 </form>
             @else
-                <x-filament::button
-                    color="gray"
-                    :href="filament()->getLoginUrl()"
-                    icon="heroicon-m-arrow-right-on-rectangle"
-                    icon-alias="panels::widgets.account.login-button"
-                    tag="a"
-                >
-                    {{ __('filament-panels::widgets/account-widget.actions.login.label') }}
-                </x-filament::button>
+                @if (filament()->hasLogin())
+                    <x-filament::button
+                        color="gray"
+                        :href="filament()->getLoginUrl()"
+                        icon="heroicon-m-arrow-right-on-rectangle"
+                        icon-alias="panels::widgets.account.login-button"
+                        tag="a"
+                    >
+                        {{ __('filament-panels::widgets/account-widget.actions.login.label') }}
+                    </x-filament::button>
+                @endif
+                @if (filament()->hasRegistration())
+                    <x-filament::button
+                        color="gray"
+                        :href="filament()->getRegistrationUrl()"
+                        icon="heroicon-m-user-plus"
+                        icon-alias="panels::widgets.account.register-button"
+                        tag="a"
+                    >
+                        {{ __('filament-panels::widgets/account-widget.actions.register.label') }}
+                    </x-filament::button>
+                @endif
             @endif
         </div>
     </x-filament::section>

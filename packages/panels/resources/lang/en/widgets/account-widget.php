@@ -12,6 +12,10 @@ return [
             'label' => 'Sign out',
         ],
 
+        'register' => [
+            'label' => 'Sign up',
+        ],
+
     ],
 
     'welcome' => 'Welcome',

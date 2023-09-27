@@ -26,6 +26,10 @@ return [
             'label' => 'User menu',
         ],
 
+        'register' => [
+            'label' => 'Sign up',
+        ],
+
         'sidebar' => [
 
             'collapse' => [

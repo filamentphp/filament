@@ -9,8 +9,9 @@
 
     $loginItem = $items['login'] ?? null;
     $logoutItem = $items['logout'] ?? null;
+    $registerItem = $items['register'] ?? null;
 
-    $items = \Illuminate\Support\Arr::except($items, ['account', 'login', 'logout', 'profile']);
+    $items = \Illuminate\Support\Arr::except($items, ['account', 'login', 'logout', 'profile', 'register']);
 @endphp
 
 {{ \Filament\Support\Facades\FilamentView::renderHook('panels::user-menu.before') }}
@@ -98,15 +99,28 @@
                 {{ $logoutItem?->getLabel() ?? __('filament-panels::layout.actions.logout.label') }}
             </x-filament::dropdown.list.item>
         @else
-            <x-filament::dropdown.list.item
-                :color="$loginItem?->getColor()"
-                :href="$loginItem?->getUrl() ?? filament()->getLoginUrl()"
-                :icon="$loginItem?->getIcon() ?? 'heroicon-m-arrow-right-on-rectangle'"
-                icon-alias="panels::guest-menu.login-button"
-                tag="a"
-            >
-                {{ $loginItem?->getLabel() ?? __('filament-panels::layout.actions.login.label') }}
-            </x-filament::dropdown.list.item>
+            @if (filament()->hasLogin())
+                <x-filament::dropdown.list.item
+                    :color="$loginItem?->getColor()"
+                    :href="$loginItem?->getUrl() ?? filament()->getLoginUrl()"
+                    :icon="$loginItem?->getIcon() ?? 'heroicon-m-arrow-right-on-rectangle'"
+                    icon-alias="panels::user-menu.login-button"
+                    tag="a"
+                >
+                    {{ $loginItem?->getLabel() ?? __('filament-panels::layout.actions.login.label') }}
+                </x-filament::dropdown.list.item>
+            @endif
+            @if (filament()->hasRegistration())
+                <x-filament::dropdown.list.item
+                    :color="$registerItem?->getColor()"
+                    :href="$registerItem?->getUrl() ?? filament()->getRegistrationUrl()"
+                    :icon="$registerItem?->getIcon() ?? 'heroicon-m-user-plus'"
+                    icon-alias="panels::user-menu.register-button"
+                    tag="a"
+                >
+                    {{ $registerItem?->getLabel() ?? __('filament-panels::layout.actions.register.label') }}
+                </x-filament::dropdown.list.item>
+            @endif
         @endif
     </x-filament::dropdown.list>
 </x-filament::dropdown>
