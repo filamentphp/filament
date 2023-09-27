@@ -1077,6 +1077,10 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
     public function getView(): string
     {
+        if (isset($this->view)) {
+            return $this->view;
+        }
+
         if ($this->isSimple()) {
             return 'filament-forms::components.simple-repeater';
         }
