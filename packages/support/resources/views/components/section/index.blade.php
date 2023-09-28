@@ -143,7 +143,7 @@
             @if ($collapsed)
                 x-cloak
             @endif
-            x-bind:class="{ 'invisible h-0 border-none': isCollapsed }"
+            x-bind:class="{ 'hidden h-0 border-none': isCollapsed }"
         @endif
         @class([
             'fi-section-content-ctn',
