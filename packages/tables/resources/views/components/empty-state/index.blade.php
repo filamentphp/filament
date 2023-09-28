@@ -30,7 +30,7 @@
 
         @if ($description)
             <x-filament-tables::empty-state.description class="mt-1">
-                {{ $description }}
+                {!! $description !!}
             </x-filament-tables::empty-state.description>
         @endif
 
