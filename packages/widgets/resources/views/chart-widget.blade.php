@@ -5,12 +5,8 @@
     $filters = $this->getFilters();
 @endphp
 
-<x-filament-widgets::widget>
-    <x-filament::section
-        :description="$description"
-        :heading="$heading"
-        class="fi-wi-chart"
-    >
+<x-filament-widgets::widget class="fi-wi-chart">
+    <x-filament::section :description="$description" :heading="$heading">
         @if ($filters)
             <x-slot name="headerEnd">
                 <x-filament::input.wrapper

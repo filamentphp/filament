@@ -94,6 +94,7 @@
                         :columns="$this->getHeaderWidgetsColumns()"
                         :data="$widgetData"
                         :widgets="$headerWidgets"
+                        class="fi-page-header-widgets"
                     />
                 @endif
 
@@ -108,6 +109,7 @@
                         :columns="$this->getFooterWidgetsColumns()"
                         :data="$widgetData"
                         :widgets="$footerWidgets"
+                        class="fi-page-footer-widgets"
                     />
                 @endif
 
