@@ -935,7 +935,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $relatedKeyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
-                $relatedKeyName = $relationship->getOwnerKeyName();
+                $relatedKeyName = $relationship->getQualifiedOwnerKeyName();
             }
 
             $relationshipQuery->where($relatedKeyName, $state);
