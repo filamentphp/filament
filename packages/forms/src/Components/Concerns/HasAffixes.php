@@ -37,8 +37,14 @@ trait HasAffixes
 
     protected string | Closure | null $suffixIcon = null;
 
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
     protected string | array | Closure | null $prefixIconColor = null;
 
+    /**
+     * @var string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null
+     */
     protected string | array | Closure | null $suffixIconColor = null;
 
     protected bool | Closure $isPrefixInline = false;
@@ -122,6 +128,9 @@ trait HasAffixes
         return $this;
     }
 
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $iconColor
+     */
     public function prefixIcon(string | Closure | null $iconName, bool | Closure $isInline = false, string | array | Closure | null $iconColor = null): static
     {
         $this->prefixIcon = $iconName;
@@ -131,6 +140,9 @@ trait HasAffixes
         return $this;
     }
 
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $iconColor
+     */
     public function suffixIcon(string | Closure | null $iconName, bool | Closure $isInline = false, string | array | Closure | null $iconColor = null): static
     {
         $this->suffixIcon = $iconName;
@@ -140,6 +152,9 @@ trait HasAffixes
         return $this;
     }
 
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $iconColor
+     */
     public function prefixIconColor(string | array | Closure | null $iconColor = null): static
     {
         $this->prefixIconColor = $iconColor;
@@ -147,6 +162,9 @@ trait HasAffixes
         return $this;
     }
 
+    /**
+     * @param  string | array{50: string, 100: string, 200: string, 300: string, 400: string, 500: string, 600: string, 700: string, 800: string, 900: string, 950: string} | Closure | null  $iconColor
+     */
     public function suffixIconColor(string | array | Closure | null $iconColor = null): static
     {
         $this->suffixIconColor = $iconColor;
