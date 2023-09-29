@@ -394,14 +394,8 @@ abstract class Resource
     {
     }
 
-    public static function getGlobalSearchResults(string $search): Collection
+    public static function globallySearchAttributesUsing(Builder $query, string $search): void
     {
-        $query = static::getGlobalSearchEloquentQuery();
-
-        if (static::isGlobalSearchForcedCaseInsensitive($query)) {
-            $search = Str::lower($search);
-        }
-
         foreach (explode(' ', $search) as $searchWord) {
             $query->where(function (Builder $query) use ($searchWord) {
                 $isFirst = true;
@@ -416,6 +410,17 @@ abstract class Resource
                 }
             });
         }
+    }
+
+    public static function getGlobalSearchResults(string $search): Collection
+    {
+        $query = static::getGlobalSearchEloquentQuery();
+
+        if (static::isGlobalSearchForcedCaseInsensitive($query)) {
+            $search = Str::lower($search);
+        }
+
+        static::globallySearchAttributesUsing($query, $search);
 
         static::modifyGlobalSearchQuery($query, $search);
 
