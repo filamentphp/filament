@@ -20,14 +20,15 @@ Actions can also collect extra information from the user. For instance, you migh
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Eloquent\Model;
 
 Action::make('sendEmail')
     ->form([
         TextInput::make('subject')->required(),
         RichEditor::make('body')->required(),
     ])
-    ->action(function (array $data) {
-        Mail::to($this->client)
+    ->action(function (Model $record,array $data) {
+        Mail::to($this->record)
             ->send(new GenericEmail(
                 subject: $data['subject'],
                 body: $data['body'],
