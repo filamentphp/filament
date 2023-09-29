@@ -7,10 +7,12 @@
     'prefix' => null,
     'prefixActions' => [],
     'prefixIcon' => null,
+    'prefixIconColor' => null,
     'prefixIconAlias' => null,
     'suffix' => null,
     'suffixActions' => [],
     'suffixIcon' => null,
+    'suffixIconColor' => null,
     'suffixIconAlias' => null,
     'valid' => true,
 ])
@@ -34,6 +36,32 @@
     $actionsClasses = '-mx-1.5 flex items-center';
     $iconClasses = 'fi-input-wrp-icon h-5 w-5 text-gray-400 dark:text-gray-500';
     $labelClasses = 'fi-input-wrp-label whitespace-nowrap text-sm text-gray-500 dark:text-gray-400';
+
+    $prefixIconStyles = $prefixIconColor !== 'gray' ? \Filament\Support\get_color_css_variables(
+        $prefixIconColor,
+        shades: [400, 500],
+    ) : null;
+
+    $prefixIconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-input-wrp-prefix-icon fi-input-wrp-icon h-5 w-5',
+        match ($prefixIconColor) {
+            null, 'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500',
+        },
+    ]);
+
+    $suffixIconStyles = $suffixIconColor !== 'gray' ? \Filament\Support\get_color_css_variables(
+        $suffixIconColor,
+        shades: [400, 500],
+    ) : null;
+
+    $suffixIconClasses = \Illuminate\Support\Arr::toCssClasses([
+        'fi-input-wrp-suffix-icon fi-input-wrp-icon h-5 w-5',
+        match ($suffixIconColor) {
+            null, 'gray' => 'text-gray-400 dark:text-gray-500',
+            default => 'text-custom-500',
+        },
+    ]);
 
     $prefixActions = array_filter(
         $prefixActions,
@@ -111,7 +139,8 @@
                     :icon="$prefixIcon"
                     :wire:loading.remove.delay="$hasLoadingIndicator"
                     :wire:target="$hasLoadingIndicator ? $loadingIndicatorTarget : null"
-                    :class="$iconClasses"
+                    :class="$prefixIconClasses"
+                    :style="$prefixIconStyles"
                 />
             @endif
 
@@ -172,7 +201,8 @@
                 <x-filament::icon
                     :alias="$suffixIconAlias"
                     :icon="$suffixIcon"
-                    :class="$iconClasses"
+                    :class="$suffixIconClasses"
+                    :style="$suffixIconStyles"
                 />
             @endif
 
