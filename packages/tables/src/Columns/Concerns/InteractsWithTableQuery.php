@@ -107,6 +107,11 @@ trait InteractsWithTableQuery
                         $search = Str::lower($search);
                     }
 
+                    $searchColumn = match ($databaseConnection->getDriverName()) {
+                        'pgsql' => "{$searchColumn}::text",
+                        default => $searchColumn,
+                    };
+
                     return $query->when(
                         $this->queriesRelationships($query->getModel()),
                         fn (EloquentBuilder $query): EloquentBuilder => $query->{"{$whereClause}Relation"}(
