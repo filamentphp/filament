@@ -55,8 +55,9 @@
         @if (! $url)
             <x-filament::icon
                 icon="heroicon-m-chevron-down"
+                icon-alias="panels::topbar.item.toggle-button"
                 @class([
-                    'fi-topbar-item-icon h-5 w-5',
+                    'fi-topbar-item-toggle-icon h-5 w-5',
                     'text-gray-400 dark:text-gray-500' => ! $active,
                     'text-primary-500' => $active,
                 ])
