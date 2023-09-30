@@ -112,7 +112,7 @@ use function Pest\Livewire\livewire;
 
 it('has a title field', function () {
     livewire(CreatePost::class)
-        ->assertFormFieldExists('title', function (TextInput $field): bool {
+        ->assertFormFieldExists('title', function (TextInput $input): bool {
             return $input->isDisabled();
         });
 });
