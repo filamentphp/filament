@@ -52,7 +52,7 @@
             </x-filament::badge>
         @endif
 
-        @if(! $url)
+        @if (! $url)
             <x-filament::icon
                 icon="heroicon-m-chevron-down"
                 @class([
