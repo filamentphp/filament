@@ -67,7 +67,7 @@ class MakeEntryCommand extends Command
             $this->copyStubToApp('EntryView', $viewPath);
         }
 
-        $this->components->info(sprintf('%s [%s] created successfully.', "Infolist Entry", $path));
+        $this->components->info("Infolist Entry [$path] created successfully.");
 
         return static::SUCCESS;
     }

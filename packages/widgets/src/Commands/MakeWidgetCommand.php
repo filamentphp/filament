@@ -204,7 +204,7 @@ class MakeWidgetCommand extends Command
             $this->copyStubToApp('WidgetView', $viewPath);
         }
 
-        $this->components->info(sprintf('%s [%s] created successfully.', "Filament Widget", $path));
+        $this->components->info("Filament Widget [$path] created successfully.");
 
         if ($resource !== null) {
             $this->components->info("Make sure to register the widget in `{$resourceClass}::getWidgets()`, and then again in `getHeaderWidgets()` or `getFooterWidgets()` of any `{$resourceClass}` page.");

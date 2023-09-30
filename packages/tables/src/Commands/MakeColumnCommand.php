@@ -67,7 +67,7 @@ class MakeColumnCommand extends Command
             $this->copyStubToApp('ColumnView', $viewPath);
         }
 
-        $this->components->info(sprintf('%s [%s] created successfully.', "Column", $path));
+        $this->components->info("Table Column [$path] created successfully.");
 
         return static::SUCCESS;
     }
