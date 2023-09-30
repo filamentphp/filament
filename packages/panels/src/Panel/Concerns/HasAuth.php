@@ -56,11 +56,17 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
-    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true, string | Closure $middlewareName = 'verified'): static
+    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
-        $this->emailVerificationMiddlewareName = $middlewareName;
         $this->emailVerificationRouteAction = $promptAction;
         $this->requiresEmailVerification($isRequired);
+
+        return $this;
+    }
+
+    public function emailVerificationMiddlewareName(string | Closure $middlewareName): static
+    {
+        $this->emailVerificationMiddlewareName = $middlewareName;
 
         return $this;
     }
