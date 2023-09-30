@@ -84,10 +84,10 @@ class DateTimePicker extends Field implements Contracts\HasAffixActions
 
             if (! $state instanceof CarbonInterface) {
                 try {
-                    $state = Carbon::createFromFormat($component->getFormat(), $state);
+                    $state = Carbon::createFromFormat($component->getFormat(), $state, $component->getTimezone());
                 } catch (InvalidFormatException $exception) {
                     try {
-                        $state = Carbon::parse($state);
+                        $state = Carbon::parse($state, $component->getTimezone());
                     } catch (InvalidFormatException $exception) {
                         $component->state(null);
 

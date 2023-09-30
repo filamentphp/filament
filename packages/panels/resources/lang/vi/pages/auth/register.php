@@ -21,7 +21,7 @@ return [
         ],
 
         'name' => [
-            'label' => 'Tên',
+            'label' => 'Họ tên',
         ],
 
         'password' => [

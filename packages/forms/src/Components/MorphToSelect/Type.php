@@ -63,10 +63,6 @@ class Type
                 ]) ?? $query;
             }
 
-            if (empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleAttribute());
-            }
-
             $isFirst = true;
             $isForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
 
@@ -113,8 +109,14 @@ class Type
                     ->toArray();
             }
 
+            $titleAttribute = $this->getTitleAttribute();
+
+            if (empty($query->getQuery()->orders)) {
+                $query->orderBy($titleAttribute);
+            }
+
             return $query
-                ->pluck($this->getTitleAttribute(), $keyName)
+                ->pluck($titleAttribute, $keyName)
                 ->toArray();
         });
 
@@ -131,10 +133,6 @@ class Type
                 ]) ?? $query;
             }
 
-            if (empty($query->getQuery()->orders)) {
-                $query->orderBy($this->getTitleAttribute());
-            }
-
             $keyName = $query->getModel()->getKeyName();
 
             if ($this->hasOptionLabelFromRecordUsingCallback()) {
@@ -146,8 +144,14 @@ class Type
                     ->toArray();
             }
 
+            $titleAttribute = $this->getTitleAttribute();
+
+            if (empty($query->getQuery()->orders)) {
+                $query->orderBy($titleAttribute);
+            }
+
             return $query
-                ->pluck($this->getTitleAttribute(), $keyName)
+                ->pluck($titleAttribute, $keyName)
                 ->toArray();
         });
 

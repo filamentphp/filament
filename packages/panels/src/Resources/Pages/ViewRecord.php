@@ -9,8 +9,6 @@ use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\ReplicateAction;
 use Filament\Actions\RestoreAction;
 use Filament\Forms\Form;
-use Filament\Infolists\Concerns\InteractsWithInfolists;
-use Filament\Infolists\Contracts\HasInfolists;
 use Filament\Infolists\Infolist;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Illuminate\Contracts\Support\Htmlable;
@@ -19,17 +17,18 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property Form $form
  */
-class ViewRecord extends Page implements HasInfolists
+class ViewRecord extends Page
 {
     use Concerns\HasRelationManagers;
     use Concerns\InteractsWithRecord;
     use InteractsWithFormActions;
-    use InteractsWithInfolists;
 
     /**
      * @var view-string
      */
     protected static string $view = 'filament-panels::resources.pages.view-record';
+
+    protected static ?string $navigationIcon = 'heroicon-o-eye';
 
     /**
      * @var array<string, mixed> | null
@@ -234,5 +233,25 @@ class ViewRecord extends Page implements HasInfolists
         return [
             'record' => $this->getRecord(),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return static::getResource()::getRecordSubNavigation($this);
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canView($parameters['record']);
     }
 }

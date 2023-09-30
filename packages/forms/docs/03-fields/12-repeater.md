@@ -386,7 +386,7 @@ Repeater::make('members')
     ->schema([
         TextInput::make('name')
             ->required()
-            ->blur(),
+            ->live(onBlur: true),
         Select::make('role')
             ->options([
                 'member' => 'Member',
@@ -402,6 +402,35 @@ Repeater::make('members')
 Any fields that you use from `$state` should be `live()` if you wish to see the item label update live as you use the form.
 
 <AutoScreenshot name="forms/fields/repeater/labelled" alt="Repeater with item labels" version="3.x" />
+
+## Simple repeaters with one field
+
+You can use the `simple()` method to create a repeater with a single field, using a minimal design
+
+```php
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\TextInput;
+
+Repeater::make('invitations')
+    ->simple(
+        TextInput::make('email')
+            ->email()
+            ->required(),
+    )
+```
+
+<AutoScreenshot name="forms/fields/repeater/simple-one-field" alt="Simple repeater design with only one field" version="3.x" />
+
+Instead of using a nested array to store data, simple repeaters use a flat array of values. This means that the data structure for the above example could look like this:
+
+```php
+[
+    'invitations' => [
+        'dan@filamentphp.com',
+        'ryan@filamentphp.com',
+    ],
+],
+```
 
 ## Using `$get()` to access parent field values
 

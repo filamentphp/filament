@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'A kiválasztottak törlése mindenképp',
+        'label' => 'Kijelöltek törlése mindenképp',
 
         'modal' => [
 
-            'heading' => 'A kiválasztott :label törlése mindenképp',
+            'heading' => 'Kijelölt :label törlése mindenképp',
 
             'actions' => [
 

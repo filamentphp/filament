@@ -79,9 +79,14 @@ class FilamentManager
         return $this->getCurrentPanel()->getAuthPasswordBroker();
     }
 
-    public function getBrandName(): string
+    public function getBrandName(): string | Htmlable
     {
         return $this->getCurrentPanel()->getBrandName();
+    }
+
+    public function getBrandLogo(): ?string
+    {
+        return $this->getCurrentPanel()->getBrandLogo();
     }
 
     public function getCollapsedSidebarWidth(): string
@@ -608,6 +613,8 @@ class FilamentManager
     public function registerPanel(Panel $panel): void
     {
         $this->panels[$panel->getId()] = $panel;
+
+        $panel->register();
 
         if ($panel->isDefault()) {
             $this->setCurrentPanel($panel);

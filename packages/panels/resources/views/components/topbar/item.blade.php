@@ -20,13 +20,7 @@
 >
     <{{ $tag }}
         @if ($url)
-            href="{{ $url }}"
-
-            @if ($shouldOpenUrlInNewTab)
-                target="_blank"
-            @else
-                {{-- wire:navigate --}}
-            @endif
+            {{ \Filament\Support\generate_href_html($url, $shouldOpenUrlInNewTab) }}
         @else
             type="button"
         @endif
@@ -55,6 +49,18 @@
             <x-filament::badge :color="$badgeColor" size="sm">
                 {{ $badge }}
             </x-filament::badge>
+        @endif
+
+        @if (! $url)
+            <x-filament::icon
+                icon="heroicon-m-chevron-down"
+                icon-alias="panels::topbar.group.toggle-button"
+                @class([
+                    'fi-topbar-group-toggle-icon h-5 w-5',
+                    'text-gray-400 dark:text-gray-500' => ! $active,
+                    'text-primary-500' => $active,
+                ])
+            />
         @endif
     </{{ $tag }}>
 </li>

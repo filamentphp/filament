@@ -2,7 +2,7 @@
 
 return [
 
-    'label' => 'Pagination navigation',
+    'label' => 'Puslapiavimo navigacija',
 
     'overview' => 'Rodomi nuo :first iki :last rezultatai iš :total',
 
@@ -10,7 +10,7 @@ return [
 
         'records_per_page' => [
 
-            'label' => 'per puslapį',
+            'label' => 'puslapyje',
 
             'options' => [
                 'all' => 'Viską',

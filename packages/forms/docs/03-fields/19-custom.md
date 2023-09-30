@@ -1,6 +1,13 @@
 ---
 title: Custom fields
 ---
+import LaracastsBanner from "@components/LaracastsBanner.astro"
+
+<LaracastsBanner
+    title="Build a Custom Form Field"
+    description="Watch the Build Advanced Components for Filament series on Laracasts - it will teach you how to build components, and you'll get to know all the internal tools to help you."
+    url="https://laracasts.com/series/build-advanced-components-for-filament/episodes/6"
+/>
 
 ## View fields
 
@@ -14,6 +21,23 @@ ViewField::make('rating')
 ```
 
 This assumes that you have a `resources/views/filament/forms/components/range-slider.blade.php` file.
+
+### Passing data to view fields
+
+You can pass a simple array of data to to the view using `viewData()`:
+
+```php
+use Filament\Forms\Components\ViewField;
+
+ViewField::make('rating')
+    ->view('filament.forms.components.range-slider')
+    ->viewData([
+        'min' => 1,
+        'max' => 5,
+    ])
+```
+
+However, more complex configuration can be achieved with a [custom field class](#custom-field-classes).
 
 ## Custom field classes
 

@@ -37,6 +37,7 @@ class Dashboard extends Page
     {
         Route::get('/', static::class)
             ->middleware(static::getRouteMiddleware($panel))
+            ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
             ->name(static::getSlug());
     }
 

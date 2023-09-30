@@ -42,8 +42,8 @@ return [
 
     'actions' => [
 
-        'back' => [
-            'label' => 'voltar',
+        'cancel' => [
+            'label' => 'Voltar',
         ],
 
     ],

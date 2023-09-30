@@ -79,7 +79,7 @@ class CreatePost extends Component implements HasForms
     
     public function render(): View
     {
-        return view('create-post');
+        return view('livewire.create-post');
     }
 }
 ```

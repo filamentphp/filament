@@ -7,18 +7,25 @@
     'badgeColor' => null,
     'color' => 'gray',
     'disabled' => false,
+    'href' => null,
     'icon' => null,
     'iconAlias' => null,
     'iconSize' => IconSize::Medium,
     'image' => null,
     'keyBindings' => null,
     'tag' => 'button',
+    'target' => null,
 ])
 
 @php
     $buttonClasses = \Illuminate\Support\Arr::toCssClasses([
         'fi-dropdown-list-item flex w-full items-center gap-2 whitespace-nowrap rounded-md p-2 text-sm transition-colors duration-75 outline-none disabled:pointer-events-none disabled:opacity-70',
         'pointer-events-none opacity-70' => $disabled,
+        match ($color) {
+            'gray' => 'fi-color-gray',
+            default => 'fi-color-custom',
+        },
+        // @deprecated `fi-dropdown-list-item-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
         is_string($color) ? "fi-dropdown-list-item-color-{$color}" : null,
         match ($color) {
             'gray' => 'hover:bg-gray-50 focus:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5',
@@ -27,7 +34,10 @@
     ]);
 
     $buttonStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [50, 400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [50, 400, 500, 600],
+        ) => $color !== 'gray',
     ]);
 
     $iconClasses = \Illuminate\Support\Arr::toCssClasses([
@@ -118,6 +128,7 @@
     </button>
 @elseif ($tag === 'a')
     <a
+        {{ \Filament\Support\generate_href_html($href, $target === '_blank') }}
         @if ($keyBindings)
             x-data="{}"
             x-mousetrap.global.{{ collect($keyBindings)->map(fn (string $keyBinding): string => str_replace('+', '-', $keyBinding))->implode('.') }}

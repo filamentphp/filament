@@ -16,21 +16,31 @@
                 state
                     ? '{{
                         match ($onColor) {
-                            'gray' => 'bg-gray-200 dark:bg-gray-700',
-                            default => 'bg-custom-600',
+                            'gray' => 'fi-color-gray bg-gray-200 dark:bg-gray-700',
+                            default => 'fi-color-custom bg-custom-600',
                         }
                     }}'
                     : '{{
                         match ($offColor) {
-                            'gray' => 'bg-gray-200 dark:bg-gray-700',
-                            default => 'bg-custom-600',
+                            'gray' => 'fi-color-gray bg-gray-200 dark:bg-gray-700',
+                            default => 'fi-color-custom bg-custom-600',
                         }
                     }}'
             "
             x-bind:style="
                 state
-                    ? '{{ \Filament\Support\get_color_css_variables($onColor, shades: [600]) }}'
-                    : '{{ \Filament\Support\get_color_css_variables($offColor, shades: [600]) }}'
+                    ? '{{
+                        \Filament\Support\get_color_css_variables(
+                            $onColor,
+                            shades: [600],
+                        )
+                    }}'
+                    : '{{
+                        \Filament\Support\get_color_css_variables(
+                            $offColor,
+                            shades: [600],
+                        )
+                    }}'
             "
             {{
                 $attributes
@@ -42,6 +52,7 @@
                         'role' => 'switch',
                         'type' => 'button',
                         'wire:loading.attr' => 'disabled',
+                        'wire:target' => $statePath,
                     ], escape: false)
                     ->merge($getExtraAttributes(), escape: false)
                     ->merge($getExtraAlpineAttributes(), escape: false)

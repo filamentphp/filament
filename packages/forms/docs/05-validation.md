@@ -430,7 +430,7 @@ If you're using the [Panel Builder](../panels), you can easily ignore the curren
 Field::make('email')->unique(ignoreRecord: true)
 ```
 
-You can further customize the rule by passing a [closure](advanced#closure-customization) to the `callback` parameter:
+You can further customize the rule by passing a [closure](advanced#closure-customization) to the `modifyRuleUsing` parameter:
 
 ```php
 use Illuminate\Validation\Rules\Unique;
@@ -474,7 +474,7 @@ TextInput::make('slug')->rules([
     function () {
         return function (string $attribute, $value, Closure $fail) {
             if ($value === 'foo') {
-                $fail("The {$attribute} is invalid.");
+                $fail('The :attribute is invalid.');
             }
         };
     },
@@ -494,6 +494,7 @@ TextInput::make('slug')->rules([
         }
     },
 ])
+```
 
 ## Validation attributes
 

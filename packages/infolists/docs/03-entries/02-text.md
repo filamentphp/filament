@@ -79,7 +79,7 @@ The `money()` method allows you to easily format monetary values, in any currenc
 use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('price')
-    ->money('eur')
+    ->money('EUR')
 ```
 
 ## Limiting text length
@@ -205,17 +205,6 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('status')
     ->formatStateUsing(fn (string $state): string => __("statuses.{$state}"))
-```
-
-## Adding a placeholder if the entry is empty
-
-Sometimes you may want to display a placeholder if the entry's value is empty:
-
-```php
-use Filament\Infolists\Components\TextEntry;
-
-TextEntry::make('updated_at')
-    ->placeholder('Never')
 ```
 
 ## Customizing the color

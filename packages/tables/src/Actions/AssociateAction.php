@@ -189,10 +189,6 @@ class AssociateAction extends Action
             $titleAttribute = $this->getRecordTitleAttribute();
             $titleAttribute = filled($titleAttribute) ? $relationshipQuery->qualifyColumn($titleAttribute) : null;
 
-            if (empty($relationshipQuery->getQuery()->orders) && filled($titleAttribute)) {
-                $relationshipQuery->orderBy($titleAttribute);
-            }
-
             if (filled($search) && ($searchColumns || filled($titleAttribute))) {
                 $searchColumns ??= [$titleAttribute];
                 $isFirst = true;
@@ -204,6 +200,8 @@ class AssociateAction extends Action
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
+                        $searchColumn = $query->qualifyColumn($searchColumn);
+
                         $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                             new Expression("lower({$searchColumn})") :
                             $searchColumn;
@@ -244,6 +242,10 @@ class AssociateAction extends Action
                 });
 
             if (filled($titleAttribute)) {
+                if (empty($relationshipQuery->getQuery()->orders)) {
+                    $relationshipQuery->orderBy($titleAttribute);
+                }
+
                 return $relationshipQuery
                     ->pluck($titleAttribute, $relationship->getModel()->getQualifiedKeyName())
                     ->all();

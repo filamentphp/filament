@@ -11,12 +11,15 @@
             ->class([
                 'fi-fo-field-wrp-hint flex items-center gap-x-3 text-sm',
                 match ($color) {
-                    'gray' => 'text-gray-500',
-                    default => 'text-custom-600 dark:text-custom-400',
+                    'gray' => 'fi-color-gray text-gray-500',
+                    default => 'fi-color-custom text-custom-600 dark:text-custom-400',
                 },
             ])
             ->style([
-                \Filament\Support\get_color_css_variables($color, shades: [400, 500, 600]),
+                \Filament\Support\get_color_css_variables(
+                    $color,
+                    shades: [400, 500, 600],
+                ),
             ])
     }}
 >

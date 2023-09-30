@@ -1,8 +1,4 @@
 <x-filament-panels::page.simple>
-    <x-slot name="subheading">
-        {{ $this->backAction }}
-    </x-slot>
-
     <x-filament-panels::form wire:submit="save">
         {{ $this->form }}
 

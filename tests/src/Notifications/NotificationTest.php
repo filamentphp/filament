@@ -206,10 +206,10 @@ it('can dispatch an event', function () {
     expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event')");
 
     $action = Action::make('action')->dispatch('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event', 'data')");
+    expect($action->getLivewireClickHandler())->toBe("\$dispatch('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatch('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 });
 
 it('can dispatch an event to itself', function () {
@@ -220,10 +220,10 @@ it('can dispatch an event to itself', function () {
     expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event')");
 
     $action = Action::make('action')->dispatchSelf('an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', 'data')");
+    expect($action->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchSelf('an_event', JSON.parse('[\\u0022data\\u0022]'))");
 });
 
 it('can dispatch an event to a component', function () {
@@ -234,8 +234,8 @@ it('can dispatch an event to a component', function () {
     expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event')");
 
     $action = Action::make('action')->dispatchTo('a_component', 'an_event', ['data']);
-    expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', 'data')");
+    expect($action->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
 
     $notification = Notification::make()->actions([$action])->send();
-    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', 'data')");
+    expect(getLastNotificationAction()->getLivewireClickHandler())->toBe("\$dispatchTo('a_component', 'an_event', JSON.parse('[\\u0022data\\u0022]'))");
 });

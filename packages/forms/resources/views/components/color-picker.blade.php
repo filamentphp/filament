@@ -23,8 +23,10 @@
         :suffix-actions="$suffixActions"
         :suffix-icon="$suffixIcon"
         :valid="! $errors->has($statePath)"
-        class="fi-fo-color-picker"
-        :attributes="\Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())"
+        :attributes="
+            \Filament\Support\prepare_inherited_attributes($getExtraAttributeBag())
+                ->class('fi-fo-color-picker')
+        "
     >
         <div
             x-ignore
