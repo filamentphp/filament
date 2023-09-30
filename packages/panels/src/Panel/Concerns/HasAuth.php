@@ -254,9 +254,9 @@ trait HasAuth
         return route("filament.{$this->getId()}.auth.logout", $parameters);
     }
 
-    public function getEmailVerificationMiddlewareName(): string | Closure
+    public function getEmailVerificationMiddlewareName(): string
     {
-        return $this->emailVerificationMiddlewareName;
+        return $this->evaluate($this->emailVerificationMiddlewareName);
     }
 
     /**
