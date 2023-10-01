@@ -14,6 +14,10 @@ return [
                 'label' => ':labelを追加',
             ],
 
+            'add_between' => [
+                'label' => 'ブロックの間に追加',
+            ],
+
             'delete' => [
                 'label' => '削除',
             ],
