@@ -2,6 +2,12 @@
 
 return [
 
+    'column_toggle' => [
+
+        'heading' => 'Columns',
+
+    ],
+
     'columns' => [
 
         'text' => [
@@ -12,9 +18,50 @@ return [
 
     'fields' => [
 
+        'bulk_select_page' => [
+            'label' => 'Select/deselect all items for bulk actions.',
+        ],
+
+        'bulk_select_record' => [
+            'label' => 'Select/deselect item :key for bulk actions.',
+        ],
+
+        'bulk_select_group' => [
+            'label' => 'Select/deselect group :title for bulk actions.',
+        ],
+
         'search' => [
             'label' => '検索',
             'placeholder' => '検索',
+            'indicator' => '検索',
+        ],
+
+    ],
+
+    'summary' => [
+
+        'heading' => 'Summary',
+
+        'subheadings' => [
+            'all' => 'All :label',
+            'group' => ':group summary',
+            'page' => 'This page',
+        ],
+
+        'summarizers' => [
+
+            'average' => [
+                'label' => 'Average',
+            ],
+
+            'count' => [
+                'label' => 'Count',
+            ],
+
+            'sum' => [
+                'label' => 'Sum',
+            ],
+
         ],
 
     ],
@@ -33,6 +80,10 @@ return [
             'label' => '絞り込み',
         ],
 
+        'group' => [
+            'label' => 'グループ',
+        ],
+
         'open_bulk_actions' => [
             'label' => '操作を開く',
         ],
@@ -44,7 +95,11 @@ return [
     ],
 
     'empty' => [
-        'heading' => 'レコードが見つかりません',
+
+        'heading' => ':modelが見つかりません',
+
+        'description' => 'Create a :model to get started.',
+
     ],
 
     'filters' => [
@@ -65,6 +120,8 @@ return [
             ],
 
         ],
+
+        'heading' => '絞り込み',
 
         'indicator' => '有効な絞り込み',
 
@@ -90,7 +147,31 @@ return [
 
     ],
 
-    'reorder_indicator' => 'ドラッグ＆ドロップでレコードを並び替え',
+    'grouping' => [
+
+        'fields' => [
+
+            'group' => [
+                'label' => 'Group by',
+                'placeholder' => 'Group by',
+            ],
+
+            'direction' => [
+
+                'label' => 'Group direction',
+
+                'options' => [
+                    'asc' => 'Ascending',
+                    'desc' => 'Descending',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
+    'reorder_indicator' => 'ドラッグ＆ドロップでレコードを並び替え。',
 
     'selection_indicator' => [
 
