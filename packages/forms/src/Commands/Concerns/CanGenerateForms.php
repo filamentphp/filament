@@ -29,6 +29,10 @@ trait CanGenerateForms
                 continue;
             }
 
+            if ($column->getName() === 'id' && $column->getLength() === 36) {
+                continue;
+            }
+
             $columnName = $column->getName();
 
             if (str($columnName)->is([
