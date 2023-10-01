@@ -161,3 +161,14 @@ You may change the title of the dashboard by overriding the `$title` property:
 ```php
 protected static ?string $title = 'Finance dashboard';
 ```
+You will also need to add the routes for any additionnal dashboard
+
+```php
+public static function routes(Panel $panel): void
+{
+    Route::get('/sales-by-country', static::class)
+        ->middleware(static::getRouteMiddleware($panel))
+        ->withoutMiddleware(static::getWithoutRouteMiddleware($panel))
+        ->name(static::getSlug());
+}
+```
