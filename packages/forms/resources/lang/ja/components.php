@@ -50,6 +50,141 @@ return [
 
     ],
 
+    'checkbox_list' => [
+
+        'actions' => [
+
+            'deselect_all' => [
+                'label' => 'Deselect all',
+            ],
+
+            'select_all' => [
+                'label' => 'Select all',
+            ],
+
+        ],
+
+    ],
+
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Drag mode "crop"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Drag mode "move"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Flip image horizontally',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Flip image vertically',
+                ],
+
+                'move_down' => [
+                    'label' => 'Move image down',
+                ],
+
+                'move_left' => [
+                    'label' => 'Move image to left',
+                ],
+
+                'move_right' => [
+                    'label' => 'Move image to right',
+                ],
+
+                'move_up' => [
+                    'label' => 'Move image up',
+                ],
+
+                'reset' => [
+                    'label' => 'Reset',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Rotate image to left',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Rotate image to right',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Set aspect ratio to :ratio',
+                ],
+
+                'save' => [
+                    'label' => 'Save',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Zoom image to 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Zoom in',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Zoom out',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Height',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Rotation',
+                    'unit' => 'deg',
+                ],
+
+                'width' => [
+                    'label' => 'Width',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Aspect ratios',
+
+                'no_fixed' => [
+                    'label' => 'Free',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'actions' => [
@@ -60,6 +195,10 @@ return [
 
             'delete' => [
                 'label' => '行を削除',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder row',
             ],
 
         ],
@@ -82,15 +221,18 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'ファイルを追加',
+            'blockquote' => 'ブロック引用',
             'bold' => '太文字',
             'bullet_list' => '箇条書き',
             'code_block' => 'コードブロック',
-            'edit' => '編集',
+            'heading' => 'Heading',
             'italic' => 'イタリック体',
             'link' => 'リンク',
             'ordered_list' => '番号付きリスト',
-            'preview' => 'プレビュー',
-            'strike' => '打ち消し線',
+            'redo' => 'Redo',
+            'strike' => 'Strikethrough',
+            'table' => 'Table',
+            'undo' => 'Undo',
         ],
 
     ],
@@ -100,7 +242,7 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => ':labelを追加',
+                'label' => ':labelへ追加',
             ],
 
             'delete' => [
@@ -164,7 +306,7 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'ファイルを添付',
-            'blockquote' => 'ブロック引用要素',
+            'blockquote' => 'ブロック引用',
             'bold' => '太文字',
             'bullet_list' => '箇条書き',
             'code_block' => 'コードブロック',
@@ -175,7 +317,8 @@ return [
             'link' => 'リンク',
             'ordered_list' => '番号付きリスト',
             'redo' => 'やり直し',
-            'strike' => '打ち消し戦',
+            'strike' => '打ち消し線',
+            'underline' => '下線',
             'undo' => '元に戻す',
         ],
 
@@ -195,6 +338,28 @@ return [
 
                         'create' => [
                             'label' => '作成',
+                        ],
+
+                        'create_another' => [
+                            'label' => 'Create & create another',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Edit',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => 'Save',
                         ],
 
                     ],
