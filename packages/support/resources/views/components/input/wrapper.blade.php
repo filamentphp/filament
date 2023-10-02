@@ -120,7 +120,7 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => $hasPrefix ? '' : null,
+                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => $hasPrefix ? '' : false,
                                 'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                             ])
                         )
