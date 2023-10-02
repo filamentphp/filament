@@ -42,4 +42,18 @@ return [
 
     'default_filesystem_disk' => env('FILAMENT_FILESYSTEM_DISK', 'public'),
 
+   /*
+    |--------------------------------------------------------------------------
+    | Wire Loading Delay
+    |--------------------------------------------------------------------------
+    |
+    | This sets the delay before loading indicators appear.
+    |
+    | Setting this to 'none' will make indicators appear immediately, which can be 
+    | desirable for high-latency connections. Setting it to 'default' will apply
+    | Livewire's standard 200ms delay.
+    |
+    */
+
+    'wire_loading_delay' => 'default',
 ];

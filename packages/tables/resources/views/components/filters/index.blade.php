@@ -21,7 +21,13 @@
         </x-filament::link>
 
         <x-filament::loading-indicator
-            wire:loading.delay=""
+            :attributes="
+                \Filament\Support\prepare_inherited_attributes(
+                    new \Illuminate\View\ComponentAttributeBag([
+                        'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => true,
+                    ])
+                )
+            "
             wire:target="tableFilters,resetTableFiltersForm"
             class="h-5 w-5 text-gray-400 dark:text-gray-500"
         />
