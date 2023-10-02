@@ -184,7 +184,7 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => true,
+                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
                         )
@@ -213,7 +213,7 @@
                     :attributes="
                         \Filament\Support\prepare_inherited_attributes(
                             new \Illuminate\View\ComponentAttributeBag([
-                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => true,
+                                'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
                         )
