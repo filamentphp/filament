@@ -87,11 +87,17 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
+        
         $this->options = $this->options();
 
-        $user = $this->createUser();
+        try{
 
-        $this->sendSuccessMessage($user);
+            $user = $this->createUser();
+            $this->sendSuccessMessage($user);
+        
+        } catch(\Throwable $t){
+            $this->error('Please run the following to initialize filament: php artisan filament:install --panels');
+        }
 
         return static::SUCCESS;
     }
