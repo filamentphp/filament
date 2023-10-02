@@ -83,7 +83,7 @@ class MakeWidgetCommand extends Command
                             fn (Panel $panel): string => "The [{$panel->getId()}] panel",
                             $panels,
                         ),
-                        '' => '[App\\Livewire] alongside other Livewire components',
+                        'App\Livewire' => '[App\\Livewire] alongside other Livewire components',
                     ]),
                 )] ?? null;
             }
