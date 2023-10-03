@@ -90,7 +90,6 @@ class MakeUserCommand extends Command
         $this->options = $this->options();
 
         try{
-
             $user = $this->createUser();
             $this->sendSuccessMessage($user);
         
