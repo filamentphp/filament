@@ -3,10 +3,10 @@
     $subNavigation = $this->getCachedSubNavigation();
 @endphp
 
-<div {{ $attributes->class(['fi-page']) }}>
+<div {{ $attributes->class(['fi-page h-full']) }}>
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.start', scopes: $this->getRenderHookScopes()) }}
 
-    <section class="grid auto-cols-fr gap-y-8 py-8">
+    <section class="grid h-full auto-cols-fr gap-y-8 py-8">
         @if ($header = $this->getHeader())
             {{ $header }}
         @elseif ($heading = $this->getHeading())
@@ -20,6 +20,7 @@
 
         <div
             @class([
+                'h-full',
                 'grid grid-cols-1 gap-6 md:grid-cols-4' => $subNavigation,
             ])
         >
@@ -83,7 +84,7 @@
 
             <div
                 @class([
-                    'grid auto-cols-fr gap-y-8',
+                    'grid h-full auto-cols-fr gap-y-8',
                     'col-span-1 md:col-span-3' => $subNavigation,
                 ])
             >
