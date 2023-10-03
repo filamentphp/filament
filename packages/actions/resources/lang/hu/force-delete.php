@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => 'Törlés mindenképp',
+        'label' => 'Végleges törlés',
 
         'modal' => [
 
-            'heading' => ':label törlése mindenképp',
+            'heading' => ':label végleges törlése',
 
             'actions' => [
 
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => 'Kijelöltek törlése mindenképp',
+        'label' => 'Kijelöltek végleges törlése',
 
         'modal' => [
 
-            'heading' => 'Kijelölt :label törlése mindenképp',
+            'heading' => 'Kijelölt :label végleges törlése',
 
             'actions' => [
 
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Elemek törölve',
+                'title' => 'Törölve',
             ],
 
         ],
