@@ -396,7 +396,7 @@ class FileUpload extends BaseFileUpload
             )
             ->unique()
             ->mapWithKeys(fn (?string $ratio): array => [
-                    $ratio ?? __('filament-forms::components.file_upload.editor.aspect_ratios.no_fixed.label') => $this->normalizeImageCroppingRatioForJs($ratio),
+                $ratio ?? __('filament-forms::components.file_upload.editor.aspect_ratios.no_fixed.label') => $this->normalizeImageCroppingRatioForJs($ratio),
             ])
             ->filter(fn (float | string | false $ratio): bool => $ratio !== false)
             ->when(

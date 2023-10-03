@@ -151,16 +151,16 @@
                 isUploadingFile: false,
             }"
         x-init="
-                form = $el.closest('form')
+            form = $el.closest('form')
 
-                form?.addEventListener('file-upload-started', () => {
-                    isUploadingFile = true
-                })
+            form?.addEventListener('file-upload-started', () => {
+                isUploadingFile = true
+            })
 
-                form?.addEventListener('file-upload-finished', () => {
-                    isUploadingFile = false
-                })
-            "
+            form?.addEventListener('file-upload-finished', () => {
+                isUploadingFile = false
+            })
+        "
         x-bind:class="{ 'enabled:opacity-70 enabled:cursor-wait': isUploadingFile }"
         @endif
         {{
