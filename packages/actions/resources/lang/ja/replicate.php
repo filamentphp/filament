@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Replicate',
+        'label' => '複製',
 
         'modal' => [
 
-            'heading' => 'Replicate :label',
+            'heading' => ':label複製',
 
             'actions' => [
 
                 'replicate' => [
-                    'label' => 'Replicate',
+                    'label' => '複製',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'replicated' => [
-                'title' => 'Replicated',
+                'title' => '複製しました',
             ],
 
         ],

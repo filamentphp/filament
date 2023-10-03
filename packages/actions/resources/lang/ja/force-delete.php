@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Force delete',
+        'label' => '強制削除',
 
         'modal' => [
 
-            'heading' => 'Force delete :label',
+            'heading' => ':label強制削除',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => '削除',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => '削除しました',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Force delete selected',
+        'label' => '選択中を強制削除',
 
         'modal' => [
 
-            'heading' => 'Force delete selected :label',
+            'heading' => '選択中の:labelを強制削除',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Delete',
+                    'label' => '削除',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Deleted',
+                'title' => '削除しました',
             ],
 
         ],

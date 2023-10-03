@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'View',
+        'label' => '表示',
 
         'modal' => [
 
-            'heading' => 'View :label',
+            'heading' => ':label表示',
 
             'actions' => [
 
                 'close' => [
-                    'label' => 'Close',
+                    'label' => '閉じる',
                 ],
 
             ],
