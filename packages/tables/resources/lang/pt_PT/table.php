@@ -38,7 +38,6 @@ return [
 
     ],
 
-
     'summary' => [
 
         'heading' => 'Resumo',

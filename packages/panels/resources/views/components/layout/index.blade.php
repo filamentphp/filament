@@ -43,7 +43,7 @@
 
             <main
                 @class([
-                    'fi-main mx-auto w-full h-full px-4 md:px-6 lg:px-8',
+                    'fi-main mx-auto h-full w-full px-4 md:px-6 lg:px-8',
                     match ($maxContentWidth ?? filament()->getMaxContentWidth() ?? '7xl') {
                         'xl' => 'max-w-xl',
                         '2xl' => 'max-w-2xl',

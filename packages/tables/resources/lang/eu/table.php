@@ -27,9 +27,9 @@ return [
         ],
 
         'search' => [
-            'label'       => 'Bilatu',
+            'label' => 'Bilatu',
             'placeholder' => 'Bilatu',
-            'indicator'   => 'Bilatu',
+            'indicator' => 'Bilatu',
         ],
 
     ],
@@ -39,9 +39,9 @@ return [
         'heading' => 'Laburpena',
 
         'subheadings' => [
-            'all'   => 'Guztiak :label',
+            'all' => 'Guztiak :label',
             'group' => ':group-aren laburpena',
-            'page'  => 'Orrialde hau',
+            'page' => 'Orrialde hau',
         ],
 
         'summarizers' => [
@@ -107,7 +107,7 @@ return [
             ],
 
             'remove_all' => [
-                'label'   => 'Iragazki guztiak kendu',
+                'label' => 'Iragazki guztiak kendu',
                 'tooltip' => 'Iragazki guztiak kendu',
             ],
 
@@ -148,7 +148,7 @@ return [
         'fields' => [
 
             'group' => [
-                'label'       => 'Taldekatu',
+                'label' => 'Taldekatu',
                 'placeholder' => 'Taldekatu',
             ],
 
@@ -157,7 +157,7 @@ return [
                 'label' => 'Taldekatzearen norabidea',
 
                 'options' => [
-                    'asc'  => 'Goranzkoa',
+                    'asc' => 'Goranzkoa',
                     'desc' => 'Beheranzkoa',
                 ],
 
@@ -200,7 +200,7 @@ return [
                 'label' => 'Ordenaren norabidea',
 
                 'options' => [
-                    'asc'  => 'Goranzkoa',
+                    'asc' => 'Goranzkoa',
                     'desc' => 'Beheranzkoa',
                 ],
 
