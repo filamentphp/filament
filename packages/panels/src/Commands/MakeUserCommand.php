@@ -87,7 +87,6 @@ class MakeUserCommand extends Command
 
     public function handle(): int
     {
-        
         $this->options = $this->options();
 
         try{
