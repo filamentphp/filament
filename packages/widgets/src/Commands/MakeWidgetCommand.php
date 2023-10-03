@@ -97,7 +97,7 @@ class MakeWidgetCommand extends Command
 
         if (! $panel) {
             $namespace = config('livewire.class_namespace');
-            $path = app_path(Str::of($namespace)->after('App\\')->replace('\\', '/')->toString());
+            $path = app_path((string) str($namespace)->after('App\\')->replace('\\', '/'));
         } elseif ($resource === null) {
             $widgetDirectories = $panel->getWidgetDirectories();
             $widgetNamespaces = $panel->getWidgetNamespaces();
