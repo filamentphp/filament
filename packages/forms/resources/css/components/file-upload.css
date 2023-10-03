@@ -1,3 +1,9 @@
+@import 'cropperjs/dist/cropper.min.css';
+@import 'filepond/dist/filepond.min.css';
+@import 'filepond-plugin-image-edit/dist/filepond-plugin-image-edit.css';
+@import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+@import 'filepond-plugin-media-preview/dist/filepond-plugin-media-preview.css';
+
 .filepond--root {
     @apply mb-0 overflow-hidden;
 }
@@ -70,4 +76,12 @@
     mask-repeat: no-repeat;
     -webkit-mask-size: 100%;
     mask-size: 100%;
+}
+
+.filepond--file-action-button.filepond--action-edit-item {
+    @apply bg-black/50;
+}
+
+.cropper-drag-box.cropper-crop.cropper-modal {
+    @apply bg-gray-100/50 opacity-100 dark:bg-gray-900/80;
 }

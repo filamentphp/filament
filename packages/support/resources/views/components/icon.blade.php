@@ -4,7 +4,7 @@
     'color' => null,
     'group' => null,
     'name' => null,
-    'size',
+    'size' => null,
 ])
 
 @php
