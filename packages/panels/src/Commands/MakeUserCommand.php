@@ -92,7 +92,6 @@ class MakeUserCommand extends Command
         try{
             $user = $this->createUser();
             $this->sendSuccessMessage($user);
-        
         } catch(\Throwable $t){
             $this->error('Please run the following to initialize filament: php artisan filament:install --panels');
         }
