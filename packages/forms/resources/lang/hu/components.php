@@ -59,7 +59,7 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Törölje az összes jelölést',
+                'label' => 'Kijelölés megszüntetése',
             ],
 
             'select_all' => [
@@ -77,7 +77,7 @@ return [
             'actions' => [
 
                 'cancel' => [
-                    'label' => 'Mégse',
+                    'label' => 'Mégsem',
                 ],
 
                 'drag_crop' => [
@@ -89,11 +89,11 @@ return [
                 ],
 
                 'flip_horizontal' => [
-                    'label' => 'A kép vízszintes tükrözése',
+                    'label' => 'Kép vízszintes tükrözése',
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'A kép függőleges tükrözése',
+                    'label' => 'Kép függőleges tükrözése',
                 ],
 
                 'move_down' => [
@@ -113,7 +113,7 @@ return [
                 ],
 
                 'reset' => [
-                    'label' => 'Újra tölt',
+                    'label' => 'Visszaállítás',
                 ],
 
                 'rotate_left' => [
@@ -180,7 +180,7 @@ return [
                 'label' => 'Képarányok',
 
                 'no_fixed' => [
-                    'label' => 'Szabad',
+                    'label' => 'Egyéni',
                 ],
 
             ],
@@ -229,7 +229,7 @@ return [
             'bold' => 'Félkövér',
             'bullet_list' => 'Felsorolás',
             'code_block' => 'Kódblokk',
-            'heading' => 'Cím',
+            'heading' => 'Címsor',
             'italic' => 'Dőlt',
             'link' => 'Hivatkozás',
             'ordered_list' => 'Számozott lista',
