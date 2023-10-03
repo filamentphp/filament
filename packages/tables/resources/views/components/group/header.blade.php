@@ -41,6 +41,8 @@
             icon-alias="tables::grouping.collapse-button"
             icon="heroicon-m-chevron-up"
             size="sm"
+            :label="filled($label) ? ($label . ': ' . $title) : $title"
+            :x-bind:aria-expanded="'! isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ')'"
             :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'rotate-180\''"
             class="-m-1.5"
         />
