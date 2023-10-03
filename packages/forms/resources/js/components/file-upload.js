@@ -1,7 +1,9 @@
 import * as FilePond from 'filepond'
+import Cropper from 'cropperjs'
 import FilePondPluginFileValidateSize from 'filepond-plugin-file-validate-size'
 import FilePondPluginFileValidateType from 'filepond-plugin-file-validate-type'
 import FilePondPluginImageCrop from 'filepond-plugin-image-crop'
+import FilePondPluginImageEdit from 'filepond-plugin-image-edit'
 import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation'
 import FilePondPluginImagePreview from 'filepond-plugin-image-preview'
 import FilePondPluginImageResize from 'filepond-plugin-image-resize'
@@ -11,6 +13,7 @@ import FilePondPluginMediaPreview from 'filepond-plugin-media-preview'
 FilePond.registerPlugin(FilePondPluginFileValidateSize)
 FilePond.registerPlugin(FilePondPluginFileValidateType)
 FilePond.registerPlugin(FilePondPluginImageCrop)
+FilePond.registerPlugin(FilePondPluginImageEdit)
 FilePond.registerPlugin(FilePondPluginImageExifOrientation)
 FilePond.registerPlugin(FilePondPluginImagePreview)
 FilePond.registerPlugin(FilePondPluginImageResize)
@@ -24,16 +27,23 @@ export default function fileUploadFormComponent({
     deleteUploadedFileUsing,
     getUploadedFilesUsing,
     imageCropAspectRatio,
+    imageEditorEmptyFillColor,
+    imageEditorMode,
+    imageEditorViewportHeight,
+    imageEditorViewportWidth,
     imagePreviewHeight,
     imageResizeMode,
     imageResizeTargetHeight,
     imageResizeTargetWidth,
     imageResizeUpscale,
     isAvatar,
+    isDeletable,
+    isDisabled,
     isDownloadable,
     isOpenable,
     isPreviewable,
     isReorderable,
+    hasImageEditor,
     loadingIndicatorPosition,
     locale,
     panelAspectRatio,
@@ -64,6 +74,14 @@ export default function fileUploadFormComponent({
         lastState: null,
 
         uploadedFileIndex: {},
+
+        isEditorOpen: false,
+
+        editingFile: {},
+
+        currentRatio: '',
+
+        editor: {},
 
         init: async function () {
             FilePond.setOptions(locales[locale] ?? locales['en'])
@@ -156,6 +174,13 @@ export default function fileUploadFormComponent({
 
                         load()
                     },
+                },
+                allowImageEdit: hasImageEditor,
+                imageEditEditor: {
+                    open: (file) => this.loadEditor(file),
+                    onconfirm: () => {},
+                    oncancel: () => this.closeEditor(),
+                    onclose: () => this.closeEditor(),
                 },
             })
 
@@ -264,6 +289,9 @@ export default function fileUploadFormComponent({
         },
 
         destroy: function () {
+            this.editor.destroy()
+            this.editor = null
+
             FilePond.destroy(this.$refs.input)
             this.pond = null
         },
@@ -383,6 +411,128 @@ export default function fileUploadFormComponent({
             anchor.target = '_blank'
 
             return anchor
+        },
+
+        initEditor: function () {
+            if (isDisabled) {
+                return
+            }
+
+            if (!hasImageEditor) {
+                return
+            }
+
+            this.editor = new Cropper(this.$refs.editor, {
+                aspectRatio:
+                    imageEditorViewportWidth / imageEditorViewportHeight,
+                autoCropArea: 1,
+                center: true,
+                crop: (event) => {
+                    this.$refs.xPositionInput.value = Math.round(event.detail.x)
+                    this.$refs.yPositionInput.value = Math.round(event.detail.y)
+                    this.$refs.heightInput.value = Math.round(
+                        event.detail.height,
+                    )
+                    this.$refs.widthInput.value = Math.round(event.detail.width)
+                    this.$refs.rotationInput.value = event.detail.rotate
+                },
+                cropBoxResizable: true,
+                guides: true,
+                highlight: true,
+                responsive: true,
+                toggleDragModeOnDblclick: true,
+                viewMode: imageEditorMode,
+                wheelZoomRatio: 0.02,
+            })
+        },
+
+        closeEditor: function () {
+            this.editingFile = {}
+
+            this.isEditorOpen = false
+
+            this.editor.destroy()
+            this.editor = null
+        },
+
+        loadEditor: function (file) {
+            if (isDisabled) {
+                return
+            }
+
+            if (!hasImageEditor) {
+                return
+            }
+
+            if (!file) {
+                return
+            }
+
+            this.editingFile = file
+
+            this.initEditor()
+
+            const reader = new FileReader()
+            reader.onload = (event) => {
+                this.isEditorOpen = true
+
+                setTimeout(() => this.editor.replace(event.target.result), 200)
+            }
+
+            reader.readAsDataURL(file)
+        },
+
+        saveEditor: function () {
+            if (isDisabled) {
+                return
+            }
+
+            if (!hasImageEditor) {
+                return
+            }
+
+            this.editor
+                .getCroppedCanvas({
+                    fillColor: imageEditorEmptyFillColor,
+                    height: imageResizeTargetHeight,
+                    imageSmoothingEnabled: true,
+                    imageSmoothingQuality: 'high',
+                    width: imageResizeTargetWidth,
+                })
+                .toBlob((croppedImage) => {
+                    this.pond.removeFile(
+                        this.pond
+                            .getFiles()
+                            .find(
+                                (uploadedFile) =>
+                                    uploadedFile.filename ===
+                                    this.editingFile.name,
+                            ),
+                    )
+
+                    this.$nextTick(() => {
+                        this.shouldUpdateState = false
+
+                        this.pond
+                            .addFile(
+                                new File(
+                                    [croppedImage],
+                                    this.editingFile.name,
+                                    {
+                                        type:
+                                            this.editingFile.type ===
+                                            'image/svg+xml'
+                                                ? 'image/png'
+                                                : this.editingFile.type,
+                                        lastModified: new Date().getTime(),
+                                    },
+                                ),
+                            )
+                            .then(() => {
+                                this.closeEditor()
+                            })
+                    })
+                }, this.editingFile.type)
         },
     }
 }

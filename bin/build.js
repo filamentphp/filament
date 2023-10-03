@@ -25,6 +25,15 @@ const defaultOptions = {
     treeShaking: true,
     target: ['es2020'],
     minify: !isDev,
+    loader: {
+        '.jpg': 'dataurl',
+        '.png': 'dataurl',
+        '.svg': 'text',
+        '.gif': 'dataurl',
+        '.woff': 'file',
+        '.woff2': 'file',
+        '.data': 'base64',
+    },
     plugins: [
         {
             name: 'watchPlugin',

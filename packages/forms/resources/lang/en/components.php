@@ -72,6 +72,125 @@ return [
 
     ],
 
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Cancel',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Drag mode "crop"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Drag mode "move"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Flip image horizontal',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Flip image vertical',
+                ],
+
+                'move_down' => [
+                    'label' => 'Move image down',
+                ],
+
+                'move_left' => [
+                    'label' => 'Move image to left',
+                ],
+
+                'move_right' => [
+                    'label' => 'Move image to right',
+                ],
+
+                'move_up' => [
+                    'label' => 'Move image up',
+                ],
+
+                'reset' => [
+                    'label' => 'Reset',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Rotate image to left',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Rotate image to right',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Set aspect ratio to :ratio',
+                ],
+
+                'save' => [
+                    'label' => 'Save',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Zoom image to 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Zoom in',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Zoom out',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Height',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Rotation',
+                    'unit' => 'deg',
+                ],
+
+                'width' => [
+                    'label' => 'Width',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Aspect ratios',
+
+                'no_fixed' => [
+                    'label' => 'Free',
+                ],
+
+            ],
+
+        ],
+
+    ],
+
     'key_value' => [
 
         'actions' => [
