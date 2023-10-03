@@ -10,12 +10,10 @@
     @if ($collapsible)
         x-on:click="toggleCollapseGroup(@js($title))"
     @endif
-    {{
-        $attributes->class([
+    {{ $attributes->class([
             'fi-ta-group-header flex w-full items-center gap-x-3 bg-gray-50 px-3 py-2 dark:bg-white/5',
             'cursor-pointer' => $collapsible,
-        ])
-    }}
+        ]) }}
 >
     {{ $start }}
 
@@ -41,7 +39,7 @@
             icon-alias="tables::grouping.collapse-button"
             icon="heroicon-m-chevron-up"
             size="sm"
-            :label="filled($label) ? "{$label}: {$title}" : $title"
+            :label="filled($label) ? $label.': '.$title : $title"
             :x-bind:aria-expanded="'! isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ')'"
             :x-bind:class="'isGroupCollapsed(' . \Illuminate\Support\Js::from($title) . ') && \'rotate-180\''"
             class="-m-1.5"
