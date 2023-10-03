@@ -4,6 +4,7 @@
     'icon' => null,
     'iconAlias' => null,
     'label' => null,
+    'ariaLabel' => null,
 ])
 
 <li
@@ -18,6 +19,7 @@
     <button
         @disabled($disabled)
         type="button"
+        aria-label="{{ $ariaLabel }}"
         @class([
             'fi-pagination-item-button group/button relative flex overflow-hidden p-2 outline-none transition duration-75 group-first/item:rounded-s-lg group-last/item:rounded-e-lg',
             'hover:bg-gray-50 focus-visible:z-10 focus-visible:ring-2 focus-visible:ring-primary-600 dark:hover:bg-white/5 dark:focus-visible:ring-primary-500' => ! $disabled,
