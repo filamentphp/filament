@@ -94,7 +94,7 @@
 
             <div
                 @class([
-                    'grid auto-cols-fr gap-y-8',
+                    'flex flex-col gap-y-8',
                     'col-span-1 md:col-span-3' => $subNavigation,
                     'h-full' => $fullHeight,
                 ])
