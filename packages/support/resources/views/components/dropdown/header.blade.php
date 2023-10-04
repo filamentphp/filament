@@ -14,6 +14,11 @@
         $attributes
             ->class([
                 'fi-dropdown-header flex w-full gap-2 p-3 text-sm',
+                match ($color) {
+                    'gray' => 'fi-color-gray',
+                    default => 'fi-color-custom',
+                },
+                // @deprecated `fi-dropdown-header-color-*` has been replaced by `fi-color-gray` and `fi-color-custom`.
                 is_string($color) ? "fi-dropdown-header-color-{$color}" : null,
             ])
             ->style([

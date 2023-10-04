@@ -16,7 +16,7 @@
     'iconPosition' => IconPosition::Before,
     'iconSize' => null,
     'keyBindings' => null,
-    'size' => 'md',
+    'size' => ActionSize::Medium,
     'tag' => 'a',
     'target' => null,
     'tooltip' => null,
@@ -24,34 +24,36 @@
 ])
 
 @php
-    $stringSize = match ($size) {
-        ActionSize::ExtraSmall => 'xs',
-        ActionSize::Small => 'sm',
-        ActionSize::Medium => 'md',
-        ActionSize::Large => 'lg',
-        ActionSize::ExtraLarge => 'xl',
-        default => $size,
-    };
+    if (! $size instanceof ActionSize) {
+        $size = ActionSize::tryFrom($size) ?? $size;
+    }
 
     $linkClasses = \Illuminate\Support\Arr::toCssClasses([
-        "fi-link fi-link-size-{$stringSize} relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline",
+        'fi-link relative inline-flex items-center justify-center font-semibold outline-none transition duration-75 hover:underline focus:underline',
         'pe-4' => $badge,
         'pointer-events-none opacity-70' => $disabled,
+        "fi-size-{$size->value}" => $size instanceof ActionSize,
+        // @deprecated `fi-link-size-*` has been replaced by `fi-size-*`.
+        "fi-link-size-{$size->value}" => $size instanceof ActionSize,
         match ($size) {
-            ActionSize::ExtraSmall, 'xs' => 'gap-1 text-xs',
-            ActionSize::Small, 'sm' => 'gap-1 text-sm',
-            ActionSize::Medium, 'md' => 'gap-1.5 text-sm',
-            ActionSize::Large, 'lg' => 'gap-1.5 text-sm',
-            ActionSize::ExtraLarge, 'xl' => 'gap-1.5 text-sm',
+            ActionSize::ExtraSmall => 'gap-1 text-xs',
+            ActionSize::Small => 'gap-1 text-sm',
+            ActionSize::Medium => 'gap-1.5 text-sm',
+            ActionSize::Large => 'gap-1.5 text-sm',
+            ActionSize::ExtraLarge => 'gap-1.5 text-sm',
+            default => $size,
         },
         match ($color) {
-            'gray' => 'text-gray-700 dark:text-gray-200',
-            default => 'text-custom-600 dark:text-custom-400',
+            'gray' => 'fi-color-gray text-gray-700 dark:text-gray-200',
+            default => 'fi-color-custom text-custom-600 dark:text-custom-400',
         },
     ]);
 
     $linkStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [300, 400, 500, 600]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [300, 400, 500, 600],
+        ) => $color !== 'gray',
     ]);
 
     $iconSize ??= match ($size) {
@@ -74,7 +76,10 @@
     ]);
 
     $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-        \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
+        \Filament\Support\get_color_css_variables(
+            $color,
+            shades: [500],
+        ) => $color !== 'gray',
     ]);
 
     $badgeContainerClasses = 'fi-link-badge-ctn absolute -top-1 start-full z-[1] -ms-1 w-max -translate-x-1/2 rounded-md bg-white rtl:translate-x-1/2 dark:bg-gray-900';

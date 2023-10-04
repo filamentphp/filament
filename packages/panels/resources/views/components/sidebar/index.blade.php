@@ -7,35 +7,30 @@
     $isRtl = __('filament-panels::layout.direction') === 'rtl';
 @endphp
 
+{{-- format-ignore-start --}}
 <aside
     x-data="{}"
-    @if (filament()->isSidebarCollapsibleOnDesktop())
+    @if (filament()->isSidebarCollapsibleOnDesktop() && (! filament()->hasTopNavigation()))
         x-cloak
-        {{-- format-ignore-start --}}
-                                x-bind:class="
-                                    $store.sidebar.isOpen
-                                        ? @js($openSidebarClasses . ' ' . 'lg:sticky')
-                                        : '-translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
-                                "
-                                {{-- format-ignore-end --}}
+        x-bind:class="
+            $store.sidebar.isOpen
+                ? @js($openSidebarClasses . ' ' . 'lg:sticky')
+                : '-translate-x-full rtl:translate-x-full lg:sticky lg:translate-x-0 rtl:lg:-translate-x-0'
+        "
     @else
         @if (filament()->hasTopNavigation())
             x-cloak
             x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses) : '-translate-x-full rtl:translate-x-full'"
         @elseif (filament()->isSidebarFullyCollapsibleOnDesktop())
             x-cloak
-            {{-- format-ignore-start --}}
-                                    x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses . ' ' . 'lg:sticky') : '-translate-x-full rtl:translate-x-full'"
-                                    {{-- format-ignore-end --}}
+            x-bind:class="$store.sidebar.isOpen ? @js($openSidebarClasses . ' ' . 'lg:sticky') : '-translate-x-full rtl:translate-x-full'"
         @else
             x-cloak="-lg"
-            {{-- format-ignore-start --}}
-                                    x-bind:class="
-                                        $store.sidebar.isOpen
-                                            ? @js($openSidebarClasses . ' ' . 'lg:sticky')
-                                            : 'w-[--sidebar-width] -translate-x-full rtl:translate-x-full lg:sticky'
-                                    "
-                                    {{-- format-ignore-end --}}
+            x-bind:class="
+                $store.sidebar.isOpen
+                    ? @js($openSidebarClasses . ' ' . 'lg:sticky')
+                    : 'w-[--sidebar-width] -translate-x-full rtl:translate-x-full lg:sticky'
+            "
         @endif
     @endif
     @class([
@@ -47,7 +42,6 @@
     <header
         class="fi-sidebar-header flex h-16 items-center bg-white px-6 ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10 lg:shadow-sm"
     >
-        {{-- format-ignore-start --}}
         <div
             @if (filament()->isSidebarCollapsibleOnDesktop())
                 x-show="$store.sidebar.isOpen"
@@ -64,7 +58,6 @@
                 <x-filament-panels::logo />
             @endif
         </div>
-        {{-- format-ignore-end --}}
 
         @if (filament()->isSidebarCollapsibleOnDesktop())
             <x-filament::icon-button
@@ -128,13 +121,6 @@
                 @endforeach
             </ul>
 
-            @php
-                $collapsedNavigationGroupLabels = collect($navigation)
-                    ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
-                    ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
-                    ->values();
-            @endphp
-
             <script>
                 let collapsedGroups = JSON.parse(
                     localStorage.getItem('collapsedGroups'),
@@ -143,7 +129,12 @@
                 if (collapsedGroups === null || collapsedGroups === 'null') {
                     localStorage.setItem(
                         'collapsedGroups',
-                        JSON.stringify(@js($collapsedNavigationGroupLabels)),
+                        JSON.stringify(@js(
+                            collect($navigation)
+                                ->filter(fn (\Filament\Navigation\NavigationGroup $group): bool => $group->isCollapsed())
+                                ->map(fn (\Filament\Navigation\NavigationGroup $group): string => $group->getLabel())
+                                ->values()
+                        )),
                     )
                 }
 
@@ -177,3 +168,4 @@
 
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::sidebar.footer') }}
 </aside>
+{{-- format-ignore-end --}}

@@ -56,7 +56,7 @@ trait HasQuery
     protected function applyQueryScopes(Builder $query): Builder
     {
         foreach ($this->queryScopes as $scope) {
-            $this->evaluate($scope, ['query' => $query]);
+            $query = $this->evaluate($scope, ['query' => $query]) ?? $query;
         }
 
         return $query;

@@ -24,11 +24,11 @@
 @endphp
 
 <section
+    {{-- TODO: Investigate Livewire bug - https://github.com/filamentphp/filament/pull/8511 --}}
+    x-data="{
+        isCollapsed: @js($collapsed),
+    }"
     @if ($collapsible)
-        x-data="{
-            isCollapsed: @js($collapsed),
-        }"
-        x-bind:class="isCollapsed && 'fi-collapsed'"
         x-on:collapse-section.window="if ($event.detail.id == $el.id) isCollapsed = true"
         x-on:expand-concealing-component.window="
             error = $el.querySelector('[data-validation-error]')
@@ -55,6 +55,7 @@
         "
         x-on:open-section.window="if ($event.detail.id == $el.id) isCollapsed = false"
         x-on:toggle-section.window="if ($event.detail.id == $el.id) isCollapsed = ! isCollapsed"
+        x-bind:class="isCollapsed && 'fi-collapsed'"
     @endif
     {{
         $attributes->class([
@@ -72,7 +73,7 @@
                 x-on:click="isCollapsed = ! isCollapsed"
             @endif
             @class([
-                'flex items-center gap-x-3 overflow-hidden',
+                'fi-section-header flex items-center gap-x-3 overflow-hidden',
                 'cursor-pointer' => $collapsible,
                 match ($compact) {
                     true => 'px-4 py-2.5',
@@ -86,8 +87,8 @@
                     @class([
                         'fi-section-header-icon self-start',
                         match ($iconColor) {
-                            'gray' => 'text-gray-400 dark:text-gray-500',
-                            default => 'text-custom-500 dark:text-custom-400',
+                            'gray' => 'fi-color-gray text-gray-400 dark:text-gray-500',
+                            default => 'fi-color-custom text-custom-500 dark:text-custom-400',
                         },
                         match ($iconSize) {
                             IconSize::Small, 'sm' => 'h-4 w-4 mt-1',
@@ -97,7 +98,10 @@
                         },
                     ])
                     @style([
-                        \Filament\Support\get_color_css_variables($iconColor, shades: [400, 500]) => $iconColor !== 'gray',
+                        \Filament\Support\get_color_css_variables(
+                            $iconColor,
+                            shades: [400, 500],
+                        ) => $iconColor !== 'gray',
                     ])
                 />
             @endif

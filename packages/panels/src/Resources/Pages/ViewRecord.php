@@ -28,6 +28,8 @@ class ViewRecord extends Page
      */
     protected static string $view = 'filament-panels::resources.pages.view-record';
 
+    protected static ?string $navigationIcon = 'heroicon-o-eye';
+
     /**
      * @var array<string, mixed> | null
      */
@@ -231,5 +233,25 @@ class ViewRecord extends Page
         return [
             'record' => $this->getRecord(),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return static::getResource()::getRecordSubNavigation($this);
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canView($parameters['record']);
     }
 }

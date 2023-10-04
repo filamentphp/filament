@@ -126,7 +126,7 @@ Edit and View resource pages:
 Relation managers:
 
 - `form()` is no longer static
-- `getInverseRelationshipName()`
+- `getInverseRelationshipName()` return type is now `?string`
 - `table()` is no longer static
 
 Custom dashboard pages:

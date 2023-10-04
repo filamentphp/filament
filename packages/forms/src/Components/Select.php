@@ -172,20 +172,20 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             return $labels;
         });
 
-        $this->transformOptionsForJsUsing(function (array $options): array {
+        $this->transformOptionsForJsUsing(static function (Select $component, array $options): array {
             return collect($options)
                 ->map(fn ($label, $value): array => is_array($label)
-                    ? ['label' => $value, 'choices' => $this->transformOptionsForJs($label)]
-                    : ['label' => $label, 'value' => strval($value), 'disabled' => $this->isOptionDisabled($value, $label)])
+                    ? ['label' => $value, 'choices' => $component->transformOptionsForJs($label)]
+                    : ['label' => $label, 'value' => strval($value), 'disabled' => $component->isOptionDisabled($value, $label)])
                 ->values()
                 ->all();
         });
 
-        $this->placeholder(fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
+        $this->placeholder(static fn (Select $component): ?string => $component->isDisabled() ? null : __('filament-forms::components.select.placeholder'));
 
         $this->suffixActions([
-            fn (Select $component): ?Action => $component->getCreateOptionAction(),
-            fn (Select $component): ?Action => $component->getEditOptionAction(),
+            static fn (Select $component): ?Action => $component->getCreateOptionAction(),
+            static fn (Select $component): ?Action => $component->getEditOptionAction(),
         ]);
     }
 
@@ -935,7 +935,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
             } elseif ($relationship instanceof \Znck\Eloquent\Relations\BelongsToThrough) {
                 $relatedKeyName = $relationship->getRelated()->getQualifiedKeyName();
             } else {
-                $relatedKeyName = $relationship->getOwnerKeyName();
+                $relatedKeyName = $relationship->getQualifiedOwnerKeyName();
             }
 
             $relationshipQuery->where($relatedKeyName, $state);

@@ -38,6 +38,8 @@ class EditRecord extends Page
 
     public ?string $previousUrl = null;
 
+    protected static ?string $navigationIcon = 'heroicon-o-pencil';
+
     public function getBreadcrumb(): string
     {
         return static::$breadcrumb ?? __('filament-panels::resources/pages/edit-record.breadcrumb');
@@ -350,5 +352,25 @@ class EditRecord extends Page
         return [
             'record' => $this->getRecord(),
         ];
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function getSubNavigationParameters(): array
+    {
+        return [
+            'record' => $this->getRecord(),
+        ];
+    }
+
+    public function getSubNavigation(): array
+    {
+        return static::getResource()::getRecordSubNavigation($this);
+    }
+
+    public static function shouldRegisterNavigation(array $parameters = []): bool
+    {
+        return parent::shouldRegisterNavigation($parameters) && static::getResource()::canEdit($parameters['record']);
     }
 }

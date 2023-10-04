@@ -103,6 +103,30 @@ public static function getRelations(): array
 
 Once a table and form have been defined for the relation manager, visit the [Edit](editing-records) or [View](viewing-records) page of your resource to see it in action.
 
+### Read-only mode
+
+Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit, and delete. We call this "read-only mode", and it is there by default to preserve the read-only behaviour of the View page. However, you can disable this behaviour, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
+
+```php
+public function isReadOnly(): bool
+{
+    return false;
+}
+```
+
+Alternatively, if you hate this functionality, you can disable it for all relation managers at once in the panel [configuration](../configuration):
+
+```php
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->readOnlyRelationManagersOnResourceViewPagesByDefault(false);
+}
+```
+
 ### Unconventional inverse relationship names
 
 For inverse relationships that do not follow Laravel's naming guidelines, you may wish to use the `inverseRelationship()` method on the table:
@@ -495,10 +519,10 @@ To learn how to customize the `DeleteAction`, including changing the notificatio
 
 ## Accessing the relationship's owner record
 
-Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is mounted in a public `$ownerRecord` property. Thus, you may access the owner record using:
+Relation managers are Livewire components. When they are first loaded, the owner record (the Eloquent record which serves as a parent - the main resource model) is saved into a property. You can read this property using:
 
 ```php
-$this->ownerRecord
+$this->getOwnerRecord()
 ```
 
 However, if you're inside a `static` method like `form()` or `table()`, `$this` isn't accessible. So, you may [use a callback](../../forms/advanced#form-component-utility-injection) to access the `$livewire` instance:
@@ -514,7 +538,7 @@ public function form(Form $form): Form
         ->schema([
             Forms\Components\Select::make('store_id')
                 ->options(function (RelationManager $livewire): array {
-                    return $livewire->ownerRecord->stores()
+                    return $livewire->getOwnerRecord()->stores()
                         ->pluck('name', 'id')
                         ->toArray();
                 }),
@@ -718,17 +742,6 @@ AssociateAction::make()
 
 AttachAction::make()
     ->recordSelectSearchColumns(['title', 'id'])
-```
-
-## Read-only mode
-
-Relation managers are usually displayed on either the Edit or View page of a resource. On the View page, Filament will automatically hide all actions that modify the relationship, such as create, edit, and delete. However, you can disable this behaviour, by overriding the `isReadOnly()` method on the relation manager class to return `false` all the time:
-
-```php
-public function isReadOnly(): bool
-{
-    return false;
-}
 ```
 
 ## Passing properties to relation managers

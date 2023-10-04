@@ -236,6 +236,8 @@ class AttachAction extends Action
 
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
+                        $searchColumn = $query->qualifyColumn($searchColumn);
+
                         $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                             new Expression("lower({$searchColumn})") :
                             $searchColumn;

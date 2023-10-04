@@ -66,7 +66,7 @@ trait HasStateBindingModifiers
         if (str($expression)->is('$entangle(*)')) {
             return (string) str($expression)->replaceLast(
                 ')',
-                in_array('live', $modifiers) ? ', true)' : ')',
+                in_array('live', $modifiers) ? ', true)' : ', false)',
             );
         }
 

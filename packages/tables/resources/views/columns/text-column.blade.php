@@ -90,7 +90,10 @@
                         ]);
 
                         $iconStyles = \Illuminate\Support\Arr::toCssStyles([
-                            \Filament\Support\get_color_css_variables($color, shades: [500]) => $color !== 'gray',
+                            \Filament\Support\get_color_css_variables(
+                                $color,
+                                shades: [500],
+                            ) => $color !== 'gray',
                         ]);
                     @endphp
 
@@ -130,8 +133,8 @@
                                     },
                                     match ($color) {
                                         null => 'text-gray-950 dark:text-white',
-                                        'gray' => 'text-gray-500 dark:text-gray-400',
-                                        default => 'text-custom-600 dark:text-custom-400',
+                                        'gray' => 'fi-color-gray text-gray-500 dark:text-gray-400',
+                                        default => 'fi-color-custom text-custom-600 dark:text-custom-400',
                                     },
                                     match ($weight) {
                                         FontWeight::Thin, 'thin' => 'font-thin',
@@ -152,7 +155,10 @@
                                     },
                                 ])
                                 @style([
-                                    \Filament\Support\get_color_css_variables($color, shades: [400, 600]) => ! in_array($color, [null, 'gray']),
+                                    \Filament\Support\get_color_css_variables(
+                                        $color,
+                                        shades: [400, 600],
+                                    ) => ! in_array($color, [null, 'gray']),
                                 ])
                             >
                                 @if ($icon && in_array($iconPosition, [IconPosition::Before, 'before']))
