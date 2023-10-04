@@ -235,7 +235,6 @@ return [
             'ordered_list' => 'Lista ordenada',
             'redo' => 'Refazer',
             'strike' => 'Tachado',
-            'underline' => 'Sublinhado',
             'table' => 'Tabela',
             'undo' => 'Desfazer',
         ],
@@ -323,6 +322,7 @@ return [
             'ordered_list' => 'Lista ordenada',
             'redo' => 'Refazer',
             'strike' => 'Tachado',
+            'underline' => 'Sublinhado',
             'undo' => 'Desfazer',
         ],
 

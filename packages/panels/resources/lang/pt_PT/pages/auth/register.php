@@ -2,15 +2,15 @@
 
 return [
 
-    'title' => 'Cadastrar',
+    'title' => 'Registar',
 
-    'heading' => 'Inscrever-se',
+    'heading' => 'Registe-se',
 
     'actions' => [
 
         'login' => [
             'before' => 'ou',
-            'label' => 'faça login em sua conta',
+            'label' => 'iniciar sessão na sua conta',
         ],
 
     ],
@@ -27,7 +27,7 @@ return [
 
         'password' => [
             'label' => 'Senha',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'senha',
         ],
 
         'password_confirmation' => [
@@ -47,7 +47,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Muitas tentativas de cadastro',
+            'title' => 'Muitas tentativas de registo',
             'body' => 'Por favor, tente novamente em :seconds segundos.',
         ],
 

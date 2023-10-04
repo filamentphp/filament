@@ -4,16 +4,16 @@ return [
 
     'single' => [
 
-        'label' => 'Végleges törlés',
+        'label' => 'Forçar exclusão',
 
         'modal' => [
 
-            'heading' => ':label végleges törlése',
+            'heading' => 'Forçar exclusão de :label',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Törlés',
+                    'label' => 'Excluir',
                 ],
 
             ],
@@ -23,7 +23,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Törölve',
+                'title' => 'Excluído',
             ],
 
         ],
@@ -32,16 +32,16 @@ return [
 
     'multiple' => [
 
-        'label' => 'Kijelöltek végleges törlése',
+        'label' => 'Forçar exclusão selecionado',
 
         'modal' => [
 
-            'heading' => 'Kijelölt :label végleges törlése',
+            'heading' => 'Forçar exclusão de :label selecionado',
 
             'actions' => [
 
                 'delete' => [
-                    'label' => 'Törlés',
+                    'label' => 'Excluir',
                 ],
 
             ],
@@ -51,7 +51,7 @@ return [
         'notifications' => [
 
             'deleted' => [
-                'title' => 'Törölve',
+                'title' => 'Excluído',
             ],
 
         ],

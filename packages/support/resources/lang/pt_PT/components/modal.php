@@ -5,7 +5,7 @@ return [
     'actions' => [
 
         'close' => [
-            'label' => 'Bezárás',
+            'label' => 'Fechar',
         ],
 
     ],
