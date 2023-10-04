@@ -91,6 +91,8 @@ public function toDatabase(User $notifiable): array
 
 Without any setup, new database notifications will only be received when the page is first loaded.
 
+> Note that Filament will only interact (count, view, delete, etc.) notifications generated from its Notification class. External notifications generated in other ways will not be visible to Filament.
+
 ### Polling for new database notifications
 
 Polling is the practice of periodically making a request to the server to check for new notifications. This is a good approach as the setup is simple, but some may say that it is not a scalable solution as it increases server load.
