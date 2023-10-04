@@ -2,18 +2,9 @@
 
 return [
 
-    'title' => 'Cadastrar',
+    'title' => 'Redefinir a sua senha',
 
-    'heading' => 'Inscrever-se',
-
-    'actions' => [
-
-        'login' => [
-            'before' => 'ou',
-            'label' => 'faça login em sua conta',
-        ],
-
-    ],
+    'heading' => 'Redefinir a sua senha',
 
     'form' => [
 
@@ -21,13 +12,9 @@ return [
             'label' => 'E-mail',
         ],
 
-        'name' => [
-            'label' => 'Nome',
-        ],
-
         'password' => [
             'label' => 'Senha',
-            'validation_attribute' => 'password',
+            'validation_attribute' => 'senha',
         ],
 
         'password_confirmation' => [
@@ -36,8 +23,8 @@ return [
 
         'actions' => [
 
-            'register' => [
-                'label' => 'Criar conta',
+            'reset' => [
+                'label' => 'Redefinir senha',
             ],
 
         ],
@@ -47,7 +34,7 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Muitas tentativas de cadastro',
+            'title' => 'Muitas tentativas de redefinição',
             'body' => 'Por favor, tente novamente em :seconds segundos.',
         ],
 
