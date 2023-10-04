@@ -7,12 +7,14 @@
     $subNavigation = $this->getCachedSubNavigation();
 @endphp
 
-<div {{
-    $attributes->class([
-        'fi-page',
-        'h-full' => $fullHeight,
-    ])
-}}>
+<div
+    {{
+        $attributes->class([
+            'fi-page',
+            'h-full' => $fullHeight,
+        ])
+    }}
+>
     {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.start', scopes: $this->getRenderHookScopes()) }}
 
     <section
