@@ -180,11 +180,11 @@ return [
         'actions' => [
 
             'select_all' => [
-                'label' => 'Bütün :count məlumatı seç ',
+                'label' => 'Bütün :count məlumatı seç',
             ],
 
             'deselect_all' => [
-                'label' => 'Bütün seçimleri yığışdır',
+                'label' => 'Bütün seçimləri yığışdır',
             ],
 
         ],

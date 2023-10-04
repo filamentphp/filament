@@ -2,6 +2,6 @@
 
 return [
 
-    'title' => 'İdarəemə Paneli',
+    'title' => 'İdarəetmə Paneli',
 
 ];

@@ -3,7 +3,7 @@
 return [
 
     'field' => [
-        'label' => 'Ümumi axtarıs',
+        'label' => 'Ümumi axtarış',
         'placeholder' => 'Axtar',
     ],
 

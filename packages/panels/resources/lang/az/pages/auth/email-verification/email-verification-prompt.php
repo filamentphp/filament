@@ -16,13 +16,13 @@ return [
 
     'messages' => [
         'notification_not_received' => 'Göndərdiyimiz e-poçt gəlmədi?',
-        'notification_sent' => ':email ünvanına, daxilində e-poçt ünvanınızı necə təsdiqləyəcəyiniz barədə talimatlar olan bir e-poçt göndərdik.',
+        'notification_sent' => ':email ünvanına, daxilində e-poçt ünvanınızı necə təsdiqləyəcəyiniz barədə təlimatlar olan bir e-poçt göndərdik.',
     ],
 
     'notifications' => [
 
         'notification_resent' => [
-            'title' => 'E-poçt yeniden göndərildi.',
+            'title' => 'E-poçt yenidən göndərildi.',
         ],
 
         'notification_resend_throttled' => [

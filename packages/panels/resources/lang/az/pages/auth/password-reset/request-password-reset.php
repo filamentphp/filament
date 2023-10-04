@@ -33,8 +33,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Çok fazla istek',
-            'body' => 'Lütfen :seconds saniye sonra tekrar deneyin.',
+            'title' => 'Bir çox istəmə cəhdi',
+            'body' => 'Zəhmət olmazsa :seconds saniyə sonra təkrar yoxlayın.',
         ],
 
     ],

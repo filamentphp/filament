@@ -34,8 +34,8 @@ return [
     'notifications' => [
 
         'throttled' => [
-            'title' => 'Çok fazla sıfırlama denemesi',
-            'body' => 'Lütfen :seconds saniye sonra tekrar deneyin.',
+            'title' => 'Bir çox sıfırlama cəhdi',
+            'body' => 'Zəhmət olmazsa :seconds saniyə sonra təkrar yoxlayın.',
         ],
 
     ],
