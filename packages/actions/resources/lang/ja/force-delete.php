@@ -4,11 +4,11 @@ return [
 
     'single' => [
 
-        'label' => '削除',
+        'label' => '強制削除',
 
         'modal' => [
 
-            'heading' => ':label削除',
+            'heading' => ':label強制削除',
 
             'actions' => [
 
@@ -32,11 +32,11 @@ return [
 
     'multiple' => [
 
-        'label' => '選択中を削除',
+        'label' => '選択中を強制削除',
 
         'modal' => [
 
-            'heading' => '選択中の:labelを削除',
+            'heading' => '選択中の:labelを強制削除',
 
             'actions' => [
 
