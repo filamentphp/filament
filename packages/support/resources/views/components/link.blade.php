@@ -187,9 +187,8 @@
                                 'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
-                        )
+                        )->class([$iconClasses])
                     "
-                    :class="$iconClasses"
                 />
             @endif
         @endif
@@ -216,9 +215,8 @@
                                 'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => '',
                                 'wire:target' => $loadingIndicatorTarget,
                             ])
-                        )
+                        )->class([$iconClasses])
                     "
-                    :class="$iconClasses"
                     :style="$iconStyles"
                 />
             @endif

@@ -123,9 +123,8 @@
                                 'wire:loading.delay.' . config('filament.wire_loading_delay', 'default') => $hasPrefix ? '' : false,
                                 'wire:target' => $hasPrefix ? $loadingIndicatorTarget : null,
                             ])
-                        )
+                        )->class([$iconClasses])
                     "
-                    :class="$iconClasses"
                 />
             @endif
 
