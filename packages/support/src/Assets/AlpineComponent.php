@@ -11,13 +11,9 @@ class AlpineComponent extends Asset
 
     public function getRelativePublicPath(): string
     {
-         $path = config('filament.assets_path');
+         $path = config('filament.assets_path', 'js');
 
-        if (filled($path)) {
-            return "{$path}/{$this->getPackage()}/components/{$this->getId()}.js";
-         }
-
-         return "js/{$this->getPackage()}/components/{$this->getId()}.js";
+         return "{$path}/{$this->getPackage()}/components/{$this->getId()}.js";
     }
 
     public function getSrc(): string
