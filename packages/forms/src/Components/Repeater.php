@@ -96,8 +96,12 @@ class Repeater extends Field implements Contracts\CanConcealComponents
 
             $items = [];
 
+            $simpleField = $component->getSimpleField();
+
             foreach ($state ?? [] as $itemData) {
-                $items[(string) Str::uuid()] = $itemData;
+                $items[(string) Str::uuid()] = $simpleField ?
+                    [$simpleField->getName() => $itemData] :
+                    $itemData;
             }
 
             $component->state($items);
