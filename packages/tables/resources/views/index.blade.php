@@ -232,7 +232,9 @@
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.before', scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
-                            <x-filament-tables::search-field :searchable-column-labels="$searchableColumnLabels" />
+                            <x-filament-tables::search-field
+                                :searchable-column-labels="$searchableColumnLabels"
+                            />
                         @endif
 
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.after', scopes: static::class) }}
