@@ -13,7 +13,7 @@ return [
             'fields' => [
 
                 'record_id' => [
-                    'label' => 'Rekord',
+                    'label' => 'Məlumat',
                 ],
 
             ],
