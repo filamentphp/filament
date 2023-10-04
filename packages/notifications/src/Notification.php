@@ -179,7 +179,7 @@ class Notification extends ViewComponent implements Arrayable
         return $this;
     }
 
-    public function toBroadcast(): BroadcastNotification
+    public function toBroadcast()
     {
         $data = $this->toArray();
         $data['format'] = 'filament';
@@ -187,7 +187,7 @@ class Notification extends ViewComponent implements Arrayable
         return new BroadcastNotification($data);
     }
 
-    public function toDatabase(): DatabaseNotification
+    public function toDatabase()
     {
         return new DatabaseNotification($this->getDatabaseMessage());
     }
