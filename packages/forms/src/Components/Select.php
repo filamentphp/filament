@@ -8,6 +8,7 @@ use Filament\Forms\ComponentContainer;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Form;
 use Filament\Support\Concerns\HasExtraAlpineAttributes;
+use Filament\Support\Services\RelationshipJoiner;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Database\Connection;
@@ -18,7 +19,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
-use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
@@ -704,23 +704,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getSearchResultsUsing(static function (Select $component, ?string $search) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getQuery();
-
-            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
-            // those that are attached in the pivot table. We need to change this to a left join so
-            // that we can still get results when the relationship is not attached to the record.
-            if ($relationship instanceof BelongsToMany) {
-                /** @var ?JoinClause $firstRelationshipJoinClause */
-                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
-
-                if ($firstRelationshipJoinClause) {
-                    $firstRelationshipJoinClause->type = 'left';
-                }
-
-                $relationshipQuery
-                    ->distinct() // Ensure that results are unique when fetching options.
-                    ->select($relationshipQuery->getModel()->getTable() . '.*');
-            }
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -786,23 +770,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getQuery();
-
-            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
-            // those that are attached in the pivot table. We need to change this to a left join so
-            // that we can still get results when the relationship is not attached to the record.
-            if ($relationship instanceof BelongsToMany) {
-                /** @var ?JoinClause $firstRelationshipJoinClause */
-                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
-
-                if ($firstRelationshipJoinClause) {
-                    $firstRelationshipJoinClause->type = 'left';
-                }
-
-                $relationshipQuery
-                    ->distinct() // Ensure that results are unique when fetching options.
-                    ->select($relationshipQuery->getModel()->getTable() . '.*');
-            }
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             if ($modifyQueryUsing) {
                 $relationshipQuery = $component->evaluate($modifyQueryUsing, [
@@ -912,23 +880,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getSelectedRecordUsing(static function (Select $component, $state) use ($modifyQueryUsing): ?Model {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getQuery();
-
-            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
-            // those that are attached in the pivot table. We need to change this to a left join so
-            // that we can still get results when the relationship is not attached to the record.
-            if ($relationship instanceof BelongsToMany) {
-                /** @var ?JoinClause $firstRelationshipJoinClause */
-                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
-
-                if ($firstRelationshipJoinClause) {
-                    $firstRelationshipJoinClause->type = 'left';
-                }
-
-                $relationshipQuery
-                    ->distinct() // Ensure that results are unique when fetching options.
-                    ->select($relationshipQuery->getModel()->getTable() . '.*');
-            }
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             if ($relationship instanceof BelongsToMany) {
                 $relatedKeyName = $relationship->getRelatedKeyName();
@@ -952,23 +904,7 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         $this->getOptionLabelsUsing(static function (Select $component, array $values) use ($modifyQueryUsing): array {
             $relationship = Relation::noConstraints(fn () => $component->getRelationship());
 
-            $relationshipQuery = $relationship->getQuery();
-
-            // By default, `BelongsToMany` relationships use an inner join to scope the results to only
-            // those that are attached in the pivot table. We need to change this to a left join so
-            // that we can still get results when the relationship is not attached to the record.
-            if ($relationship instanceof BelongsToMany) {
-                /** @var ?JoinClause $firstRelationshipJoinClause */
-                $firstRelationshipJoinClause = $relationshipQuery->getQuery()->joins[0] ?? null;
-
-                if ($firstRelationshipJoinClause) {
-                    $firstRelationshipJoinClause->type = 'left';
-                }
-
-                $relationshipQuery
-                    ->distinct() // Ensure that results are unique when fetching options.
-                    ->select($relationshipQuery->getModel()->getTable() . '.*');
-            }
+            $relationshipQuery = (new RelationshipJoiner())->prepareQueryForNoConstraints($relationship);
 
             if ($relationship instanceof BelongsToMany) {
                 $relatedKeyName = $relationship->getQualifiedRelatedKeyName();
