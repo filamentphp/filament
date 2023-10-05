@@ -83,8 +83,12 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::topbar.group.toggle-button` - Toggle button for a topbar group
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::user-menu.profile-item` - Profile item in the user menu
+- `panels::user-menu.login-button` - Button in the user menu to log in
 - `panels::user-menu.logout-button` - Button in the user menu to log out
+- `panels::user-menu.register-button` - Button in the user menu to register
+- `panels::widgets.account.login-button` - Button in the account widget to log in
 - `panels::widgets.account.logout-button` - Button in the account widget to log out
+- `panels::widgets.account.register-button` - Button in the account widget to register
 - `panels::widgets.filament-info.open-documentation-button` - Button to open the documentation from the Filament info widget
 - `panels::widgets.filament-info.open-github-button` - Button to open GitHub from the Filament info widget
 
