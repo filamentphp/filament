@@ -16,6 +16,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Stringable;
 
+use function Filament\Forms\evaluate_search_attribute_string;
+
 trait InteractsWithTableQuery
 {
     protected ?string $inverseRelationshipName = null;
@@ -94,10 +96,11 @@ trait InteractsWithTableQuery
                 $translatableContentDriver?->isAttributeTranslatable($model::class, attribute: $searchColumn),
                 fn (EloquentBuilder $query): EloquentBuilder => $translatableContentDriver->applySearchConstraintToQuery($query, $searchColumn, $search, $whereClause, $this->isSearchForcedCaseInsensitive($query)),
                 function (EloquentBuilder $query) use ($search, $searchColumn, $whereClause): EloquentBuilder {
-                    /** @var Connection $databaseConnection */
-                    $databaseConnection = $query->getConnection();
+                    
 
                     $isSearchForcedCaseInsensitive = $this->isSearchForcedCaseInsensitive($query);
+
+                    $searchColumn = evaluate_search_attribute_string($searchColumn, $query->getConnection());
 
                     $caseAwareSearchColumn = $isSearchForcedCaseInsensitive ?
                         new Expression("lower({$searchColumn})") :
@@ -106,11 +109,6 @@ trait InteractsWithTableQuery
                     if ($isSearchForcedCaseInsensitive) {
                         $search = Str::lower($search);
                     }
-
-                    $searchColumn = match ($databaseConnection->getDriverName()) {
-                        'pgsql' => "{$searchColumn}::text",
-                        default => $searchColumn,
-                    };
 
                     return $query->when(
                         $this->queriesRelationships($query->getModel()),

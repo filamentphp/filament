@@ -36,6 +36,7 @@ use Illuminate\Support\Stringable;
 use Illuminate\Support\Traits\Macroable;
 
 use function Filament\authorize;
+use function Filament\Forms\evaluate_search_attribute_string;
 use function Filament\Support\get_model_label;
 use function Filament\Support\locale_has_pluralization;
 
@@ -653,10 +654,8 @@ abstract class Resource
             $query->when(
                 method_exists($model, 'isTranslatableAttribute') && $model->isTranslatableAttribute($searchAttribute),
                 function (Builder $query) use ($databaseConnection, $isForcedCaseInsensitive, $searchAttribute, $search, $whereClause): Builder {
-                    $searchColumn = match ($databaseConnection->getDriverName()) {
-                        'pgsql' => "{$searchAttribute}::text",
-                        default => $searchAttribute,
-                    };
+                    
+                    $searchColumn = evaluate_search_attribute_string($searchAttribute, $query->getConnection());
 
                     $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                         new Expression("lower({$searchColumn})") :
@@ -673,6 +672,8 @@ abstract class Resource
                     function (Builder $query) use ($isForcedCaseInsensitive, $searchAttribute, $search, $whereClause): Builder {
                         $searchColumn = (string) str($searchAttribute)->afterLast('.');
 
+                        $searchColumn = evaluate_search_attribute_string($searchColumn, $query->getConnection());
+                        
                         $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                             new Expression("lower({$searchColumn})") :
                             $searchColumn;
@@ -685,6 +686,9 @@ abstract class Resource
                         );
                     },
                     function ($query) use ($isForcedCaseInsensitive, $whereClause, $searchAttribute, $search) {
+                        
+                        $searchAttribute = evaluate_search_attribute_string($searchAttribute, $query->getConnection());
+                        
                         $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                             new Expression("lower({$searchAttribute})") :
                             $searchAttribute;

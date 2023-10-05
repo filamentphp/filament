@@ -17,6 +17,8 @@ use Illuminate\Database\Query\JoinClause;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Str;
 
+use function Filament\Forms\evaluate_search_attribute_string;
+
 class AttachAction extends Action
 {
     use CanCustomizeProcess;
@@ -237,6 +239,8 @@ class AttachAction extends Action
                 $relationshipQuery->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $searchColumns, $search): Builder {
                     foreach ($searchColumns as $searchColumn) {
                         $searchColumn = $query->qualifyColumn($searchColumn);
+
+                        $searchColumn = evaluate_search_attribute_string($searchColumn, $query->getConnection());
 
                         $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                             new Expression("lower({$searchColumn})") :

@@ -24,6 +24,8 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Exists;
 use Livewire\Component as LivewireComponent;
 
+use function Filament\Forms\evaluate_search_attribute_string;
+
 class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNestedRecursiveValidationRules
 {
     use Concerns\CanAllowHtml;
@@ -1079,6 +1081,9 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
 
         $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
             foreach ($this->getSearchColumns() as $searchColumn) {
+
+                $searchColumn = evaluate_search_attribute_string($searchColumn, $query->getConnection());
+
                 $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                     new Expression("lower({$searchColumn})") :
                     $searchColumn;

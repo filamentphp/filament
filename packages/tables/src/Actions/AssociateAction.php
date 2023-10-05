@@ -17,6 +17,8 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 
+use function Filament\Forms\evaluate_search_attribute_string;
+
 class AssociateAction extends Action
 {
     use CanCustomizeProcess;
@@ -202,6 +204,8 @@ class AssociateAction extends Action
                     foreach ($searchColumns as $searchColumn) {
                         $searchColumn = $query->qualifyColumn($searchColumn);
 
+                        $searchColumn = evaluate_search_attribute_string($searchColumn, $query->getConnection());
+                        
                         $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                             new Expression("lower({$searchColumn})") :
                             $searchColumn;

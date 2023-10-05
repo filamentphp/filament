@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Support\Str;
 
+use function Filament\Forms\evaluate_search_attribute_string;
 use function Filament\Support\get_model_label;
 
 class Type
@@ -72,6 +73,9 @@ class Type
 
             $query->where(function (Builder $query) use ($isFirst, $isForcedCaseInsensitive, $search): Builder {
                 foreach ($this->getSearchColumns() as $searchColumn) {
+
+                    $searchColumn = evaluate_search_attribute_string($searchColumn, $query->getConnection());
+
                     $caseAwareSearchColumn = $isForcedCaseInsensitive ?
                         new Expression("lower({$searchColumn})") :
                         $searchColumn;
