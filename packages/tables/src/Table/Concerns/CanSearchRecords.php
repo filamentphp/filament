@@ -80,7 +80,6 @@ trait CanSearchRecords
         return $this->getLivewire()->getTableColumnSearchIndicators();
     }
 
-
     public function searchPlaceholder(string | Closure $searchPlaceholder): static
     {
         $this->searchPlaceholder = $searchPlaceholder;
