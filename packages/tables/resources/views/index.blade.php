@@ -59,6 +59,7 @@
     $isStriped = $isStriped();
     $isLoaded = $isLoaded();
     $hasFilters = $isFilterable();
+    $searchPlaceholder = $getSearchPlaceholder();
     $filtersLayout = $getFiltersLayout();
     $filtersTriggerAction = $getFiltersTriggerAction();
     $hasFiltersDropdown = $hasFilters && ($filtersLayout === FiltersLayout::Dropdown);
@@ -231,7 +232,7 @@
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.before', scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
-                            <x-filament-tables::search-field />
+                            <x-filament-tables::search-field :search-placeholder="$searchPlaceholder" />
                         @endif
 
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.after', scopes: static::class) }}

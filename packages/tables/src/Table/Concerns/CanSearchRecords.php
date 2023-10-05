@@ -10,6 +10,8 @@ trait CanSearchRecords
 
     protected bool | Closure | null $persistsColumnSearchesInSession = false;
 
+    protected string | Closure | null $searchPlaceholder = null;
+
     public function persistSearchInSession(bool | Closure $condition = true): static
     {
         $this->persistsSearchInSession = $condition;
@@ -76,5 +78,18 @@ trait CanSearchRecords
     public function getColumnSearchIndicators(): array
     {
         return $this->getLivewire()->getTableColumnSearchIndicators();
+    }
+
+
+    public function searchPlaceholder(string | Closure $searchPlaceholder): static
+    {
+        $this->searchPlaceholder = $searchPlaceholder;
+
+        return $this;
+    }
+
+    public function getSearchPlaceholder(): ?string
+    {
+        return $this->evaluate($this->searchPlaceholder);
     }
 }
