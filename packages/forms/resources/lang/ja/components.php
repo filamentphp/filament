@@ -14,6 +14,10 @@ return [
                 'label' => ':labelを追加',
             ],
 
+            'add_between' => [
+                'label' => 'ブロックの間に追加',
+            ],
+
             'delete' => [
                 'label' => '削除',
             ],
@@ -39,11 +43,146 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => '全て折り畳む',
+                'label' => 'すべて折り畳む',
             ],
 
             'expand_all' => [
-                'label' => '全て展開',
+                'label' => 'すべて展開',
+            ],
+
+        ],
+
+    ],
+
+    'checkbox_list' => [
+
+        'actions' => [
+
+            'deselect_all' => [
+                'label' => 'すべて解除',
+            ],
+
+            'select_all' => [
+                'label' => 'すべて選択',
+            ],
+
+        ],
+
+    ],
+
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'キャンセル',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'ドラッグモード "クロップ"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'ドラッグモード "移動"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => '水平フリップ',
+                ],
+
+                'flip_vertical' => [
+                    'label' => '垂直フリップ',
+                ],
+
+                'move_down' => [
+                    'label' => '下に移動',
+                ],
+
+                'move_left' => [
+                    'label' => '左に移動',
+                ],
+
+                'move_right' => [
+                    'label' => '右に移動',
+                ],
+
+                'move_up' => [
+                    'label' => '上に移動',
+                ],
+
+                'reset' => [
+                    'label' => 'リセット',
+                ],
+
+                'rotate_left' => [
+                    'label' => '左回転',
+                ],
+
+                'rotate_right' => [
+                    'label' => '右回転',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'アスペクト比を:ratioにセット',
+                ],
+
+                'save' => [
+                    'label' => '保存',
+                ],
+
+                'zoom_100' => [
+                    'label' => '100%にズーム',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'ズームイン',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'ズームアウト',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => '高さ',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => '回転',
+                    'unit' => '度',
+                ],
+
+                'width' => [
+                    'label' => '幅',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'アスペクト比',
+
+                'no_fixed' => [
+                    'label' => 'フリー',
+                ],
+
             ],
 
         ],
@@ -60,6 +199,10 @@ return [
 
             'delete' => [
                 'label' => '行を削除',
+            ],
+
+            'reorder' => [
+                'label' => 'Reorder row',
             ],
 
         ],
@@ -81,16 +224,19 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'ファイルを追加',
-            'bold' => '太文字',
+            'attach_files' => 'ファイルを添付',
+            'blockquote' => 'ブロック引用',
+            'bold' => '太字',
             'bullet_list' => '箇条書き',
             'code_block' => 'コードブロック',
-            'edit' => '編集',
-            'italic' => 'イタリック体',
+            'heading' => '見出し',
+            'italic' => 'イタリック',
             'link' => 'リンク',
             'ordered_list' => '番号付きリスト',
-            'preview' => 'プレビュー',
+            'redo' => 'やり直し',
             'strike' => '打ち消し線',
+            'table' => '表',
+            'undo' => '元に戻す',
         ],
 
     ],
@@ -100,7 +246,7 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => ':labelを追加',
+                'label' => ':labelへ追加',
             ],
 
             'delete' => [
@@ -132,11 +278,11 @@ return [
             ],
 
             'collapse_all' => [
-                'label' => '全て折り畳む',
+                'label' => 'すべて折り畳む',
             ],
 
             'expand_all' => [
-                'label' => '全て展開',
+                'label' => 'すべて展開',
             ],
 
         ],
@@ -164,18 +310,19 @@ return [
 
         'toolbar_buttons' => [
             'attach_files' => 'ファイルを添付',
-            'blockquote' => 'ブロック引用要素',
-            'bold' => '太文字',
+            'blockquote' => 'ブロック引用',
+            'bold' => '太字',
             'bullet_list' => '箇条書き',
             'code_block' => 'コードブロック',
-            'h1' => '見出し1(h1)',
-            'h2' => '見出し2(h2)',
-            'h3' => '見出し3(h3)',
-            'italic' => 'イタリック体',
+            'h1' => 'タイトル',
+            'h2' => '見出し',
+            'h3' => '小見出し',
+            'italic' => 'イタリック',
             'link' => 'リンク',
             'ordered_list' => '番号付きリスト',
             'redo' => 'やり直し',
-            'strike' => '打ち消し戦',
+            'strike' => '打ち消し線',
+            'underline' => '下線',
             'undo' => '元に戻す',
         ],
 
@@ -195,6 +342,28 @@ return [
 
                         'create' => [
                             'label' => '作成',
+                        ],
+
+                        'create_another' => [
+                            'label' => '保存して、続けて作成',
+                        ],
+
+                    ],
+
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => '編集',
+
+                    'actions' => [
+
+                        'save' => [
+                            'label' => '保存',
                         ],
 
                     ],

@@ -26,6 +26,10 @@ return [
             'label' => 'Velg/fjern element :key for massehandlinger.',
         ],
 
+        'bulk_select_group' => [
+            'label' => 'Velg/fjern gruppen :title for massehandlinger.',
+        ],
+
         'search' => [
             'label' => 'Søk',
             'placeholder' => 'Søk',

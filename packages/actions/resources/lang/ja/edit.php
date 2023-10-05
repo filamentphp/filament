@@ -13,7 +13,7 @@ return [
             'actions' => [
 
                 'save' => [
-                    'label' => '保存',
+                    'label' => '変更を保存',
                 ],
 
             ],

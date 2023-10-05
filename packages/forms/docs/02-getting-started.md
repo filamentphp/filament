@@ -196,7 +196,7 @@ use Illuminate\Support\Str;
         ->live()
         ->afterStateUpdated(function (Set $set, $state) {
             $set('slug', Str::slug($state));
-        })
+        }),
     TextInput::make('slug')
         ->required()
         ->maxLength(255),

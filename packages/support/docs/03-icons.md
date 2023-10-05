@@ -80,6 +80,7 @@ Alternatively, you may pass an SVG element into the component's slot instead of 
 - `panels::theme-switcher.system-button` - Button to switch to the system theme from the theme switcher
 - `panels::topbar.close-sidebar-button` - Button to close the sidebar
 - `panels::topbar.open-sidebar-button` - Button to open the sidebar
+- `panels::topbar.group.toggle-button` - Toggle button for a topbar group
 - `panels::topbar.open-database-notifications-button` - Button to open the database notifications modal
 - `panels::user-menu.profile-item` - Profile item in the user menu
 - `panels::user-menu.logout-button` - Button in the user menu to log out

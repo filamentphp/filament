@@ -1,4 +1,3 @@
-import { mutateDom } from 'alpinejs/src/mutation'
 import { once } from 'alpinejs/src/utils/once'
 
 export default (Alpine) => {
@@ -36,7 +35,7 @@ export default (Alpine) => {
             const display = this.computedStyle.display
 
             const show = () => {
-                mutateDom(() => {
+                Alpine.mutateDom(() => {
                     this.$el.style.setProperty('display', display)
                     this.$el.style.setProperty('visibility', 'visible')
                 })
@@ -44,7 +43,7 @@ export default (Alpine) => {
             }
 
             const hide = () => {
-                mutateDom(() => {
+                Alpine.mutateDom(() => {
                     this.$el._x_isShown
                         ? this.$el.style.setProperty('visibility', 'hidden')
                         : this.$el.style.setProperty('display', 'none')

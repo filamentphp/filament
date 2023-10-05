@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\URL;
 
 trait HasAuth
 {
-    protected string | Closure $emailVerificationMiddlewareName = 'verified';
+    protected string | Closure $emailVerifiedMiddlewareName = 'verified';
 
     /**
      * @var string | Closure | array<class-string, string> | null
@@ -56,11 +56,17 @@ trait HasAuth
     /**
      * @param  string | Closure | array<class-string, string> | null  $promptAction
      */
-    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true, string | Closure $middlewareName = 'verified'): static
+    public function emailVerification(string | Closure | array | null $promptAction = EmailVerificationPrompt::class, bool $isRequired = true): static
     {
-        $this->emailVerificationMiddlewareName = $middlewareName;
         $this->emailVerificationRouteAction = $promptAction;
         $this->requiresEmailVerification($isRequired);
+
+        return $this;
+    }
+
+    public function emailVerifiedMiddlewareName(string | Closure $name): static
+    {
+        $this->emailVerifiedMiddlewareName = $name;
 
         return $this;
     }
@@ -164,7 +170,7 @@ trait HasAuth
 
     public function getEmailVerifiedMiddleware(): string
     {
-        return "{$this->getEmailVerificationMiddlewareName()}:{$this->getEmailVerificationPromptRouteName()}";
+        return "{$this->getEmailVerifiedMiddlewareName()}:{$this->getEmailVerificationPromptRouteName()}";
     }
 
     /**
@@ -254,9 +260,9 @@ trait HasAuth
         return route("filament.{$this->getId()}.auth.logout", $parameters);
     }
 
-    public function getEmailVerificationMiddlewareName(): string | Closure
+    public function getEmailVerifiedMiddlewareName(): string
     {
-        return $this->emailVerificationMiddlewareName;
+        return $this->evaluate($this->emailVerifiedMiddlewareName);
     }
 
     /**
