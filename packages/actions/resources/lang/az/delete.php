@@ -36,7 +36,7 @@ return [
 
         'modal' => [
 
-            'heading' => 'Seçilənləri sil', // When ':label' is used here, the meaning is distorted.
+            'heading' => 'Seçilənləri sil',
 
             'actions' => [
 
