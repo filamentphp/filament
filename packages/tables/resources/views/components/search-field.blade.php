@@ -1,6 +1,6 @@
 @props([
     'wireModel' => 'tableSearch',
-    'searchPlaceholder' => __('filament-tables::table.fields.search.placeholder')
+    'searchPlaceholder' => __('filament-tables::table.fields.search.placeholder'),
 ])
 
 <div
