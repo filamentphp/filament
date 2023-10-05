@@ -1239,14 +1239,14 @@ class Select extends Field implements Contracts\HasAffixActions, Contracts\HasNe
         };
     }
 
-    public function getDefaultState(): mixed
+    public function hydrateDefaultState(?array &$hydratedDefaultState): void
     {
-        $state = parent::getDefaultState();
+        parent::hydrateDefaultState($hydratedDefaultState);
+
+        $state = $this->getState();
 
         if (is_bool($state)) {
-            return $state ? 1 : 0;
+            $this->state($state ? 1 : 0);
         }
-
-        return $state;
     }
 }
