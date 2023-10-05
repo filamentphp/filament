@@ -24,19 +24,6 @@ trait CanSearchRecords
         return $this;
     }
 
-    public function getGloballySearchableColumnLabels(): array
-    {
-        $items = [];
-
-        foreach ($this->getColumns() as $column) {
-            if ($column->isGloballySearchable()) {
-                $items[] = $column->getLabel();
-            }
-        }
-
-        return $items;
-    }
-
     public function isSearchable(): bool
     {
         foreach ($this->getColumns() as $column) {

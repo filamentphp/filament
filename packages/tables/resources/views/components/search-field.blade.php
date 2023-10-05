@@ -1,6 +1,5 @@
 @props([
     'wireModel' => 'tableSearch',
-    'searchableColumnLabels'
 ])
 
 <div
@@ -20,7 +19,7 @@
         <x-filament::input
             autocomplete="off"
             inline-prefix
-            :placeholder="__('filament-tables::table.fields.search.placeholder') . ($searchableColumnLabels ? ' (' . implode(', ', $searchableColumnLabels) .')' : '')"
+            :placeholder="__('filament-tables::table.fields.search.placeholder')"
             type="search"
             :wire:model.live.debounce.500ms="$wireModel"
             x-bind:id="$id('input')"

@@ -54,7 +54,6 @@
     $isReordering = $isReordering();
     $isColumnSearchVisible = $isSearchableByColumn();
     $isGlobalSearchVisible = $isSearchable();
-    $searchableColumnLabels = $getGloballySearchableColumnLabels();
     $isSelectionEnabled = $isSelectionEnabled();
     $recordCheckboxPosition = $getRecordCheckboxPosition();
     $isStriped = $isStriped();
@@ -232,7 +231,7 @@
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.before', scopes: static::class) }}
 
                         @if ($isGlobalSearchVisible)
-                            <x-filament-tables::search-field :searchable-column-labels="$searchableColumnLabels" />
+                            <x-filament-tables::search-field />
                         @endif
 
                         {{ \Filament\Support\Facades\FilamentView::renderHook('tables::toolbar.search.after', scopes: static::class) }}
