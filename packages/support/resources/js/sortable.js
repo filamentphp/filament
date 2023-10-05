@@ -9,7 +9,6 @@ export default (Alpine) => {
             handle: '[x-sortable-handle]',
             dataIdAttr: 'x-sortable-item',
             animation: 300,
-            ghostClass: 'opacity-30',
         })
     })
 }

@@ -99,7 +99,6 @@
                             x-sortable-item="{{ $uuid }}"
                             x-bind:class="isCollapsed && 'fi-collapsed'"
                             class="fi-fo-repeater-item rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-white/5 dark:ring-white/10"
-                            data-extra-for-tailwind-content="opacity-30"
                         >
                             @if ($isReorderableWithDragAndDrop || $isReorderableWithButtons || filled($itemLabel) || $isCloneable || $isDeletable || $isCollapsible)
                                 <div
