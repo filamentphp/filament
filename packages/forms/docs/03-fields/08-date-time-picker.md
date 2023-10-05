@@ -213,6 +213,7 @@ You may restrict the minimum and maximum date that can be selected with the pick
 use Filament\Forms\Components\DatePicker;
 
 DatePicker::make('date_of_birth')
+    ->native(false)
     ->minDate(now()->subYears(150))
     ->maxDate(now())
 ```
