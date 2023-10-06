@@ -38,6 +38,8 @@ FilamentView::registerRenderHook(
 
 - `panels::auth.login.form.before` - Before login form
 - `panels::auth.login.form.after` - After login form
+- `panels::auth.register.form.before` - Before register form
+- `panels::auth.register.form.after` - After register form
 - `panels::body.start` - After `<body>`
 - `panels::body.end` - Before `</body>`
 - `panels::content.end` - After page content, inside `<main>`
