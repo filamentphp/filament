@@ -1,10 +1,11 @@
 <x-filament-actions::action
     :action="$action"
     dynamic-component="filament::button"
-    :outlined="$isOutlined()"
-    :labeled-from="$getLabeledFromBreakpoint()"
     :icon-position="$getIconPosition()"
     :icon-size="$getIconSize()"
+    :labeled-from="$getLabeledFromBreakpoint()"
+    :outlined="$isOutlined()"
+    :size="$getSize()"
     class="fi-ac-btn-action"
 >
     {{ $getLabel() }}

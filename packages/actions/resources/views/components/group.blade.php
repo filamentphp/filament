@@ -8,6 +8,8 @@
     'dynamicComponent' => null,
     'group' => null,
     'icon' => null,
+    'iconPosition' => null,
+    'iconSize' => null,
     'iconButton' => false,
     'label' => null,
     'link' => false,
@@ -24,6 +26,8 @@
             ->color($color)
             ->dropdownPlacement($dropdownPlacement)
             ->icon($icon)
+            ->iconPosition($iconPosition)
+            ->iconSize($iconSize)
             ->label($label)
             ->size($size)
             ->tooltip($tooltip)
@@ -89,12 +93,11 @@
             <x-dynamic-component
                 :badge="$group->getBadge()"
                 :badge-color="$group->getBadgeColor()"
-                :component="$dynamicComponent"
                 :color="$group->getColor()"
-                :tooltip="$group->getTooltip()"
+                :component="$dynamicComponent"
                 :icon="$group->getIcon()"
-                :size="$group->getSize()"
                 :label-sr-only="$group->isLabelHidden()"
+                :tooltip="$group->getTooltip()"
                 :attributes="\Filament\Support\prepare_inherited_attributes($attributes)->merge($group->getExtraAttributes(), escape: false)"
             >
                 {{ $slot }}
