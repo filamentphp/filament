@@ -181,7 +181,7 @@ class MakePageCommand extends Command
             $this->copyStubToApp('PageView', $viewPath);
         }
 
-        $this->components->info("Successfully created {$page}!");
+        $this->components->info("Filament Page [{$path}] created successfully.");
 
         if ($resource !== null) {
             $this->components->info("Make sure to register the page in `{$resourceClass}::getPages()`.");
