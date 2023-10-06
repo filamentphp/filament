@@ -268,7 +268,7 @@ class MakeResourceCommand extends Command
             ]);
         }
 
-        $this->components->info("Successfully created {$resource} !");
+		$this->components->info(sprintf('Resource [%s] created successfully.', $resourcePath));
 
         return static::SUCCESS;
     }

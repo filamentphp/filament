@@ -55,7 +55,8 @@ class MakePanelCommand extends Command
             ));
         }
 
-        $this->components->info("Successfully created {$class} !");
+        //$this->components->info("Successfully created {$class} !");
+		$this->components->info(sprintf('Panel [%s] created successfully.', $path));
         $this->components->warn("We've attempted to register the {$class} in your [config/app.php] file as a service provider.  If you get an error while trying to access your panel then this process has probably failed. You can manually register the service provider by adding it to the [providers] array.");
 
         return static::SUCCESS;
