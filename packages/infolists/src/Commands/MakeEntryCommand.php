@@ -67,7 +67,7 @@ class MakeEntryCommand extends Command
             $this->copyStubToApp('EntryView', $viewPath);
         }
 
-        $this->components->info("Filament Infolist Entry [{$path}] created successfully.");
+        $this->components->info("Filament infolist entry [{$path}] created successfully.");
 
         return static::SUCCESS;
     }

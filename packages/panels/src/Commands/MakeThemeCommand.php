@@ -101,7 +101,7 @@ class MakeThemeCommand extends Command
         if (! file_exists($postcssConfigPath)) {
             $this->copyStubToApp('ThemePostcssConfig', $postcssConfigPath);
 
-            $this->components->info('Filament Theme [postcss.config.js] created successfully.');
+            $this->components->info('Filament theme [postcss.config.js] created successfully.');
         }
 
         $this->components->warn('Action is required to complete the theme setup:');

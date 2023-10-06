@@ -261,7 +261,7 @@ class MakeResourceCommand extends Command
             ]);
         }
 
-        $this->components->info("Filament Resource [{$resourcePath}] created successfully.");
+        $this->components->info("Filament resource [{$resourcePath}] created successfully.");
 
         return static::SUCCESS;
     }
