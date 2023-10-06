@@ -234,7 +234,10 @@ class SpatieMediaLibraryFileUpload extends FileUpload
             return $diskName;
         }
 
-        $diskNameFromRegisteredConversions = $this->getModelInstance()
+        /** @var Model&HasMedia $model */
+        $model = $this->getModelInstance();
+        
+        $diskNameFromRegisteredConversions = $model
             ->getRegisteredMediaCollections()
             ->filter(fn (MediaCollection $collection) => $collection->name === $this->getCollection())
             ->value('diskName');
