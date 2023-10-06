@@ -381,7 +381,7 @@ public function panel(Panel $panel): Panel
     return $panel
         // ...
         ->tenantMenuItems([
-            'profile' => MenuItem::make()->label('Edit team'),
+            'profile' => MenuItem::make()->label('Edit team profile'),
             // ...
         ]);
 }
