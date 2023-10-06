@@ -368,6 +368,25 @@ public function panel(Panel $panel): Panel
 }
 ```
 
+### Customizing the profile link
+
+To customize the profile link on the tenant menu, register a new item with the `profile` array key:
+
+```php
+use Filament\Navigation\MenuItem;
+use Filament\Panel;
+
+public function panel(Panel $panel): Panel
+{
+    return $panel
+        // ...
+        ->tenantMenuItems([
+            'profile' => MenuItem::make()->label('Edit team'),
+            // ...
+        ]);
+}
+```
+
 ### Customizing the billing link
 
 To customize the billing link on the tenant menu, register a new item with the `billing` array key:
