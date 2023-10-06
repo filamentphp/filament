@@ -9,6 +9,9 @@ export default (Alpine) => {
             handle: '[x-sortable-handle]',
             dataIdAttr: 'x-sortable-item',
             animation: 300,
+            // Class name for the drop placeholder
+            // Applying styles on packages/forms/resources/css/components/sortable.css
+            ghostClass: "sortable-ghost",
         })
     })
 }
