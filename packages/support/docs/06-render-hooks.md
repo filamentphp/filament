@@ -54,6 +54,7 @@ FilamentView::registerRenderHook(
 - `panels::page.end` - End of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.footer-widgets.after` - After the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.footer-widgets.before` - Before the page footer widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
+- `panels::page.header` - Between the page header title and actions, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.header-widgets.after` - After the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.header-widgets.before` - Before the page header widgets, also [can be scoped](#scoping-render-hooks) to the page or resource class
 - `panels::page.start` - Start of the page content container, also [can be scoped](#scoping-render-hooks) to the page or resource class

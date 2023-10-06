@@ -31,6 +31,8 @@
         @endif
     </div>
 
+    {{ \Filament\Support\Facades\FilamentView::renderHook('panels::page.header', scopes: $this->getRenderHookScopes()) }}
+
     @if ($actions)
         <x-filament-actions::actions
             :actions="$actions"
