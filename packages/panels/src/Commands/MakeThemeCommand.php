@@ -82,7 +82,7 @@ class MakeThemeCommand extends Command
             'viewPathPrefix' => $viewPathPrefix,
         ]);
 
-        $this->components->info("Successfully created resources/css/filament/{$panelId}/theme.css and resources/css/filament/{$panelId}/tailwind.config.js!");
+        $this->components->info("Filament theme [resources/css/filament/{$panelId}/theme.css] and [resources/css/filament/{$panelId}/tailwind.config.js] created successfully.");
 
         if (! file_exists(base_path('vite.config.js'))) {
             $this->components->warn('Action is required to complete the theme setup:');
@@ -101,7 +101,7 @@ class MakeThemeCommand extends Command
         if (! file_exists($postcssConfigPath)) {
             $this->copyStubToApp('ThemePostcssConfig', $postcssConfigPath);
 
-            $this->components->info('Successfully created postcss.config.js!');
+            $this->components->info('Filament Theme [postcss.config.js] created successfully.');
         }
 
         $this->components->warn('Action is required to complete the theme setup:');
