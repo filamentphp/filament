@@ -100,10 +100,10 @@ use Filament\Infolists\Components\TextEntry;
 
 TextEntry::make('description')
     ->limit(50)
-    ->tooltip(function (TextEntry $entry): ?string {
-        $state = $entry->getState();
+    ->tooltip(function (TextEntry $component): ?string {
+        $state = $component->getState();
 
-        if (strlen($state) <= $entry->getCharacterLimit()) {
+        if (strlen($state) <= $component->getCharacterLimit()) {
             return null;
         }
 
