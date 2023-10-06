@@ -144,22 +144,13 @@ it('can send notifications', function () {
         ->getEventData()->toBe($actionEventData)
         ->getExtraAttributes()->toBe($actionExtraAttributes)
         ->getIcon()->toBe($actionIcon)
-        ->getIconPosition()->toBe(match ($actionIconPosition) {
-            IconPosition::After => 'after',
-            IconPosition::Before => 'before',
-        })
+        ->getIconPosition()->toBe($actionIconPosition)
         ->isOutlined()->toBe($isActionOutlined)
         ->isDisabled()->toBe($isActionDisabled)
         ->getLabel()->toBe($actionLabel)
         ->shouldClose()->toBe($shouldClose)
         ->shouldOpenUrlInNewTab()->toBe($shouldActionOpenUrlInNewTab)
-        ->getSize()->toBe(match ($actionSize) {
-            ActionSize::ExtraSmall => 'xs',
-            ActionSize::Small => 'sm',
-            ActionSize::Medium => 'md',
-            ActionSize::Large => 'lg',
-            ActionSize::ExtraLarge => 'xl',
-        })
+        ->getSize()->toBe($actionSize)
         ->getUrl()->toBe($actionUrl);
 
     expect(session()->get('filament.notifications'))
