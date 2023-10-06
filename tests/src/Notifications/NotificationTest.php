@@ -100,22 +100,13 @@ it('can send notifications', function () {
         ->eventData->toBe($actionEventData)
         ->extraAttributes->toBe($actionExtraAttributes)
         ->icon->toBe($actionIcon)
-        ->iconPosition->toBe(match ($actionIconPosition) {
-            IconPosition::After => 'after',
-            IconPosition::Before => 'before',
-        })
+        ->iconPosition->toBe($actionIconPosition)
         ->isOutlined->toBe($isActionOutlined)
         ->isDisabled->toBe($isActionDisabled)
         ->label->toBe($actionLabel)
         ->shouldClose->toBe($shouldClose)
         ->shouldOpenUrlInNewTab->toBe($shouldActionOpenUrlInNewTab)
-        ->size->toBe(match ($actionSize) {
-            ActionSize::ExtraSmall => 'xs',
-            ActionSize::Small => 'sm',
-            ActionSize::Medium => 'md',
-            ActionSize::Large => 'lg',
-            ActionSize::ExtraLarge => 'xl',
-        })
+        ->size->toBe($actionSize)
         ->url->toBe($actionUrl);
 
     $component = livewire(Notifications::class);
