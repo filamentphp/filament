@@ -1,7 +1,7 @@
 @props([
     'field' => null,
     'hasInlineLabel' => null,
-    'hasNestedRecursiveValidationRules' => false,
+    'hasNestedRecursiveValidationRules' => null,
     'helperText' => null,
     'hint' => null,
     'hintActions' => null,
@@ -108,7 +108,7 @@
 
                 @if ($hasError)
                     <x-filament-forms::field-wrapper.error-message>
-                        {{ $errors->first($statePath) ?? ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
+                        {{ $errors->has($statePath) ? $errors->first($statePath) : ($hasNestedRecursiveValidationRules ? $errors->first("{$statePath}.*") : null) }}
                     </x-filament-forms::field-wrapper.error-message>
                 @endif
 
