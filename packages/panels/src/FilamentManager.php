@@ -490,6 +490,11 @@ class FilamentManager
         return $this->getCurrentPanel()->getWidgets();
     }
 
+    public function getDatabaseNotificationLivewire(): string
+    {
+        return $this->getCurrentPanel()->getDatabaseNotificationLivewire();
+    }
+
     public function hasBreadcrumbs(): bool
     {
         return $this->getCurrentPanel()->hasBreadcrumbs();
