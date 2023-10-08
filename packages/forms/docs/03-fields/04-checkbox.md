@@ -56,7 +56,7 @@ Checkbox::make('is_admin')->inline(false)
 
 ## Distinct selection in a Repeater
 
-You may enforce selection of a checkbox in one (and only one) instance of a Repeater by using the `distinct()` method.
+You may enforce selection of a checkbox in one (and only one) instance of a Repeater by using the `distinctOptions()` method.
 
 This example of adding multiple locations in a Repeater would require that one (and only one) instance is selected as primary: 
 
@@ -67,14 +67,14 @@ use Filament\Forms\Components\Repeaater;
 Repeaater::make('locations')
     ->schema([  
         Checkbox::make('primary')
-            ->distinct(),
+            ->distinctOptions(),
         //
     ])
 ```
 
 Selecting the Primary checkbox in a second or subsequent repeat instance would de-select the previous selection.
 
-A validation is automatically added which will fail if no instance of the checkbox is selected, or if more than one is selected (which of course shouldn't happen with newly created data).
+Enabling this method will automatically apply the `distinct()` validation.
 
 ## Checkbox validation
 

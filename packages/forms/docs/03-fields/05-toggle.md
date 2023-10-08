@@ -88,7 +88,7 @@ Toggle::make('is_admin')
 
 ## Distinct selection in a Repeater
 
-You may enforce selection of a Toggle in one (and only one) instance of a Repeater by using the `distinct()` method.
+You may enforce selection of a Toggle in one (and only one) instance of a Repeater by using the `distinctOptions()` method.
 
 This example of adding multiple locations in a Repeater would require that one (and only one) instance is selected as primary:
 
@@ -99,14 +99,14 @@ use Filament\Forms\Components\Repeaater;
 Repeaater::make('locations')
     ->schema([  
         Toggle::make('primary')
-            ->distinct(),
+            ->distinctOptions(),
         //
     ])
 ```
 
 Selecting the Primary toggle in a second or subsequent repeat instance would de-select the previous selection.
 
-A validation is automatically added which will fail if no instance of the toggle is selected, or if more than one is selected (which of course shouldn't happen with newly created data).
+Enabling this method will automatically add the `distinct()` validation, will fail if no instance of the toggle is selected, or if more than one is selected (which of course shouldn't happen with newly created data).
 
 ## Toggle validation
 
