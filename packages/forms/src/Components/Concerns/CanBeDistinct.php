@@ -13,7 +13,7 @@ trait CanBeDistinct
 {
     protected bool | Closure $isDistinct = false;
 
-    public function distinct(bool | Closure $condition = true, bool $shouldDisableOptions = false): static
+    public function distinctOptions(bool | Closure $condition = true, bool $shouldDisableOptions = false): static
     {
         $this->isDistinct = $condition;
 
@@ -75,62 +75,7 @@ trait CanBeDistinct
             });
         }
 
-        $this->rule(static function (Component $component, mixed $state) {
-            return function (string $attribute, $value, Closure $fail) use ($component, $state) {
-                if (! $component->isRepeated()) {
-                    return;
-                }
-
-                $repeatKey = (string) Str::of($component->getStatePath())
-                    ->beforeLast(".{$component->getName()}")
-                    ->afterLast('.');
-
-                $siblings = collect($component->getRepeaterComponent()?->getState())
-                    ->reject(fn (array $item, string $key): bool => $key === $repeatKey);
-
-                if (count($siblings) === 0) {
-                    return;
-                }
-
-                if (is_bool($state)) {
-                    // if it's boolean, it's a Toggle or Checkbox, so "one, and only one, must be selected"
-                    $selected = collect($siblings)
-                        ->pluck($component->getName())
-                        ->contains(true);
-
-                    if (empty($selected)) {
-                        $fail("One of {$component->getLabel()} must be selected.");
-
-                        return;
-                    }
-
-                    if ($value) {
-                        $isDuplicate = $siblings->pluck($component->getName())
-                            ->contains(true);
-
-                        if ($isDuplicate) {
-                            $fail("Only one of {$component->getLabel()} may be selected.");
-                        }
-                    }
-                } elseif (is_array($state)) {
-                    // an array is Select multiple() or CheckboxList, so test for any intersection with other instances
-                    $intersects = $siblings->filter(fn (array $item): bool => ! empty(array_intersect(data_get($item, $component->getName(), []), $state)))
-                        ->isNotEmpty();
-
-                    if ($intersects) {
-                        $fail("{$component->getLabel()} field must be distinct.");
-                    }
-                } else {
-                    // it's a single select of some sort, so test for duplicates
-                    $isDuplicate = $siblings->pluck($component->getName())
-                        ->contains($state);
-
-                    if ($isDuplicate) {
-                        $fail("{$component->getLabel()} field must be distinct.");
-                    }
-                }
-            };
-        });
+        $this->distinct();
 
         return $this;
     }

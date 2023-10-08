@@ -413,4 +413,17 @@ return [
 
     ],
 
+    'validation' => [
+
+        'distinct' => [
+
+            'must_be_selected' => 'One of :attribute must be selected',
+
+            'only_one_must_be_selected' => 'Only one of :attribute must be selected',
+
+            'must_be_distinct' => ':attribute must be distinct',
+
+        ],
+    ],
+
 ];

@@ -531,6 +531,65 @@ trait CanBeValidated
         return $this;
     }
 
+    public function distinct(): static
+    {
+        $this->rule(static function (Field $component, mixed $state) {
+            return function (string $attribute, mixed $value, Closure $fail) use ($component, $state) {
+                if (! $component->isRepeated()) {
+                    return;
+                }
+
+                $repeatKey = (string) Str::of($component->getStatePath())
+                    ->beforeLast(".{$component->getName()}")
+                    ->afterLast('.');
+
+                $siblings = collect($component->getRepeaterComponent()?->getState())
+                    ->reject(fn (array $item, string $key): bool => $key === $repeatKey);
+
+                if (count($siblings) === 0) {
+                    return;
+                }
+
+                if (is_bool($state)) {
+                    // if it's boolean, it's a Toggle or Checkbox, so "one, and only one, must be selected"
+                    $siblingSelected = collect($siblings)
+                        ->pluck($component->getName())
+                        ->contains(true);
+
+                    if ((! $state && ! $siblingSelected)) {
+                        $fail(__('filament-forms::components.validation.distinct.must_be_selected', ['attribute' => $component->getValidationAttribute()]));
+
+                        return;
+                    }
+
+                    if ($state) {
+                        if ($siblings->pluck($component->getName())->contains(true)) {
+                            $fail(__('filament-forms::components.validation.distinct.only_one_must_be_selected', ['attribute' => $component->getValidationAttribute()]));
+                        }
+                    }
+                } elseif (is_array($state)) {
+                    // an array is Select multiple() or CheckboxList, so test for any intersection with other instances
+                    $intersects = $siblings->filter(fn (array $item): bool => ! empty(array_intersect(data_get($item, $component->getName(), []), $state)))
+                        ->isNotEmpty();
+
+                    if ($intersects) {
+                        $fail(__('filament-forms::components.validation.distinct.must_be_distinct', ['attribute' => $component->getValidationAttribute()]));
+                    }
+                } else {
+                    // it's a single select of some sort, so test for duplicates
+                    $isDuplicate = $siblings->pluck($component->getName())
+                        ->contains($state);
+
+                    if ($isDuplicate) {
+                        $fail(__('filament-forms::components.validation.distinct.must_be_distinct', ['attribute' => $component->getValidationAttribute()]));
+                    }
+                }
+            };
+        });
+
+        return $this;
+    }
+
     public function validationAttribute(string | Closure | null $label): static
     {
         $this->validationAttribute = $label;
