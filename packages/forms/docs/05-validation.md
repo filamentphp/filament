@@ -400,6 +400,32 @@ Field::make('name')->string()
 
 The field value must not exist in the database. [See the Laravel documentation.](https://laravel.com/docs/validation#rule-unique)
 
+### Distinct
+
+The field must be distinct within a Repeater.
+
+```php
+Select::make('shirt_color')
+    ->options([
+        'blue' => 'Blue',
+        'green' => 'Green',
+        'red' => 'Red',
+        'yellow' => 'Yellow',
+        'white' => 'White',
+    ])
+    ->distinct()
+```
+
+The exact behavior of the `distinct()` validation depends on the field type.
+
+For Checkbox and Toggle (any field whose state is a boolean) one and only one must be selected within the repeater.
+
+For Radio, CheckboxList and Select (any field whose state is an array) any given option may only be selected once within the repeater.
+
+For any other field types (any field whose state is a string) the value must be distinct within the repeater.
+
+Note that this validation does not police selection on the form.  If you wish to prevent the user from selecting non-distinct options for Radio, Toggle, Checkbox(List) or Select fields, use the `distinctOptions()` method instead (which also applies this validation).
+
 ```php
 Field::make('email')->unique()
 ```
